@@ -1,0 +1,12 @@
+.idea/workspace.xml
+build/*
+**/build/*
+*.build
+*.swp
+*.pyc
+*.o
+*.so
+*.perspectivev3
+*.pbxuser
+xcuserdata
+.hg
