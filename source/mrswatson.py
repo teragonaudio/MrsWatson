@@ -24,14 +24,18 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import sys
+from optparse import OptionParser
+
 versionMajor=0
 versionMinor=0
 versionPatch=1
 
 def printVersion():
     print "This is MrsWatson, version %d.%d.%d" % (versionMajor, versionMinor, versionPatch)
+    print "Copyright 2011 Teragon Audio, see source code for copying conditions"
+    sys.exit(0)
 
-from optparse import OptionParser
 parser = OptionParser()
 parser.add_option("-v", "--version", dest="showVersion", action="store_true",
                   help="Print version and copyright information", default=False)
