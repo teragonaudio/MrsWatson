@@ -3,6 +3,9 @@
   <component name="DependencyValidationManager">
     <option name="SKIP_IMPORT_STATEMENTS" value="false" />
   </component>
+  <component name="ProjectResources">
+    <default-html-doctype>http://www.w3.org/1999/xhtml</default-html-doctype>
+  </component>
   <component name="ProjectRootManager" version="2" project-jdk-name="Python 2.6.1 (/System/Library/Frameworks/Python.framework/Versions/2.6/bin/python)" project-jdk-type="Python SDK" />
 </project>
 
