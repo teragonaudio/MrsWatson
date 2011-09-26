@@ -1,4 +1,5 @@
 .idea/workspace.xml
+.idea/dictionaries/*
 build/*
 **/build/*
 *.build
@@ -10,3 +11,4 @@ build/*
 *.pbxuser
 xcuserdata
 .hg
+python
