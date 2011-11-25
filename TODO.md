@@ -6,7 +6,7 @@
 - Set up virtual python environment (with virtualenv)
 - See if python modules already exist for the following functions, if
   not, then we will need to code these modules by hand:
-  * Loading VST plugins into python for processing
+  * Loading VST plugins into python for processing - pyVST?
   * Decoding WAV/AIFF data to raw PCM
   * Decoding compressed (mp3/ogg) data to raw PCM
     ^ This feature is not a high priority
