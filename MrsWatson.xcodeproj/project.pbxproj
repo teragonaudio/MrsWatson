@@ -1,0 +1,206 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		24FDFBC1148CC9CC0074D3A1 /* MrsWatson.c in Sources */ = {isa = PBXBuildFile; fileRef = 24FDFBC0148CC9CC0074D3A1 /* MrsWatson.c */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		24FDFBA8148CC6AF0074D3A1 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		24FDFBAA148CC6AF0074D3A1 /* MrsWatson */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = MrsWatson; sourceTree = BUILT_PRODUCTS_DIR; };
+		24FDFBC0148CC9CC0074D3A1 /* MrsWatson.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = MrsWatson.c; path = source/MrsWatson.c; sourceTree = SOURCE_ROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		24FDFBA7148CC6AF0074D3A1 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		24FDFB9F148CC6AF0074D3A1 = {
+			isa = PBXGroup;
+			children = (
+				24FDFBAD148CC6AF0074D3A1 /* Source */,
+				24FDFBAB148CC6AF0074D3A1 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		24FDFBAB148CC6AF0074D3A1 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				24FDFBAA148CC6AF0074D3A1 /* MrsWatson */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		24FDFBAD148CC6AF0074D3A1 /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				24FDFBC0148CC9CC0074D3A1 /* MrsWatson.c */,
+			);
+			name = Source;
+			path = MrsWatson;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		24FDFBA9148CC6AF0074D3A1 /* MrsWatson */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 24FDFBB4148CC6AF0074D3A1 /* Build configuration list for PBXNativeTarget "MrsWatson" */;
+			buildPhases = (
+				24FDFBA6148CC6AF0074D3A1 /* Sources */,
+				24FDFBA7148CC6AF0074D3A1 /* Frameworks */,
+				24FDFBA8148CC6AF0074D3A1 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MrsWatson;
+			productName = MrsWatson;
+			productReference = 24FDFBAA148CC6AF0074D3A1 /* MrsWatson */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		24FDFBA1148CC6AF0074D3A1 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0420;
+			};
+			buildConfigurationList = 24FDFBA4148CC6AF0074D3A1 /* Build configuration list for PBXProject "MrsWatson" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 24FDFB9F148CC6AF0074D3A1;
+			productRefGroup = 24FDFBAB148CC6AF0074D3A1 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				24FDFBA9148CC6AF0074D3A1 /* MrsWatson */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		24FDFBA6148CC6AF0074D3A1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				24FDFBC1148CC9CC0074D3A1 /* MrsWatson.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		24FDFBB2148CC6AF0074D3A1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		24FDFBB3148CC6AF0074D3A1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		24FDFBB5148CC6AF0074D3A1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		24FDFBB6148CC6AF0074D3A1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		24FDFBA4148CC6AF0074D3A1 /* Build configuration list for PBXProject "MrsWatson" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				24FDFBB2148CC6AF0074D3A1 /* Debug */,
+				24FDFBB3148CC6AF0074D3A1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		24FDFBB4148CC6AF0074D3A1 /* Build configuration list for PBXNativeTarget "MrsWatson" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				24FDFBB5148CC6AF0074D3A1 /* Debug */,
+				24FDFBB6148CC6AF0074D3A1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 24FDFBA1148CC6AF0074D3A1 /* Project object */;
+}
