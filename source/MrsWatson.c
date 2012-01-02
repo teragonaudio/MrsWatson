@@ -14,7 +14,7 @@
 #include "CharString.h"
 #include "MrsWatson.h"
 
-int main(int argc, char *argv[]) {
+int main(int argc, char** argv) {
   EventLogger eventLogger = newEventLogger();
 
   ProgramOptions programOptions = newProgramOptions();
