@@ -13,13 +13,16 @@
 
 #include "EventLogger.h"
 
-EventLogger newEventLogger(void) {
-  EventLogger eventLogger = malloc(sizeof(EventLoggerMembers));
+EventLogger eventLoggerGlobalInstance;
 
-  eventLogger->logLevel = LOG_INFO;
-  eventLogger->startTime = time(NULL);
+void initEventLogger(void) {
+  eventLoggerGlobalInstance = malloc(sizeof(EventLoggerMembers));
+  eventLoggerGlobalInstance->logLevel = LOG_INFO;
+  eventLoggerGlobalInstance->startTime = time(NULL);
+}
 
-  return eventLogger;
+static EventLogger _getGlobalInstance(void) {
+  return eventLoggerGlobalInstance;
 }
 
 static char _logLevelStatusChar(const LogLevel logLevel) {
@@ -36,25 +39,26 @@ static void _printMessage(const LogLevel logLevel, const long elapsedTime, const
   fprintf(stderr, "%c %ld %s\n", _logLevelStatusChar(logLevel), elapsedTime, message);
 }
 
-void logMessage(EventLogger eventLogger, const LogLevel logLevel, const char* message) {
+void logMessage(const LogLevel logLevel, const char* message) {
+  EventLogger eventLogger = _getGlobalInstance();
   if(logLevel >= eventLogger->logLevel) {
     time_t currentTime = time(NULL);
     _printMessage(logLevel, currentTime - eventLogger->startTime, message);
   }
 }
 
-void logDebug(EventLogger eventLogger, const char* message) {
-  logMessage(eventLogger, LOG_DEBUG, message);
+void logDebug(const char* message) {
+  logMessage(LOG_DEBUG, message);
 }
 
-void logInfo(EventLogger eventLogger, const char* message) {
-  logMessage(eventLogger, LOG_INFO, message);
+void logInfo(const char* message) {
+  logMessage(LOG_INFO, message);
 }
 
-void logError(EventLogger eventLogger, const char* message) {
-  logMessage(eventLogger, LOG_ERROR, message);
+void logError(const char* message) {
+  logMessage(LOG_ERROR, message);
 }
 
-void logCritical(EventLogger eventLogger, const char* message) {
-  logMessage(eventLogger, LOG_CRITICAL, message);
+void logCritical(const char* message) {
+  logMessage(LOG_CRITICAL, message);
 }

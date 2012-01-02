@@ -22,11 +22,11 @@ CharString getNewVersionString(void) {
 }
 
 int main(int argc, char** argv) {
-  EventLogger eventLogger = newEventLogger();
+  initEventLogger();
 
   RuntimeConfiguration runtimeConfiguration = newRuntimeConfiguration();
   if(!parseCommandLine(runtimeConfiguration, argc, argv)) {
-    logCritical(eventLogger, "Error parsing command line");
+    logCritical("Error parsing command line");
     return -1;
   }
 
@@ -35,7 +35,7 @@ int main(int argc, char** argv) {
   }
 
   CharString hello = getNewVersionString();
-  logInfo(eventLogger, hello);
+  logInfo(hello);
   free(hello);
 
   return 0;

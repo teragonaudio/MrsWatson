@@ -25,13 +25,14 @@ typedef struct {
 } EventLoggerMembers;
 
 typedef EventLoggerMembers* EventLogger;
+extern EventLogger eventLoggerGlobalInstance;
 
-EventLogger newEventLogger(void);
+void initEventLogger(void);
 
-void logMessage(EventLogger eventLogger, const LogLevel logLevel, const char* message);
-void logDebug(EventLogger eventLogger, const char* message);
-void logInfo(EventLogger eventLogger, const char* message);
-void logError(EventLogger eventLogger, const char* message);
-void logCritical(EventLogger eventLogger, const char* message);
+void logMessage(const LogLevel logLevel, const char* message);
+void logDebug(const char* message);
+void logInfo(const char* message);
+void logError(const char* message);
+void logCritical(const char* message);
 
 #endif
