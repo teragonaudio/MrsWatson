@@ -8,6 +8,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#import <string.h>
 #include "ProgramOptions.h"
 
 ProgramOptions newProgramOptions(void) {
@@ -19,6 +20,12 @@ ProgramOptions newProgramOptions(void) {
   return programOptions;
 }
 
-bool parseCommandLine(ProgramOptions programOptions, int argc, char *argv[]) {
-  return true;
+bool parseCommandLine(ProgramOptions programOptions, int argc, char** argv) {
+  bool result = true;
+
+  for(int argumentIndex = 0; argumentIndex < argc; argumentIndex++) {
+    char* currentArgument = argv[argumentIndex];
+  }
+
+  return result;
 }

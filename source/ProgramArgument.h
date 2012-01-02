@@ -6,9 +6,21 @@
 //  Copyright (c) 2012 Teragon Audio. All rights reserved.
 //
 
+#import "CharString.h"
+#import "Types.h"
+
 #ifndef MrsWatson_ProgramArgument_h
 #define MrsWatson_ProgramArgument_h
 
+typedef struct {
+  CharString name;
+  CharString help;
+  bool isShort;
+} ProgramArgumentMembers;
 
+typedef ProgramArgumentMembers* ProgramArgument;
+typedef ProgramArgument* ProgramArguments;
+
+ProgramArguments newProgramArguments(void);
 
 #endif
