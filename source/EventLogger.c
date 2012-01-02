@@ -33,7 +33,7 @@ static char _logLevelStatusChar(const LogLevel logLevel) {
 }
 
 static void _printMessage(const LogLevel logLevel, const long elapsedTime, const char* message) {
-  printf("%c %ld %s\n", _logLevelStatusChar(logLevel), elapsedTime, message);
+  fprintf(stderr, "%c %ld %s\n", _logLevelStatusChar(logLevel), elapsedTime, message);
 }
 
 void logMessage(EventLogger eventLogger, const LogLevel logLevel, const char* message) {
