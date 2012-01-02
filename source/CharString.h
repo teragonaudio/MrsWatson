@@ -15,8 +15,8 @@
 
 typedef char* CharString;
 
-CharString newCharString();
-CharString newCharStringShort();
-CharString newCharStringLong();
+CharString newCharString(void);
+CharString newCharStringShort(void);
+CharString newCharStringLong(void);
 
 #endif

@@ -18,7 +18,7 @@ typedef struct {
 
 typedef ProgramOptionsMembers* ProgramOptions;
 
-ProgramOptions newProgramOptions();
+ProgramOptions newProgramOptions(void);
 bool parseCommandLine(ProgramOptions programOptions, int argc, char *argv[]);
 
 #endif

@@ -26,7 +26,7 @@ typedef struct {
 
 typedef EventLoggerMembers* EventLogger;
 
-EventLogger newEventLogger();
+EventLogger newEventLogger(void);
 
 void logMessage(EventLogger eventLogger, const LogLevel logLevel, const char* message);
 void logDebug(EventLogger eventLogger, const char* message);

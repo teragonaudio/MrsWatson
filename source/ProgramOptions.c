@@ -10,7 +10,7 @@
 #include <stdlib.h>
 #include "ProgramOptions.h"
 
-ProgramOptions newProgramOptions() {
+ProgramOptions newProgramOptions(void) {
   ProgramOptions programOptions = malloc(sizeof(ProgramOptionsMembers));
   
   programOptions->quiet = false;

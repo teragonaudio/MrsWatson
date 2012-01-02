@@ -17,14 +17,14 @@ static CharString _newCharString(const int length) {
   return charString;
 }
 
-CharString newCharString() {
+CharString newCharString(void) {
   return _newCharString(STRING_LENGTH);
 }
 
-CharString newCharStringShort() {
+CharString newCharStringShort(void) {
   return _newCharString(STRING_LENGTH_SHORT);
 }
 
-CharString newCharStringLong() {
+CharString newCharStringLong(void) {
   return _newCharString(STRING_LENGTH_LONG);
 }

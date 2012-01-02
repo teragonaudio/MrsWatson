@@ -13,7 +13,7 @@
 
 #include "EventLogger.h"
 
-EventLogger newEventLogger() {
+EventLogger newEventLogger(void) {
   EventLogger eventLogger = malloc(sizeof(EventLoggerMembers));
 
   eventLogger->logLevel = LOG_INFO;
