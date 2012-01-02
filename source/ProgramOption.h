@@ -1,5 +1,5 @@
 //
-//  ProgramArgument.h
+//  ProgramOption.h
 //  MrsWatson
 //
 //  Created by Nik Reiman on 1/2/12.
@@ -9,19 +9,16 @@
 #import "CharString.h"
 #import "Types.h"
 
-#ifndef MrsWatson_ProgramArgument_h
-#define MrsWatson_ProgramArgument_h
+#ifndef MrsWatson_ProgramOption_h
+#define MrsWatson_ProgramOption_h
 
 typedef struct {
   CharString name;
   CharString help;
   bool isShort;
   bool requiresArgument;
-} ProgramArgumentMembers;
+} ProgramOptionMembers;
 
-typedef ProgramArgumentMembers* ProgramArgument;
-typedef ProgramArgument* ProgramArguments;
-
-ProgramArguments newProgramArguments(void);
+typedef ProgramOptionMembers* ProgramOption;
 
 #endif
