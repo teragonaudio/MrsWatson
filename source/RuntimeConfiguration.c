@@ -17,9 +17,6 @@ RuntimeConfiguration newRuntimeConfiguration(void) {
   RuntimeConfiguration runtimeConfiguration = malloc(sizeof(RuntimeConfigurationMembers));
 
   runtimeConfiguration->configurationOk = false;
-  runtimeConfiguration->quiet = false;
-  runtimeConfiguration->verbose = false;
-  
   return runtimeConfiguration;
 }
 

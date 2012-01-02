@@ -34,13 +34,6 @@ int main(int argc, char** argv) {
     return 1;
   }
 
-  if(runtimeConfiguration->verbose) {
-    eventLogger->logLevel = LOG_DEBUG;
-  }
-  else if(runtimeConfiguration->quiet) {
-    eventLogger->logLevel = LOG_CRITICAL;
-  }
-
   CharString hello = getNewVersionString();
   logInfo(eventLogger, hello);
   free(hello);
