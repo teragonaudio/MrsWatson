@@ -9,7 +9,7 @@
 #ifndef MrsWatson_CharString_h
 #define MrsWatson_CharString_h
 
-#define STRING_LENGTH 128
+#define STRING_LENGTH 256
 #define STRING_LENGTH_SHORT 32
 #define STRING_LENGTH_LONG 8192
 
