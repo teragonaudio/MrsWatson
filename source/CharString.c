@@ -10,7 +10,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "CharString.h"
-#import "PlatformInfo.h"
+#include "PlatformInfo.h"
 
 static CharString _newCharString(const int length) {
   CharString charString = malloc(sizeof(char) * length);

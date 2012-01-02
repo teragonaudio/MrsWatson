@@ -7,7 +7,7 @@
 //
 
 #include <stdio.h>
-#import <stdlib.h>
+#include <stdlib.h>
 #include "SampleBuffer.h"
 
 SampleBuffer newSampleBuffer(int numChannels, int blocksize) {

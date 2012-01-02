@@ -8,11 +8,10 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include "RuntimeConfiguration.h"
 #include "ProgramOption.h"
 #include "MrsWatson.h"
-#import "BuildInfo.h"
+#include "BuildInfo.h"
 
 RuntimeConfiguration newRuntimeConfiguration(void) {
   RuntimeConfiguration runtimeConfiguration = malloc(sizeof(RuntimeConfigurationMembers));

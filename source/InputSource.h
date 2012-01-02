@@ -6,9 +6,9 @@
 //  Copyright (c) 2012 Teragon Audio. All rights reserved.
 //
 
-#import "Types.h"
-#import "SampleBuffer.h"
-#import "CharString.h"
+#include "Types.h"
+#include "SampleBuffer.h"
+#include "CharString.h"
 
 #ifndef MrsWatson_InputFile_h
 #define MrsWatson_InputFile_h
