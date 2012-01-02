@@ -35,7 +35,7 @@ int main(int argc, char** argv) {
   }
 
   CharString hello = newCharString();
-  sprintf(hello, "This is MrsWatson, version %d.%d.%d", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
+  sprintf(hello, "This is %s, version %d.%d.%d", PROGRAM_NAME, VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
   logInfo(eventLogger, hello);
   free(hello);
 
