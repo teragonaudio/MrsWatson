@@ -10,6 +10,7 @@
 		2435635914B19E490049FD43 /* ProgramOptions.c in Sources */ = {isa = PBXBuildFile; fileRef = 2435635814B19E490049FD43 /* ProgramOptions.c */; };
 		2435636814B1A2D50049FD43 /* EventLogger.c in Sources */ = {isa = PBXBuildFile; fileRef = 2435636714B1A2D50049FD43 /* EventLogger.c */; };
 		2435636B14B1B4FE0049FD43 /* CharString.c in Sources */ = {isa = PBXBuildFile; fileRef = 2435636A14B1B4FE0049FD43 /* CharString.c */; };
+		2435637B14B1BF3F0049FD43 /* ProgramArgument.c in Sources */ = {isa = PBXBuildFile; fileRef = 2435637A14B1BF3F0049FD43 /* ProgramArgument.c */; };
 		24FDFBC1148CC9CC0074D3A1 /* MrsWatson.c in Sources */ = {isa = PBXBuildFile; fileRef = 24FDFBC0148CC9CC0074D3A1 /* MrsWatson.c */; };
 /* End PBXBuildFile section */
 
@@ -34,6 +35,8 @@
 		2435636A14B1B4FE0049FD43 /* CharString.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = CharString.c; path = source/CharString.c; sourceTree = SOURCE_ROOT; };
 		2435636C14B1B50A0049FD43 /* CharString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CharString.h; path = source/CharString.h; sourceTree = SOURCE_ROOT; };
 		2435636D14B1B5F50049FD43 /* MrsWatson.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MrsWatson.h; path = source/MrsWatson.h; sourceTree = SOURCE_ROOT; };
+		2435637A14B1BF3F0049FD43 /* ProgramArgument.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ProgramArgument.c; path = source/ProgramArgument.c; sourceTree = SOURCE_ROOT; };
+		2435637C14B1BF4B0049FD43 /* ProgramArgument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProgramArgument.h; path = source/ProgramArgument.h; sourceTree = SOURCE_ROOT; };
 		24FDFBAA148CC6AF0074D3A1 /* MrsWatson */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = MrsWatson; sourceTree = BUILT_PRODUCTS_DIR; };
 		24FDFBC0148CC9CC0074D3A1 /* MrsWatson.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = MrsWatson.c; path = source/MrsWatson.c; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
@@ -74,6 +77,8 @@
 				2435636614B1A2C50049FD43 /* EventLogger.h */,
 				24FDFBC0148CC9CC0074D3A1 /* MrsWatson.c */,
 				2435636D14B1B5F50049FD43 /* MrsWatson.h */,
+				2435637A14B1BF3F0049FD43 /* ProgramArgument.c */,
+				2435637C14B1BF4B0049FD43 /* ProgramArgument.h */,
 				2435635814B19E490049FD43 /* ProgramOptions.c */,
 				2435635B14B19E590049FD43 /* ProgramOptions.h */,
 				2435636914B1A2FE0049FD43 /* Types.h */,
@@ -137,6 +142,7 @@
 				2435635914B19E490049FD43 /* ProgramOptions.c in Sources */,
 				2435636814B1A2D50049FD43 /* EventLogger.c in Sources */,
 				2435636B14B1B4FE0049FD43 /* CharString.c in Sources */,
+				2435637B14B1BF3F0049FD43 /* ProgramArgument.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
