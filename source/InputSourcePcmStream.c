@@ -1,5 +1,5 @@
 //
-//  InputFilePcmFile.c
+//  InputSourcePcmStream.c
 //  MrsWatson
 //
 //  Created by Nik Reiman on 1/2/12.
