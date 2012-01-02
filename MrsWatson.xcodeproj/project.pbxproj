@@ -11,18 +11,20 @@
 		2435636814B1A2D50049FD43 /* EventLogger.c in Sources */ = {isa = PBXBuildFile; fileRef = 2435636714B1A2D50049FD43 /* EventLogger.c */; };
 		2435636B14B1B4FE0049FD43 /* CharString.c in Sources */ = {isa = PBXBuildFile; fileRef = 2435636A14B1B4FE0049FD43 /* CharString.c */; };
 		2435637B14B1BF3F0049FD43 /* ProgramOption.c in Sources */ = {isa = PBXBuildFile; fileRef = 2435637A14B1BF3F0049FD43 /* ProgramOption.c */; };
+		2435638C14B1FF010049FD43 /* InputFile.c in Sources */ = {isa = PBXBuildFile; fileRef = 2435638B14B1FF010049FD43 /* InputFile.c */; };
+		2435638F14B1FF180049FD43 /* InputFilePcm.c in Sources */ = {isa = PBXBuildFile; fileRef = 2435638E14B1FF180049FD43 /* InputFilePcm.c */; };
 		24FDFBC1148CC9CC0074D3A1 /* MrsWatson.c in Sources */ = {isa = PBXBuildFile; fileRef = 24FDFBC0148CC9CC0074D3A1 /* MrsWatson.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		24FDFBA8148CC6AF0074D3A1 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
+			buildActionMask = 12;
+			dstPath = /usr/local/bin;
 			dstSubfolderSpec = 0;
 			files = (
 			);
-			runOnlyForDeploymentPostprocessing = 1;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
@@ -37,7 +39,11 @@
 		2435636D14B1B5F50049FD43 /* MrsWatson.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MrsWatson.h; path = source/MrsWatson.h; sourceTree = SOURCE_ROOT; };
 		2435637A14B1BF3F0049FD43 /* ProgramOption.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ProgramOption.c; path = source/ProgramOption.c; sourceTree = SOURCE_ROOT; };
 		2435637C14B1BF4B0049FD43 /* ProgramOption.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProgramOption.h; path = source/ProgramOption.h; sourceTree = SOURCE_ROOT; };
-		24FDFBAA148CC6AF0074D3A1 /* MrsWatson */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = MrsWatson; sourceTree = BUILT_PRODUCTS_DIR; };
+		2435638914B1FEF70049FD43 /* InputFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InputFile.h; path = source/InputFile.h; sourceTree = SOURCE_ROOT; };
+		2435638B14B1FF010049FD43 /* InputFile.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = InputFile.c; path = source/InputFile.c; sourceTree = SOURCE_ROOT; };
+		2435638D14B1FF110049FD43 /* InputFilePcm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InputFilePcm.h; path = source/InputFilePcm.h; sourceTree = SOURCE_ROOT; };
+		2435638E14B1FF180049FD43 /* InputFilePcm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = InputFilePcm.c; sourceTree = SOURCE_ROOT; };
+		24FDFBAA148CC6AF0074D3A1 /* mrswatson */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = mrswatson; sourceTree = BUILT_PRODUCTS_DIR; };
 		24FDFBC0148CC9CC0074D3A1 /* MrsWatson.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = MrsWatson.c; path = source/MrsWatson.c; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
@@ -63,7 +69,7 @@
 		24FDFBAB148CC6AF0074D3A1 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				24FDFBAA148CC6AF0074D3A1 /* MrsWatson */,
+				24FDFBAA148CC6AF0074D3A1 /* mrswatson */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -82,6 +88,10 @@
 				2435635814B19E490049FD43 /* RuntimeConfiguration.c */,
 				2435635B14B19E590049FD43 /* RuntimeConfiguration.h */,
 				2435636914B1A2FE0049FD43 /* Types.h */,
+				2435638914B1FEF70049FD43 /* InputFile.h */,
+				2435638B14B1FF010049FD43 /* InputFile.c */,
+				2435638D14B1FF110049FD43 /* InputFilePcm.h */,
+				2435638E14B1FF180049FD43 /* InputFilePcm.c */,
 			);
 			name = Source;
 			path = MrsWatson;
@@ -97,6 +107,7 @@
 				24FDFBA6148CC6AF0074D3A1 /* Sources */,
 				24FDFBA7148CC6AF0074D3A1 /* Frameworks */,
 				24FDFBA8148CC6AF0074D3A1 /* CopyFiles */,
+				2435639114B200590049FD43 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -104,7 +115,7 @@
 			);
 			name = MrsWatson;
 			productName = MrsWatson;
-			productReference = 24FDFBAA148CC6AF0074D3A1 /* MrsWatson */;
+			productReference = 24FDFBAA148CC6AF0074D3A1 /* mrswatson */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
@@ -133,6 +144,23 @@
 		};
 /* End PBXProject section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		2435639114B200590049FD43 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/mrswatson",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cp -p $CODESIGNING_FOLDER_PATH /usr/local/bin";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		24FDFBA6148CC6AF0074D3A1 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -143,6 +171,8 @@
 				2435636814B1A2D50049FD43 /* EventLogger.c in Sources */,
 				2435636B14B1B4FE0049FD43 /* CharString.c in Sources */,
 				2435637B14B1BF3F0049FD43 /* ProgramOption.c in Sources */,
+				2435638C14B1FF010049FD43 /* InputFile.c in Sources */,
+				2435638F14B1FF180049FD43 /* InputFilePcm.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -199,14 +229,14 @@
 		24FDFBB5148CC6AF0074D3A1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = mrswatson;
 			};
 			name = Debug;
 		};
 		24FDFBB6148CC6AF0074D3A1 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = mrswatson;
 			};
 			name = Release;
 		};
