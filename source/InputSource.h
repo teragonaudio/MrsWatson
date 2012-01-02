@@ -10,16 +10,37 @@
 #include "SampleBuffer.h"
 #include "CharString.h"
 
-#ifndef MrsWatson_InputFile_h
-#define MrsWatson_InputFile_h
+#ifndef MrsWatson_InputSource_h
+#define MrsWatson_InputSource_h
 
-typedef void(*ReadBlockFuncPtr)(SampleBuffer);
+typedef enum {
+  INPUT_SOURCE_TYPE_INVALID,
+  INPUT_SOURCE_TYPE_PCM_FILE,
+  INPUT_SOURCE_TYPE_PCM_STREAM,
+  NUM_INPUT_SOURCE_TYPES
+} InputSourceType;
+
+typedef bool(*OpenInputSourceFuncPtr)(void*, const CharString filename);
+typedef bool(*ReadBlockFuncPtr)(void*, SampleBuffer);
+typedef void(*FreeInputSourceDataFuncPtr)(void*);
 
 typedef struct {
-  CharString inputName;
-  ReadBlockFuncPtr readBlockFuncPtr;
-} InputFileMembers;
+  InputSourceType inputSourceType;
+  CharString inputSourceName;
+  int numChannels;
+  float sampleRate;
 
-typedef InputFileMembers* InputFile;
+  OpenInputSourceFuncPtr openInputSource;
+  ReadBlockFuncPtr readBlock;
+  FreeInputSourceDataFuncPtr freeInputSourceData;
+
+  void* extraData;
+} InputSourceMembers;
+
+typedef InputSourceMembers* InputSource;
+
+InputSourceType guessInputSourceType(CharString inputSourceTypeString);
+InputSource newInputSource(InputSourceType inputSourceType);
+void freeInputSource(InputSource inputSource);
 
 #endif

@@ -23,6 +23,7 @@ typedef struct {
 typedef SampleBufferMembers* SampleBuffer;
 
 SampleBuffer newSampleBuffer(int numChannels, int blocksize);
+void copyInterlacedSamplesToSampleBuffer(const Sample* interlacedData, SampleBuffer sampleBuffer);
 void freeSampleBuffer(SampleBuffer sampleBuffer);
 
 #endif

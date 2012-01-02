@@ -18,9 +18,11 @@ typedef struct {
   CharString help;
   bool isShort;
   bool requiresArgument;
+  CharString argument;
 } ProgramOptionMembers;
 
 typedef enum {
+  OPTION_INPUT_SOURCE,
   OPTION_HELP,
   OPTION_VERSION,
   OPTION_VERBOSE,
@@ -33,6 +35,7 @@ typedef ProgramOption* ProgramOptions;
 
 ProgramOptions newProgramOptions(void);
 ProgramOption findProgramOption(ProgramOptions programOptions, const char* optionString);
+bool fillOptionArgument(ProgramOption programOption, int* currentArgc, int argc, char** argv);
 void printProgramOptions(ProgramOptions programOptions);
 void freeProgramOptions(ProgramOptions programOptions);
 

@@ -23,6 +23,19 @@ SampleBuffer newSampleBuffer(int numChannels, int blocksize) {
   return sampleBuffer;
 }
 
+void copyInterlacedSamplesToSampleBuffer(const Sample* interlacedSamples, SampleBuffer sampleBuffer) {
+  int numInterlacedSamples = sampleBuffer->numChannels * sampleBuffer->blocksize;
+  int interlacedSampleIndex = 0;
+  int sampleIndex = 0;
+
+  while(interlacedSampleIndex < numInterlacedSamples) {
+    for(int channelIndex = 0; channelIndex < sampleBuffer->numChannels; channelIndex++) {
+      sampleBuffer->channels[channelIndex][sampleIndex] = interlacedSamples[interlacedSampleIndex++];
+    }
+    sampleIndex++;
+  }
+}
+
 void freeSampleBuffer(SampleBuffer sampleBuffer) {
   for(int i = 0; i < sampleBuffer->numChannels; i++) {
     free(sampleBuffer->channels[i]);

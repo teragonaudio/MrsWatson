@@ -22,6 +22,7 @@ static void _addNewProgramOption(const ProgramOptions programOptions, const int 
   strncpy(programOption->help, help, STRING_LENGTH_LONG);
   programOption->isShort = isShort;
   programOption->requiresArgument = requiresArgument;
+  programOption->argument = newCharString();
 
   programOptions[index] = programOption;
 }
@@ -29,6 +30,7 @@ static void _addNewProgramOption(const ProgramOptions programOptions, const int 
 ProgramOption* newProgramOptions(void) {
   ProgramOptions programOptions = malloc(sizeof(ProgramOption) * NUM_OPTIONS);
 
+  _addNewProgramOption(programOptions, OPTION_INPUT_SOURCE, "input", "Input source", true, true);
   _addNewProgramOption(programOptions, OPTION_HELP, "help", "Print help", true, false);
   _addNewProgramOption(programOptions, OPTION_VERSION, "version", "Print version and copyright information", false, false);
   _addNewProgramOption(programOptions, OPTION_VERBOSE, "verbose", "Verbose logging", true, false);
@@ -71,6 +73,30 @@ ProgramOption findProgramOption(ProgramOptions programOptions, const char* optio
   return NULL;
 }
 
+bool fillOptionArgument(ProgramOption programOption, int* currentArgc, int argc, char** argv) {
+  (*currentArgc)++;
+  if(*currentArgc >= argc) {
+    return false;
+  }
+  else if(!programOption->requiresArgument) {
+    // TODO: Really stupid error, should not happen
+    return false;
+  }
+  else {
+    // Generally speaking, passing argument-like strings is not a good idea. However, passing '-'
+    // is both acceptable and common, so that must be permitted.
+    const char* argument = argv[*currentArgc];
+    if(strlen(argument) > 1) {
+      if(argument[0] == '-' && argument[1] == '-') {
+        // TODO: Logging, etc.
+        return false;
+      }
+    }
+    strncpy(programOption->argument, argument, STRING_LENGTH);
+    return true;
+  }
+}
+
 void printProgramOptions(ProgramOptions programOptions) {
   for(int i = 0; i < NUM_OPTIONS; i++) {
     printf("  ");
@@ -84,7 +110,7 @@ void printProgramOptions(ProgramOptions programOptions) {
     printf("--%s", programOption->name);
 
     if(programOption->requiresArgument) {
-      printf("=(argument)");
+      printf(" (argument)");
     }
 
     // Newline and indentation before help
@@ -98,6 +124,7 @@ void printProgramOptions(ProgramOptions programOptions) {
 static void _freeProgramOption(ProgramOption programOption) {
   free(programOption->name);
   free(programOption->help);
+  free(programOption->argument);
   free(programOption);
 }
 

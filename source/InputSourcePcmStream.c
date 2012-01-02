@@ -7,3 +7,8 @@
 //
 
 #include <stdio.h>
+#include "InputSourcePcmStream.h"
+
+InputSource newInputSourcePcmStream(void) {
+  return NULL;
+}

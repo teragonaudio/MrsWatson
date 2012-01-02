@@ -17,6 +17,8 @@ RuntimeConfiguration newRuntimeConfiguration(void) {
   RuntimeConfiguration runtimeConfiguration = malloc(sizeof(RuntimeConfigurationMembers));
 
   runtimeConfiguration->configurationOk = false;
+  runtimeConfiguration->inputSource = NULL;
+
   return runtimeConfiguration;
 }
 
@@ -30,7 +32,7 @@ bool parseCommandLine(RuntimeConfiguration runtimeConfiguration, int argc, char*
       result &= false;
     }
     else if(option->index == OPTION_HELP) {
-      printf("Usage: %s (options), where options include:\n", basename(argv[0]));
+      printf("Usage: %s (options), where options include:\n", getFileBasename(argv[0]));
       printProgramOptions(programOptions);
     }
     else if(option->index == OPTION_VERSION) {
@@ -43,8 +45,33 @@ bool parseCommandLine(RuntimeConfiguration runtimeConfiguration, int argc, char*
       printf("%s\n\n", wrappedLicenseInfo);
       free(wrappedLicenseInfo);
     }
+    else if(option->index == OPTION_VERBOSE) {
+      // TODO
+    }
+    else if(option->index == OPTION_QUIET) {
+      // TODO
+    }
+    else if(option->index == OPTION_INPUT_SOURCE) {
+      if(!fillOptionArgument(option, &argumentIndex, argc, argv)) {
+        // TODO: Required argument not given, log and fail
+        result &= false;
+      }
+      else {
+        InputSourceType inputSourceType = guessInputSourceType(option->argument);
+        runtimeConfiguration->inputSource = newInputSource(inputSourceType);
+        if(runtimeConfiguration->inputSource == NULL) {
+          // TODO: Error, unsupported source type
+          result &= false;
+        }
+      }
+    }
   }
 
   freeProgramOptions(programOptions);
   return result;
+}
+
+void freeRuntimeConfiguration(RuntimeConfiguration runtimeConfiguration) {
+  freeInputSource(runtimeConfiguration->inputSource);
+  free(runtimeConfiguration);
 }

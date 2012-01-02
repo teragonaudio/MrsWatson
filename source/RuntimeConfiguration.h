@@ -7,19 +7,21 @@
 //
 
 #include "Types.h"
+#include "EventLogger.h"
+#include "InputSource.h"
 
 #ifndef MrsWatson_RuntimeConfiguration_h
 #define MrsWatson_RuntimeConfiguration_h
 
 typedef struct {
   bool configurationOk;
-  bool verbose;
-  bool quiet;
+  InputSource inputSource;
 } RuntimeConfigurationMembers;
 
 typedef RuntimeConfigurationMembers*RuntimeConfiguration;
 
 RuntimeConfiguration newRuntimeConfiguration(void);
 bool parseCommandLine(RuntimeConfiguration runtimeConfiguration, int argc, char** argv);
+void freeRuntimeConfiguration(RuntimeConfiguration runtimeConfiguration);
 
 #endif
