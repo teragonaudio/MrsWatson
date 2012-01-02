@@ -23,6 +23,8 @@ CharString newCharStringLong(void);
 
 void wrapCharString(const CharString srcString, CharString destString, int indentSize, int lineLength);
 void wrapCharStringForTerminal(const CharString srcString, CharString destString, int indentSize);
-CharString basename(const CharString pathname);
+
+CharString getFileBasename(const CharString filename);
+CharString getFileExtension(const CharString filename);
 
 #endif

@@ -94,12 +94,22 @@ void wrapCharString(const CharString srcString, CharString destString, int inden
   free(lineBuffer);
 }
 
-CharString basename(const CharString pathname) {
-  char *lastDelimiter = strrchr(pathname, PATH_DELIMITER);
+CharString getFileBasename(const CharString filename) {
+  char *lastDelimiter = strrchr(filename, PATH_DELIMITER);
   if(lastDelimiter == NULL) {
-    return pathname;
+    return filename;
   }
   else {
     return lastDelimiter + 1;
+  }
+}
+
+CharString getFileExtension(const CharString filename) {
+  char *dot = strrchr(filename, '.');
+  if(dot == NULL) {
+    return NULL;
+  }
+  else {
+    return dot + 1;
   }
 }
