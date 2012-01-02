@@ -47,14 +47,19 @@ void wrapCharString(const CharString srcString, CharString destString, int inden
       }
     }
 
+    // Clear out the line buffer, and copy a full line into it
     memset(lineBuffer, 0, STRING_LENGTH);
     long bufferLength = lineLength - lineIndex;
     strncpy(lineBuffer, srcString + srcStringIndex, (size_t)bufferLength);
+
+    // Check to see if we have copied the last line of the source string. If so, append that to
+    // the destination string and return.
     if(bufferLength + srcStringIndex >= strlen(srcString)) {
       strncpy(destString + destStringIndex, lineBuffer, (size_t)bufferLength);
       break;
     }
 
+    // Look for any newlines in the buffer, and stop there if we find any
     char *newlineIndex = strchr(lineBuffer, '\n');
     if(newlineIndex != NULL) {
       bufferLength = newlineIndex - lineBuffer + 1;
@@ -65,8 +70,11 @@ void wrapCharString(const CharString srcString, CharString destString, int inden
       continue;
     }
 
+    // If no newlines were found, then find the last space in this line and copy to that point
     char *lastSpaceIndex = strrchr(lineBuffer, ' ');
     if(lastSpaceIndex == NULL) {
+      // If NULL is returned here, then there are no spaces in this line and we should simply
+      // copy the entire line. This means that really long lines will be truncated, but whatever.
       bufferLength = strlen(lineBuffer);
       strncpy(destString + destStringIndex, lineBuffer, (size_t)bufferLength);
     }
@@ -75,6 +83,7 @@ void wrapCharString(const CharString srcString, CharString destString, int inden
       strncpy(destString + destStringIndex, lineBuffer, (size_t)bufferLength);
     }
 
+    // Increase string indexes and continue looping
     destStringIndex += bufferLength;
     destString[destStringIndex++] = '\n';
     srcStringIndex += bufferLength + 1;
