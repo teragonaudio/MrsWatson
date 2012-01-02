@@ -35,6 +35,16 @@ bool parseCommandLine(RuntimeConfiguration runtimeConfiguration, int argc, char*
       printf("Usage: %s (options), where options include:\n", argv[0]);
       printProgramOptions(programOptions);
     }
+    else if(option->index == OPTION_VERSION) {
+      CharString versionString = getNewVersionString();
+      printf("%s\nCopyright (c) %d, %s. All rights reserved.\n\n", versionString, buildYear(), COPYRIGHT_HOLDER);
+      free(versionString);
+
+      CharString wrappedLicenseInfo = newCharStringLong();
+      wrapCharString(LICENSE_STRING, wrappedLicenseInfo, 0, TERMINAL_LINE_LENGTH);
+      printf("%s\n\n", wrappedLicenseInfo);
+      free(wrappedLicenseInfo);
+    }
   }
 
   freeProgramOptions(programOptions);

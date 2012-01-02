@@ -13,10 +13,14 @@
 #define STRING_LENGTH_SHORT 32
 #define STRING_LENGTH_LONG 8192
 
+#define TERMINAL_LINE_LENGTH 84
+
 typedef char* CharString;
 
 CharString newCharString(void);
 CharString newCharStringShort(void);
 CharString newCharStringLong(void);
+
+void wrapCharString(const CharString srcString, CharString destString, int indentSize, int lineLength);
 
 #endif

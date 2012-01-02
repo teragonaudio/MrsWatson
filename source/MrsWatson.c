@@ -13,6 +13,13 @@
 #include "EventLogger.h"
 #include "CharString.h"
 #include "MrsWatson.h"
+#include "BuildInfo.h"
+
+CharString getNewVersionString(void) {
+  CharString versionString = newCharString();
+  snprintf(versionString, STRING_LENGTH, "This is %s, version %d.%d.%d.", PROGRAM_NAME, VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
+  return versionString;
+}
 
 int main(int argc, char** argv) {
   EventLogger eventLogger = newEventLogger();
@@ -34,8 +41,7 @@ int main(int argc, char** argv) {
     eventLogger->logLevel = LOG_CRITICAL;
   }
 
-  CharString hello = newCharString();
-  sprintf(hello, "This is %s, version %d.%d.%d", PROGRAM_NAME, VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
+  CharString hello = getNewVersionString();
   logInfo(eventLogger, hello);
   free(hello);
 
