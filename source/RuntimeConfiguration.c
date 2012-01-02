@@ -46,10 +46,10 @@ bool parseCommandLine(RuntimeConfiguration runtimeConfiguration, int argc, char*
       free(wrappedLicenseInfo);
     }
     else if(option->index == OPTION_VERBOSE) {
-      // TODO
+      setLogLevel(LOG_DEBUG);
     }
     else if(option->index == OPTION_QUIET) {
-      // TODO
+      setLogLevel(LOG_CRITICAL);
     }
     else if(option->index == OPTION_INPUT_SOURCE) {
       if(!fillOptionArgument(option, &argumentIndex, argc, argv)) {

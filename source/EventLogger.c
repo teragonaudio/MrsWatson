@@ -25,6 +25,11 @@ static EventLogger _getGlobalInstance(void) {
   return eventLoggerGlobalInstance;
 }
 
+void setLogLevel(LogLevel logLevel) {
+  EventLogger eventLogger = _getGlobalInstance();
+  eventLogger->logLevel = logLevel;
+}
+
 static char _logLevelStatusChar(const LogLevel logLevel) {
   switch(logLevel) {
     case LOG_DEBUG: return ' ';

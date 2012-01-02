@@ -28,6 +28,7 @@ typedef EventLoggerMembers* EventLogger;
 extern EventLogger eventLoggerGlobalInstance;
 
 void initEventLogger(void);
+void setLogLevel(LogLevel logLevel);
 
 void logMessage(const LogLevel logLevel, const char* message);
 void logDebug(const char* message);
