@@ -9,6 +9,20 @@
 #ifndef MrsWatson_SampleBuffer_h
 #define MrsWatson_SampleBuffer_h
 
+#define DEFAULT_BLOCKSIZE 512
 
+typedef float Sample;
+typedef Sample* ChannelBuffer;
+
+typedef struct {
+  int numChannels;
+  int blocksize;
+  ChannelBuffer* channels;
+} SampleBufferMembers;
+
+typedef SampleBufferMembers* SampleBuffer;
+
+SampleBuffer newSampleBuffer(int numChannels, int blocksize);
+void freeSampleBuffer(SampleBuffer sampleBuffer);
 
 #endif
