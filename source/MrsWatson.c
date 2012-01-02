@@ -17,16 +17,20 @@
 int main(int argc, char** argv) {
   EventLogger eventLogger = newEventLogger();
 
-  RuntimeConfiguration programOptions = newRuntimeConfiguration();
-  if(!parseCommandLine(programOptions, argc, argv)) {
+  RuntimeConfiguration runtimeConfiguration = newRuntimeConfiguration();
+  if(!parseCommandLine(runtimeConfiguration, argc, argv)) {
     logCritical(eventLogger, "Error parsing command line");
-    exit(1);
+    return -1;
   }
 
-  if(programOptions->verbose) {
+  if(!runtimeConfiguration->configurationOk) {
+    return 1;
+  }
+
+  if(runtimeConfiguration->verbose) {
     eventLogger->logLevel = LOG_DEBUG;
   }
-  else if(programOptions->quiet) {
+  else if(runtimeConfiguration->quiet) {
     eventLogger->logLevel = LOG_CRITICAL;
   }
 

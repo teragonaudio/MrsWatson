@@ -12,6 +12,7 @@
 #define MrsWatson_RuntimeConfiguration_h
 
 typedef struct {
+  bool configurationOk;
   bool verbose;
   bool quiet;
 } RuntimeConfigurationMembers;
