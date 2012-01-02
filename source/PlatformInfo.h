@@ -9,6 +9,10 @@
 #ifndef MrsWatson_PlatformInfo_h
 #define MrsWatson_PlatformInfo_h
 
-
+#if WIN32
+#define PATH_DELIMITER '\\'
+#else
+#define PATH_DELIMITER '/'
+#endif
 
 #endif

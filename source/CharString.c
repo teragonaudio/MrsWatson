@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "CharString.h"
+#import "PlatformInfo.h"
 
 static CharString _newCharString(const int length) {
   CharString charString = malloc(sizeof(char) * length);
@@ -91,4 +92,14 @@ void wrapCharString(const CharString srcString, CharString destString, int inden
   }
 
   free(lineBuffer);
+}
+
+CharString basename(const CharString pathname) {
+  char *lastDelimiter = strrchr(pathname, PATH_DELIMITER);
+  if(lastDelimiter == NULL) {
+    return pathname;
+  }
+  else {
+    return lastDelimiter + 1;
+  }
 }

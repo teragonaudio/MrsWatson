@@ -23,5 +23,6 @@ CharString newCharStringLong(void);
 
 void wrapCharString(const CharString srcString, CharString destString, int indentSize, int lineLength);
 void wrapCharStringForTerminal(const CharString srcString, CharString destString, int indentSize);
+CharString basename(const CharString pathname);
 
 #endif

@@ -34,7 +34,7 @@ bool parseCommandLine(RuntimeConfiguration runtimeConfiguration, int argc, char*
       result &= false;
     }
     else if(option->index == OPTION_HELP) {
-      printf("Usage: %s (options), where options include:\n", argv[0]);
+      printf("Usage: %s (options), where options include:\n", basename(argv[0]));
       printProgramOptions(programOptions);
     }
     else if(option->index == OPTION_VERSION) {
