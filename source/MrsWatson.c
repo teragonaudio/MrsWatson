@@ -9,7 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "ProgramOptions.h"
+#include "RuntimeConfiguration.h"
 #include "EventLogger.h"
 #include "CharString.h"
 #include "MrsWatson.h"
@@ -17,7 +17,7 @@
 int main(int argc, char** argv) {
   EventLogger eventLogger = newEventLogger();
 
-  ProgramOptions programOptions = newProgramOptions();
+  RuntimeConfiguration programOptions = newRuntimeConfiguration();
   if(!parseCommandLine(programOptions, argc, argv)) {
     logCritical(eventLogger, "Error parsing command line");
     exit(1);

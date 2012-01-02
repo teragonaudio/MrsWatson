@@ -16,6 +16,7 @@ typedef struct {
   CharString name;
   CharString help;
   bool isShort;
+  bool requiresArgument;
 } ProgramArgumentMembers;
 
 typedef ProgramArgumentMembers* ProgramArgument;
