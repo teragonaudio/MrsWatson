@@ -43,7 +43,7 @@ bool parseCommandLine(RuntimeConfiguration runtimeConfiguration, int argc, char*
       free(versionString);
 
       CharString wrappedLicenseInfo = newCharStringLong();
-      wrapCharString(LICENSE_STRING, wrappedLicenseInfo, 0, TERMINAL_LINE_LENGTH);
+      wrapCharStringForTerminal(LICENSE_STRING, wrappedLicenseInfo, 0);
       printf("%s\n\n", wrappedLicenseInfo);
       free(wrappedLicenseInfo);
     }

@@ -29,6 +29,10 @@ CharString newCharStringLong(void) {
   return _newCharString(STRING_LENGTH_LONG);
 }
 
+void wrapCharStringForTerminal(const CharString srcString, CharString destString, int indentSize) {
+  wrapCharString(srcString, destString, indentSize, TERMINAL_LINE_LENGTH);
+}
+
 void wrapCharString(const CharString srcString, CharString destString, int indentSize, int lineLength) {
   CharString lineBuffer = newCharString();
   long destStringIndex = 0;
