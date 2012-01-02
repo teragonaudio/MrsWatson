@@ -36,7 +36,7 @@ static char _logLevelStatusChar(const LogLevel logLevel) {
 }
 
 static void _printMessage(const LogLevel logLevel, const long elapsedTime, const char* message) {
-  fprintf(stderr, "%c %ld %s\n", _logLevelStatusChar(logLevel), elapsedTime, message);
+  fprintf(stderr, "%c %06ld %s\n", _logLevelStatusChar(logLevel), elapsedTime, message);
 }
 
 void logMessage(const LogLevel logLevel, const char* message) {
