@@ -51,6 +51,9 @@ bool parseCommandLine(RuntimeConfiguration runtimeConfiguration, int argc, char*
     else if(option->index == OPTION_QUIET) {
       setLogLevel(LOG_CRITICAL);
     }
+    else if(option->index == OPTION_COLOR_LOGGING) {
+      setColorLogging(true);
+    }
     else if(option->index == OPTION_INPUT_SOURCE) {
       if(!fillOptionArgument(option, &argumentIndex, argc, argv)) {
         // TODO: Required argument not given, log and fail

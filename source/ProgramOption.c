@@ -33,6 +33,7 @@ ProgramOption* newProgramOptions(void) {
   _addNewProgramOption(programOptions, OPTION_INPUT_SOURCE, "input", "Input source", true, true);
   _addNewProgramOption(programOptions, OPTION_HELP, "help", "Print help", true, false);
   _addNewProgramOption(programOptions, OPTION_VERSION, "version", "Print version and copyright information", false, false);
+  _addNewProgramOption(programOptions, OPTION_COLOR_LOGGING, "color", "Color-coded logging output", false, false);
   _addNewProgramOption(programOptions, OPTION_VERBOSE, "verbose", "Verbose logging", true, false);
   _addNewProgramOption(programOptions, OPTION_QUIET, "quiet", "Only log critical errors", true, false);
 
