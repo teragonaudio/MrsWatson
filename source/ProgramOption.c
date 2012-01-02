@@ -88,7 +88,10 @@ void printProgramOptions(ProgramOptions programOptions) {
     }
 
     // Newline and indentation before help
+    CharString wrappedHelpString = newCharStringLong();
+    wrapCharStringForTerminal(programOption->help, wrappedHelpString, 4);
     printf("\n    %s\n", programOption->help);
+    free(wrappedHelpString);
   }
 }
 
