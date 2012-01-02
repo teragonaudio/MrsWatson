@@ -15,6 +15,7 @@
 		2435639314B20B5A0049FD43 /* BuildInfo.c in Sources */ = {isa = PBXBuildFile; fileRef = 2435639214B20B5A0049FD43 /* BuildInfo.c */; };
 		2435639714B20B960049FD43 /* InputFilePcm.c in Sources */ = {isa = PBXBuildFile; fileRef = 2435639614B20B960049FD43 /* InputFilePcm.c */; };
 		2435639A14B22B990049FD43 /* PlatformInfo.c in Sources */ = {isa = PBXBuildFile; fileRef = 2435639914B22B990049FD43 /* PlatformInfo.c */; };
+		2435639C14B22FFC0049FD43 /* SampleBuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = 2435639B14B22FFB0049FD43 /* SampleBuffer.c */; };
 		24FDFBC1148CC9CC0074D3A1 /* MrsWatson.c in Sources */ = {isa = PBXBuildFile; fileRef = 24FDFBC0148CC9CC0074D3A1 /* MrsWatson.c */; };
 /* End PBXBuildFile section */
 
@@ -49,6 +50,8 @@
 		2435639614B20B960049FD43 /* InputFilePcm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = InputFilePcm.c; path = source/InputFilePcm.c; sourceTree = SOURCE_ROOT; };
 		2435639814B22B910049FD43 /* PlatformInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlatformInfo.h; path = source/PlatformInfo.h; sourceTree = SOURCE_ROOT; };
 		2435639914B22B990049FD43 /* PlatformInfo.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = PlatformInfo.c; path = source/PlatformInfo.c; sourceTree = SOURCE_ROOT; };
+		2435639B14B22FFB0049FD43 /* SampleBuffer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = SampleBuffer.c; path = source/SampleBuffer.c; sourceTree = SOURCE_ROOT; };
+		2435639D14B230070049FD43 /* SampleBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SampleBuffer.h; path = source/SampleBuffer.h; sourceTree = SOURCE_ROOT; };
 		24FDFBAA148CC6AF0074D3A1 /* mrswatson */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = mrswatson; sourceTree = BUILT_PRODUCTS_DIR; };
 		24FDFBC0148CC9CC0074D3A1 /* MrsWatson.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = MrsWatson.c; path = source/MrsWatson.c; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
@@ -101,6 +104,8 @@
 				2435637C14B1BF4B0049FD43 /* ProgramOption.h */,
 				2435635814B19E490049FD43 /* RuntimeConfiguration.c */,
 				2435635B14B19E590049FD43 /* RuntimeConfiguration.h */,
+				2435639B14B22FFB0049FD43 /* SampleBuffer.c */,
+				2435639D14B230070049FD43 /* SampleBuffer.h */,
 				2435636914B1A2FE0049FD43 /* Types.h */,
 			);
 			name = Source;
@@ -185,6 +190,7 @@
 				2435639314B20B5A0049FD43 /* BuildInfo.c in Sources */,
 				2435639714B20B960049FD43 /* InputFilePcm.c in Sources */,
 				2435639A14B22B990049FD43 /* PlatformInfo.c in Sources */,
+				2435639C14B22FFC0049FD43 /* SampleBuffer.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
