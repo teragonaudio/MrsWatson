@@ -19,8 +19,8 @@ typedef enum {
   INPUT_SOURCE_TYPE_PCM_STREAM,
 } InputSourceType;
 
-typedef bool (*OpenInputSourceFunc)(void*);
-typedef bool (*ReadBlockFunc)(void*, SampleBuffer);
+typedef boolean (*OpenInputSourceFunc)(void*);
+typedef boolean (*ReadBlockFunc)(void*, SampleBuffer);
 typedef void (*FreeInputSourceDataFunc)(void*);
 
 typedef struct {

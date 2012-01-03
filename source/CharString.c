@@ -30,7 +30,7 @@ CharString newCharStringLong(void) {
   return _newCharString(STRING_LENGTH_LONG);
 }
 
-bool isStringEmpty(CharString testString) {
+boolean isStringEmpty(CharString testString) {
   return (testString == NULL || testString[0] == '\0');
 }
 

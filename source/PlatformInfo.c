@@ -21,10 +21,10 @@ PlatformType getPlatformType() {
 #endif
 }
 
-bool fileExists(const CharString absolutePath) {
+boolean fileExists(const CharString absolutePath) {
 #if MACOSX
   struct stat* buffer = malloc(sizeof(struct stat));
-  bool result = (stat(absolutePath, buffer) == 0);
+  boolean result = (stat(absolutePath, buffer) == 0);
   free(buffer);
   return result;
 #elif WIN32

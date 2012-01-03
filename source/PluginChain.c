@@ -21,7 +21,7 @@ PluginChain newPluginChain(void) {
   return pluginChain;
 }
 
-static bool _addPluginToChain(PluginChain pluginChain, Plugin plugin) {
+static boolean _addPluginToChain(PluginChain pluginChain, Plugin plugin) {
   if(pluginChain->numPlugins + 1 >= MAX_PLUGINS) {
     logError("Could not add plugin, maximum number reached");
     return false;

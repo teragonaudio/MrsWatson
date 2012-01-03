@@ -17,7 +17,7 @@ typedef enum {
   PLUGIN_TYPE_VST_2X,
 } PluginType;
 
-typedef bool (*OpenPluginFunc)(void*);
+typedef boolean (*OpenPluginFunc)(void*);
 typedef void (*PluginProcessFunc)(void*, SampleBuffer);
 typedef void (*FreePluginDataFunc)(void*);
 

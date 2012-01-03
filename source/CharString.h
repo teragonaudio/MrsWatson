@@ -23,7 +23,7 @@ CharString newCharString(void);
 CharString newCharStringShort(void);
 CharString newCharStringLong(void);
 
-bool isStringEmpty(CharString testString);
+boolean isStringEmpty(CharString testString);
 
 void wrapCharString(const CharString srcString, CharString destString, int indentSize, int lineLength);
 void wrapCharStringForTerminal(const CharString srcString, CharString destString, int indentSize);

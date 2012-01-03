@@ -18,7 +18,7 @@ typedef struct {
 
 typedef PluginVst2xDataMembers* PluginVst2xData;
 
-bool vst2xPluginExists(const CharString pluginName);
+boolean vst2xPluginExists(const CharString pluginName);
 Plugin newPluginVst2x(const CharString pluginName);
 
 #endif

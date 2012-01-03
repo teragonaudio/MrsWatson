@@ -11,7 +11,7 @@
 #include <string.h>
 #include "InputSourcePcmFile.h"
 
-static bool _openInputSourcePcmFile(void* inputSourcePtr) {
+static boolean _openInputSourcePcmFile(void* inputSourcePtr) {
   InputSource inputSource = inputSourcePtr;
 
   InputSourcePcmFileData extraData = inputSource->extraData;
@@ -39,7 +39,7 @@ static void _convertPcmToFloat(const short* inPcmSamples, Samples outFloatSample
   }
 }
 
-static bool _readBlockPcmFile(void* inputSourcePtr, SampleBuffer sampleBuffer) {
+static boolean _readBlockPcmFile(void* inputSourcePtr, SampleBuffer sampleBuffer) {
   InputSource inputSource = inputSourcePtr;
   InputSourcePcmFileData extraData = inputSource->extraData;
   if(extraData->dataBufferNumItems == 0) {
@@ -50,7 +50,7 @@ static bool _readBlockPcmFile(void* inputSourcePtr, SampleBuffer sampleBuffer) {
   // Clear the PCM data buffer, or else the last block will have dirty samples in the end
   memset(extraData->interlacedPcmDataBuffer, 0, sizeof(short) * extraData->dataBufferNumItems);
 
-  bool result = true;
+  boolean result = true;
   size_t bytesRead = fread(extraData->interlacedPcmDataBuffer, sizeof(short), extraData->dataBufferNumItems, extraData->fileHandle);
   if(bytesRead < extraData->dataBufferNumItems * sizeof(short)) {
     // TODO: End of file reached -- do something special?

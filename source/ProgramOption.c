@@ -13,7 +13,7 @@
 #include "EventLogger.h"
 
 static void _addNewProgramOption(const ProgramOptions programOptions, const int index,
-  const char* name, const char* help, bool hasShortForm, ProgramOptionArgumentType argumentType) {
+  const char* name, const char* help, boolean hasShortForm, ProgramOptionArgumentType argumentType) {
   ProgramOption programOption = malloc(sizeof(ProgramOptionMembers));
 
   programOption->index = index;
@@ -45,11 +45,11 @@ ProgramOption* newProgramOptions(void) {
   return programOptions;
 }
 
-static bool _isStringShortOption(const char* testString) {
+static boolean _isStringShortOption(const char* testString) {
   return (testString != NULL && strlen(testString) == 2 && testString[0] == '-');
 }
 
-static bool _isStringLongOption(const char* testString) {
+static boolean _isStringLongOption(const char* testString) {
   return (testString != NULL && strlen(testString) > 2 && testString[0] == '-' && testString[1] == '-');  
 }
 
@@ -82,7 +82,7 @@ static ProgramOption _findProgramOption(ProgramOptions programOptions, const cha
   return NULL;
 }
 
-static bool _fillOptionArgument(ProgramOption programOption, int* currentArgc, int argc, char** argv) {
+static boolean _fillOptionArgument(ProgramOption programOption, int* currentArgc, int argc, char** argv) {
   if(programOption->argumentType == ARGUMENT_TYPE_NONE) {
     return false;
   }
@@ -130,7 +130,7 @@ static bool _fillOptionArgument(ProgramOption programOption, int* currentArgc, i
   }
 }
 
-bool parseCommandLine(ProgramOptions programOptions, int argc, char** argv) {
+boolean parseCommandLine(ProgramOptions programOptions, int argc, char** argv) {
   for(int argumentIndex = 1; argumentIndex < argc; argumentIndex++) {
     const ProgramOption option = _findProgramOption(programOptions, argv[argumentIndex]);
     if(option == NULL) {

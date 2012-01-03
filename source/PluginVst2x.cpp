@@ -87,14 +87,14 @@ static CharString _newVst2xPluginAbsolutePath(const CharString pluginName) {
   return result;
 }
 
-bool vst2xPluginExists(const CharString pluginName) {
+boolean vst2xPluginExists(const CharString pluginName) {
   CharString pluginLocation = _newVst2xPluginAbsolutePath(pluginName);
-  bool result = !isStringEmpty(pluginLocation);
+  boolean result = !isStringEmpty(pluginLocation);
   free(pluginLocation);
   return result;
 }
 
-static bool _openVst2xPlugin(void* pluginPtr) {
+static boolean _openVst2xPlugin(void* pluginPtr) {
   Plugin plugin = (Plugin)pluginPtr;
   CharString pluginLocation = _newVst2xPluginAbsolutePath(plugin->pluginName);
   free(pluginLocation);

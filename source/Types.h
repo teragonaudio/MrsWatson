@@ -9,8 +9,8 @@
 #ifndef MrsWatson_Types_h
 #define MrsWatson_Types_h
 
-#ifndef bool
-typedef short bool;
+#ifndef boolean
+typedef short boolean;
 #endif
 
 #ifndef false
