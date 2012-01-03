@@ -37,6 +37,14 @@ int main(int argc, char** argv) {
     return -1;
   }
 
+  // Parse these options separately so that log messages displayed in the below loop are properly displayed
+  if(programOptions[OPTION_VERBOSE]->enabled) {
+    setLogLevel(LOG_DEBUG);
+  }
+  else if(programOptions[OPTION_QUIET]->enabled) {
+    setLogLevel(LOG_CRITICAL);
+  }
+
   for(int i = 0; i < NUM_OPTIONS; i++) {
     ProgramOption option = programOptions[i];
     if(option->enabled) {
@@ -56,12 +64,6 @@ int main(int argc, char** argv) {
         free(wrappedLicenseInfo);
 
         return RETURN_CODE_NOT_RUN;
-      }
-      else if(option->index == OPTION_VERBOSE) {
-        setLogLevel(LOG_DEBUG);
-      }
-      else if(option->index == OPTION_QUIET) {
-        setLogLevel(LOG_CRITICAL);
       }
       else if(option->index == OPTION_COLOR_LOGGING) {
         if(isStringEmpty(option->argument)) {
