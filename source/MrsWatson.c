@@ -84,6 +84,9 @@ int main(int argc, char** argv) {
         InputSourceType inputSourceType = guessInputSourceType(option->argument);
         inputSource = newInputSource(inputSourceType);
       }
+      else if(option->index == OPTION_PLUGIN) {
+        addPluginsFromArgumentString(pluginChain, option->argument);
+      }
     }
   }
   freeProgramOptions(programOptions);

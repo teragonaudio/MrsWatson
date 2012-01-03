@@ -8,7 +8,9 @@
 
 #include <stdio.h>
 #import <stdlib.h>
+#import <string.h>
 #import "PluginChain.h"
+#include "EventLogger.h"
 
 PluginChain newPluginChain(void) {
   PluginChain pluginChain = malloc(sizeof(PluginChainMembers));
@@ -19,8 +21,53 @@ PluginChain newPluginChain(void) {
   return pluginChain;
 }
 
-void addPluginToChain(PluginChain pluginChain, Plugin plugin) {
+static bool _addPluginToChain(PluginChain pluginChain, Plugin plugin) {
+  if(pluginChain->numPlugins + 1 >= MAX_PLUGINS) {
+    logError("Could not add plugin, maximum number reached");
+    return false;
+  }
+  else {
+    pluginChain->plugins[pluginChain->numPlugins] = plugin;
+    pluginChain->numPlugins++;
+    return true;
+  }
+}
 
+void addPluginsFromArgumentString(PluginChain pluginChain, const CharString argumentString) {
+  // Expect a comma-separated string of plugins with colon separators for preset name
+  // Example: plugin1:preset1name,plugin2:preset2name
+  char* substringStart = argumentString;
+  char* comma = strchr(argumentString, ',');
+  char* endChar = argumentString + strlen(argumentString);
+  CharString nameBuffer = newCharString();
+
+  do {
+    size_t substringLength = 0;
+    if(comma == NULL) {
+      substringLength = strlen(argumentString);
+    }
+    else {
+      substringLength = comma - substringStart;      
+    }
+    strncpy(nameBuffer, substringStart, substringLength);
+
+    // TODO: Use colon as a separator for presets to load into these plugins
+    PluginType pluginType = guessPluginType(nameBuffer);
+    if(pluginType != PLUGIN_TYPE_INVALID) {
+      Plugin plugin = newPlugin(pluginType);
+      _addPluginToChain(pluginChain, plugin);
+    }
+
+    if(comma == NULL) {
+      break;
+    }
+    else {
+      substringStart = comma + 1;
+      comma = strchr(comma + 1, ',');
+    }
+  } while(substringStart < endChar);
+
+  free(nameBuffer);
 }
 
 void process(PluginChain pluginChain, SampleBuffer inBuffer, SampleBuffer outBuffer) {

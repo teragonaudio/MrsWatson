@@ -15,10 +15,14 @@
 PluginType guessPluginType(CharString pluginName) {
   PluginType pluginType = PLUGIN_TYPE_INVALID;
   CharString pluginFullPath = newCharString();
-  logDebug("Guessing plugin type for '%s'", pluginName);
+  logDebug("Trying to find plugin '%s'", pluginName);
 
   if(locateVst2xPlugin(pluginName, pluginFullPath)) {
+    logDebug("Plugin is VST 2.x");
     pluginType = PLUGIN_TYPE_VST_2X;
+  }
+  else {
+    logError("Plugin '%s' could not be found", pluginName);
   }
 
   free(pluginFullPath);

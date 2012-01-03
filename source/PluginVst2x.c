@@ -12,54 +12,65 @@
 #import "PluginVst2x.h"
 #import "PlatformInfo.h"
 #import "EventLogger.h"
+#import "CharStringList.h"
 
-static CharString* _newDefaultPluginLocationArray(PlatformType platformType) {
+static CharStringList _newDefaultPluginLocationArray(PlatformType platformType) {
+  CharStringList locations = newCharStringList();
+  CharString locationBuffer = newCharString();
+
   switch(platformType) {
     case PLATFORM_WINDOWS:
       // TODO: Yeah, whatever
-      return NULL;
+      break;
     case PLATFORM_MACOSX:
-    {
-      CharString* locations = malloc(STRING_LENGTH * 2);
-      for(int i = 0; i < 2; i++) {
-        locations[i] = newCharString();
-      }
-      snprintf(locations[0], STRING_LENGTH, "/Library/Audio/Plug-Ins/VST");
-      snprintf(locations[1], STRING_LENGTH, "%s/Library/Audio/Plug-Ins/VST", getenv("HOME"));
-      return locations;
-    }
+      snprintf(locationBuffer, STRING_LENGTH, "/Library/Audio/Plug-Ins/VST");
+      addItemToStringList(locations, locationBuffer);
+      snprintf(locationBuffer, STRING_LENGTH, "%s/Library/Audio/Plug-Ins/VST", getenv("HOME"));
+      addItemToStringList(locations, locationBuffer);
+      break;
     case PLATFORM_UNSUPPORTED:
-      logCritical("Unsupported platform, sorry!");
-      return NULL;
     default:
-      return NULL;
+      logCritical("Unsupported platform, sorry!");
+      break;
+  }
+
+  free(locationBuffer);
+  return locations;
+}
+
+static const char*_getVst2xPlatformExtension(void) {
+  PlatformType platformType = getPlatformType();
+  switch(platformType) {
+    case PLATFORM_MACOSX:
+      return "vst";
+    case PLATFORM_WINDOWS:
+      return "dll";
+    default:
+      return "";
   }
 }
 
 bool locateVst2xPlugin(const CharString pluginName, CharString outLocation) {
-  // TODO: Meh, should probably be a linked list or something here
-  CharString* pluginLocations = _newDefaultPluginLocationArray(getPlatformType());
-  if(pluginLocations == NULL) {
+  CharStringList pluginLocations = _newDefaultPluginLocationArray(getPlatformType());
+  if(pluginLocations->item == NULL) {
     return false;
   }
 
   bool result = false;
-  int numLocations = sizeof(pluginLocations) / STRING_LENGTH;
   CharString pluginSearchPath = newCharString();
-  for(int i = 0; i < numLocations; i++) {
-    snprintf(pluginSearchPath, STRING_LENGTH, "%s%c%s", pluginLocations[i], PATH_DELIMITER, pluginName);
+  CharStringListIterator iterator = pluginLocations;
+  while(iterator->nextItem != NULL) {
+    snprintf(pluginSearchPath, STRING_LENGTH, "%s%c%s.%s", iterator->item, PATH_DELIMITER, pluginName, _getVst2xPlatformExtension());
     if(fileExists(pluginSearchPath)) {
       strncpy(outLocation, pluginSearchPath, STRING_LENGTH);
       result = true;
       break;
     }
+    iterator = iterator->nextItem;
   }
-  free(pluginSearchPath);
 
-  for(int i = 0; i < numLocations; i++) {
-    free(pluginLocations[i]);
-  }
-  free(pluginLocations);
+  free(pluginSearchPath);
+  freeCharStringList(pluginLocations);
 
   return result;
 }
@@ -89,6 +100,8 @@ Plugin newPluginVst2x(void) {
   plugin->process = _processVst2xPlugin;
   plugin->freePluginData = _freeVst2xPluginData;
 
-  plugin->extraData = malloc(sizeof(PluginVst2xDataMembers));
+  PluginVst2xData extraData = malloc(sizeof(PluginVst2xDataMembers));
+  plugin->extraData = extraData;
+
   return plugin;
 }

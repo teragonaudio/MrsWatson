@@ -34,6 +34,7 @@ ProgramOption* newProgramOptions(void) {
   ProgramOptions programOptions = malloc(sizeof(ProgramOptionMembers) * NUM_OPTIONS);
 
   // TODO: Expand help for options
+  _addNewProgramOption(programOptions, OPTION_PLUGIN, "plugin", "Plugin(s) to process", true, ARGUMENT_TYPE_REQUIRED);
   _addNewProgramOption(programOptions, OPTION_INPUT_SOURCE, "input", "Input source", true, ARGUMENT_TYPE_REQUIRED);
   _addNewProgramOption(programOptions, OPTION_HELP, "help", "Print help", true, ARGUMENT_TYPE_NONE);
   _addNewProgramOption(programOptions, OPTION_VERSION, "version", "Print version and copyright information", false, ARGUMENT_TYPE_NONE);
@@ -107,13 +108,13 @@ static bool _fillOptionArgument(ProgramOption programOption, int* currentArgc, i
     int nextArgc = *currentArgc + 1;
     if(nextArgc >= argc) {
       // TODO: It would be nice to actually print the option name here
-      logCritical("Option requires an argument, but none was given");
+      logCritical("Option '%s' requires an argument, but none was given", programOption->name);
       return false;
     }
     else {
       char* nextArg = argv[nextArgc];
       if(_isStringShortOption(nextArg) || _isStringLongOption(nextArg)) {
-        logCritical("Option requires an argument, but next option does not seem to be valid");
+        logCritical("Option '%s' requires an argument, but it does not seem to be valid", programOption->name);
         return false;
       }
       else {

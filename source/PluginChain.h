@@ -21,7 +21,7 @@ typedef struct {
 typedef PluginChainMembers* PluginChain;
 
 PluginChain newPluginChain(void);
-void addPluginToChain(PluginChain pluginChain, Plugin plugin);
+void addPluginsFromArgumentString(PluginChain pluginChain, const CharString argumentString);
 void process(PluginChain pluginChain, SampleBuffer inBuffer, SampleBuffer outBuffer);
 void freePluginChain(PluginChain pluginChain);
 
