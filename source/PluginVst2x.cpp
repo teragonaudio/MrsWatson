@@ -293,6 +293,30 @@ static boolean _openVst2xPlugin(void* pluginPtr) {
 static void _displayVst2xPluginInfo(void* pluginPtr) {
   Plugin plugin = (Plugin)pluginPtr;
   PluginVst2xData data = (PluginVst2xData)plugin->extraData;
+  CharString nameBuffer = newCharStringShort();
+
+  logInfo("Displaying information for VST2.x plugin '%s'", plugin->pluginName);
+  data->dispatcher(data->pluginHandle, effGetVendorString, 0, 0, nameBuffer, 0.0f);
+  logInfo("Vendor: %s", nameBuffer);
+  CharString pluginUniqueId = _newVst2xUniqueIdString(data->pluginHandle->uniqueID);
+  logInfo("Unique ID: ", pluginUniqueId);
+  free(pluginUniqueId);
+  logInfo("Version: %d", data->pluginHandle->version);
+  logInfo("I/O: %d/%d", data->pluginHandle->numInputs, data->pluginHandle->numOutputs);
+  logInfo("Parameters (%d total)", data->pluginHandle->numParams);
+  for(int i = 0; i < data->pluginHandle->numParams; i++) {
+    float value = data->pluginHandle->getParameter(data->pluginHandle, i);
+    memset(nameBuffer, 0, STRING_LENGTH_SHORT);
+    data->dispatcher(data->pluginHandle, effGetParamName, i, 0, &nameBuffer, 0.0f);
+    logInfo("  %d: %s (%f)", i, nameBuffer, value);
+  }
+  logInfo("Programs (%d total)", data->pluginHandle->numPrograms);
+  for(int i = 0; i < data->pluginHandle->numPrograms; i++) {
+    memset(nameBuffer, 0, STRING_LENGTH_SHORT);
+    data->dispatcher(data->pluginHandle, effGetProgramName, i, 0, &nameBuffer, 0.0f);
+    logInfo("  %d: %s", i, nameBuffer);
+  }
+  free(nameBuffer);
 }
 
 static void _processVst2xPlugin(void* pluginPtr, SampleBuffer inputs, SampleBuffer outputs) {
