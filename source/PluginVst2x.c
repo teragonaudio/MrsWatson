@@ -24,8 +24,8 @@ static CharString* _newDefaultPluginLocationArray(PlatformType platformType) {
       for(int i = 0; i < 2; i++) {
         locations[i] = newCharString();
       }
-      snprintf(locations[0], STRING_LENGTH, "/Library/Audio/Plug-Ins/VST", getenv("HOME"));
-      snprintf(locations[1], STRING_LENGTH, "%s/Library/Audio/Plug-Ins/VST");
+      snprintf(locations[0], STRING_LENGTH, "/Library/Audio/Plug-Ins/VST");
+      snprintf(locations[1], STRING_LENGTH, "%s/Library/Audio/Plug-Ins/VST", getenv("HOME"));
       return locations;
     }
     case PLATFORM_UNSUPPORTED:
@@ -47,7 +47,7 @@ bool locateVst2xPlugin(const CharString pluginName, CharString outLocation) {
   int numLocations = sizeof(pluginLocations) / STRING_LENGTH;
   CharString pluginSearchPath = newCharString();
   for(int i = 0; i < numLocations; i++) {
-    snprintf(pluginSearchPath, "%s%c%s", pluginLocations[i], PATH_DELIMITER, pluginName);
+    snprintf(pluginSearchPath, STRING_LENGTH, "%s%c%s", pluginLocations[i], PATH_DELIMITER, pluginName);
     if(fileExists(pluginSearchPath)) {
       strncpy(outLocation, pluginSearchPath, STRING_LENGTH);
       result = true;
