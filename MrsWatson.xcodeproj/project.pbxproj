@@ -17,6 +17,7 @@
 		2435639C14B22FFC0049FD43 /* SampleBuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = 2435639B14B22FFB0049FD43 /* SampleBuffer.c */; };
 		243563AA14B2356F0049FD43 /* InputSourcePcmStream.c in Sources */ = {isa = PBXBuildFile; fileRef = 243563A914B2356F0049FD43 /* InputSourcePcmStream.c */; };
 		2465A2CA14B3130B00F94E84 /* Plugin.c in Sources */ = {isa = PBXBuildFile; fileRef = 2465A2C914B3130B00F94E84 /* Plugin.c */; };
+		2465A2D414B3156A00F94E84 /* PluginVst2x.c in Sources */ = {isa = PBXBuildFile; fileRef = 2465A2D314B3156A00F94E84 /* PluginVst2x.c */; };
 		24FDFBC1148CC9CC0074D3A1 /* MrsWatson.c in Sources */ = {isa = PBXBuildFile; fileRef = 24FDFBC0148CC9CC0074D3A1 /* MrsWatson.c */; };
 /* End PBXBuildFile section */
 
@@ -55,6 +56,11 @@
 		243563A914B2356F0049FD43 /* InputSourcePcmStream.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = InputSourcePcmStream.c; path = source/InputSourcePcmStream.c; sourceTree = SOURCE_ROOT; };
 		2465A2C814B312FB00F94E84 /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Plugin.h; path = source/Plugin.h; sourceTree = SOURCE_ROOT; };
 		2465A2C914B3130B00F94E84 /* Plugin.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Plugin.c; path = source/Plugin.c; sourceTree = SOURCE_ROOT; };
+		2465A2CE14B3152100F94E84 /* aeffect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = aeffect.h; sourceTree = "<group>"; };
+		2465A2CF14B3152100F94E84 /* aeffectx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = aeffectx.h; sourceTree = "<group>"; };
+		2465A2D014B3152100F94E84 /* vstfxstore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vstfxstore.h; sourceTree = "<group>"; };
+		2465A2D314B3156A00F94E84 /* PluginVst2x.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = PluginVst2x.c; path = source/PluginVst2x.c; sourceTree = SOURCE_ROOT; };
+		2465A2D514B3157500F94E84 /* PluginVst2x.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PluginVst2x.h; path = source/PluginVst2x.h; sourceTree = SOURCE_ROOT; };
 		24FDFBAA148CC6AF0074D3A1 /* mrswatson */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = mrswatson; sourceTree = BUILT_PRODUCTS_DIR; };
 		24FDFBC0148CC9CC0074D3A1 /* MrsWatson.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = MrsWatson.c; path = source/MrsWatson.c; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
@@ -70,10 +76,38 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2465A2CB14B3145F00F94E84 /* VST SDK */ = {
+			isa = PBXGroup;
+			children = (
+				2465A2CC14B3152100F94E84 /* pluginterfaces */,
+			);
+			name = "VST SDK";
+			sourceTree = "<group>";
+		};
+		2465A2CC14B3152100F94E84 /* pluginterfaces */ = {
+			isa = PBXGroup;
+			children = (
+				2465A2CD14B3152100F94E84 /* vst2.x */,
+			);
+			name = pluginterfaces;
+			path = vendor/vstsdk2.4/pluginterfaces;
+			sourceTree = "<group>";
+		};
+		2465A2CD14B3152100F94E84 /* vst2.x */ = {
+			isa = PBXGroup;
+			children = (
+				2465A2CE14B3152100F94E84 /* aeffect.h */,
+				2465A2CF14B3152100F94E84 /* aeffectx.h */,
+				2465A2D014B3152100F94E84 /* vstfxstore.h */,
+			);
+			path = vst2.x;
+			sourceTree = "<group>";
+		};
 		24FDFB9F148CC6AF0074D3A1 = {
 			isa = PBXGroup;
 			children = (
 				24FDFBAD148CC6AF0074D3A1 /* Source */,
+				2465A2CB14B3145F00F94E84 /* VST SDK */,
 				24FDFBAB148CC6AF0074D3A1 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -107,6 +141,8 @@
 				2435639814B22B910049FD43 /* PlatformInfo.h */,
 				2465A2C914B3130B00F94E84 /* Plugin.c */,
 				2465A2C814B312FB00F94E84 /* Plugin.h */,
+				2465A2D314B3156A00F94E84 /* PluginVst2x.c */,
+				2465A2D514B3157500F94E84 /* PluginVst2x.h */,
 				2435637A14B1BF3F0049FD43 /* ProgramOption.c */,
 				2435637C14B1BF4B0049FD43 /* ProgramOption.h */,
 				2435639B14B22FFB0049FD43 /* SampleBuffer.c */,
@@ -197,6 +233,7 @@
 				2435639C14B22FFC0049FD43 /* SampleBuffer.c in Sources */,
 				243563AA14B2356F0049FD43 /* InputSourcePcmStream.c in Sources */,
 				2465A2CA14B3130B00F94E84 /* Plugin.c in Sources */,
+				2465A2D414B3156A00F94E84 /* PluginVst2x.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -215,6 +252,7 @@
 				GCC_INPUT_FILETYPE = automatic;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
+					"MACOSX=1",
 					"DEBUG=1",
 					"$(inherited)",
 				);
@@ -240,6 +278,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_INPUT_FILETYPE = automatic;
+				GCC_PREPROCESSOR_DEFINITIONS = "MACOSX=1";
 				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
