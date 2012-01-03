@@ -50,7 +50,7 @@ void setLoggingColor(LogColorType colorType) {
 
 static char _logLevelStatusChar(const LogLevel logLevel) {
   switch(logLevel) {
-    case LOG_DEBUG:    return ' ';
+    case LOG_DEBUG:    return '.';
     case LOG_INFO:     return '-';
     case LOG_ERROR:    return '!';
     case LOG_CRITICAL: return '*';
