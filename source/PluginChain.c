@@ -7,9 +7,9 @@
 //
 
 #include <stdio.h>
-#import <stdlib.h>
-#import <string.h>
-#import "PluginChain.h"
+#include <stdlib.h>
+#include <string.h>
+#include "PluginChain.h"
 #include "EventLogger.h"
 
 PluginChain newPluginChain(void) {

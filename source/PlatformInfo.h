@@ -6,8 +6,8 @@
 //  Copyright (c) 2012 Teragon Audio. All rights reserved.
 //
 
-#import "Types.h"
-#import "CharString.h"
+#include "Types.h"
+#include "CharString.h"
 
 #ifndef MrsWatson_PlatformInfo_h
 #define MrsWatson_PlatformInfo_h

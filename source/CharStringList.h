@@ -6,7 +6,7 @@
 //  Copyright (c) 2012 Teragon Audio. All rights reserved.
 //
 
-#import "CharString.h"
+#include "CharString.h"
 
 #ifndef MrsWatson_CharStringList_h
 #define MrsWatson_CharStringList_h

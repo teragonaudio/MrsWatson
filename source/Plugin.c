@@ -7,9 +7,9 @@
 //
 
 #include <stdio.h>
-#import <stdlib.h>
-#import "Plugin.h"
-#import "EventLogger.h"
+#include <stdlib.h>
+#include "Plugin.h"
+#include "EventLogger.h"
 #include "PluginVst2x.h"
 
 PluginType guessPluginType(CharString pluginName) {

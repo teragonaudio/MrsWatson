@@ -7,9 +7,9 @@
 //
 
 #include <stdio.h>
-#import <stdlib.h>
-#import <string.h>
-#import "CharStringList.h"
+#include <stdlib.h>
+#include <string.h>
+#include "CharStringList.h"
 
 CharStringList newCharStringList(void) {
   CharStringList list = malloc(sizeof(CharStringListMembers));

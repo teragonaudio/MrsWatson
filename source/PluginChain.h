@@ -6,7 +6,7 @@
 //  Copyright (c) 2012 Teragon Audio. All rights reserved.
 //
 
-#import "Plugin.h"
+#include "Plugin.h"
 
 #ifndef MrsWatson_PluginChain_h
 #define MrsWatson_PluginChain_h

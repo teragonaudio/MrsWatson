@@ -6,8 +6,8 @@
 //  Copyright (c) 2012 Teragon Audio. All rights reserved.
 //
 
-#import "CharString.h"
-#import "Plugin.h"
+#include "CharString.h"
+#include "Plugin.h"
 
 #ifndef MrsWatson_PluginVst2x_h
 #define MrsWatson_PluginVst2x_h

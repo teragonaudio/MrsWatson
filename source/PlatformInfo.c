@@ -7,9 +7,9 @@
 //
 
 #include <stdio.h>
-#import <stdlib.h>
+#include <stdlib.h>
 #include <sys/stat.h>
-#import "PlatformInfo.h"
+#include "PlatformInfo.h"
 
 PlatformType getPlatformType() {
 #if MACOSX
