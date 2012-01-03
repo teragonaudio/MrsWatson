@@ -10,5 +10,4 @@ build/*
 *.perspectivev3
 *.pbxuser
 xcuserdata
-.hg
-python
+vendor/vstsdk2.4/*
