@@ -41,7 +41,7 @@ extern "C" {
 static CharString _newVst2xUniqueIdString(long uniqueId) {
   CharString uniqueIdString = newCharStringShort();
   for(int i = 0; i < 4; i++) {
-    uniqueIdString[i] = (char)(uniqueId >> (3 - i) & 0xff);
+    uniqueIdString[i] = (char)(uniqueId >> ((3 - i) * 8) & 0xff);
   }
   return uniqueIdString;
 }
