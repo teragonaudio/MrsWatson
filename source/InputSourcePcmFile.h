@@ -20,6 +20,6 @@ typedef struct {
 
 typedef InputSourcePcmFileDataMembers* InputSourcePcmFileData;
 
-InputSource newInputSourcePcmFile(void);
+InputSource newInputSourcePcmFile(const CharString inputSourceName);
 
 #endif

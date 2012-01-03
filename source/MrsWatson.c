@@ -82,7 +82,7 @@ int main(int argc, char** argv) {
       }
       else if(option->index == OPTION_INPUT_SOURCE) {
         InputSourceType inputSourceType = guessInputSourceType(option->argument);
-        inputSource = newInputSource(inputSourceType);
+        inputSource = newInputSource(inputSourceType, option->argument);
       }
       else if(option->index == OPTION_PLUGIN) {
         addPluginsFromArgumentString(pluginChain, option->argument);
@@ -105,6 +105,9 @@ int main(int argc, char** argv) {
   CharString hello = getNewVersionString();
   logInfo(hello);
   free(hello);
+
+  // Prepare input/output sources, plugins
+  inputSource->openInputSource(inputSource);
 
   // Shut down and free data (will also close open filehandles, plugins, etc)
   freeInputSource(inputSource);

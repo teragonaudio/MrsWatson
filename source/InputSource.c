@@ -36,10 +36,10 @@ InputSourceType guessInputSourceType(CharString inputSourceTypeString) {
   return INPUT_SOURCE_TYPE_INVALID;
 }
 
-InputSource newInputSource(InputSourceType inputSourceType) {
+InputSource newInputSource(InputSourceType inputSourceType, const CharString inputSourceName) {
   switch(inputSourceType) {
     case INPUT_SOURCE_TYPE_PCM_FILE:
-      return newInputSourcePcmFile();
+      return newInputSourcePcmFile(inputSourceName);
     case INPUT_SOURCE_TYPE_PCM_STREAM:
       return newInputSourcePcmStream();
     default:

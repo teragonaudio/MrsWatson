@@ -11,13 +11,12 @@
 #include <string.h>
 #include "InputSourcePcmFile.h"
 
-static bool _openInputSourcePcmFile(void* inputSourcePtr, const CharString filename) {
+static bool _openInputSourcePcmFile(void* inputSourcePtr) {
   InputSource inputSource = inputSourcePtr;
-  strncpy(inputSource->inputSourceName, filename, STRING_LENGTH);
 
   InputSourcePcmFileData extraData = inputSource->extraData;
   extraData->dataBufferNumItems = 0;
-  extraData->fileHandle = fopen(filename, "rb");
+  extraData->fileHandle = fopen(inputSource->inputSourceName, "rb");
   if(extraData == NULL) {
     // TODO: Error
     return false;
@@ -71,11 +70,12 @@ static void _freeInputSourceDataPcmFile(void* inputSourceDataPtr) {
   free(extraData);
 }
 
-InputSource newInputSourcePcmFile() {
+InputSource newInputSourcePcmFile(const CharString inputSourceName) {
   InputSource inputSource = malloc(sizeof(InputSourceMembers));
 
   inputSource->inputSourceType = INPUT_SOURCE_TYPE_PCM_FILE;
   inputSource->inputSourceName = newCharString();
+  strncpy(inputSource->inputSourceName, inputSourceName, STRING_LENGTH);
   // TODO: Need a way to pass in channels, bitrate, sample rate
   inputSource->numChannels = 2;
   inputSource->sampleRate = 44100.0f;
