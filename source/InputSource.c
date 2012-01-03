@@ -48,7 +48,7 @@ InputSource newInputSource(InputSourceType inputSourceType, const CharString inp
 }
 
 void freeInputSource(InputSource inputSource) {
-  free(inputSource->inputSourceName);
   inputSource->freeInputSourceData(inputSource->extraData);
+  free(inputSource->inputSourceName);
   free(inputSource);
 }
