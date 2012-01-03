@@ -40,6 +40,7 @@ int main(int argc, char** argv) {
       if(option->index == OPTION_HELP) {
         printf("Usage: %s (options), where options include:\n", getFileBasename(argv[0]));
         printProgramOptions(programOptions);
+        return RETURN_CODE_NOT_RUN;
       }
       else if(option->index == OPTION_VERSION) {
         CharString versionString = getNewVersionString();
@@ -50,6 +51,8 @@ int main(int argc, char** argv) {
         wrapCharStringForTerminal(LICENSE_STRING, wrappedLicenseInfo, 0);
         printf("%s\n\n", wrappedLicenseInfo);
         free(wrappedLicenseInfo);
+
+        return RETURN_CODE_NOT_RUN;
       }
       else if(option->index == OPTION_VERBOSE) {
         setLogLevel(LOG_DEBUG);
@@ -78,12 +81,11 @@ int main(int argc, char** argv) {
       }
     }
   }
-
   freeProgramOptions(programOptions);
 
   CharString hello = getNewVersionString();
   logInfo(hello);
   free(hello);
 
-  return 0;
+  return RETURN_CODE_SUCCESS;
 }

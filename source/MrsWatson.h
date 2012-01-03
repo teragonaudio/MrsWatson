@@ -34,6 +34,11 @@
 #define VERSION_MINOR 1
 #define VERSION_PATCH 0
 
+typedef enum {
+  RETURN_CODE_SUCCESS,
+  RETURN_CODE_NOT_RUN,
+} ReturnCodes;
+
 CharString getNewVersionString(void);
 
 #endif
