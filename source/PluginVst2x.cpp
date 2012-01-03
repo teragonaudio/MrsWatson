@@ -71,13 +71,14 @@ static CharString _newVst2xPluginAbsolutePath(const CharString pluginName) {
     return NULL;
   }
 
-  CharString result = NULL;
+  CharString result = newCharString();
   CharString pluginSearchPath = newCharString();
   CharStringListIterator iterator = pluginLocations;
   while(iterator->nextItem != NULL) {
     snprintf(pluginSearchPath, STRING_LENGTH, "%s%c%s.%s", iterator->item, PATH_DELIMITER, pluginName, _getVst2xPlatformExtension());
     if(fileExists(pluginSearchPath)) {
-      result = pluginSearchPath;
+      strncpy(result, pluginSearchPath, STRING_LENGTH);
+      break;
     }
     iterator = (CharStringListIterator)iterator->nextItem;
   }
