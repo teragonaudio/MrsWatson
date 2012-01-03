@@ -6,9 +6,23 @@
 //  Copyright (c) 2012 Teragon Audio. All rights reserved.
 //
 
+#import "Plugin.h"
+
 #ifndef MrsWatson_PluginChain_h
 #define MrsWatson_PluginChain_h
 
+#define MAX_PLUGINS 8
 
+typedef struct {
+  int numPlugins;
+  Plugin* plugins;
+} PluginChainMembers;
+
+typedef PluginChainMembers* PluginChain;
+
+PluginChain newPluginChain(void);
+void addPluginToChain(PluginChain pluginChain, Plugin plugin);
+void process(PluginChain pluginChain, SampleBuffer inBuffer, SampleBuffer outBuffer);
+void freePluginChain(PluginChain pluginChain);
 
 #endif
