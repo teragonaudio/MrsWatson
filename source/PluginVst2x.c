@@ -13,7 +13,7 @@
 #import "PlatformInfo.h"
 #import "EventLogger.h"
 
-CharString* _newDefaultPluginLocationArray(PlatformType platformType) {
+static CharString* _newDefaultPluginLocationArray(PlatformType platformType) {
   switch(platformType) {
     case PLATFORM_WINDOWS:
       // TODO: Yeah, whatever
