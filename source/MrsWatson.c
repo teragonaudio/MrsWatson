@@ -26,13 +26,14 @@ CharString getNewVersionString(void) {
 int main(int argc, char** argv) {
   initEventLogger();
 
+  // Input/Output sources, plugin chain, and other required objects
+  InputSource inputSource;
+
   ProgramOptions programOptions = newProgramOptions();
   if(!parseCommandLine(programOptions, argc, argv)) {
     logCritical("Error parsing command line");
     return -1;
   }
-
-  InputSource inputSource;
 
   for(int i = 0; i < NUM_OPTIONS; i++) {
     ProgramOption option = programOptions[i];

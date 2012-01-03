@@ -33,6 +33,7 @@ static void _addNewProgramOption(const ProgramOptions programOptions, const int 
 ProgramOption* newProgramOptions(void) {
   ProgramOptions programOptions = malloc(sizeof(ProgramOption) * NUM_OPTIONS);
 
+  // TODO: Expand help for options
   _addNewProgramOption(programOptions, OPTION_INPUT_SOURCE, "input", "Input source", true, ARGUMENT_TYPE_REQUIRED);
   _addNewProgramOption(programOptions, OPTION_HELP, "help", "Print help", true, ARGUMENT_TYPE_NONE);
   _addNewProgramOption(programOptions, OPTION_VERSION, "version", "Print version and copyright information", false, ARGUMENT_TYPE_NONE);
@@ -146,6 +147,7 @@ bool parseCommandLine(ProgramOptions programOptions, int argc, char** argv) {
 }
 
 void printProgramOptions(ProgramOptions programOptions) {
+  // TODO: Instead of just printing out all options, they should be alphabetized. This is nice.
   for(int i = 0; i < NUM_OPTIONS; i++) {
     printf("  ");
     ProgramOption programOption = programOptions[i];
