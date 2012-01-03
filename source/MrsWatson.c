@@ -45,6 +45,11 @@ int main(int argc, char** argv) {
     setLogLevel(LOG_CRITICAL);
   }
 
+  // Say hello!
+  CharString hello = getNewVersionString();
+  logInfo(hello);
+  free(hello);
+
   for(int i = 0; i < NUM_OPTIONS; i++) {
     ProgramOption option = programOptions[i];
     if(option->enabled) {
@@ -100,11 +105,6 @@ int main(int argc, char** argv) {
     logError("No plugins loaded");
     return RETURN_CODE_MISSING_REQUIRED_OPTION;
   }
-
-  // Say hello!
-  CharString hello = getNewVersionString();
-  logInfo(hello);
-  free(hello);
 
   // Prepare input/output sources, plugins
   inputSource->openInputSource(inputSource);
