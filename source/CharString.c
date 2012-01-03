@@ -30,6 +30,10 @@ CharString newCharStringLong(void) {
   return _newCharString(STRING_LENGTH_LONG);
 }
 
+bool isStringEmpty(CharString testString) {
+  return (testString == NULL || testString[0] == '\0');
+}
+
 void wrapCharStringForTerminal(const CharString srcString, CharString destString, int indentSize) {
   wrapCharString(srcString, destString, indentSize, TERMINAL_LINE_LENGTH);
 }

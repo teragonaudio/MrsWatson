@@ -6,6 +6,8 @@
 //  Copyright (c) 2012 Teragon Audio. All rights reserved.
 //
 
+#import "Types.h"
+
 #ifndef MrsWatson_CharString_h
 #define MrsWatson_CharString_h
 
@@ -20,6 +22,8 @@ typedef char* CharString;
 CharString newCharString(void);
 CharString newCharStringShort(void);
 CharString newCharStringLong(void);
+
+bool isStringEmpty(CharString testString);
 
 void wrapCharString(const CharString srcString, CharString destString, int indentSize, int lineLength);
 void wrapCharStringForTerminal(const CharString srcString, CharString destString, int indentSize);
