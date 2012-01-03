@@ -18,8 +18,8 @@ typedef enum {
 } PluginType;
 
 typedef boolean (*OpenPluginFunc)(void*);
-typedef void (*PluginProcessFunc)(void*, SampleBuffer);
 typedef void (*DisplayPluginInfoFunc)(void*);
+typedef void (*PluginProcessFunc)(void*, SampleBuffer, SampleBuffer);
 typedef void (*FreePluginDataFunc)(void*);
 
 typedef struct {
