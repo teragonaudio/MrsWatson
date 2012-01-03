@@ -31,7 +31,7 @@ static void _addNewProgramOption(const ProgramOptions programOptions, const int 
 }
 
 ProgramOption* newProgramOptions(void) {
-  ProgramOptions programOptions = malloc(sizeof(ProgramOptionMembers) * NUM_OPTIONS);
+  ProgramOptions programOptions = malloc(sizeof(ProgramOptions) * NUM_OPTIONS);
 
   // TODO: Expand help for options
   _addNewProgramOption(programOptions, OPTION_PLUGIN, "plugin", "Plugin(s) to process", true, ARGUMENT_TYPE_REQUIRED);
