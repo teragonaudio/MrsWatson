@@ -77,6 +77,13 @@ void initializePluginChain(PluginChain pluginChain) {
   }
 }
 
+void displayPluginInfo(PluginChain pluginChain) {
+  for(int i = 0; i < pluginChain->numPlugins; i++) {
+    Plugin plugin = pluginChain->plugins[i];
+    plugin->displayPluginInfo(plugin);
+  }
+}
+
 void process(PluginChain pluginChain, SampleBuffer inBuffer, SampleBuffer outBuffer) {
   
 }

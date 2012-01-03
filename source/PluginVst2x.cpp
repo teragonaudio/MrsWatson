@@ -290,8 +290,15 @@ static boolean _openVst2xPlugin(void* pluginPtr) {
   return false;
 }
 
-static void _processVst2xPlugin(void* pluginPtr, SampleBuffer sampleBuffer) {
-  
+static void _displayVst2xPluginInfo(void* pluginPtr) {
+  Plugin plugin = (Plugin)pluginPtr;
+  PluginVst2xData data = (PluginVst2xData)plugin->extraData;
+}
+
+static void _processVst2xPlugin(void* pluginPtr, SampleBuffer inputs, SampleBuffer outputs) {
+  Plugin plugin = (Plugin)pluginPtr;
+  PluginVst2xData data = (PluginVst2xData)plugin->extraData;
+  data->pluginHandle->processReplacing(data->pluginHandle, inputs->samples, outputs->samples, inputs->blocksize);
 }
 
 static void _freeVst2xPluginData(void* pluginDataPtr) {
@@ -317,6 +324,7 @@ Plugin newPluginVst2x(const CharString pluginName) {
   strncpy(plugin->pluginName, pluginName, STRING_LENGTH);
 
   plugin->open = _openVst2xPlugin;
+  plugin->displayPluginInfo = _displayVst2xPluginInfo;
   plugin->process = _processVst2xPlugin;
   plugin->freePluginData = _freeVst2xPluginData;
 

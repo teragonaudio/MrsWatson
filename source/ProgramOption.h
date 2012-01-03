@@ -31,6 +31,7 @@ typedef struct {
 
 typedef enum {
   OPTION_PLUGIN,
+  OPTION_DISPLAY_INFO,
   OPTION_INPUT_SOURCE,
   OPTION_HELP,
   OPTION_VERSION,

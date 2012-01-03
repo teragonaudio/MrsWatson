@@ -30,6 +30,7 @@ int main(int argc, char** argv) {
   // Input/Output sources, plugin chain, and other required objects
   InputSource inputSource = NULL;
   PluginChain pluginChain = newPluginChain();
+  boolean shouldDisplayPluginInfo = false;
 
   ProgramOptions programOptions = newProgramOptions();
   if(!parseCommandLine(programOptions, argc, argv)) {
@@ -92,6 +93,9 @@ int main(int argc, char** argv) {
       else if(option->index == OPTION_PLUGIN) {
         addPluginsFromArgumentString(pluginChain, option->argument);
       }
+      else if(option->index == OPTION_DISPLAY_INFO) {
+        shouldDisplayPluginInfo = true;
+      }
     }
   }
   freeProgramOptions(programOptions);
@@ -109,6 +113,10 @@ int main(int argc, char** argv) {
   // Prepare input/output sources, plugins
   inputSource->openInputSource(inputSource);
   initializePluginChain(pluginChain);
+
+  if(shouldDisplayPluginInfo) {
+    displayPluginInfo(pluginChain);
+  }
 
   // Shut down and free data (will also close open filehandles, plugins, etc)
   freeInputSource(inputSource);

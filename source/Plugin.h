@@ -19,6 +19,7 @@ typedef enum {
 
 typedef boolean (*OpenPluginFunc)(void*);
 typedef void (*PluginProcessFunc)(void*, SampleBuffer);
+typedef void (*DisplayPluginInfoFunc)(void*);
 typedef void (*FreePluginDataFunc)(void*);
 
 typedef struct {
@@ -26,6 +27,7 @@ typedef struct {
   CharString pluginName;
 
   OpenPluginFunc open;
+  DisplayPluginInfoFunc displayPluginInfo;
   PluginProcessFunc process;
   FreePluginDataFunc freePluginData;
 

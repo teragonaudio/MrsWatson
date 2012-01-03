@@ -35,6 +35,7 @@ ProgramOption* newProgramOptions(void) {
 
   // TODO: Expand help for options
   _addNewProgramOption(programOptions, OPTION_PLUGIN, "plugin", "Plugin(s) to process", true, ARGUMENT_TYPE_REQUIRED);
+  _addNewProgramOption(programOptions, OPTION_DISPLAY_INFO, "info", "Print information about the plugin(s)", false, ARGUMENT_TYPE_NONE);
   _addNewProgramOption(programOptions, OPTION_INPUT_SOURCE, "input", "Input source", true, ARGUMENT_TYPE_REQUIRED);
   _addNewProgramOption(programOptions, OPTION_HELP, "help", "Print help", true, ARGUMENT_TYPE_NONE);
   _addNewProgramOption(programOptions, OPTION_VERSION, "version", "Print version and copyright information", false, ARGUMENT_TYPE_NONE);
