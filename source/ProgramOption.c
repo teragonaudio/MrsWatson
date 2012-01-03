@@ -18,7 +18,7 @@ static void _addNewProgramOption(const ProgramOptions programOptions, const int 
 
   programOption->index = index;
   programOption->name = newCharStringShort();
-  strncpy(programOption->name, name, STRING_LENGTH);
+  strncpy(programOption->name, name, STRING_LENGTH_SHORT);
   programOption->help = newCharStringLong();
   strncpy(programOption->help, help, STRING_LENGTH_LONG);
   programOption->hasShortForm = hasShortForm;
