@@ -7,3 +7,15 @@
 //
 
 #include <stdio.h>
+#import "PlatformInfo.h"
+
+PlatformType getPlatformType() {
+#if MACOSX
+  return PLATFORM_MACOSX;
+#elif WIN32
+  return PLATFORM_WINDOWS;
+#else
+  return PLATFORM_UNSUPPORTED;
+#endif
+}
+
