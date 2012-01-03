@@ -12,18 +12,17 @@
 #define DEFAULT_BLOCKSIZE 512
 
 typedef float Sample;
-typedef Sample* ChannelBuffer;
+typedef Sample* Samples;
 
 typedef struct {
   int numChannels;
   int blocksize;
-  ChannelBuffer* channels;
+  Samples samples;
 } SampleBufferMembers;
 
 typedef SampleBufferMembers* SampleBuffer;
 
 SampleBuffer newSampleBuffer(int numChannels, int blocksize);
-void copyInterlacedSamplesToSampleBuffer(const Sample* interlacedData, SampleBuffer sampleBuffer);
 void freeSampleBuffer(SampleBuffer sampleBuffer);
 
 #endif

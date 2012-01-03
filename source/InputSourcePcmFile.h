@@ -16,7 +16,6 @@ typedef struct {
   FILE* fileHandle;
   size_t dataBufferNumItems;
   short* interlacedPcmDataBuffer;
-  Sample* interlacedSampleBuffer;
 } InputSourcePcmFileDataMembers;
 
 typedef InputSourcePcmFileDataMembers* InputSourcePcmFileData;

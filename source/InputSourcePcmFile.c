@@ -26,16 +26,16 @@ static bool _openInputSourcePcmFile(void* inputSourcePtr, const CharString filen
   return true;
 }
 
-static void _convertPcmDataToFloat(const short* inPcmData, Sample* outFloatData, const long numSamples) {
+static void _convertPcmToFloat(const short* inPcmSamples, Samples outFloatSamples, const long numSamples) {
   for(long i = 0; i < numSamples; i++) {
-    outFloatData[i] = (Sample)inPcmData[i] / 32768.0f;
+    outFloatSamples[i] = (Sample)inPcmSamples[i] / 32768.0f;
 
     // Apply brickwall limiter to prevent clipping
-    if(outFloatData[i] > 1.0f) {
-      outFloatData[i] = 1.0f;
+    if(outFloatSamples[i] > 1.0f) {
+      outFloatSamples[i] = 1.0f;
     }
-    else if(outFloatData[i] < -1.0f) {
-      outFloatData[i] = -1.0f;
+    else if(outFloatSamples[i] < -1.0f) {
+      outFloatSamples[i] = -1.0f;
     }
   }
 }
@@ -46,7 +46,6 @@ static bool _readBlockPcmFile(void* inputSourcePtr, SampleBuffer sampleBuffer) {
   if(extraData->dataBufferNumItems == 0) {
     extraData->dataBufferNumItems = (size_t)(sampleBuffer->numChannels * sampleBuffer->blocksize);
     extraData->interlacedPcmDataBuffer = malloc(sizeof(short) * extraData->dataBufferNumItems);
-    extraData->interlacedSampleBuffer = malloc(sizeof(Sample) * extraData->dataBufferNumItems);
   }
 
   // Clear the PCM data buffer, or else the last block will have dirty samples in the end
@@ -59,17 +58,13 @@ static bool _readBlockPcmFile(void* inputSourcePtr, SampleBuffer sampleBuffer) {
     result = false;
   }
 
-  // Convert integer PCM data to floating point
-  _convertPcmDataToFloat(extraData->interlacedPcmDataBuffer, extraData->interlacedSampleBuffer, extraData->dataBufferNumItems);
-  copyInterlacedSamplesToSampleBuffer(extraData->interlacedSampleBuffer, sampleBuffer);
-
+  _convertPcmToFloat(extraData->interlacedPcmDataBuffer, sampleBuffer->samples, extraData->dataBufferNumItems);
   return result;
 }
 
 static void _freeInputSourceDataPcmFile(void* inputSourceDataPtr) {
   InputSourcePcmFileData extraData = inputSourceDataPtr;
   free(extraData->interlacedPcmDataBuffer);
-  free(extraData->interlacedSampleBuffer);
   if(extraData->fileHandle != NULL) {
     fclose(extraData->fileHandle);
   }
