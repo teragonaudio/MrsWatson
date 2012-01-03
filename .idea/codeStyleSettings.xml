@@ -28,6 +28,8 @@
         </ADDITIONAL_INDENT_OPTIONS>
         <codeStyleSettings language="ObjectiveC">
           <option name="ELSE_ON_NEW_LINE" value="true" />
+          <option name="SPACE_AFTER_SEMICOLON" value="false" />
+          <option name="SPACE_AFTER_TYPE_CAST" value="false" />
           <option name="SPACE_BEFORE_IF_PARENTHESES" value="false" />
           <option name="SPACE_BEFORE_WHILE_PARENTHESES" value="false" />
           <option name="SPACE_BEFORE_FOR_PARENTHESES" value="false" />
