@@ -20,9 +20,9 @@ typedef enum {
   NUM_INPUT_SOURCE_TYPES
 } InputSourceType;
 
-typedef bool(*OpenInputSourceFuncPtr)(void*, const CharString filename);
-typedef bool(*ReadBlockFuncPtr)(void*, SampleBuffer);
-typedef void(*FreeInputSourceDataFuncPtr)(void*);
+typedef bool(*OpenInputSourceFunc)(void*, const CharString filename);
+typedef bool(*ReadBlockFunc)(void*, SampleBuffer);
+typedef void(*FreeInputSourceDataFunc)(void*);
 
 typedef struct {
   InputSourceType inputSourceType;
@@ -30,9 +30,9 @@ typedef struct {
   int numChannels;
   float sampleRate;
 
-  OpenInputSourceFuncPtr openInputSource;
-  ReadBlockFuncPtr readBlock;
-  FreeInputSourceDataFuncPtr freeInputSourceData;
+  OpenInputSourceFunc openInputSource;
+  ReadBlockFunc readBlock;
+  FreeInputSourceDataFunc freeInputSourceData;
 
   void* extraData;
 } InputSourceMembers;
