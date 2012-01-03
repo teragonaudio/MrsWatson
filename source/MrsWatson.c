@@ -27,7 +27,7 @@ int main(int argc, char** argv) {
   initEventLogger();
 
   // Input/Output sources, plugin chain, and other required objects
-  InputSource inputSource;
+  InputSource inputSource = NULL;
 
   ProgramOptions programOptions = newProgramOptions();
   if(!parseCommandLine(programOptions, argc, argv)) {
@@ -83,6 +83,12 @@ int main(int argc, char** argv) {
     }
   }
   freeProgramOptions(programOptions);
+
+  // Check required variables to make sure we have everything needed to start processing
+  if(inputSource == NULL) {
+    logError("No input source given");
+    return RETURN_CODE_MISSING_REQUIRED_OPTION;
+  }
 
   CharString hello = getNewVersionString();
   logInfo(hello);

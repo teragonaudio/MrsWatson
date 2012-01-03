@@ -37,6 +37,7 @@
 typedef enum {
   RETURN_CODE_SUCCESS,
   RETURN_CODE_NOT_RUN,
+  RETURN_CODE_MISSING_REQUIRED_OPTION,
 } ReturnCodes;
 
 CharString getNewVersionString(void);
