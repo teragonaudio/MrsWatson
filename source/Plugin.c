@@ -10,13 +10,7 @@
 #import <stdlib.h>
 #import "Plugin.h"
 #import "EventLogger.h"
-
-// Do NOT include PluginVst2x.h from this file, otherwise we start mixing too much C/C++ code
-// and things become a real mess. Instead, we simply extern the functions needed in that file
-// for use here. Yes, this is a bit redundant, but otherwise the entire project starts being
-// "infected" by C++.
-extern bool vst2xPluginExists(const CharString pluginName);
-extern Plugin newPluginVst2x(const CharString pluginName);
+#include "PluginVst2x.h"
 
 PluginType guessPluginType(CharString pluginName) {
   PluginType pluginType = PLUGIN_TYPE_INVALID;

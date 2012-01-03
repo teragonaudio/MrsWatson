@@ -7,13 +7,28 @@
 //
 
 #include <stdio.h>
-#import <stdlib.h>
-#import <string.h>
-#import "PluginVst2x.h"
-#import "PlatformInfo.h"
-#import "EventLogger.h"
-#import "CharStringList.h"
+#include <stdlib.h>
+#include <string.h>
 
+extern "C" {
+#include "PluginVst2x.h"
+#include "PlatformInfo.h"
+#include "EventLogger.h"
+#include "CharStringList.h"
+}
+
+#include "aeffectx.h"
+
+VstIntPtr VSTCALLBACK vst2xPluginHostCallback(AEffect *effect, VstInt32 opcode, VstInt32 index, VstInt32 value, void *ptr, float opt);
+
+typedef AEffect* (*Vst2xPluginEntryFuncPtr)(audioMasterCallback host);
+typedef VstIntPtr (*Vst2xPluginDispatcherFuncPtr)(AEffect *effect, VstInt32 opCode, VstInt32 index, VstInt32 value, void *ptr, float opt);
+typedef float (*Vst2xPluginGetParameterFuncPtr)(AEffect *effect, VstInt32 index);
+typedef void (*Vst2xPluginSetParameterFuncPtr)(AEffect *effect, VstInt32 index, float value);
+typedef VstInt32 (*Vst2xPluginProcessEventsFuncPtr)(struct VstEvents* events);
+typedef void (*Vst2xPluginProcessFuncPtr)(AEffect* effect, float** inputs, float** outputs, VstInt32 sampleFrames);
+
+extern "C" {
 static CharStringList _newDefaultPluginLocationArray(PlatformType platformType) {
   CharStringList locations = newCharStringList();
   CharString locationBuffer = newCharString();
@@ -50,32 +65,39 @@ static const char*_getVst2xPlatformExtension(void) {
   }
 }
 
-bool locateVst2xPlugin(const CharString pluginName, CharString outLocation) {
+static CharString _newVst2xPluginAbsolutePath(const CharString pluginName) {
   CharStringList pluginLocations = _newDefaultPluginLocationArray(getPlatformType());
   if(pluginLocations->item == NULL) {
-    return false;
+    return NULL;
   }
 
-  bool result = false;
+  CharString result = NULL;
   CharString pluginSearchPath = newCharString();
   CharStringListIterator iterator = pluginLocations;
   while(iterator->nextItem != NULL) {
     snprintf(pluginSearchPath, STRING_LENGTH, "%s%c%s.%s", iterator->item, PATH_DELIMITER, pluginName, _getVst2xPlatformExtension());
     if(fileExists(pluginSearchPath)) {
-      strncpy(outLocation, pluginSearchPath, STRING_LENGTH);
-      result = true;
-      break;
+      result = pluginSearchPath;
     }
-    iterator = iterator->nextItem;
+    iterator = (CharStringListIterator)iterator->nextItem;
   }
 
   free(pluginSearchPath);
   freeCharStringList(pluginLocations);
-
   return result;
 }
 
-static bool _openVst2xPlugin(void* pluginPtr, const CharString pluginName) {
+bool vst2xPluginExists(const CharString pluginName) {
+  CharString pluginLocation = _newVst2xPluginAbsolutePath(pluginName);
+  bool result = !isStringEmpty(pluginLocation);
+  free(pluginLocation);
+  return result;
+}
+
+static bool _openVst2xPlugin(void* pluginPtr) {
+  Plugin plugin = (Plugin)pluginPtr;
+  CharString pluginLocation = _newVst2xPluginAbsolutePath(plugin->pluginName);
+  free(pluginLocation);
   return false;
 }
 
@@ -84,24 +106,26 @@ static void _processVst2xPlugin(void* pluginPtr, SampleBuffer sampleBuffer) {
 }
 
 static void _freeVst2xPluginData(void* pluginPtr) {
-  Plugin plugin = pluginPtr;
-  PluginVst2xData data = plugin->extraData;
+  Plugin plugin = (Plugin)pluginPtr;
+  PluginVst2xData data = (PluginVst2xData)(plugin->extraData);
   // TODO: Free, close plugin
   free(data);
 }
 
-Plugin newPluginVst2x(void) {
-  Plugin plugin = malloc(sizeof(PluginMembers));
+Plugin newPluginVst2x(const CharString pluginName) {
+  Plugin plugin = (Plugin)malloc(sizeof(PluginMembers));
 
   plugin->pluginType = PLUGIN_TYPE_VST_2X;
   plugin->pluginName = newCharString();
+  strncpy(plugin->pluginName, pluginName, STRING_LENGTH);
 
   plugin->open = _openVst2xPlugin;
   plugin->process = _processVst2xPlugin;
   plugin->freePluginData = _freeVst2xPluginData;
 
-  PluginVst2xData extraData = malloc(sizeof(PluginVst2xDataMembers));
+  PluginVst2xData extraData = (PluginVst2xData)malloc(sizeof(PluginVst2xDataMembers));
   plugin->extraData = extraData;
 
   return plugin;
+}
 }
