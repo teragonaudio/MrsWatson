@@ -294,11 +294,9 @@ static void _processVst2xPlugin(void* pluginPtr, SampleBuffer sampleBuffer) {
   
 }
 
-static void _freeVst2xPluginData(void* pluginPtr) {
-  Plugin plugin = (Plugin)pluginPtr;
-  PluginVst2xData data = (PluginVst2xData)(plugin->extraData);
+static void _freeVst2xPluginData(void* pluginDataPtr) {
+  PluginVst2xData data = (PluginVst2xData)(pluginDataPtr);
 
-  logInfo("Closing plugin '%s'", plugin->pluginName);
   data->dispatcher(data->pluginHandle, effClose, 0, 0, NULL, 0.0f);
   data->dispatcher = NULL;
   data->pluginHandle = NULL;
