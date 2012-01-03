@@ -16,6 +16,7 @@
 #include "BuildInfo.h"
 #include "ProgramOption.h"
 #include "InputSource.h"
+#include "PluginChain.h"
 
 CharString getNewVersionString(void) {
   CharString versionString = newCharString();
@@ -28,6 +29,7 @@ int main(int argc, char** argv) {
 
   // Input/Output sources, plugin chain, and other required objects
   InputSource inputSource = NULL;
+  PluginChain pluginChain = newPluginChain();
 
   ProgramOptions programOptions = newProgramOptions();
   if(!parseCommandLine(programOptions, argc, argv)) {
@@ -89,10 +91,19 @@ int main(int argc, char** argv) {
     logError("No input source given");
     return RETURN_CODE_MISSING_REQUIRED_OPTION;
   }
+  else if(pluginChain->numPlugins == 0) {
+    logError("No plugins loaded");
+    return RETURN_CODE_MISSING_REQUIRED_OPTION;
+  }
 
+  // Say hello!
   CharString hello = getNewVersionString();
   logInfo(hello);
   free(hello);
+
+  // Shut down and free data (will also close open filehandles, plugins, etc)
+  freeInputSource(inputSource);
+  freePluginChain(pluginChain);
 
   return RETURN_CODE_SUCCESS;
 }

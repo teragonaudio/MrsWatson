@@ -36,5 +36,7 @@ Plugin newPlugin(PluginType pluginType) {
 }
 
 void freePlugin(Plugin plugin) {
-
+  free(plugin->pluginName);
+  plugin->freePluginData(plugin->extraData);
+  free(plugin);
 }

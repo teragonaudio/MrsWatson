@@ -72,6 +72,13 @@ static void _processVst2xPlugin(void* pluginPtr, SampleBuffer sampleBuffer) {
   
 }
 
+static void _freeVst2xPluginData(void* pluginPtr) {
+  Plugin plugin = pluginPtr;
+  PluginVst2xData data = plugin->extraData;
+  // TODO: Free, close plugin
+  free(data);
+}
+
 Plugin newPluginVst2x(void) {
   Plugin plugin = malloc(sizeof(PluginMembers));
 
@@ -80,6 +87,7 @@ Plugin newPluginVst2x(void) {
 
   plugin->open = _openVst2xPlugin;
   plugin->process = _processVst2xPlugin;
+  plugin->freePluginData = _freeVst2xPluginData;
 
   plugin->extraData = malloc(sizeof(PluginVst2xDataMembers));
   return plugin;
