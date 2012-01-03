@@ -25,5 +25,6 @@ typedef enum {
 } PlatformType;
 
 PlatformType getPlatformType(void);
+bool fileExists(const CharString absolutePath);
 
 #endif

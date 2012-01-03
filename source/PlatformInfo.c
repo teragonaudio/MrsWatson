@@ -7,6 +7,8 @@
 //
 
 #include <stdio.h>
+#import <stdlib.h>
+#include <sys/stat.h>
 #import "PlatformInfo.h"
 
 PlatformType getPlatformType() {
@@ -19,3 +21,16 @@ PlatformType getPlatformType() {
 #endif
 }
 
+bool fileExists(const CharString absolutePath) {
+#if MACOSX
+  struct stat* buffer = malloc(sizeof(struct stat));
+  bool result = (stat(absolutePath, buffer) == 0);
+  free(buffer);
+  return result;
+#elif WIN32
+  // TODO: this
+  return false;
+#else
+  return false;
+#endif
+}
