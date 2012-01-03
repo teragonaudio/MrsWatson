@@ -31,7 +31,7 @@ static void _addNewProgramOption(const ProgramOptions programOptions, const int 
 }
 
 ProgramOption* newProgramOptions(void) {
-  ProgramOptions programOptions = malloc(sizeof(ProgramOption) * NUM_OPTIONS);
+  ProgramOptions programOptions = malloc(sizeof(ProgramOptionMembers) * NUM_OPTIONS);
 
   // TODO: Expand help for options
   _addNewProgramOption(programOptions, OPTION_INPUT_SOURCE, "input", "Input source", true, ARGUMENT_TYPE_REQUIRED);

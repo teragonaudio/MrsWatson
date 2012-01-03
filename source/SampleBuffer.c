@@ -11,7 +11,7 @@
 #include "SampleBuffer.h"
 
 SampleBuffer newSampleBuffer(int numChannels, int blocksize) {
-  SampleBuffer sampleBuffer = malloc(sizeof(SampleBuffer));
+  SampleBuffer sampleBuffer = malloc(sizeof(SampleBufferMembers));
 
   sampleBuffer->numChannels = numChannels;
   sampleBuffer->blocksize = blocksize;

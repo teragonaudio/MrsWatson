@@ -77,7 +77,7 @@ static void _freeInputSourceDataPcmFile(void* inputSourceDataPtr) {
 }
 
 InputSource newInputSourcePcmFile() {
-  InputSource inputSource = malloc(sizeof(InputSource));
+  InputSource inputSource = malloc(sizeof(InputSourceMembers));
 
   inputSource->inputSourceType = INPUT_SOURCE_TYPE_PCM_FILE;
   inputSource->inputSourceName = newCharString();
@@ -89,7 +89,7 @@ InputSource newInputSourcePcmFile() {
   inputSource->readBlock = _readBlockPcmFile;
   inputSource->freeInputSourceData = _freeInputSourceDataPcmFile;
 
-  inputSource->extraData = malloc(sizeof(InputSourcePcmFileData));
+  inputSource->extraData = malloc(sizeof(InputSourcePcmFileDataMembers));
 
   return inputSource;
 }
