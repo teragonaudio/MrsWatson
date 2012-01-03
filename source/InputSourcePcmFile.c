@@ -25,17 +25,20 @@ static boolean _openInputSourcePcmFile(void* inputSourcePtr) {
   return true;
 }
 
-static void _convertPcmToFloat(const short* inPcmSamples, Samples outFloatSamples, const long numSamples) {
-  for(long i = 0; i < numSamples; i++) {
-    outFloatSamples[i] = (Sample)inPcmSamples[i] / 32768.0f;
-
-    // Apply brickwall limiter to prevent clipping
-    if(outFloatSamples[i] > 1.0f) {
-      outFloatSamples[i] = 1.0f;
+static void _convertPcmDataToSampleBuffer(const short* inPcmSamples, SampleBuffer sampleBuffer, const long numInterlacedSamples) {
+  for(long interlacedIndex = 0, deinterlacedIndex = 0; interlacedIndex < numInterlacedSamples; interlacedIndex++) {
+    for(int channelIndex = 0; channelIndex < sampleBuffer->numChannels; channelIndex++) {
+      Sample convertedSample = (Sample)inPcmSamples[interlacedIndex] / 32768.0f;
+      // Apply brickwall limiter to prevent clipping
+      if(convertedSample > 1.0f) {
+        convertedSample = 1.0f;
+      }
+      else if(convertedSample < -1.0f) {
+        convertedSample = -1.0f;
+      }
+      sampleBuffer->samples[channelIndex][deinterlacedIndex] = convertedSample;
     }
-    else if(outFloatSamples[i] < -1.0f) {
-      outFloatSamples[i] = -1.0f;
-    }
+    deinterlacedIndex++;
   }
 }
 
@@ -57,7 +60,7 @@ static boolean _readBlockPcmFile(void* inputSourcePtr, SampleBuffer sampleBuffer
     result = false;
   }
 
-  _convertPcmToFloat(extraData->interlacedPcmDataBuffer, sampleBuffer->samples, extraData->dataBufferNumItems);
+  _convertPcmDataToSampleBuffer(extraData->interlacedPcmDataBuffer, sampleBuffer, extraData->dataBufferNumItems);
   return result;
 }
 

@@ -17,7 +17,7 @@ typedef Sample* Samples;
 typedef struct {
   int numChannels;
   int blocksize;
-  Samples samples;
+  Samples* samples;
 } SampleBufferMembers;
 
 typedef SampleBufferMembers* SampleBuffer;

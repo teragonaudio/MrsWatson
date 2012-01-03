@@ -15,12 +15,18 @@ SampleBuffer newSampleBuffer(int numChannels, int blocksize) {
 
   sampleBuffer->numChannels = numChannels;
   sampleBuffer->blocksize = blocksize;
-  sampleBuffer->samples = malloc(sizeof(Sample) * numChannels * blocksize);
+  sampleBuffer->samples = malloc(sizeof(Samples) * numChannels);
+  for(int i = 0; i < numChannels; i++) {
+    sampleBuffer->samples[i] = malloc(sizeof(Sample) * blocksize);
+  }
 
   return sampleBuffer;
 }
 
 void freeSampleBuffer(SampleBuffer sampleBuffer) {
+  for(int i = 0; i < sampleBuffer->numChannels; i++) {
+    free(sampleBuffer->samples[i]);
+  }
   free(sampleBuffer->samples);
   free(sampleBuffer);
 }
