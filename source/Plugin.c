@@ -17,7 +17,7 @@ PluginType guessPluginType(CharString pluginName) {
   logDebug("Trying to find plugin '%s'", pluginName);
 
   if(vst2xPluginExists(pluginName)) {
-    logDebug("Plugin is VST 2.x");
+    logDebug("Plugin '%s' is of type VST2.x", pluginName);
     pluginType = PLUGIN_TYPE_VST_2X;
   }
   else {
@@ -39,7 +39,7 @@ Plugin newPlugin(PluginType pluginType, const CharString pluginName) {
 }
 
 void freePlugin(Plugin plugin) {
-  free(plugin->pluginName);
   plugin->freePluginData(plugin->extraData);
+  free(plugin->pluginName);
   free(plugin);
 }

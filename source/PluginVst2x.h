@@ -12,12 +12,6 @@
 #ifndef MrsWatson_PluginVst2x_h
 #define MrsWatson_PluginVst2x_h
 
-typedef struct {
-
-} PluginVst2xDataMembers;
-
-typedef PluginVst2xDataMembers* PluginVst2xData;
-
 boolean vst2xPluginExists(const CharString pluginName);
 Plugin newPluginVst2x(const CharString pluginName);
 
