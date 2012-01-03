@@ -8,8 +8,10 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdarg.h>
 #include <sys/types.h>
 #include <time.h>
+#include "CharString.h"
 
 #include "EventLogger.h"
 
@@ -90,26 +92,37 @@ static void _printMessage(const LogLevel logLevel, const long elapsedTime, const
   }
 }
 
-void logMessage(const LogLevel logLevel, const char* message) {
+static void _logMessage(const LogLevel logLevel, const char* message, va_list arguments) {
   EventLogger eventLogger = _getGlobalInstance();
   if(logLevel >= eventLogger->logLevel) {
+    CharString formattedMessage = newCharString();
+    vsnprintf(formattedMessage, STRING_LENGTH, message, arguments);
     time_t currentTime = time(NULL);
-    _printMessage(logLevel, currentTime - eventLogger->startTime, eventLogger->colorType, message);
+    _printMessage(logLevel, currentTime - eventLogger->startTime, eventLogger->colorType, formattedMessage);
+    free(formattedMessage);
   }
 }
 
-void logDebug(const char* message) {
-  logMessage(LOG_DEBUG, message);
+void logDebug(const char* message, ...) {
+  va_list arguments;
+  va_start(arguments, message);
+  _logMessage(LOG_DEBUG, message, arguments);
 }
 
-void logInfo(const char* message) {
-  logMessage(LOG_INFO, message);
+void logInfo(const char* message, ...) {
+  va_list arguments;
+  va_start(arguments, message);
+  _logMessage(LOG_INFO, message, arguments);
 }
 
-void logError(const char* message) {
-  logMessage(LOG_ERROR, message);
+void logError(const char* message, ...) {
+  va_list arguments;
+  va_start(arguments, message);
+  _logMessage(LOG_ERROR, message, arguments);
 }
 
-void logCritical(const char* message) {
-  logMessage(LOG_CRITICAL, message);
+void logCritical(const char* message, ...) {
+  va_list arguments;
+  va_start(arguments, message);
+  _logMessage(LOG_CRITICAL, message, arguments);
 }

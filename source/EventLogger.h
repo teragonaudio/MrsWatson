@@ -38,10 +38,9 @@ void initEventLogger(void);
 void setLogLevel(LogLevel logLevel);
 void setLoggingColor(LogColorType colorType);
 
-void logMessage(const LogLevel logLevel, const char* message);
-void logDebug(const char* message);
-void logInfo(const char* message);
-void logError(const char* message);
-void logCritical(const char* message);
+void logDebug(const char* message, ...);
+void logInfo(const char* message, ...);
+void logError(const char* message, ...);
+void logCritical(const char* message, ...);
 
 #endif

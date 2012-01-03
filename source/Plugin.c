@@ -15,6 +15,7 @@
 PluginType guessPluginType(CharString pluginName) {
   PluginType pluginType = PLUGIN_TYPE_INVALID;
   CharString pluginFullPath = newCharString();
+  logDebug("Guessing plugin type for '%s'", pluginName);
 
   if(locateVst2xPlugin(pluginName, pluginFullPath)) {
     pluginType = PLUGIN_TYPE_VST_2X;
