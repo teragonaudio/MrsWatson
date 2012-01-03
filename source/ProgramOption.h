@@ -25,7 +25,7 @@ typedef struct {
   bool hasShortForm;
 
   ProgramOptionArgumentType argumentType;
-  CharString stringArgument;
+  CharString argument;
   bool enabled;
 } ProgramOptionMembers;
 

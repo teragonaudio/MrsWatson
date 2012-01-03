@@ -24,7 +24,7 @@ static void _addNewProgramOption(const ProgramOptions programOptions, const int 
   programOption->hasShortForm = hasShortForm;
   
   programOption->argumentType = argumentType;
-  programOption->stringArgument = newCharString();
+  programOption->argument = newCharString();
   programOption->enabled = false;
 
   programOptions[index] = programOption;
@@ -93,7 +93,7 @@ static bool _fillOptionArgument(ProgramOption programOption, int* currentArgc, i
       char* potentialNextArg = argv[potentialNextArgc];
       // If the next string in the sequence is NOT an argument, we assume it is the optional argument
       if(!_isStringShortOption(potentialNextArg) && !_isStringLongOption(potentialNextArg)) {
-        strncpy(programOption->stringArgument, potentialNextArg, STRING_LENGTH);
+        strncpy(programOption->argument, potentialNextArg, STRING_LENGTH);
         (*currentArgc)++;
         return true;
       }
@@ -116,7 +116,7 @@ static bool _fillOptionArgument(ProgramOption programOption, int* currentArgc, i
         return false;
       }
       else {
-        strncpy(programOption->stringArgument, nextArg, STRING_LENGTH);
+        strncpy(programOption->argument, nextArg, STRING_LENGTH);
         (*currentArgc)++;
         return true;
       }
@@ -180,7 +180,7 @@ void printProgramOptions(ProgramOptions programOptions) {
 static void _freeProgramOption(ProgramOption programOption) {
   free(programOption->name);
   free(programOption->help);
-  free(programOption->stringArgument);
+  free(programOption->argument);
   free(programOption);
 }
 

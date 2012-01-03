@@ -19,10 +19,16 @@ typedef enum {
   LOG_CRITICAL
 } LogLevel;
 
+typedef enum {
+  COLOR_TYPE_PLAIN,
+  COLOR_TYPE_DARK,
+  COLOR_TYPE_LIGHT
+} LogColorType;
+
 typedef struct {
   LogLevel logLevel;
   time_t startTime;
-  bool colorLogging;
+  LogColorType colorType;
 } EventLoggerMembers;
 
 typedef EventLoggerMembers* EventLogger;
@@ -30,7 +36,7 @@ extern EventLogger eventLoggerGlobalInstance;
 
 void initEventLogger(void);
 void setLogLevel(LogLevel logLevel);
-void setColorLogging(bool enabled);
+void setLoggingColor(LogColorType colorType);
 
 void logMessage(const LogLevel logLevel, const char* message);
 void logDebug(const char* message);

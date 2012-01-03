@@ -8,6 +8,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "EventLogger.h"
 #include "CharString.h"
@@ -57,10 +58,22 @@ int main(int argc, char** argv) {
         setLogLevel(LOG_CRITICAL);
       }
       else if(option->index == OPTION_COLOR_LOGGING) {
-        setColorLogging(true);
+        if(isStringEmpty(option->argument)) {
+          setLoggingColor(COLOR_TYPE_DARK);
+        }
+        else if(!strncmp(option->argument, "dark", STRING_LENGTH)) {
+          setLoggingColor(COLOR_TYPE_DARK);
+        }
+        else if(!strncmp(option->argument, "light", STRING_LENGTH)) {
+          setLoggingColor(COLOR_TYPE_LIGHT);
+        }
+        else {
+          logCritical("Unknown color scheme");
+          setLoggingColor(COLOR_TYPE_PLAIN);
+        }
       }
       else if(option->index == OPTION_INPUT_SOURCE) {
-        InputSourceType inputSourceType = guessInputSourceType(option->stringArgument);
+        InputSourceType inputSourceType = guessInputSourceType(option->argument);
         inputSource = newInputSource(inputSourceType);
       }
     }

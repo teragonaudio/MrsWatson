@@ -13,6 +13,7 @@
 
 #include "EventLogger.h"
 
+#define ANSI_COLOR_BLACK   "[30m"
 #define ANSI_COLOR_RED     "[31m"
 #define ANSI_COLOR_GREEN   "[32m"
 #define ANSI_COLOR_YELLOW  "[33m"
@@ -28,7 +29,7 @@ void initEventLogger(void) {
   eventLoggerGlobalInstance = malloc(sizeof(EventLoggerMembers));
   eventLoggerGlobalInstance->logLevel = LOG_INFO;
   eventLoggerGlobalInstance->startTime = time(NULL);
-  eventLoggerGlobalInstance->colorLogging = false;
+  eventLoggerGlobalInstance->colorType = COLOR_TYPE_PLAIN;
 }
 
 static EventLogger _getGlobalInstance(void) {
@@ -40,9 +41,9 @@ void setLogLevel(LogLevel logLevel) {
   eventLogger->logLevel = logLevel;
 }
 
-void setColorLogging(bool enabled) {
+void setLoggingColor(LogColorType colorType) {
   EventLogger eventLogger = _getGlobalInstance();
-  eventLogger->colorLogging = enabled;
+  eventLogger->colorType = colorType;
 }
 
 static char _logLevelStatusChar(const LogLevel logLevel) {
@@ -55,22 +56,37 @@ static char _logLevelStatusChar(const LogLevel logLevel) {
   }
 }
 
-static const char* _logLevelStatusColor(const LogLevel logLevel) {
-  switch(logLevel) {
-    case LOG_DEBUG:    return ANSI_COLOR_WHITE;
-    case LOG_INFO:     return ANSI_COLOR_GREEN;
-    case LOG_ERROR:    return ANSI_COLOR_RED;
-    case LOG_CRITICAL: return ANSI_COLOR_YELLOW;
-    default:           return ANSI_COLOR_WHITE;
+static const char* _logLevelStatusColor(LogLevel logLevel, LogColorType colorType) {
+  if(colorType == COLOR_TYPE_DARK) {
+    switch(logLevel) {
+      case LOG_DEBUG:    return ANSI_COLOR_WHITE;
+      case LOG_INFO:     return ANSI_COLOR_GREEN;
+      case LOG_ERROR:    return ANSI_COLOR_RED;
+      case LOG_CRITICAL: return ANSI_COLOR_YELLOW;
+      default:           return ANSI_COLOR_WHITE;
+    }
+  }
+  else if(colorType == COLOR_TYPE_LIGHT) {
+    switch(logLevel) {
+      case LOG_DEBUG:    return ANSI_COLOR_BLACK;
+      case LOG_INFO:     return ANSI_COLOR_GREEN;
+      case LOG_ERROR:    return ANSI_COLOR_RED;
+      case LOG_CRITICAL: return ANSI_COLOR_MAGENTA;
+      default:           return ANSI_COLOR_WHITE;
+    }
+  }
+  else {
+    // TODO: Invalid color scheme, how to handle errors from the logger?
+    return ANSI_COLOR_WHITE;
   }
 }
 
-static void _printMessage(const LogLevel logLevel, const long elapsedTime, const bool colorLogging, const char* message) {
-  if(colorLogging) {
-    fprintf(stderr, "\x1b%s%c %06ld %s\x1b%s\n", _logLevelStatusColor(logLevel), _logLevelStatusChar(logLevel), elapsedTime, message, ANSI_COLOR_RESET);
+static void _printMessage(const LogLevel logLevel, const long elapsedTime, const LogColorType colorType, const char* message) {
+  if(colorType == COLOR_TYPE_PLAIN) {
+    fprintf(stderr, "%c %06ld %s\n", _logLevelStatusChar(logLevel), elapsedTime, message);
   }
   else {
-    fprintf(stderr, "%c %06ld %s\n", _logLevelStatusChar(logLevel), elapsedTime, message);
+    fprintf(stderr, "\x1b%s%c %06ld %s\x1b%s\n", _logLevelStatusColor(logLevel, colorType), _logLevelStatusChar(logLevel), elapsedTime, message, ANSI_COLOR_RESET);
   }
 }
 
@@ -78,7 +94,7 @@ void logMessage(const LogLevel logLevel, const char* message) {
   EventLogger eventLogger = _getGlobalInstance();
   if(logLevel >= eventLogger->logLevel) {
     time_t currentTime = time(NULL);
-    _printMessage(logLevel, currentTime - eventLogger->startTime, eventLogger->colorLogging, message);
+    _printMessage(logLevel, currentTime - eventLogger->startTime, eventLogger->colorType, message);
   }
 }
 
