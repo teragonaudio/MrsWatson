@@ -12,13 +12,21 @@
 #ifndef MrsWatson_ProgramOption_h
 #define MrsWatson_ProgramOption_h
 
+typedef enum {
+  ARGUMENT_TYPE_NONE,
+  ARGUMENT_TYPE_OPTIONAL,
+  ARGUMENT_TYPE_REQUIRED
+} ProgramOptionArgumentType;
+
 typedef struct {
   int index;
   CharString name;
   CharString help;
-  bool isShort;
-  bool requiresArgument;
-  CharString argument;
+  bool hasShortForm;
+
+  ProgramOptionArgumentType argumentType;
+  CharString stringArgument;
+  bool enabled;
 } ProgramOptionMembers;
 
 typedef enum {
@@ -35,8 +43,7 @@ typedef ProgramOptionMembers* ProgramOption;
 typedef ProgramOption* ProgramOptions;
 
 ProgramOptions newProgramOptions(void);
-ProgramOption findProgramOption(ProgramOptions programOptions, const char* optionString);
-bool fillOptionArgument(ProgramOption programOption, int* currentArgc, int argc, char** argv);
+bool parseCommandLine(ProgramOptions programOptions, int argc, char** argv);
 void printProgramOptions(ProgramOptions programOptions);
 void freeProgramOptions(ProgramOptions programOptions);
 

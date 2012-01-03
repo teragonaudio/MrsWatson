@@ -9,11 +9,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "RuntimeConfiguration.h"
 #include "EventLogger.h"
 #include "CharString.h"
 #include "MrsWatson.h"
 #include "BuildInfo.h"
+#include "ProgramOption.h"
+#include "InputSource.h"
 
 CharString getNewVersionString(void) {
   CharString versionString = newCharString();
@@ -24,15 +25,48 @@ CharString getNewVersionString(void) {
 int main(int argc, char** argv) {
   initEventLogger();
 
-  RuntimeConfiguration runtimeConfiguration = newRuntimeConfiguration();
-  if(!parseCommandLine(runtimeConfiguration, argc, argv)) {
+  ProgramOptions programOptions = newProgramOptions();
+  if(!parseCommandLine(programOptions, argc, argv)) {
     logCritical("Error parsing command line");
     return -1;
   }
 
-  if(!runtimeConfiguration->configurationOk) {
-    return 1;
+  InputSource inputSource;
+
+  for(int i = 0; i < NUM_OPTIONS; i++) {
+    ProgramOption option = programOptions[i];
+    if(option->enabled) {
+      if(option->index == OPTION_HELP) {
+        printf("Usage: %s (options), where options include:\n", getFileBasename(argv[0]));
+        printProgramOptions(programOptions);
+      }
+      else if(option->index == OPTION_VERSION) {
+        CharString versionString = getNewVersionString();
+        printf("%s\nCopyright (c) %d, %s. All rights reserved.\n\n", versionString, buildYear(), COPYRIGHT_HOLDER);
+        free(versionString);
+
+        CharString wrappedLicenseInfo = newCharStringLong();
+        wrapCharStringForTerminal(LICENSE_STRING, wrappedLicenseInfo, 0);
+        printf("%s\n\n", wrappedLicenseInfo);
+        free(wrappedLicenseInfo);
+      }
+      else if(option->index == OPTION_VERBOSE) {
+        setLogLevel(LOG_DEBUG);
+      }
+      else if(option->index == OPTION_QUIET) {
+        setLogLevel(LOG_CRITICAL);
+      }
+      else if(option->index == OPTION_COLOR_LOGGING) {
+        setColorLogging(true);
+      }
+      else if(option->index == OPTION_INPUT_SOURCE) {
+        InputSourceType inputSourceType = guessInputSourceType(option->stringArgument);
+        inputSource = newInputSource(inputSourceType);
+      }
+    }
   }
+
+  freeProgramOptions(programOptions);
 
   CharString hello = getNewVersionString();
   logInfo(hello);
