@@ -108,6 +108,7 @@ int main(int argc, char** argv) {
 
   // Prepare input/output sources, plugins
   inputSource->openInputSource(inputSource);
+  initializePluginChain(pluginChain);
 
   // Shut down and free data (will also close open filehandles, plugins, etc)
   freeInputSource(inputSource);

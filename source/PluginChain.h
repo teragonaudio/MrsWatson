@@ -22,6 +22,7 @@ typedef PluginChainMembers* PluginChain;
 
 PluginChain newPluginChain(void);
 void addPluginsFromArgumentString(PluginChain pluginChain, const CharString argumentString);
+void initializePluginChain(PluginChain pluginChain);
 void process(PluginChain pluginChain, SampleBuffer inBuffer, SampleBuffer outBuffer);
 void freePluginChain(PluginChain pluginChain);
 

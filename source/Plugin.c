@@ -9,15 +9,20 @@
 #include <stdio.h>
 #import <stdlib.h>
 #import "Plugin.h"
-#import "PluginVst2x.h"
 #import "EventLogger.h"
+
+// Do NOT include PluginVst2x.h from this file, otherwise we start mixing too much C/C++ code
+// and things become a real mess. Instead, we simply extern the functions needed in that file
+// for use here. Yes, this is a bit redundant, but otherwise the entire project starts being
+// "infected" by C++.
+extern bool vst2xPluginExists(const CharString pluginName);
+extern Plugin newPluginVst2x(const CharString pluginName);
 
 PluginType guessPluginType(CharString pluginName) {
   PluginType pluginType = PLUGIN_TYPE_INVALID;
-  CharString pluginFullPath = newCharString();
   logDebug("Trying to find plugin '%s'", pluginName);
 
-  if(locateVst2xPlugin(pluginName, pluginFullPath)) {
+  if(vst2xPluginExists(pluginName)) {
     logDebug("Plugin is VST 2.x");
     pluginType = PLUGIN_TYPE_VST_2X;
   }
@@ -25,14 +30,13 @@ PluginType guessPluginType(CharString pluginName) {
     logError("Plugin '%s' could not be found", pluginName);
   }
 
-  free(pluginFullPath);
   return pluginType;
 }
 
-Plugin newPlugin(PluginType pluginType) {
+Plugin newPlugin(PluginType pluginType, const CharString pluginName) {
   switch(pluginType) {
     case PLUGIN_TYPE_VST_2X:
-      return newPluginVst2x();
+      return newPluginVst2x(pluginName);
     case PLUGIN_TYPE_INVALID:
     default:
       logError("Plugin type not supported");
