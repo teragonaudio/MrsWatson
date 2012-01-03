@@ -84,7 +84,11 @@ InputSource newInputSourcePcmFile() {
   inputSource->readBlock = _readBlockPcmFile;
   inputSource->freeInputSourceData = _freeInputSourceDataPcmFile;
 
-  inputSource->extraData = malloc(sizeof(InputSourcePcmFileDataMembers));
+  InputSourcePcmFileData extraData = malloc(sizeof(InputSourcePcmFileDataMembers));
+  extraData->fileHandle = NULL;
+  extraData->dataBufferNumItems = 0;
+  extraData->interlacedPcmDataBuffer = NULL;
+  inputSource->extraData = extraData;
 
   return inputSource;
 }
