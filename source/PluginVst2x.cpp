@@ -8,7 +8,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
 extern "C" {
 #include <Carbon/Carbon.h>
@@ -50,7 +49,7 @@ static VstIntPtr VSTCALLBACK vst2xPluginHostCallback(AEffect *effect, VstInt32 o
     case audioMasterVersion:
       return 2400;
 
-    // Unimplemented opcodes
+    // TODO: Unimplemented opcodes
     // VST1.x opcodes
     case audioMasterAutomate:
     case audioMasterCurrentId:
