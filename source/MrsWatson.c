@@ -61,27 +61,28 @@ int main(int argc, char** argv) {
   else if(programOptions[OPTION_QUIET]->enabled) {
     setLogLevel(LOG_ERROR);
   }
+  if(programOptions[OPTION_COLOR_LOGGING]->enabled) {
+    ProgramOption option = programOptions[OPTION_COLOR_LOGGING];
+    if(isCharStringEmpty(option->argument)) {
+      setLoggingColorScheme(COLOR_SCHEME_DARK);
+    }
+    else if(isCharStringEqualToCString(option->argument, "dark", false)) {
+      setLoggingColorScheme(COLOR_SCHEME_DARK);
+    }
+    else if(isCharStringEqualToCString(option->argument, "light", false)) {
+      setLoggingColorScheme(COLOR_SCHEME_LIGHT);
+    }
+    else {
+      logCritical("Unknown color scheme '%s'", option->argument->data);
+      setLoggingColorScheme(COLOR_SCHEME_NONE);
+    }
+  }
 
   // Parse other options and set up necessary objects
   for(int i = 0; i < NUM_OPTIONS; i++) {
     ProgramOption option = programOptions[i];
     if(option->enabled) {
-      if(option->index == OPTION_COLOR_LOGGING) {
-        if(isCharStringEmpty(option->argument)) {
-          setLoggingColorScheme(COLOR_SCHEME_DARK);
-        }
-        else if(isCharStringEqualToCString(option->argument, "dark", false)) {
-          setLoggingColorScheme(COLOR_SCHEME_DARK);
-        }
-        else if(isCharStringEqualToCString(option->argument, "light", false)) {
-          setLoggingColorScheme(COLOR_SCHEME_LIGHT);
-        }
-        else {
-          logCritical("Unknown color scheme '%s'", option->argument->data);
-          setLoggingColorScheme(COLOR_SCHEME_NONE);
-        }
-      }
-      else if(option->index == OPTION_INPUT_SOURCE) {
+      if(option->index == OPTION_INPUT_SOURCE) {
         InputSourceType inputSourceType = guessInputSourceType(option->argument);
         inputSource = newInputSource(inputSourceType, option->argument);
       }
