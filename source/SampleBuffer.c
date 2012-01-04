@@ -8,6 +8,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#import <string.h>
 #include "SampleBuffer.h"
 
 SampleBuffer newSampleBuffer(int numChannels, int blocksize) {
@@ -19,8 +20,21 @@ SampleBuffer newSampleBuffer(int numChannels, int blocksize) {
   for(int i = 0; i < numChannels; i++) {
     sampleBuffer->samples[i] = malloc(sizeof(Sample) * blocksize);
   }
+  clearSampleBuffer(sampleBuffer);
 
   return sampleBuffer;
+}
+
+void clearSampleBuffer(SampleBuffer sampleBuffer) {
+  for(int i = 0; i < sampleBuffer->numChannels; i++) {
+    memset(sampleBuffer->samples[i], 0, sizeof(Sample) * sampleBuffer->blocksize);
+  }
+}
+
+void copySampleBuffers(SampleBuffer destBuffer, const SampleBuffer srcBuffer) {
+  for(int i = 0; i < destBuffer->numChannels; i++) {
+    memcpy(destBuffer->samples[i], srcBuffer->samples[i], sizeof(Sample) * destBuffer->blocksize);
+  }
 }
 
 void freeSampleBuffer(SampleBuffer sampleBuffer) {

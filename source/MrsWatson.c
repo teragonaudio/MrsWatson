@@ -138,9 +138,20 @@ int main(int argc, char** argv) {
   }
 
   // Let the games begin!
-  logInfo("Processing with samplerate %.0f, blocksize %d, num channels %d", getSampleRate(), getBlocksize(), getNumChannels());
+  logInfo("Processing with samplerate %.0f, blocksize %d, %d channels", getSampleRate(), getBlocksize(), getNumChannels());
+  SampleBuffer inputSampleBuffer = newSampleBuffer(getNumChannels(), getBlocksize());
+  SampleBuffer outputSampleBuffer = newSampleBuffer(getNumChannels(), getBlocksize());
+  boolean finishedReading = false;
+  while(!finishedReading) {
+    finishedReading = !inputSource->readSampleBlock(inputSource, inputSampleBuffer);
+    process(pluginChain, inputSampleBuffer, outputSampleBuffer);
+    outputSource->writeSampleBlock(outputSource, outputSampleBuffer);
+  }
 
-  // Shut down and free data (will also close open filehandles, plugins, etc)
+  freeSampleBuffer(inputSampleBuffer);
+  freeSampleBuffer(outputSampleBuffer);
+
+  // Shut down and free data (will also close open files, plugins, etc)
   logInfo("Shutting down");
   freeSampleSource(inputSource);
   freePluginChain(pluginChain);
