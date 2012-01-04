@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		24182A8314B492DD009F0A5D /* AudioSettings.c in Sources */ = {isa = PBXBuildFile; fileRef = 24182A8214B492DD009F0A5D /* AudioSettings.c */; };
 		2435636814B1A2D50049FD43 /* EventLogger.c in Sources */ = {isa = PBXBuildFile; fileRef = 2435636714B1A2D50049FD43 /* EventLogger.c */; };
 		2435636B14B1B4FE0049FD43 /* CharString.c in Sources */ = {isa = PBXBuildFile; fileRef = 2435636A14B1B4FE0049FD43 /* CharString.c */; };
 		2435637B14B1BF3F0049FD43 /* ProgramOption.c in Sources */ = {isa = PBXBuildFile; fileRef = 2435637A14B1BF3F0049FD43 /* ProgramOption.c */; };
@@ -37,6 +38,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		24182A8014B492D6009F0A5D /* AudioSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioSettings.h; path = source/AudioSettings.h; sourceTree = SOURCE_ROOT; };
+		24182A8214B492DD009F0A5D /* AudioSettings.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = AudioSettings.c; path = source/AudioSettings.c; sourceTree = SOURCE_ROOT; };
 		2435636614B1A2C50049FD43 /* EventLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EventLogger.h; path = source/EventLogger.h; sourceTree = SOURCE_ROOT; };
 		2435636714B1A2D50049FD43 /* EventLogger.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = EventLogger.c; path = source/EventLogger.c; sourceTree = SOURCE_ROOT; };
 		2435636914B1A2FE0049FD43 /* Types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Types.h; path = source/Types.h; sourceTree = SOURCE_ROOT; };
@@ -141,6 +144,8 @@
 		24FDFBAD148CC6AF0074D3A1 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				24182A8214B492DD009F0A5D /* AudioSettings.c */,
+				24182A8014B492D6009F0A5D /* AudioSettings.h */,
 				2435639214B20B5A0049FD43 /* BuildInfo.c */,
 				2435639514B20B750049FD43 /* BuildInfo.h */,
 				2435636A14B1B4FE0049FD43 /* CharString.c */,
@@ -149,10 +154,6 @@
 				24EE33E914B3456000CFADE0 /* CharStringList.h */,
 				2435636714B1A2D50049FD43 /* EventLogger.c */,
 				2435636614B1A2C50049FD43 /* EventLogger.h */,
-				2435638B14B1FF010049FD43 /* SampleSource.c */,
-				2435638914B1FEF70049FD43 /* SampleSource.h */,
-				2435639614B20B960049FD43 /* SampleSourcePcmFile.c */,
-				2435638D14B1FF110049FD43 /* SampleSourcePcmFile.h */,
 				24FDFBC0148CC9CC0074D3A1 /* MrsWatson.c */,
 				2435636D14B1B5F50049FD43 /* MrsWatson.h */,
 				2435639914B22B990049FD43 /* PlatformInfo.c */,
@@ -167,6 +168,10 @@
 				2435637C14B1BF4B0049FD43 /* ProgramOption.h */,
 				2435639B14B22FFB0049FD43 /* SampleBuffer.c */,
 				2435639D14B230070049FD43 /* SampleBuffer.h */,
+				2435638B14B1FF010049FD43 /* SampleSource.c */,
+				2435638914B1FEF70049FD43 /* SampleSource.h */,
+				2435639614B20B960049FD43 /* SampleSourcePcmFile.c */,
+				2435638D14B1FF110049FD43 /* SampleSourcePcmFile.h */,
 				2458026014B4542A0030FEE9 /* StringUtilities.c */,
 				2458026314B454320030FEE9 /* StringUtilities.h */,
 				2435636914B1A2FE0049FD43 /* Types.h */,
@@ -258,6 +263,7 @@
 				2465A2D814B3313600F94E84 /* PluginChain.c in Sources */,
 				24EE33E714B3455800CFADE0 /* CharStringList.c in Sources */,
 				2458026114B4542A0030FEE9 /* StringUtilities.c in Sources */,
+				24182A8314B492DD009F0A5D /* AudioSettings.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
