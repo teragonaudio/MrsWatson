@@ -1,5 +1,5 @@
 //
-//  InputSourcePcmFile.h
+//  SampleSourcePcmFile.h
 //  MrsWatson
 //
 //  Created by Nik Reiman on 1/2/12.
@@ -7,7 +7,7 @@
 //
 
 #include <stdio.h>
-#include "InputSource.h"
+#include "SampleSource.h"
 
 #ifndef MrsWatson_InputSourcePcmFile_h
 #define MrsWatson_InputSourcePcmFile_h
@@ -16,10 +16,10 @@ typedef struct {
   FILE* fileHandle;
   size_t dataBufferNumItems;
   short* interlacedPcmDataBuffer;
-} InputSourcePcmFileDataMembers;
+} SampleSourcePcmFileDataMembers;
 
-typedef InputSourcePcmFileDataMembers* InputSourcePcmFileData;
+typedef SampleSourcePcmFileDataMembers* SampleSourcePcmFileData;
 
-InputSource newInputSourcePcmFile(const CharString inputSourceName);
+SampleSource newSampleSourcePcmFile(const CharString sampleSourceName);
 
 #endif

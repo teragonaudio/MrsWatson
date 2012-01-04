@@ -6,11 +6,11 @@
 //  Copyright (c) 2012 Teragon Audio. All rights reserved.
 //
 
-#include "InputSource.h"
+#include "SampleSource.h"
 
 #ifndef MrsWatson_InputSourcePcmStream_h
 #define MrsWatson_InputSourcePcmStream_h
 
-InputSource newInputSourcePcmStream(void);
+SampleSource newInputSourcePcmStream(void);
 
 #endif

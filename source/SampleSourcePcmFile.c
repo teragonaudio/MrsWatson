@@ -1,5 +1,5 @@
 //
-//  InputSourcePcmFile.c
+//  SampleSourcePcmFile.c
 //  MrsWatson
 //
 //  Created by Nik Reiman on 1/2/12.
@@ -9,14 +9,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "InputSourcePcmFile.h"
+#include "SampleSourcePcmFile.h"
 
-static boolean _openInputSourcePcmFile(void* inputSourcePtr) {
-  InputSource inputSource = inputSourcePtr;
+static boolean _openSampleSourcePcmFile(void* sampleSourcePtr) {
+  SampleSource sampleSource = sampleSourcePtr;
 
-  InputSourcePcmFileData extraData = inputSource->extraData;
+  SampleSourcePcmFileData extraData = sampleSource->extraData;
   extraData->dataBufferNumItems = 0;
-  extraData->fileHandle = fopen(inputSource->inputSourceName->data, "rb");
+  extraData->fileHandle = fopen(sampleSource->sourceName->data, "rb");
   if(extraData == NULL) {
     // TODO: Error
     return false;
@@ -42,9 +42,9 @@ static void _convertPcmDataToSampleBuffer(const short* inPcmSamples, SampleBuffe
   }
 }
 
-static boolean _readBlockPcmFile(void* inputSourcePtr, SampleBuffer sampleBuffer) {
-  InputSource inputSource = inputSourcePtr;
-  InputSourcePcmFileData extraData = inputSource->extraData;
+static boolean _readBlockPcmFile(void* sampleSourcePtr, SampleBuffer sampleBuffer) {
+  SampleSource sampleSource = sampleSourcePtr;
+  SampleSourcePcmFileData extraData = sampleSource->extraData;
   if(extraData->dataBufferNumItems == 0) {
     extraData->dataBufferNumItems = (size_t)(sampleBuffer->numChannels * sampleBuffer->blocksize);
     extraData->interlacedPcmDataBuffer = malloc(sizeof(short) * extraData->dataBufferNumItems);
@@ -64,8 +64,8 @@ static boolean _readBlockPcmFile(void* inputSourcePtr, SampleBuffer sampleBuffer
   return result;
 }
 
-static void _freeInputSourceDataPcmFile(void* inputSourceDataPtr) {
-  InputSourcePcmFileData extraData = inputSourceDataPtr;
+static void _freeInputSourceDataPcmFile(void* sampleSourceDataPtr) {
+  SampleSourcePcmFileData extraData = sampleSourceDataPtr;
   free(extraData->interlacedPcmDataBuffer);
   if(extraData->fileHandle != NULL) {
     fclose(extraData->fileHandle);
@@ -73,25 +73,25 @@ static void _freeInputSourceDataPcmFile(void* inputSourceDataPtr) {
   free(extraData);
 }
 
-InputSource newInputSourcePcmFile(const CharString inputSourceName) {
-  InputSource inputSource = malloc(sizeof(InputSourceMembers));
+SampleSource newSampleSourcePcmFile(const CharString sampleSourceName) {
+  SampleSource sampleSource = malloc(sizeof(SampleSourceMembers));
 
-  inputSource->inputSourceType = INPUT_SOURCE_TYPE_PCM_FILE;
-  inputSource->inputSourceName = newCharString();
-  copyCharStrings(inputSource->inputSourceName, inputSourceName);
+  sampleSource->sampleSourceType = SAMPLE_SOURCE_TYPE_PCM_FILE;
+  sampleSource->sourceName = newCharString();
+  copyCharStrings(sampleSource->sourceName, sampleSourceName);
   // TODO: Need a way to pass in channels, bitrate, sample rate
-  inputSource->numChannels = 2;
-  inputSource->sampleRate = 44100.0f;
+  sampleSource->numChannels = 2;
+  sampleSource->sampleRate = 44100.0f;
 
-  inputSource->openInputSource = _openInputSourcePcmFile;
-  inputSource->readBlock = _readBlockPcmFile;
-  inputSource->freeInputSourceData = _freeInputSourceDataPcmFile;
+  sampleSource->openSampleSource = _openSampleSourcePcmFile;
+  sampleSource->readSampleBlock = _readBlockPcmFile;
+  sampleSource->freeSampleSourceData = _freeInputSourceDataPcmFile;
 
-  InputSourcePcmFileData extraData = malloc(sizeof(InputSourcePcmFileDataMembers));
+  SampleSourcePcmFileData extraData = malloc(sizeof(SampleSourcePcmFileDataMembers));
   extraData->fileHandle = NULL;
   extraData->dataBufferNumItems = 0;
   extraData->interlacedPcmDataBuffer = NULL;
-  inputSource->extraData = extraData;
+  sampleSource->extraData = extraData;
 
-  return inputSource;
+  return sampleSource;
 }

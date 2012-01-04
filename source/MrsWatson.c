@@ -13,7 +13,7 @@
 #include "MrsWatson.h"
 #include "BuildInfo.h"
 #include "ProgramOption.h"
-#include "InputSource.h"
+#include "SampleSource.h"
 #include "PluginChain.h"
 #include "StringUtilities.h"
 
@@ -25,7 +25,7 @@ int main(int argc, char** argv) {
   initEventLogger();
 
   // Input/Output sources, plugin chain, and other required objects
-  InputSource inputSource = NULL;
+  SampleSource inputSource = NULL;
   PluginChain pluginChain = newPluginChain();
   boolean shouldDisplayPluginInfo = false;
 
@@ -83,8 +83,8 @@ int main(int argc, char** argv) {
     ProgramOption option = programOptions[i];
     if(option->enabled) {
       if(option->index == OPTION_INPUT_SOURCE) {
-        InputSourceType inputSourceType = guessInputSourceType(option->argument);
-        inputSource = newInputSource(inputSourceType, option->argument);
+        SampleSourceType inputSourceType = guessSampleSourceType(option->argument);
+        inputSource = newSampleSource(inputSourceType, option->argument);
       }
       else if(option->index == OPTION_PLUGIN) {
         addPluginsFromArgumentString(pluginChain, option->argument);
@@ -113,7 +113,7 @@ int main(int argc, char** argv) {
   }
 
   // Prepare input/output sources, plugins
-  inputSource->openInputSource(inputSource);
+  inputSource->openSampleSource(inputSource);
   initializePluginChain(pluginChain);
 
   if(shouldDisplayPluginInfo) {
@@ -122,7 +122,7 @@ int main(int argc, char** argv) {
 
   // Shut down and free data (will also close open filehandles, plugins, etc)
   logInfo("Shutting down");
-  freeInputSource(inputSource);
+  freeSampleSource(inputSource);
   freePluginChain(pluginChain);
 
   logInfo("Goodbye!");

@@ -9,6 +9,6 @@
 #include <stdio.h>
 #include "InputSourcePcmStream.h"
 
-InputSource newInputSourcePcmStream(void) {
+SampleSource newInputSourcePcmStream(void) {
   return NULL;
 }
