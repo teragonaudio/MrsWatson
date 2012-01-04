@@ -9,8 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
-#include <sys/types.h>
-#include <time.h>
+#import <sys/time.h>
 #include "CharString.h"
 #include "BuildInfo.h"
 #include "EventLogger.h"
@@ -31,7 +30,10 @@ EventLogger eventLoggerGlobalInstance;
 void initEventLogger(void) {
   eventLoggerGlobalInstance = malloc(sizeof(EventLoggerMembers));
   eventLoggerGlobalInstance->logLevel = LOG_INFO;
-  eventLoggerGlobalInstance->startTime = time(NULL);
+  struct timeval currentTime;
+  gettimeofday(&currentTime, NULL);
+  eventLoggerGlobalInstance->startTimeInSec = currentTime.tv_sec;
+  eventLoggerGlobalInstance->startTimeInMs = currentTime.tv_usec / 1000;
   eventLoggerGlobalInstance->colorScheme = COLOR_SCHEME_NONE;
 }
 
@@ -87,10 +89,10 @@ static const char* _logLevelStatusColor(const LogLevel logLevel, const LogColorS
 static const char* _logTimeZebraStripeColor(const long elapsedTime, const LogColorScheme colorScheme) {
   boolean zebraState = ((elapsedTime / ZEBRA_STRIPE_SIZE_IN_MS) % 2) == 1;
   if(colorScheme == COLOR_SCHEME_DARK) {
-    return zebraState ? ANSI_COLOR_YELLOW : ANSI_COLOR_WHITE;
+    return zebraState ? ANSI_COLOR_WHITE : ANSI_COLOR_YELLOW;
   }
   else if(colorScheme == COLOR_SCHEME_LIGHT) {
-    return zebraState ? ANSI_COLOR_BLUE : ANSI_COLOR_BLACK;
+    return zebraState ? ANSI_COLOR_BLACK : ANSI_COLOR_BLUE;
   }
   else {
     // TODO: Invalid color scheme, how to handle errors from the logger?
@@ -98,14 +100,19 @@ static const char* _logTimeZebraStripeColor(const long elapsedTime, const LogCol
   }
 }
 
-static void _printMessage(const LogLevel logLevel, const long elapsedTime, const LogColorScheme colorScheme, const char* message) {
+static void _printMessage(const LogLevel logLevel, const long elapsedTimeInMs, const LogColorScheme colorScheme, const char* message) {
   if(colorScheme == COLOR_SCHEME_NONE) {
-    fprintf(stderr, "%c %06ld %s\n", _logLevelStatusChar(logLevel), elapsedTime, message);
+    fprintf(stderr, "%c %06ld %s\n", _logLevelStatusChar(logLevel), elapsedTimeInMs, message);
   }
   else {
     fprintf(stderr, "\x1b%s%c\x1b%s ", _logLevelStatusColor(logLevel, colorScheme), _logLevelStatusChar(logLevel), ANSI_COLOR_RESET);
-    fprintf(stderr, "\x1b%s%06ld\x1b%s ", _logTimeZebraStripeColor(elapsedTime, colorScheme), elapsedTime, ANSI_COLOR_RESET);
-    fprintf(stderr, "%s\n", message);
+    fprintf(stderr, "\x1b%s%06ld\x1b%s ", _logTimeZebraStripeColor(elapsedTimeInMs, colorScheme), elapsedTimeInMs, ANSI_COLOR_RESET);
+    if(logLevel == LOG_ERROR) {
+      fprintf(stderr, "\x1b%s%s\x1b%s\n", ANSI_COLOR_RED, message, ANSI_COLOR_RESET);
+    }
+    else {
+      fprintf(stderr, "%s\n", message);
+    }
   }
 }
 
@@ -114,8 +121,11 @@ static void _logMessage(const LogLevel logLevel, const char* message, va_list ar
   if(logLevel >= eventLogger->logLevel) {
     CharString formattedMessage = newCharString();
     vsnprintf(formattedMessage->data, formattedMessage->capacity, message, arguments);
-    time_t currentTime = time(NULL);
-    _printMessage(logLevel, currentTime - eventLogger->startTime, eventLogger->colorScheme, formattedMessage->data);
+    struct timeval currentTime;
+    gettimeofday(&currentTime, NULL);
+    const long elapsedTimeInMs = ((currentTime.tv_sec - (eventLogger->startTimeInSec + 1)) * 1000) +
+      (currentTime.tv_usec / 1000) + (1000 - eventLogger->startTimeInMs);
+    _printMessage(logLevel, elapsedTimeInMs, eventLogger->colorScheme, formattedMessage->data);
     freeCharString(formattedMessage);
   }
 }

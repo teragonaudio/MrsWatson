@@ -12,7 +12,7 @@
 #ifndef MrsWatson_EventLogger_h
 #define MrsWatson_EventLogger_h
 
-#define ZEBRA_STRIPE_SIZE_IN_MS 100
+#define ZEBRA_STRIPE_SIZE_IN_MS 1000
 
 typedef enum {
   LOG_DEBUG,
@@ -29,7 +29,8 @@ typedef enum {
 
 typedef struct {
   LogLevel logLevel;
-  time_t startTime;
+  long startTimeInSec;
+  long startTimeInMs;
   LogColorScheme colorScheme;
 } EventLoggerMembers;
 
