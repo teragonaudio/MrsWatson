@@ -13,6 +13,7 @@
 #include "InputSourcePcmFile.h"
 #include "InputSourcePcmStream.h"
 #include "StringUtilities.h"
+#import "EventLogger.h"
 
 InputSourceType guessInputSourceType(CharString inputSourceTypeString) {
   if(inputSourceTypeString != NULL) {
@@ -30,11 +31,16 @@ InputSourceType guessInputSourceType(CharString inputSourceTypeString) {
       else if(!strcasecmp(fileExtension, "pcm") || !strcasecmp(fileExtension, "raw") || !strcasecmp(fileExtension, "dat")) {
         return INPUT_SOURCE_TYPE_PCM_FILE;
       }
+      else {
+        logCritical("Input source '%s' does not match any supported type", inputSourceTypeString->data);
+        return INPUT_SOURCE_TYPE_INVALID;
+      }
     }
   }
-
-  // If we reach this point, then it is probably not a supported input source type
-  return INPUT_SOURCE_TYPE_INVALID;
+  else {
+    logInternalError("Input source type was null");
+    return INPUT_SOURCE_TYPE_INVALID;
+  }
 }
 
 InputSource newInputSource(InputSourceType inputSourceType, const CharString inputSourceName) {
