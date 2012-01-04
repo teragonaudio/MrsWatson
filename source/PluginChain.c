@@ -86,29 +86,18 @@ void displayPluginInfo(PluginChain pluginChain) {
 
 void process(PluginChain pluginChain, SampleBuffer inBuffer, SampleBuffer outBuffer) {
   logDebug("Processing plugin chain");
-  SampleBuffer chainInput = inBuffer;
-  SampleBuffer chainOutput = newSampleBuffer(inBuffer->numChannels, inBuffer->blocksize);
-
   for(int i = 0; i < pluginChain->numPlugins; i++) {
-    clearSampleBuffer(chainOutput);
+    clearSampleBuffer(outBuffer);
     Plugin plugin = pluginChain->plugins[i];
     logDebug("Processing plugin '%s'", plugin->pluginName->data);
-    plugin->process(plugin, chainInput, chainOutput);
+    plugin->process(plugin, inBuffer, outBuffer);
 
-    // If this is not the last plugin in the chain, then flip the inputs and outputs for
-    // the next cycle. This will allow the next plugin to have this plugin's output as
-    // it's input. This plugin's input is no longer relevant, so it can be safely cleared
-    // at the start of the next loop.
+    // If this is not the last plugin in the chain, then copy the output of this plugin
+    // back to the input for the next one in the chain.
     if(i + 1 < pluginChain->numPlugins) {
-      SampleBuffer swapBuffer = chainInput;
-      chainInput = chainOutput;
-      chainOutput = swapBuffer;
+      copySampleBuffers(inBuffer, outBuffer);
     }
   }
-
-  // Copy the output from the last processed plugin to the output buffer
-  copySampleBuffers(outBuffer, chainOutput);
-  freeSampleBuffer(chainOutput);
 }
 
 void freePluginChain(PluginChain pluginChain) {
