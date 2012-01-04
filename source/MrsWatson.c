@@ -31,46 +31,42 @@ int main(int argc, char** argv) {
 
   ProgramOptions programOptions = newProgramOptions();
   if(!parseCommandLine(programOptions, argc, argv)) {
-    logCritical("Error parsing command line");
-    return -1;
+    return RETURN_CODE_INVALID_ARGUMENT;
   }
 
-  // Parse these options separately so that log messages displayed in the below loop are properly displayed
+  // If the user wanted help or the version info, print those out and then exit right away
+  if(programOptions[OPTION_HELP]->enabled) {
+    printf("Usage: %s (options), where options include:\n", getFileBasename(argv[0]));
+    printProgramOptions(programOptions);
+    return RETURN_CODE_NOT_RUN;
+  }
+  else if(programOptions[OPTION_VERSION]->enabled) {
+    CharString versionString = newCharString();
+    fillVersionString(versionString);
+    printf("%s\nCopyright (c) %d, %s. All rights reserved.\n\n", versionString->data, buildYear(), COPYRIGHT_HOLDER);
+    freeCharString(versionString);
+
+    CharString wrappedLicenseInfo = newCharStringWithCapacity(STRING_LENGTH_LONG);
+    wrapCharStringForTerminal(LICENSE_STRING, wrappedLicenseInfo->data, 0);
+    printf("%s\n\n", wrappedLicenseInfo->data);
+    freeCharString(wrappedLicenseInfo);
+
+    return RETURN_CODE_NOT_RUN;
+  }
+
+  // Parse these options first so that log messages displayed in the below loop are properly displayed
   if(programOptions[OPTION_VERBOSE]->enabled) {
     setLogLevel(LOG_DEBUG);
   }
   else if(programOptions[OPTION_QUIET]->enabled) {
-    setLogLevel(LOG_CRITICAL);
+    setLogLevel(LOG_ERROR);
   }
 
-  // Say hello!
-  CharString hello = newCharString();
-  fillVersionString(hello);
-  logInfo(hello->data);
-  freeCharString(hello);
-
+  // Parse other options and set up necessary objects
   for(int i = 0; i < NUM_OPTIONS; i++) {
     ProgramOption option = programOptions[i];
     if(option->enabled) {
-      if(option->index == OPTION_HELP) {
-        printf("Usage: %s (options), where options include:\n", getFileBasename(argv[0]));
-        printProgramOptions(programOptions);
-        return RETURN_CODE_NOT_RUN;
-      }
-      else if(option->index == OPTION_VERSION) {
-        CharString versionString = newCharString();
-        fillVersionString(versionString);
-        printf("%s\nCopyright (c) %d, %s. All rights reserved.\n\n", versionString->data, buildYear(), COPYRIGHT_HOLDER);
-        freeCharString(versionString);
-
-        CharString wrappedLicenseInfo = newCharStringWithCapacity(STRING_LENGTH_LONG);
-        wrapCharStringForTerminal(LICENSE_STRING, wrappedLicenseInfo->data, 0);
-        printf("%s\n\n", wrappedLicenseInfo->data);
-        freeCharString(wrappedLicenseInfo);
-
-        return RETURN_CODE_NOT_RUN;
-      }
-      else if(option->index == OPTION_COLOR_LOGGING) {
+      if(option->index == OPTION_COLOR_LOGGING) {
         if(isCharStringEmpty(option->argument)) {
           setLoggingColor(COLOR_TYPE_DARK);
         }
@@ -98,6 +94,12 @@ int main(int argc, char** argv) {
     }
   }
   freeProgramOptions(programOptions);
+
+  // Say hello!
+  CharString versionString = newCharString();
+  fillVersionString(versionString);
+  logInfo("%s initialized", versionString->data);
+  freeCharString(versionString);
 
   // Check required variables to make sure we have everything needed to start processing
   if(inputSource == NULL) {
