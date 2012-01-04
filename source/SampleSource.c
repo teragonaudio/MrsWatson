@@ -11,7 +11,6 @@
 #include <string.h>
 #include "SampleSource.h"
 #include "SampleSourcePcmFile.h"
-#include "InputSourcePcmStream.h"
 #include "StringUtilities.h"
 #include "EventLogger.h"
 
@@ -48,7 +47,8 @@ SampleSource newSampleSource(SampleSourceType sampleSourceType, const CharString
     case SAMPLE_SOURCE_TYPE_PCM_FILE:
       return newSampleSourcePcmFile(sampleSourceName);
     case SAMPLE_SOURCE_TYPE_PCM_STREAM:
-      return newInputSourcePcmStream();
+      // TODO: Currently unsupported
+      return NULL;
     default:
       return NULL;
   }
