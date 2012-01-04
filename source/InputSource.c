@@ -12,7 +12,7 @@
 #include "InputSource.h"
 #include "InputSourcePcmFile.h"
 #include "InputSourcePcmStream.h"
-#import "StringUtilities.h"
+#include "StringUtilities.h"
 
 InputSourceType guessInputSourceType(CharString inputSourceTypeString) {
   if(inputSourceTypeString != NULL) {

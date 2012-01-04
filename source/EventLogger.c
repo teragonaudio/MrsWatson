@@ -12,8 +12,9 @@
 #include <sys/types.h>
 #include <time.h>
 #include "CharString.h"
-
+#include "BuildInfo.h"
 #include "EventLogger.h"
+#include "MrsWatson.h"
 
 #define ANSI_COLOR_BLACK   "[30m"
 #define ANSI_COLOR_RED     "[31m"

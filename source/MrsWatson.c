@@ -15,7 +15,7 @@
 #include "ProgramOption.h"
 #include "InputSource.h"
 #include "PluginChain.h"
-#import "StringUtilities.h"
+#include "StringUtilities.h"
 
 void fillVersionString(CharString outString) {
   snprintf(outString->data, outString->capacity,

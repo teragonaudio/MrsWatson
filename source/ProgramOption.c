@@ -11,7 +11,7 @@
 #include <string.h>
 #include "ProgramOption.h"
 #include "EventLogger.h"
-#import "StringUtilities.h"
+#include "StringUtilities.h"
 
 static void _addNewProgramOption(const ProgramOptions programOptions, const int index,
   const char* name, const char* help, boolean hasShortForm, ProgramOptionArgumentType argumentType) {

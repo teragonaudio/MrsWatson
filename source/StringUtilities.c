@@ -7,10 +7,10 @@
 //
 
 #include <stdio.h>
-#import <string.h>
-#import <stdlib.h>
+#include <string.h>
+#include <stdlib.h>
 #include "StringUtilities.h"
-#import "PlatformInfo.h"
+#include "PlatformInfo.h"
 
 void wrapCharStringForTerminal(const char* srcString, char* destString, int indentSize) {
   wrapCharString(srcString, destString, indentSize, TERMINAL_LINE_LENGTH);
