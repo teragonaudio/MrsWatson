@@ -41,7 +41,7 @@ static boolean _openSampleSourcePcmFile(void* sampleSourcePtr, const SampleSourc
 static void _convertPcmDataToSampleBuffer(const short* inPcmSamples, SampleBuffer sampleBuffer, const long numInterlacedSamples) {
   for(long interlacedIndex = 0, deinterlacedIndex = 0; interlacedIndex < numInterlacedSamples; interlacedIndex++) {
     for(int channelIndex = 0; channelIndex < sampleBuffer->numChannels; channelIndex++) {
-      Sample convertedSample = (Sample)inPcmSamples[interlacedIndex] / 32768.0f;
+      Sample convertedSample = (Sample)inPcmSamples[interlacedIndex] / 32767.0f;
       // Apply brickwall limiter to prevent clipping
       if(convertedSample > 1.0f) {
         convertedSample = 1.0f;
