@@ -15,6 +15,7 @@ extern "C" {
 #include "PlatformInfo.h"
 #include "EventLogger.h"
 #include "CharStringList.h"
+#include "AudioSettings.h"
 }
 
 #include "aeffectx.h"
@@ -240,11 +241,8 @@ static void _initVst2xPlugin(Plugin plugin) {
   logDebug("Initializing VST2.x plugin '%s' (%s)", plugin->pluginName->data, uniqueIdString->data);
 
   data->dispatcher(data->pluginHandle, effOpen, 0, 0, NULL, 0.0f);
-  // TODO: Ugh, still need to figure out how/where to store sample rate, blocksize, etc.
-  float sampleRate = 44100.0f;
-  data->dispatcher(data->pluginHandle, effSetSampleRate, 0, 0, NULL, sampleRate);
-  int blocksize = 512;
-  data->dispatcher(data->pluginHandle, effSetBlockSize, 0, blocksize, NULL, 0.0f);
+  data->dispatcher(data->pluginHandle, effSetSampleRate, 0, 0, NULL, getSampleRate());
+  data->dispatcher(data->pluginHandle, effSetBlockSize, 0, getBlocksize(), NULL, 0.0f);
 
   _resumePlugin(plugin);
 }
