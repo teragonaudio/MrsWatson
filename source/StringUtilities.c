@@ -12,11 +12,11 @@
 #include "StringUtilities.h"
 #include "PlatformInfo.h"
 
-void wrapCharStringForTerminal(const char* srcString, char* destString, int indentSize) {
-  wrapCharString(srcString, destString, indentSize, TERMINAL_LINE_LENGTH);
+void wrapStringForTerminal(const char* srcString, char* destString, int indentSize) {
+  wrapString(srcString, destString, indentSize, TERMINAL_LINE_LENGTH);
 }
 
-void wrapCharString(const char* srcString, char* destString, int indentSize, int lineLength) {
+void wrapString(const char* srcString, char* destString, int indentSize, int lineLength) {
   char* lineBuffer = malloc(sizeof(char) * lineLength);
   long destStringIndex = 0;
   long srcStringIndex = 0;

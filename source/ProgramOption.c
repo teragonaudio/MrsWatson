@@ -182,7 +182,7 @@ void printProgramOptions(ProgramOptions programOptions) {
 
     // Newline and indentation before help
     CharString wrappedHelpString = newCharStringWithCapacity(STRING_LENGTH_LONG);
-    wrapCharStringForTerminal(programOption->help->data, wrappedHelpString->data, 4);
+    wrapStringForTerminal(programOption->help->data, wrappedHelpString->data, 4);
     printf("\n    %s\n", wrappedHelpString->data);
     freeCharString(wrappedHelpString);
   }

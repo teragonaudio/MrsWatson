@@ -7,9 +7,9 @@
 //
 
 #include <stdio.h>
+#import <stdlib.h>
 
 #include "EventLogger.h"
-#include "CharString.h"
 #include "MrsWatson.h"
 #include "BuildInfo.h"
 #include "ProgramOption.h"
@@ -49,7 +49,7 @@ int main(int argc, char** argv) {
     freeCharString(versionString);
 
     CharString wrappedLicenseInfo = newCharStringWithCapacity(STRING_LENGTH_LONG);
-    wrapCharStringForTerminal(LICENSE_STRING, wrappedLicenseInfo->data, 0);
+    wrapStringForTerminal(LICENSE_STRING, wrappedLicenseInfo->data, 0);
     printf("%s\n\n", wrappedLicenseInfo->data);
     freeCharString(wrappedLicenseInfo);
 
