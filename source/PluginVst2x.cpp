@@ -234,8 +234,11 @@ static void _suspendPlugin(Plugin plugin) {
 }
 
 static void _initVst2xPlugin(Plugin plugin) {
-  logDebug("Initializing VST2.x plugin '%s'", plugin->pluginName->data);
   PluginVst2xData data = (PluginVst2xData)plugin->extraData;
+  CharString uniqueIdString = newCharStringWithCapacity(STRING_LENGTH_SHORT);
+  _fillVst2xUniqueIdToString(data->pluginHandle->uniqueID, uniqueIdString);
+  logDebug("Initializing VST2.x plugin '%s' (%s)", plugin->pluginName->data, uniqueIdString->data);
+
   data->dispatcher(data->pluginHandle, effOpen, 0, 0, NULL, 0.0f);
   // TODO: Ugh, still need to figure out how/where to store sample rate, blocksize, etc.
   float sampleRate = 44100.0f;
