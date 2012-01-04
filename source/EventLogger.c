@@ -47,9 +47,26 @@ void setLogLevel(LogLevel logLevel) {
   eventLogger->logLevel = logLevel;
 }
 
-void setLoggingColorScheme(LogColorScheme colorScheme) {
+void setLoggingColorScheme(const LogColorScheme colorScheme) {
   EventLogger eventLogger = _getEventLoggerInstance();
   eventLogger->colorScheme = colorScheme;
+}
+
+void setLoggingColorSchemeWithString(const CharString colorSchemeName) {
+  if(isCharStringEmpty(colorSchemeName)) {
+    // If no name was explicitly given, assume a dark terminal background
+    setLoggingColorScheme(COLOR_SCHEME_DARK);
+  }
+  else if(isCharStringEqualToCString(colorSchemeName, "dark", false)) {
+    setLoggingColorScheme(COLOR_SCHEME_DARK);
+  }
+  else if(isCharStringEqualToCString(colorSchemeName, "light", false)) {
+    setLoggingColorScheme(COLOR_SCHEME_LIGHT);
+  }
+  else {
+    logCritical("Unknown color scheme '%s'", colorSchemeName->data);
+    setLoggingColorScheme(COLOR_SCHEME_NONE);
+  }
 }
 
 static char _logLevelStatusChar(const LogLevel logLevel) {

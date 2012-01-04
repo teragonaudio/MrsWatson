@@ -64,20 +64,7 @@ int main(int argc, char** argv) {
     setLogLevel(LOG_ERROR);
   }
   if(programOptions[OPTION_COLOR_LOGGING]->enabled) {
-    ProgramOption option = programOptions[OPTION_COLOR_LOGGING];
-    if(isCharStringEmpty(option->argument)) {
-      setLoggingColorScheme(COLOR_SCHEME_DARK);
-    }
-    else if(isCharStringEqualToCString(option->argument, "dark", false)) {
-      setLoggingColorScheme(COLOR_SCHEME_DARK);
-    }
-    else if(isCharStringEqualToCString(option->argument, "light", false)) {
-      setLoggingColorScheme(COLOR_SCHEME_LIGHT);
-    }
-    else {
-      logCritical("Unknown color scheme '%s'", option->argument->data);
-      setLoggingColorScheme(COLOR_SCHEME_NONE);
-    }
+    setLoggingColorSchemeWithString(programOptions[OPTION_COLOR_LOGGING]->argument);
   }
 
   // Parse other options and set up necessary objects

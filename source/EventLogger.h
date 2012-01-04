@@ -8,6 +8,7 @@
 
 #include <sys/types.h>
 #include "Types.h"
+#import "CharString.h"
 
 #ifndef MrsWatson_EventLogger_h
 #define MrsWatson_EventLogger_h
@@ -40,7 +41,8 @@ extern EventLogger eventLoggerInstance;
 void initEventLogger(void);
 
 void setLogLevel(LogLevel logLevel);
-void setLoggingColorScheme(LogColorScheme colorScheme);
+void setLoggingColorScheme(const LogColorScheme colorScheme);
+void setLoggingColorSchemeWithString(const CharString colorSchemeName);
 
 void logDebug(const char* message, ...);
 void logInfo(const char* message, ...);
