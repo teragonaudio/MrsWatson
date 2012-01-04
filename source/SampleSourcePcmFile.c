@@ -10,18 +10,31 @@
 #include <stdlib.h>
 #include <string.h>
 #include "SampleSourcePcmFile.h"
+#import "EventLogger.h"
 
-static boolean _openSampleSourcePcmFile(void* sampleSourcePtr) {
+static boolean _openSampleSourcePcmFile(void* sampleSourcePtr, const SampleSourceOpenAs openAs) {
   SampleSource sampleSource = sampleSourcePtr;
 
   SampleSourcePcmFileData extraData = sampleSource->extraData;
   extraData->dataBufferNumItems = 0;
-  extraData->fileHandle = fopen(sampleSource->sourceName->data, "rb");
-  if(extraData == NULL) {
-    // TODO: Error
+  if(openAs == SAMPLE_SOURCE_OPEN_READ) {
+    extraData->fileHandle = fopen(sampleSource->sourceName->data, "rb");
+  }
+  else if(openAs == SAMPLE_SOURCE_OPEN_WRITE) {
+    extraData->fileHandle = fopen(sampleSource->sourceName->data, "wb");
+  }
+  else {
+    logInternalError("Invalid type for openAs in PCM file");
     return false;
   }
 
+  if(extraData == NULL) {
+    logError("PCM File '%s' could not be opened for %s",
+      sampleSource->sourceName->data, openAs == SAMPLE_SOURCE_OPEN_READ ? "reading" : "writing");
+    return false;
+  }
+
+  sampleSource->openedAs = openAs;
   return true;
 }
 
@@ -42,7 +55,7 @@ static void _convertPcmDataToSampleBuffer(const short* inPcmSamples, SampleBuffe
   }
 }
 
-static boolean _readBlockPcmFile(void* sampleSourcePtr, SampleBuffer sampleBuffer) {
+static boolean _readBlockFromPcmFile(void* sampleSourcePtr, SampleBuffer sampleBuffer) {
   SampleSource sampleSource = sampleSourcePtr;
   SampleSourcePcmFileData extraData = sampleSource->extraData;
   if(extraData->dataBufferNumItems == 0) {
@@ -64,6 +77,10 @@ static boolean _readBlockPcmFile(void* sampleSourcePtr, SampleBuffer sampleBuffe
   return result;
 }
 
+static boolean _writeBlockFromPcmFile(void* sampleSourcePtr, const SampleBuffer sampleBuffer) {
+  return false;
+}
+
 static void _freeInputSourceDataPcmFile(void* sampleSourceDataPtr) {
   SampleSourcePcmFileData extraData = sampleSourceDataPtr;
   free(extraData->interlacedPcmDataBuffer);
@@ -77,6 +94,7 @@ SampleSource newSampleSourcePcmFile(const CharString sampleSourceName) {
   SampleSource sampleSource = malloc(sizeof(SampleSourceMembers));
 
   sampleSource->sampleSourceType = SAMPLE_SOURCE_TYPE_PCM_FILE;
+  sampleSource->openedAs = SAMPLE_SOURCE_OPEN_NOT_OPENED;
   sampleSource->sourceName = newCharString();
   copyCharStrings(sampleSource->sourceName, sampleSourceName);
   // TODO: Need a way to pass in channels, bitrate, sample rate
@@ -84,7 +102,8 @@ SampleSource newSampleSourcePcmFile(const CharString sampleSourceName) {
   sampleSource->sampleRate = 44100.0f;
 
   sampleSource->openSampleSource = _openSampleSourcePcmFile;
-  sampleSource->readSampleBlock = _readBlockPcmFile;
+  sampleSource->readSampleBlock = _readBlockFromPcmFile;
+  sampleSource->writeSampleBlock = _writeBlockFromPcmFile;
   sampleSource->freeSampleSourceData = _freeInputSourceDataPcmFile;
 
   SampleSourcePcmFileData extraData = malloc(sizeof(SampleSourcePcmFileDataMembers));

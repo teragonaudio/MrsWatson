@@ -113,7 +113,7 @@ int main(int argc, char** argv) {
   }
 
   // Prepare input/output sources, plugins
-  inputSource->openSampleSource(inputSource);
+  inputSource->openSampleSource(inputSource, SAMPLE_SOURCE_OPEN_READ);
   initializePluginChain(pluginChain);
 
   if(shouldDisplayPluginInfo) {

@@ -19,18 +19,27 @@ typedef enum {
   SAMPLE_SOURCE_TYPE_PCM_STREAM,
 } SampleSourceType;
 
-typedef boolean (*OpenSampleSourceFunc)(void*);
+typedef enum {
+  SAMPLE_SOURCE_OPEN_NOT_OPENED,
+  SAMPLE_SOURCE_OPEN_READ,
+  SAMPLE_SOURCE_OPEN_WRITE,
+} SampleSourceOpenAs;
+
+typedef boolean (*OpenSampleSourceFunc)(void*, const SampleSourceOpenAs);
 typedef boolean (*ReadSampleBlockFunc)(void*, SampleBuffer);
+typedef boolean (*WriteSampleBlockFunc)(void*, const SampleBuffer);
 typedef void (*FreeSampleSourceDataFunc)(void*);
 
 typedef struct {
   SampleSourceType sampleSourceType;
+  SampleSourceOpenAs openedAs;
   CharString sourceName;
   int numChannels;
   float sampleRate;
 
   OpenSampleSourceFunc openSampleSource;
   ReadSampleBlockFunc readSampleBlock;
+  WriteSampleBlockFunc writeSampleBlock;
   FreeSampleSourceDataFunc freeSampleSourceData;
 
   void* extraData;
