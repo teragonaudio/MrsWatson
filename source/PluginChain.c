@@ -91,7 +91,7 @@ void process(PluginChain pluginChain, SampleBuffer inBuffer, SampleBuffer outBuf
 void freePluginChain(PluginChain pluginChain) {
   for(int i = 0; i < pluginChain->numPlugins; i++) {
     Plugin plugin = pluginChain->plugins[i];
-    logInfo("Closing plugin '%s'", plugin->pluginName);
+    logInfo("Closing plugin '%s'", plugin->pluginName->data);
     freePlugin(plugin);
   }
   free(pluginChain);

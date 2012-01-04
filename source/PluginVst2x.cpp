@@ -224,19 +224,19 @@ static boolean _canPluginDo(Plugin plugin, const char* canDoString) {
 }
 
 static void _resumePlugin(Plugin plugin) {
-  logDebug("Resuming plugin '%s'", plugin->pluginName);
+  logDebug("Resuming plugin '%s'", plugin->pluginName->data);
   PluginVst2xData data = (PluginVst2xData)plugin->extraData;
   data->dispatcher(data->pluginHandle, effMainsChanged, 0, 1, NULL, 0.0f);
 }
 
 static void _suspendPlugin(Plugin plugin) {
-  logDebug("Suspending plugin '%s'", plugin->pluginName);
+  logDebug("Suspending plugin '%s'", plugin->pluginName->data);
   PluginVst2xData data = (PluginVst2xData)plugin->extraData;
   data->dispatcher(data->pluginHandle, effMainsChanged, 0, 0, NULL, 0.0f);
 }
 
 static void _initVst2xPlugin(Plugin plugin) {
-  logDebug("Initializing VST2.x plugin '%s'", plugin->pluginName);
+  logDebug("Initializing VST2.x plugin '%s'", plugin->pluginName->data);
   PluginVst2xData data = (PluginVst2xData)plugin->extraData;
   data->dispatcher(data->pluginHandle, effOpen, 0, 0, NULL, 0.0f);
   // TODO: Ugh, still need to figure out how/where to store sample rate, blocksize, etc.
@@ -251,7 +251,7 @@ static void _initVst2xPlugin(Plugin plugin) {
 static boolean _openVst2xPlugin(void* pluginPtr) {
   Plugin plugin = (Plugin)pluginPtr;
   PluginVst2xData data = (PluginVst2xData)plugin->extraData;
-  logInfo("Opening VST2.x plugin '%s'", plugin->pluginName);
+  logInfo("Opening VST2.x plugin '%s'", plugin->pluginName->data);
   CharString pluginAbsolutePath = newCharString();
   _fillVst2xPluginAbsolutePath(plugin->pluginName, pluginAbsolutePath);
 
@@ -263,14 +263,14 @@ static boolean _openVst2xPlugin(void* pluginPtr) {
 #endif
 
   if(pluginHandle == NULL) {
-    logError("Could not load VST2.x plugin '%s'", plugin->pluginName);
+    logError("Could not load VST2.x plugin '%s'", plugin->pluginName->data);
     return false;
   }
 
   // Check plugin's magic number. If incorrect, then the file either was not loaded
   // properly, is not a real VST plugin, or is otherwise corrupt.
   if(pluginHandle->magic != kEffectMagic) {
-    logError("Plugin '%s' has bad magic number, possibly corrupt", plugin->pluginName);
+    logError("Plugin '%s' has bad magic number, possibly corrupt", plugin->pluginName->data);
     return false;
   }
 
@@ -295,7 +295,7 @@ static void _displayVst2xPluginInfo(void* pluginPtr) {
   PluginVst2xData data = (PluginVst2xData)plugin->extraData;
   CharString nameBuffer = newCharString();
 
-  logInfo("Displaying information for VST2.x plugin '%s'", plugin->pluginName);
+  logInfo("Information for VST2.x plugin '%s'", plugin->pluginName->data);
   data->dispatcher(data->pluginHandle, effGetVendorString, 0, 0, nameBuffer->data, 0.0f);
   logInfo("Vendor: %s", nameBuffer->data);
   int vendorVersion = data->dispatcher(data->pluginHandle, effGetVendorVersion, 0, 0, NULL, 0.0f);
