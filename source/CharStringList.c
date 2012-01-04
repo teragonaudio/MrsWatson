@@ -19,7 +19,7 @@ CharStringList newCharStringList(void) {
   return list;
 }
 
-void addItemToStringList(CharStringList list, const CharString charString) {
+void appendItemToStringList(CharStringList list, const CharString charString) {
   CharStringListIterator iterator = list;
   while(iterator->nextItem != NULL) {
     iterator = iterator->nextItem;

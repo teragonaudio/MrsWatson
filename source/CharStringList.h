@@ -20,7 +20,7 @@ typedef CharStringListMembers* CharStringList;
 typedef CharStringListMembers*CharStringListIterator;
 
 CharStringList newCharStringList(void);
-void addItemToStringList(CharStringList list, const CharString charString);
+void appendItemToStringList(CharStringList list, const CharString charString);
 int numItemsInStringList(CharStringList list);
 void freeCharStringList(CharStringList list);
 

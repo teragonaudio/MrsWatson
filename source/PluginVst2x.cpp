@@ -161,9 +161,9 @@ static CharStringList _newDefaultPluginLocationArray(PlatformType platformType) 
       break;
     case PLATFORM_MACOSX:
       snprintf(locationBuffer->data, (size_t)(locationBuffer->capacity), "/Library/Audio/Plug-Ins/VST");
-      addItemToStringList(locations, locationBuffer);
+      appendItemToStringList(outLocations, locationBuffer);
       snprintf(locationBuffer->data, (size_t)(locationBuffer->capacity), "%s/Library/Audio/Plug-Ins/VST", getenv("HOME"));
-      addItemToStringList(locations, locationBuffer);
+      appendItemToStringList(outLocations, locationBuffer);
       break;
     case PLATFORM_UNSUPPORTED:
     default:
