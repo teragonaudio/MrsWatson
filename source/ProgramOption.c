@@ -86,12 +86,12 @@ static ProgramOption _findProgramOption(ProgramOptions programOptions, const cha
 
 static boolean _fillOptionArgument(ProgramOption programOption, int* currentArgc, int argc, char** argv) {
   if(programOption->argumentType == ARGUMENT_TYPE_NONE) {
-    return false;
+    return true;
   }
   else if(programOption->argumentType == ARGUMENT_TYPE_OPTIONAL) {
     int potentialNextArgc = *currentArgc + 1;
     if(potentialNextArgc >= argc) {
-      return false;
+      return true;
     }
     else {
       char* potentialNextArg = argv[potentialNextArgc];
@@ -102,7 +102,8 @@ static boolean _fillOptionArgument(ProgramOption programOption, int* currentArgc
         return true;
       }
       else {
-        return false;
+        // Otherwise, it is another option, but that's ok
+        return true;
       }
     }
   }
@@ -140,7 +141,9 @@ boolean parseCommandLine(ProgramOptions programOptions, int argc, char** argv) {
     }
     else {
       option->enabled = true;
-      _fillOptionArgument(option, &argumentIndex, argc, argv);
+      if(!_fillOptionArgument(option, &argumentIndex, argc, argv)) {
+        return false;
+      }
     }
   }
 
