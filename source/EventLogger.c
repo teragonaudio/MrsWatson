@@ -9,7 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
-#import <sys/time.h>
+#include <sys/time.h>
 #include "CharString.h"
 #include "BuildInfo.h"
 #include "EventLogger.h"
