@@ -48,7 +48,13 @@ static void _fillVst2xUniqueIdToString(const long uniqueId, CharString outString
 static VstIntPtr VSTCALLBACK vst2xPluginHostCallback(AEffect *effect, VstInt32 opcode, VstInt32 index, VstIntPtr value, void *outPtr, float opt) {
   // This string is used in a bunch of logging calls below
   CharString uniqueIdString = newCharStringWithCapacity(STRING_LENGTH_SHORT);
-  _fillVst2xUniqueIdToString(effect->uniqueID, uniqueIdString);
+  if(effect != NULL) {
+    _fillVst2xUniqueIdToString(effect->uniqueID, uniqueIdString);
+  }
+  else {
+    // During plugin initialization, the dispatcher can be called without a valid plugin instance
+    copyToCharString(uniqueIdString, "????");
+  }
   const char* uniqueId = uniqueIdString->data;
   int result = 0;
 
