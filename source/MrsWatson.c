@@ -71,15 +71,28 @@ int main(int argc, char** argv) {
   for(int i = 0; i < NUM_OPTIONS; i++) {
     ProgramOption option = programOptions[i];
     if(option->enabled) {
-      if(option->index == OPTION_INPUT_SOURCE) {
-        SampleSourceType inputSourceType = guessSampleSourceType(option->argument);
-        inputSource = newSampleSource(inputSourceType, option->argument);
-      }
-      else if(option->index == OPTION_PLUGIN) {
-        addPluginsFromArgumentString(pluginChain, option->argument);
-      }
-      else if(option->index == OPTION_DISPLAY_INFO) {
-        shouldDisplayPluginInfo = true;
+      switch(option->index) {
+        case OPTION_BLOCKSIZE:
+          setBlocksize(strtol(option->argument->data, NULL, 10));
+          break;
+        case OPTION_CHANNELS:
+          setNumChannels(strtol(option->argument->data, NULL, 10));
+          break;
+        case OPTION_DISPLAY_INFO:
+          shouldDisplayPluginInfo = true;
+          break;
+        case OPTION_INPUT_SOURCE:
+          inputSource = newSampleSource(guessSampleSourceType(option->argument), option->argument);
+          break;
+        case OPTION_PLUGIN:
+          addPluginsFromArgumentString(pluginChain, option->argument);
+          break;
+        case OPTION_SAMPLERATE:
+          setSampleRate(strtof(option->argument->data, NULL));
+          break;
+        default:
+          // Ignore -- no special handling needs to be performed here
+          break;
       }
     }
   }
