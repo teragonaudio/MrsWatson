@@ -25,20 +25,20 @@
 #define ANSI_COLOR_WHITE   "[37m"
 #define ANSI_COLOR_RESET   "[0m"
 
-EventLogger eventLoggerGlobalInstance;
+EventLogger eventLoggerInstance;
 
 void initEventLogger(void) {
-  eventLoggerGlobalInstance = malloc(sizeof(EventLoggerMembers));
-  eventLoggerGlobalInstance->logLevel = LOG_INFO;
+  eventLoggerInstance = malloc(sizeof(EventLoggerMembers));
+  eventLoggerInstance->logLevel = LOG_INFO;
   struct timeval currentTime;
   gettimeofday(&currentTime, NULL);
-  eventLoggerGlobalInstance->startTimeInSec = currentTime.tv_sec;
-  eventLoggerGlobalInstance->startTimeInMs = currentTime.tv_usec / 1000;
-  eventLoggerGlobalInstance->colorScheme = COLOR_SCHEME_NONE;
+  eventLoggerInstance->startTimeInSec = currentTime.tv_sec;
+  eventLoggerInstance->startTimeInMs = currentTime.tv_usec / 1000;
+  eventLoggerInstance->colorScheme = COLOR_SCHEME_NONE;
 }
 
 static EventLogger _getGlobalInstance(void) {
-  return eventLoggerGlobalInstance;
+  return eventLoggerInstance;
 }
 
 void setLogLevel(LogLevel logLevel) {

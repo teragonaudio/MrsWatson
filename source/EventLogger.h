@@ -35,7 +35,7 @@ typedef struct {
 } EventLoggerMembers;
 
 typedef EventLoggerMembers* EventLogger;
-extern EventLogger eventLoggerGlobalInstance;
+extern EventLogger eventLoggerInstance;
 
 void initEventLogger(void);
 void setLogLevel(LogLevel logLevel);
