@@ -19,6 +19,7 @@ extern "C" {
 }
 
 #include "aeffectx.h"
+#import "MrsWatson.h"
 
 typedef AEffect* (*Vst2xPluginEntryFunc)(audioMasterCallback host);
 typedef VstIntPtr (*Vst2xPluginDispatcherFunc)(AEffect *effect, VstInt32 opCode, VstInt32 index, VstInt32 value, void *ptr, float opt);
@@ -44,56 +45,128 @@ static void _fillVst2xUniqueIdToString(const long uniqueId, CharString outString
   }
 }
 
-static VstIntPtr VSTCALLBACK vst2xPluginHostCallback(AEffect *effect, VstInt32 opcode, VstInt32 index, VstIntPtr value, void *ptr, float opt) {
-  switch(opcode) {
-    // VST1.x opcodes
-    case audioMasterVersion:
-      return 2400;
+static VstIntPtr VSTCALLBACK vst2xPluginHostCallback(AEffect *effect, VstInt32 opcode, VstInt32 index, VstIntPtr value, void *outPtr, float opt) {
+  // This string is used in a bunch of logging calls below
+  CharString uniqueIdString = newCharStringWithCapacity(STRING_LENGTH_SHORT);
+  _fillVst2xUniqueIdToString(effect->uniqueID, uniqueIdString);
+  const char* uniqueId = uniqueIdString->data;
+  int result = 0;
 
-    // TODO: Unimplemented opcodes
-    // VST1.x opcodes
+  switch(opcode) {
     case audioMasterAutomate:
+      // The plugin will call this if a parameter has changed via MIDI or the GUI, so the host can update
+      // itself accordingly. We don't care about this (for the time being), and as we don't support either
+      // GUI's or live MIDI, this shouldn't happen.
+      logWarn("Plugin '%s' asked us to automate parameter %d (unsupported)", uniqueId, index);
+      break;
+    case audioMasterVersion:
+      // We are a VST 2.4 compatible host
+      result = 2400;
+      break;
     case audioMasterCurrentId:
+      result = effect->uniqueID;
+      break;
     case audioMasterIdle:
-    // VST2.x opcodes
+      // Idle is currently ignored
+      break;
+
     case audioMasterGetTime:
+      // TODO: This opcode is a real pain in the ass
+      logInternalError("Plugin asked for unimplemented opcode %d", opcode);
+      break;
     case audioMasterProcessEvents:
+      // TODO: Really important...
+      logInternalError("Plugin asked for unimplemented opcode %d", opcode);
+      break;
     case audioMasterIOChanged:
-    case audioMasterSizeWindow:
+      // TODO: Really important...
+      logInternalError("Plugin asked for unimplemented opcode %d", opcode);
+      break;
     case audioMasterGetSampleRate:
+      result = (int)getSampleRate();
+      break;
     case audioMasterGetBlockSize:
+      result = getBlocksize();
+      break;
     case audioMasterGetInputLatency:
+      // Input latency is not supported, and is always 0
+      result = 0;
+      break;
     case audioMasterGetOutputLatency:
+      // Output latency is not supported, and is always 0
+      result = 0;
+      break;
     case audioMasterGetCurrentProcessLevel:
+      // We are not a multithreaded app, and have no GUI, so this is unsupported.
+      result = kVstProcessLevelUnknown;
+      break;
     case audioMasterGetAutomationState:
+      // Automation is also not supported (for now)
+      result = kVstAutomationUnsupported;
+      break;
     case audioMasterOfflineStart:
+      logWarn("Plugin '%s' asked us to start offline processing (unsupported)", uniqueId);
+      break;
     case audioMasterOfflineRead:
+      logWarn("Plugin '%s' asked to read offline data (unsupported)", uniqueId);
+      break;
     case audioMasterOfflineWrite:
+      logWarn("Plugin '%s' asked to write offline data (unsupported)", uniqueId);
+      break;
     case audioMasterOfflineGetCurrentPass:
+      logWarn("Plugin '%s' asked for current offline pass (unsupported)", uniqueId);
+      break;
     case audioMasterOfflineGetCurrentMetaPass:
+      logWarn("Plugin '%s' asked for current offline meta pass (unsupported)", uniqueId);
+      break;
     case audioMasterGetVendorString:
+      strncpy((char*)outPtr, VENDOR_NAME, kVstMaxVendorStrLen);
+      result = 1;
+      break;
     case audioMasterGetProductString:
+      strncpy((char*)outPtr, PROGRAM_NAME, kVstMaxProductStrLen);
+      result = 1;
+      break;
     case audioMasterGetVendorVersion:
+      // Return our version as a single string, in the form ABCC, which corresponds to version A.B.C
+      // Often times the patch can reach double-digits, so it gets two decimal places.
+      result = VERSION_MAJOR * 1000 + VERSION_MINOR * 100 + VERSION_PATCH;
+      break;
     case audioMasterVendorSpecific:
+      logWarn("Plugin '%s' made a vendor specific (unsupported). Arguments: %d, %d, %f", uniqueId, index, value, opt);
+      break;
     case audioMasterCanDo:
+      // TODO: Really important...
+      logInternalError("Plugin asked for unimplemented opcode %d", opcode);
+      break;
     case audioMasterGetLanguage:
+      result = kVstLangEnglish;
+      break;
     case audioMasterGetDirectory:
+      logWarn("Plugin '%s' asked for directory pointer (unsupported)", uniqueId);
+      break;
     case audioMasterUpdateDisplay:
+      logWarn("Plugin '%s' asked us to update display (unsupported)", uniqueId);
+      break;
     case audioMasterBeginEdit:
+      logWarn("Plugin '%s' asked to begin parameter automation (unsupported)", uniqueId);
+      break;
     case audioMasterEndEdit:
+      logWarn("Plugin '%s' asked to end parameter automation (unsupported)", uniqueId);
+      break;
     case audioMasterOpenFileSelector:
+      logWarn("Plugin '%s' asked us to open file selector (unsupported)", uniqueId);
+      break;
     case audioMasterCloseFileSelector:
+      logWarn("Plugin '%s' asked us to close file selector (unsupported)", uniqueId);
+      break;
     default:
-    {
-      CharString uniqueIdString = newCharStringWithCapacity(STRING_LENGTH_SHORT);
-      _fillVst2xUniqueIdToString(effect->uniqueID, uniqueIdString);
-      logInfo("Plugin '%s' asked if host can do %d (unsupported)", uniqueIdString->data, opcode);
-      freeCharString(uniqueIdString);
-    }
+      logWarn("Plugin '%s' asked if host can do %d (unsupported)", uniqueId, opcode);
       break;
   }
 
-  return 0;
+  freeCharString(uniqueIdString);
+  return result;
 }
 }
 
