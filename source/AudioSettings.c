@@ -25,6 +25,18 @@ AudioSettings getAudioSettings(void) {
   return audioSettingsInstance;
 }
 
+float getSampleRate(void) {
+  return getAudioSettings()->sampleRate;
+}
+
+int getNumChannels(void) {
+  return getAudioSettings()->numChannels;
+}
+
+int getBlocksize(void) {
+  return getAudioSettings()->blocksize;
+}
+
 void setSampleRate(const float sampleRate) {
   if(sampleRate == 0.0f) {
     logCritical("Ignoring attempt to set sample rate to 0");

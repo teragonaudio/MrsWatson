@@ -25,6 +25,9 @@ extern AudioSettings audioSettingsInstance;
 void initAudioSettings(void);
 
 AudioSettings getAudioSettings(void);
+float getSampleRate(void);
+int getNumChannels(void);
+int getBlocksize(void);
 void setSampleRate(const float sampleRate);
 void setNumChannels(const int numChannels);
 void setBlocksize(const int blocksize);
