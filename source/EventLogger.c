@@ -53,8 +53,8 @@ static char _logLevelStatusChar(const LogLevel logLevel) {
   switch(logLevel) {
     case LOG_DEBUG:    return '.';
     case LOG_INFO:     return '-';
+    case LOG_WARN:     return '*';
     case LOG_ERROR:    return '!';
-    case LOG_CRITICAL: return '*';
     default:           return ' ';
   }
 }
@@ -64,8 +64,8 @@ static const char* _logLevelStatusColor(LogLevel logLevel, LogColorType colorTyp
     switch(logLevel) {
       case LOG_DEBUG:    return ANSI_COLOR_WHITE;
       case LOG_INFO:     return ANSI_COLOR_GREEN;
+      case LOG_WARN:     return ANSI_COLOR_MAGENTA;
       case LOG_ERROR:    return ANSI_COLOR_RED;
-      case LOG_CRITICAL: return ANSI_COLOR_YELLOW;
       default:           return ANSI_COLOR_WHITE;
     }
   }
@@ -73,8 +73,8 @@ static const char* _logLevelStatusColor(LogLevel logLevel, LogColorType colorTyp
     switch(logLevel) {
       case LOG_DEBUG:    return ANSI_COLOR_BLACK;
       case LOG_INFO:     return ANSI_COLOR_GREEN;
+      case LOG_WARN:     return ANSI_COLOR_MAGENTA;
       case LOG_ERROR:    return ANSI_COLOR_RED;
-      case LOG_CRITICAL: return ANSI_COLOR_MAGENTA;
       default:           return ANSI_COLOR_WHITE;
     }
   }
@@ -114,6 +114,12 @@ void logInfo(const char* message, ...) {
   va_list arguments;
   va_start(arguments, message);
   _logMessage(LOG_INFO, message, arguments);
+}
+
+void logWarn(const char* message, ...) {
+  va_list arguments;
+  va_start(arguments, message);
+  _logMessage(LOG_WARN, message, arguments);
 }
 
 void logError(const char* message, ...) {
