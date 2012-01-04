@@ -39,10 +39,12 @@ static boolean _openSampleSourcePcmFile(void* sampleSourcePtr, const SampleSourc
 }
 
 static void _convertPcmDataToSampleBuffer(const short* inPcmSamples, SampleBuffer sampleBuffer) {
-  long numInterlacedSamples = sampleBuffer->numChannels * sampleBuffer->blocksize;
-  for(long interlacedIndex = 0, deinterlacedIndex = 0; interlacedIndex < numInterlacedSamples; interlacedIndex++) {
-    for(int channelIndex = 0; channelIndex < sampleBuffer->numChannels; channelIndex++) {
-      Sample convertedSample = (Sample)inPcmSamples[interlacedIndex] / 32767.0f;
+  int numInterlacedSamples = sampleBuffer->numChannels * sampleBuffer->blocksize;
+  int currentInterlacedSample = 0;
+  int currentDeinterlacedSample = 0;
+  while(currentInterlacedSample < numInterlacedSamples) {
+    for(int currentChannel = 0; currentChannel < sampleBuffer->numChannels; currentChannel++) {
+      Sample convertedSample = (Sample)inPcmSamples[currentInterlacedSample++] / 32767.0f;
       // Apply brickwall limiter to prevent clipping
       if(convertedSample > 1.0f) {
         convertedSample = 1.0f;
@@ -50,9 +52,9 @@ static void _convertPcmDataToSampleBuffer(const short* inPcmSamples, SampleBuffe
       else if(convertedSample < -1.0f) {
         convertedSample = -1.0f;
       }
-      sampleBuffer->samples[channelIndex][deinterlacedIndex] = convertedSample;
+      sampleBuffer->samples[currentChannel][currentDeinterlacedSample] = convertedSample;
     }
-    deinterlacedIndex++;
+    currentDeinterlacedSample++;
   }
 }
 
