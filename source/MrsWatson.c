@@ -37,7 +37,7 @@ int main(int argc, char** argv) {
   }
 
   // If the user wanted help or the version info, print those out and then exit right away
-  if(programOptions[OPTION_HELP]->enabled) {
+  if(programOptions[OPTION_HELP]->enabled || argc == 1) {
     printf("Usage: %s (options), where options include:\n", getFileBasename(argv[0]));
     printProgramOptions(programOptions);
     return RETURN_CODE_NOT_RUN;
