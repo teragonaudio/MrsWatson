@@ -81,7 +81,7 @@ static const char* _logLevelStatusColor(const LogLevel logLevel, const LogColorS
     }
   }
   else {
-    // TODO: Invalid color scheme, how to handle errors from the logger?
+    logInternalError("Invalid color scheme for status char");
     return ANSI_COLOR_WHITE;
   }
 }
@@ -95,7 +95,7 @@ static const char* _logTimeZebraStripeColor(const long elapsedTime, const LogCol
     return zebraState ? ANSI_COLOR_BLACK : ANSI_COLOR_BLUE;
   }
   else {
-    // TODO: Invalid color scheme, how to handle errors from the logger?
+    logInternalError("Invalid color scheme for stripe color");
     return ANSI_COLOR_WHITE;
   }
 }
