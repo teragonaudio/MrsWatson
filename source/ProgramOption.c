@@ -35,6 +35,11 @@ ProgramOption* newProgramOptions(void) {
   ProgramOptions programOptions = malloc(sizeof(ProgramOptions) * NUM_OPTIONS);
 
   // TODO: Expand help for options
+  _addNewProgramOption(programOptions, OPTION_SAMPLERATE, "samplerate", "Set sample rate", false, ARGUMENT_TYPE_REQUIRED);
+  _addNewProgramOption(programOptions, OPTION_BLOCKSIZE, "blocksize", "Set blocksize", false, ARGUMENT_TYPE_REQUIRED);
+  _addNewProgramOption(programOptions, OPTION_NUM_CHANNELS, "channels", "Set number of channels", false, ARGUMENT_TYPE_REQUIRED);
+  _addNewProgramOption(programOptions, OPTION_PCM_FILE_NUM_CHANNELS, "pcm-file-channels", "Number of channels to use when reading raw PCM data", false, ARGUMENT_TYPE_REQUIRED);
+  _addNewProgramOption(programOptions, OPTION_PCM_FILE_SAMPLERATE, "pcm-file-samplerate", "Sample rate to use when reading raw PCM data", false, ARGUMENT_TYPE_REQUIRED);
   _addNewProgramOption(programOptions, OPTION_PLUGIN, "plugin", "Plugin(s) to process", true, ARGUMENT_TYPE_REQUIRED);
   _addNewProgramOption(programOptions, OPTION_DISPLAY_INFO, "info", "Print information about the plugin(s)", false, ARGUMENT_TYPE_NONE);
   _addNewProgramOption(programOptions, OPTION_INPUT_SOURCE, "input", "Input source", true, ARGUMENT_TYPE_REQUIRED);
