@@ -17,7 +17,7 @@ PluginType guessPluginType(CharString pluginName) {
   logDebug("Trying to find plugin '%s'", pluginName->data);
 
   if(vst2xPluginExists(pluginName)) {
-    logDebug("Plugin '%s' is of type VST2.x", pluginName->data);
+    logInfo("Plugin '%s' is of type VST2.x", pluginName->data);
     pluginType = PLUGIN_TYPE_VST_2X;
   }
   else {
