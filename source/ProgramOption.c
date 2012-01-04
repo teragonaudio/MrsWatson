@@ -35,7 +35,7 @@ ProgramOption* newProgramOptions(void) {
   ProgramOptions programOptions = malloc(sizeof(ProgramOptions) * NUM_OPTIONS);
 
   // TODO: Expand help for options
-  _addNewProgramOption(programOptions, OPTION_BLOCKSIZE, "blocksize", "Set blocksize", false, ARGUMENT_TYPE_REQUIRED);
+  _addNewProgramOption(programOptions, OPTION_BLOCKSIZE, "blocksize", "Set blocksize", true, ARGUMENT_TYPE_REQUIRED);
   _addNewProgramOption(programOptions, OPTION_COLOR_LOGGING, "color", "Color-coded logging output", false, ARGUMENT_TYPE_OPTIONAL);
   _addNewProgramOption(programOptions, OPTION_DISPLAY_INFO, "display-info", "Print information about the plugin(s)", false, ARGUMENT_TYPE_NONE);
   _addNewProgramOption(programOptions, OPTION_HELP, "help", "Print help", true, ARGUMENT_TYPE_NONE);
@@ -45,7 +45,7 @@ ProgramOption* newProgramOptions(void) {
   _addNewProgramOption(programOptions, OPTION_PCM_FILE_SAMPLERATE, "pcm-file-samplerate", "Sample rate to use when reading raw PCM data", false, ARGUMENT_TYPE_REQUIRED);
   _addNewProgramOption(programOptions, OPTION_PLUGIN, "plugin", "Plugin(s) to process", true, ARGUMENT_TYPE_REQUIRED);
   _addNewProgramOption(programOptions, OPTION_QUIET, "quiet", "Only log critical errors", true, ARGUMENT_TYPE_NONE);
-  _addNewProgramOption(programOptions, OPTION_SAMPLERATE, "samplerate", "Set sample rate", false, ARGUMENT_TYPE_REQUIRED);
+  _addNewProgramOption(programOptions, OPTION_SAMPLERATE, "samplerate", "Set sample rate", true, ARGUMENT_TYPE_REQUIRED);
   _addNewProgramOption(programOptions, OPTION_VERBOSE, "verbose", "Verbose logging", true, ARGUMENT_TYPE_NONE);
   _addNewProgramOption(programOptions, OPTION_VERSION, "version", "Print version and copyright information", false, ARGUMENT_TYPE_NONE);
 
