@@ -25,9 +25,10 @@
 #define ANSI_COLOR_WHITE   "[37m"
 #define ANSI_COLOR_RESET   "[0m"
 
-EventLogger eventLoggerInstance;
+EventLogger eventLoggerInstance = NULL;
 
 void initEventLogger(void) {
+  // TODO: This is never freed, but it lives for the life of the program. Do we need to worry about that?
   eventLoggerInstance = malloc(sizeof(EventLoggerMembers));
   eventLoggerInstance->logLevel = LOG_INFO;
   struct timeval currentTime;
@@ -37,17 +38,17 @@ void initEventLogger(void) {
   eventLoggerInstance->colorScheme = COLOR_SCHEME_NONE;
 }
 
-static EventLogger _getGlobalInstance(void) {
+static EventLogger _getEventLoggerInstance(void) {
   return eventLoggerInstance;
 }
 
 void setLogLevel(LogLevel logLevel) {
-  EventLogger eventLogger = _getGlobalInstance();
+  EventLogger eventLogger = _getEventLoggerInstance();
   eventLogger->logLevel = logLevel;
 }
 
 void setLoggingColorScheme(LogColorScheme colorScheme) {
-  EventLogger eventLogger = _getGlobalInstance();
+  EventLogger eventLogger = _getEventLoggerInstance();
   eventLogger->colorScheme = colorScheme;
 }
 
@@ -117,7 +118,7 @@ static void _printMessage(const LogLevel logLevel, const long elapsedTimeInMs, c
 }
 
 static void _logMessage(const LogLevel logLevel, const char* message, va_list arguments) {
-  EventLogger eventLogger = _getGlobalInstance();
+  EventLogger eventLogger = _getEventLoggerInstance();
   if(logLevel >= eventLogger->logLevel) {
     CharString formattedMessage = newCharString();
     vsnprintf(formattedMessage->data, formattedMessage->capacity, message, arguments);

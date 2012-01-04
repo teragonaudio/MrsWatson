@@ -38,6 +38,7 @@ typedef EventLoggerMembers* EventLogger;
 extern EventLogger eventLoggerInstance;
 
 void initEventLogger(void);
+
 void setLogLevel(LogLevel logLevel);
 void setLoggingColorScheme(LogColorScheme colorScheme);
 
