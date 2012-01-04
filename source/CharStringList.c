@@ -42,7 +42,7 @@ int numItemsInStringList(CharStringList list) {
 
 void freeCharStringList(CharStringList list) {
   CharStringListIterator iterator = list;
-  while(iterator != NULL) {
+  while(iterator->nextItem != NULL) {
     freeCharString(iterator->item);
     CharStringList current = iterator;
     iterator = iterator->nextItem;

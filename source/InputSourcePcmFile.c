@@ -70,7 +70,6 @@ static void _freeInputSourceDataPcmFile(void* inputSourceDataPtr) {
   if(extraData->fileHandle != NULL) {
     fclose(extraData->fileHandle);
   }
-  // TODO: malloc_error_break warns that "object was probably modified after being freed" here, not sure why
   free(extraData);
 }
 
