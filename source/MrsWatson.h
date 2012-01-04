@@ -44,6 +44,8 @@ typedef enum {
   RETURN_CODE_NOT_RUN,
   RETURN_CODE_INVALID_ARGUMENT,
   RETURN_CODE_MISSING_REQUIRED_OPTION,
+  RETURN_CODE_IO_ERROR,
+  RETURN_CODE_PLUGIN_ERROR,
 } ReturnCodes;
 
 void fillVersionString(CharString outString);

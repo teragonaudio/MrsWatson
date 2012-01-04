@@ -28,6 +28,7 @@ int main(int argc, char** argv) {
 
   // Input/Output sources, plugin chain, and other required objects
   SampleSource inputSource = NULL;
+  SampleSource outputSource = NULL;
   PluginChain pluginChain = newPluginChain();
   boolean shouldDisplayPluginInfo = false;
 
@@ -84,6 +85,9 @@ int main(int argc, char** argv) {
         case OPTION_INPUT_SOURCE:
           inputSource = newSampleSource(guessSampleSourceType(option->argument), option->argument);
           break;
+        case OPTION_OUTPUT_SOURCE:
+          outputSource = newSampleSource(guessSampleSourceType(option->argument), option->argument);
+          break;
         case OPTION_PLUGIN:
           addPluginsFromArgumentString(pluginChain, option->argument);
           break;
@@ -106,7 +110,11 @@ int main(int argc, char** argv) {
 
   // Check required variables to make sure we have everything needed to start processing
   if(inputSource == NULL) {
-    logError("No input source given");
+    logError("No input source");
+    return RETURN_CODE_MISSING_REQUIRED_OPTION;
+  }
+  else if(outputSource == NULL) {
+    logError("No output source");
     return RETURN_CODE_MISSING_REQUIRED_OPTION;
   }
   else if(pluginChain->numPlugins == 0) {
@@ -115,7 +123,14 @@ int main(int argc, char** argv) {
   }
 
   // Prepare input/output sources, plugins
-  inputSource->openSampleSource(inputSource, SAMPLE_SOURCE_OPEN_READ);
+  if(!inputSource->openSampleSource(inputSource, SAMPLE_SOURCE_OPEN_READ)) {
+    logError("Input source could not be opened");
+    return RETURN_CODE_IO_ERROR;
+  }
+  if(!outputSource->openSampleSource(outputSource, SAMPLE_SOURCE_OPEN_WRITE)) {
+    logError("Output source could not be opened");
+    return RETURN_CODE_IO_ERROR;
+  }
   initializePluginChain(pluginChain);
 
   if(shouldDisplayPluginInfo) {
