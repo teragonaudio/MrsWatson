@@ -122,6 +122,9 @@ int main(int argc, char** argv) {
     displayPluginInfo(pluginChain);
   }
 
+  // Let the games begin!
+  logInfo("Processing with samplerate %.0f, blocksize %d, num channels %d", getSampleRate(), getBlocksize(), getNumChannels());
+
   // Shut down and free data (will also close open filehandles, plugins, etc)
   logInfo("Shutting down");
   freeSampleSource(inputSource);
