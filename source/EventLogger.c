@@ -53,31 +53,31 @@ void setLoggingColorScheme(LogColorScheme colorScheme) {
 
 static char _logLevelStatusChar(const LogLevel logLevel) {
   switch(logLevel) {
-    case LOG_DEBUG:    return '.';
-    case LOG_INFO:     return '-';
-    case LOG_WARN:     return '*';
-    case LOG_ERROR:    return '!';
-    default:           return ' ';
+    case LOG_DEBUG: return '.';
+    case LOG_INFO:  return '-';
+    case LOG_WARN:  return '*';
+    case LOG_ERROR: return '!';
+    default:        return ' ';
   }
 }
 
 static const char* _logLevelStatusColor(const LogLevel logLevel, const LogColorScheme colorScheme) {
   if(colorScheme == COLOR_SCHEME_DARK) {
     switch(logLevel) {
-      case LOG_DEBUG:    return ANSI_COLOR_WHITE;
-      case LOG_INFO:     return ANSI_COLOR_GREEN;
-      case LOG_WARN:     return ANSI_COLOR_MAGENTA;
-      case LOG_ERROR:    return ANSI_COLOR_RED;
-      default:           return ANSI_COLOR_WHITE;
+      case LOG_DEBUG: return ANSI_COLOR_WHITE;
+      case LOG_INFO:  return ANSI_COLOR_GREEN;
+      case LOG_WARN:  return ANSI_COLOR_MAGENTA;
+      case LOG_ERROR: return ANSI_COLOR_RED;
+      default:        return ANSI_COLOR_WHITE;
     }
   }
   else if(colorScheme == COLOR_SCHEME_LIGHT) {
     switch(logLevel) {
-      case LOG_DEBUG:    return ANSI_COLOR_BLACK;
-      case LOG_INFO:     return ANSI_COLOR_GREEN;
-      case LOG_WARN:     return ANSI_COLOR_MAGENTA;
-      case LOG_ERROR:    return ANSI_COLOR_RED;
-      default:           return ANSI_COLOR_WHITE;
+      case LOG_DEBUG: return ANSI_COLOR_BLACK;
+      case LOG_INFO:  return ANSI_COLOR_GREEN;
+      case LOG_WARN:  return ANSI_COLOR_MAGENTA;
+      case LOG_ERROR: return ANSI_COLOR_RED;
+      default:        return ANSI_COLOR_WHITE;
     }
   }
   else {
