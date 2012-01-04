@@ -13,14 +13,16 @@
 #include "BuildInfo.h"
 
 int buildYear(void) {
-  CharString buildDate = newCharStringShort();
+  CharString buildDate = newCharStringWithCapacity(STRING_LENGTH_SHORT);
   int startingIndex = strlen(__DATE__) - 4;
-  strncpy(buildDate, __DATE__ + startingIndex, 4);
-  int buildYear = atoi(buildDate);
-  free(buildDate);
+  strncpy(buildDate->data, __DATE__ + startingIndex, 4);
+  int buildYear = atoi(buildDate->data);
+  freeCharString(buildDate);
   return buildYear;
 }
 
 long buildDatestamp(void) {
+  // TODO: Need to take build date and convert to number
+  // Example: Feb 17 2013 -> 20130217
   return 0;
 }

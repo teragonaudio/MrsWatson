@@ -40,6 +40,6 @@ Plugin newPlugin(PluginType pluginType, const CharString pluginName) {
 
 void freePlugin(Plugin plugin) {
   plugin->freePluginData(plugin->extraData);
-  free(plugin->pluginName);
+  freeCharString(plugin->pluginName);
   free(plugin);
 }

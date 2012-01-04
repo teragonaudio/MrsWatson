@@ -40,6 +40,6 @@ typedef enum {
   RETURN_CODE_MISSING_REQUIRED_OPTION,
 } ReturnCodes;
 
-CharString getNewVersionString(void);
+void fillVersionString(CharString outString);
 
 #endif

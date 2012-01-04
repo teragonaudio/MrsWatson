@@ -11,16 +11,17 @@
 #include <string.h>
 #include "ProgramOption.h"
 #include "EventLogger.h"
+#import "StringUtilities.h"
 
 static void _addNewProgramOption(const ProgramOptions programOptions, const int index,
   const char* name, const char* help, boolean hasShortForm, ProgramOptionArgumentType argumentType) {
   ProgramOption programOption = malloc(sizeof(ProgramOptionMembers));
 
   programOption->index = index;
-  programOption->name = newCharStringShort();
-  strncpy(programOption->name, name, STRING_LENGTH_SHORT);
-  programOption->help = newCharStringLong();
-  strncpy(programOption->help, help, STRING_LENGTH_LONG);
+  programOption->name = newCharStringWithCapacity(STRING_LENGTH_SHORT);
+  copyToCharString(programOption->name, name);
+  programOption->help = newCharStringWithCapacity(STRING_LENGTH_LONG);
+  copyToCharString(programOption->help, help);
   programOption->hasShortForm = hasShortForm;
   
   programOption->argumentType = argumentType;
@@ -58,7 +59,7 @@ static ProgramOption _findProgramOption(ProgramOptions programOptions, const cha
   if(_isStringShortOption(optionString)) {
     for(int i = 0; i < NUM_OPTIONS; i++) {
       ProgramOption potentialMatchOption = programOptions[i];
-      if(potentialMatchOption->hasShortForm && potentialMatchOption->name[0] == optionString[1]) {
+      if(potentialMatchOption->hasShortForm && potentialMatchOption->name->data[0] == optionString[1]) {
         return potentialMatchOption;
       }
     }
@@ -66,16 +67,16 @@ static ProgramOption _findProgramOption(ProgramOptions programOptions, const cha
 
   if(_isStringLongOption(optionString)) {
     ProgramOption optionMatch = NULL;
-    CharString optionStringWithoutDashes = newCharStringShort();
-    strncpy(optionStringWithoutDashes, optionString + 2, strlen(optionString) - 2);
+    CharString optionStringWithoutDashes = newCharStringWithCapacity(STRING_LENGTH_SHORT);
+    strncpy(optionStringWithoutDashes->data, optionString + 2, strlen(optionString) - 2);
     for(int i = 0; i < NUM_OPTIONS; i++) {
       ProgramOption potentialMatchOption = programOptions[i];
-      if(!strncmp(potentialMatchOption->name, optionStringWithoutDashes, STRING_LENGTH_SHORT)) {
+      if(isCharStringEqualTo(potentialMatchOption->name, optionStringWithoutDashes, false)) {
         optionMatch = potentialMatchOption;
         break;
       }
     }
-    free(optionStringWithoutDashes);
+    freeCharString(optionStringWithoutDashes);
     return optionMatch;
   }
 
@@ -96,7 +97,7 @@ static boolean _fillOptionArgument(ProgramOption programOption, int* currentArgc
       char* potentialNextArg = argv[potentialNextArgc];
       // If the next string in the sequence is NOT an argument, we assume it is the optional argument
       if(!_isStringShortOption(potentialNextArg) && !_isStringLongOption(potentialNextArg)) {
-        strncpy(programOption->argument, potentialNextArg, STRING_LENGTH);
+        copyToCharString(programOption->argument, potentialNextArg);
         (*currentArgc)++;
         return true;
       }
@@ -108,7 +109,6 @@ static boolean _fillOptionArgument(ProgramOption programOption, int* currentArgc
   else if(programOption->argumentType == ARGUMENT_TYPE_REQUIRED) {
     int nextArgc = *currentArgc + 1;
     if(nextArgc >= argc) {
-      // TODO: It would be nice to actually print the option name here
       logCritical("Option '%s' requires an argument, but none was given", programOption->name);
       return false;
     }
@@ -119,7 +119,7 @@ static boolean _fillOptionArgument(ProgramOption programOption, int* currentArgc
         return false;
       }
       else {
-        strncpy(programOption->argument, nextArg, STRING_LENGTH);
+        copyToCharString(programOption->argument, nextArg);
         (*currentArgc)++;
         return true;
       }
@@ -155,11 +155,11 @@ void printProgramOptions(ProgramOptions programOptions) {
     ProgramOption programOption = programOptions[i];
 
     if(programOption->hasShortForm) {
-      printf("-%c, ", programOption->name[0]);
+      printf("-%c, ", programOption->name->data[0]);
     }
 
     // All arguments have a long form
-    printf("--%s", programOption->name);
+    printf("--%s", programOption->name->data);
 
     switch(programOption->argumentType) {
       case ARGUMENT_TYPE_REQUIRED:
@@ -174,17 +174,17 @@ void printProgramOptions(ProgramOptions programOptions) {
     }
 
     // Newline and indentation before help
-    CharString wrappedHelpString = newCharStringLong();
-    wrapCharStringForTerminal(programOption->help, wrappedHelpString, 4);
-    printf("\n    %s\n", programOption->help);
-    free(wrappedHelpString);
+    CharString wrappedHelpString = newCharStringWithCapacity(STRING_LENGTH_LONG);
+    wrapCharStringForTerminal(programOption->help->data, wrappedHelpString->data, 4);
+    printf("\n    %s\n", wrappedHelpString->data);
+    freeCharString(wrappedHelpString);
   }
 }
 
 static void _freeProgramOption(ProgramOption programOption) {
-  free(programOption->name);
-  free(programOption->help);
-  free(programOption->argument);
+  freeCharString(programOption->name);
+  freeCharString(programOption->help);
+  freeCharString(programOption->argument);
   free(programOption);
 }
 

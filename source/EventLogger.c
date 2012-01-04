@@ -96,10 +96,10 @@ static void _logMessage(const LogLevel logLevel, const char* message, va_list ar
   EventLogger eventLogger = _getGlobalInstance();
   if(logLevel >= eventLogger->logLevel) {
     CharString formattedMessage = newCharString();
-    vsnprintf(formattedMessage, STRING_LENGTH, message, arguments);
+    vsnprintf(formattedMessage->data, formattedMessage->capacity, message, arguments);
     time_t currentTime = time(NULL);
-    _printMessage(logLevel, currentTime - eventLogger->startTime, eventLogger->colorType, formattedMessage);
-    free(formattedMessage);
+    _printMessage(logLevel, currentTime - eventLogger->startTime, eventLogger->colorType, formattedMessage->data);
+    freeCharString(formattedMessage);
   }
 }
 

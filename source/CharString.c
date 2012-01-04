@@ -10,110 +10,56 @@
 #include <stdlib.h>
 #include <string.h>
 #include "CharString.h"
-#include "PlatformInfo.h"
 
-static CharString _newCharString(const int length) {
-  CharString charString = malloc(sizeof(char) * length);
-  memset(charString, 0, sizeof(char) * length);
+CharString newCharString(void) {
+  return newCharStringWithCapacity(STRING_LENGTH_DEFAULT);
+}
+
+CharString newCharStringWithCapacity(int length) {
+  CharString charString = malloc(sizeof(CharStringMembers));
+  charString->capacity = length;
+  charString->data = malloc(sizeof(char) * length);
+  clearCharString(charString);
   return charString;
 }
 
-CharString newCharString(void) {
-  return _newCharString(STRING_LENGTH);
+void clearCharString(CharString charString) {
+  memset(charString->data, 0, (size_t)(charString->capacity));
 }
 
-CharString newCharStringShort(void) {
-  return _newCharString(STRING_LENGTH_SHORT);
+void copyToCharString(CharString destString, const char* srcString) {
+  strncpy(destString->data, srcString, (size_t)(destString->capacity));
 }
 
-CharString newCharStringLong(void) {
-  return _newCharString(STRING_LENGTH_LONG);
+void copyCharStrings(CharString destString, const CharString srcString) {
+  strncpy(destString->data, srcString->data, (size_t)(destString->capacity));
 }
 
-boolean isStringEmpty(CharString testString) {
-  return (testString == NULL || testString[0] == '\0');
+boolean isCharStringEmpty(const CharString charString) {
+  return (charString->data == NULL || charString->data[0] == '\0');
 }
 
-void wrapCharStringForTerminal(const CharString srcString, CharString destString, int indentSize) {
-  wrapCharString(srcString, destString, indentSize, TERMINAL_LINE_LENGTH);
-}
-
-void wrapCharString(const CharString srcString, CharString destString, int indentSize, int lineLength) {
-  CharString lineBuffer = newCharString();
-  long destStringIndex = 0;
-  long srcStringIndex = 0;
-  int lineIndex = 0;
-
-  while(srcStringIndex < strlen(srcString)) {
-    if(lineIndex == 0) {
-      for(int indentIndex = 0; indentIndex < indentSize; indentIndex++) {
-        destString[destStringIndex++] = ' ';
-        lineIndex++;
-      }
-    }
-
-    // Clear out the line buffer, and copy a full line into it
-    memset(lineBuffer, 0, STRING_LENGTH);
-    long bufferLength = lineLength - lineIndex;
-    strncpy(lineBuffer, srcString + srcStringIndex, (size_t)bufferLength);
-
-    // Check to see if we have copied the last line of the source string. If so, append that to
-    // the destination string and return.
-    if(bufferLength + srcStringIndex >= strlen(srcString)) {
-      strncpy(destString + destStringIndex, lineBuffer, (size_t)bufferLength);
-      break;
-    }
-
-    // Look for any newlines in the buffer, and stop there if we find any
-    char *newlineIndex = strchr(lineBuffer, '\n');
-    if(newlineIndex != NULL) {
-      bufferLength = newlineIndex - lineBuffer + 1;
-      strncpy(destString + destStringIndex, lineBuffer, (size_t)bufferLength);
-      destStringIndex += bufferLength;
-      srcStringIndex += bufferLength;
-      lineIndex = 0;
-      continue;
-    }
-
-    // If no newlines were found, then find the last space in this line and copy to that point
-    char *lastSpaceIndex = strrchr(lineBuffer, ' ');
-    if(lastSpaceIndex == NULL) {
-      // If NULL is returned here, then there are no spaces in this line and we should simply
-      // copy the entire line. This means that really long lines will be truncated, but whatever.
-      bufferLength = strlen(lineBuffer);
-      strncpy(destString + destStringIndex, lineBuffer, (size_t)bufferLength);
-    }
-    else {
-      bufferLength = lastSpaceIndex - lineBuffer;
-      strncpy(destString + destStringIndex, lineBuffer, (size_t)bufferLength);
-    }
-
-    // Increase string indexes and continue looping
-    destStringIndex += bufferLength;
-    destString[destStringIndex++] = '\n';
-    srcStringIndex += bufferLength + 1;
-    lineIndex = 0;
-  }
-
-  free(lineBuffer);
-}
-
-CharString getFileBasename(const CharString filename) {
-  char *lastDelimiter = strrchr(filename, PATH_DELIMITER);
-  if(lastDelimiter == NULL) {
-    return filename;
+boolean isCharStringEqualTo(const CharString firstString, const CharString otherString, boolean caseInsensitive) {
+  // Only compare to the length of the smaller of the two strings
+  size_t comparisonSize = (size_t)((firstString->capacity < otherString->capacity) ? firstString->capacity : otherString->capacity );
+  if(caseInsensitive) {
+    return strncasecmp(firstString->data, otherString->data, comparisonSize) == 0;
   }
   else {
-    return lastDelimiter + 1;
+    return strncmp(firstString->data, otherString->data, comparisonSize) == 0;
   }
 }
 
-CharString getFileExtension(const CharString filename) {
-  char *dot = strrchr(filename, '.');
-  if(dot == NULL) {
-    return NULL;
+boolean isCharStringEqualToCString(const CharString charString, const char* otherString, boolean caseInsensitive) {
+  if(caseInsensitive) {
+    return strncasecmp(charString->data, otherString, (size_t)charString->capacity) == 0;
   }
   else {
-    return dot + 1;
+    return strncmp(charString->data, otherString, (size_t)charString->capacity) == 0;
   }
+}
+
+void freeCharString(CharString charString) {
+  free(charString->data);
+  free(charString);
 }

@@ -16,7 +16,7 @@ static boolean _openInputSourcePcmFile(void* inputSourcePtr) {
 
   InputSourcePcmFileData extraData = inputSource->extraData;
   extraData->dataBufferNumItems = 0;
-  extraData->fileHandle = fopen(inputSource->inputSourceName, "rb");
+  extraData->fileHandle = fopen(inputSource->inputSourceName->data, "rb");
   if(extraData == NULL) {
     // TODO: Error
     return false;
@@ -79,7 +79,7 @@ InputSource newInputSourcePcmFile(const CharString inputSourceName) {
 
   inputSource->inputSourceType = INPUT_SOURCE_TYPE_PCM_FILE;
   inputSource->inputSourceName = newCharString();
-  strncpy(inputSource->inputSourceName, inputSourceName, STRING_LENGTH);
+  copyCharStrings(inputSource->inputSourceName, inputSourceName);
   // TODO: Need a way to pass in channels, bitrate, sample rate
   inputSource->numChannels = 2;
   inputSource->sampleRate = 44100.0f;

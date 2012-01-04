@@ -8,7 +8,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include "CharStringList.h"
 
 CharStringList newCharStringList(void) {
@@ -26,10 +25,11 @@ void addItemToStringList(CharStringList list, const CharString charString) {
     iterator = iterator->nextItem;
   }
   iterator->item = newCharString();
-  strncpy(iterator->item, charString, STRING_LENGTH);
+  copyCharStrings(iterator->item, charString);
   iterator->nextItem = newCharStringList();
 }
 
+// TODO: Currently unused, is this needed?
 int numItemsInStringList(CharStringList list) {
   int result = 0;
   CharStringListIterator iterator = list;
@@ -43,7 +43,7 @@ int numItemsInStringList(CharStringList list) {
 void freeCharStringList(CharStringList list) {
   CharStringListIterator iterator = list;
   while(iterator != NULL) {
-    free(iterator->item);
+    freeCharString(iterator->item);
     CharStringList current = iterator;
     iterator = iterator->nextItem;
     free(current);

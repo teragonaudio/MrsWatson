@@ -11,24 +11,28 @@
 #ifndef MrsWatson_CharString_h
 #define MrsWatson_CharString_h
 
-#define STRING_LENGTH 256
+#define STRING_LENGTH_DEFAULT 256
 #define STRING_LENGTH_SHORT 32
 #define STRING_LENGTH_LONG 8192
 
-#define TERMINAL_LINE_LENGTH 84
+typedef struct {
+  int capacity;
+  char* data;
+} CharStringMembers;
 
-typedef char* CharString;
+typedef CharStringMembers* CharString;
 
 CharString newCharString(void);
-CharString newCharStringShort(void);
-CharString newCharStringLong(void);
+CharString newCharStringWithCapacity(int length);
 
-boolean isStringEmpty(CharString testString);
+void clearCharString(CharString charString);
+void copyToCharString(CharString destString, const char* srcString);
+void copyCharStrings(CharString destString, const CharString srcString);
 
-void wrapCharString(const CharString srcString, CharString destString, int indentSize, int lineLength);
-void wrapCharStringForTerminal(const CharString srcString, CharString destString, int indentSize);
+boolean isCharStringEmpty(const CharString testString);
+boolean isCharStringEqualTo(const CharString charString, const CharString otherString, boolean caseInsensitive);
+boolean isCharStringEqualToCString(const CharString charString, const char* otherString, boolean caseInsensitive);
 
-CharString getFileBasename(const CharString filename);
-CharString getFileExtension(const CharString filename);
+void freeCharString(CharString charString);
 
 #endif

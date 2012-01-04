@@ -7,8 +7,6 @@
 //
 
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 
 #include "EventLogger.h"
 #include "CharString.h"
@@ -17,11 +15,12 @@
 #include "ProgramOption.h"
 #include "InputSource.h"
 #include "PluginChain.h"
+#import "StringUtilities.h"
 
-CharString getNewVersionString(void) {
-  CharString versionString = newCharString();
-  snprintf(versionString, STRING_LENGTH, "This is %s, version %d.%d.%d.", PROGRAM_NAME, VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
-  return versionString;
+void fillVersionString(CharString outString) {
+  snprintf(outString->data, outString->capacity,
+    "This is %s, version %d.%d.%d.",
+    PROGRAM_NAME, VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
 }
 
 int main(int argc, char** argv) {
@@ -47,9 +46,10 @@ int main(int argc, char** argv) {
   }
 
   // Say hello!
-  CharString hello = getNewVersionString();
-  logInfo(hello);
-  free(hello);
+  CharString hello = newCharString();
+  fillVersionString(hello);
+  logInfo(hello->data);
+  freeCharString(hello);
 
   for(int i = 0; i < NUM_OPTIONS; i++) {
     ProgramOption option = programOptions[i];
@@ -60,25 +60,26 @@ int main(int argc, char** argv) {
         return RETURN_CODE_NOT_RUN;
       }
       else if(option->index == OPTION_VERSION) {
-        CharString versionString = getNewVersionString();
-        printf("%s\nCopyright (c) %d, %s. All rights reserved.\n\n", versionString, buildYear(), COPYRIGHT_HOLDER);
-        free(versionString);
+        CharString versionString = newCharString();
+        fillVersionString(versionString);
+        printf("%s\nCopyright (c) %d, %s. All rights reserved.\n\n", versionString->data, buildYear(), COPYRIGHT_HOLDER);
+        freeCharString(versionString);
 
-        CharString wrappedLicenseInfo = newCharStringLong();
-        wrapCharStringForTerminal(LICENSE_STRING, wrappedLicenseInfo, 0);
-        printf("%s\n\n", wrappedLicenseInfo);
-        free(wrappedLicenseInfo);
+        CharString wrappedLicenseInfo = newCharStringWithCapacity(STRING_LENGTH_LONG);
+        wrapCharStringForTerminal(LICENSE_STRING, wrappedLicenseInfo->data, 0);
+        printf("%s\n\n", wrappedLicenseInfo->data);
+        freeCharString(wrappedLicenseInfo);
 
         return RETURN_CODE_NOT_RUN;
       }
       else if(option->index == OPTION_COLOR_LOGGING) {
-        if(isStringEmpty(option->argument)) {
+        if(isCharStringEmpty(option->argument)) {
           setLoggingColor(COLOR_TYPE_DARK);
         }
-        else if(!strncmp(option->argument, "dark", STRING_LENGTH)) {
+        else if(isCharStringEqualToCString(option->argument, "dark", false)) {
           setLoggingColor(COLOR_TYPE_DARK);
         }
-        else if(!strncmp(option->argument, "light", STRING_LENGTH)) {
+        else if(isCharStringEqualToCString(option->argument, "light", false)) {
           setLoggingColor(COLOR_TYPE_LIGHT);
         }
         else {

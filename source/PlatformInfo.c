@@ -21,7 +21,7 @@ PlatformType getPlatformType() {
 #endif
 }
 
-boolean fileExists(const CharString absolutePath) {
+boolean fileExists(const char* absolutePath) {
 #if MACOSX
   struct stat* buffer = malloc(sizeof(struct stat));
   boolean result = (stat(absolutePath, buffer) == 0);

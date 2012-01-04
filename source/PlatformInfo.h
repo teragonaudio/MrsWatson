@@ -7,7 +7,6 @@
 //
 
 #include "Types.h"
-#include "CharString.h"
 
 #ifndef MrsWatson_PlatformInfo_h
 #define MrsWatson_PlatformInfo_h
@@ -25,6 +24,6 @@ typedef enum {
 } PlatformType;
 
 PlatformType getPlatformType(void);
-boolean fileExists(const CharString absolutePath);
+boolean fileExists(const char* absolutePath);
 
 #endif

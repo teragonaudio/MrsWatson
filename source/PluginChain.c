@@ -36,20 +36,20 @@ static boolean _addPluginToChain(PluginChain pluginChain, Plugin plugin) {
 void addPluginsFromArgumentString(PluginChain pluginChain, const CharString argumentString) {
   // Expect a comma-separated string of plugins with colon separators for preset name
   // Example: plugin1:preset1name,plugin2:preset2name
-  char* substringStart = argumentString;
-  char* comma = strchr(argumentString, ',');
-  char* endChar = argumentString + strlen(argumentString);
+  char* substringStart = argumentString->data;
+  char* comma = strchr(argumentString->data, ',');
+  char* endChar = argumentString->data + strlen(argumentString->data);
   CharString nameBuffer = newCharString();
 
   do {
-    size_t substringLength = 0;
+    size_t substringLength;
     if(comma == NULL) {
-      substringLength = strlen(argumentString);
+      substringLength = strlen(argumentString->data);
     }
     else {
       substringLength = comma - substringStart;      
     }
-    strncpy(nameBuffer, substringStart, substringLength);
+    strncpy(nameBuffer->data, substringStart, substringLength);
 
     // TODO: Use colon as a separator for presets to load into these plugins
     PluginType pluginType = guessPluginType(nameBuffer);
@@ -67,7 +67,7 @@ void addPluginsFromArgumentString(PluginChain pluginChain, const CharString argu
     }
   } while(substringStart < endChar);
 
-  free(nameBuffer);
+  freeCharString(nameBuffer);
 }
 
 void initializePluginChain(PluginChain pluginChain) {

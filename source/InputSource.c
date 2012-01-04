@@ -12,15 +12,16 @@
 #include "InputSource.h"
 #include "InputSourcePcmFile.h"
 #include "InputSourcePcmStream.h"
+#import "StringUtilities.h"
 
 InputSourceType guessInputSourceType(CharString inputSourceTypeString) {
   if(inputSourceTypeString != NULL) {
     // Look for stdin/stdout
-    if(strlen(inputSourceTypeString) == 1 && inputSourceTypeString[0] == '-') {
+    if(strlen(inputSourceTypeString->data) == 1 && inputSourceTypeString->data[0] == '-') {
       return INPUT_SOURCE_TYPE_PCM_STREAM;
     }
     else {
-      CharString fileExtension = getFileExtension(inputSourceTypeString);
+      const char* fileExtension = getFileExtension(inputSourceTypeString->data);
       // If there is no file extension, then automatically assume raw PCM data. Deal with it!
       if(fileExtension == NULL) {
         return INPUT_SOURCE_TYPE_PCM_FILE;
@@ -49,6 +50,6 @@ InputSource newInputSource(InputSourceType inputSourceType, const CharString inp
 
 void freeInputSource(InputSource inputSource) {
   inputSource->freeInputSourceData(inputSource->extraData);
-  free(inputSource->inputSourceName);
+  freeCharString(inputSource->inputSourceName);
   free(inputSource);
 }
