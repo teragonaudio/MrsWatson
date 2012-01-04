@@ -151,8 +151,7 @@ static AEffect* _loadVst2xPluginMac(CFBundleRef bundle) {
 #endif
 
 extern "C" {
-static CharStringList _newDefaultPluginLocationArray(PlatformType platformType) {
-  CharStringList locations = newCharStringList();
+static void _fillDefaultPluginLocationArray(PlatformType platformType, CharStringList outLocations) {
   CharString locationBuffer = newCharString();
 
   switch(platformType) {
@@ -172,7 +171,6 @@ static CharStringList _newDefaultPluginLocationArray(PlatformType platformType) 
   }
 
   freeCharString(locationBuffer);
-  return locations;
 }
 
 static const char*_getVst2xPlatformExtension(void) {
@@ -188,7 +186,8 @@ static const char*_getVst2xPlatformExtension(void) {
 }
 
 static void _fillVst2xPluginAbsolutePath(const CharString pluginName, CharString outString) {
-  CharStringList pluginLocations = _newDefaultPluginLocationArray(getPlatformType());
+  CharStringList pluginLocations = newCharStringList();
+  _fillDefaultPluginLocationArray(getPlatformType(), pluginLocations);
   if(pluginLocations->item == NULL) {
     return;
   }
