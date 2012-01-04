@@ -13,7 +13,7 @@
 #ifndef MrsWatson_EventLogger_h
 #define MrsWatson_EventLogger_h
 
-#define ZEBRA_STRIPE_SIZE_IN_MS 1000
+#define ZEBRA_STRIPE_SIZE_IN_MS 100
 
 typedef enum {
   LOG_DEBUG,
