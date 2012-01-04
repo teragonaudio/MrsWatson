@@ -131,5 +131,28 @@ void logError(const char* message, ...) {
 void logCritical(const char* message, ...) {
   va_list arguments;
   va_start(arguments, message);
-  _logMessage(LOG_CRITICAL, message, arguments);
+  CharString formattedMessage = newCharString();
+  // Instead of going through the common logging method, we always dump critical messages to stderr
+  vsnprintf(formattedMessage->data, formattedMessage->capacity, message, arguments);
+  fprintf(stderr, "ERROR: %s\n", formattedMessage->data);
+  freeCharString(formattedMessage);
+}
+
+void logInternalError(const char* message, ...) {
+  va_list arguments;
+  va_start(arguments, message);
+  CharString formattedMessage = newCharString();
+  // Instead of going through the common logging method, we always dump critical messages to stderr
+  vsnprintf(formattedMessage->data, formattedMessage->capacity, message, arguments);
+  fprintf(stderr, "INTERNAL ERROR: %s\n", formattedMessage->data);
+  freeCharString(formattedMessage);
+
+  fprintf(stderr, "  This should not have happened. Please take a minute to report a bug.\n");
+  fprintf(stderr, "  Support website: %s\n", SUPPORT_WEBSITE);
+  fprintf(stderr, "  Support email: %s\n", SUPPORT_EMAIL);
+
+  CharString versionString = newCharString();
+  fillVersionString(versionString);
+  fprintf(stderr, "  Program version: %ld\n", buildDatestamp());
+  freeCharString(versionString);
 }

@@ -12,6 +12,15 @@
 #define MrsWatson_MrsWatson_h
 
 #define PROGRAM_NAME "MrsWatson"
+#define VERSION_MAJOR 0
+#define VERSION_MINOR 1
+#define VERSION_PATCH 0
+
+#define OFFICIAL_WEBSITE "http://www.teragonaudio.com"
+// TODO: This URL doesn't exist yet. Be sure to double-check it before releasing anything.
+#define SUPPORT_WEBSITE "https://github.com/teragonaudio/mrswatson/issues"
+#define SUPPORT_EMAIL "support@teragonaudio.com"
+
 #define COPYRIGHT_HOLDER "Teragon Audio"
 #define LICENSE_STRING "Redistribution and use in source and binary forms, with or without " \
 "modification, are permitted provided that the following conditions are met:\n\n" \
@@ -30,13 +39,10 @@
 "NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED " \
 "OF THE POSSIBILITY OF SUCH DAMAGE."
 
-#define VERSION_MAJOR 0
-#define VERSION_MINOR 1
-#define VERSION_PATCH 0
-
 typedef enum {
   RETURN_CODE_SUCCESS,
   RETURN_CODE_NOT_RUN,
+  RETURN_CODE_INVALID_ARGUMENT,
   RETURN_CODE_MISSING_REQUIRED_OPTION,
 } ReturnCodes;
 

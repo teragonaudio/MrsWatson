@@ -83,7 +83,7 @@ int main(int argc, char** argv) {
           setLoggingColor(COLOR_TYPE_LIGHT);
         }
         else {
-          logCritical("Unknown color scheme");
+          logCritical("Unknown color scheme '%s'", option->argument->data);
           setLoggingColor(COLOR_TYPE_PLAIN);
         }
       }

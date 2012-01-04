@@ -109,13 +109,13 @@ static boolean _fillOptionArgument(ProgramOption programOption, int* currentArgc
   else if(programOption->argumentType == ARGUMENT_TYPE_REQUIRED) {
     int nextArgc = *currentArgc + 1;
     if(nextArgc >= argc) {
-      logCritical("Option '%s' requires an argument, but none was given", programOption->name);
+      logCritical("Option '%s' requires an argument, but none was given", programOption->name->data);
       return false;
     }
     else {
       char* nextArg = argv[nextArgc];
       if(_isStringShortOption(nextArg) || _isStringLongOption(nextArg)) {
-        logCritical("Option '%s' requires an argument, but it does not seem to be valid", programOption->name);
+        logCritical("Option '%s' requires an argument, but '%s' is not valid", programOption->name->data, nextArg);
         return false;
       }
       else {
@@ -126,7 +126,7 @@ static boolean _fillOptionArgument(ProgramOption programOption, int* currentArgc
     }
   }
   else {
-    logCritical("Internal error while parsing arguments. Please report!");
+    logInternalError("Unknown argument type '%d'", programOption->argumentType);
     return false;
   }
 }
@@ -135,7 +135,7 @@ boolean parseCommandLine(ProgramOptions programOptions, int argc, char** argv) {
   for(int argumentIndex = 1; argumentIndex < argc; argumentIndex++) {
     const ProgramOption option = _findProgramOption(programOptions, argv[argumentIndex]);
     if(option == NULL) {
-      // Invalid option, bail out
+      logCritical("Invalid option '%s'", argv[argumentIndex]);
       return false;
     }
     else {
@@ -149,7 +149,7 @@ boolean parseCommandLine(ProgramOptions programOptions, int argc, char** argv) {
 }
 
 void printProgramOptions(ProgramOptions programOptions) {
-  // TODO: Instead of just printing out all options, they should be alphabetized. This is nice.
+  // TODO: Instead of just printing out all options, they should be alphabetized.
   for(int i = 0; i < NUM_OPTIONS; i++) {
     printf("  ");
     ProgramOption programOption = programOptions[i];

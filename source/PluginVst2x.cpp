@@ -167,7 +167,7 @@ static CharStringList _newDefaultPluginLocationArray(PlatformType platformType) 
       break;
     case PLATFORM_UNSUPPORTED:
     default:
-      logCritical("Unsupported platform, sorry!");
+      logCritical("Unsupported platform detected. Sorry!");
       break;
   }
 

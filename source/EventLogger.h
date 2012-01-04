@@ -15,8 +15,8 @@
 typedef enum {
   LOG_DEBUG,
   LOG_INFO,
+  LOG_WARN,
   LOG_ERROR,
-  LOG_CRITICAL
 } LogLevel;
 
 typedef enum {
@@ -40,7 +40,10 @@ void setLoggingColor(LogColorType colorType);
 
 void logDebug(const char* message, ...);
 void logInfo(const char* message, ...);
+void logWarn(const char* message, ...);
 void logError(const char* message, ...);
+
 void logCritical(const char* message, ...);
+void logInternalError(const char* message, ...);
 
 #endif
