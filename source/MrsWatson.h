@@ -12,6 +12,8 @@
 #define MrsWatson_MrsWatson_h
 
 #define PROGRAM_NAME "MrsWatson"
+#define VENDOR_NAME "Teragon Audio"
+
 #define VERSION_MAJOR 0
 #define VERSION_MINOR 1
 #define VERSION_PATCH 0
@@ -21,7 +23,6 @@
 #define SUPPORT_WEBSITE "https://github.com/teragonaudio/mrswatson/issues"
 #define SUPPORT_EMAIL "support@teragonaudio.com"
 
-#define COPYRIGHT_HOLDER "Teragon Audio"
 #define LICENSE_STRING "Redistribution and use in source and binary forms, with or without " \
 "modification, are permitted provided that the following conditions are met:\n\n" \
 "* Redistributions of source code must retain the above copyright notice, this list of " \

@@ -46,7 +46,7 @@ int main(int argc, char** argv) {
   else if(programOptions[OPTION_VERSION]->enabled) {
     CharString versionString = newCharString();
     fillVersionString(versionString);
-    printf("%s\nCopyright (c) %d, %s. All rights reserved.\n\n", versionString->data, buildYear(), COPYRIGHT_HOLDER);
+    printf("%s\nCopyright (c) %d, %s. All rights reserved.\n\n", versionString->data, buildYear(), VENDOR_NAME);
     freeCharString(versionString);
 
     CharString wrappedLicenseInfo = newCharStringWithCapacity(STRING_LENGTH_LONG);
