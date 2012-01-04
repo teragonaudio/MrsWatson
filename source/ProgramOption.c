@@ -35,12 +35,12 @@ ProgramOption* newProgramOptions(void) {
   ProgramOptions programOptions = malloc(sizeof(ProgramOptions) * NUM_OPTIONS);
 
   // TODO: Expand help for options
-  _addNewProgramOption(programOptions, OPTION_BLOCKSIZE, "blocksize", "Set blocksize", true, ARGUMENT_TYPE_REQUIRED);
+  _addNewProgramOption(programOptions, OPTION_BLOCKSIZE, "blocksize", "Blocksize", true, ARGUMENT_TYPE_REQUIRED);
+  _addNewProgramOption(programOptions, OPTION_CHANNELS, "channels", "Number of channels", true, ARGUMENT_TYPE_REQUIRED);
   _addNewProgramOption(programOptions, OPTION_COLOR_LOGGING, "color", "Color-coded logging output", false, ARGUMENT_TYPE_OPTIONAL);
   _addNewProgramOption(programOptions, OPTION_DISPLAY_INFO, "display-info", "Print information about the plugin(s)", false, ARGUMENT_TYPE_NONE);
   _addNewProgramOption(programOptions, OPTION_HELP, "help", "Print help", true, ARGUMENT_TYPE_NONE);
   _addNewProgramOption(programOptions, OPTION_INPUT_SOURCE, "input", "Input source", true, ARGUMENT_TYPE_REQUIRED);
-  _addNewProgramOption(programOptions, OPTION_NUM_CHANNELS, "num-channels", "Set number of channels", false, ARGUMENT_TYPE_REQUIRED);
   _addNewProgramOption(programOptions, OPTION_PCM_FILE_NUM_CHANNELS, "pcm-file-num-channels", "Number of channels to use when reading raw PCM data", false, ARGUMENT_TYPE_REQUIRED);
   _addNewProgramOption(programOptions, OPTION_PCM_FILE_SAMPLERATE, "pcm-file-samplerate", "Sample rate to use when reading raw PCM data", false, ARGUMENT_TYPE_REQUIRED);
   _addNewProgramOption(programOptions, OPTION_PLUGIN, "plugin", "Plugin(s) to process", true, ARGUMENT_TYPE_REQUIRED);
