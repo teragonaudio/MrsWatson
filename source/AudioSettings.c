@@ -9,6 +9,7 @@
 #include <stdio.h>
 #import <stdlib.h>
 #import "AudioSettings.h"
+#import "EventLogger.h"
 
 AudioSettings audioSettingsInstance = NULL;
 
@@ -25,16 +26,28 @@ AudioSettings getAudioSettings(void) {
 }
 
 void setSampleRate(const float sampleRate) {
+  if(sampleRate == 0.0f) {
+    logCritical("Ignoring attempt to set sample rate to 0");
+    return;
+  }
   AudioSettings audioSettings = getAudioSettings();
   audioSettings->sampleRate = sampleRate;
 }
 
 void setNumChannels(const int numChannels) {
+  if(numChannels == 0) {
+    logCritical("Ignoring attempt to set num channels to 0");
+    return;
+  }
   AudioSettings audioSettings = getAudioSettings();
   audioSettings->numChannels = numChannels;
 }
 
 void setBlocksize(const int blocksize) {
+  if(blocksize == 0) {
+    logCritical("Ignoring attempt to set blocksize to 0");
+    return;
+  }
   AudioSettings audioSettings = getAudioSettings();
   audioSettings->blocksize = blocksize;
 }
