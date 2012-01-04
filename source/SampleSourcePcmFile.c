@@ -70,11 +70,12 @@ static boolean _readBlockFromPcmFile(void* sampleSourcePtr, SampleBuffer sampleB
   memset(extraData->interlacedPcmDataBuffer, 0, sizeof(short) * extraData->dataBufferNumItems);
 
   boolean result = true;
-  size_t bytesRead = fread(extraData->interlacedPcmDataBuffer, sizeof(short), extraData->dataBufferNumItems, extraData->fileHandle);
-  if(bytesRead < extraData->dataBufferNumItems * sizeof(short)) {
+  size_t pcmSamplesRead = fread(extraData->interlacedPcmDataBuffer, sizeof(short), extraData->dataBufferNumItems, extraData->fileHandle);
+  if(pcmSamplesRead < extraData->dataBufferNumItems) {
     logDebug("End of PCM file reached");
     result = false;
   }
+  logDebug("Read %d samples from PCM file", pcmSamplesRead);
 
   _convertPcmDataToSampleBuffer(extraData->interlacedPcmDataBuffer, sampleBuffer);
   return result;
@@ -108,12 +109,13 @@ static boolean _writeBlockFromPcmFile(void* sampleSourcePtr, const SampleBuffer 
   memset(extraData->interlacedPcmDataBuffer, 0, sizeof(short) * extraData->dataBufferNumItems);
 
   _convertSampleBufferToPcmData(sampleBuffer, extraData->interlacedPcmDataBuffer);
-  size_t bytesWritten = fwrite(extraData->interlacedPcmDataBuffer, sizeof(short), extraData->dataBufferNumItems, extraData->fileHandle);
-  if(bytesWritten < extraData->dataBufferNumItems * sizeof(short)) {
+  size_t pcmSamplesWritten = fwrite(extraData->interlacedPcmDataBuffer, sizeof(short), extraData->dataBufferNumItems, extraData->fileHandle);
+  if(pcmSamplesWritten < extraData->dataBufferNumItems) {
     logWarn("Short write to PCM file");
     return false;
   }
 
+  logDebug("Wrote %d samples to PCM file", pcmSamplesWritten);
   return true;
 }
 
