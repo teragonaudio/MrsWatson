@@ -68,17 +68,17 @@ int main(int argc, char** argv) {
     if(option->enabled) {
       if(option->index == OPTION_COLOR_LOGGING) {
         if(isCharStringEmpty(option->argument)) {
-          setLoggingColor(COLOR_TYPE_DARK);
+          setLoggingColorScheme(COLOR_SCHEME_DARK);
         }
         else if(isCharStringEqualToCString(option->argument, "dark", false)) {
-          setLoggingColor(COLOR_TYPE_DARK);
+          setLoggingColorScheme(COLOR_SCHEME_DARK);
         }
         else if(isCharStringEqualToCString(option->argument, "light", false)) {
-          setLoggingColor(COLOR_TYPE_LIGHT);
+          setLoggingColorScheme(COLOR_SCHEME_LIGHT);
         }
         else {
           logCritical("Unknown color scheme '%s'", option->argument->data);
-          setLoggingColor(COLOR_TYPE_PLAIN);
+          setLoggingColorScheme(COLOR_SCHEME_NONE);
         }
       }
       else if(option->index == OPTION_INPUT_SOURCE) {
@@ -120,8 +120,10 @@ int main(int argc, char** argv) {
   }
 
   // Shut down and free data (will also close open filehandles, plugins, etc)
+  logInfo("Shutting down");
   freeInputSource(inputSource);
   freePluginChain(pluginChain);
 
+  logInfo("Goodbye!");
   return RETURN_CODE_SUCCESS;
 }

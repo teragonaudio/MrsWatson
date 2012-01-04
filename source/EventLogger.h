@@ -12,6 +12,8 @@
 #ifndef MrsWatson_EventLogger_h
 #define MrsWatson_EventLogger_h
 
+#define ZEBRA_STRIPE_SIZE_IN_MS 100
+
 typedef enum {
   LOG_DEBUG,
   LOG_INFO,
@@ -20,15 +22,15 @@ typedef enum {
 } LogLevel;
 
 typedef enum {
-  COLOR_TYPE_PLAIN,
-  COLOR_TYPE_DARK,
-  COLOR_TYPE_LIGHT
-} LogColorType;
+  COLOR_SCHEME_NONE,
+  COLOR_SCHEME_DARK,
+  COLOR_SCHEME_LIGHT
+} LogColorScheme;
 
 typedef struct {
   LogLevel logLevel;
   time_t startTime;
-  LogColorType colorType;
+  LogColorScheme colorScheme;
 } EventLoggerMembers;
 
 typedef EventLoggerMembers* EventLogger;
@@ -36,7 +38,7 @@ extern EventLogger eventLoggerGlobalInstance;
 
 void initEventLogger(void);
 void setLogLevel(LogLevel logLevel);
-void setLoggingColor(LogColorType colorType);
+void setLoggingColorScheme(LogColorScheme colorScheme);
 
 void logDebug(const char* message, ...);
 void logInfo(const char* message, ...);
