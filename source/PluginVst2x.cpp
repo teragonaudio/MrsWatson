@@ -93,18 +93,41 @@ static VstIntPtr VSTCALLBACK vst2xPluginHostCallback(AEffect *effect, VstInt32 o
     case audioMasterIdle:
       // Idle is currently ignored
       break;
-
+    case audioMasterPinConnected: // Deprecated
+      logInternalError("Plugin '%s' asked for unimplemented opcode audioMasterPinConnected", uniqueId);
+      break;
+    case audioMasterWantMidi: // Deprecated
+      logInternalError("Plugin '%s' asked for unimplemented opcode audioMasterWantMidi", uniqueId);
+      break;
     case audioMasterGetTime:
       // TODO: This opcode is a real pain in the ass
-      logInternalError("Plugin asked for unimplemented opcode %d", opcode);
+      logInternalError("Plugin '%s' asked for unimplemented opcode audioMasterGetTime", uniqueId);
       break;
     case audioMasterProcessEvents:
       // TODO: Really important...
-      logInternalError("Plugin asked for unimplemented opcode %d", opcode);
+      logInternalError("Plugin '%s' asked for unimplemented opcode audioMasterProcessEvents", uniqueId);
+      break;
+    case audioMasterSetTime: // Deprecated
+      logInternalError("Plugin '%s' asked for unimplemented opcode audioMasterSetTime", uniqueId);
+      break;
+    case audioMasterTempoAt: // Deprecated
+      logInternalError("Plugin '%s' asked for unimplemented opcode audioMasterTempoAt", uniqueId);
+      break;
+    case audioMasterGetNumAutomatableParameters: // Deprecated
+      logInternalError("Plugin '%s' asked for unimplemented opcode audioMasterGetNumAutomatableParameters", uniqueId);
+      break;
+    case audioMasterGetParameterQuantization: // Deprecated
+      logInternalError("Plugin '%s' asked for unimplemented opcode audioMasterGetParameterQuantization", uniqueId);
       break;
     case audioMasterIOChanged:
       // TODO: Really important...
-      logInternalError("Plugin asked for unimplemented opcode %d", opcode);
+      logInternalError("Plugin '%s' asked for unimplemented opcode audioMasterIOChanged", uniqueId);
+      break;
+    case audioMasterNeedIdle: // Deprecated
+      logInternalError("Plugin '%s' asked for unimplemented opcode audioMasterNeedIdle", uniqueId);
+      break;
+    case audioMasterSizeWindow:
+      logWarn("Plugin '%s' asked us to resize window (unsupported)", uniqueId);
       break;
     case audioMasterGetSampleRate:
       result = (int)getSampleRate();
@@ -119,6 +142,15 @@ static VstIntPtr VSTCALLBACK vst2xPluginHostCallback(AEffect *effect, VstInt32 o
     case audioMasterGetOutputLatency:
       // Output latency is not supported, and is always 0
       result = 0;
+      break;
+    case audioMasterGetPreviousPlug: // Deprecated
+      logInternalError("Plugin '%s' asked for unimplemented opcode audioMasterGetPreviousPlug", uniqueId);
+      break;
+    case audioMasterGetNextPlug: // Deprecated
+      logInternalError("Plugin '%s' asked for unimplemented opcode audioMasterGetNextPlug", uniqueId);
+      break;
+    case audioMasterWillReplaceOrAccumulate: // Deprecated
+      logInternalError("Plugin '%s' asked for unimplemented opcode audioMasterWillReplaceOrAccumulate", uniqueId);
       break;
     case audioMasterGetCurrentProcessLevel:
       // We are not a multithreaded app, and have no GUI, so this is unsupported.
@@ -143,12 +175,18 @@ static VstIntPtr VSTCALLBACK vst2xPluginHostCallback(AEffect *effect, VstInt32 o
     case audioMasterOfflineGetCurrentMetaPass:
       logWarn("Plugin '%s' asked for current offline meta pass (unsupported)", uniqueId);
       break;
+    case audioMasterSetOutputSampleRate: // Deprecated
+      logInternalError("Plugin '%s' asked for unimplemented opcode audioMasterSetOutputSampleRate", uniqueId);
+      break;
+    case audioMasterGetOutputSpeakerArrangement: // Deprecated
+      logInternalError("Plugin '%s' asked for unimplemented opcode audioMasterGetOutputSpeakerArrangement", uniqueId);
+      break;
     case audioMasterGetVendorString:
-      strncpy((char*)outPtr, VENDOR_NAME, kVstMaxVendorStrLen);
+      strncpy((char *)dataPtr, VENDOR_NAME, kVstMaxVendorStrLen);
       result = 1;
       break;
     case audioMasterGetProductString:
-      strncpy((char*)outPtr, PROGRAM_NAME, kVstMaxProductStrLen);
+      strncpy((char *)dataPtr, PROGRAM_NAME, kVstMaxProductStrLen);
       result = 1;
       break;
     case audioMasterGetVendorVersion:
@@ -160,11 +198,19 @@ static VstIntPtr VSTCALLBACK vst2xPluginHostCallback(AEffect *effect, VstInt32 o
       logWarn("Plugin '%s' made a vendor specific (unsupported). Arguments: %d, %d, %f", uniqueId, index, value, opt);
       break;
     case audioMasterCanDo:
-      // TODO: Really important...
-      logInternalError("Plugin asked for unimplemented opcode %d", opcode);
+      result = _canHostDo(uniqueId, (char *)dataPtr);
+      break;
+    case audioMasterSetIcon: // Deprecated
+      logInternalError("Plugin '%s' asked for unimplemented opcode audioMasterSetIcon", uniqueId);
       break;
     case audioMasterGetLanguage:
       result = kVstLangEnglish;
+      break;
+    case audioMasterOpenWindow: // Deprecated
+      logInternalError("Plugin '%s' asked for unimplemented opcode audioMasterOpenWindow", uniqueId);
+      break;
+    case audioMasterCloseWindow: // Deprecated
+      logInternalError("Plugin '%s' asked for unimplemented opcode audioMasterCloseWindow", uniqueId);
       break;
     case audioMasterGetDirectory:
       logWarn("Plugin '%s' asked for directory pointer (unsupported)", uniqueId);
@@ -184,8 +230,17 @@ static VstIntPtr VSTCALLBACK vst2xPluginHostCallback(AEffect *effect, VstInt32 o
     case audioMasterCloseFileSelector:
       logWarn("Plugin '%s' asked us to close file selector (unsupported)", uniqueId);
       break;
+    case audioMasterEditFile: // Deprecated
+      logInternalError("Plugin '%s' asked for unimplemented opcode audioMasterEditFile", uniqueId);
+      break;
+    case audioMasterGetChunkFile: // Deprecated
+      logInternalError("Plugin '%s' asked for unimplemented opcode audioMasterGetChunkFile", uniqueId);
+      break;
+    case audioMasterGetInputSpeakerArrangement: // Deprecated
+      logInternalError("Plugin '%s' asked for unimplemented opcode audioMasterGetInputSpeakerArrangement", uniqueId);
+      break;
     default:
-      logWarn("Plugin '%s' asked if host can do %d (unsupported)", uniqueId, opcode);
+      logWarn("Plugin '%s' asked if host can do unknown opcode %d", uniqueId, opcode);
       break;
   }
 
