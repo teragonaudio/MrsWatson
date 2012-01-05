@@ -26,7 +26,25 @@ static boolean _openMidiSourceFile(void* midiSourcePtr) {
 }
 
 static boolean _readMidiEventsFile(void* midiSourcePtr, MidiSequence midiSequence) {
+  for(int i = 0; i < 8; i++) {
+    MidiEvent onEvent = newMidiEvent();
+    onEvent->eventType = MIDI_TYPE_REGULAR;
+    onEvent->timestamp = (unsigned long)(20000 * i);
+    onEvent->status = 0x90; // Note on
+    onEvent->data1 = 0x45; // A4
+    onEvent->data2 = 0x7f; // Maximum velocity
+    appendMidiEventToSequence(midiSequence, onEvent);
 
+    MidiEvent offEvent = newMidiEvent();
+    offEvent->eventType = MIDI_TYPE_REGULAR;
+    offEvent->timestamp = (unsigned long)(200000 * i) + 10000;
+    offEvent->status = 0x90; // Note on (0 velocity for off)
+    offEvent->data1 = 0x45; // A4
+    offEvent->data2 = 0x00;
+    appendMidiEventToSequence(midiSequence, offEvent);
+  }
+
+  return true;
 }
 
 static void _freeMidiEventsFile(void *midiSourceDataPtr) {
