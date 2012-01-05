@@ -7,3 +7,19 @@
 //
 
 #include <stdio.h>
+#include <stdlib.h>
+#include "MidiSequence.h"
+#include "MidiEvent.h"
+
+MidiSequence newMidiSequence(void) {
+  MidiSequence midiSequence = malloc(sizeof(MidiSequenceMembers));
+
+  midiSequence->midiEvents = newLinkedList();
+
+  return midiSequence;
+}
+
+void freeMidiSequence(MidiSequence midiSequence) {
+  freeLinkedList(midiSequence->midiEvents, (LinkedListFreeItemFunc)freeMidiEvent);
+  free(midiSequence);
+}
