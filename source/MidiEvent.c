@@ -14,6 +14,7 @@ MidiEvent newMidiEvent(void) {
   MidiEvent midiEvent = malloc(sizeof(MidiEventMembers));
 
   midiEvent->eventType = MIDI_TYPE_INVALID;
+  midiEvent->deltaFrames = 0;
   midiEvent->timestamp = 0;
   midiEvent->status = 0;
   midiEvent->data1 = 0;
