@@ -20,6 +20,6 @@ MidiSequence newMidiSequence(void) {
 }
 
 void freeMidiSequence(MidiSequence midiSequence) {
-  freeLinkedList(midiSequence->midiEvents, (LinkedListFreeItemFunc)freeMidiEvent);
+  freeLinkedListAndItems(midiSequence->midiEvents, (LinkedListFreeItemFunc)freeMidiEvent);
   free(midiSequence);
 }

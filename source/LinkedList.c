@@ -39,7 +39,7 @@ int numItemsInList(LinkedList list) {
   return result;
 }
 
-void freeLinkedList(LinkedList list, LinkedListFreeItemFunc freeItem) {
+void freeLinkedListAndItems(LinkedList list, LinkedListFreeItemFunc freeItem) {
   LinkedListIterator iterator = list;
   while(iterator->nextItem != NULL) {
     freeItem(iterator->item);

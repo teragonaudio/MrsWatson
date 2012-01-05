@@ -297,7 +297,7 @@ static void _fillVst2xPluginAbsolutePath(const CharString pluginName, CharString
   }
 
   freeCharString(pluginSearchPath);
-  freeLinkedList(pluginLocations, (LinkedListFreeItemFunc)freeCharString);
+  freeLinkedListAndItems(pluginLocations, (LinkedListFreeItemFunc)freeCharString);
 }
 
 boolean vst2xPluginExists(const CharString pluginName) {
