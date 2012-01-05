@@ -494,10 +494,59 @@ static void _displayVst2xPluginInfo(void* pluginPtr) {
   freeCharString(nameBuffer);
 }
 
-static void _processVst2xPlugin(void* pluginPtr, SampleBuffer inputs, SampleBuffer outputs) {
+static void _processAudioVst2xPlugin(void* pluginPtr, SampleBuffer inputs, SampleBuffer outputs) {
   Plugin plugin = (Plugin)pluginPtr;
   PluginVst2xData data = (PluginVst2xData)plugin->extraData;
   data->pluginHandle->processReplacing(data->pluginHandle, inputs->samples, outputs->samples, inputs->blocksize);
+}
+
+static void _fillVstMidiEvent(const MidiEvent midiEvent, VstMidiEvent* vstMidiEvent) {
+  switch(midiEvent->eventType) {
+    case MIDI_TYPE_REGULAR:
+      vstMidiEvent->type = kVstMidiType;
+      vstMidiEvent->byteSize = sizeof(VstMidiEvent);
+      vstMidiEvent->deltaFrames = midiEvent->deltaFrames;
+      vstMidiEvent->midiData[0] = midiEvent->status;
+      vstMidiEvent->midiData[1] = midiEvent->data1;
+      vstMidiEvent->midiData[2] = midiEvent->data2;
+      vstMidiEvent->flags = 0;
+      vstMidiEvent->reserved1 = 0;
+      vstMidiEvent->reserved2 = 0;
+      break;
+    case MIDI_TYPE_SYSEX:
+      logInternalError("Sysex is not yet supported for VST2.x plugins");
+      break;
+    default:
+      logInternalError("Cannot convert MIDI event type '%s' to VstMidiEvent", midiEvent->eventType);
+      break;
+  }
+}
+
+static void _processMidiEventsVst2xPlugin(void *pluginPtr, LinkedList midiEvents) {
+  Plugin plugin = (Plugin)pluginPtr;
+  PluginVst2xData data = (PluginVst2xData)(plugin->extraData);
+
+  VstEvents vstEvents;
+  vstEvents.numEvents = numItemsInList(midiEvents);
+  vstEvents.events[0] = (VstEvent*)malloc(sizeof(VstMidiEvent) * vstEvents.numEvents);
+  LinkedListIterator iterator = midiEvents;
+  int i = 0;
+  while(iterator->nextItem != NULL) {
+    MidiEvent midiEvent = (MidiEvent)(iterator->item);
+    if(midiEvent != NULL) {
+      VstMidiEvent* vstMidiEvent = (VstMidiEvent*)malloc(sizeof(VstMidiEvent));
+      _fillVstMidiEvent(midiEvent, vstMidiEvent);
+      vstEvents.events[i] = (VstEvent*)vstMidiEvent;
+    }
+    iterator = (LinkedListIterator)(iterator->nextItem);
+    i++;
+  }
+
+  // TODO: I'm not entirely sure that this is the correct way to alloc/free this memory. Possible memory leak.
+  data->dispatcher(data->pluginHandle, effProcessEvents, 0, 0, &vstEvents, 0.0f);
+  for(i = 0; i < vstEvents.numEvents; i++) {
+    free(vstEvents.events[i]);
+  }
 }
 
 static void _freeVst2xPluginData(void* pluginDataPtr) {
@@ -525,7 +574,8 @@ Plugin newPluginVst2x(const CharString pluginName) {
 
   plugin->open = _openVst2xPlugin;
   plugin->displayPluginInfo = _displayVst2xPluginInfo;
-  plugin->process = _processVst2xPlugin;
+  plugin->processAudio = _processAudioVst2xPlugin;
+  plugin->processMidiEvents = _processMidiEventsVst2xPlugin;
   plugin->freePluginData = _freeVst2xPluginData;
 
   PluginVst2xData extraData = (PluginVst2xData)malloc(sizeof(PluginVst2xDataMembers));
