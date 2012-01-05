@@ -26,18 +26,6 @@ static boolean _addPluginToChain(PluginChain pluginChain, Plugin plugin) {
     logError("Could not add plugin '%s', maximum number reached", plugin->pluginName->data);
     return false;
   }
-  else if(pluginChain->numPlugins > 1 && plugin->pluginType == PLUGIN_TYPE_INSTRUMENT) {
-    logError("Instrument plugin '%s' must be first in the chain", plugin->pluginName->data);
-    return false;
-  }
-  else if(plugin->pluginType == PLUGIN_TYPE_UNKNOWN) {
-    logError("Plugin '%s' has unknown type; It was probably not loaded correctly", plugin->pluginName->data);
-    return false;
-  }
-  else if(plugin->pluginType == PLUGIN_TYPE_UNSUPPORTED) {
-    logError("Plugin '%s' is of unsupported type", plugin->pluginName->data);
-    return false;
-  }
   else {
     pluginChain->plugins[pluginChain->numPlugins] = plugin;
     pluginChain->numPlugins++;
@@ -92,6 +80,20 @@ boolean initializePluginChain(PluginChain pluginChain) {
     if(!plugin->open(plugin)) {
       logError("Plugin '%s' could not be opened", plugin->pluginName->data);
       return false;
+    }
+    else {
+      if(i > 1 && plugin->pluginType == PLUGIN_TYPE_INSTRUMENT) {
+        logError("Instrument plugin '%s' must be first in the chain", plugin->pluginName->data);
+        return false;
+      }
+      else if(plugin->pluginType == PLUGIN_TYPE_UNKNOWN) {
+        logError("Plugin '%s' has unknown type; It was probably not loaded correctly", plugin->pluginName->data);
+        return false;
+      }
+      else if(plugin->pluginType == PLUGIN_TYPE_UNSUPPORTED) {
+        logError("Plugin '%s' is of unsupported type", plugin->pluginName->data);
+        return false;
+      }
     }
   }
 
