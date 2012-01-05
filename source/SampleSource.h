@@ -17,12 +17,14 @@ typedef enum {
   SAMPLE_SOURCE_TYPE_INVALID,
   SAMPLE_SOURCE_TYPE_PCM_FILE,
   SAMPLE_SOURCE_TYPE_PCM_STREAM,
+  NUM_SAMPLE_SOURCES
 } SampleSourceType;
 
 typedef enum {
   SAMPLE_SOURCE_OPEN_NOT_OPENED,
   SAMPLE_SOURCE_OPEN_READ,
   SAMPLE_SOURCE_OPEN_WRITE,
+  NUM_SAMPLE_SOURCE_OPEN_AS
 } SampleSourceOpenAs;
 
 typedef boolean (*OpenSampleSourceFunc)(void*, const SampleSourceOpenAs);
