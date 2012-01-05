@@ -16,6 +16,8 @@
 		2435639714B20B960049FD43 /* SampleSourcePcmFile.c in Sources */ = {isa = PBXBuildFile; fileRef = 2435639614B20B960049FD43 /* SampleSourcePcmFile.c */; };
 		2435639A14B22B990049FD43 /* PlatformInfo.c in Sources */ = {isa = PBXBuildFile; fileRef = 2435639914B22B990049FD43 /* PlatformInfo.c */; };
 		2435639C14B22FFC0049FD43 /* SampleBuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = 2435639B14B22FFB0049FD43 /* SampleBuffer.c */; };
+		2457AB8614B5BEF7000D868C /* TaskTimer.c in Sources */ = {isa = PBXBuildFile; fileRef = 2457AB8514B5BEF7000D868C /* TaskTimer.c */; };
+		2457AB8914B5BF0F000D868C /* AudioClock.c in Sources */ = {isa = PBXBuildFile; fileRef = 2457AB8814B5BF0F000D868C /* AudioClock.c */; };
 		2458026114B4542A0030FEE9 /* StringUtilities.c in Sources */ = {isa = PBXBuildFile; fileRef = 2458026014B4542A0030FEE9 /* StringUtilities.c */; };
 		2465A2CA14B3130B00F94E84 /* Plugin.c in Sources */ = {isa = PBXBuildFile; fileRef = 2465A2C914B3130B00F94E84 /* Plugin.c */; };
 		2465A2D414B3156A00F94E84 /* PluginVst2x.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2465A2D314B3156A00F94E84 /* PluginVst2x.cpp */; };
@@ -63,6 +65,10 @@
 		2435639914B22B990049FD43 /* PlatformInfo.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = PlatformInfo.c; path = source/PlatformInfo.c; sourceTree = SOURCE_ROOT; };
 		2435639B14B22FFB0049FD43 /* SampleBuffer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = SampleBuffer.c; path = source/SampleBuffer.c; sourceTree = SOURCE_ROOT; };
 		2435639D14B230070049FD43 /* SampleBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SampleBuffer.h; path = source/SampleBuffer.h; sourceTree = SOURCE_ROOT; };
+		2457AB8114B5BEE3000D868C /* TaskTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TaskTimer.h; path = source/TaskTimer.h; sourceTree = SOURCE_ROOT; };
+		2457AB8514B5BEF7000D868C /* TaskTimer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = TaskTimer.c; path = source/TaskTimer.c; sourceTree = SOURCE_ROOT; };
+		2457AB8714B5BF08000D868C /* AudioClock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioClock.h; path = source/AudioClock.h; sourceTree = SOURCE_ROOT; };
+		2457AB8814B5BF0F000D868C /* AudioClock.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = AudioClock.c; path = source/AudioClock.c; sourceTree = SOURCE_ROOT; };
 		2458026014B4542A0030FEE9 /* StringUtilities.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = StringUtilities.c; path = source/StringUtilities.c; sourceTree = SOURCE_ROOT; };
 		2458026314B454320030FEE9 /* StringUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StringUtilities.h; path = source/StringUtilities.h; sourceTree = SOURCE_ROOT; };
 		2465A2C814B312FB00F94E84 /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Plugin.h; path = source/Plugin.h; sourceTree = SOURCE_ROOT; };
@@ -159,6 +165,8 @@
 		24FDFBAD148CC6AF0074D3A1 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				2457AB8814B5BF0F000D868C /* AudioClock.c */,
+				2457AB8714B5BF08000D868C /* AudioClock.h */,
 				24182A8214B492DD009F0A5D /* AudioSettings.c */,
 				24182A8014B492D6009F0A5D /* AudioSettings.h */,
 				2435639214B20B5A0049FD43 /* BuildInfo.c */,
@@ -199,6 +207,8 @@
 				24BD3E6F14B59BE000BFA6DE /* SampleSourceSilence.h */,
 				2458026014B4542A0030FEE9 /* StringUtilities.c */,
 				2458026314B454320030FEE9 /* StringUtilities.h */,
+				2457AB8514B5BEF7000D868C /* TaskTimer.c */,
+				2457AB8114B5BEE3000D868C /* TaskTimer.h */,
 				2435636914B1A2FE0049FD43 /* Types.h */,
 			);
 			name = Source;
@@ -294,6 +304,8 @@
 				24BD3E6E14B59BD700BFA6DE /* SampleSourceSilence.c in Sources */,
 				24BD3E7714B5A5C900BFA6DE /* MidiSourceFile.c in Sources */,
 				24BD3E7A14B5A60F00BFA6DE /* MidiEvent.c in Sources */,
+				2457AB8614B5BEF7000D868C /* TaskTimer.c in Sources */,
+				2457AB8914B5BF0F000D868C /* AudioClock.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
