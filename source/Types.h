@@ -13,6 +13,10 @@
 typedef short boolean;
 #endif
 
+#ifndef byte
+typedef unsigned char byte;
+#endif
+
 #ifndef false
 #define false 0
 #endif
