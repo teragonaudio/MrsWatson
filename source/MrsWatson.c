@@ -157,41 +157,67 @@ int main(int argc, char** argv) {
 
   // Prepare input/output sources, plugins
   if(!inputSource->openSampleSource(inputSource, SAMPLE_SOURCE_OPEN_READ)) {
-    logError("Input source could not be opened");
+    logError("Input source '%s' could not be opened", inputSource->sourceName->data);
     return RETURN_CODE_IO_ERROR;
   }
   if(!outputSource->openSampleSource(outputSource, SAMPLE_SOURCE_OPEN_WRITE)) {
-    logError("Output source could not be opened");
+    logError("Output source '%s' could not be opened", outputSource->sourceName->data);
     return RETURN_CODE_IO_ERROR;
   }
+  if(midiSource != NULL) {
+    if(!midiSource->openMidiSource(midiSource)) {
+      logError("MIDI source '%s' could not be opened", midiSource->sourceName->data);
+      return RETURN_CODE_IO_ERROR;
+    }
 
-  if(!initializePluginChain(pluginChain)) {
-    logError("Could not initialize plugin chain");
-    return RETURN_CODE_PLUGIN_ERROR;
+    // Read in all events from the MIDI source
+    // TODO: This will not work if we want to support streaming MIDI events (ie, from a pipe)
+    midiSequence = newMidiSequence();
+    if(!midiSource->readMidiEvents(midiSource, midiSequence)) {
+      logWarn("Failed reading MIDI events from source '%s'", midiSource->sourceName->data);
+    }
   }
 
-  if(shouldDisplayPluginInfo) {
-    displayPluginInfo(pluginChain);
-  }
-
-  // Let the games begin!
-  logInfo("Processing with samplerate %.0f, blocksize %d, %d channels", getSampleRate(), getBlocksize(), getNumChannels());
-  SampleBuffer inputSampleBuffer = newSampleBuffer(getNumChannels(), getBlocksize());
-  SampleBuffer outputSampleBuffer = newSampleBuffer(getNumChannels(), getBlocksize());
+  // Main processing loop
+  const int blocksize = getBlocksize();
+  logInfo("Processing with samplerate %.0f, blocksize %d, %d channels", getSampleRate(), blocksize, getNumChannels());
+  SampleBuffer inputSampleBuffer = newSampleBuffer(getNumChannels(), blocksize);
+  SampleBuffer outputSampleBuffer = newSampleBuffer(getNumChannels(), blocksize);
   boolean finishedReading = false;
   while(!finishedReading) {
     finishedReading = !inputSource->readSampleBlock(inputSource, inputSampleBuffer);
-    process(pluginChain, inputSampleBuffer, outputSampleBuffer);
+
+    // TODO: For streaming MIDI, we would need to read in events from source here
+    if(midiSequence != NULL) {
+      LinkedList midiEventsForBlock = newLinkedList();
+      // MIDI source overrides the value set to finishedReading by the input source
+      finishedReading = !fillMidiEventsFromRange(midiSequence, getAudioClockCurrentSample(), blocksize, midiEventsForBlock);
+      processPluginChainMidiEvents(pluginChain, midiEventsForBlock);
+      freeLinkedList(midiEventsForBlock);
+    }
+
+    processPluginChainAudio(pluginChain, inputSampleBuffer, outputSampleBuffer);
     outputSource->writeSampleBlock(outputSource, outputSampleBuffer);
+
+    advanceAudioClock(blocksize);
   }
 
-  freeSampleBuffer(inputSampleBuffer);
-  freeSampleBuffer(outputSampleBuffer);
+  // TODO: Implement tail time, both for plugin's requested tail time and as an option
 
   // Shut down and free data (will also close open files, plugins, etc)
   logInfo("Shutting down");
   freeSampleSource(inputSource);
+  freeSampleSource(outputSource);
+  freeSampleBuffer(inputSampleBuffer);
+  freeSampleBuffer(outputSampleBuffer);
   freePluginChain(pluginChain);
+
+  if(midiSource != NULL) {
+    freeMidiSource(midiSource);
+  }
+  if(midiSequence != NULL) {
+    freeMidiSequence(midiSequence);
+  }
 
   logInfo("Goodbye!");
   return RETURN_CODE_SUCCESS;
