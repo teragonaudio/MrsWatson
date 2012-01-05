@@ -54,8 +54,7 @@ void setLoggingColorScheme(const LogColorScheme colorScheme) {
 
 void setLoggingColorSchemeWithString(const CharString colorSchemeName) {
   if(isCharStringEmpty(colorSchemeName)) {
-    // If no name was explicitly given, assume a dark terminal background
-    setLoggingColorScheme(COLOR_SCHEME_DARK);
+    setLoggingColorScheme(COLOR_SCHEME_DEFAULT);
   }
   else if(isCharStringEqualToCString(colorSchemeName, "dark", false)) {
     setLoggingColorScheme(COLOR_SCHEME_DARK);

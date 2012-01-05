@@ -26,8 +26,11 @@ typedef enum {
 typedef enum {
   COLOR_SCHEME_NONE,
   COLOR_SCHEME_DARK,
-  COLOR_SCHEME_LIGHT
+  COLOR_SCHEME_LIGHT,
+  NUM_COLOR_SCHEMES
 } LogColorScheme;
+
+#define COLOR_SCHEME_DEFAULT COLOR_SCHEME_DARK
 
 typedef struct {
   LogLevel logLevel;
