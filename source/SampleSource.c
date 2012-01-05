@@ -13,6 +13,7 @@
 #include "SampleSourcePcmFile.h"
 #include "StringUtilities.h"
 #include "EventLogger.h"
+#include "SampleSourceSilence.h"
 
 SampleSourceType guessSampleSourceType(CharString sampleSourceTypeString) {
   if(sampleSourceTypeString != NULL) {
@@ -49,6 +50,8 @@ SampleSource newSampleSource(SampleSourceType sampleSourceType, const CharString
     case SAMPLE_SOURCE_TYPE_PCM_STREAM:
       // TODO: Currently unsupported
       return NULL;
+    case SAMPLE_SOURCE_TYPE_SILENCE:
+      return newSampleSourceSilence(sampleSourceName);
     default:
       return NULL;
   }
