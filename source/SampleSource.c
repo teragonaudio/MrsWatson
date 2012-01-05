@@ -38,7 +38,7 @@ SampleSourceType guessSampleSourceType(const CharString sampleSourceTypeString) 
     }
   }
   else {
-    logInternalError("Input source type was null");
+    logInternalError("Sample source type was null");
     return SAMPLE_SOURCE_TYPE_INVALID;
   }
 }
