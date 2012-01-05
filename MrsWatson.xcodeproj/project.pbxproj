@@ -24,6 +24,7 @@
 		24BD3E6C14B59B7900BFA6DE /* MidiSequence.c in Sources */ = {isa = PBXBuildFile; fileRef = 24BD3E6B14B59B7900BFA6DE /* MidiSequence.c */; };
 		24BD3E6E14B59BD700BFA6DE /* SampleSourceSilence.c in Sources */ = {isa = PBXBuildFile; fileRef = 24BD3E6D14B59BD700BFA6DE /* SampleSourceSilence.c */; };
 		24BD3E7714B5A5C900BFA6DE /* MidiSourceFile.c in Sources */ = {isa = PBXBuildFile; fileRef = 24BD3E7614B5A5C900BFA6DE /* MidiSourceFile.c */; };
+		24BD3E7A14B5A60F00BFA6DE /* MidiEvent.c in Sources */ = {isa = PBXBuildFile; fileRef = 24BD3E7914B5A60F00BFA6DE /* MidiEvent.c */; };
 		24CFD07B14B3736A005AF479 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 24CFD07A14B3736A005AF479 /* Carbon.framework */; };
 		24EE33E714B3455800CFADE0 /* LinkedList.c in Sources */ = {isa = PBXBuildFile; fileRef = 24EE33E614B3455800CFADE0 /* LinkedList.c */; };
 		24FDFBC1148CC9CC0074D3A1 /* MrsWatson.c in Sources */ = {isa = PBXBuildFile; fileRef = 24FDFBC0148CC9CC0074D3A1 /* MrsWatson.c */; };
@@ -81,6 +82,8 @@
 		24BD3E6F14B59BE000BFA6DE /* SampleSourceSilence.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SampleSourceSilence.h; path = source/SampleSourceSilence.h; sourceTree = SOURCE_ROOT; };
 		24BD3E7414B5A5C200BFA6DE /* MidiSourceFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MidiSourceFile.h; path = source/MidiSourceFile.h; sourceTree = SOURCE_ROOT; };
 		24BD3E7614B5A5C900BFA6DE /* MidiSourceFile.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = MidiSourceFile.c; path = source/MidiSourceFile.c; sourceTree = SOURCE_ROOT; };
+		24BD3E7814B5A60900BFA6DE /* MidiEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MidiEvent.h; path = source/MidiEvent.h; sourceTree = SOURCE_ROOT; };
+		24BD3E7914B5A60F00BFA6DE /* MidiEvent.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = MidiEvent.c; path = source/MidiEvent.c; sourceTree = SOURCE_ROOT; };
 		24CFD07A14B3736A005AF479 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
 		24EE33E614B3455800CFADE0 /* LinkedList.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = LinkedList.c; path = source/LinkedList.c; sourceTree = SOURCE_ROOT; };
 		24EE33E914B3456000CFADE0 /* LinkedList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LinkedList.h; path = source/LinkedList.h; sourceTree = SOURCE_ROOT; };
@@ -166,6 +169,8 @@
 				2435636614B1A2C50049FD43 /* EventLogger.h */,
 				24EE33E614B3455800CFADE0 /* LinkedList.c */,
 				24EE33E914B3456000CFADE0 /* LinkedList.h */,
+				24BD3E7914B5A60F00BFA6DE /* MidiEvent.c */,
+				24BD3E7814B5A60900BFA6DE /* MidiEvent.h */,
 				24BD3E6B14B59B7900BFA6DE /* MidiSequence.c */,
 				24BD3E6414B59B3000BFA6DE /* MidiSequence.h */,
 				24BD3E6214B59B1E00BFA6DE /* MidiSource.c */,
@@ -288,6 +293,7 @@
 				24BD3E6C14B59B7900BFA6DE /* MidiSequence.c in Sources */,
 				24BD3E6E14B59BD700BFA6DE /* SampleSourceSilence.c in Sources */,
 				24BD3E7714B5A5C900BFA6DE /* MidiSourceFile.c in Sources */,
+				24BD3E7A14B5A60F00BFA6DE /* MidiEvent.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
