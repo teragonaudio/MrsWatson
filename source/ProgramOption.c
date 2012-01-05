@@ -41,6 +41,7 @@ ProgramOption* newProgramOptions(void) {
   _addNewProgramOption(programOptions, OPTION_DISPLAY_INFO, "display-info", "Print information about the plugin(s)", false, ARGUMENT_TYPE_NONE);
   _addNewProgramOption(programOptions, OPTION_HELP, "help", "Print help", true, ARGUMENT_TYPE_NONE);
   _addNewProgramOption(programOptions, OPTION_INPUT_SOURCE, "input", "Input source", true, ARGUMENT_TYPE_REQUIRED);
+  _addNewProgramOption(programOptions, OPTION_MIDI_SOURCE, "midi-file", "MIDI file to read", true, ARGUMENT_TYPE_REQUIRED);
   _addNewProgramOption(programOptions, OPTION_OUTPUT_SOURCE, "output", "Output source", true, ARGUMENT_TYPE_REQUIRED);
   _addNewProgramOption(programOptions, OPTION_PCM_FILE_NUM_CHANNELS, "pcm-file-num-channels", "Number of channels to use when reading raw PCM data", false, ARGUMENT_TYPE_REQUIRED);
   _addNewProgramOption(programOptions, OPTION_PCM_FILE_SAMPLERATE, "pcm-file-samplerate", "Sample rate to use when reading raw PCM data", false, ARGUMENT_TYPE_REQUIRED);
