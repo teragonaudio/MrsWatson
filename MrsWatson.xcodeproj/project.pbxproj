@@ -20,7 +20,7 @@
 		2465A2CA14B3130B00F94E84 /* Plugin.c in Sources */ = {isa = PBXBuildFile; fileRef = 2465A2C914B3130B00F94E84 /* Plugin.c */; };
 		2465A2D414B3156A00F94E84 /* PluginVst2x.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2465A2D314B3156A00F94E84 /* PluginVst2x.cpp */; };
 		2465A2D814B3313600F94E84 /* PluginChain.c in Sources */ = {isa = PBXBuildFile; fileRef = 2465A2D714B3313600F94E84 /* PluginChain.c */; };
-		24BD3E6314B59B1E00BFA6DE /* MidiFile.c in Sources */ = {isa = PBXBuildFile; fileRef = 24BD3E6214B59B1E00BFA6DE /* MidiFile.c */; };
+		24BD3E6314B59B1E00BFA6DE /* MidiSource.c in Sources */ = {isa = PBXBuildFile; fileRef = 24BD3E6214B59B1E00BFA6DE /* MidiSource.c */; };
 		24BD3E6C14B59B7900BFA6DE /* MidiSequence.c in Sources */ = {isa = PBXBuildFile; fileRef = 24BD3E6B14B59B7900BFA6DE /* MidiSequence.c */; };
 		24BD3E6E14B59BD700BFA6DE /* SampleSourceSilence.c in Sources */ = {isa = PBXBuildFile; fileRef = 24BD3E6D14B59BD700BFA6DE /* SampleSourceSilence.c */; };
 		24CFD07B14B3736A005AF479 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 24CFD07A14B3736A005AF479 /* Carbon.framework */; };
@@ -72,8 +72,8 @@
 		2465A2D514B3157500F94E84 /* PluginVst2x.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PluginVst2x.h; path = source/PluginVst2x.h; sourceTree = SOURCE_ROOT; };
 		2465A2D614B3312D00F94E84 /* PluginChain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PluginChain.h; path = source/PluginChain.h; sourceTree = SOURCE_ROOT; };
 		2465A2D714B3313600F94E84 /* PluginChain.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = PluginChain.c; path = source/PluginChain.c; sourceTree = SOURCE_ROOT; };
-		24BD3E6114B59B1800BFA6DE /* MidiFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MidiFile.h; path = source/MidiFile.h; sourceTree = SOURCE_ROOT; };
-		24BD3E6214B59B1E00BFA6DE /* MidiFile.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = MidiFile.c; path = source/MidiFile.c; sourceTree = SOURCE_ROOT; };
+		24BD3E6114B59B1800BFA6DE /* MidiSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MidiSource.h; path = source/MidiSource.h; sourceTree = SOURCE_ROOT; };
+		24BD3E6214B59B1E00BFA6DE /* MidiSource.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = MidiSource.c; path = source/MidiSource.c; sourceTree = SOURCE_ROOT; };
 		24BD3E6414B59B3000BFA6DE /* MidiSequence.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MidiSequence.h; path = source/MidiSequence.h; sourceTree = SOURCE_ROOT; };
 		24BD3E6B14B59B7900BFA6DE /* MidiSequence.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = MidiSequence.c; path = source/MidiSequence.c; sourceTree = SOURCE_ROOT; };
 		24BD3E6D14B59BD700BFA6DE /* SampleSourceSilence.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = SampleSourceSilence.c; path = source/SampleSourceSilence.c; sourceTree = SOURCE_ROOT; };
@@ -163,8 +163,8 @@
 				2435636614B1A2C50049FD43 /* EventLogger.h */,
 				24EE33E614B3455800CFADE0 /* LinkedList.c */,
 				24EE33E914B3456000CFADE0 /* LinkedList.h */,
-				24BD3E6214B59B1E00BFA6DE /* MidiFile.c */,
-				24BD3E6114B59B1800BFA6DE /* MidiFile.h */,
+				24BD3E6214B59B1E00BFA6DE /* MidiSource.c */,
+				24BD3E6114B59B1800BFA6DE /* MidiSource.h */,
 				24BD3E6B14B59B7900BFA6DE /* MidiSequence.c */,
 				24BD3E6414B59B3000BFA6DE /* MidiSequence.h */,
 				24FDFBC0148CC9CC0074D3A1 /* MrsWatson.c */,
@@ -279,7 +279,7 @@
 				24EE33E714B3455800CFADE0 /* LinkedList.c in Sources */,
 				2458026114B4542A0030FEE9 /* StringUtilities.c in Sources */,
 				24182A8314B492DD009F0A5D /* AudioSettings.c in Sources */,
-				24BD3E6314B59B1E00BFA6DE /* MidiFile.c in Sources */,
+				24BD3E6314B59B1E00BFA6DE /* MidiSource.c in Sources */,
 				24BD3E6C14B59B7900BFA6DE /* MidiSequence.c in Sources */,
 				24BD3E6E14B59BD700BFA6DE /* SampleSourceSilence.c in Sources */,
 			);
