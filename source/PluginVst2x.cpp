@@ -46,7 +46,24 @@ static void _fillVst2xUniqueIdToString(const long uniqueId, CharString outString
   }
 }
 
-static VstIntPtr VSTCALLBACK vst2xPluginHostCallback(AEffect *effect, VstInt32 opcode, VstInt32 index, VstIntPtr value, void *outPtr, float opt) {
+// TODO: This method pretty important. We should implement the most common requests made by plugins.
+static int _canHostDo(const char* pluginName, const char* canDoString) {
+  // Don't know or unsupported
+  int result = 0;
+
+  // TODO: This is just a guess. No idea how long this string can/should be
+  const size_t canDoStringLength = 32;
+  if(!strncmp(canDoString, EMPTY_STRING, canDoStringLength)) {
+    logWarn("Plugin '%s' asked if we can do an empty string", pluginName);
+  }
+  else {
+    logInternalError("Plugin '%s' asked if host canDo '%s' (unimplemented)", canDoString);
+  }
+
+  return result;
+}
+
+static VstIntPtr VSTCALLBACK vst2xPluginHostCallback(AEffect *effect, VstInt32 opcode, VstInt32 index, VstIntPtr value, void *dataPtr, float opt) {
   // This string is used in a bunch of logging calls below
   CharString uniqueIdString = newCharStringWithCapacity(STRING_LENGTH_SHORT);
   if(effect != NULL) {
