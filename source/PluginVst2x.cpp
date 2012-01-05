@@ -326,24 +326,17 @@ static void _suspendPlugin(Plugin plugin) {
   data->dispatcher(data->pluginHandle, effMainsChanged, 0, 0, NULL, 0.0f);
 }
 
-static void _initVst2xPlugin(Plugin plugin) {
+static boolean _initVst2xPlugin(Plugin plugin) {
   PluginVst2xData data = (PluginVst2xData)plugin->extraData;
   CharString uniqueIdString = newCharStringWithCapacity(STRING_LENGTH_SHORT);
   _fillVst2xUniqueIdToString(data->pluginHandle->uniqueID, uniqueIdString);
   logDebug("Initializing VST2.x plugin '%s' (%s)", plugin->pluginName->data, uniqueIdString->data);
 
-  int pluginCategory = data->dispatcher(data->pluginHandle, effGetPlugCategory, 0, 0, NULL, 0.0f);
-  switch(pluginCategory) {
-    case kPlugCategEffect:
-      plugin->pluginType = PLUGIN_TYPE_EFFECT;
-      break;
-    case kPlugCategSynth:
-      plugin->pluginType = PLUGIN_TYPE_INSTRUMENT;
-      break;
-    default:
-      logWarn("Plugin '%s' is of unsupported type %d", plugin->pluginName->data, pluginCategory);
-      plugin->pluginType = PLUGIN_TYPE_UNSUPPORTED;
-      break;
+  if(data->pluginHandle->flags & effFlagsIsSynth) {
+    plugin->pluginType = PLUGIN_TYPE_INSTRUMENT;
+  }
+  else {
+    plugin->pluginType = PLUGIN_TYPE_EFFECT;
   }
 
   data->dispatcher(data->pluginHandle, effOpen, 0, 0, NULL, 0.0f);
@@ -351,6 +344,7 @@ static void _initVst2xPlugin(Plugin plugin) {
   data->dispatcher(data->pluginHandle, effSetBlockSize, 0, getBlocksize(), NULL, 0.0f);
 
   _resumePlugin(plugin);
+  return true;
 }
 
 static boolean _openVst2xPlugin(void* pluginPtr) {
