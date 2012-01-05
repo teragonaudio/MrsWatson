@@ -111,17 +111,25 @@ int main(int argc, char** argv) {
   freeCharString(versionString);
 
   // Check required variables to make sure we have everything needed to start processing
-  if(inputSource == NULL) {
-    logError("No input source");
+  if(pluginChain->numPlugins == 0) {
+    logError("No plugins loaded");
     return RETURN_CODE_MISSING_REQUIRED_OPTION;
   }
-  else if(outputSource == NULL) {
+  if(outputSource == NULL) {
     logError("No output source");
     return RETURN_CODE_MISSING_REQUIRED_OPTION;
   }
-  else if(pluginChain->numPlugins == 0) {
-    logError("No plugins loaded");
-    return RETURN_CODE_MISSING_REQUIRED_OPTION;
+  if(inputSource == NULL) {
+    // If the first plugin in the chain is an instrument, use the silent source as our input and
+    // make sure that there is a corresponding MIDI file
+    Plugin headPlugin = pluginChain->plugins[0];
+    if(headPlugin->pluginType == PLUGIN_TYPE_INSTRUMENT) {
+      inputSource = newSampleSource(SAMPLE_SOURCE_TYPE_SILENCE, NULL);
+    }
+    else {
+      logError("No input source");
+      return RETURN_CODE_MISSING_REQUIRED_OPTION;
+    }
   }
 
   // Prepare input/output sources, plugins
