@@ -14,13 +14,13 @@ extern "C" {
 #include "PluginVst2x.h"
 #include "PlatformInfo.h"
 #include "EventLogger.h"
-#include "LinkedList.h"
 #include "AudioSettings.h"
+#include "MrsWatson.h"
+#include "MidiEvent.h"
 }
 
 #define VST_FORCE_DEPRECATED 0
 #include "aeffectx.h"
-#include "MrsWatson.h"
 
 typedef AEffect* (*Vst2xPluginEntryFunc)(audioMasterCallback host);
 typedef VstIntPtr (*Vst2xPluginDispatcherFunc)(AEffect *effect, VstInt32 opCode, VstInt32 index, VstInt32 value, void *ptr, float opt);
