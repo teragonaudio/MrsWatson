@@ -15,8 +15,8 @@
 #include "EventLogger.h"
 #include "SampleSourceSilence.h"
 
-SampleSourceType guessSampleSourceType(CharString sampleSourceTypeString) {
-  if(sampleSourceTypeString != NULL) {
+SampleSourceType guessSampleSourceType(const CharString sampleSourceTypeString) {
+  if(!isCharStringEmpty(sampleSourceTypeString)) {
     // Look for stdin/stdout
     if(strlen(sampleSourceTypeString->data) == 1 && sampleSourceTypeString->data[0] == '-') {
       return SAMPLE_SOURCE_TYPE_PCM_STREAM;
