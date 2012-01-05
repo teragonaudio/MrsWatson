@@ -89,7 +89,9 @@ int main(int argc, char** argv) {
           outputSource = newSampleSource(guessSampleSourceType(option->argument), option->argument);
           break;
         case OPTION_PLUGIN:
-          addPluginsFromArgumentString(pluginChain, option->argument);
+          if(!addPluginsFromArgumentString(pluginChain, option->argument)) {
+            return RETURN_CODE_INVALID_PLUGIN_CHAIN;
+          }
           break;
         case OPTION_SAMPLERATE:
           setSampleRate(strtof(option->argument->data, NULL));

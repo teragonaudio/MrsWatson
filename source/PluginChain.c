@@ -33,7 +33,7 @@ static boolean _addPluginToChain(PluginChain pluginChain, Plugin plugin) {
   }
 }
 
-void addPluginsFromArgumentString(PluginChain pluginChain, const CharString argumentString) {
+boolean addPluginsFromArgumentString(PluginChain pluginChain, const CharString argumentString) {
   // Expect a comma-separated string of plugins with colon separators for preset name
   // Example: plugin1:preset1name,plugin2:preset2name
   char* substringStart = argumentString->data;
@@ -55,7 +55,10 @@ void addPluginsFromArgumentString(PluginChain pluginChain, const CharString argu
     PluginInterfaceType pluginType = guessPluginInterfaceType(nameBuffer);
     if(pluginType != PLUGIN_TYPE_INVALID) {
       Plugin plugin = newPlugin(pluginType, nameBuffer);
-      _addPluginToChain(pluginChain, plugin);
+      if(!_addPluginToChain(pluginChain, plugin)) {
+        logError("Plugin chain could not be constructed");
+        return false;
+      }
     }
 
     if(comma == NULL) {
@@ -68,6 +71,7 @@ void addPluginsFromArgumentString(PluginChain pluginChain, const CharString argu
   } while(substringStart < endChar);
 
   freeCharString(nameBuffer);
+  return true;
 }
 
 void initializePluginChain(PluginChain pluginChain) {
