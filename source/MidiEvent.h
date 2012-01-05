@@ -20,6 +20,7 @@ typedef enum {
 
 typedef struct {
   MidiEventType eventType;
+  unsigned long timestamp;
   byte status;
   byte data1;
   byte data2;
