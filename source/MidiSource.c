@@ -8,6 +8,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "MidiSource.h"
 #include "EventLogger.h"
 #include "StringUtilities.h"
@@ -19,8 +20,7 @@ MidiSourceType guessMidiSourceType(const CharString midiSourceTypeString) {
     if(fileExtension == NULL) {
       return MIDI_SOURCE_TYPE_INVALID;
     }
-    else if(isCharStringEqualToCString(midiSourceTypeString, "mid", true) ||
-      isCharStringEqualToCString(midiSourceTypeString, "midi", true)) {
+    else if(!strcasecmp(fileExtension, "mid") || !strcasecmp(fileExtension, "midi")) {
       return MIDI_SOURCE_TYPE_FILE;
     }
     else {
