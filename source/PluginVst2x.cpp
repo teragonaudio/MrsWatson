@@ -437,7 +437,7 @@ static void _freeVst2xPluginData(void* pluginDataPtr) {
 Plugin newPluginVst2x(const CharString pluginName) {
   Plugin plugin = (Plugin)malloc(sizeof(PluginMembers));
 
-  plugin->pluginType = PLUGIN_TYPE_VST_2X;
+  plugin->interfaceType = PLUGIN_TYPE_VST_2X;
   plugin->pluginName = newCharString();
   copyCharStrings(plugin->pluginName, pluginName);
 

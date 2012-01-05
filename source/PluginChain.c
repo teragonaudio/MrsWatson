@@ -52,7 +52,7 @@ void addPluginsFromArgumentString(PluginChain pluginChain, const CharString argu
     strncpy(nameBuffer->data, substringStart, substringLength);
 
     // TODO: Use colon as a separator for presets to load into these plugins
-    PluginType pluginType = guessPluginType(nameBuffer);
+    PluginInterfaceType pluginType = guessPluginInterfaceType(nameBuffer);
     if(pluginType != PLUGIN_TYPE_INVALID) {
       Plugin plugin = newPlugin(pluginType, nameBuffer);
       _addPluginToChain(pluginChain, plugin);
