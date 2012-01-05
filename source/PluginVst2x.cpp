@@ -276,11 +276,6 @@ static const char*_getVst2xPlatformExtension(void) {
   }
 }
 
-static void _freePluginLocationsItem(void* item) {
-  CharString charString = (CharString)item;
-  freeCharString(charString);
-}
-
 static void _fillVst2xPluginAbsolutePath(const CharString pluginName, CharString outString) {
   LinkedList pluginLocations = newLinkedList();
   _fillDefaultPluginLocationArray(getPlatformType(), pluginLocations);
@@ -302,7 +297,7 @@ static void _fillVst2xPluginAbsolutePath(const CharString pluginName, CharString
   }
 
   freeCharString(pluginSearchPath);
-  freeLinkedList(pluginLocations, _freePluginLocationsItem);
+  freeLinkedList(pluginLocations, (LinkedListFreeItemFunc)freeCharString);
 }
 
 boolean vst2xPluginExists(const CharString pluginName) {
