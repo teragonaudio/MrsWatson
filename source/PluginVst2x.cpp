@@ -14,7 +14,7 @@ extern "C" {
 #include "PluginVst2x.h"
 #include "PlatformInfo.h"
 #include "EventLogger.h"
-#include "CharStringList.h"
+#include "LinkedList.h"
 #include "AudioSettings.h"
 }
 
@@ -241,26 +241,27 @@ static AEffect* _loadVst2xPluginMac(CFBundleRef bundle) {
 #endif
 
 extern "C" {
-static void _fillDefaultPluginLocationArray(PlatformType platformType, CharStringList outLocations) {
-  CharString locationBuffer = newCharString();
-
+static void _fillDefaultPluginLocationArray(PlatformType platformType, LinkedList outLocations) {
   switch(platformType) {
     case PLATFORM_WINDOWS:
       // TODO: Yeah, whatever
       break;
     case PLATFORM_MACOSX:
-      snprintf(locationBuffer->data, (size_t)(locationBuffer->capacity), "/Library/Audio/Plug-Ins/VST");
-      appendItemToStringList(outLocations, locationBuffer);
-      snprintf(locationBuffer->data, (size_t)(locationBuffer->capacity), "%s/Library/Audio/Plug-Ins/VST", getenv("HOME"));
-      appendItemToStringList(outLocations, locationBuffer);
+    {
+      CharString locationBuffer1 = newCharString();
+      snprintf(locationBuffer1->data, (size_t)(locationBuffer1->capacity), "/Library/Audio/Plug-Ins/VST");
+      appendItemToList(outLocations, locationBuffer1);
+
+      CharString locationBuffer2 = newCharString();
+      snprintf(locationBuffer2->data, (size_t)(locationBuffer2->capacity), "%s/Library/Audio/Plug-Ins/VST", getenv("HOME"));
+      appendItemToList(outLocations, locationBuffer2);
+    }
       break;
     case PLATFORM_UNSUPPORTED:
     default:
       logCritical("Unsupported platform detected. Sorry!");
       break;
   }
-
-  freeCharString(locationBuffer);
 }
 
 static const char*_getVst2xPlatformExtension(void) {
@@ -275,27 +276,33 @@ static const char*_getVst2xPlatformExtension(void) {
   }
 }
 
+static void _freePluginLocationsItem(void* item) {
+  CharString charString = (CharString)item;
+  freeCharString(charString);
+}
+
 static void _fillVst2xPluginAbsolutePath(const CharString pluginName, CharString outString) {
-  CharStringList pluginLocations = newCharStringList();
+  LinkedList pluginLocations = newLinkedList();
   _fillDefaultPluginLocationArray(getPlatformType(), pluginLocations);
   if(pluginLocations->item == NULL) {
     return;
   }
 
   CharString pluginSearchPath = newCharString();
-  CharStringListIterator iterator = pluginLocations;
+  LinkedListIterator iterator = pluginLocations;
   while(iterator->nextItem != NULL) {
+    CharString location = (CharString)(iterator->item);
     snprintf(pluginSearchPath->data, (size_t)(pluginSearchPath->capacity),
-      "%s%c%s.%s", iterator->item->data, PATH_DELIMITER, pluginName->data, _getVst2xPlatformExtension());
+      "%s%c%s.%s", location->data, PATH_DELIMITER, pluginName->data, _getVst2xPlatformExtension());
     if(fileExists(pluginSearchPath->data)) {
       copyCharStrings(outString, pluginSearchPath);
       break;
     }
-    iterator = (CharStringListIterator)iterator->nextItem;
+    iterator = (LinkedListIterator)iterator->nextItem;
   }
 
   freeCharString(pluginSearchPath);
-  freeCharStringList(pluginLocations);
+  freeLinkedList(pluginLocations, _freePluginLocationsItem);
 }
 
 boolean vst2xPluginExists(const CharString pluginName) {

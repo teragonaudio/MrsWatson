@@ -10,8 +10,8 @@
 #include <stdlib.h>
 #include "LinkedList.h"
 
-CharStringList newCharStringList(void) {
-  CharStringList list = malloc(sizeof(CharStringListMembers));
+LinkedList newLinkedList(void) {
+  LinkedList list = malloc(sizeof(LinkedListMembers));
 
   list->item = NULL;
   list->nextItem = NULL;
@@ -19,19 +19,19 @@ CharStringList newCharStringList(void) {
   return list;
 }
 
-void appendItemToStringList(CharStringList list, void* charString) {
-  CharStringListIterator iterator = list;
+void appendItemToList(LinkedList list, void* item) {
+  LinkedListIterator iterator = list;
   while(iterator->nextItem != NULL) {
     iterator = iterator->nextItem;
   }
-  iterator->item = charString;
-  iterator->nextItem = newCharStringList();
+  iterator->item = item;
+  iterator->nextItem = newLinkedList();
 }
 
 // TODO: Currently unused, is this needed?
-int numItemsInStringList(CharStringList list) {
+int numItemsInList(LinkedList list) {
   int result = 0;
-  CharStringListIterator iterator = list;
+  LinkedListIterator iterator = list;
   while(iterator != NULL) {
     result++;
     iterator = iterator->nextItem;
@@ -39,11 +39,11 @@ int numItemsInStringList(CharStringList list) {
   return result;
 }
 
-void freeCharStringList(CharStringList list, CharStringListFreeFunc freeFunc) {
-  CharStringListIterator iterator = list;
+void freeLinkedList(LinkedList list, LinkedListFreeItemFunc freeItem) {
+  LinkedListIterator iterator = list;
   while(iterator->nextItem != NULL) {
-    freeFunc(iterator->item);
-    CharStringList current = iterator;
+    freeItem(iterator->item);
+    LinkedList current = iterator;
     iterator = iterator->nextItem;
     free(current);
   }

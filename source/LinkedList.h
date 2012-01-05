@@ -6,24 +6,22 @@
 //  Copyright (c) 2012 Teragon Audio. All rights reserved.
 //
 
-#include "CharString.h"
-
-#ifndef MrsWatson_CharStringList_h
-#define MrsWatson_CharStringList_h
+#ifndef MrsWatson_LinkedList_h
+#define MrsWatson_LinkedList_h
 
 typedef struct {
   void* item;
   void* nextItem;
-} CharStringListMembers;
+} LinkedListMembers;
 
-typedef CharStringListMembers* CharStringList;
-typedef CharStringListMembers*CharStringListIterator;
+typedef LinkedListMembers *LinkedList;
+typedef LinkedListMembers *LinkedListIterator;
 
-typedef void (*CharStringListFreeFunc)(void*);
+typedef void (*LinkedListFreeItemFunc)(void*);
 
-CharStringList newCharStringList(void);
-void appendItemToStringList(CharStringList list, void* charString);
-int numItemsInStringList(CharStringList list);
-void freeCharStringList(CharStringList list, CharStringListFreeFunc freeFunc);
+LinkedList newLinkedList(void);
+void appendItemToList(LinkedList list, void* item);
+int numItemsInList(LinkedList list);
+void freeLinkedList(LinkedList list, LinkedListFreeItemFunc freeItem);
 
 #endif
