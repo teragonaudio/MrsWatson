@@ -56,6 +56,9 @@ void setLoggingColorSchemeWithString(const CharString colorSchemeName) {
   if(isCharStringEmpty(colorSchemeName)) {
     setLoggingColorScheme(COLOR_SCHEME_DEFAULT);
   }
+  else if(isCharStringEqualToCString(colorSchemeName, "none", false)) {
+    setLoggingColorScheme(COLOR_SCHEME_NONE);
+  }
   else if(isCharStringEqualToCString(colorSchemeName, "dark", false)) {
     setLoggingColorScheme(COLOR_SCHEME_DARK);
   }
