@@ -18,6 +18,8 @@
 #include "StringUtilities.h"
 #include "AudioSettings.h"
 #include "AudioClock.h"
+#include "MidiSequence.h"
+#include "MidiSource.h"
 
 void fillVersionString(CharString outString) {
   snprintf(outString->data, outString->capacity, "%s, version %d.%d.%d", PROGRAM_NAME, VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
@@ -33,6 +35,8 @@ int main(int argc, char** argv) {
   SampleSource outputSource = NULL;
   PluginChain pluginChain = newPluginChain();
   boolean shouldDisplayPluginInfo = false;
+  MidiSequence midiSequence = NULL;
+  MidiSource midiSource = NULL;
 
   ProgramOptions programOptions = newProgramOptions();
   if(!parseCommandLine(programOptions, argc, argv)) {
@@ -86,6 +90,9 @@ int main(int argc, char** argv) {
           break;
         case OPTION_INPUT_SOURCE:
           inputSource = newSampleSource(guessSampleSourceType(option->argument), option->argument);
+          break;
+        case OPTION_MIDI_SOURCE:
+          midiSource = newMidiSource(guessMidiSourceType(option->argument), option->argument);
           break;
         case OPTION_OUTPUT_SOURCE:
           outputSource = newSampleSource(guessSampleSourceType(option->argument), option->argument);
