@@ -36,7 +36,7 @@ void copyCharStrings(CharString destString, const CharString srcString) {
 }
 
 boolean isCharStringEmpty(const CharString charString) {
-  return (charString->data == NULL || charString->data[0] == '\0');
+  return (charString == NULL || charString->data == NULL || charString->data[0] == '\0');
 }
 
 boolean isCharStringEqualTo(const CharString firstString, const CharString otherString, boolean caseInsensitive) {
