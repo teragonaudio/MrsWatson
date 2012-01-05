@@ -6,9 +6,11 @@
 //  Copyright (c) 2012 Teragon Audio. All rights reserved.
 //
 
+#include "SampleSource.h"
+
 #ifndef MrsWatson_SampleSourceSilence_h
 #define MrsWatson_SampleSourceSilence_h
 
-
+SampleSource newSampleSourceSilence(const CharString sampleSourceName);
 
 #endif
