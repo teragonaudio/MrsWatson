@@ -144,6 +144,10 @@ int main(int argc, char** argv) {
     Plugin headPlugin = pluginChain->plugins[0];
     if(headPlugin->pluginType == PLUGIN_TYPE_INSTRUMENT) {
       inputSource = newSampleSource(SAMPLE_SOURCE_TYPE_SILENCE, NULL);
+      if(midiSource == NULL) {
+        logError("Plugin chain contains an instrument, but no MIDI source was supplied");
+        return RETURN_CODE_MISSING_REQUIRED_OPTION;
+      }
     }
     else {
       logError("No input source");
