@@ -17,7 +17,7 @@ static boolean _openMidiSourceFile(void* midiSourcePtr) {
   MidiSourceFileData extraData = midiSource->extraData;
 
   extraData->fileHandle = fopen(midiSource->sourceName->data, "rb");
-  if(extraData->fileHandle) {
+  if(extraData->fileHandle == NULL) {
     logError("MIDI file '%s' could not be opened for reading", midiSource->sourceName->data);
     return false;
   }
