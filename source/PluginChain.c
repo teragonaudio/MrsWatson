@@ -94,6 +94,8 @@ boolean initializePluginChain(PluginChain pluginChain) {
       return false;
     }
   }
+
+  return true;
 }
 
 void displayPluginInfo(PluginChain pluginChain) {
