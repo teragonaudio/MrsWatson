@@ -1,5 +1,5 @@
 //
-//  CharStringList.c
+//  LinkedList.c
 //  MrsWatson
 //
 //  Created by Nik Reiman on 1/3/12.
@@ -8,7 +8,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "CharStringList.h"
+#include "LinkedList.h"
 
 CharStringList newCharStringList(void) {
   CharStringList list = malloc(sizeof(CharStringListMembers));
@@ -19,13 +19,12 @@ CharStringList newCharStringList(void) {
   return list;
 }
 
-void appendItemToStringList(CharStringList list, const CharString charString) {
+void appendItemToStringList(CharStringList list, void* charString) {
   CharStringListIterator iterator = list;
   while(iterator->nextItem != NULL) {
     iterator = iterator->nextItem;
   }
-  iterator->item = newCharString();
-  copyCharStrings(iterator->item, charString);
+  iterator->item = charString;
   iterator->nextItem = newCharStringList();
 }
 
@@ -40,10 +39,10 @@ int numItemsInStringList(CharStringList list) {
   return result;
 }
 
-void freeCharStringList(CharStringList list) {
+void freeCharStringList(CharStringList list, CharStringListFreeFunc freeFunc) {
   CharStringListIterator iterator = list;
   while(iterator->nextItem != NULL) {
-    freeCharString(iterator->item);
+    freeFunc(iterator->item);
     CharStringList current = iterator;
     iterator = iterator->nextItem;
     free(current);

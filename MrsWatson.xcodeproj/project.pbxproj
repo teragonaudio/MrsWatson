@@ -21,7 +21,7 @@
 		2465A2D414B3156A00F94E84 /* PluginVst2x.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2465A2D314B3156A00F94E84 /* PluginVst2x.cpp */; };
 		2465A2D814B3313600F94E84 /* PluginChain.c in Sources */ = {isa = PBXBuildFile; fileRef = 2465A2D714B3313600F94E84 /* PluginChain.c */; };
 		24CFD07B14B3736A005AF479 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 24CFD07A14B3736A005AF479 /* Carbon.framework */; };
-		24EE33E714B3455800CFADE0 /* CharStringList.c in Sources */ = {isa = PBXBuildFile; fileRef = 24EE33E614B3455800CFADE0 /* CharStringList.c */; };
+		24EE33E714B3455800CFADE0 /* LinkedList.c in Sources */ = {isa = PBXBuildFile; fileRef = 24EE33E614B3455800CFADE0 /* LinkedList.c */; };
 		24FDFBC1148CC9CC0074D3A1 /* MrsWatson.c in Sources */ = {isa = PBXBuildFile; fileRef = 24FDFBC0148CC9CC0074D3A1 /* MrsWatson.c */; };
 /* End PBXBuildFile section */
 
@@ -70,8 +70,8 @@
 		2465A2D614B3312D00F94E84 /* PluginChain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PluginChain.h; path = source/PluginChain.h; sourceTree = SOURCE_ROOT; };
 		2465A2D714B3313600F94E84 /* PluginChain.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = PluginChain.c; path = source/PluginChain.c; sourceTree = SOURCE_ROOT; };
 		24CFD07A14B3736A005AF479 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
-		24EE33E614B3455800CFADE0 /* CharStringList.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = CharStringList.c; path = source/CharStringList.c; sourceTree = SOURCE_ROOT; };
-		24EE33E914B3456000CFADE0 /* CharStringList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CharStringList.h; path = source/CharStringList.h; sourceTree = SOURCE_ROOT; };
+		24EE33E614B3455800CFADE0 /* LinkedList.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = LinkedList.c; path = source/LinkedList.c; sourceTree = SOURCE_ROOT; };
+		24EE33E914B3456000CFADE0 /* LinkedList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LinkedList.h; path = source/LinkedList.h; sourceTree = SOURCE_ROOT; };
 		24FDFBAA148CC6AF0074D3A1 /* mrswatson */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = mrswatson; sourceTree = BUILT_PRODUCTS_DIR; };
 		24FDFBC0148CC9CC0074D3A1 /* MrsWatson.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = MrsWatson.c; path = source/MrsWatson.c; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
@@ -150,10 +150,10 @@
 				2435639514B20B750049FD43 /* BuildInfo.h */,
 				2435636A14B1B4FE0049FD43 /* CharString.c */,
 				2435636C14B1B50A0049FD43 /* CharString.h */,
-				24EE33E614B3455800CFADE0 /* CharStringList.c */,
-				24EE33E914B3456000CFADE0 /* CharStringList.h */,
 				2435636714B1A2D50049FD43 /* EventLogger.c */,
 				2435636614B1A2C50049FD43 /* EventLogger.h */,
+				24EE33E614B3455800CFADE0 /* LinkedList.c */,
+				24EE33E914B3456000CFADE0 /* LinkedList.h */,
 				24FDFBC0148CC9CC0074D3A1 /* MrsWatson.c */,
 				2435636D14B1B5F50049FD43 /* MrsWatson.h */,
 				2435639914B22B990049FD43 /* PlatformInfo.c */,
@@ -261,7 +261,7 @@
 				2465A2CA14B3130B00F94E84 /* Plugin.c in Sources */,
 				2465A2D414B3156A00F94E84 /* PluginVst2x.cpp in Sources */,
 				2465A2D814B3313600F94E84 /* PluginChain.c in Sources */,
-				24EE33E714B3455800CFADE0 /* CharStringList.c in Sources */,
+				24EE33E714B3455800CFADE0 /* LinkedList.c in Sources */,
 				2458026114B4542A0030FEE9 /* StringUtilities.c in Sources */,
 				24182A8314B492DD009F0A5D /* AudioSettings.c in Sources */,
 			);
