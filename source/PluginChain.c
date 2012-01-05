@@ -11,6 +11,7 @@
 #include <string.h>
 #include "PluginChain.h"
 #include "EventLogger.h"
+#include "MidiEvent.h"
 
 PluginChain newPluginChain(void) {
   PluginChain pluginChain = malloc(sizeof(PluginChainMembers));
@@ -107,19 +108,29 @@ void displayPluginInfo(PluginChain pluginChain) {
   }
 }
 
-void process(PluginChain pluginChain, SampleBuffer inBuffer, SampleBuffer outBuffer) {
-  logDebug("Processing plugin chain");
+void processPluginChainAudio(PluginChain pluginChain, SampleBuffer inBuffer, SampleBuffer outBuffer) {
+  logDebug("Processing plugin chain audio");
   for(int i = 0; i < pluginChain->numPlugins; i++) {
     clearSampleBuffer(outBuffer);
     Plugin plugin = pluginChain->plugins[i];
-    logDebug("Processing plugin '%s'", plugin->pluginName->data);
-    plugin->process(plugin, inBuffer, outBuffer);
+    logDebug("Plugin '%s' processing audio", plugin->pluginName->data);
+    plugin->processAudio(plugin, inBuffer, outBuffer);
 
     // If this is not the last plugin in the chain, then copy the output of this plugin
     // back to the input for the next one in the chain.
     if(i + 1 < pluginChain->numPlugins) {
       copySampleBuffers(inBuffer, outBuffer);
     }
+  }
+}
+
+void processPluginChainMidiEvents(PluginChain pluginChain, LinkedList midiEvents) {
+  if(midiEvents->item != NULL) {
+    logDebug("Processing plugin chain MIDI events");
+    // Right now, we only process MIDI in the first plugin in the chain
+    // TODO: Is this really the correct behavior? How do other sequencers do it?
+    Plugin plugin = pluginChain->plugins[0];
+    plugin->processMidiEvents(plugin, midiEvents);
   }
 }
 

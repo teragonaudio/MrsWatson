@@ -7,6 +7,7 @@
 //
 
 #include "Plugin.h"
+#include "LinkedList.h"
 
 #ifndef MrsWatson_PluginChain_h
 #define MrsWatson_PluginChain_h
@@ -21,10 +22,14 @@ typedef struct {
 typedef PluginChainMembers* PluginChain;
 
 PluginChain newPluginChain(void);
+
 boolean addPluginsFromArgumentString(PluginChain pluginChain, const CharString argumentString);
 boolean initializePluginChain(PluginChain pluginChain);
 void displayPluginInfo(PluginChain pluginChain);
-void process(PluginChain pluginChain, SampleBuffer inBuffer, SampleBuffer outBuffer);
+
+void processPluginChainAudio(PluginChain pluginChain, SampleBuffer inBuffer, SampleBuffer outBuffer);
+void processPluginChainMidiEvents(PluginChain pluginChain, LinkedList midiEvents);
+
 void freePluginChain(PluginChain pluginChain);
 
 #endif

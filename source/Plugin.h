@@ -8,6 +8,7 @@
 
 #include "CharString.h"
 #include "SampleBuffer.h"
+#include "LinkedList.h"
 
 #ifndef MrsWatson_Plugin_h
 #define MrsWatson_Plugin_h
@@ -28,7 +29,8 @@ typedef enum {
 
 typedef boolean (*OpenPluginFunc)(void*);
 typedef void (*DisplayPluginInfoFunc)(void*);
-typedef void (*PluginProcessFunc)(void*, SampleBuffer, SampleBuffer);
+typedef void (*PluginProcessAudioFunc)(void*, SampleBuffer, SampleBuffer);
+typedef void (*PluginProcessMidiEventsFunc)(void*, LinkedList);
 typedef void (*FreePluginDataFunc)(void*);
 
 typedef struct {
@@ -38,7 +40,8 @@ typedef struct {
 
   OpenPluginFunc open;
   DisplayPluginInfoFunc displayPluginInfo;
-  PluginProcessFunc process;
+  PluginProcessAudioFunc processAudio;
+  PluginProcessMidiEventsFunc processMidiEvents;
   FreePluginDataFunc freePluginData;
 
   void* extraData;
