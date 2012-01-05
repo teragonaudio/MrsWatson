@@ -203,11 +203,22 @@ static CFBundleRef _bundleRefForPlugin(const char* pluginPath) {
 }
 
 static AEffect* _loadVst2xPluginMac(CFBundleRef bundle) {
-  Vst2xPluginEntryFunc mainEntryPoint;
-  mainEntryPoint = (Vst2xPluginEntryFunc)CFBundleGetFunctionPointerForName(bundle, CFSTR("VSTPluginMain"));
+  // Somewhat cheap hack to avoid a tricky compiler warning. Casting from void* to a proper function
+  // pointer will cause GCC to warn that "ISO C++ forbids casting between pointer-to-function and
+  // pointer-to-object". Here, we represent both types in a union and use the correct one in the given
+  // context, thus avoiding the need to cast anything.
+  // See also: http://stackoverflow.com/a/2742234/14302
+  union {
+    Vst2xPluginEntryFunc entryPointFuncPtr;
+    void *entryPointVoidPtr;
+  } entryPoint;
+
+  entryPoint.entryPointVoidPtr = CFBundleGetFunctionPointerForName(bundle, CFSTR("VSTPluginMain"));
+  Vst2xPluginEntryFunc mainEntryPoint = entryPoint.entryPointFuncPtr;
   // VST plugins previous to the 2.4 SDK used main_macho for the entry point name
   if(mainEntryPoint == NULL) {
-    mainEntryPoint = (Vst2xPluginEntryFunc)CFBundleGetFunctionPointerForName(bundle, CFSTR("main_macho"));
+    entryPoint.entryPointVoidPtr = CFBundleGetFunctionPointerForName(bundle, CFSTR("main_macho"));
+    mainEntryPoint = entryPoint.entryPointFuncPtr;
   }
 
   if(mainEntryPoint == NULL) {
