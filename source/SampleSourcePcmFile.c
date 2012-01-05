@@ -10,7 +10,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "SampleSourcePcmFile.h"
-#import "EventLogger.h"
+#include "EventLogger.h"
 
 static boolean _openSampleSourcePcmFile(void* sampleSourcePtr, const SampleSourceOpenAs openAs) {
   SampleSource sampleSource = sampleSourcePtr;

@@ -19,7 +19,7 @@ extern "C" {
 }
 
 #include "aeffectx.h"
-#import "MrsWatson.h"
+#include "MrsWatson.h"
 
 typedef AEffect* (*Vst2xPluginEntryFunc)(audioMasterCallback host);
 typedef VstIntPtr (*Vst2xPluginDispatcherFunc)(AEffect *effect, VstInt32 opCode, VstInt32 index, VstInt32 value, void *ptr, float opt);

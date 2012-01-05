@@ -18,8 +18,8 @@ void wrapStringForTerminal(const char* srcString, char* destString, int indentSi
 
 void wrapString(const char* srcString, char* destString, int indentSize, int lineLength) {
   char* lineBuffer = malloc(sizeof(char) * lineLength);
-  long destStringIndex = 0;
-  long srcStringIndex = 0;
+  unsigned long destStringIndex = 0;
+  unsigned long srcStringIndex = 0;
   int lineIndex = 0;
 
   while(srcStringIndex < strlen(srcString)) {

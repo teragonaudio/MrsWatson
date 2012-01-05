@@ -7,7 +7,7 @@
 //
 
 #include <stdio.h>
-#import <stdlib.h>
+#include <stdlib.h>
 
 #include "EventLogger.h"
 #include "MrsWatson.h"
@@ -16,7 +16,7 @@
 #include "SampleSource.h"
 #include "PluginChain.h"
 #include "StringUtilities.h"
-#import "AudioSettings.h"
+#include "AudioSettings.h"
 
 void fillVersionString(CharString outString) {
   snprintf(outString->data, outString->capacity, "%s, version %d.%d.%d", PROGRAM_NAME, VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);

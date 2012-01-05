@@ -8,7 +8,7 @@
 
 #include <sys/types.h>
 #include "Types.h"
-#import "CharString.h"
+#include "CharString.h"
 
 #ifndef MrsWatson_EventLogger_h
 #define MrsWatson_EventLogger_h
@@ -20,6 +20,7 @@ typedef enum {
   LOG_INFO,
   LOG_WARN,
   LOG_ERROR,
+  NUM_LOG_LEVELS
 } LogLevel;
 
 typedef enum {

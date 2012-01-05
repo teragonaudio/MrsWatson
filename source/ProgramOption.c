@@ -13,11 +13,11 @@
 #include "EventLogger.h"
 #include "StringUtilities.h"
 
-static void _addNewProgramOption(const ProgramOptions programOptions, const int index,
+static void _addNewProgramOption(const ProgramOptions programOptions, const int optionIndex,
   const char* name, const char* help, boolean hasShortForm, ProgramOptionArgumentType argumentType) {
   ProgramOption programOption = malloc(sizeof(ProgramOptionMembers));
 
-  programOption->index = index;
+  programOption->index = optionIndex;
   programOption->name = newCharStringWithCapacity(STRING_LENGTH_SHORT);
   copyToCharString(programOption->name, name);
   programOption->help = newCharStringWithCapacity(STRING_LENGTH_LONG);
@@ -28,7 +28,7 @@ static void _addNewProgramOption(const ProgramOptions programOptions, const int 
   programOption->argument = newCharString();
   programOption->enabled = false;
 
-  programOptions[index] = programOption;
+  programOptions[optionIndex] = programOption;
 }
 
 ProgramOption* newProgramOptions(void) {

@@ -16,9 +16,9 @@ int buildYear(void) {
   CharString buildDate = newCharStringWithCapacity(STRING_LENGTH_SHORT);
   int startingIndex = strlen(__DATE__) - 4;
   strncpy(buildDate->data, __DATE__ + startingIndex, 4);
-  int buildYear = strtol(buildDate->data, NULL, 10);
+  int result = strtol(buildDate->data, NULL, 10);
   freeCharString(buildDate);
-  return buildYear;
+  return result;
 }
 
 long buildDatestamp(void) {

@@ -15,6 +15,7 @@
 typedef enum {
   PLUGIN_TYPE_INVALID,
   PLUGIN_TYPE_VST_2X,
+  NUM_PLUGIN_TYPES
 } PluginType;
 
 typedef boolean (*OpenPluginFunc)(void*);

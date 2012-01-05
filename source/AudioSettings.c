@@ -7,9 +7,9 @@
 //
 
 #include <stdio.h>
-#import <stdlib.h>
-#import "AudioSettings.h"
-#import "EventLogger.h"
+#include <stdlib.h>
+#include "AudioSettings.h"
+#include "EventLogger.h"
 
 AudioSettings audioSettingsInstance = NULL;
 
