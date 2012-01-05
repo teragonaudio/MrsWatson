@@ -133,7 +133,11 @@ int main(int argc, char** argv) {
     logError("Output source could not be opened");
     return RETURN_CODE_IO_ERROR;
   }
-  initializePluginChain(pluginChain);
+
+  if(!initializePluginChain(pluginChain)) {
+    logError("Could not initialize plugin chain");
+    return RETURN_CODE_PLUGIN_ERROR;
+  }
 
   if(shouldDisplayPluginInfo) {
     displayPluginInfo(pluginChain);
