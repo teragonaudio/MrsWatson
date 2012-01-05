@@ -18,6 +18,7 @@ extern "C" {
 #include "AudioSettings.h"
 }
 
+#define VST_FORCE_DEPRECATED 0
 #include "aeffectx.h"
 #include "MrsWatson.h"
 
