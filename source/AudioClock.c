@@ -26,6 +26,6 @@ void advanceAudioClock(const int blocksize) {
   audioClock->currentSample += blocksize;
 }
 
-unsigned long getCurrentSample(void) {
+unsigned long getAudioClockCurrentSample(void) {
   return _getAudioClockInstance()->currentSample;
 }

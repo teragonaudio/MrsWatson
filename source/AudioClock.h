@@ -19,6 +19,6 @@ extern AudioClock audioClockInstance;
 void initAudioClock(void);
 
 void advanceAudioClock(const int blocksize);
-unsigned long getCurrentSample(void);
+unsigned long getAudioClockCurrentSample(void);
 
 #endif
