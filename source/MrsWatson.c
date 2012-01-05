@@ -17,6 +17,7 @@
 #include "PluginChain.h"
 #include "StringUtilities.h"
 #include "AudioSettings.h"
+#include "AudioClock.h"
 
 void fillVersionString(CharString outString) {
   snprintf(outString->data, outString->capacity, "%s, version %d.%d.%d", PROGRAM_NAME, VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
@@ -25,6 +26,7 @@ void fillVersionString(CharString outString) {
 int main(int argc, char** argv) {
   initEventLogger();
   initAudioSettings();
+  initAudioClock();
 
   // Input/Output sources, plugin chain, and other required objects
   SampleSource inputSource = NULL;
