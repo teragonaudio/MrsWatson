@@ -11,6 +11,6 @@
 #ifndef MrsWatson_SampleSourceSilence_h
 #define MrsWatson_SampleSourceSilence_h
 
-SampleSource newSampleSourceSilence(const CharString sampleSourceName);
+SampleSource newSampleSourceSilence(void);
 
 #endif

@@ -29,13 +29,13 @@ static boolean _writeBlockFromSilence(void* sampleSourcePtr, const SampleBuffer 
 static void _freeInputSourceDataSilence(void* sampleSourceDataPtr) {
 }
 
-SampleSource newSampleSourceSilence(const CharString sampleSourceName) {
+SampleSource newSampleSourceSilence(void) {
   SampleSource sampleSource = malloc(sizeof(SampleSourceMembers));
 
   sampleSource->sampleSourceType = SAMPLE_SOURCE_TYPE_SILENCE;
   sampleSource->openedAs = SAMPLE_SOURCE_OPEN_NOT_OPENED;
   sampleSource->sourceName = newCharString();
-  copyCharStrings(sampleSource->sourceName, sampleSourceName);
+  copyToCharString(sampleSource->sourceName, "(silence)");
   sampleSource->numChannels = getNumChannels();
   sampleSource->sampleRate = getSampleRate();
 

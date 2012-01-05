@@ -51,7 +51,7 @@ SampleSource newSampleSource(SampleSourceType sampleSourceType, const CharString
       // TODO: Currently unsupported
       return NULL;
     case SAMPLE_SOURCE_TYPE_SILENCE:
-      return newSampleSourceSilence(sampleSourceName);
+      return newSampleSourceSilence();
     default:
       return NULL;
   }
