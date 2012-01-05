@@ -14,8 +14,8 @@
 
 static boolean _openSampleSourcePcmFile(void* sampleSourcePtr, const SampleSourceOpenAs openAs) {
   SampleSource sampleSource = sampleSourcePtr;
-
   SampleSourcePcmFileData extraData = sampleSource->extraData;
+
   extraData->dataBufferNumItems = 0;
   if(openAs == SAMPLE_SOURCE_OPEN_READ) {
     extraData->fileHandle = fopen(sampleSource->sourceName->data, "rb");
