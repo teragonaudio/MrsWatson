@@ -50,7 +50,7 @@ typedef struct {
 
 typedef SampleSourceMembers* SampleSource;
 
-SampleSourceType guessSampleSourceType(CharString sampleSourceTypeString);
+SampleSourceType guessSampleSourceType(const CharString sampleSourceTypeString);
 SampleSource newSampleSource(SampleSourceType sampleSourceType, const CharString sampleSourceName);
 void freeSampleSource(SampleSource sampleSource);
 
