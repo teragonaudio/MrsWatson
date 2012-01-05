@@ -8,6 +8,7 @@
 
 #include "Types.h"
 #include "MidiSequence.h"
+#include "CharString.h"
 
 #ifndef MrsWatson_MidiSource_h
 #define MrsWatson_MidiSource_h
@@ -20,6 +21,23 @@ typedef enum {
 
 typedef boolean (*OpenMidiSourceFunc)(void*);
 typedef boolean (*ReadMidiEventsFunc)(void*, MidiSequence);
-typedef boolean (*FreeMidiSourceDataFunc)(void*);
+typedef void (*FreeMidiSourceDataFunc)(void*);
+
+typedef struct {
+  MidiSourceType midiSourceType;
+  CharString sourceName;
+
+  OpenMidiSourceFunc openMidiSource;
+  ReadMidiEventsFunc readMidiEvents;
+  FreeMidiSourceDataFunc freeMidiSourceData;
+
+  void* extraData;
+} MidiSourceMembers;
+
+typedef MidiSourceMembers* MidiSource;
+
+MidiSourceType guessMidiSourceType(const CharString midiSourceTypeString);
+MidiSource newMidiSource(MidiSourceType midiSourceType, const CharString midiSourceName);
+void freeMidiSource(MidiSource midiSource);
 
 #endif
