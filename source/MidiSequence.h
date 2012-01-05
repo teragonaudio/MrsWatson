@@ -7,6 +7,7 @@
 //
 
 #include "LinkedList.h"
+#include "MidiEvent.h"
 
 #ifndef MrsWatson_MidiSequence_h
 #define MrsWatson_MidiSequence_h
@@ -18,6 +19,10 @@ typedef struct {
 typedef MidiSequenceMembers* MidiSequence;
 
 MidiSequence newMidiSequence(void);
+
+void appendMidiEventToSequence(MidiSequence midiSequence, MidiEvent midiEvent);
+boolean fillMidiEventsFromRange(MidiSequence midiSequence, const unsigned long startTimestamp, const int blocksize, LinkedList outMidiEvents);
+
 void freeMidiSequence(MidiSequence midiSequence);
 
 #endif
