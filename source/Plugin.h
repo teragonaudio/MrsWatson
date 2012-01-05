@@ -15,8 +15,16 @@
 typedef enum {
   PLUGIN_TYPE_INVALID,
   PLUGIN_TYPE_VST_2X,
-  NUM_PLUGIN_TYPES
+  NUM_PLUGIN_INTERFACE_TYPES
 } PluginInterfaceType;
+
+typedef enum {
+  PLUGIN_TYPE_UNKNOWN,
+  PLUGIN_TYPE_UNSUPPORTED,
+  PLUGIN_TYPE_EFFECT,
+  PLUGIN_TYPE_INSTRUMENT,
+  NUM_PLUGIN_TYPES
+} PluginType;
 
 typedef boolean (*OpenPluginFunc)(void*);
 typedef void (*DisplayPluginInfoFunc)(void*);
@@ -25,6 +33,7 @@ typedef void (*FreePluginDataFunc)(void*);
 
 typedef struct {
   PluginInterfaceType interfaceType;
+  PluginType pluginType;
   CharString pluginName;
 
   OpenPluginFunc open;

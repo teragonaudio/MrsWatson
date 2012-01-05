@@ -332,6 +332,20 @@ static void _initVst2xPlugin(Plugin plugin) {
   _fillVst2xUniqueIdToString(data->pluginHandle->uniqueID, uniqueIdString);
   logDebug("Initializing VST2.x plugin '%s' (%s)", plugin->pluginName->data, uniqueIdString->data);
 
+  int pluginCategory = data->dispatcher(data->pluginHandle, effGetPlugCategory, 0, 0, NULL, 0.0f);
+  switch(pluginCategory) {
+    case kPlugCategEffect:
+      plugin->pluginType = PLUGIN_TYPE_EFFECT;
+      break;
+    case kPlugCategSynth:
+      plugin->pluginType = PLUGIN_TYPE_INSTRUMENT;
+      break;
+    default:
+      logWarn("Plugin '%s' is of unsupported type %d", plugin->pluginName->data, pluginCategory);
+      plugin->pluginType = PLUGIN_TYPE_UNSUPPORTED;
+      break;
+  }
+
   data->dispatcher(data->pluginHandle, effOpen, 0, 0, NULL, 0.0f);
   data->dispatcher(data->pluginHandle, effSetSampleRate, 0, 0, NULL, getSampleRate());
   data->dispatcher(data->pluginHandle, effSetBlockSize, 0, getBlocksize(), NULL, 0.0f);
@@ -438,6 +452,7 @@ Plugin newPluginVst2x(const CharString pluginName) {
   Plugin plugin = (Plugin)malloc(sizeof(PluginMembers));
 
   plugin->interfaceType = PLUGIN_TYPE_VST_2X;
+  plugin->pluginType = PLUGIN_TYPE_UNKNOWN;
   plugin->pluginName = newCharString();
   copyCharStrings(plugin->pluginName, pluginName);
 
