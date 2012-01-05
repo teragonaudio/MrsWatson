@@ -28,6 +28,7 @@
 		24BD3E7714B5A5C900BFA6DE /* MidiSourceFile.c in Sources */ = {isa = PBXBuildFile; fileRef = 24BD3E7614B5A5C900BFA6DE /* MidiSourceFile.c */; };
 		24BD3E7A14B5A60F00BFA6DE /* MidiEvent.c in Sources */ = {isa = PBXBuildFile; fileRef = 24BD3E7914B5A60F00BFA6DE /* MidiEvent.c */; };
 		24CFD07B14B3736A005AF479 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 24CFD07A14B3736A005AF479 /* Carbon.framework */; };
+		24D400B114B5EAEA00531081 /* Vst2xHostCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 24D400B014B5EAEA00531081 /* Vst2xHostCallback.cpp */; };
 		24EE33E714B3455800CFADE0 /* LinkedList.c in Sources */ = {isa = PBXBuildFile; fileRef = 24EE33E614B3455800CFADE0 /* LinkedList.c */; };
 		24FDFBC1148CC9CC0074D3A1 /* MrsWatson.c in Sources */ = {isa = PBXBuildFile; fileRef = 24FDFBC0148CC9CC0074D3A1 /* MrsWatson.c */; };
 /* End PBXBuildFile section */
@@ -91,6 +92,7 @@
 		24BD3E7814B5A60900BFA6DE /* MidiEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MidiEvent.h; path = source/MidiEvent.h; sourceTree = SOURCE_ROOT; };
 		24BD3E7914B5A60F00BFA6DE /* MidiEvent.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = MidiEvent.c; path = source/MidiEvent.c; sourceTree = SOURCE_ROOT; };
 		24CFD07A14B3736A005AF479 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
+		24D400B014B5EAEA00531081 /* Vst2xHostCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Vst2xHostCallback.cpp; path = source/Vst2xHostCallback.cpp; sourceTree = SOURCE_ROOT; };
 		24EE33E614B3455800CFADE0 /* LinkedList.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = LinkedList.c; path = source/LinkedList.c; sourceTree = SOURCE_ROOT; };
 		24EE33E914B3456000CFADE0 /* LinkedList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LinkedList.h; path = source/LinkedList.h; sourceTree = SOURCE_ROOT; };
 		24FDFBAA148CC6AF0074D3A1 /* mrswatson */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = mrswatson; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -210,6 +212,7 @@
 				2457AB8514B5BEF7000D868C /* TaskTimer.c */,
 				2457AB8114B5BEE3000D868C /* TaskTimer.h */,
 				2435636914B1A2FE0049FD43 /* Types.h */,
+				24D400B014B5EAEA00531081 /* Vst2xHostCallback.cpp */,
 			);
 			name = Source;
 			path = MrsWatson;
@@ -306,6 +309,7 @@
 				24BD3E7A14B5A60F00BFA6DE /* MidiEvent.c in Sources */,
 				2457AB8614B5BEF7000D868C /* TaskTimer.c in Sources */,
 				2457AB8914B5BF0F000D868C /* AudioClock.c in Sources */,
+				24D400B114B5EAEA00531081 /* Vst2xHostCallback.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

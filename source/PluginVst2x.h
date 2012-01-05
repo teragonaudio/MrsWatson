@@ -13,6 +13,7 @@
 #define MrsWatson_PluginVst2x_h
 
 boolean vst2xPluginExists(const CharString pluginName);
+void fillVst2xUniqueIdToString(const long uniqueId, CharString outString);
 Plugin newPluginVst2x(const CharString pluginName);
 
 #endif
