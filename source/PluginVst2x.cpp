@@ -272,7 +272,7 @@ static const char*_getVst2xPlatformExtension(void) {
     case PLATFORM_WINDOWS:
       return "dll";
     default:
-      return "";
+      return EMPTY_STRING;
   }
 }
 

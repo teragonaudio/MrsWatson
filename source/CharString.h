@@ -15,6 +15,8 @@
 #define STRING_LENGTH_SHORT 32
 #define STRING_LENGTH_LONG 8192
 
+#define EMPTY_STRING ""
+
 typedef struct {
   int capacity;
   char* data;
