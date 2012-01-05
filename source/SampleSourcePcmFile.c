@@ -28,7 +28,7 @@ static boolean _openSampleSourcePcmFile(void* sampleSourcePtr, const SampleSourc
     return false;
   }
 
-  if(extraData == NULL) {
+  if(extraData->fileHandle == NULL) {
     logError("PCM File '%s' could not be opened for %s",
       sampleSource->sourceName->data, openAs == SAMPLE_SOURCE_OPEN_READ ? "reading" : "writing");
     return false;
