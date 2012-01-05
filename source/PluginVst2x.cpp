@@ -383,10 +383,10 @@ static boolean _openVst2xPlugin(void* pluginPtr) {
 
   data->pluginHandle = pluginHandle;
   data->dispatcher = dispatcher;
-  _initVst2xPlugin(plugin);
+  boolean result = _initVst2xPlugin(plugin);
 
   freeCharString(pluginAbsolutePath);
-  return false;
+  return result;
 }
 
 static void _displayVst2xPluginInfo(void* pluginPtr) {
