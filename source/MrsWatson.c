@@ -119,11 +119,21 @@ int main(int argc, char** argv) {
   logInfo("%s initialized", versionString->data);
   freeCharString(versionString);
 
-  // Check required variables to make sure we have everything needed to start processing
+  // Verify that the plugin chain was constructed
   if(pluginChain->numPlugins == 0) {
     logError("No plugins loaded");
     return RETURN_CODE_MISSING_REQUIRED_OPTION;
   }
+  if(!initializePluginChain(pluginChain)) {
+    logError("Could not initialize plugin chain");
+    return RETURN_CODE_PLUGIN_ERROR;
+  }
+  // Display info for plugins in the chain before checking for valid input/output sources
+  if(shouldDisplayPluginInfo) {
+    displayPluginInfo(pluginChain);
+  }
+
+  // Verify input/output sources
   if(outputSource == NULL) {
     logError("No output source");
     return RETURN_CODE_MISSING_REQUIRED_OPTION;
