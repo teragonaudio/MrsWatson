@@ -6,7 +6,7 @@
 //  Copyright (c) 2012 Teragon Audio. All rights reserved.
 //
 
-#import "LinkedList.h"
+#include "LinkedList.h"
 
 #ifndef MrsWatson_MidiSequence_h
 #define MrsWatson_MidiSequence_h
