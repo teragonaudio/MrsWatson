@@ -214,3 +214,15 @@ void logInternalError(const char* message, ...) {
   fprintf(stderr, "  Program version: %ld\n", buildDatestamp());
   freeCharString(versionString);
 }
+
+void logUnsupportedFeature(const char* featureName) {
+  fprintf(stderr, "UNSUPPORTED FEATURE: %s\n", featureName);
+  fprintf(stderr, "  This feature is not yet supported. Please help us out and submit a patch! :)\n");
+  fprintf(stderr, "  Project website: %s\n", PROJECT_WEBSITE);
+  fprintf(stderr, "  Support email: %s\n", SUPPORT_EMAIL);
+
+  CharString versionString = newCharString();
+  fillVersionString(versionString);
+  fprintf(stderr, "  Program version: %ld\n", buildDatestamp());
+  freeCharString(versionString);
+}
