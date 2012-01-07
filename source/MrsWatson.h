@@ -19,7 +19,8 @@
 #define VERSION_PATCH 0
 
 #define OFFICIAL_WEBSITE "http://www.teragonaudio.com"
-// TODO: This URL doesn't exist yet. Be sure to double-check it before releasing anything.
+// TODO: These URL's don't exist yet. Be sure to double-check it before releasing anything.
+#define PROJECT_WEBSITE "https://github.com/teragonaudio/mrswatson"
 #define SUPPORT_WEBSITE "https://github.com/teragonaudio/mrswatson/issues"
 #define SUPPORT_EMAIL "support@teragonaudio.com"
 
