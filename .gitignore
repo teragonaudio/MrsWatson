@@ -4,6 +4,7 @@ build/*
 **/build/*
 *.build
 *.swp
+*~
 *.pyc
 *.o
 *.so
