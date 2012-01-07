@@ -10,7 +10,9 @@
 #include <stdlib.h>
 
 extern "C" {
+#if MACOSX
 #include <Carbon/Carbon.h>
+#endif
 #include "PluginVst2x.h"
 #include "PlatformInfo.h"
 #include "EventLogger.h"

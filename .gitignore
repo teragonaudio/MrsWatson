@@ -4,6 +4,7 @@ build/*
 **/build/*
 *.build
 *.swp
+*~
 *.pyc
 *.o
 *.so
@@ -11,3 +12,13 @@ build/*
 *.pbxuser
 xcuserdata
 vendor/vstsdk2.4/*
+aclocal.m4
+autom4te.cache/*
+*.in
+install-sh
+missing
+depcomp
+configure
+config.*
+Makefile
+**/.deps/*
