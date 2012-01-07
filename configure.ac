@@ -1,11 +1,11 @@
-#                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
-
 AC_PREREQ([2.68])
 AC_INIT([MrsWatson], [1.0.0], [support@teragonaudio.com])
+AM_INIT_AUTOMAKE([MrsWatson], [1.0.0])
+
 AC_CONFIG_SRCDIR([source])
 # AC_CONFIG_HEADERS([config.h])
-AC_CONFIG_FILES([Makefile])
+# AC_CONFIG_FILES([Makefile])
 
 # Checks for programs.
 AC_PROG_CXX
@@ -30,6 +30,4 @@ AC_FUNC_MALLOC
 AC_FUNC_REALLOC
 AC_CHECK_FUNCS([floor gethrtime gettimeofday memset pow strcasecmp strchr strdup strncasecmp strrchr strstr strtol])
 
-AC_OUTPUT
-
-AM_INIT_AUTOMAKE([MrsWatson], [1.0.0])
+AC_OUTPUT(Makefile source/Makefile)
