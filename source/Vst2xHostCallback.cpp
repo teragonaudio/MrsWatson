@@ -30,7 +30,7 @@ static int _canHostDo(const char* pluginName, const char* canDoString) {
     logWarn("Plugin '%s' asked if we can do an empty string", pluginName);
   }
   else {
-    logInternalError("Plugin '%s' asked if host canDo '%s' (unimplemented)", canDoString);
+    logWarn("Plugin '%s' asked if host canDo '%s' (unimplemented)", canDoString);
   }
   
   return result;
@@ -68,37 +68,37 @@ VstIntPtr VSTCALLBACK vst2xPluginHostCallback(AEffect *effect, VstInt32 opcode, 
       // Idle is currently ignored
       break;
     case audioMasterPinConnected: // Deprecated
-      logInternalError("Plugin '%s' asked for unimplemented opcode audioMasterPinConnected", uniqueId);
+      logUnsupportedFeature("VST master opcode audioMasterPinConnected");
       break;
     case audioMasterWantMidi: // Deprecated
-      logInternalError("Plugin '%s' asked for unimplemented opcode audioMasterWantMidi", uniqueId);
+      logUnsupportedFeature("VST master opcode audioMasterWantMidi");
       break;
     case audioMasterGetTime:
       // TODO: This opcode is a real pain in the ass
-      logInternalError("Plugin '%s' asked for unimplemented opcode audioMasterGetTime", uniqueId);
+      logUnsupportedFeature("VST master opcode audioMasterGetTime");
       break;
     case audioMasterProcessEvents:
       // TODO: Really important...
-      logInternalError("Plugin '%s' asked for unimplemented opcode audioMasterProcessEvents", uniqueId);
+      logUnsupportedFeature("VST master opcode audioMasterProcessEvents");
       break;
     case audioMasterSetTime: // Deprecated
-      logInternalError("Plugin '%s' asked for unimplemented opcode audioMasterSetTime", uniqueId);
+      logUnsupportedFeature("VST master opcode audioMasterSetTime");
       break;
     case audioMasterTempoAt: // Deprecated
-      logInternalError("Plugin '%s' asked for unimplemented opcode audioMasterTempoAt", uniqueId);
+      logUnsupportedFeature("VST master opcode audioMasterTempoAt");
       break;
     case audioMasterGetNumAutomatableParameters: // Deprecated
-      logInternalError("Plugin '%s' asked for unimplemented opcode audioMasterGetNumAutomatableParameters", uniqueId);
+      logUnsupportedFeature("VST master opcode audioMasterGetNumAutomatableParameters");
       break;
     case audioMasterGetParameterQuantization: // Deprecated
-      logInternalError("Plugin '%s' asked for unimplemented opcode audioMasterGetParameterQuantization", uniqueId);
+      logUnsupportedFeature("VST master opcode audioMasterGetParameterQuantization");
       break;
     case audioMasterIOChanged:
       // TODO: Really important...
-      logInternalError("Plugin '%s' asked for unimplemented opcode audioMasterIOChanged", uniqueId);
+      logUnsupportedFeature("VST master opcode audioMasterIOChanged");
       break;
     case audioMasterNeedIdle: // Deprecated
-      logInternalError("Plugin '%s' asked for unimplemented opcode audioMasterNeedIdle", uniqueId);
+      logUnsupportedFeature("VST master opcode audioMasterNeedIdle");
       break;
     case audioMasterSizeWindow:
       logWarn("Plugin '%s' asked us to resize window (unsupported)", uniqueId);
@@ -118,13 +118,13 @@ VstIntPtr VSTCALLBACK vst2xPluginHostCallback(AEffect *effect, VstInt32 opcode, 
       result = 0;
       break;
     case audioMasterGetPreviousPlug: // Deprecated
-      logInternalError("Plugin '%s' asked for unimplemented opcode audioMasterGetPreviousPlug", uniqueId);
+      logUnsupportedFeature("VST master opcode audioMasterGetPreviousPlug");
       break;
     case audioMasterGetNextPlug: // Deprecated
-      logInternalError("Plugin '%s' asked for unimplemented opcode audioMasterGetNextPlug", uniqueId);
+      logUnsupportedFeature("VST master opcode audioMasterGetNextPlug");
       break;
     case audioMasterWillReplaceOrAccumulate: // Deprecated
-      logInternalError("Plugin '%s' asked for unimplemented opcode audioMasterWillReplaceOrAccumulate", uniqueId);
+      logUnsupportedFeature("VST master opcode audioMasterWillReplaceOrAccumulate");
       break;
     case audioMasterGetCurrentProcessLevel:
       // We are not a multithreaded app, and have no GUI, so this is unsupported.
@@ -150,10 +150,10 @@ VstIntPtr VSTCALLBACK vst2xPluginHostCallback(AEffect *effect, VstInt32 opcode, 
       logWarn("Plugin '%s' asked for current offline meta pass (unsupported)", uniqueId);
       break;
     case audioMasterSetOutputSampleRate: // Deprecated
-      logInternalError("Plugin '%s' asked for unimplemented opcode audioMasterSetOutputSampleRate", uniqueId);
+      logUnsupportedFeature("VST master opcode audioMasterSetOutputSampleRate");
       break;
     case audioMasterGetOutputSpeakerArrangement: // Deprecated
-      logInternalError("Plugin '%s' asked for unimplemented opcode audioMasterGetOutputSpeakerArrangement", uniqueId);
+      logUnsupportedFeature("VST master opcode audioMasterGetOutputSpeakerArrangement");
       break;
     case audioMasterGetVendorString:
       strncpy((char *)dataPtr, VENDOR_NAME, kVstMaxVendorStrLen);
@@ -175,16 +175,16 @@ VstIntPtr VSTCALLBACK vst2xPluginHostCallback(AEffect *effect, VstInt32 opcode, 
       result = _canHostDo(uniqueId, (char *)dataPtr);
       break;
     case audioMasterSetIcon: // Deprecated
-      logInternalError("Plugin '%s' asked for unimplemented opcode audioMasterSetIcon", uniqueId);
+      logWarn("Plugin '%s' asked to set icon (unsupported)", uniqueId);
       break;
     case audioMasterGetLanguage:
       result = kVstLangEnglish;
       break;
     case audioMasterOpenWindow: // Deprecated
-      logInternalError("Plugin '%s' asked for unimplemented opcode audioMasterOpenWindow", uniqueId);
+      logWarn("Plugin '%s' asked to open window (unsupported)", uniqueId);
       break;
     case audioMasterCloseWindow: // Deprecated
-      logInternalError("Plugin '%s' asked for unimplemented opcode audioMasterCloseWindow", uniqueId);
+      logWarn("Plugin '%s' asked to close window (unsupported)", uniqueId);
       break;
     case audioMasterGetDirectory:
       logWarn("Plugin '%s' asked for directory pointer (unsupported)", uniqueId);
@@ -205,13 +205,13 @@ VstIntPtr VSTCALLBACK vst2xPluginHostCallback(AEffect *effect, VstInt32 opcode, 
       logWarn("Plugin '%s' asked us to close file selector (unsupported)", uniqueId);
       break;
     case audioMasterEditFile: // Deprecated
-      logInternalError("Plugin '%s' asked for unimplemented opcode audioMasterEditFile", uniqueId);
+      logWarn("Plugin '%s' asked to edit file (unsupported)", uniqueId);
       break;
     case audioMasterGetChunkFile: // Deprecated
-      logInternalError("Plugin '%s' asked for unimplemented opcode audioMasterGetChunkFile", uniqueId);
+      logWarn("Plugin '%s' asked to get file chunk (unsupported)", uniqueId);
       break;
     case audioMasterGetInputSpeakerArrangement: // Deprecated
-      logInternalError("Plugin '%s' asked for unimplemented opcode audioMasterGetInputSpeakerArrangement", uniqueId);
+      logUnsupportedFeature("VST master opcode audioMasterGetInputSpeakerArrangement");
       break;
     default:
       logWarn("Plugin '%s' asked if host can do unknown opcode %d", uniqueId, opcode);
