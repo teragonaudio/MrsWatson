@@ -8,6 +8,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "MidiSource.h"
 #include "MidiSourceFile.h"
 #include "EventLogger.h"
@@ -25,26 +26,72 @@ static boolean _openMidiSourceFile(void* midiSourcePtr) {
   return true;
 }
 
-static boolean _readMidiEventsFile(void* midiSourcePtr, MidiSequence midiSequence) {
-  for(int i = 0; i < 8; i++) {
-    MidiEvent onEvent = newMidiEvent();
-    onEvent->eventType = MIDI_TYPE_REGULAR;
-    onEvent->timestamp = (unsigned long)(20000 * i);
-    onEvent->status = 0x90; // Note on
-    onEvent->data1 = 0x45; // A4
-    onEvent->data2 = 0x7f; // Maximum velocity
-    appendMidiEventToSequence(midiSequence, onEvent);
-
-    MidiEvent offEvent = newMidiEvent();
-    offEvent->eventType = MIDI_TYPE_REGULAR;
-    offEvent->timestamp = (unsigned long)(200000 * i) + 10000;
-    offEvent->status = 0x90; // Note on (0 velocity for off)
-    offEvent->data1 = 0x45; // A4
-    offEvent->data2 = 0x00;
-    appendMidiEventToSequence(midiSequence, offEvent);
+static boolean _readMidiFileHeader(FILE *midiFile,
+  unsigned short *formatType, unsigned short *numTracks, unsigned short *timeDivision) {
+  byte chunkId[5];
+  memset(chunkId, 0, 5);
+  size_t itemsRead = fread(chunkId, sizeof(byte), 4, midiFile);
+  if(itemsRead < 4) {
+    logError("Short read of MIDI file (at header, chunk ID)");
+    return false;
+  }
+  else if(strncmp((char*)chunkId, "MThd", 4)) {
+    logError("MIDI file does not have valid header chunk ID");
+    return false;
   }
 
+  unsigned int numBytesBuffer;
+  itemsRead = fread(&numBytesBuffer, sizeof(unsigned int), 1, midiFile);
+  if(itemsRead < 1) {
+    logError("Short read of MIDI file (at header, num items)");
+    return false;
+  }
+
+  unsigned int numBytes = htonl(numBytesBuffer);
+  if(numBytes != 6) {
+    logError("MIDI file has %d bytes in header chunk, expected 6", numBytes);
+    return false;
+  }
+
+  unsigned short wordBuffer;
+  itemsRead = fread(&wordBuffer, sizeof(unsigned short), 2, midiFile);
+  if(itemsRead != 2) {
+    logError("Short read of MIDI file (at header, format type");
+    return false;
+  }
+  *formatType = htons(wordBuffer);
+
+  itemsRead = fread(&wordBuffer, sizeof(unsigned short), 2, midiFile);
+  if(itemsRead != 2) {
+    logError("Short read of MIDI file (at header, num tracks)");
+    return false;
+  }
+  *numTracks = htons(wordBuffer);
+
+  itemsRead = fread(&wordBuffer, sizeof(unsigned short), 2, midiFile);
+  if(itemsRead != 2) {
+    logError("Short read of MIDI file (at header, time division)");
+    return false;
+  }
+  *timeDivision = htons(wordBuffer);
+
   return true;
+}
+
+static boolean _readMidiEventsFile(void* midiSourcePtr, MidiSequence midiSequence) {
+  MidiSource midiSource = midiSourcePtr;
+  MidiSourceFileData extraData = midiSource->extraData;
+  unsigned short formatType, numTracks, timeDivision = 0;
+  if(!_readMidiFileHeader(extraData->fileHandle, &formatType, &numTracks, &timeDivision)) {
+    return false;
+  }
+  logDebug("MIDI file is type %d, has %d tracks, and time division %d", formatType, numTracks, timeDivision);
+  if(formatType != 0) {
+    logUnsupportedFeature("MIDI file types other than 0");
+    return false;
+  }
+
+  return false;
 }
 
 static void _freeMidiEventsFile(void *midiSourceDataPtr) {
