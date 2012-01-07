@@ -175,6 +175,7 @@ int main(int argc, char** argv) {
     midiSequence = newMidiSequence();
     if(!midiSource->readMidiEvents(midiSource, midiSequence)) {
       logWarn("Failed reading MIDI events from source '%s'", midiSource->sourceName->data);
+      return RETURN_CODE_IO_ERROR;
     }
   }
 
