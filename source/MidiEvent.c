@@ -19,14 +19,14 @@ MidiEvent newMidiEvent(void) {
   midiEvent->status = 0;
   midiEvent->data1 = 0;
   midiEvent->data2 = 0;
-  midiEvent->sysex = NULL;
+  midiEvent->extraData = NULL;
 
   return midiEvent;
 }
 
 void freeMidiEvent(MidiEvent midiEvent) {
-  if(midiEvent->eventType == MIDI_TYPE_SYSEX) {
-    free(midiEvent->sysex);
+  if(midiEvent->eventType == MIDI_TYPE_SYSEX || midiEvent->eventType == MIDI_TYPE_META) {
+    free(midiEvent->extraData);
   }
   free(midiEvent);
 }
