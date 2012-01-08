@@ -48,7 +48,7 @@ SampleSource newSampleSource(SampleSourceType sampleSourceType, const CharString
     case SAMPLE_SOURCE_TYPE_PCM_FILE:
       return newSampleSourcePcmFile(sampleSourceName);
     case SAMPLE_SOURCE_TYPE_PCM_STREAM:
-      // TODO: Currently unsupported
+      logUnsupportedFeature("PCM streams");
       return NULL;
     case SAMPLE_SOURCE_TYPE_SILENCE:
       return newSampleSourceSilence();
