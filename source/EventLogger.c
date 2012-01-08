@@ -211,7 +211,7 @@ void logInternalError(const char* message, ...) {
 
   CharString versionString = newCharString();
   fillVersionString(versionString);
-  fprintf(stderr, "  Program version: %ld\n", buildDatestamp());
+  fprintf(stderr, "  Program version: %s, build %ld\n", versionString->data, buildDatestamp());
   freeCharString(versionString);
 }
 
@@ -223,6 +223,6 @@ void logUnsupportedFeature(const char* featureName) {
 
   CharString versionString = newCharString();
   fillVersionString(versionString);
-  fprintf(stderr, "  Program version: %ld\n", buildDatestamp());
+  fprintf(stderr, "  Program version: %s, build %ld\n", versionString->data, buildDatestamp());
   freeCharString(versionString);
 }
