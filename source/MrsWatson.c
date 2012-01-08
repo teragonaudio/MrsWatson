@@ -22,7 +22,7 @@
 #include "MidiSource.h"
 
 void fillVersionString(CharString outString) {
-  snprintf(outString->data, outString->capacity, "%s, version %d.%d.%d", PROGRAM_NAME, VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
+  snprintf(outString->data, outString->capacity, "%s version %d.%d.%d", PROGRAM_NAME, VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
 }
 
 int main(int argc, char** argv) {
