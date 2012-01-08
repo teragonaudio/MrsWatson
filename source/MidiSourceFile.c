@@ -12,6 +12,7 @@
 #include "MidiSource.h"
 #include "MidiSourceFile.h"
 #include "EventLogger.h"
+#include "AudioSettings.h"
 
 static boolean _openMidiSourceFile(void* midiSourcePtr) {
   MidiSource midiSource = midiSourcePtr;
@@ -86,7 +87,9 @@ static boolean _readMidiFileHeader(FILE *midiFile, unsigned short *formatType, u
   return true;
 }
 
-static boolean _readMidiFileTrack(FILE *midiFile, const int trackNumber, MidiSequence midiSequence) {
+static boolean _readMidiFileTrack(FILE *midiFile, const int trackNumber,
+  const int timeDivision, const MidiFileTimeDivisionType divisionType,
+  MidiSequence midiSequence) {
   if(!_readMidiFileChunkHeader(midiFile, "MTrk")) {
     return false;
   }
@@ -108,6 +111,7 @@ static boolean _readMidiFileTrack(FILE *midiFile, const int trackNumber, MidiSeq
     return false;
   }
 
+  unsigned long currentTimeInSamples = 0;
   unsigned long unpackedVariableLength;
   byte* currentByte = trackData;
   byte* endByte = trackData + numBytes;
@@ -141,15 +145,42 @@ static boolean _readMidiFileTrack(FILE *midiFile, const int trackNumber, MidiSeq
         midiEvent->eventType = MIDI_TYPE_REGULAR;
         midiEvent->status = *currentByte++;
         midiEvent->data1 = *currentByte++;
-        // TODO: Not correct for some MIDI event types
-        midiEvent->data2 = *currentByte++;
+        // All regular MIDI events have 3 bytes except for program change and channel aftertouch
+        if(!(midiEvent->status & 0xf0 == 0xc0 || midiEvent->status & 0xf0 == 0xd0)) {
+          midiEvent->data2 = *currentByte++;
+        }
         break;
     }
 
-    if(midiEvent->eventType == MIDI_TYPE_META) {
-      // TODO: Blah
+    switch(divisionType) {
+      case TIME_DIVISION_TYPE_TICKS_PER_BEAT:
+      {
+        // TODO: If the time signature is not 4/4, this calculation will be wrong
+        double ticksPerSecond = (double)timeDivision * getTempo() / 60.0;
+        double samplesPerTick = getSampleRate() / ticksPerSecond;
+        currentTimeInSamples += (long)(unpackedVariableLength * samplesPerTick);
+      }
+        break;
+      case TIME_DIVISION_TYPE_FRAMES_PER_SECOND:
+        // Actually, this should be caught when parsing the file type
+        logUnsupportedFeature("Time division frames/sec");
+        return false;
+      case TIME_DIVISION_TYPE_INVALID:
+      default:
+        logInternalError("Invalid time division type");
+        return false;
     }
-    appendMidiEventToSequence(midiSequence, midiEvent);
+
+    midiEvent->timestamp = currentTimeInSamples;
+    if(midiEvent->eventType == MIDI_TYPE_META) {
+      logDebug("Parsed MIDI meta event of type 0x%02x", midiEvent->status);
+      // TODO: Need to deal with certain types of meta events, like time signature, etc.
+      // TODO: Also need to handle time signature changes, which really suck
+    }
+    else {
+      logDebug("MIDI event of type 0x%02x parsed at %ld", midiEvent->status, midiEvent->timestamp);
+      appendMidiEventToSequence(midiSequence, midiEvent);
+    }
   }
 
   free(trackData);
@@ -186,12 +217,12 @@ static boolean _readMidiEventsFile(void* midiSourcePtr, MidiSequence midiSequenc
     formatType, numTracks, timeDivision, extraData->divisionType);
 
   for(int track = 0; track < numTracks; track++) {
-    if(!_readMidiFileTrack(extraData->fileHandle, track, midiSequence)) {
+    if(!_readMidiFileTrack(extraData->fileHandle, track, timeDivision, extraData->divisionType, midiSequence)) {
       return false;
     }
   }
 
-  return false;
+  return true;
 }
 
 static void _freeMidiEventsFile(void *midiSourceDataPtr) {
