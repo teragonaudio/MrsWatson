@@ -63,6 +63,11 @@ int main(int argc, char** argv) {
 
     return RETURN_CODE_NOT_RUN;
   }
+  else if(programOptions[OPTION_FILE_TYPES]->enabled) {
+    printf("Supported source types: \n");
+    printSupportedSourceTypes();
+    return RETURN_CODE_NOT_RUN;
+  }
 
   // Parse these options first so that log messages displayed in the below loop are properly displayed
   if(programOptions[OPTION_VERBOSE]->enabled) {

@@ -15,6 +15,11 @@
 #include "EventLogger.h"
 #include "SampleSourceSilence.h"
 
+void printSupportedSourceTypes(void) {
+  printf("- Raw PCM\n");
+  logUnsupportedFeature("We could use support for more!");
+}
+
 SampleSourceType guessSampleSourceType(const CharString sampleSourceTypeString) {
   if(!isCharStringEmpty(sampleSourceTypeString)) {
     // Look for stdin/stdout
