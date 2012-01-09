@@ -201,6 +201,10 @@ boolean parseCommandLine(ProgramOptions programOptions, int argc, char** argv) {
 
 void printProgramOptions(ProgramOptions programOptions) {
   for(int i = 0; i < NUM_OPTIONS; i++) {
+    // Don't print out help in help
+    if(i == OPTION_HELP) {
+      continue;
+    }
     printf("  ");
     ProgramOption programOption = programOptions[i];
 
