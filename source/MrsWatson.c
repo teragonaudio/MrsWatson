@@ -246,7 +246,7 @@ int main(int argc, char** argv) {
   for(int i = 0; i < taskTimer->numTasks; i++) {
     totalProcessingTime += taskTimer->totalTaskTimes[i];
   }
-  logInfo("Total processing time %ldms, breakdown by component:", totalProcessingTime);
+  logInfo("Total processing time %ldms, approximate breakdown by component:", totalProcessingTime);
   for(int i = 0; i < pluginChain->numPlugins; i++) {
     logInfo("  %s: %ldms", pluginChain->plugins[i]->pluginName->data, taskTimer->totalTaskTimes[i]);
   }
