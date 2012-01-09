@@ -30,7 +30,6 @@
 #include <string.h>
 #include "PluginChain.h"
 #include "EventLogger.h"
-#include "MidiEvent.h"
 
 PluginChain newPluginChain(void) {
   PluginChain pluginChain = malloc(sizeof(PluginChainMembers));
@@ -127,13 +126,16 @@ void displayPluginInfo(PluginChain pluginChain) {
   }
 }
 
-void processPluginChainAudio(PluginChain pluginChain, SampleBuffer inBuffer, SampleBuffer outBuffer) {
+void processPluginChainAudio(PluginChain pluginChain, SampleBuffer inBuffer, SampleBuffer outBuffer, TaskTimer taskTimer) {
   logDebug("Processing plugin chain audio");
   for(int i = 0; i < pluginChain->numPlugins; i++) {
     clearSampleBuffer(outBuffer);
     Plugin plugin = pluginChain->plugins[i];
     logDebug("Plugin '%s' processing audio", plugin->pluginName->data);
+    startTimingTask(taskTimer, i);
     plugin->processAudio(plugin, inBuffer, outBuffer);
+    // TODO: Last task ID is the host, but this is a bit hacky
+    startTimingTask(taskTimer, taskTimer->numTasks - 1);
 
     // If this is not the last plugin in the chain, then copy the output of this plugin
     // back to the input for the next one in the chain.
@@ -143,12 +145,13 @@ void processPluginChainAudio(PluginChain pluginChain, SampleBuffer inBuffer, Sam
   }
 }
 
-void processPluginChainMidiEvents(PluginChain pluginChain, LinkedList midiEvents) {
+void processPluginChainMidiEvents(PluginChain pluginChain, LinkedList midiEvents, TaskTimer taskTimer) {
   if(midiEvents->item != NULL) {
     logDebug("Processing plugin chain MIDI events");
     // Right now, we only process MIDI in the first plugin in the chain
     // TODO: Is this really the correct behavior? How do other sequencers do it?
     Plugin plugin = pluginChain->plugins[0];
+    startTimingTask(taskTimer, 0);
     plugin->processMidiEvents(plugin, midiEvents);
   }
 }

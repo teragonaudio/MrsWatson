@@ -39,6 +39,7 @@
 #include "AudioClock.h"
 #include "MidiSequence.h"
 #include "MidiSource.h"
+#include "TaskTimer.h"
 
 void fillVersionString(CharString outString) {
   snprintf(outString->data, outString->capacity, "%s version %d.%d.%d", PROGRAM_NAME, VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
@@ -204,13 +205,20 @@ int main(int argc, char** argv) {
     }
   }
 
-  // Main processing loop
   const int blocksize = getBlocksize();
   logInfo("Processing with samplerate %.0f, blocksize %d, %d channels", getSampleRate(), blocksize, getNumChannels());
   SampleBuffer inputSampleBuffer = newSampleBuffer(getNumChannels(), blocksize);
   SampleBuffer outputSampleBuffer = newSampleBuffer(getNumChannels(), blocksize);
   boolean finishedReading = false;
+
+  // Initialize task timer to record how much time was used by each plugin (and us). The
+  // last index in the task timer will be reserved for the host.
+  TaskTimer taskTimer = newTaskTimer(pluginChain->numPlugins + 1);
+  const int hostTaskId = taskTimer->numTasks - 1;
+
+  // Main processing loop
   while(!finishedReading) {
+    startTimingTask(taskTimer, hostTaskId);
     finishedReading = !inputSource->readSampleBlock(inputSource, inputSampleBuffer);
 
     // TODO: For streaming MIDI, we would need to read in events from source here
@@ -218,17 +226,32 @@ int main(int argc, char** argv) {
       LinkedList midiEventsForBlock = newLinkedList();
       // MIDI source overrides the value set to finishedReading by the input source
       finishedReading = !fillMidiEventsFromRange(midiSequence, getAudioClockCurrentSample(), blocksize, midiEventsForBlock);
-      processPluginChainMidiEvents(pluginChain, midiEventsForBlock);
+      processPluginChainMidiEvents(pluginChain, midiEventsForBlock, taskTimer);
+      startTimingTask(taskTimer, hostTaskId);
       freeLinkedList(midiEventsForBlock);
     }
 
-    processPluginChainAudio(pluginChain, inputSampleBuffer, outputSampleBuffer);
+    processPluginChainAudio(pluginChain, inputSampleBuffer, outputSampleBuffer, taskTimer);
+    startTimingTask(taskTimer, hostTaskId);
     outputSource->writeSampleBlock(outputSource, outputSampleBuffer);
 
     advanceAudioClock(blocksize);
   }
 
   // TODO: Implement tail time, both for plugin's requested tail time and as an option
+
+  // Print out statistics about each plugin's time usage
+  stopTiming(taskTimer);
+  unsigned long totalProcessingTime  = 0;
+  for(int i = 0; i < taskTimer->numTasks; i++) {
+    totalProcessingTime += taskTimer->totalTaskTimes[i];
+  }
+  logInfo("Total processing time %ldms, breakdown by component:", totalProcessingTime);
+  for(int i = 0; i < pluginChain->numPlugins; i++) {
+    logInfo("  %s: %ldms", pluginChain->plugins[i]->pluginName->data, taskTimer->totalTaskTimes[i]);
+  }
+  logInfo("  %s: %ldms", PROGRAM_NAME, taskTimer->totalTaskTimes[hostTaskId]);
+  freeTaskTimer(taskTimer);
 
   // Shut down and free data (will also close open files, plugins, etc)
   logInfo("Shutting down");

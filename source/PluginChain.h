@@ -27,6 +27,7 @@
 
 #include "Plugin.h"
 #include "LinkedList.h"
+#include "TaskTimer.h"
 
 #ifndef MrsWatson_PluginChain_h
 #define MrsWatson_PluginChain_h
@@ -46,8 +47,8 @@ boolean addPluginsFromArgumentString(PluginChain pluginChain, const CharString a
 boolean initializePluginChain(PluginChain pluginChain);
 void displayPluginInfo(PluginChain pluginChain);
 
-void processPluginChainAudio(PluginChain pluginChain, SampleBuffer inBuffer, SampleBuffer outBuffer);
-void processPluginChainMidiEvents(PluginChain pluginChain, LinkedList midiEvents);
+void processPluginChainAudio(PluginChain pluginChain, SampleBuffer inBuffer, SampleBuffer outBuffer, TaskTimer taskTimer);
+void processPluginChainMidiEvents(PluginChain pluginChain, LinkedList midiEvents, TaskTimer taskTimer);
 
 void freePluginChain(PluginChain pluginChain);
 
