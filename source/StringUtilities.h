@@ -9,7 +9,7 @@
 #ifndef MrsWatson_StringUtilities_h
 #define MrsWatson_StringUtilities_h
 
-#define TERMINAL_LINE_LENGTH 84
+#define TERMINAL_LINE_LENGTH 80
 
 char* getFileBasename(const char* filename);
 char* getFileExtension(const char* filename);
