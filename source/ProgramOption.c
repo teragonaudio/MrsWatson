@@ -217,7 +217,7 @@ void printProgramOptions(ProgramOptions programOptions) {
 
     switch(programOption->argumentType) {
       case ARGUMENT_TYPE_REQUIRED:
-        printf(" (argument)");
+        printf(" <argument>");
         break;
       case ARGUMENT_TYPE_OPTIONAL:
         printf(" [argument]");
