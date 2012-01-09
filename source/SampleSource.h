@@ -58,6 +58,7 @@ typedef struct {
   CharString sourceName;
   int numChannels;
   float sampleRate;
+  unsigned long numFramesProcessed;
 
   OpenSampleSourceFunc openSampleSource;
   ReadSampleBlockFunc readSampleBlock;

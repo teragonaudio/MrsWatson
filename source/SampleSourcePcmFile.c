@@ -94,6 +94,7 @@ static boolean _readBlockFromPcmFile(void* sampleSourcePtr, SampleBuffer sampleB
     logDebug("End of PCM file reached");
     result = false;
   }
+  sampleSource->numFramesProcessed += pcmSamplesRead;
   logDebug("Read %d samples from PCM file", pcmSamplesRead);
 
   _convertPcmDataToSampleBuffer(extraData->interlacedPcmDataBuffer, sampleBuffer);
@@ -134,6 +135,7 @@ static boolean _writeBlockFromPcmFile(void* sampleSourcePtr, const SampleBuffer 
     return false;
   }
 
+  sampleSource->numFramesProcessed += pcmSamplesWritten;
   logDebug("Wrote %d samples to PCM file", pcmSamplesWritten);
   return true;
 }
@@ -157,6 +159,7 @@ SampleSource newSampleSourcePcmFile(const CharString sampleSourceName) {
   // TODO: Need a way to pass in channels, bitrate, sample rate
   sampleSource->numChannels = 2;
   sampleSource->sampleRate = 44100.0f;
+  sampleSource->numFramesProcessed = 0;
 
   sampleSource->openSampleSource = _openSampleSourcePcmFile;
   sampleSource->readSampleBlock = _readBlockFromPcmFile;

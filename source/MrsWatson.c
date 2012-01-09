@@ -253,6 +253,9 @@ int main(int argc, char** argv) {
   logInfo("  %s: %ldms", PROGRAM_NAME, taskTimer->totalTaskTimes[hostTaskId]);
   freeTaskTimer(taskTimer);
 
+  logInfo("Read %ld frames from %s, wrote %ld frames to %s",
+    inputSource->numFramesProcessed, inputSource->sourceName->data, outputSource->numFramesProcessed, outputSource->sourceName->data);
+
   // Shut down and free data (will also close open files, plugins, etc)
   logInfo("Shutting down");
   freeSampleSource(inputSource);
