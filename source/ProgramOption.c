@@ -227,6 +227,10 @@ void printProgramOptions(ProgramOptions programOptions) {
         break;
     }
 
+    if(programOption->helpDefaultValue != NO_DEFAULT_VALUE) {
+      printf(", default value: %d", programOption->helpDefaultValue);
+    }
+
     // Newline and indentation before help
     CharString wrappedHelpString = newCharStringWithCapacity(STRING_LENGTH_LONG);
     wrapStringForTerminal(programOption->help->data, wrappedHelpString->data, 4);

@@ -22,6 +22,7 @@ typedef struct {
   int index;
   CharString name;
   CharString help;
+  int helpDefaultValue;
   boolean hasShortForm;
 
   ProgramOptionArgumentType argumentType;
