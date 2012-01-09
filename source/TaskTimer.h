@@ -25,9 +25,23 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
+#include "CharString.h"
+
 #ifndef MrsWatson_TaskTimer_h
 #define MrsWatson_TaskTimer_h
 
+typedef struct {
+  int numTasks;
+  int currentTask;
+  unsigned long* totalTaskTimes;
+  struct timeval* startTime;
+} TaskTimerMembers;
 
+typedef TaskTimerMembers* TaskTimer;
+
+TaskTimer newTaskTimer(const int maxTasks);
+void startTimingTask(TaskTimer taskTimer, const int taskId);
+void stopTiming(TaskTimer taskTimer);
+void freeTaskTimer(TaskTimer taskTimer);
 
 #endif
