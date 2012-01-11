@@ -40,7 +40,7 @@ extern "C" {
 #include "aeffectx.h"
 
 extern "C" {
-// TODO: This method pretty important. We should implement the most common requests made by plugins.
+// TODO: This method is important. We should implement the most common requests made by plugins.
 static int _canHostDo(const char* pluginName, const char* canDoString) {
   // Don't know or unsupported
   int result = 0;
@@ -91,9 +91,11 @@ VstIntPtr VSTCALLBACK vst2xPluginHostCallback(AEffect *effect, VstInt32 opcode, 
       // Idle is currently ignored
       break;
     case audioMasterPinConnected: // Deprecated
+      // TODO: Important opcode
       logUnsupportedFeature("VST master opcode audioMasterPinConnected");
       break;
     case audioMasterWantMidi: // Deprecated
+      // TODO: Important opcode
       logUnsupportedFeature("VST master opcode audioMasterWantMidi");
       break;
     case audioMasterGetTime:
@@ -148,7 +150,7 @@ VstIntPtr VSTCALLBACK vst2xPluginHostCallback(AEffect *effect, VstInt32 opcode, 
       dataPtr = &vstTimeInfo;
       break;
     case audioMasterProcessEvents:
-      // TODO: Really important...
+      // TODO: Important opcode ?
       logUnsupportedFeature("VST master opcode audioMasterProcessEvents");
       break;
     case audioMasterSetTime: // Deprecated
@@ -164,7 +166,7 @@ VstIntPtr VSTCALLBACK vst2xPluginHostCallback(AEffect *effect, VstInt32 opcode, 
       logUnsupportedFeature("VST master opcode audioMasterGetParameterQuantization");
       break;
     case audioMasterIOChanged:
-      // TODO: Really important...
+      // TODO: Important opcode
       logUnsupportedFeature("VST master opcode audioMasterIOChanged");
       break;
     case audioMasterNeedIdle: // Deprecated
