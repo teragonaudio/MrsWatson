@@ -52,6 +52,11 @@ void advanceAudioClock(const int blocksize) {
   audioClock->currentSample += blocksize;
 }
 
+void stopAudioClock(void) {
+  _getAudioClockInstance()->isPlaying = false;
+  _getAudioClockInstance()->transportChanged = true;
+}
+
 unsigned long getAudioClockCurrentSample(void) {
   return _getAudioClockInstance()->currentSample;
 }

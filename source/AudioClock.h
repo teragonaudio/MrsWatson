@@ -42,6 +42,7 @@ extern AudioClock audioClockInstance;
 void initAudioClock(void);
 
 void advanceAudioClock(const int blocksize);
+void stopAudioClock(void);
 unsigned long getAudioClockCurrentSample(void);
 boolean getAudioClockTransportChanged(void);
 boolean getAudioClockIsPlaying(void);
