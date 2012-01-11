@@ -35,7 +35,7 @@ AudioSettings audioSettingsInstance = NULL;
 void initAudioSettings(void) {
   // TODO: This is never freed, but it lives for the life of the program. Do we need to worry about that?
   audioSettingsInstance = malloc(sizeof(AudioSettingsMembers));
-  audioSettingsInstance->sampleRate = DEFAULT_SAMPLERATE;
+  audioSettingsInstance->sampleRate = DEFAULT_SAMPLE_RATE;
   audioSettingsInstance->numChannels = DEFAULT_NUM_CHANNELS;
   audioSettingsInstance->blocksize = DEFAULT_BLOCKSIZE;
   audioSettingsInstance->tempo = DEFAULT_TEMPO;

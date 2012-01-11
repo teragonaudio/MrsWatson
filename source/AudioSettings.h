@@ -28,7 +28,7 @@
 #ifndef MrsWatson_AudioSettings_h
 #define MrsWatson_AudioSettings_h
 
-#define DEFAULT_SAMPLERATE 44100.0f
+#define DEFAULT_SAMPLE_RATE 44100.0f
 #define DEFAULT_NUM_CHANNELS 2
 #define DEFAULT_BLOCKSIZE 512
 #define DEFAULT_TEMPO 120.0f;

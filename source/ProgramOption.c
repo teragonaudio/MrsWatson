@@ -91,10 +91,12 @@ If stderr is a terminal device, color is used automatically unless 'none' is giv
 --file-types to see a list of supported types. Use '-' to write to stdout.",
     true, ARGUMENT_TYPE_REQUIRED, NO_DEFAULT_VALUE);
   _addNewProgramOption(programOptions, OPTION_PCM_FILE_NUM_CHANNELS, "pcm-file-num-channels",
-    "Number of channels to use when reading raw PCM data.",
+    "Number of channels to use when reading raw PCM data. If not given, defaults to the global channel count \
+from the --channels option.",
     false, ARGUMENT_TYPE_REQUIRED, getNumChannels());
-  _addNewProgramOption(programOptions, OPTION_PCM_FILE_SAMPLERATE, "pcm-file-samplerate",
-    "Sample rate to use when reading raw PCM data.",
+  _addNewProgramOption(programOptions, OPTION_PCM_FILE_SAMPLERATE, "pcm-file-sample-rate",
+    "Sample rate to use when reading raw PCM data. If not given, defaults to the global sample rate from the \
+--sample-rate option",
     false, ARGUMENT_TYPE_REQUIRED, (int)getSampleRate());
   _addNewProgramOption(programOptions, OPTION_PLUGIN, "plugin",
     "Plugin(s) to process. Multiple plugins can given in a comma-separated list, in which case they will be \
@@ -104,7 +106,7 @@ loaded from the standard locations for the OS.",
   _addNewProgramOption(programOptions, OPTION_QUIET, "quiet",
     "Only log critical errors.",
     true, ARGUMENT_TYPE_NONE, NO_DEFAULT_VALUE);
-  _addNewProgramOption(programOptions, OPTION_SAMPLERATE, "samplerate",
+  _addNewProgramOption(programOptions, OPTION_SAMPLERATE, "sample-rate",
     "Sample rate to use when processing.",
     true, ARGUMENT_TYPE_REQUIRED, (int)getSampleRate());
   _addNewProgramOption(programOptions, OPTION_VERBOSE, "verbose",
