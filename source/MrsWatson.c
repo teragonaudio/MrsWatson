@@ -241,6 +241,7 @@ int main(int argc, char** argv) {
   // TODO: Implement tail time, both for plugin's requested tail time and as an option
 
   // Print out statistics about each plugin's time usage
+  stopAudioClock();
   stopTiming(taskTimer);
   unsigned long totalProcessingTime  = 0;
   for(int i = 0; i < taskTimer->numTasks; i++) {
