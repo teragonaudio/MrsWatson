@@ -166,7 +166,6 @@ VstIntPtr VSTCALLBACK vst2xPluginHostCallback(AEffect *effect, VstInt32 opcode, 
       logUnsupportedFeature("VST master opcode audioMasterGetParameterQuantization");
       break;
     case audioMasterIOChanged:
-      // TODO: Important opcode
       logUnsupportedFeature("VST master opcode audioMasterIOChanged");
       break;
     case audioMasterNeedIdle: // Deprecated
@@ -222,7 +221,7 @@ VstIntPtr VSTCALLBACK vst2xPluginHostCallback(AEffect *effect, VstInt32 opcode, 
       logWarn("Plugin '%s' asked for current offline meta pass (unsupported)", uniqueId);
       break;
     case audioMasterSetOutputSampleRate: // Deprecated
-      logUnsupportedFeature("VST master opcode audioMasterSetOutputSampleRate");
+      logWarn("Plugin '%s' asked to set sample rate (unsupported)", uniqueId);
       break;
     case audioMasterGetOutputSpeakerArrangement: // Deprecated
       logUnsupportedFeature("VST master opcode audioMasterGetOutputSpeakerArrangement");
