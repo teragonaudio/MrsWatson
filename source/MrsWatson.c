@@ -205,6 +205,11 @@ int main(int argc, char** argv) {
     }
   }
 
+  if(inputSource->numChannels != outputSource->numChannels) {
+    logUnsupportedFeature("Different I/O channel counts");
+    return RETURN_CODE_UNSUPPORTED_FEATURE;
+  }
+
   const int blocksize = getBlocksize();
   logInfo("Processing with sample rate %.0f, blocksize %d, %d channels", getSampleRate(), blocksize, getNumChannels());
   SampleBuffer inputSampleBuffer = newSampleBuffer(getNumChannels(), blocksize);
