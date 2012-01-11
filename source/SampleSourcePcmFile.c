@@ -30,6 +30,7 @@
 #include <string.h>
 #include "SampleSourcePcmFile.h"
 #include "EventLogger.h"
+#include "AudioSettings.h"
 
 static boolean _openSampleSourcePcmFile(void* sampleSourcePtr, const SampleSourceOpenAs openAs) {
   SampleSource sampleSource = sampleSourcePtr;
@@ -156,9 +157,8 @@ SampleSource newSampleSourcePcmFile(const CharString sampleSourceName) {
   sampleSource->openedAs = SAMPLE_SOURCE_OPEN_NOT_OPENED;
   sampleSource->sourceName = newCharString();
   copyCharStrings(sampleSource->sourceName, sampleSourceName);
-  // TODO: Need a way to pass in channels, bitrate, sample rate
-  sampleSource->numChannels = 2;
-  sampleSource->sampleRate = 44100.0f;
+  sampleSource->numChannels = getNumChannels();
+  sampleSource->sampleRate = getSampleRate();
   sampleSource->numFramesProcessed = 0;
 
   sampleSource->openSampleSource = _openSampleSourcePcmFile;
