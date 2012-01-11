@@ -27,9 +27,11 @@
 
 extern "C" {
 #include <stdio.h>
+#include <string.h>
 #include "CharString.h"
 #include "EventLogger.h"
 #include "MrsWatson.h"
+#include "AudioClock.h"
 #include "AudioSettings.h"
 #include "PluginVst2x.h"
 }
@@ -54,6 +56,8 @@ static int _canHostDo(const char* pluginName, const char* canDoString) {
   
   return result;
 }
+
+VstTimeInfo vstTimeInfo;
 
 VstIntPtr VSTCALLBACK vst2xPluginHostCallback(AEffect *effect, VstInt32 opcode, VstInt32 index, VstIntPtr value, void *dataPtr, float opt);
 VstIntPtr VSTCALLBACK vst2xPluginHostCallback(AEffect *effect, VstInt32 opcode, VstInt32 index, VstIntPtr value, void *dataPtr, float opt) {
@@ -93,8 +97,55 @@ VstIntPtr VSTCALLBACK vst2xPluginHostCallback(AEffect *effect, VstInt32 opcode, 
       logUnsupportedFeature("VST master opcode audioMasterWantMidi");
       break;
     case audioMasterGetTime:
-      // TODO: This opcode is a real pain in the ass
-      logUnsupportedFeature("VST master opcode audioMasterGetTime");
+      // These values are always valid
+      vstTimeInfo.samplePos = getAudioClockCurrentSample();
+      vstTimeInfo.sampleRate = getSampleRate();
+
+      // Set flags for transport state
+      vstTimeInfo.flags = 0;
+      vstTimeInfo.flags |= getAudioClockTransportChanged();
+      vstTimeInfo.flags |= getAudioClockIsPlaying();
+
+      // Fill values based on other flags which may have been requested
+      if(value & kVstNanosValid) {
+        // It doesn't make sense to return this value, as the plugin may try to calculate
+        // something based on the current system time. As we are running offline, anything
+        // the plugin calculates here will probably be wrong given the way we are running.
+        // However, for realtime mode, this flag should be implemented in that case.
+        logWarn("Plugin '%s' asked for time in nanoseconds (unsupported)", uniqueId);
+        vstTimeInfo.flags |= 0;
+      }
+      if(value & kVstPpqPosValid) {
+        logUnsupportedFeature("Current position in PPQ");
+        vstTimeInfo.flags |= 0;
+      }
+      if(value & kVstTempoValid) {
+        vstTimeInfo.tempo = getTempo();
+        vstTimeInfo.flags |= 1;
+      }
+      if(value & kVstBarsValid) {
+        logUnsupportedFeature("Current position in Bars");
+        vstTimeInfo.flags |= 0;
+      }
+      if(value & kVstCyclePosValid) {
+        // We don't care about the cycle position
+        vstTimeInfo.flags |= 0;
+      }
+      if(value & kVstTimeSigValid) {
+        vstTimeInfo.timeSigNumerator = getTimeSignatureBeatsPerMeasure();
+        vstTimeInfo.timeSigDenominator = getTimeSignatureNoteValue();
+        vstTimeInfo.flags |= 1;
+      }
+      if(value & kVstSmpteValid) {
+        logUnsupportedFeature("Current time in SMPTE format");
+        vstTimeInfo.flags |= 0;
+      }
+      if(value & kVstClockValid) {
+        logUnsupportedFeature("Samples until next clock");
+        vstTimeInfo.flags |= 0;
+      }
+
+      dataPtr = &vstTimeInfo;
       break;
     case audioMasterProcessEvents:
       // TODO: Really important...
