@@ -42,9 +42,24 @@ static AudioClock _getAudioClockInstance(void) {
 
 void advanceAudioClock(const int blocksize) {
   AudioClock audioClock = _getAudioClockInstance();
+  if(audioClock->currentSample == 0) {
+    audioClock->transportChanged = true;
+    audioClock->isPlaying = true;
+  }
+  else {
+    audioClock->transportChanged = false;
+  }
   audioClock->currentSample += blocksize;
 }
 
 unsigned long getAudioClockCurrentSample(void) {
   return _getAudioClockInstance()->currentSample;
+}
+
+boolean getAudioClockTransportChanged(void) {
+  return _getAudioClockInstance()->transportChanged;
+}
+
+boolean getAudioClockIsPlaying(void) {
+  return _getAudioClockInstance()->isPlaying;
 }

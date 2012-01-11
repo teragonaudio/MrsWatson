@@ -25,10 +25,14 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
+#include "Types.h"
+
 #ifndef MrsWatson_AudioClock_h
 #define MrsWatson_AudioClock_h
 
 typedef struct {
+  boolean transportChanged;
+  boolean isPlaying;
   unsigned long currentSample;
 } AudioClockMembers;
 
@@ -39,5 +43,7 @@ void initAudioClock(void);
 
 void advanceAudioClock(const int blocksize);
 unsigned long getAudioClockCurrentSample(void);
+boolean getAudioClockTransportChanged(void);
+boolean getAudioClockIsPlaying(void);
 
 #endif
