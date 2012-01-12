@@ -39,7 +39,6 @@
 #include "AudioClock.h"
 #include "MidiSequence.h"
 #include "MidiSource.h"
-#include "TaskTimer.h"
 
 void fillVersionString(CharString outString) {
   snprintf(outString->data, outString->capacity, "%s version %d.%d.%d", PROGRAM_NAME, VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
@@ -180,11 +179,25 @@ int main(int argc, char** argv) {
     }
   }
 
-  // Prepare input/output sources, plugins
+  // Prepare input source
   if(!inputSource->openSampleSource(inputSource, SAMPLE_SOURCE_OPEN_READ)) {
     logError("Input source '%s' could not be opened", inputSource->sourceName->data);
     return RETURN_CODE_IO_ERROR;
   }
+  else if(inputSource->sampleSourceType == SAMPLE_SOURCE_TYPE_PCM) {
+    if(programOptions[OPTION_PCM_SAMPLERATE]->enabled) {
+      inputSource->sampleRate = strtof(programOptions[OPTION_PCM_SAMPLERATE]->argument->data, NULL);
+      if(getSampleRate() != inputSource->sampleRate) {
+        logUnsupportedFeature("Resampling input source");
+        return RETURN_CODE_UNSUPPORTED_FEATURE;
+      }
+    }
+    if(programOptions[OPTION_PCM_NUM_CHANNELS]->enabled) {
+      inputSource->numChannels = strtol(programOptions[OPTION_PCM_NUM_CHANNELS]->argument->data, NULL, 10);
+    }
+  }
+
+  // Prepare output source
   if(!outputSource->openSampleSource(outputSource, SAMPLE_SOURCE_OPEN_WRITE)) {
     logError("Output source '%s' could not be opened", outputSource->sourceName->data);
     return RETURN_CODE_IO_ERROR;
