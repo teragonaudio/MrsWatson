@@ -137,7 +137,6 @@ int main(int argc, char** argv) {
       }
     }
   }
-  freeProgramOptions(programOptions);
 
   // Say hello!
   CharString versionString = newCharString();
@@ -220,6 +219,9 @@ int main(int argc, char** argv) {
   // last index in the task timer will be reserved for the host.
   TaskTimer taskTimer = newTaskTimer(pluginChain->numPlugins + 1);
   const int hostTaskId = taskTimer->numTasks - 1;
+
+  // Initialization is finished, we should be able to free this memory now
+  freeProgramOptions(programOptions);
 
   // Main processing loop
   while(!finishedReading) {
