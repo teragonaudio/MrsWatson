@@ -1,5 +1,5 @@
 //
-// SampleSourcePcmFile.h - MrsWatson
+// SampleSourcePcm.h - MrsWatson
 // Created by Nik Reiman on 1/2/12.
 // Copyright (c) 2012 Teragon Audio. All rights reserved.
 //
@@ -28,17 +28,17 @@
 #include <stdio.h>
 #include "SampleSource.h"
 
-#ifndef MrsWatson_InputSourcePcmFile_h
-#define MrsWatson_InputSourcePcmFile_h
+#ifndef MrsWatson_InputSourcePcm_h
+#define MrsWatson_InputSourcePcm_h
 
 typedef struct {
   FILE* fileHandle;
   size_t dataBufferNumItems;
   short* interlacedPcmDataBuffer;
-} SampleSourcePcmFileDataMembers;
+} SampleSourcePcmDataMembers;
 
-typedef SampleSourcePcmFileDataMembers* SampleSourcePcmFileData;
+typedef SampleSourcePcmDataMembers *SampleSourcePcmData;
 
-SampleSource newSampleSourcePcmFile(const CharString sampleSourceName);
+SampleSource newSampleSourcePcm(const CharString sampleSourceName);
 
 #endif

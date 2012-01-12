@@ -1,5 +1,5 @@
 //
-// SampleSourcePcmFile.c - MrsWatson
+// SampleSourcePcm.c - MrsWatson
 // Created by Nik Reiman on 1/2/12.
 // Copyright (c) 2012 Teragon Audio. All rights reserved.
 //
@@ -28,13 +28,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "SampleSourcePcmFile.h"
+#include "SampleSourcePcm.h"
 #include "EventLogger.h"
 #include "AudioSettings.h"
 
-static boolean _openSampleSourcePcmFile(void* sampleSourcePtr, const SampleSourceOpenAs openAs) {
+static boolean _openSampleSourcePcm(void* sampleSourcePtr, const SampleSourceOpenAs openAs) {
   SampleSource sampleSource = sampleSourcePtr;
-  SampleSourcePcmFileData extraData = sampleSource->extraData;
+  SampleSourcePcmData extraData = sampleSource->extraData;
 
   extraData->dataBufferNumItems = 0;
   if(openAs == SAMPLE_SOURCE_OPEN_READ) {
@@ -90,9 +90,9 @@ static void _convertPcmDataToSampleBuffer(const short* inPcmSamples, SampleBuffe
   }
 }
 
-static boolean _readBlockFromPcmFile(void* sampleSourcePtr, SampleBuffer sampleBuffer) {
+static boolean _readBlockFromPcm(void* sampleSourcePtr, SampleBuffer sampleBuffer) {
   SampleSource sampleSource = sampleSourcePtr;
-  SampleSourcePcmFileData extraData = sampleSource->extraData;
+  SampleSourcePcmData extraData = sampleSource->extraData;
   if(extraData->dataBufferNumItems == 0) {
     extraData->dataBufferNumItems = (size_t)(sampleBuffer->numChannels * sampleBuffer->blocksize);
     extraData->interlacedPcmDataBuffer = malloc(sizeof(short) * extraData->dataBufferNumItems);
@@ -130,9 +130,9 @@ static void _convertSampleBufferToPcmData(const SampleBuffer sampleBuffer, short
   }
 }
 
-static boolean _writeBlockFromPcmFile(void* sampleSourcePtr, const SampleBuffer sampleBuffer) {
+static boolean _writeBlockFromPcm(void* sampleSourcePtr, const SampleBuffer sampleBuffer) {
   SampleSource sampleSource = sampleSourcePtr;
-  SampleSourcePcmFileData extraData = sampleSource->extraData;
+  SampleSourcePcmData extraData = sampleSource->extraData;
   if(extraData->dataBufferNumItems == 0) {
     extraData->dataBufferNumItems = (size_t)(sampleBuffer->numChannels * sampleBuffer->blocksize);
     extraData->interlacedPcmDataBuffer = malloc(sizeof(short) * extraData->dataBufferNumItems);
@@ -153,8 +153,8 @@ static boolean _writeBlockFromPcmFile(void* sampleSourcePtr, const SampleBuffer 
   return true;
 }
 
-static void _freeInputSourceDataPcmFile(void* sampleSourceDataPtr) {
-  SampleSourcePcmFileData extraData = sampleSourceDataPtr;
+static void _freeInputSourceDataPcm(void* sampleSourceDataPtr) {
+  SampleSourcePcmData extraData = sampleSourceDataPtr;
   free(extraData->interlacedPcmDataBuffer);
   if(extraData->fileHandle != NULL) {
     fclose(extraData->fileHandle);
@@ -162,10 +162,10 @@ static void _freeInputSourceDataPcmFile(void* sampleSourceDataPtr) {
   free(extraData);
 }
 
-SampleSource newSampleSourcePcmFile(const CharString sampleSourceName) {
+SampleSource newSampleSourcePcm(const CharString sampleSourceName) {
   SampleSource sampleSource = malloc(sizeof(SampleSourceMembers));
 
-  sampleSource->sampleSourceType = SAMPLE_SOURCE_TYPE_PCM_FILE;
+  sampleSource->sampleSourceType = SAMPLE_SOURCE_TYPE_PCM;
   sampleSource->openedAs = SAMPLE_SOURCE_OPEN_NOT_OPENED;
   sampleSource->sourceName = newCharString();
   copyCharStrings(sampleSource->sourceName, sampleSourceName);
@@ -173,12 +173,12 @@ SampleSource newSampleSourcePcmFile(const CharString sampleSourceName) {
   sampleSource->sampleRate = getSampleRate();
   sampleSource->numFramesProcessed = 0;
 
-  sampleSource->openSampleSource = _openSampleSourcePcmFile;
-  sampleSource->readSampleBlock = _readBlockFromPcmFile;
-  sampleSource->writeSampleBlock = _writeBlockFromPcmFile;
-  sampleSource->freeSampleSourceData = _freeInputSourceDataPcmFile;
+  sampleSource->openSampleSource = _openSampleSourcePcm;
+  sampleSource->readSampleBlock = _readBlockFromPcm;
+  sampleSource->writeSampleBlock = _writeBlockFromPcm;
+  sampleSource->freeSampleSourceData = _freeInputSourceDataPcm;
 
-  SampleSourcePcmFileData extraData = malloc(sizeof(SampleSourcePcmFileDataMembers));
+  SampleSourcePcmData extraData = malloc(sizeof(SampleSourcePcmDataMembers));
   extraData->fileHandle = NULL;
   extraData->dataBufferNumItems = 0;
   extraData->interlacedPcmDataBuffer = NULL;
