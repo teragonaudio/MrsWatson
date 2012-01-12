@@ -41,6 +41,7 @@ static boolean _openSampleSourcePcm(void* sampleSourcePtr, const SampleSourceOpe
     if(isCharStringEqualToCString(sampleSource->sourceName, "-", false)) {
       extraData->fileHandle = stdin;
       strncpy(sampleSource->sourceName->data, "stdin", (size_t)sampleSource->sourceName->capacity);
+      extraData->isStream = true;
     }
     else {
       extraData->fileHandle = fopen(sampleSource->sourceName->data, "rb");
@@ -50,6 +51,7 @@ static boolean _openSampleSourcePcm(void* sampleSourcePtr, const SampleSourceOpe
     if(isCharStringEqualToCString(sampleSource->sourceName, "-", false)) {
       extraData->fileHandle = stdout;
       strncpy(sampleSource->sourceName->data, "stdout", (size_t)sampleSource->sourceName->capacity);
+      extraData->isStream = true;
     }
     else {
       extraData->fileHandle = fopen(sampleSource->sourceName->data, "wb");
@@ -179,6 +181,7 @@ SampleSource newSampleSourcePcm(const CharString sampleSourceName) {
   sampleSource->freeSampleSourceData = _freeInputSourceDataPcm;
 
   SampleSourcePcmData extraData = malloc(sizeof(SampleSourcePcmDataMembers));
+  extraData->isStream = false;
   extraData->fileHandle = NULL;
   extraData->dataBufferNumItems = 0;
   extraData->interlacedPcmDataBuffer = NULL;
