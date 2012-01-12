@@ -43,7 +43,7 @@ SampleSourceType guessSampleSourceType(const CharString sampleSourceTypeString) 
   if(!isCharStringEmpty(sampleSourceTypeString)) {
     // Look for stdin/stdout
     if(strlen(sampleSourceTypeString->data) == 1 && sampleSourceTypeString->data[0] == '-') {
-      return SAMPLE_SOURCE_TYPE_PCM_STREAM;
+      return SAMPLE_SOURCE_TYPE_PCM_FILE;
     }
     else {
       const char* fileExtension = getFileExtension(sampleSourceTypeString->data);
@@ -71,9 +71,6 @@ SampleSource newSampleSource(SampleSourceType sampleSourceType, const CharString
   switch(sampleSourceType) {
     case SAMPLE_SOURCE_TYPE_PCM_FILE:
       return newSampleSourcePcmFile(sampleSourceName);
-    case SAMPLE_SOURCE_TYPE_PCM_STREAM:
-      logUnsupportedFeature("PCM streams");
-      return NULL;
     case SAMPLE_SOURCE_TYPE_SILENCE:
       return newSampleSourceSilence();
     default:

@@ -38,10 +38,22 @@ static boolean _openSampleSourcePcmFile(void* sampleSourcePtr, const SampleSourc
 
   extraData->dataBufferNumItems = 0;
   if(openAs == SAMPLE_SOURCE_OPEN_READ) {
-    extraData->fileHandle = fopen(sampleSource->sourceName->data, "rb");
+    if(isCharStringEqualToCString(sampleSource->sourceName, "-", false)) {
+      extraData->fileHandle = stdin;
+      strncpy(sampleSource->sourceName->data, "stdin", (size_t)sampleSource->sourceName->capacity);
+    }
+    else {
+      extraData->fileHandle = fopen(sampleSource->sourceName->data, "rb");
+    }
   }
   else if(openAs == SAMPLE_SOURCE_OPEN_WRITE) {
-    extraData->fileHandle = fopen(sampleSource->sourceName->data, "wb");
+    if(isCharStringEqualToCString(sampleSource->sourceName, "-", false)) {
+      extraData->fileHandle = stdout;
+      strncpy(sampleSource->sourceName->data, "stdout", (size_t)sampleSource->sourceName->capacity);
+    }
+    else {
+      extraData->fileHandle = fopen(sampleSource->sourceName->data, "wb");
+    }
   }
   else {
     logInternalError("Invalid type for openAs in PCM file");
