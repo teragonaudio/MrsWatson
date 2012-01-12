@@ -90,11 +90,11 @@ If stderr is a terminal device, color is used automatically unless 'none' is giv
     "Output source to write processed data to, where the file type is determined from the extension. Run with \
 --file-types to see a list of supported types. Use '-' to write to stdout.",
     true, ARGUMENT_TYPE_REQUIRED, NO_DEFAULT_VALUE);
-  _addNewProgramOption(programOptions, OPTION_PCM_FILE_NUM_CHANNELS, "pcm-file-num-channels",
+  _addNewProgramOption(programOptions, OPTION_PCM_NUM_CHANNELS, "pcm-num-channels",
     "Number of channels to use when reading raw PCM data. If not given, defaults to the global channel count \
 from the --channels option.",
     false, ARGUMENT_TYPE_REQUIRED, getNumChannels());
-  _addNewProgramOption(programOptions, OPTION_PCM_FILE_SAMPLERATE, "pcm-file-sample-rate",
+  _addNewProgramOption(programOptions, OPTION_PCM_SAMPLERATE, "pcm-sample-rate",
     "Sample rate to use when reading raw PCM data. If not given, defaults to the global sample rate from the \
 --sample-rate option",
     false, ARGUMENT_TYPE_REQUIRED, (int)getSampleRate());
