@@ -32,6 +32,7 @@
 #include "MidiSourceFile.h"
 #include "EventLogger.h"
 #include "AudioSettings.h"
+#include "PlatformUtilities.h"
 
 static boolean _openMidiSourceFile(void* midiSourcePtr) {
   MidiSource midiSource = midiSourcePtr;
@@ -75,7 +76,7 @@ static boolean _readMidiFileHeader(FILE *midiFile, unsigned short *formatType, u
     return false;
   }
 
-  unsigned int numBytes = htonl(numBytesBuffer);
+  unsigned int numBytes = convertIntToBigEndian(numBytesBuffer);
   if(numBytes != 6) {
     logError("MIDI file has %d bytes in header chunk, expected 6", numBytes);
     return false;
@@ -87,21 +88,21 @@ static boolean _readMidiFileHeader(FILE *midiFile, unsigned short *formatType, u
     logError("Short read of MIDI file (at header, format type)");
     return false;
   }
-  *formatType = htons(wordBuffer);
+  *formatType = convertShortToBigEndian(wordBuffer);
 
   itemsRead = fread(&wordBuffer, sizeof(unsigned short), 1, midiFile);
   if(itemsRead != 1) {
     logError("Short read of MIDI file (at header, num tracks)");
     return false;
   }
-  *numTracks = htons(wordBuffer);
+  *numTracks = convertShortToBigEndian(wordBuffer);
 
   itemsRead = fread(&wordBuffer, sizeof(unsigned short), 1, midiFile);
   if(itemsRead != 1) {
     logError("Short read of MIDI file (at header, time division)");
     return false;
   }
-  *timeDivision = htons(wordBuffer);
+  *timeDivision = convertShortToBigEndian(wordBuffer);
 
   return true;
 }
@@ -122,7 +123,7 @@ static boolean _readMidiFileTrack(FILE *midiFile, const int trackNumber,
 
   // Read in the entire track in one pass and parse the events from the buffer data. Much easier
   // than having to call fread() for each event.
-  unsigned int numBytes = htonl(numBytesBuffer);
+  size_t numBytes = (size_t)convertIntToBigEndian(numBytesBuffer);
   byte* trackData = malloc(numBytes);
   itemsRead = fread(trackData, 1, numBytes, midiFile);
   if(itemsRead != numBytes) {

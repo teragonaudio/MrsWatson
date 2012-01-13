@@ -53,3 +53,11 @@ boolean fileExists(const char* absolutePath) {
   return false;
 #endif
 }
+
+unsigned short convertShortToBigEndian(const unsigned short value) {
+  return htons(value);
+}
+
+unsigned int convertIntToBigEndian(const unsigned int value) {
+  return htonl(value);
+}
