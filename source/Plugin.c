@@ -31,16 +31,16 @@
 #include "EventLogger.h"
 #include "PluginVst2x.h"
 
-PluginInterfaceType guessPluginInterfaceType(CharString interfaceTypeName) {
+PluginInterfaceType guessPluginInterfaceType(CharString pluginName) {
   PluginInterfaceType pluginType = PLUGIN_TYPE_INVALID;
-  logDebug("Trying to find plugin '%s'", interfaceTypeName->data);
+  logDebug("Trying to find plugin '%s'", pluginName->data);
 
-  if(vst2xPluginExists(interfaceTypeName)) {
-    logInfo("Plugin '%s' is of type VST2.x", interfaceTypeName->data);
+  if(vst2xPluginExists(pluginName)) {
+    logInfo("Plugin '%s' is of type VST2.x", pluginName->data);
     pluginType = PLUGIN_TYPE_VST_2X;
   }
   else {
-    logError("Plugin '%s' could not be found", interfaceTypeName->data);
+    logError("Plugin '%s' could not be found", pluginName->data);
   }
 
   return pluginType;
