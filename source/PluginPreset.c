@@ -26,3 +26,49 @@
 //
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "PluginPreset.h"
+#include "StringUtilities.h"
+#include "EventLogger.h"
+
+PluginPresetType guessPluginPresetType(const CharString presetName) {
+  const char* fileExtension = getFileExtension(presetName->data);
+  if(fileExtension == NULL) {
+    return PRESET_TYPE_INVALID;
+  }
+  else if(!strcasecmp(fileExtension, "fxp")) {
+    return PRESET_TYPE_FXP;
+  }
+  else {
+    logCritical("Preset '%s' does not match any supported type", presetName->data);
+    return PRESET_TYPE_INVALID;
+  }
+}
+
+PluginPreset newPluginPreset(PluginPresetType presetType, const CharString presetName) {
+  switch(presetType) {
+    case PRESET_TYPE_FXP:
+      return newPluginPresetFxp(presetName);
+    default:
+      return NULL;
+  }
+}
+
+void _setPresetCompatibleWithPluginType(PluginPreset pluginPreset, PluginInterfaceType interfaceType) {
+  pluginPreset->compatiblePluginTypes |= (1 << interfaceType);
+}
+
+boolean isPresetCompatibleWithPlugin(const PluginPreset pluginPreset, const Plugin plugin) {
+  return pluginPreset & (1 << plugin->interfaceType);
+}
+
+boolean loadPreset(const PluginPreset pluginPreset, Plugin plugin) {
+  return pluginPreset->loadPreset(pluginPreset, plugin);
+}
+
+void freePluginPreset(PluginPreset pluginPreset) {
+  pluginPreset->freePresetData(pluginPreset->extraData);
+  freeCharString(pluginPreset->presetName);
+  free(pluginPreset);
+}

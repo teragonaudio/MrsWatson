@@ -25,9 +25,42 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
+#include "CharString.h"
+#include "Plugin.h"
+
 #ifndef MrsWatson_PluginPreset_h
 #define MrsWatson_PluginPreset_h
 
+typedef enum {
+  PRESET_TYPE_INVALID,
+  PRESET_TYPE_FXP,
+  NUM_PRESET_TYPES
+} PluginPresetType;
 
+typedef boolean (*OpenPresetFunc)(void*);
+typedef boolean (*LoadPresetFunc)(void*, Plugin);
+typedef void (*FreePresetDataFunc)(void*);
+
+typedef struct {
+  PluginPresetType presetType;
+  CharString presetName;
+  unsigned int compatiblePluginTypes;
+
+  OpenPresetFunc openPreset;
+  LoadPresetFunc loadPreset;
+  FreePresetDataFunc freePresetData;
+
+  void* extraData;
+} PluginPresetMembers;
+
+typedef PluginPresetMembers* PluginPreset;
+
+PluginPresetType guessPluginPresetType(const CharString presetName);
+PluginPreset newPluginPreset(PluginPresetType presetType, const CharString presetName);
+// Consider this "protected"
+void _setPresetCompatibleWithPluginType(PluginPreset pluginPreset, PluginInterfaceType interfaceType);
+boolean isPresetCompatibleWithPlugin(const PluginPreset pluginPreset, const Plugin plugin);
+boolean loadPreset(const PluginPreset pluginPreset, Plugin plugin);
+void freePluginPreset(PluginPreset pluginPreset);
 
 #endif
