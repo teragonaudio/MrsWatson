@@ -29,7 +29,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "StringUtilities.h"
-#include "PlatformInfo.h"
+#include "PlatformUtilities.h"
 
 void wrapStringForTerminal(const char* srcString, char* destString, int indentSize) {
   wrapString(srcString, destString, indentSize, TERMINAL_LINE_LENGTH);

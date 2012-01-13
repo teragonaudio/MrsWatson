@@ -33,7 +33,7 @@ extern "C" {
 #include <Carbon/Carbon.h>
 #endif
 #include "PluginVst2x.h"
-#include "PlatformInfo.h"
+#include "PlatformUtilities.h"
 #include "EventLogger.h"
 #include "AudioSettings.h"
 #include "MrsWatson.h"

@@ -1,5 +1,5 @@
 //
-// PlatformInfo.h - MrsWatson
+// PlatformUtilities.h - MrsWatson
 // Created by Nik Reiman on 1/2/12.
 // Copyright (c) 2012 Teragon Audio. All rights reserved.
 //

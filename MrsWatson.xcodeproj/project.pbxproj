@@ -14,7 +14,7 @@
 		2435638C14B1FF010049FD43 /* SampleSource.c in Sources */ = {isa = PBXBuildFile; fileRef = 2435638B14B1FF010049FD43 /* SampleSource.c */; };
 		2435639314B20B5A0049FD43 /* BuildInfo.c in Sources */ = {isa = PBXBuildFile; fileRef = 2435639214B20B5A0049FD43 /* BuildInfo.c */; };
 		2435639714B20B960049FD43 /* SampleSourcePcm.c in Sources */ = {isa = PBXBuildFile; fileRef = 2435639614B20B960049FD43 /* SampleSourcePcm.c */; };
-		2435639A14B22B990049FD43 /* PlatformInfo.c in Sources */ = {isa = PBXBuildFile; fileRef = 2435639914B22B990049FD43 /* PlatformInfo.c */; };
+		2435639A14B22B990049FD43 /* PlatformUtilities.c in Sources */ = {isa = PBXBuildFile; fileRef = 2435639914B22B990049FD43 /* PlatformUtilities.c */; };
 		2435639C14B22FFC0049FD43 /* SampleBuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = 2435639B14B22FFB0049FD43 /* SampleBuffer.c */; };
 		2457AB8614B5BEF7000D868C /* TaskTimer.c in Sources */ = {isa = PBXBuildFile; fileRef = 2457AB8514B5BEF7000D868C /* TaskTimer.c */; };
 		2457AB8914B5BF0F000D868C /* AudioClock.c in Sources */ = {isa = PBXBuildFile; fileRef = 2457AB8814B5BF0F000D868C /* AudioClock.c */; };
@@ -64,8 +64,8 @@
 		2435639214B20B5A0049FD43 /* BuildInfo.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = BuildInfo.c; path = source/BuildInfo.c; sourceTree = SOURCE_ROOT; };
 		2435639514B20B750049FD43 /* BuildInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BuildInfo.h; path = source/BuildInfo.h; sourceTree = SOURCE_ROOT; };
 		2435639614B20B960049FD43 /* SampleSourcePcm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = SampleSourcePcm.c; path = source/SampleSourcePcm.c; sourceTree = SOURCE_ROOT; };
-		2435639814B22B910049FD43 /* PlatformInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlatformInfo.h; path = source/PlatformInfo.h; sourceTree = SOURCE_ROOT; };
-		2435639914B22B990049FD43 /* PlatformInfo.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = PlatformInfo.c; path = source/PlatformInfo.c; sourceTree = SOURCE_ROOT; };
+		2435639814B22B910049FD43 /* PlatformUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlatformUtilities.h; path = source/PlatformUtilities.h; sourceTree = SOURCE_ROOT; };
+		2435639914B22B990049FD43 /* PlatformUtilities.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = PlatformUtilities.c; path = source/PlatformUtilities.c; sourceTree = SOURCE_ROOT; };
 		2435639B14B22FFB0049FD43 /* SampleBuffer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = SampleBuffer.c; path = source/SampleBuffer.c; sourceTree = SOURCE_ROOT; };
 		2435639D14B230070049FD43 /* SampleBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SampleBuffer.h; path = source/SampleBuffer.h; sourceTree = SOURCE_ROOT; };
 		2457AB8114B5BEE3000D868C /* TaskTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TaskTimer.h; path = source/TaskTimer.h; sourceTree = SOURCE_ROOT; };
@@ -195,8 +195,8 @@
 				24BD3E7414B5A5C200BFA6DE /* MidiSourceFile.h */,
 				24FDFBC0148CC9CC0074D3A1 /* MrsWatson.c */,
 				2435636D14B1B5F50049FD43 /* MrsWatson.h */,
-				2435639914B22B990049FD43 /* PlatformInfo.c */,
-				2435639814B22B910049FD43 /* PlatformInfo.h */,
+				2435639914B22B990049FD43 /* PlatformUtilities.c */,
+				2435639814B22B910049FD43 /* PlatformUtilities.h */,
 				2465A2C914B3130B00F94E84 /* Plugin.c */,
 				2465A2C814B312FB00F94E84 /* Plugin.h */,
 				2465A2D714B3313600F94E84 /* PluginChain.c */,
@@ -304,7 +304,7 @@
 				2435638C14B1FF010049FD43 /* SampleSource.c in Sources */,
 				2435639314B20B5A0049FD43 /* BuildInfo.c in Sources */,
 				2435639714B20B960049FD43 /* SampleSourcePcm.c in Sources */,
-				2435639A14B22B990049FD43 /* PlatformInfo.c in Sources */,
+				2435639A14B22B990049FD43 /* PlatformUtilities.c in Sources */,
 				2435639C14B22FFC0049FD43 /* SampleBuffer.c in Sources */,
 				2465A2CA14B3130B00F94E84 /* Plugin.c in Sources */,
 				2465A2D414B3156A00F94E84 /* PluginVst2x.cpp in Sources */,

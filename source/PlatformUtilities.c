@@ -1,5 +1,5 @@
 //
-// PlatformInfo.c - MrsWatson
+// PlatformUtilities.c - MrsWatson
 // Created by Nik Reiman on 1/2/12.
 // Copyright (c) 2012 Teragon Audio. All rights reserved.
 //
@@ -28,7 +28,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/stat.h>
-#include "PlatformInfo.h"
+#include "PlatformUtilities.h"
 
 PlatformType getPlatformType() {
 #if MACOSX
