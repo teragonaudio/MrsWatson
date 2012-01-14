@@ -60,7 +60,6 @@ PluginPreset newPluginPreset(PluginPresetType presetType, const CharString prese
 // Consider this "protected"
 void _setPresetCompatibleWithPluginType(PluginPreset pluginPreset, PluginInterfaceType interfaceType);
 boolean isPresetCompatibleWithPlugin(const PluginPreset pluginPreset, const Plugin plugin);
-boolean loadPreset(const PluginPreset pluginPreset, Plugin plugin);
 void freePluginPreset(PluginPreset pluginPreset);
 
 #endif

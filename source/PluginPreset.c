@@ -31,6 +31,7 @@
 #include "PluginPreset.h"
 #include "StringUtilities.h"
 #include "EventLogger.h"
+#include "PluginPresetFxp.h"
 
 PluginPresetType guessPluginPresetType(const CharString presetName) {
   const char* fileExtension = getFileExtension(presetName->data);
@@ -60,11 +61,7 @@ void _setPresetCompatibleWithPluginType(PluginPreset pluginPreset, PluginInterfa
 }
 
 boolean isPresetCompatibleWithPlugin(const PluginPreset pluginPreset, const Plugin plugin) {
-  return pluginPreset & (1 << plugin->interfaceType);
-}
-
-boolean loadPreset(const PluginPreset pluginPreset, Plugin plugin) {
-  return pluginPreset->loadPreset(pluginPreset, plugin);
+  return (pluginPreset->compatiblePluginTypes & (1 << plugin->interfaceType));
 }
 
 void freePluginPreset(PluginPreset pluginPreset) {
