@@ -30,6 +30,7 @@
 #include <string.h>
 #include "PluginChain.h"
 #include "EventLogger.h"
+#include "PluginPreset.h"
 
 PluginChain newPluginChain(void) {
   PluginChain pluginChain = malloc(sizeof(PluginChainMembers));
@@ -70,15 +71,48 @@ boolean addPluginsFromArgumentString(PluginChain pluginChain, const CharString a
     }
     strncpy(nameBuffer->data, substringStart, substringLength);
 
-    // TODO: Use colon as a separator for presets to load into these plugins
+    // Use colon as a separator for presets to load into these plugins
+    CharString presetNameBuffer = newCharString();
+    char* colon = strchr(nameBuffer->data, ':');
+    if(colon != NULL) {
+      // Null-terminate this string to force it to end, then extract preset name from next char
+      *colon = '\0';
+      strncpy(presetNameBuffer->data, colon + 1, strlen(colon + 1));
+    }
+
+    Plugin plugin = NULL;
     PluginInterfaceType pluginType = guessPluginInterfaceType(nameBuffer);
     if(pluginType != PLUGIN_TYPE_INVALID) {
-      Plugin plugin = newPlugin(pluginType, nameBuffer);
+      plugin = newPlugin(pluginType, nameBuffer);
       if(!_addPluginToChain(pluginChain, plugin)) {
         logError("Plugin chain could not be constructed");
         return false;
       }
     }
+
+    // Load preset for this plugin (if given)
+    if(strlen(presetNameBuffer->data) > 0 && plugin != NULL) {
+      logInfo("Opening preset '%s' for plugin", presetNameBuffer->data);
+      PluginPresetType presetType = guessPluginPresetType(presetNameBuffer);
+      if(presetType != PRESET_TYPE_INVALID) {
+        PluginPreset pluginPreset = newPluginPreset(presetType, presetNameBuffer);
+        if(isPresetCompatibleWithPlugin(pluginPreset, plugin)) {
+          if(!pluginPreset->openPreset(pluginPreset)) {
+            logError("Could not open preset '%s'", pluginPreset->presetName->data);
+            return false;
+          }
+          if(!pluginPreset->loadPreset(pluginPreset, plugin)) {
+            logError("Could not load preset '%s'", pluginPreset->presetName->data);
+            return false;
+          }
+          logInfo("Loaded preset '%s' to plugin '%s'", pluginPreset->presetName->data, plugin->pluginName->data);
+        }
+        else {
+          logError("Preset '%s' is a compatible format for plugin", pluginPreset->presetName->data);
+        }
+      }
+    }
+    freeCharString(presetNameBuffer);
 
     if(comma == NULL) {
       break;
