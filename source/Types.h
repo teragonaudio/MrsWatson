@@ -29,7 +29,7 @@
 #define MrsWatson_Types_h
 
 #ifndef boolean
-typedef short boolean;
+#define boolean short
 #endif
 
 #ifndef byte

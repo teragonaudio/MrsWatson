@@ -28,6 +28,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "PlatformUtilities.h"
 #include "PluginPreset.h"
 #include "StringUtilities.h"
 #include "EventLogger.h"
