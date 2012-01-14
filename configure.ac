@@ -3,6 +3,12 @@ AC_PREREQ([2.61])
 AC_INIT([MrsWatson], [1.0.0], [support@teragonaudio.com])
 AM_INIT_AUTOMAKE([MrsWatson], [1.0.0])
 
+AC_CANONICAL_HOST
+case "${host}" in
+	*-*-mingw*) AC_DEFINE(WINDOWS, 1, "Windows") ;;
+	*) AC_MSG_RESULT([Unsupported operating system: ${host}]) ;;
+esac
+
 AC_CONFIG_SRCDIR([source])
 # AC_CONFIG_HEADERS([config.h])
 # AC_CONFIG_FILES([Makefile])
@@ -30,4 +36,5 @@ AC_FUNC_MALLOC
 AC_FUNC_REALLOC
 AC_CHECK_FUNCS([floor gethrtime gettimeofday memset pow strcasecmp strchr strdup strncasecmp strrchr strstr strtol])
 
+AC_CONFIG_HEADERS(config.h)
 AC_OUTPUT(Makefile source/Makefile)
