@@ -27,10 +27,10 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "PluginPresetFxp.h"
 #include "EventLogger.h"
-#include "vstfxstore.h"
-#import "PlatformUtilities.h"
+#include "PlatformUtilities.h"
 
 static boolean _openPluginPresetFxp(void* pluginPresetPtr) {
   PluginPreset pluginPreset = pluginPresetPtr;
@@ -46,7 +46,7 @@ static boolean _openPluginPresetFxp(void* pluginPresetPtr) {
 static boolean _loadPluginPresetFxp(void* pluginPresetPtr, Plugin plugin) {
   PluginPreset pluginPreset = pluginPresetPtr;
   PluginPresetFxpData extraData = pluginPreset->extraData;
-  struct fxProgram *inProgram = malloc(sizeof(struct fxProgram));
+  fxpProgram inProgram = malloc(sizeof(fxpProgramMembers));
 
   unsigned int valueBuffer;
   unsigned int numObjectsRead = fread(&valueBuffer, sizeof(unsigned int), 1, extraData->fileHandle);
@@ -55,13 +55,73 @@ static boolean _loadPluginPresetFxp(void* pluginPresetPtr, Plugin plugin) {
     return false;
   }
   inProgram->chunkMagic = convertIntToBigEndian(valueBuffer);
-  if(inProgram->chunkMagic != 'CcnK') {
-    
+  if(inProgram->chunkMagic != 0x43636E4B) { // 'CcnK'
+    logError("FXP preset file has bad chunk magic");
+    return false;
   }
 
   numObjectsRead = fread(&valueBuffer, sizeof(unsigned int), 1, extraData->fileHandle);
   if(numObjectsRead != 1) {
     logError("Short read of FXP preset file at byteSize");
+  }
+  inProgram->byteSize = convertIntToBigEndian(valueBuffer);
+  logDebug("FXP program has %d bytes in main chunk", inProgram->byteSize);
+
+  PluginPresetFxpProgramType programType = FXP_TYPE_INVALID;
+  numObjectsRead = fread(&valueBuffer, sizeof(unsigned int), 1, extraData->fileHandle);
+  if(numObjectsRead != 1) {
+    logError("Short read of FXP preset file at fxMagic");
+  }
+  inProgram->fxMagic = convertIntToBigEndian(valueBuffer);
+  if(inProgram->fxMagic == 0x4678436b) { // 'FxCk'
+    programType = FXP_TYPE_REGULAR;
+  }
+  else if(inProgram->fxMagic == 0x46504368) { // 'FPCh'
+    programType = FXP_TYPE_OPAQUE_CHUNK;
+  }
+  else {
+    logError("FXP preset has invalid fxMagic type");
+    return false;
+  }
+
+  numObjectsRead = fread(&valueBuffer, sizeof(unsigned int), 1, extraData->fileHandle);
+  if(numObjectsRead != 1) {
+    logError("Short read of FXP preset file at version");
+  }
+  inProgram->version = convertIntToBigEndian(valueBuffer);
+
+  numObjectsRead = fread(&valueBuffer, sizeof(unsigned int), 1, extraData->fileHandle);
+  if(numObjectsRead != 1) {
+    logError("Short read of FXP preset file at fxID");
+  }
+  inProgram->fxID = convertIntToBigEndian(valueBuffer);
+
+  numObjectsRead = fread(&valueBuffer, sizeof(unsigned int), 1, extraData->fileHandle);
+  if(numObjectsRead != 1) {
+    logError("Short read of FXP preset file at fxVersion");
+  }
+  inProgram->fxVersion = convertIntToBigEndian(valueBuffer);
+
+  numObjectsRead = fread(&valueBuffer, sizeof(unsigned int), 1, extraData->fileHandle);
+  if(numObjectsRead != 1) {
+    logError("Short read of FXP preset file at numParams");
+  }
+  inProgram->numParams = convertIntToBigEndian(valueBuffer);
+
+  memset(inProgram->prgName, 0, sizeof(char) * 28);
+  numObjectsRead = fread(inProgram->prgName, sizeof(char), 28, extraData->fileHandle);
+  if(numObjectsRead != 28) {
+    logError("Short read of FXP preset file at prgName");
+  }
+  copyToCharString(pluginPreset->presetName, inProgram->prgName);
+
+  if(programType == FXP_TYPE_REGULAR) {
+  }
+  else if(programType == FXP_TYPE_OPAQUE_CHUNK) {
+  }
+  else {
+    logInternalError("Invalid FXP program type");
+    return false;
   }
 
   free(inProgram);
