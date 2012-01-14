@@ -29,11 +29,15 @@
 #include <stdlib.h>
 #include <sys/stat.h>
 #include "PlatformUtilities.h"
+#if WINDOWS
+#define WIN32_LEAN_AND_MEAN
+#include "windows.h"
+#endif
 
 PlatformType getPlatformType() {
 #if MACOSX
   return PLATFORM_MACOSX;
-#elif WIN32
+#elif WINDOWS
   return PLATFORM_WINDOWS;
 #else
   return PLATFORM_UNSUPPORTED;

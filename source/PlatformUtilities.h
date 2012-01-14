@@ -25,15 +25,23 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
+#include "../config.h"
 #include "Types.h"
 
 #ifndef MrsWatson_PlatformInfo_h
 #define MrsWatson_PlatformInfo_h
 
-#if WIN32
+#if WINDOWS
 #define PATH_DELIMITER '\\'
 #else
 #define PATH_DELIMITER '/'
+#endif
+
+// Substitutes for POSIX functions not found on Windows
+#if WINDOWS
+#define WIN32_LEAN_AND_MEAN
+#include "Windows.h"
+#define strcasecmp _stricmp
 #endif
 
 typedef enum {
