@@ -50,18 +50,37 @@ boolean fileExists(const char* absolutePath) {
   boolean result = (stat(absolutePath, buffer) == 0);
   free(buffer);
   return result;
-#elif WIN32
-  // TODO: this
-  return false;
+#elif WINDOWS
+  unsigned long fileAttributes = GetFileAttributes(absolutePath);
+  if(fileAttributes == 0xffffff) {
+	return false;
+  }
+  return true;
 #else
   return false;
 #endif
 }
 
+static boolean _isHostLittleEndian(void) {
+  int num = 1;
+  return (*(char*)&num == 1);
+}
+
 unsigned short convertShortToBigEndian(const unsigned short value) {
-  return htons(value);
+  if(_isHostLittleEndian()) {
+    return (value << 8) | (value >> 8);
+  }
+  else {
+    return value;
+  }
 }
 
 unsigned int convertIntToBigEndian(const unsigned int value) {
-  return htonl(value);
+  if(_isHostLittleEndian()) {
+    return (value << 24) | ((value >> 8) & 0x00ff0000) | ((value >> 8) & 0x0000ff00) | (value >> 24);
+  }
+  else {
+    return value;
+  }
 }
+
