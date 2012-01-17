@@ -58,7 +58,7 @@ typedef struct {
     struct
     {
       unsigned int size;    ///< size of program data
-      char chunk[1];    ///< variable sized array with opaque program data
+      char* chunk;    ///< variable sized array with opaque program data
     } data;         ///< program chunk data
   } content;          ///< program content depending on fxMagic
 } fxpProgramMembers;
