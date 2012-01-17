@@ -84,3 +84,13 @@ unsigned int convertIntToBigEndian(const unsigned int value) {
   }
 }
 
+float convertBigEndianFloatToPlatform(const float value) {
+  float result = 0.0f;
+  byte* floatToConvert = (byte*)&value;
+  byte* floatResult = (byte*)&result;
+  floatResult[0] = floatToConvert[3];
+  floatResult[1] = floatToConvert[2];
+  floatResult[2] = floatToConvert[1];
+  floatResult[3] = floatToConvert[0];
+  return result;
+}
