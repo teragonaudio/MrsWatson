@@ -29,11 +29,11 @@
 #include <stdlib.h>
 
 extern "C" {
+#include "PlatformUtilities.h"
 #if MACOSX
-#include <Carbon/Carbon.h>
+#include <CoreFoundation/CFBundle.h>
 #endif
 #include "PluginVst2x.h"
-#include "PlatformUtilities.h"
 #include "EventLogger.h"
 #include "AudioSettings.h"
 #include "MrsWatson.h"
