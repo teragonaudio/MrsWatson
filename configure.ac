@@ -9,7 +9,7 @@ case "${host}" in
     HOST_CPPFLAGS='-arch i386 -fmessage-length=0 -pipe -Wno-trigraphs -fpascal-strings -std=c99 -O3 -Wmissing-field-initializers -Wall -Wmissing-prototypes -Wreturn-type -Wunused-variable -pedantic -Wshadow -Wsign-compare -Wnewline-eof -Wshorten-64-to-32 -DMACOSX=1 -fasm-blocks -mmacosx-version-min=10.4'
     HOST_LDFLAGS='-arch i386 -framework Carbon -framework CoreFoundation'
     ;;
-	*-*-mingw*)
+  *-*-mingw*)
     HOST_CPPFLAGS='-DWINDOWS=1'
     HOST_LDFLAGS=''
     ;;
