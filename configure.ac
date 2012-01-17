@@ -13,7 +13,11 @@ case "${host}" in
     HOST_CPPFLAGS='-DWINDOWS=1'
     HOST_LDFLAGS=''
     ;;
-	*)
+  *-*-linux*)
+    HOST_CPPFLAGS='-fmessage-length=0 -pipe -Wno-trigraphs -std=c99 -O3 -Wmissing-field-initializers -Wall -Wreturn-type -Wunused-variable -pedantic -Wshadow -Wsign-compare -DLINUX=1 -D__cdecl=""'
+    HOST_LDFLAGS=''
+    ;;
+  *)
     AC_MSG_RESULT([Unsupported operating system: ${host}])
     ;;
 esac
