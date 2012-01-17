@@ -368,6 +368,12 @@ static void _processMidiEventsVst2xPlugin(void *pluginPtr, LinkedList midiEvents
   }
 }
 
+static void _setParameterVst2xPlugin(void *pluginPtr, int index, float value) {
+  Plugin plugin = (Plugin)pluginPtr;
+  PluginVst2xData data = (PluginVst2xData)(plugin->extraData);
+  data->pluginHandle->setParameter(data->pluginHandle, index, value);
+}
+
 static void _freeVst2xPluginData(void* pluginDataPtr) {
   PluginVst2xData data = (PluginVst2xData)(pluginDataPtr);
 
@@ -395,6 +401,7 @@ Plugin newPluginVst2x(const CharString pluginName) {
   plugin->displayPluginInfo = _displayVst2xPluginInfo;
   plugin->processAudio = _processAudioVst2xPlugin;
   plugin->processMidiEvents = _processMidiEventsVst2xPlugin;
+  plugin->setParameter = _setParameterVst2xPlugin;
   plugin->freePluginData = _freeVst2xPluginData;
 
   PluginVst2xData extraData = (PluginVst2xData)malloc(sizeof(PluginVst2xDataMembers));

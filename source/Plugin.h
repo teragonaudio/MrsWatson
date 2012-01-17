@@ -50,6 +50,7 @@ typedef boolean (*OpenPluginFunc)(void*);
 typedef void (*DisplayPluginInfoFunc)(void*);
 typedef void (*PluginProcessAudioFunc)(void*, SampleBuffer, SampleBuffer);
 typedef void (*PluginProcessMidiEventsFunc)(void*, LinkedList);
+typedef void (*PluginSetParameterFunc)(void*, int, float);
 typedef void (*FreePluginDataFunc)(void*);
 
 typedef struct {
@@ -61,6 +62,7 @@ typedef struct {
   DisplayPluginInfoFunc displayPluginInfo;
   PluginProcessAudioFunc processAudio;
   PluginProcessMidiEventsFunc processMidiEvents;
+  PluginSetParameterFunc setParameter;
   FreePluginDataFunc freePluginData;
 
   void* extraData;
