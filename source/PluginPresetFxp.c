@@ -64,14 +64,16 @@ static boolean _loadPluginPresetFxp(void* pluginPresetPtr, Plugin plugin) {
   numObjectsRead = fread(&valueBuffer, sizeof(unsigned int), 1, extraData->fileHandle);
   if(numObjectsRead != 1) {
     logError("Short read of FXP preset file at byteSize");
+    return false;
   }
   inProgram->byteSize = convertBigEndianIntToPlatform(valueBuffer);
   logDebug("FXP program has %d bytes in main chunk", inProgram->byteSize);
 
-  PluginPresetFxpProgramType programType = FXP_TYPE_INVALID;
+  PluginPresetFxpProgramType programType;
   numObjectsRead = fread(&valueBuffer, sizeof(unsigned int), 1, extraData->fileHandle);
   if(numObjectsRead != 1) {
     logError("Short read of FXP preset file at fxMagic");
+    return false;
   }
   inProgram->fxMagic = convertBigEndianIntToPlatform(valueBuffer);
   if(inProgram->fxMagic == 0x4678436b) { // 'FxCk'
