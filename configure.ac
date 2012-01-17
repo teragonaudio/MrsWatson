@@ -10,7 +10,7 @@ case "${host}" in
     HOST_LDFLAGS='-arch i386 -framework Carbon -framework CoreFoundation'
     ;;
   *-*-mingw*)
-    HOST_CPPFLAGS='-DWINDOWS=1'
+    HOST_CPPFLAGS='-m32 -O3 -std=c99 -DWINDOWS=1'
     HOST_LDFLAGS=''
     ;;
   *-*-linux*)
