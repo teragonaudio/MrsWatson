@@ -52,8 +52,8 @@ typedef enum {
 
 PlatformType getPlatformType(void);
 boolean fileExists(const char* absolutePath);
-unsigned short convertShortToBigEndian(const unsigned short value);
-unsigned int convertIntToBigEndian(const unsigned int value);
+unsigned short convertBigEndianShortToPlatform(const unsigned short value);
+unsigned int convertBigEndianIntToPlatform(const unsigned int value);
 float convertBigEndianFloatToPlatform(const float value);
 
 #endif

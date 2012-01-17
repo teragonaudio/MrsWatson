@@ -54,7 +54,7 @@ static boolean _loadPluginPresetFxp(void* pluginPresetPtr, Plugin plugin) {
     logError("Short read of FXP preset file at chunkMagic");
     return false;
   }
-  inProgram->chunkMagic = convertIntToBigEndian(valueBuffer);
+  inProgram->chunkMagic = convertBigEndianIntToPlatform(valueBuffer);
   if(inProgram->chunkMagic != 0x43636E4B) { // 'CcnK'
     logError("FXP preset file has bad chunk magic");
     return false;
@@ -64,7 +64,7 @@ static boolean _loadPluginPresetFxp(void* pluginPresetPtr, Plugin plugin) {
   if(numObjectsRead != 1) {
     logError("Short read of FXP preset file at byteSize");
   }
-  inProgram->byteSize = convertIntToBigEndian(valueBuffer);
+  inProgram->byteSize = convertBigEndianIntToPlatform(valueBuffer);
   logDebug("FXP program has %d bytes in main chunk", inProgram->byteSize);
 
   PluginPresetFxpProgramType programType = FXP_TYPE_INVALID;
@@ -72,7 +72,7 @@ static boolean _loadPluginPresetFxp(void* pluginPresetPtr, Plugin plugin) {
   if(numObjectsRead != 1) {
     logError("Short read of FXP preset file at fxMagic");
   }
-  inProgram->fxMagic = convertIntToBigEndian(valueBuffer);
+  inProgram->fxMagic = convertBigEndianIntToPlatform(valueBuffer);
   if(inProgram->fxMagic == 0x4678436b) { // 'FxCk'
     programType = FXP_TYPE_REGULAR;
   }

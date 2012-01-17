@@ -66,7 +66,7 @@ static boolean _isHostLittleEndian(void) {
   return (*(char*)&num == 1);
 }
 
-unsigned short convertShortToBigEndian(const unsigned short value) {
+unsigned short convertBigEndianShortToPlatform(const unsigned short value) {
   if(_isHostLittleEndian()) {
     return (value << 8) | (value >> 8);
   }
@@ -75,7 +75,7 @@ unsigned short convertShortToBigEndian(const unsigned short value) {
   }
 }
 
-unsigned int convertIntToBigEndian(const unsigned int value) {
+unsigned int convertBigEndianIntToPlatform(const unsigned int value) {
   if(_isHostLittleEndian()) {
     return (value << 24) | ((value >> 8) & 0x00ff0000) | ((value >> 8) & 0x0000ff00) | (value >> 24);
   }
