@@ -313,6 +313,16 @@ static void _displayVst2xPluginInfo(void* pluginPtr) {
   freeCharString(nameBuffer);
 }
 
+void setVst2xPluginChunk(Plugin plugin, char* chunk) {
+#if 0
+  PluginVst2xData data = (PluginVst2xData)plugin->extraData;
+  // TODO: This call seems to crash the plugin; I think we're doing it wrong
+  data->dispatcher(data->pluginHandle, effSetChunk, 1, 0, chunk, 0.0f);
+#else
+  logInternalError("Loading plugin chunks is known to be buggy. Bailing out, sorry!");
+#endif
+}
+
 static void _processAudioVst2xPlugin(void* pluginPtr, SampleBuffer inputs, SampleBuffer outputs) {
   Plugin plugin = (Plugin)pluginPtr;
   PluginVst2xData data = (PluginVst2xData)plugin->extraData;

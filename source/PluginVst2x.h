@@ -33,6 +33,7 @@
 
 boolean vst2xPluginExists(const CharString pluginName);
 void fillVst2xUniqueIdToString(const long uniqueId, CharString outString);
+void setVst2xPluginChunk(Plugin plugin, char* chunk);
 Plugin newPluginVst2x(const CharString pluginName);
 
 #endif
