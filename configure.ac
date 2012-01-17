@@ -5,9 +5,20 @@ AM_INIT_AUTOMAKE([MrsWatson], [1.0.0])
 
 AC_CANONICAL_HOST
 case "${host}" in
-	*-*-mingw*) AC_DEFINE(WINDOWS, 1, "Windows") ;;
-	*) AC_MSG_RESULT([Unsupported operating system: ${host}]) ;;
+  *-*-darwin*)
+    HOST_CPPFLAGS='-arch i386 -fmessage-length=0 -pipe -Wno-trigraphs -fpascal-strings -std=c99 -O3 -Wmissing-field-initializers -Wall -Wmissing-prototypes -Wreturn-type -Wunused-variable -pedantic -Wshadow -Wsign-compare -Wnewline-eof -Wshorten-64-to-32 -DMACOSX=1 -fasm-blocks -mmacosx-version-min=10.4'
+    HOST_LDFLAGS='-arch i386 -framework Carbon -framework CoreFoundation'
+    ;;
+	*-*-mingw*)
+    HOST_CPPFLAGS='-DWINDOWS=1'
+    HOST_LDFLAGS=''
+    ;;
+	*)
+    AC_MSG_RESULT([Unsupported operating system: ${host}])
+    ;;
 esac
+AC_SUBST([HOST_CPPFLAGS])
+AC_SUBST([HOST_LDFLAGS])
 
 AC_CONFIG_SRCDIR([source])
 # AC_CONFIG_HEADERS([config.h])
