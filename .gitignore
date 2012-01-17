@@ -24,3 +24,4 @@ Makefile
 **/.deps/*
 stamp-h1
 source/mrswatson
+source/mrswatson.exe
