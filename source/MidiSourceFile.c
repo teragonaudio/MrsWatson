@@ -166,7 +166,7 @@ static boolean _readMidiFileTrack(FILE *midiFile, const int trackNumber,
         midiEvent->status = *currentByte++;
         midiEvent->data1 = *currentByte++;
         // All regular MIDI events have 3 bytes except for program change and channel aftertouch
-        if(!((midiEvent->status & 0xf0 == 0xc0) || (midiEvent->status & 0xf0 == 0xd0))) {
+        if(!((midiEvent->status & 0xf0) == 0xc0 || (midiEvent->status & 0xf0) == 0xd0)) {
           midiEvent->data2 = *currentByte++;
         }
         break;

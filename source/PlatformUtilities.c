@@ -63,7 +63,8 @@ boolean fileExists(const char* absolutePath) {
 
 static boolean _isHostLittleEndian(void) {
   int num = 1;
-  return (*(char*)&num == 1);
+  boolean result = (*(char*)&num == 1);
+  return result;
 }
 
 unsigned short convertBigEndianShortToPlatform(const unsigned short value) {
