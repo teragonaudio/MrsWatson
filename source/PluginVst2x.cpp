@@ -133,7 +133,7 @@ static AEffect* _loadVst2xPluginMac(CFBundleRef bundle) {
 }
 #endif
 
-static void _fillDefaultPluginLocationArray(PlatformType platformType, LinkedList outLocations) {
+static void _appendDefaultPluginLocations(PlatformType platformType, LinkedList outLocations) {
   switch(platformType) {
     case PLATFORM_WINDOWS:
       // TODO: Yeah, whatever
@@ -168,36 +168,50 @@ static const char*_getVst2xPlatformExtension(void) {
   }
 }
 
-static void _fillVst2xPluginAbsolutePath(const CharString pluginName, CharString outString) {
-  LinkedList pluginLocations = newLinkedList();
-  _fillDefaultPluginLocationArray(getPlatformType(), pluginLocations);
-  if(pluginLocations->item == NULL) {
-    return;
+static boolean _doesVst2xPluginExistAtLocation(const CharString pluginName, const CharString location) {
+  boolean result = false;
+  CharString pluginSearchPath = newCharString();
+  buildAbsolutePath(location, pluginName, _getVst2xPlatformExtension(), pluginSearchPath);
+  if(!isCharStringEmpty(location) && fileExists(pluginSearchPath->data)) {
+    result = true;
   }
 
-  CharString pluginSearchPath = newCharString();
+  freeCharString(pluginSearchPath);
+  return result;
+}
+
+static boolean _fillVst2xPluginAbsolutePath(const CharString pluginName, const CharString pluginRoot, CharString outLocation) {
+  if(_doesVst2xPluginExistAtLocation(pluginName, pluginRoot)) {
+    copyCharStrings(outLocation, pluginRoot);
+    return true;
+  }
+
+  // If the plugin wasn't found in the user's plugin root, then try searching the default locations for the platform
+  LinkedList pluginLocations = newLinkedList();
+  _appendDefaultPluginLocations(getPlatformType(), pluginLocations);
+  if(pluginLocations->item == NULL) {
+    freeLinkedList(pluginLocations);
+    return false;
+  }
+
+  boolean result = false;
   LinkedListIterator iterator = pluginLocations;
   while(iterator->nextItem != NULL) {
-    CharString location = (CharString)(iterator->item);
-    snprintf(pluginSearchPath->data, (size_t)(pluginSearchPath->capacity),
-      "%s%c%s.%s", location->data, PATH_DELIMITER, pluginName->data, _getVst2xPlatformExtension());
-    if(fileExists(pluginSearchPath->data)) {
-      copyCharStrings(outString, pluginSearchPath);
+    CharString searchLocation = (CharString)(iterator->item);
+    if(_doesVst2xPluginExistAtLocation(pluginName, searchLocation)) {
+      copyCharStrings(outLocation, searchLocation);
+      result = true;
       break;
     }
     iterator = (LinkedListIterator)iterator->nextItem;
   }
 
-  freeCharString(pluginSearchPath);
   freeLinkedListAndItems(pluginLocations, (LinkedListFreeItemFunc)freeCharString);
+  return result;
 }
 
-boolean vst2xPluginExists(const CharString pluginName) {
-  CharString pluginLocation = newCharString();
-  _fillVst2xPluginAbsolutePath(pluginName, pluginLocation);
-  boolean result = !isCharStringEmpty(pluginLocation);
-  freeCharString(pluginLocation);
-  return result;
+boolean vst2xPluginExists(const CharString pluginName, const CharString pluginRoot, CharString outLocation) {
+  return _fillVst2xPluginAbsolutePath(pluginName, pluginRoot, outLocation);
 }
 
 static boolean _canPluginDo(Plugin plugin, const char* canDoString) {
@@ -244,19 +258,27 @@ static boolean _openVst2xPlugin(void* pluginPtr) {
   PluginVst2xData data = (PluginVst2xData)plugin->extraData;
   logInfo("Opening VST2.x plugin '%s'", plugin->pluginName->data);
   CharString pluginAbsolutePath = newCharString();
-  _fillVst2xPluginAbsolutePath(plugin->pluginName, pluginAbsolutePath);
+  buildAbsolutePath(plugin->pluginLocation, plugin->pluginName, _getVst2xPlatformExtension(), pluginAbsolutePath);
 
   AEffect* pluginHandle;
 #if MACOSX
   CFBundleRef bundleRef = _bundleRefForPlugin(pluginAbsolutePath->data);
+  if(bundleRef == NULL) {
+    return false;
+  }
   data->bundleRef = bundleRef;
   pluginHandle = _loadVst2xPluginMac(bundleRef);
+#elif WINDOWS
+#error Plugin must be loaded here
 #endif
 
   if(pluginHandle == NULL) {
-    logError("Could not load VST2.x plugin '%s'", plugin->pluginName->data);
+    logError("Could not load VST2.x plugin '%s'", pluginAbsolutePath->data);
     return false;
   }
+
+  // No longer needed
+  freeCharString(pluginAbsolutePath);
 
   // Check plugin's magic number. If incorrect, then the file either was not loaded
   // properly, is not a real VST plugin, or is otherwise corrupt.
@@ -277,7 +299,6 @@ static boolean _openVst2xPlugin(void* pluginPtr) {
   data->dispatcher = dispatcher;
   boolean result = _initVst2xPlugin(plugin);
 
-  freeCharString(pluginAbsolutePath);
   return result;
 }
 
