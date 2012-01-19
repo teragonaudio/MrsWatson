@@ -399,13 +399,15 @@ static void _freeVst2xPluginData(void* pluginDataPtr) {
   free(data);
 }
 
-Plugin newPluginVst2x(const CharString pluginName) {
+Plugin newPluginVst2x(const CharString pluginName, const CharString pluginLocation) {
   Plugin plugin = (Plugin)malloc(sizeof(PluginMembers));
 
   plugin->interfaceType = PLUGIN_TYPE_VST_2X;
   plugin->pluginType = PLUGIN_TYPE_UNKNOWN;
   plugin->pluginName = newCharString();
   copyCharStrings(plugin->pluginName, pluginName);
+  plugin->pluginLocation = newCharString();
+  copyCharStrings(plugin->pluginLocation, pluginLocation);
 
   plugin->open = _openVst2xPlugin;
   plugin->displayPluginInfo = _displayVst2xPluginInfo;

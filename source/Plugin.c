@@ -59,6 +59,7 @@ Plugin newPlugin(PluginInterfaceType interfaceType, const CharString pluginName)
 
 void freePlugin(Plugin plugin) {
   plugin->freePluginData(plugin->extraData);
+  freeCharString(plugin->pluginLocation);
   freeCharString(plugin->pluginName);
   free(plugin);
 }

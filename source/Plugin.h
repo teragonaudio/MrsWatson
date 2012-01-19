@@ -57,6 +57,7 @@ typedef struct {
   PluginInterfaceType interfaceType;
   PluginType pluginType;
   CharString pluginName;
+  CharString pluginLocation;
 
   OpenPluginFunc open;
   DisplayPluginInfoFunc displayPluginInfo;
