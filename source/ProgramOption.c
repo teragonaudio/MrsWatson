@@ -115,6 +115,10 @@ placed into a chain in the order specified. Instrument plugins must appear first
 loaded from the standard locations for the OS.",
     true, ARGUMENT_TYPE_REQUIRED, NO_DEFAULT_VALUE);
 
+  _addNewProgramOption(programOptions, OPTION_PLUGIN_ROOT, "plugin-root",
+    "Directory to use when searching for plugins.",
+    false, ARGUMENT_TYPE_REQUIRED, NO_DEFAULT_VALUE);
+
   _addNewProgramOption(programOptions, OPTION_QUIET, "quiet",
     "Only log critical errors.",
     true, ARGUMENT_TYPE_NONE, NO_DEFAULT_VALUE);
