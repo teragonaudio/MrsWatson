@@ -54,12 +54,20 @@ location of your choice.
 Linux
 -----
 
-**NOTE: Linux is currently an unsupported platform!**
+**NOTE: Linux is currently an experimental platform!**
 
-MrsWatson probably won't work for you without some extra patching. However,
-linux is a desired target platform, so please submit any necessary patches or
-bug reports to the official project webpage.
+MrsWatson may not work for you without some extra work, but linux is a desired
+target platform, so please submit any necessary patches or bug reports to the
+official project webpage. As MrsWatson is a 32-bit program, you will need to
+have a complete 32-bit build environment set up for your machine.
 
+On Ubuntu, this can be done by installing the following packages:
+
+  * libstdc++
+  * g++-multilib
+  * ia32-libs
+
+This is in addition to the standard build tools (autoconf, gcc, g++, etc).
 Otherwise, building on linux should be a matter of:
 
     ./configure
