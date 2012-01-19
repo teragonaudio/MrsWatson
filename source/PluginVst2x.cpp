@@ -155,7 +155,13 @@ static AEffect* _loadVst2xPluginWindows(HMODULE moduleHandle) {
 static void _appendDefaultPluginLocations(PlatformType platformType, LinkedList outLocations) {
   switch(platformType) {
     case PLATFORM_WINDOWS:
-      // TODO: Yeah, whatever
+    {
+      CharString locationBuffer1 = newCharString();
+      snprintf(locationBuffer1->data, (size_t)(locationBuffer1->capacity), "C:\\Program Files\\Common Files\\VstPlugins");
+      appendItemToList(outLocations, locationBuffer1);
+
+      // TODO: Ugh, VST storage locations on windows are really messy. What should be included?
+    }
       break;
     case PLATFORM_MACOSX:
     {
