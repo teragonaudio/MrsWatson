@@ -34,7 +34,7 @@
 #include "EventLogger.h"
 #include "MrsWatson.h"
 
-#if ! WIN32
+#if ! WINDOWS
 #include <unistd.h>
 #endif
 
@@ -60,7 +60,7 @@ void initEventLogger(void) {
   eventLoggerInstance->startTimeInMs = currentTime.tv_usec / 1000;
   eventLoggerInstance->colorScheme = COLOR_SCHEME_NONE;
 
-#if ! WIN32
+#if ! WINDOWS
   // On unix, we can detect if stderr is pointing to a terminal and set output
   // coloring automatically. Not sure how to do this on Windows (or if we care).
   if(isatty(2)) {
