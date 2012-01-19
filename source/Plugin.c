@@ -31,11 +31,11 @@
 #include "EventLogger.h"
 #include "PluginVst2x.h"
 
-PluginInterfaceType guessPluginInterfaceType(CharString pluginName) {
+PluginInterfaceType guessPluginInterfaceType(const CharString pluginName, const CharString pluginSearchRoot, CharString outLocation) {
   PluginInterfaceType pluginType = PLUGIN_TYPE_INVALID;
   logDebug("Trying to find plugin '%s'", pluginName->data);
 
-  if(vst2xPluginExists(pluginName)) {
+  if(vst2xPluginExists(pluginName, pluginSearchRoot, outLocation)) {
     logInfo("Plugin '%s' is of type VST2.x", pluginName->data);
     pluginType = PLUGIN_TYPE_VST_2X;
   }
@@ -46,10 +46,10 @@ PluginInterfaceType guessPluginInterfaceType(CharString pluginName) {
   return pluginType;
 }
 
-Plugin newPlugin(PluginInterfaceType interfaceType, const CharString pluginName) {
+Plugin newPlugin(PluginInterfaceType interfaceType, const CharString pluginName, const CharString pluginLocation) {
   switch(interfaceType) {
     case PLUGIN_TYPE_VST_2X:
-      return newPluginVst2x(pluginName);
+      return newPluginVst2x(pluginName, pluginLocation);
     case PLUGIN_TYPE_INVALID:
     default:
       logError("Plugin type not supported");

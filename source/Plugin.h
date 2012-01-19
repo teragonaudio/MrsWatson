@@ -71,8 +71,8 @@ typedef struct {
 
 typedef PluginMembers* Plugin;
 
-PluginInterfaceType guessPluginInterfaceType(CharString pluginName);
-Plugin newPlugin(PluginInterfaceType pluginInterfaceType, const CharString pluginName);
+PluginInterfaceType guessPluginInterfaceType(CharString pluginName, const CharString pluginRoot, CharString outLocation);
+Plugin newPlugin(PluginInterfaceType pluginInterfaceType, const CharString pluginName, const CharString pluginLocation);
 void freePlugin(Plugin plugin);
 
 #endif

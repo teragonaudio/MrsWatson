@@ -53,13 +53,13 @@ static boolean _addPluginToChain(PluginChain pluginChain, Plugin plugin) {
   }
 }
 
-boolean addPluginsFromArgumentString(PluginChain pluginChain, const CharString argumentString) {
+boolean addPluginsFromArgumentString(PluginChain pluginChain, const CharString argumentString, const CharString pluginRoot) {
   // Expect a comma-separated string of plugins with colon separators for preset name
   // Example: plugin1:preset1name,plugin2:preset2name
   char* substringStart = argumentString->data;
   char* comma = strchr(argumentString->data, ',');
   char* endChar = argumentString->data + strlen(argumentString->data);
-  CharString nameBuffer = newCharString();
+  CharString pluginNameBuffer = newCharString();
 
   do {
     size_t substringLength;

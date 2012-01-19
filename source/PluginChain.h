@@ -43,7 +43,7 @@ typedef PluginChainMembers* PluginChain;
 
 PluginChain newPluginChain(void);
 
-boolean addPluginsFromArgumentString(PluginChain pluginChain, const CharString argumentString);
+boolean addPluginsFromArgumentString(PluginChain pluginChain, const CharString argumentString, const CharString pluginRoot);
 boolean initializePluginChain(PluginChain pluginChain);
 void displayPluginInfo(PluginChain pluginChain);
 
