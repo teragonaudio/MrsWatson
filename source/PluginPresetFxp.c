@@ -94,6 +94,7 @@ static boolean _loadPluginPresetFxp(void* pluginPresetPtr, Plugin plugin) {
   }
   inProgram->version = convertBigEndianIntToPlatform(valueBuffer);
 
+  // TODO: Need to check to make sure this matches the ID of the plugin
   numObjectsRead = fread(&valueBuffer, sizeof(unsigned int), 1, extraData->fileHandle);
   if(numObjectsRead != 1) {
     logError("Short read of FXP preset file at fxID");
@@ -101,6 +102,7 @@ static boolean _loadPluginPresetFxp(void* pluginPresetPtr, Plugin plugin) {
   }
   inProgram->fxID = convertBigEndianIntToPlatform(valueBuffer);
 
+  // TODO: Need to check to make sure this matches the version of the plugin
   numObjectsRead = fread(&valueBuffer, sizeof(unsigned int), 1, extraData->fileHandle);
   if(numObjectsRead != 1) {
     logError("Short read of FXP preset file at fxVersion");
