@@ -53,6 +53,7 @@ int main(int argc, char** argv) {
   SampleSource inputSource = NULL;
   SampleSource outputSource = NULL;
   PluginChain pluginChain = newPluginChain();
+  CharString pluginSearchRoot = newCharString();
   boolean shouldDisplayPluginInfo = false;
   MidiSequence midiSequence = NULL;
   MidiSource midiSource = NULL;
@@ -122,10 +123,8 @@ int main(int argc, char** argv) {
         case OPTION_OUTPUT_SOURCE:
           outputSource = newSampleSource(guessSampleSourceType(option->argument), option->argument);
           break;
-        case OPTION_PLUGIN:
-          if(!addPluginsFromArgumentString(pluginChain, option->argument)) {
-            return RETURN_CODE_INVALID_PLUGIN_CHAIN;
-          }
+        case OPTION_PLUGIN_ROOT:
+          copyCharStrings(pluginSearchRoot, option->argument);
           break;
         case OPTION_SAMPLERATE:
           setSampleRate(strtof(option->argument->data, NULL));
@@ -143,7 +142,13 @@ int main(int argc, char** argv) {
   logInfo("%s initialized", versionString->data);
   freeCharString(versionString);
 
-  // Verify that the plugin chain was constructed
+  // Construct plugin chain
+  if(!addPluginsFromArgumentString(pluginChain, programOptions[OPTION_PLUGIN]->argument, pluginSearchRoot)) {
+    return RETURN_CODE_INVALID_PLUGIN_CHAIN;
+  }
+  // No longer needed
+  freeCharString(pluginSearchRoot);
+
   if(pluginChain->numPlugins == 0) {
     logError("No plugins loaded");
     return RETURN_CODE_MISSING_REQUIRED_OPTION;
