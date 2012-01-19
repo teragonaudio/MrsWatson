@@ -62,56 +62,71 @@ ProgramOption* newProgramOptions(void) {
     "Blocksize in samples to use for processing. If input source is not an even multiple of the blocksize, then \
 empty samples will be added to the last block.",
     true, ARGUMENT_TYPE_REQUIRED, getBlocksize());
+
   _addNewProgramOption(programOptions, OPTION_CHANNELS, "channels",
     "Number of channels for output source. If the input source's channel count does not match the output source, \
 then channels are either copied (mono -> dual mono) or ignored (stereo -> mono, left channel).",
     true, ARGUMENT_TYPE_REQUIRED, getNumChannels());
+
   _addNewProgramOption(programOptions, OPTION_COLOR_LOGGING, "color",
     "Colored logging output. Argument can be 'light', 'dark', or 'none'. If no argument given, 'dark' is assumed. \
 If stderr is a terminal device, color is used automatically unless 'none' is given to this option.",
     false, ARGUMENT_TYPE_OPTIONAL, NO_DEFAULT_VALUE);
+
   _addNewProgramOption(programOptions, OPTION_DISPLAY_INFO, "display-info",
     "Print information about each plugin in the chain.",
     false, ARGUMENT_TYPE_NONE, NO_DEFAULT_VALUE);
+
   _addNewProgramOption(programOptions, OPTION_FILE_TYPES, "file-types",
     "Print a list of supported file types for input/output sources.",
     false, ARGUMENT_TYPE_NONE, NO_DEFAULT_VALUE);
+
   _addNewProgramOption(programOptions, OPTION_HELP, "help",
     "Print help",
     true, ARGUMENT_TYPE_NONE, NO_DEFAULT_VALUE);
+
   _addNewProgramOption(programOptions, OPTION_INPUT_SOURCE, "input",
     "Input source to use for processing, where the file type is determined from the extension. Run with \
 --file-types to see a list of supported types. Use '-' to read from stdin.",
     true, ARGUMENT_TYPE_REQUIRED, NO_DEFAULT_VALUE);
+
   _addNewProgramOption(programOptions, OPTION_MIDI_SOURCE, "midi-file",
     "MIDI file to read events from. Required if processing an instrument plugin.",
     true, ARGUMENT_TYPE_REQUIRED, NO_DEFAULT_VALUE);
+
   _addNewProgramOption(programOptions, OPTION_OUTPUT_SOURCE, "output",
     "Output source to write processed data to, where the file type is determined from the extension. Run with \
 --file-types to see a list of supported types. Use '-' to write to stdout.",
     true, ARGUMENT_TYPE_REQUIRED, NO_DEFAULT_VALUE);
+
   _addNewProgramOption(programOptions, OPTION_PCM_NUM_CHANNELS, "pcm-num-channels",
     "Number of channels to use when reading raw PCM data. If not given, defaults to the global channel count \
 from the --channels option.",
     false, ARGUMENT_TYPE_REQUIRED, getNumChannels());
+
   _addNewProgramOption(programOptions, OPTION_PCM_SAMPLERATE, "pcm-sample-rate",
     "Sample rate to use when reading raw PCM data. If not given, defaults to the global sample rate from the \
 --sample-rate option",
     false, ARGUMENT_TYPE_REQUIRED, (int)getSampleRate());
+
   _addNewProgramOption(programOptions, OPTION_PLUGIN, "plugin",
     "Plugin(s) to process. Multiple plugins can given in a comma-separated list, in which case they will be \
 placed into a chain in the order specified. Instrument plugins must appear first in any chains. Plugins are \
 loaded from the standard locations for the OS.",
     true, ARGUMENT_TYPE_REQUIRED, NO_DEFAULT_VALUE);
+
   _addNewProgramOption(programOptions, OPTION_QUIET, "quiet",
     "Only log critical errors.",
     true, ARGUMENT_TYPE_NONE, NO_DEFAULT_VALUE);
+
   _addNewProgramOption(programOptions, OPTION_SAMPLERATE, "sample-rate",
     "Sample rate to use when processing.",
     true, ARGUMENT_TYPE_REQUIRED, (int)getSampleRate());
+
   _addNewProgramOption(programOptions, OPTION_VERBOSE, "verbose",
     "Verbose logging.",
     true, ARGUMENT_TYPE_NONE, NO_DEFAULT_VALUE);
+
   _addNewProgramOption(programOptions, OPTION_VERSION, "version",
     "Print full program version and copyright information.",
     false, ARGUMENT_TYPE_NONE, NO_DEFAULT_VALUE);
