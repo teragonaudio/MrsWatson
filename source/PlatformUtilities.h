@@ -27,6 +27,7 @@
 
 #include "../config.h"
 #include "Types.h"
+#include "CharString.h"
 
 #ifndef MrsWatson_PlatformInfo_h
 #define MrsWatson_PlatformInfo_h
@@ -52,6 +53,11 @@ typedef enum {
 
 PlatformType getPlatformType(void);
 boolean fileExists(const char* absolutePath);
+
+// const char* is used here as it is assumed that the extensions will be defined by the preprocessor
+// for given platforms, not kept in stack memory.
+void buildAbsolutePath(const CharString directory, const CharString file, const char* fileExtension, CharString outString);
+
 unsigned short convertBigEndianShortToPlatform(const unsigned short value);
 unsigned int convertBigEndianIntToPlatform(const unsigned int value);
 float convertBigEndianFloatToPlatform(const float value);

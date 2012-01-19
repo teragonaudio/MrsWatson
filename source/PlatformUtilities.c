@@ -61,6 +61,10 @@ boolean fileExists(const char* absolutePath) {
 #endif
 }
 
+void buildAbsolutePath(const CharString directory, const CharString file, const char* fileExtension, CharString outString) {
+  snprintf(outString->data, outString->capacity, "%s%c%s.%s", directory->data, PATH_DELIMITER, file->data, fileExtension);
+}
+
 static boolean _isHostLittleEndian(void) {
   int num = 1;
   boolean result = (*(char*)&num == 1);
