@@ -14,8 +14,8 @@ case "${host}" in
     HOST_LDFLAGS=''
     ;;
   *-*-linux*)
-    HOST_CPPFLAGS='-fmessage-length=0 -pipe -Wno-trigraphs -std=c99 -O3 -Wmissing-field-initializers -Wall -Wreturn-type -Wunused-variable -pedantic -Wshadow -Wsign-compare -DLINUX=1 -D__cdecl=""'
-    HOST_LDFLAGS=''
+    HOST_CPPFLAGS='-fmessage-length=0 -m32 -pipe -Wno-trigraphs -std=c99 -O3 -Wmissing-field-initializers -Wall -Wreturn-type -Wunused-variable -pedantic -Wshadow -Wsign-compare -DLINUX=1 -D__cdecl=""'
+    HOST_LDFLAGS='-m32 -static'
     ;;
   *)
     AC_MSG_RESULT([Unsupported operating system: ${host}])
