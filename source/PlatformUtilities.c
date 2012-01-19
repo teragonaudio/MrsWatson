@@ -39,13 +39,15 @@ PlatformType getPlatformType() {
   return PLATFORM_MACOSX;
 #elif WINDOWS
   return PLATFORM_WINDOWS;
+#elif LINUX
+  return PLATFORM_LINUX;
 #else
   return PLATFORM_UNSUPPORTED;
 #endif
 }
 
 boolean fileExists(const char* absolutePath) {
-#if MACOSX
+#if MACOSX || LINUX
   struct stat* buffer = malloc(sizeof(struct stat));
   boolean result = (stat(absolutePath, buffer) == 0);
   free(buffer);

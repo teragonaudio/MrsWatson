@@ -48,7 +48,8 @@
 typedef enum {
   PLATFORM_UNSUPPORTED,
   PLATFORM_MACOSX,
-  PLATFORM_WINDOWS
+  PLATFORM_WINDOWS,
+  PLATFORM_LINUX,
 } PlatformType;
 
 PlatformType getPlatformType(void);
