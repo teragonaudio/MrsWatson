@@ -188,6 +188,8 @@ static const char*_getVst2xPlatformExtension(void) {
       return "vst";
     case PLATFORM_WINDOWS:
       return "dll";
+    case PLATFORM_LINUX:
+      return "so";
     default:
       return EMPTY_STRING;
   }
