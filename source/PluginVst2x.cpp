@@ -72,7 +72,7 @@ void fillVst2xUniqueIdToString(const long uniqueId, CharString outString) {
 }
 
 #if MACOSX
-static CFBundleRef _bundleRefForPlugin(const char* pluginPath) {
+static CFBundleRef _bundleRefForVst2xPlugin(const char* pluginPath) {
   // Create a path to the bundle
   CFStringRef pluginPathStringRef = CFStringCreateWithCString(NULL, pluginPath, kCFStringEncodingASCII);
   CFURLRef bundleUrl = CFURLCreateWithFileSystemPath(kCFAllocatorDefault, pluginPathStringRef, kCFURLPOSIXPathStyle, true);
@@ -281,12 +281,11 @@ static boolean _openVst2xPlugin(void* pluginPtr) {
 
   AEffect* pluginHandle;
 #if MACOSX
-  CFBundleRef bundleRef = _bundleRefForPlugin(pluginAbsolutePath->data);
-  if(bundleRef == NULL) {
+  data->bundleRef = _bundleRefForVst2xPlugin(pluginAbsolutePath->data);
+  if(data->bundleRef == NULL) {
     return false;
   }
-  data->bundleRef = bundleRef;
-  pluginHandle = _loadVst2xPluginMac(bundleRef);
+  pluginHandle = _loadVst2xPluginMac(data->bundleRef);
 #elif WINDOWS
   data->moduleHandle = _moduleHandleForPlugin(pluginAbsolutePath->data);
   if(data->moduleHandle == NULL) {
