@@ -55,6 +55,8 @@ typedef struct {
 
 #if MACOSX
   CFBundleRef bundleRef;
+#elif WINDOWS
+  HMODULE moduleHandle;
 #endif
 } PluginVst2xDataMembers;
 
@@ -129,6 +131,23 @@ static AEffect* _loadVst2xPluginMac(CFBundleRef bundle) {
     return NULL;
   }
 
+  return plugin;
+}
+#endif
+
+#if WINDOWS
+static HMODULE _moduleHandleForPlugin(const char* pluginAbsolutePath) {
+  HMODULE moduleHandle = LoadLibrary(pluginAbsolutePath);
+  if(moduleHandle == NULL) {
+    logError("Could not open library, error code '%d'", GetLastError());
+    return NULL;
+  }
+  return moduleHandle;
+}
+
+static AEffect* _loadVst2xPluginWindows(HMODULE moduleHandle) {
+  Vst2xPluginEntryFunc entryPoint = (Vst2xPluginEntryFunc)GetProcAddress(moduleHandle, "VSTPluginMain");
+  AEffect* plugin = entryPoint(vst2xPluginHostCallback);
   return plugin;
 }
 #endif
@@ -269,7 +288,13 @@ static boolean _openVst2xPlugin(void* pluginPtr) {
   data->bundleRef = bundleRef;
   pluginHandle = _loadVst2xPluginMac(bundleRef);
 #elif WINDOWS
-#error Plugin must be loaded here
+  data->moduleHandle = _moduleHandleForPlugin(pluginAbsolutePath->data);
+  if(data->moduleHandle == NULL) {
+    return false;
+  }
+  pluginHandle = _loadVst2xPluginWindows(data->moduleHandle);
+#else
+#error Unsupported platform
 #endif
 
   if(pluginHandle == NULL) {
@@ -411,6 +436,10 @@ static void _freeVst2xPluginData(void* pluginDataPtr) {
 #if MACOSX
   CFBundleUnloadExecutable(data->bundleRef);
   CFRelease(data->bundleRef);
+#elif WINDOWS
+  FreeLibrary(data->moduleHandle);
+#else
+#error Unsupported platform
 #endif
 
   free(data);
