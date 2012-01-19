@@ -28,6 +28,7 @@
 #include "Plugin.h"
 #include "LinkedList.h"
 #include "TaskTimer.h"
+#include "PluginPreset.h"
 
 #ifndef MrsWatson_PluginChain_h
 #define MrsWatson_PluginChain_h
@@ -37,6 +38,7 @@
 typedef struct {
   int numPlugins;
   Plugin* plugins;
+  PluginPreset* presets;
 } PluginChainMembers;
 
 typedef PluginChainMembers* PluginChain;

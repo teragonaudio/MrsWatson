@@ -37,17 +37,19 @@ PluginChain newPluginChain(void) {
 
   pluginChain->numPlugins = 0;
   pluginChain->plugins = malloc(sizeof(Plugin) * MAX_PLUGINS);
+  pluginChain->presets = malloc(sizeof(PluginPreset) * MAX_PLUGINS);
 
   return pluginChain;
 }
 
-static boolean _addPluginToChain(PluginChain pluginChain, Plugin plugin) {
+static boolean _addPluginToChain(PluginChain pluginChain, Plugin plugin, PluginPreset preset) {
   if(pluginChain->numPlugins + 1 >= MAX_PLUGINS) {
     logError("Could not add plugin '%s', maximum number reached", plugin->pluginName->data);
     return false;
   }
   else {
     pluginChain->plugins[pluginChain->numPlugins] = plugin;
+    pluginChain->presets[pluginChain->numPlugins] = preset;
     pluginChain->numPlugins++;
     return true;
   }
@@ -69,50 +71,39 @@ boolean addPluginsFromArgumentString(PluginChain pluginChain, const CharString a
     else {
       substringLength = comma - substringStart;      
     }
-    strncpy(nameBuffer->data, substringStart, substringLength);
+    strncpy(pluginNameBuffer->data, substringStart, substringLength);
 
     // Use colon as a separator for presets to load into these plugins
     CharString presetNameBuffer = newCharString();
-    char* colon = strchr(nameBuffer->data, ':');
+    char* colon = strchr(pluginNameBuffer->data, ':');
     if(colon != NULL) {
       // Null-terminate this string to force it to end, then extract preset name from next char
       *colon = '\0';
       strncpy(presetNameBuffer->data, colon + 1, strlen(colon + 1));
     }
 
-    Plugin plugin = NULL;
-    PluginInterfaceType pluginType = guessPluginInterfaceType(nameBuffer);
+    // Find preset for this plugin (if given)
+    PluginPreset preset = NULL;
+    if(strlen(presetNameBuffer->data) > 0) {
+      logInfo("Opening preset '%s' for plugin", presetNameBuffer->data);
+      PluginPresetType presetType = guessPluginPresetType(presetNameBuffer);
+      if(presetType != PRESET_TYPE_INVALID) {
+        preset = newPluginPreset(presetType, presetNameBuffer);
+      }
+    }
+    freeCharString(presetNameBuffer);
+
+    // Guess the plugin type from the file extension, search root, etc.
+    CharString pluginLocationBuffer = newCharString();
+    PluginInterfaceType pluginType = guessPluginInterfaceType(pluginNameBuffer, pluginRoot, pluginLocationBuffer);
     if(pluginType != PLUGIN_TYPE_INVALID) {
-      plugin = newPlugin(pluginType, nameBuffer);
-      if(!_addPluginToChain(pluginChain, plugin)) {
+      Plugin plugin = newPlugin(pluginType, pluginNameBuffer, pluginLocationBuffer);
+      if(!_addPluginToChain(pluginChain, plugin, preset)) {
         logError("Plugin chain could not be constructed");
         return false;
       }
     }
-
-    // Load preset for this plugin (if given)
-    if(strlen(presetNameBuffer->data) > 0 && plugin != NULL) {
-      logInfo("Opening preset '%s' for plugin", presetNameBuffer->data);
-      PluginPresetType presetType = guessPluginPresetType(presetNameBuffer);
-      if(presetType != PRESET_TYPE_INVALID) {
-        PluginPreset pluginPreset = newPluginPreset(presetType, presetNameBuffer);
-        if(isPresetCompatibleWithPlugin(pluginPreset, plugin)) {
-          if(!pluginPreset->openPreset(pluginPreset)) {
-            logError("Could not open preset '%s'", pluginPreset->presetName->data);
-            return false;
-          }
-          if(!pluginPreset->loadPreset(pluginPreset, plugin)) {
-            logError("Could not load preset '%s'", pluginPreset->presetName->data);
-            return false;
-          }
-          logInfo("Loaded preset '%s' to plugin '%s'", pluginPreset->presetName->data, plugin->pluginName->data);
-        }
-        else {
-          logError("Preset '%s' is a compatible format for plugin", pluginPreset->presetName->data);
-        }
-      }
-    }
-    freeCharString(presetNameBuffer);
+    freeCharString(pluginLocationBuffer);
 
     if(comma == NULL) {
       break;
@@ -123,8 +114,27 @@ boolean addPluginsFromArgumentString(PluginChain pluginChain, const CharString a
     }
   } while(substringStart < endChar);
 
-  freeCharString(nameBuffer);
+  freeCharString(pluginNameBuffer);
   return true;
+}
+
+static boolean _loadPresetForPlugin(Plugin plugin, PluginPreset preset) {
+  if(isPresetCompatibleWithPlugin(preset, plugin)) {
+    if(!preset->openPreset(preset)) {
+      logError("Could not open preset '%s'", preset->presetName->data);
+      return false;
+    }
+    if(!preset->loadPreset(preset, plugin)) {
+      logError("Could not load preset '%s'", preset->presetName->data);
+      return false;
+    }
+    logInfo("Loaded preset '%s' to plugin '%s'", preset->presetName->data, plugin->pluginName->data);
+    return true;
+  }
+  else {
+    logError("Preset '%s' is not a compatible format for plugin", preset->presetName->data);
+    return false;
+  }
 }
 
 boolean initializePluginChain(PluginChain pluginChain) {
@@ -146,6 +156,14 @@ boolean initializePluginChain(PluginChain pluginChain) {
       else if(plugin->pluginType == PLUGIN_TYPE_UNSUPPORTED) {
         logError("Plugin '%s' is of unsupported type", plugin->pluginName->data);
         return false;
+      }
+
+      PluginPreset preset = pluginChain->presets[i];
+      if(preset != NULL) {
+        if(!_loadPresetForPlugin(plugin, preset)) {
+          logError("Could not load preset '%s' for plugin '%s'", preset->presetName->data, plugin->pluginName->data);
+          return false;
+        }
       }
     }
   }
