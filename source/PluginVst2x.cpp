@@ -75,14 +75,14 @@ static CFBundleRef _bundleRefForPlugin(const char* pluginPath) {
   CFStringRef pluginPathStringRef = CFStringCreateWithCString(NULL, pluginPath, kCFStringEncodingASCII);
   CFURLRef bundleUrl = CFURLCreateWithFileSystemPath(kCFAllocatorDefault, pluginPathStringRef, kCFURLPOSIXPathStyle, true);
   if(bundleUrl == NULL) {
-    printf("Couldn't make URL reference for plugin\n");
+    logError("Couldn't make URL reference for plugin");
     return NULL;
   }
 
   // Open the bundle
   CFBundleRef bundleRef = CFBundleCreate(kCFAllocatorDefault, bundleUrl);
   if(bundleRef == NULL) {
-    printf("Couldn't create bundle reference\n");
+    logError("Couldn't create bundle reference");
     CFRelease(pluginPathStringRef);
     CFRelease(bundleUrl);
     return NULL;
@@ -115,7 +115,7 @@ static AEffect* _loadVst2xPluginMac(CFBundleRef bundle) {
   }
 
   if(mainEntryPoint == NULL) {
-    printf("Couldn't get a pointer to plugin's main()\n");
+    logError("Couldn't get a pointer to plugin's main()");
     CFBundleUnloadExecutable(bundle);
     CFRelease(bundle);
     return NULL;
@@ -123,7 +123,7 @@ static AEffect* _loadVst2xPluginMac(CFBundleRef bundle) {
 
   AEffect* plugin = mainEntryPoint(vst2xPluginHostCallback);
   if(plugin == NULL) {
-    printf("Plugin's main() returns null\n");
+    logError("Plugin's main() returns null");
     CFBundleUnloadExecutable(bundle);
     CFRelease(bundle);
     return NULL;
