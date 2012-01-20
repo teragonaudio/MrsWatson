@@ -57,6 +57,7 @@ int main(int argc, char** argv) {
   boolean shouldDisplayPluginInfo = false;
   MidiSequence midiSequence = NULL;
   MidiSource midiSource = NULL;
+  long tailTimeInMs = 0;
 
   ProgramOptions programOptions = newProgramOptions();
   if(!parseCommandLine(programOptions, argc, argv)) {
@@ -129,6 +130,9 @@ int main(int argc, char** argv) {
           break;
         case OPTION_SAMPLE_RATE:
           setSampleRate(strtof(option->argument->data, NULL));
+          break;
+        case OPTION_TAIL_TIME:
+          tailTimeInMs = strtol(option->argument->data, NULL, 10);
           break;
         default:
           // Ignore -- no special handling needs to be performed here
@@ -263,8 +267,23 @@ int main(int argc, char** argv) {
 
     advanceAudioClock(blocksize);
   }
+  logInfo("Finished processing input source");
 
-  // TODO: Implement tail time, both for plugin's requested tail time and as an option
+  if(tailTimeInMs > 0) {
+    const unsigned long stopSample = (unsigned long)(getAudioClockCurrentSample() + (tailTimeInMs * getSampleRate()) / 1000);
+    logDebug("Adding %d extra samples of silence", stopSample - getAudioClockCurrentSample());
+    SampleSource silentSampleInput = newSampleSource(SAMPLE_SOURCE_TYPE_SILENCE, NULL);
+    while(getAudioClockCurrentSample() < stopSample) {
+      startTimingTask(taskTimer, hostTaskId);
+      silentSampleInput->readSampleBlock(silentSampleInput, inputSampleBuffer);
+
+      processPluginChainAudio(pluginChain, inputSampleBuffer, outputSampleBuffer, taskTimer);
+
+      startTimingTask(taskTimer, hostTaskId);
+      outputSource->writeSampleBlock(outputSource, outputSampleBuffer);
+      advanceAudioClock(blocksize);
+    }
+  }
 
   // Print out statistics about each plugin's time usage
   stopAudioClock();
