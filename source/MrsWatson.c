@@ -275,9 +275,11 @@ int main(int argc, char** argv) {
   }
   logInfo("Total processing time %ldms, approximate breakdown by component:", totalProcessingTime);
   for(int i = 0; i < pluginChain->numPlugins; i++) {
-    logInfo("  %s: %ldms", pluginChain->plugins[i]->pluginName->data, taskTimer->totalTaskTimes[i]);
+    double timePercentage = 100.0f * ((double)taskTimer->totalTaskTimes[i]) / ((double)totalProcessingTime);
+    logInfo("  %s: %ldms, %2.1f%%", pluginChain->plugins[i]->pluginName->data, taskTimer->totalTaskTimes[i], timePercentage);
   }
-  logInfo("  %s: %ldms", PROGRAM_NAME, taskTimer->totalTaskTimes[hostTaskId]);
+  double timePercentage = 100.0f * ((double)taskTimer->totalTaskTimes[hostTaskId]) / ((double)totalProcessingTime);
+  logInfo("  %s: %ldms, %2.1f%%", PROGRAM_NAME, taskTimer->totalTaskTimes[hostTaskId], timePercentage);
   freeTaskTimer(taskTimer);
 
   logInfo("Read %ld frames from %s, wrote %ld frames to %s",
