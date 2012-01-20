@@ -33,6 +33,7 @@
 
 typedef struct {
   LinkedList midiEvents;
+  LinkedListIterator _lastEvent;
 } MidiSequenceMembers;
 
 typedef MidiSequenceMembers* MidiSequence;

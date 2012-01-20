@@ -28,11 +28,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "MidiSequence.h"
+#include "EventLogger.h"
 
 MidiSequence newMidiSequence(void) {
   MidiSequence midiSequence = malloc(sizeof(MidiSequenceMembers));
 
   midiSequence->midiEvents = newLinkedList();
+  midiSequence->_lastEvent = midiSequence->midiEvents;
 
   return midiSequence;
 }
@@ -42,22 +44,23 @@ void appendMidiEventToSequence(MidiSequence midiSequence, MidiEvent midiEvent) {
 }
 
 boolean fillMidiEventsFromRange(MidiSequence midiSequence, const unsigned long startTimestamp, const int blocksize, LinkedList outMidiEvents) {
-  LinkedListIterator iterator = midiSequence->midiEvents;
+  LinkedListIterator iterator = midiSequence->_lastEvent;
   const unsigned long stopTimestamp = startTimestamp + blocksize;
   boolean result = true;
 
-  // TODO: This is inefficient. Maybe convert the sequence to an array before running?
   while(true) {
     MidiEvent midiEvent = iterator->item;
     if(stopTimestamp < midiEvent->timestamp) {
-      // We have not yet reached this event, continue iterating
+      // We have not yet reached this event, stop iterating
+      break;
     }
     else if(startTimestamp <= midiEvent->timestamp && stopTimestamp > midiEvent->timestamp) {
       midiEvent->deltaFrames = midiEvent->timestamp - startTimestamp;
       appendItemToList(outMidiEvents, midiEvent);
+      midiSequence->_lastEvent = iterator;
     }
     else if(startTimestamp > midiEvent->timestamp) {
-      // We have aready passed this event, continue iterating
+      logInternalError("Inconsistent MIDI sequence ordering");
     }
 
     // Last item in the list
