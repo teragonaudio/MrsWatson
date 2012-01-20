@@ -28,6 +28,7 @@
 #include "../config.h"
 #include "Types.h"
 #include "CharString.h"
+#include "LinkedList.h"
 
 #ifndef MrsWatson_PlatformInfo_h
 #define MrsWatson_PlatformInfo_h
@@ -54,6 +55,7 @@ typedef enum {
 
 PlatformType getPlatformType(void);
 boolean fileExists(const char* absolutePath);
+int listDirectory(const char* directory, LinkedList outItems);
 
 // const char* is used here as it is assumed that the extensions will be defined by the preprocessor
 // for given platforms, not kept in stack memory.

@@ -29,9 +29,12 @@
 #include <stdlib.h>
 #include <sys/stat.h>
 #include "PlatformUtilities.h"
+#include "EventLogger.h"
 #if WINDOWS
 #define WIN32_LEAN_AND_MEAN
 #include "windows.h"
+#elif MACOSX || LINUX
+#include <dirent.h>
 #endif
 
 PlatformType getPlatformType() {
@@ -60,6 +63,27 @@ boolean fileExists(const char* absolutePath) {
   return true;
 #else
   return false;
+#endif
+}
+
+int listDirectory(const char* directory, LinkedList outItems) {
+#if MACOSX || LINUX
+  DIR* directoryPtr = opendir(directory);
+  if(directoryPtr == NULL) {
+    return 0;
+  }
+  int numItems = 0;
+  struct dirent* entry;
+  while((entry = readdir(directoryPtr)) != NULL) {
+    appendItemToList(outItems, entry->d_name);
+    numItems++;
+  }
+  return numItems;
+
+#elif WINDOWS
+  logUnsupportedFeature("List files on Windows");
+#error
+#error Unsupported platform
 #endif
 }
 
