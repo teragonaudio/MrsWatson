@@ -91,12 +91,10 @@ VstIntPtr VSTCALLBACK vst2xPluginHostCallback(AEffect *effect, VstInt32 opcode, 
       // Idle is currently ignored
       break;
     case audioMasterPinConnected: // Deprecated
-      // TODO: Important opcode
-      logUnsupportedFeature("VST master opcode audioMasterPinConnected");
+      logWarn("Plugin '%s' asked to connect pin %d (unsupported)", uniqueId, index);
       break;
     case audioMasterWantMidi: // Deprecated
-      // TODO: Important opcode
-      logUnsupportedFeature("VST master opcode audioMasterWantMidi");
+      logWarn("Plugin '%s' wants MIDI (unsupported)");
       break;
     case audioMasterGetTime:
       // These values are always valid
@@ -150,7 +148,6 @@ VstIntPtr VSTCALLBACK vst2xPluginHostCallback(AEffect *effect, VstInt32 opcode, 
       dataPtr = &vstTimeInfo;
       break;
     case audioMasterProcessEvents:
-      // TODO: Important opcode ?
       logUnsupportedFeature("VST master opcode audioMasterProcessEvents");
       break;
     case audioMasterSetTime: // Deprecated
