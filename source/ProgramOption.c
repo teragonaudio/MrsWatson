@@ -257,15 +257,14 @@ void printProgramOptions(ProgramOptions programOptions) {
     if(i == OPTION_HELP) {
       continue;
     }
-    printf("  ");
+
+    // All arguments have a long form, so that will always be printed
     ProgramOption programOption = programOptions[i];
+    printf("  --%s,", programOption->name->data);
 
     if(programOption->hasShortForm) {
-      printf("-%c, ", programOption->name->data[0]);
+      printf(" -%c", programOption->name->data[0]);
     }
-
-    // All arguments have a long form
-    printf("--%s", programOption->name->data);
 
     switch(programOption->argumentType) {
       case ARGUMENT_TYPE_REQUIRED:
