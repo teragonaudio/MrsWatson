@@ -451,21 +451,21 @@ static void _processMidiEventsVst2xPlugin(void *pluginPtr, LinkedList midiEvents
   vstEvents.numEvents = numItemsInList(midiEvents);
   vstEvents.events[0] = (VstEvent*)malloc(sizeof(VstMidiEvent) * vstEvents.numEvents);
   LinkedListIterator iterator = midiEvents;
-  int i = 0;
-  while(iterator->nextItem != NULL) {
+  int outIndex = 0;
+  while(iterator != NULL) {
     MidiEvent midiEvent = (MidiEvent)(iterator->item);
     if(midiEvent != NULL) {
       VstMidiEvent* vstMidiEvent = (VstMidiEvent*)malloc(sizeof(VstMidiEvent));
       _fillVstMidiEvent(midiEvent, vstMidiEvent);
-      vstEvents.events[i] = (VstEvent*)vstMidiEvent;
+      vstEvents.events[outIndex] = (VstEvent*)vstMidiEvent;
     }
     iterator = (LinkedListIterator)(iterator->nextItem);
-    i++;
+    outIndex++;
   }
 
   // TODO: I'm not entirely sure that this is the correct way to alloc/free this memory. Possible memory leak.
   data->dispatcher(data->pluginHandle, effProcessEvents, 0, 0, &vstEvents, 0.0f);
-  for(i = 0; i < vstEvents.numEvents; i++) {
+  for(int i = 0; i < vstEvents.numEvents; i++) {
     free(vstEvents.events[i]);
   }
 }
