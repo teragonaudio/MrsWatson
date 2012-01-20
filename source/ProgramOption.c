@@ -82,7 +82,7 @@ If stderr is a terminal device, color is used automatically unless 'none' is giv
     false, ARGUMENT_TYPE_NONE, NO_DEFAULT_VALUE);
 
   _addNewProgramOption(programOptions, OPTION_HELP, "help",
-    "Print help",
+    "Print help (this screen).",
     true, ARGUMENT_TYPE_NONE, NO_DEFAULT_VALUE);
 
   _addNewProgramOption(programOptions, OPTION_INPUT_SOURCE, "input",
