@@ -181,7 +181,7 @@ static void _appendDefaultPluginLocations(PlatformType platformType, LinkedList 
   }
 }
 
-static const char*_getVst2xPlatformExtension(void) {
+static const char* _getVst2xPlatformExtension(void) {
   PlatformType platformType = getPlatformType();
   switch(platformType) {
     case PLATFORM_MACOSX:

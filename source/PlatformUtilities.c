@@ -55,6 +55,7 @@ boolean fileExists(const char* absolutePath) {
   boolean result = (stat(absolutePath, buffer) == 0);
   free(buffer);
   return result;
+
 #elif WINDOWS
   unsigned long fileAttributes = GetFileAttributes(absolutePath);
   if(fileAttributes == 0xffffff) {
