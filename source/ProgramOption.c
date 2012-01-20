@@ -104,9 +104,9 @@ If stderr is a terminal device, color is used automatically unless 'none' is giv
 from the --channels option.",
     false, ARGUMENT_TYPE_REQUIRED, getNumChannels());
 
-  _addNewProgramOption(programOptions, OPTION_PCM_SAMPLERATE, "pcm-sample-rate",
+  _addNewProgramOption(programOptions, OPTION_PCM_SAMPLE_RATE, "pcm-sample-rate",
     "Sample rate to use when reading raw PCM data. If not given, defaults to the global sample rate from the \
---sample-rate option",
+--sample-rate option.",
     false, ARGUMENT_TYPE_REQUIRED, (int)getSampleRate());
 
   _addNewProgramOption(programOptions, OPTION_PLUGIN, "plugin",
@@ -123,7 +123,7 @@ loaded from the standard locations for the OS.",
     "Only log critical errors.",
     true, ARGUMENT_TYPE_NONE, NO_DEFAULT_VALUE);
 
-  _addNewProgramOption(programOptions, OPTION_SAMPLERATE, "sample-rate",
+  _addNewProgramOption(programOptions, OPTION_SAMPLE_RATE, "sample-rate",
     "Sample rate to use when processing.",
     true, ARGUMENT_TYPE_REQUIRED, (int)getSampleRate());
 

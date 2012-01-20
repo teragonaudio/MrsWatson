@@ -104,13 +104,13 @@ static boolean _readBlockFromPcm(void* sampleSourcePtr, SampleBuffer sampleBuffe
   memset(extraData->interlacedPcmDataBuffer, 0, sizeof(short) * extraData->dataBufferNumItems);
 
   boolean result = true;
-  size_t pcmSamplesRead = fread(extraData->interlacedPcmDataBuffer, sizeof(short), extraData->dataBufferNumItems, extraData->fileHandle);
-  if(pcmSamplesRead < extraData->dataBufferNumItems) {
+  size_t pcmFramesRead = fread(extraData->interlacedPcmDataBuffer, sizeof(short), extraData->dataBufferNumItems, extraData->fileHandle);
+  if(pcmFramesRead < extraData->dataBufferNumItems) {
     logDebug("End of PCM file reached");
     result = false;
   }
-  sampleSource->numFramesProcessed += pcmSamplesRead;
-  logDebug("Read %d samples from PCM file", pcmSamplesRead);
+  sampleSource->numFramesProcessed += pcmFramesRead;
+  logDebug("Read %d sample frames from PCM file", pcmFramesRead);
 
   _convertPcmDataToSampleBuffer(extraData->interlacedPcmDataBuffer, sampleBuffer);
   return result;
@@ -144,14 +144,14 @@ static boolean _writeBlockFromPcm(void* sampleSourcePtr, const SampleBuffer samp
   memset(extraData->interlacedPcmDataBuffer, 0, sizeof(short) * extraData->dataBufferNumItems);
 
   _convertSampleBufferToPcmData(sampleBuffer, extraData->interlacedPcmDataBuffer);
-  size_t pcmSamplesWritten = fwrite(extraData->interlacedPcmDataBuffer, sizeof(short), extraData->dataBufferNumItems, extraData->fileHandle);
-  if(pcmSamplesWritten < extraData->dataBufferNumItems) {
+  size_t pcmFramesWritten = fwrite(extraData->interlacedPcmDataBuffer, sizeof(short), extraData->dataBufferNumItems, extraData->fileHandle);
+  if(pcmFramesWritten < extraData->dataBufferNumItems) {
     logWarn("Short write to PCM file");
     return false;
   }
 
-  sampleSource->numFramesProcessed += pcmSamplesWritten;
-  logDebug("Wrote %d samples to PCM file", pcmSamplesWritten);
+  sampleSource->numFramesProcessed += pcmFramesWritten;
+  logDebug("Wrote %d sample frames to PCM file", pcmFramesWritten);
   return true;
 }
 

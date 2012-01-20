@@ -126,7 +126,7 @@ int main(int argc, char** argv) {
         case OPTION_PLUGIN_ROOT:
           copyCharStrings(pluginSearchRoot, option->argument);
           break;
-        case OPTION_SAMPLERATE:
+        case OPTION_SAMPLE_RATE:
           setSampleRate(strtof(option->argument->data, NULL));
           break;
         default:
@@ -190,8 +190,8 @@ int main(int argc, char** argv) {
     return RETURN_CODE_IO_ERROR;
   }
   else if(inputSource->sampleSourceType == SAMPLE_SOURCE_TYPE_PCM) {
-    if(programOptions[OPTION_PCM_SAMPLERATE]->enabled) {
-      inputSource->sampleRate = strtof(programOptions[OPTION_PCM_SAMPLERATE]->argument->data, NULL);
+    if(programOptions[OPTION_PCM_SAMPLE_RATE]->enabled) {
+      inputSource->sampleRate = strtof(programOptions[OPTION_PCM_SAMPLE_RATE]->argument->data, NULL);
       if(getSampleRate() != inputSource->sampleRate) {
         logUnsupportedFeature("Resampling input source");
         return RETURN_CODE_UNSUPPORTED_FEATURE;

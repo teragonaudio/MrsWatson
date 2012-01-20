@@ -143,7 +143,7 @@ VstIntPtr VSTCALLBACK vst2xPluginHostCallback(AEffect *effect, VstInt32 opcode, 
         vstTimeInfo.flags |= 0;
       }
       if(value & kVstClockValid) {
-        logUnsupportedFeature("Samples until next clock");
+        logUnsupportedFeature("Sample frames until next clock");
         vstTimeInfo.flags |= 0;
       }
 

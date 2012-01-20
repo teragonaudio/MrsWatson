@@ -131,7 +131,7 @@ static boolean _readMidiFileTrack(FILE *midiFile, const int trackNumber,
     return false;
   }
 
-  unsigned long currentTimeInSamples = 0;
+  unsigned long currentTimeInSampleFrames = 0;
   unsigned long unpackedVariableLength;
   byte* currentByte = trackData;
   byte* endByte = trackData + numBytes;
@@ -177,8 +177,8 @@ static boolean _readMidiFileTrack(FILE *midiFile, const int trackNumber,
       {
         // TODO: If the time signature is not 4/4, this calculation will be wrong
         double ticksPerSecond = (double)timeDivision * getTempo() / 60.0;
-        double samplesPerTick = getSampleRate() / ticksPerSecond;
-        currentTimeInSamples += (long)(unpackedVariableLength * samplesPerTick);
+        double sampleFramesPerTick = getSampleRate() / ticksPerSecond;
+        currentTimeInSampleFrames += (long)(unpackedVariableLength * sampleFramesPerTick);
       }
         break;
       case TIME_DIVISION_TYPE_FRAMES_PER_SECOND:
@@ -191,7 +191,7 @@ static boolean _readMidiFileTrack(FILE *midiFile, const int trackNumber,
         return false;
     }
 
-    midiEvent->timestamp = currentTimeInSamples;
+    midiEvent->timestamp = currentTimeInSampleFrames;
     if(midiEvent->eventType == MIDI_TYPE_META) {
       logDebug("Parsed MIDI meta event of type 0x%02x", midiEvent->status);
       // TODO: Need to deal with certain types of meta events, like time signature, etc.
