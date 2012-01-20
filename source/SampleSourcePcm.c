@@ -79,13 +79,14 @@ static void _convertPcmDataToSampleBuffer(const short* inPcmSamples, SampleBuffe
   while(currentInterlacedSample < numInterlacedSamples) {
     for(int currentChannel = 0; currentChannel < sampleBuffer->numChannels; currentChannel++) {
       Sample convertedSample = (Sample)inPcmSamples[currentInterlacedSample++] / 32767.0f;
-      // Apply brickwall limiter to prevent clipping
+#if USE_BRICKWALL_LIMITER
       if(convertedSample > 1.0f) {
         convertedSample = 1.0f;
       }
       else if(convertedSample < -1.0f) {
         convertedSample = -1.0f;
       }
+#endif
       sampleBuffer->samples[currentChannel][currentDeinterlacedSample] = convertedSample;
     }
     currentDeinterlacedSample++;
@@ -121,12 +122,14 @@ static void _convertSampleBufferToPcmData(const SampleBuffer sampleBuffer, short
   for(int currentSample = 0; currentSample < sampleBuffer->blocksize; currentSample++) {
     for(int currentChannel = 0; currentChannel < sampleBuffer->numChannels; currentChannel++) {
       Sample sample = sampleBuffer->samples[currentChannel][currentSample];
+#if USE_BRICKWALL_LIMITER
       if(sample > 1.0f) {
         sample = 1.0f;
       }
       else if(sample < -1.0f) {
         sample = -1.0f;
       }
+#endif
       outPcmSamples[currentInterlacedSample++] = (short)(sample * 32767.0f);
     }
   }
