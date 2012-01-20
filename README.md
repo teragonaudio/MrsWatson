@@ -122,6 +122,20 @@ plugins, please make a pull request.
 Likewise, if you want to help out without programming, the best way to do so
 is to test and report any problems with given plugins or platforms.
 
+Donate
+------
+
+If you are using MrsWatson to do something cool, please send me a link to your
+project! If you appreciate MrsWatson and would like to donate money, please
+instead make a donation to a charity on our behalf, and let us know about it.
+The organizations which have helped us the most are:
+
+  * [EFF](https://supporters.eff.org/donate): Without the EFF, programs like
+    MrsWatson would be significantly harder to create and distribute.
+  * [Wikipedia](http://wikimediafoundation.org/wiki/WMFJA085/en): Writing
+    MrsWatson involves a lot of research as well as coding, and Wikipedia is
+    an essential part of this.
+
 Licensing
 ---------
 
