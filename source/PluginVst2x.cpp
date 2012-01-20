@@ -306,6 +306,7 @@ static boolean _initVst2xPlugin(Plugin plugin) {
   CharString uniqueIdString = newCharStringWithCapacity(STRING_LENGTH_SHORT);
   fillVst2xUniqueIdToString(data->pluginHandle->uniqueID, uniqueIdString);
   logDebug("Initializing VST2.x plugin '%s' (%s)", plugin->pluginName->data, uniqueIdString->data);
+  freeCharString(uniqueIdString);
 
   if(data->pluginHandle->flags & effFlagsIsSynth) {
     plugin->pluginType = PLUGIN_TYPE_INSTRUMENT;
