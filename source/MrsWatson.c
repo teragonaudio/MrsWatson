@@ -63,7 +63,8 @@ int main(int argc, char** argv) {
     return RETURN_CODE_INVALID_ARGUMENT;
   }
 
-  // If the user wanted help or the version info, print those out and then exit right away
+  // These options conflict with standard processing (more or less), so check to see if the user wanted one
+  // of these and then exit right away.
   if(programOptions[OPTION_HELP]->enabled || argc == 1) {
     printf("Usage: %s (options), where options include:\n", getFileBasename(argv[0]));
     printProgramOptions(programOptions);
