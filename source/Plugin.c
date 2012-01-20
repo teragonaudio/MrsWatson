@@ -46,6 +46,10 @@ PluginInterfaceType guessPluginInterfaceType(const CharString pluginName, const 
   return pluginType;
 }
 
+void listAvailablePlugins(const CharString pluginRoot) {
+  listAvailablePluginsVst2x(pluginRoot);
+}
+
 Plugin newPlugin(PluginInterfaceType interfaceType, const CharString pluginName, const CharString pluginLocation) {
   switch(interfaceType) {
     case PLUGIN_TYPE_VST_2X:

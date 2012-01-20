@@ -141,6 +141,11 @@ int main(int argc, char** argv) {
     }
   }
 
+  if(programOptions[OPTION_LIST_PLUGINS]->enabled) {
+    listAvailablePlugins(pluginSearchRoot);
+    return RETURN_CODE_NOT_RUN;
+  }
+
   // Say hello!
   CharString versionString = newCharString();
   fillVersionString(versionString);

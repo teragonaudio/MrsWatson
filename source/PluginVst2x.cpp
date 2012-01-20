@@ -195,6 +195,48 @@ static const char* _getVst2xPlatformExtension(void) {
   }
 }
 
+static void _listPluginsVst2xInLocation(const CharString location) {
+  logInfo("Location '%s':", location->data);
+  LinkedList locationItems = newLinkedList();
+  listDirectory(location->data, locationItems);
+  LinkedListIterator iterator = locationItems;
+  int numItems = 0;
+  while(iterator != NULL) {
+    char* itemName = (char*)iterator->item;
+    char* dot = strrchr(itemName, '.');
+    if(dot != NULL) {
+      if(!strncmp(dot + 1, _getVst2xPlatformExtension(), 3)) {
+        *dot = '\0';
+        logInfo("  %s", iterator->item);
+        numItems++;
+      }
+    }
+    iterator = (LinkedListIterator)iterator->nextItem;
+  }
+
+  if(numItems == 0) {
+    logInfo("  No plugins found");
+  }
+  freeLinkedList(locationItems);
+}
+
+void listAvailablePluginsVst2x(const CharString pluginRoot) {
+  if(!isCharStringEmpty(pluginRoot)) {
+    _listPluginsVst2xInLocation(pluginRoot);
+  }
+
+  LinkedList pluginLocations = newLinkedList();
+  _appendDefaultPluginLocations(getPlatformType(), pluginLocations);
+  LinkedListIterator iterator = pluginLocations;
+  while(iterator != NULL) {
+    CharString location = (CharString)iterator->item;
+    _listPluginsVst2xInLocation(location);
+    iterator = (LinkedListIterator)iterator->nextItem;
+  }
+
+  freeLinkedListAndItems(pluginLocations, (LinkedListFreeItemFunc)freeCharString);
+}
+
 static boolean _doesVst2xPluginExistAtLocation(const CharString pluginName, const CharString location) {
   boolean result = false;
   CharString pluginSearchPath = newCharString();

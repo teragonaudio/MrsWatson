@@ -90,6 +90,10 @@ If stderr is a terminal device, color is used automatically unless 'none' is giv
 --file-types to see a list of supported types. Use '-' to read from stdin.",
     true, ARGUMENT_TYPE_REQUIRED, NO_DEFAULT_VALUE);
 
+  _addNewProgramOption(programOptions, OPTION_LIST_PLUGINS, "list-plugins",
+    "List available plugins. Useful for determining if a plugin can be 'seen'.",
+    false, ARGUMENT_TYPE_NONE, NO_DEFAULT_VALUE);
+
   _addNewProgramOption(programOptions, OPTION_MIDI_SOURCE, "midi-file",
     "MIDI file to read events from. Required if processing an instrument plugin.",
     true, ARGUMENT_TYPE_REQUIRED, NO_DEFAULT_VALUE);

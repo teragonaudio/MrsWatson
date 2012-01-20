@@ -32,6 +32,7 @@
 #define MrsWatson_PluginVst2x_h
 
 boolean vst2xPluginExists(const CharString pluginName, const CharString pluginRoot, CharString outLocation);
+void listAvailablePluginsVst2x(const CharString pluginRoot);
 void fillVst2xUniqueIdToString(const long uniqueId, CharString outString);
 void setVst2xPluginChunk(Plugin plugin, char* chunk);
 Plugin newPluginVst2x(const CharString pluginName, const CharString pluginLocation);
