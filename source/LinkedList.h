@@ -31,6 +31,9 @@
 typedef struct {
   void* item;
   void* nextItem;
+
+  // This field should be considered private, and is only valid for the head node
+  int _numItems;
 } LinkedListMembers;
 
 typedef LinkedListMembers *LinkedList;

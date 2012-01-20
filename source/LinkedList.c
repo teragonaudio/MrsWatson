@@ -35,6 +35,7 @@ LinkedList newLinkedList(void) {
 
   list->item = NULL;
   list->nextItem = NULL;
+  list->_numItems = 0;
 
   return list;
 }
@@ -45,14 +46,17 @@ void appendItemToList(LinkedList list, void* item) {
   // First item in the list
   if(iterator->item == NULL) {
     iterator->item = item;
+    iterator->_numItems = 1;
     return;
   }
 
+  LinkedListIterator headNode = list;
   while(true) {
     if(iterator->nextItem == NULL) {
       LinkedList nextItem = newLinkedList();
       nextItem->item = item;
       iterator->nextItem = nextItem;
+      headNode->_numItems++;
       break;
     }
     else {
@@ -61,15 +65,8 @@ void appendItemToList(LinkedList list, void* item) {
   }
 }
 
-// TODO: This is a bit inefficent
 int numItemsInList(LinkedList list) {
-  int result = 0;
-  LinkedListIterator iterator = list;
-  while(iterator->item != NULL && iterator->nextItem != NULL) {
-    result++;
-    iterator = iterator->nextItem;
-  }
-  return result;
+  return list->_numItems;
 }
 
 void freeLinkedList(LinkedList list) {
