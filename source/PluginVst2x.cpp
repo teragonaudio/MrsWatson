@@ -171,8 +171,26 @@ static void* _libraryHandleForPlugin(const char* pluginAbsolutePath) {
 }
 
 static AEffect* _loadVst2xPluginLinux(void* libraryHandle) {
-  Vst2xPluginEntryFunc entryPoint = (Vst2xPluginEntryFunc)dlsym(libraryHandle, "VSTPluginMain");
-  AEffect* plugin = entryPoint(vst2xPluginHostCallback);
+  // Somewhat cheap hack to avoid a tricky compiler warning. Casting from void* to a proper function
+  // pointer will cause GCC to warn that "ISO C++ forbids casting between pointer-to-function and
+  // pointer-to-object". Here, we represent both types in a union and use the correct one in the given
+  // context, thus avoiding the need to cast anything.
+  // See also: http://stackoverflow.com/a/2742234/14302
+  union {
+    Vst2xPluginEntryFunc entryPointFuncPtr;
+    void *entryPointVoidPtr;
+  } entryPoint;
+
+  entryPoint.entryPointVoidPtr = dlsym(libraryHandle, "VSTPluginMain");
+  if(entryPoint.entryPointVoidPtr == NULL) {
+    entryPoint.entryPointVoidPtr = dlsym(libraryHandle, "main");
+    if(entryPoint.entryPointVoidPtr == NULL) {
+      logError("Couldn't get a pointer to plugin's main()");
+      return NULL;
+    }
+  }
+  Vst2xPluginEntryFunc mainEntryPoint = entryPoint.entryPointFuncPtr;
+  AEffect* plugin = mainEntryPoint(vst2xPluginHostCallback);
   return plugin;
 }
 #endif
