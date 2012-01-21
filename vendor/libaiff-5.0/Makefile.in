@@ -3,7 +3,7 @@
 CC = @CC@
 RANLIB = @RANLIB@
 AR = ar
-CFLAGS = @DEFS@ -I. -Ilibaiff -g -O2 -ansi -pedantic -Wall -Wfloat-equal -Wshadow -Wpointer-arith -Wbad-function-cast -Wcast-align -Wwrite-strings -Wsign-compare -Waggregate-return -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wredundant-decls -Wnested-externs -Wno-unreachable-code
+CFLAGS = @DEFS@ @CFLAGS@ -I. -Ilibaiff -g -O2 -ansi -pedantic -Wall -Wfloat-equal -Wshadow -Wpointer-arith -Wbad-function-cast -Wcast-align -Wwrite-strings -Wsign-compare -Waggregate-return -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wredundant-decls -Wnested-externs -Wno-unreachable-code
 
 # for GCC4. comment for GCC3
 CFLAGS += -Wextra -Wmissing-field-initializers -Wno-discard-qual
