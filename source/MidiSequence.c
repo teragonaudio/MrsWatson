@@ -58,7 +58,7 @@ boolean fillMidiEventsFromRange(MidiSequence midiSequence, const unsigned long s
     else if(startTimestamp <= midiEvent->timestamp && stopTimestamp > midiEvent->timestamp) {
       midiEvent->deltaFrames = midiEvent->timestamp - startTimestamp;
       appendItemToList(outMidiEvents, midiEvent);
-      midiSequence->_lastEvent = iterator;
+      midiSequence->_lastEvent = iterator->nextItem;
       midiSequence->numMidiEventsProcessed++;
     }
     else if(startTimestamp > midiEvent->timestamp) {
