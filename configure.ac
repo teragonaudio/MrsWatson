@@ -7,15 +7,17 @@ AC_CANONICAL_HOST
 case "${host}" in
   *-*-darwin*)
     HOST_CPPFLAGS='-arch i386 -fmessage-length=0 -pipe -Wno-trigraphs -fpascal-strings -std=c99 -O3 -Wmissing-field-initializers -Wall -Wmissing-prototypes -Wreturn-type -Wunused-variable -pedantic -Wshadow -Wsign-compare -Wnewline-eof -Wshorten-64-to-32 -DMACOSX=1 -fasm-blocks -mmacosx-version-min=10.4'
-    HOST_LDFLAGS='-arch i386 -framework Carbon -framework CoreFoundation ../libs/mac/libaiff.a'
+    HOST_LDFLAGS='-arch i386 -framework Carbon -framework CoreFoundation'
+    HOST_LIBS='../libs/mac/libaiff.a'
     ;;
   *-*-mingw*)
-    HOST_CPPFLAGS='-m32 -O3 -std=c99 -DWINDOWS=1'
+    HOST_CPPFLAGS='-O3 -std=c99 -DWINDOWS=1'
     HOST_LDFLAGS=''
     ;;
   *-*-linux*)
     HOST_CPPFLAGS='-fmessage-length=0 -m32 -pipe -Wno-trigraphs -std=c99 -O3 -Wmissing-field-initializers -Wall -Wreturn-type -Wunused-variable -pedantic -Wshadow -Wsign-compare -DLINUX=1 -D__cdecl=""'
-    HOST_LDFLAGS='-m32 -static'
+    HOST_LDFLAGS='-m32'
+    HOST_LIBS='-ldl ../libs/linux/libaiff.a'
     ;;
   *)
     AC_MSG_RESULT([Unsupported operating system: ${host}])
@@ -23,6 +25,7 @@ case "${host}" in
 esac
 AC_SUBST([HOST_CPPFLAGS])
 AC_SUBST([HOST_LDFLAGS])
+AC_SUBST([HOST_LIBS])
 
 AC_CONFIG_SRCDIR([source])
 # AC_CONFIG_HEADERS([config.h])
