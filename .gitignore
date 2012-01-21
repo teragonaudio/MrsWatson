@@ -14,6 +14,7 @@ xcuserdata
 vendor/vstsdk2.4/*
 aclocal.m4
 autom4te.cache/*
+vendor/*/autom4te.cache/*
 *.in
 install-sh
 missing
