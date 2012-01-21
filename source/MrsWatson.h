@@ -34,7 +34,7 @@
 #define VENDOR_NAME "Teragon Audio"
 
 #define VERSION_MAJOR 0
-#define VERSION_MINOR 1
+#define VERSION_MINOR 9
 #define VERSION_PATCH 0
 
 #define OFFICIAL_WEBSITE "http://www.teragonaudio.com"
