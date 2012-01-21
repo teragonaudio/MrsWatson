@@ -1,7 +1,7 @@
 # Process this file with autoconf to produce a configure script.
 AC_PREREQ([2.61])
 AC_INIT([MrsWatson], [1.0.0], [support@teragonaudio.com])
-AM_INIT_AUTOMAKE([MrsWatson], [1.0.0])
+AM_INIT_AUTOMAKE([MrsWatson], [0.9.0])
 
 AC_CANONICAL_HOST
 case "${host}" in
