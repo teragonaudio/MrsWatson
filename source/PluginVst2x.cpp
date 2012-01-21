@@ -32,6 +32,8 @@ extern "C" {
 #include "PlatformUtilities.h"
 #if MACOSX
 #include <CoreFoundation/CFBundle.h>
+#elif LINUX
+#include <dlfcn.h>
 #endif
 #include "PluginVst2x.h"
 #include "EventLogger.h"
@@ -57,6 +59,8 @@ typedef struct {
   CFBundleRef bundleRef;
 #elif WINDOWS
   HMODULE moduleHandle;
+#elif LINUX
+  void* libraryHandle;
 #endif
 } PluginVst2xDataMembers;
 
@@ -147,6 +151,24 @@ static HMODULE _moduleHandleForPlugin(const char* pluginAbsolutePath) {
 
 static AEffect* _loadVst2xPluginWindows(HMODULE moduleHandle) {
   Vst2xPluginEntryFunc entryPoint = (Vst2xPluginEntryFunc)GetProcAddress(moduleHandle, "VSTPluginMain");
+  AEffect* plugin = entryPoint(vst2xPluginHostCallback);
+  return plugin;
+}
+#endif
+
+#if LINUX
+static void* _libraryHandleForPlugin(const char* pluginAbsolutePath) {
+  // TODO: Check library flags
+  void* libraryHandle = dlopen(pluginAbsolutePath, RTLD_LAZY | RTLD_LOCAL);
+  if(libraryHandle == NULL) {
+    logError("Could not open library");
+    return NULL;
+  }
+  return libraryHandle;
+}
+
+static AEffect* _loadVst2xPluginLinux(void* libraryHandle) {
+  Vst2xPluginEntryFunc entryPoint = (Vst2xPluginEntryFunc)dlsym(libraryHandle, "VSTPluginMain");
   AEffect* plugin = entryPoint(vst2xPluginHostCallback);
   return plugin;
 }
@@ -343,6 +365,12 @@ static boolean _openVst2xPlugin(void* pluginPtr) {
     return false;
   }
   pluginHandle = _loadVst2xPluginWindows(data->moduleHandle);
+#elif LINUX
+  data->libraryHandle = _libraryHandleForPlugin(pluginAbsolutePath->data);
+  if(data->libraryHandle == NULL) {
+    return false;
+  }
+  pluginHandle = _loadVst2xPluginLinux(data->libraryHandle);
 #else
 #error Unsupported platform
 #endif
@@ -509,6 +537,8 @@ static void _freeVst2xPluginData(void* pluginDataPtr) {
   CFRelease(data->bundleRef);
 #elif WINDOWS
   FreeLibrary(data->moduleHandle);
+#elif LINUX
+  dlclose(data->libraryHandle);
 #else
 #error Unsupported platform
 #endif
