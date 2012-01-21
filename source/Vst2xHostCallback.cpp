@@ -93,8 +93,8 @@ VstIntPtr VSTCALLBACK vst2xPluginHostCallback(AEffect *effect, VstInt32 opcode, 
     case audioMasterPinConnected: // Deprecated
       logWarn("Plugin '%s' asked to connect pin %d (unsupported)", uniqueId, index);
       break;
-    case audioMasterWantMidi: // Deprecated
-      logWarn("Plugin '%s' wants MIDI (unsupported)");
+    case audioMasterWantMidi:
+      // This is called by old VST2.3 plugins to tell us that they are instruments
       break;
     case audioMasterGetTime:
       // These values are always valid
