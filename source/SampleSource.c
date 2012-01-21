@@ -33,6 +33,7 @@
 #include "StringUtilities.h"
 #include "EventLogger.h"
 #include "SampleSourceSilence.h"
+#include "SampleSourceAiff.h"
 
 void printSupportedSourceTypes(void) {
   printf("- Raw PCM\n");
@@ -55,6 +56,10 @@ SampleSourceType guessSampleSourceType(const CharString sampleSourceTypeString) 
       else if(!strcasecmp(fileExtension, "pcm") || !strcasecmp(fileExtension, "raw") || !strcasecmp(fileExtension, "dat")) {
         return SAMPLE_SOURCE_TYPE_PCM;
       }
+      // Will catch AIF, AIFF, and AIFC (all supported)
+      else if(!strncasecmp(fileExtension, "aif", 3)) {
+        return SAMPLE_SOURCE_TYPE_AIFF;
+      }
       else {
         logCritical("Sample source '%s' does not match any supported type", sampleSourceTypeString->data);
         return SAMPLE_SOURCE_TYPE_INVALID;
@@ -69,10 +74,12 @@ SampleSourceType guessSampleSourceType(const CharString sampleSourceTypeString) 
 
 SampleSource newSampleSource(SampleSourceType sampleSourceType, const CharString sampleSourceName) {
   switch(sampleSourceType) {
-    case SAMPLE_SOURCE_TYPE_PCM:
-      return newSampleSourcePcm(sampleSourceName);
     case SAMPLE_SOURCE_TYPE_SILENCE:
       return newSampleSourceSilence();
+    case SAMPLE_SOURCE_TYPE_PCM:
+      return newSampleSourcePcm(sampleSourceName);
+    case SAMPLE_SOURCE_TYPE_AIFF:
+      return newSampleSourceAiff(sampleSourceName);
     default:
       return NULL;
   }
