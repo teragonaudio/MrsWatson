@@ -140,5 +140,14 @@ Licensing
 ---------
 
 MrsWatson is made available under the BSD license. For more details, see the
-`LICENSE` file distributed with the source code.
+`LICENSE` file distributed with the source code. MrsWatson also uses the
+following third-party libraries, which are licensed under the respective
+agreements:
+
+  * [VST](http://www.steinberg.net/en/company/developer.html): Licensed under
+    Steinberg's VST SDK license agreement, version 2.4. For more information,
+    see Steinberg's developer portal.
+  * [LibAiff](http://aifftools.sourceforge.net/libaiff/): Written by Marco
+    Trillo, made under the BSD license. For more details, see the LICENSE file
+    in the LibAiff source code.
 
