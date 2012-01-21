@@ -20,3 +20,14 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+Third-party libraries
+---------------------
+VST is a trademark of Steinberg Media Technologies GmbH. The VST SDK is
+licensed unde a separate agreement which can be found here:
+
+http://www.steinberg.net/en/company/developer.html
+
+
+LibAiff is written by Marco Trillo. For licensing information, please see the
+LICENSE file in the libaiff source code directory.
+
