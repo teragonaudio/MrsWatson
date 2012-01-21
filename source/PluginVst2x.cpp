@@ -162,8 +162,7 @@ static AEffect* _loadVst2xPluginWindows(HMODULE moduleHandle) {
 
 #if LINUX
 static void* _libraryHandleForPlugin(const char* pluginAbsolutePath) {
-  // TODO: Check library flags
-  void* libraryHandle = dlopen(pluginAbsolutePath, RTLD_LAZY | RTLD_LOCAL);
+  void* libraryHandle = dlopen(pluginAbsolutePath, RTLD_NOW | RTLD_LOCAL);
   if(libraryHandle == NULL) {
     logError("Could not open library");
     return NULL;
