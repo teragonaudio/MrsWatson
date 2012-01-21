@@ -136,6 +136,19 @@ loaded from the standard locations for the OS.",
 to any tail time requested by plugins in the chain. If any plugins in chain the require tail time, the largest \
 value will be used and added to <argument>.",
     false, ARGUMENT_TYPE_REQUIRED, NO_DEFAULT_VALUE);
+
+  _addNewProgramOption(programOptions, OPTION_TEMPO, "tempo",
+    "Tempo to use when processing.",
+    false, ARGUMENT_TYPE_REQUIRED, (int)getTempo());
+
+  _addNewProgramOption(programOptions, OPTION_TIME_SIGNATURE_TOP, "time-signature-top",
+    "Set the numerator of the time signature, which determines the number of beats per measure.",
+    false, ARGUMENT_TYPE_REQUIRED, getTimeSignatureBeatsPerMeasure());
+
+  _addNewProgramOption(programOptions, OPTION_TIME_SIGNATURE_BOTTOM, "time-signature-bottom",
+    "Set the denominator of the time signature, which determines the value of a quarter note.",
+    false, ARGUMENT_TYPE_REQUIRED, getTimeSignatureNoteValue());
+
   _addNewProgramOption(programOptions, OPTION_VERBOSE, "verbose",
     "Verbose logging.",
     true, ARGUMENT_TYPE_NONE, NO_DEFAULT_VALUE);

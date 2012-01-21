@@ -140,6 +140,15 @@ int main(int argc, char** argv) {
         case OPTION_TAIL_TIME:
           tailTimeInMs = strtol(option->argument->data, NULL, 10);
           break;
+        case OPTION_TEMPO:
+          setTempo(strtof(option->argument->data, NULL));
+          break;
+        case OPTION_TIME_SIGNATURE_TOP:
+          setTimeSignatureBeatsPerMeasure((short)strtol(option->argument->data, NULL, 10));
+          break;
+        case OPTION_TIME_SIGNATURE_BOTTOM:
+          setTimeSignatureNoteValue((short)strtol(option->argument->data, NULL, 10));
+          break;
         default:
           // Ignore -- no special handling needs to be performed here
           break;
