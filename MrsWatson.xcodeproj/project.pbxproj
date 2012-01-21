@@ -23,6 +23,7 @@
 		2465A2CA14B3130B00F94E84 /* Plugin.c in Sources */ = {isa = PBXBuildFile; fileRef = 2465A2C914B3130B00F94E84 /* Plugin.c */; };
 		2465A2D414B3156A00F94E84 /* PluginVst2x.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2465A2D314B3156A00F94E84 /* PluginVst2x.cpp */; };
 		2465A2D814B3313600F94E84 /* PluginChain.c in Sources */ = {isa = PBXBuildFile; fileRef = 2465A2D714B3313600F94E84 /* PluginChain.c */; };
+		24667E0F14CAD1F70065FA1D /* libaiff.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 24667E0E14CAD1F70065FA1D /* libaiff.a */; };
 		24BD3E6314B59B1E00BFA6DE /* MidiSource.c in Sources */ = {isa = PBXBuildFile; fileRef = 24BD3E6214B59B1E00BFA6DE /* MidiSource.c */; };
 		24BD3E6C14B59B7900BFA6DE /* MidiSequence.c in Sources */ = {isa = PBXBuildFile; fileRef = 24BD3E6B14B59B7900BFA6DE /* MidiSequence.c */; };
 		24BD3E6E14B59BD700BFA6DE /* SampleSourceSilence.c in Sources */ = {isa = PBXBuildFile; fileRef = 24BD3E6D14B59BD700BFA6DE /* SampleSourceSilence.c */; };
@@ -86,6 +87,10 @@
 		2465A2D514B3157500F94E84 /* PluginVst2x.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PluginVst2x.h; path = source/PluginVst2x.h; sourceTree = SOURCE_ROOT; };
 		2465A2D614B3312D00F94E84 /* PluginChain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PluginChain.h; path = source/PluginChain.h; sourceTree = SOURCE_ROOT; };
 		2465A2D714B3313600F94E84 /* PluginChain.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = PluginChain.c; path = source/PluginChain.c; sourceTree = SOURCE_ROOT; };
+		24667E0D14CAD1E50065FA1D /* libaiff.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = libaiff.h; path = "vendor/libaiff-5.0/libaiff/libaiff.h"; sourceTree = "<group>"; };
+		24667E0E14CAD1F70065FA1D /* libaiff.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libaiff.a; path = "vendor/libaiff-5.0/libaiff.a"; sourceTree = "<group>"; };
+		24667E1114CAD7160065FA1D /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = config.h; path = "vendor/libaiff-5.0/libaiff/config.h"; sourceTree = "<group>"; };
+		24667E1214CAD7160065FA1D /* endian.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = endian.h; path = "vendor/libaiff-5.0/libaiff/endian.h"; sourceTree = "<group>"; };
 		24BD3E6114B59B1800BFA6DE /* MidiSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MidiSource.h; path = source/MidiSource.h; sourceTree = SOURCE_ROOT; };
 		24BD3E6214B59B1E00BFA6DE /* MidiSource.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = MidiSource.c; path = source/MidiSource.c; sourceTree = SOURCE_ROOT; };
 		24BD3E6414B59B3000BFA6DE /* MidiSequence.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MidiSequence.h; path = source/MidiSequence.h; sourceTree = SOURCE_ROOT; };
@@ -114,37 +119,49 @@
 			buildActionMask = 2147483647;
 			files = (
 				24CFD07B14B3736A005AF479 /* Carbon.framework in Frameworks */,
+				24667E0F14CAD1F70065FA1D /* libaiff.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		2465A2CB14B3145F00F94E84 /* VST SDK */ = {
+		2465A2CB14B3145F00F94E84 /* Vendor */ = {
 			isa = PBXGroup;
 			children = (
-				2465A2CC14B3152100F94E84 /* pluginterfaces */,
+				24667E0C14CAD1B80065FA1D /* LibAiff */,
+				2465A2CD14B3152100F94E84 /* VST2.4 */,
 			);
-			name = "VST SDK";
+			name = Vendor;
 			sourceTree = "<group>";
 		};
-		2465A2CC14B3152100F94E84 /* pluginterfaces */ = {
-			isa = PBXGroup;
-			children = (
-				2465A2CD14B3152100F94E84 /* vst2.x */,
-			);
-			name = pluginterfaces;
-			path = vendor/vstsdk2.4/pluginterfaces;
-			sourceTree = "<group>";
-		};
-		2465A2CD14B3152100F94E84 /* vst2.x */ = {
+		2465A2CD14B3152100F94E84 /* VST2.4 */ = {
 			isa = PBXGroup;
 			children = (
 				2465A2CE14B3152100F94E84 /* aeffect.h */,
 				2465A2CF14B3152100F94E84 /* aeffectx.h */,
 				2465A2D014B3152100F94E84 /* vstfxstore.h */,
 			);
-			path = vst2.x;
+			name = VST2.4;
+			path = vendor/vstsdk2.4/pluginterfaces/vst2.x;
+			sourceTree = "<group>";
+		};
+		24667E0C14CAD1B80065FA1D /* LibAiff */ = {
+			isa = PBXGroup;
+			children = (
+				24667E1114CAD7160065FA1D /* config.h */,
+				24667E1214CAD7160065FA1D /* endian.h */,
+				24667E0D14CAD1E50065FA1D /* libaiff.h */,
+			);
+			name = LibAiff;
+			sourceTree = "<group>";
+		};
+		24667E1014CAD1FD0065FA1D /* Libraries */ = {
+			isa = PBXGroup;
+			children = (
+				24667E0E14CAD1F70065FA1D /* libaiff.a */,
+			);
+			name = Libraries;
 			sourceTree = "<group>";
 		};
 		24CFD07C14B37373005AF479 /* Frameworks */ = {
@@ -159,9 +176,10 @@
 			isa = PBXGroup;
 			children = (
 				24CFD07C14B37373005AF479 /* Frameworks */,
+				24667E1014CAD1FD0065FA1D /* Libraries */,
 				24FDFBAB148CC6AF0074D3A1 /* Products */,
 				24FDFBAD148CC6AF0074D3A1 /* Source */,
-				2465A2CB14B3145F00F94E84 /* VST SDK */,
+				2465A2CB14B3145F00F94E84 /* Vendor */,
 			);
 			sourceTree = "<group>";
 		};
@@ -356,6 +374,7 @@
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = "./vendor/libaiff-5.0";
 				MACOSX_DEPLOYMENT_TARGET = 10.4;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
@@ -379,6 +398,7 @@
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = "./vendor/libaiff-5.0";
 				MACOSX_DEPLOYMENT_TARGET = 10.4;
 				SDKROOT = macosx;
 			};
@@ -394,6 +414,10 @@
 				GCC_WARN_PEDANTIC = YES;
 				GCC_WARN_SHADOW = YES;
 				GCC_WARN_SIGN_COMPARE = YES;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/vendor/libaiff-5.0\"",
+				);
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_NAME = mrswatson;
 				SDKROOT = "";
@@ -411,6 +435,10 @@
 				GCC_WARN_SHADOW = YES;
 				GCC_WARN_SIGN_COMPARE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/vendor/libaiff-5.0\"",
+				);
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_NAME = mrswatson;
 				SDKROOT = "";
