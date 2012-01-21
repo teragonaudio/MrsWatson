@@ -36,8 +36,9 @@
 #include "SampleSourceAiff.h"
 
 void printSupportedSourceTypes(void) {
-  printf("- Raw PCM\n");
-  logUnsupportedFeature("We could use support for more!");
+  printf("- AIFF\n");
+  printf("- AIFC\n");
+  printf("- PCM, 16-bit\n");
 }
 
 SampleSourceType guessSampleSourceType(const CharString sampleSourceTypeString) {
