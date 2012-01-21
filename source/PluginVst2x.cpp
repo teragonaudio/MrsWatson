@@ -217,6 +217,20 @@ static void _appendDefaultPluginLocations(PlatformType platformType, LinkedList 
       appendItemToList(outLocations, locationBuffer2);
     }
       break;
+    case PLATFORM_LINUX:
+    {
+      CharString locationBuffer1 = newCharString();
+      snprintf(locationBuffer1->data, (size_t)(locationBuffer1->capacity), "%s/.vst", getenv("HOME"));
+      appendItemToList(outLocations, locationBuffer1);
+
+      CharString locationBuffer2 = newCharString();
+      const char* vstPath = getenv("VST_PATH");
+      if(vstPath != NULL) {
+        snprintf(locationBuffer2->data, (size_t)(locationBuffer2->capacity), "%s", getenv("VST_PATH"));
+        appendItemToList(outLocations, locationBuffer2);
+      }
+    }
+      break;
     case PLATFORM_UNSUPPORTED:
     default:
       logCritical("Unsupported platform detected. Sorry!");
