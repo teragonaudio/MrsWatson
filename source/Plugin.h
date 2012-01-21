@@ -46,12 +46,13 @@ typedef enum {
   NUM_PLUGIN_TYPES
 } PluginType;
 
-typedef boolean (*OpenPluginFunc)(void*);
-typedef void (*DisplayPluginInfoFunc)(void*);
-typedef void (*PluginProcessAudioFunc)(void*, SampleBuffer, SampleBuffer);
-typedef void (*PluginProcessMidiEventsFunc)(void*, LinkedList);
-typedef void (*PluginSetParameterFunc)(void*, int, float);
-typedef void (*FreePluginDataFunc)(void*);
+typedef boolean (*OpenPluginFunc)(void* pluginPtr);
+typedef void (*PluginDisplayInfoFunc)(void* pluginPtr);
+typedef int (*PluginGetSettingFunc)(void*, PluginSetting pluginSetting);
+typedef void (*PluginProcessAudioFunc)(void* pluginPtr, SampleBuffer inputs, SampleBuffer outputs);
+typedef void (*PluginProcessMidiEventsFunc)(void* pluginPtr, LinkedList midiEvents);
+typedef void (*PluginSetParameterFunc)(void* pluginPtr, int index, float value);
+typedef void (*FreePluginDataFunc)(void* pluginDataPtr);
 
 typedef struct {
   PluginInterfaceType interfaceType;
