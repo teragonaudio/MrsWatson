@@ -66,8 +66,14 @@ int main(int argc, char** argv) {
 
   // These options conflict with standard processing (more or less), so check to see if the user wanted one
   // of these and then exit right away.
-  if(programOptions[OPTION_HELP]->enabled || argc == 1) {
-    printf("Usage: %s (options), where options include:\n", getFileBasename(argv[0]));
+  if(argc == 1) {
+    printf("Quickstart for effects: %s --plugin <name> --input <name> --output <name>\n", getFileBasename(argv[0]));
+    printf("Quickstart for instruments: %s --plugin <name> --midi-file <name> --output <name>\n", getFileBasename(argv[0]));
+    printf("Run %s --help to see all possible options\n", getFileBasename(argv[0]));
+    return RETURN_CODE_NOT_RUN;
+  }
+  else if(programOptions[OPTION_HELP]->enabled) {
+    printf("Usage: %s (options), where <argument> is required and [argument] is optional:\n", getFileBasename(argv[0]));
     printProgramOptions(programOptions);
     return RETURN_CODE_NOT_RUN;
   }
