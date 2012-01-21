@@ -117,7 +117,7 @@ static boolean _readBlockFromPcm(void* sampleSourcePtr, SampleBuffer sampleBuffe
   return result;
 }
 
-static void _convertSampleBufferToPcmData(const SampleBuffer sampleBuffer, short* outPcmSamples) {
+void convertSampleBufferToPcmData(const SampleBuffer sampleBuffer, short* outPcmSamples) {
   int currentInterlacedSample = 0;
   for(int currentSample = 0; currentSample < sampleBuffer->blocksize; currentSample++) {
     for(int currentChannel = 0; currentChannel < sampleBuffer->numChannels; currentChannel++) {
@@ -146,7 +146,7 @@ static boolean _writeBlockFromPcm(void* sampleSourcePtr, const SampleBuffer samp
   // Clear the PCM data buffer just to be safe
   memset(extraData->interlacedPcmDataBuffer, 0, sizeof(short) * extraData->dataBufferNumItems);
 
-  _convertSampleBufferToPcmData(sampleBuffer, extraData->interlacedPcmDataBuffer);
+  convertSampleBufferToPcmData(sampleBuffer, extraData->interlacedPcmDataBuffer);
   size_t pcmFramesWritten = fwrite(extraData->interlacedPcmDataBuffer, sizeof(short), extraData->dataBufferNumItems, extraData->fileHandle);
   if(pcmFramesWritten < extraData->dataBufferNumItems) {
     logWarn("Short write to PCM file");
