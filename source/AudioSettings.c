@@ -105,11 +105,17 @@ void setTempo(const float tempo) {
 }
 
 void setTimeSignatureBeatsPerMeasure(const short beatsPerMeasure) {
-  // TODO: Check for invalid values
+  if(beatsPerMeasure == 0) {
+    logCritical("Ignoring attempt to set time signature numerator to 0");
+    return;
+  }
   _getAudioSettings()->timeSignatureBeatsPerMeasure = beatsPerMeasure;
 }
 
 void setTimeSignatureNoteValue(const short noteValue) {
-  // TODO: Check for invalid note values
+  if(noteValue == 0) {
+    logCritical("Ignoring attempt to set time signature denominator to 0");
+    return;
+  }
   _getAudioSettings()->timeSignatureNoteValue = noteValue;
 }
