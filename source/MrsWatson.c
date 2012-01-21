@@ -306,8 +306,14 @@ int main(int argc, char** argv) {
   logInfo("  %s: %ldms, %2.1f%%", PROGRAM_NAME, taskTimer->totalTaskTimes[hostTaskId], timePercentage);
   freeTaskTimer(taskTimer);
 
-  logInfo("Read %ld frames from %s, wrote %ld frames to %s",
-    inputSource->numFramesProcessed, inputSource->sourceName->data, outputSource->numFramesProcessed, outputSource->sourceName->data);
+  if(midiSequence != NULL) {
+    logInfo("Read %ld MIDI events from %s, wrote %ld frames to %s",
+      midiSequence->numMidiEventsProcessed, midiSource->sourceName->data, outputSource->numFramesProcessed, outputSource->sourceName->data);
+  }
+  else {
+    logInfo("Read %ld frames from %s, wrote %ld frames to %s",
+      inputSource->numFramesProcessed, inputSource->sourceName->data, outputSource->numFramesProcessed, outputSource->sourceName->data);
+  }
 
   // Shut down and free data (will also close open files, plugins, etc)
   logInfo("Shutting down");

@@ -35,6 +35,7 @@ MidiSequence newMidiSequence(void) {
 
   midiSequence->midiEvents = newLinkedList();
   midiSequence->_lastEvent = midiSequence->midiEvents;
+  midiSequence->numMidiEventsProcessed = 0;
 
   return midiSequence;
 }
@@ -58,6 +59,7 @@ boolean fillMidiEventsFromRange(MidiSequence midiSequence, const unsigned long s
       midiEvent->deltaFrames = midiEvent->timestamp - startTimestamp;
       appendItemToList(outMidiEvents, midiEvent);
       midiSequence->_lastEvent = iterator;
+      midiSequence->numMidiEventsProcessed++;
     }
     else if(startTimestamp > midiEvent->timestamp) {
       logInternalError("Inconsistent MIDI sequence ordering");
