@@ -255,9 +255,15 @@ static const char* _getVst2xPlatformExtension(void) {
 static void _listPluginsVst2xInLocation(const CharString location) {
   logInfo("Location '%s':", location->data);
   LinkedList locationItems = newLinkedList();
-  listDirectory(location->data, locationItems);
+  int numItems = listDirectory(location->data, locationItems);
+  if(numItems == 0) {
+    logInfo("  Directory does not exist");
+    freeLinkedList(locationItems);
+    return;
+  }
+
   LinkedListIterator iterator = locationItems;
-  int numItems = 0;
+  int numPlugins = 0;
   while(iterator != NULL) {
     char* itemName = (char*)iterator->item;
     char* dot = strrchr(itemName, '.');
@@ -265,13 +271,13 @@ static void _listPluginsVst2xInLocation(const CharString location) {
       if(!strncmp(dot + 1, _getVst2xPlatformExtension(), 3)) {
         *dot = '\0';
         logInfo("  %s", iterator->item);
-        numItems++;
+        numPlugins++;
       }
     }
     iterator = (LinkedListIterator)iterator->nextItem;
   }
 
-  if(numItems == 0) {
+  if(numPlugins == 0) {
     logInfo("  No plugins found");
   }
   freeLinkedList(locationItems);
