@@ -1,0 +1,19 @@
+$Id: TODO,v 1.5.2.1 2007/09/20 17:18:03 toad32767 Exp $
+
+LibAiff 5.0
+=====================================
+This is a released version of LibAiff.
+
+To-do-list:
+	* Implementing <comments> for each <marker>
+	  (with timestamp, etc.).
+	  
+	* Implementing mome compression formats for AIFC
+
+Any comments? Want to help with this project?
+	+ Contact me on <marcotrillo@gmail.com>
+
+	Thanks!
+
+
+
