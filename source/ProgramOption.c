@@ -133,7 +133,7 @@ loaded from the standard locations for the OS.",
 
   _addNewProgramOption(programOptions, OPTION_TAIL_TIME, "tail-time",
     "Continue processing for up to <argument> extra milliseconds after input source is finished, in addition \
-to any tail time requested by plugins in the chain. If multiple plugins in the require tail time, the largest \
+to any tail time requested by plugins in the chain. If any plugins in chain the require tail time, the largest \
 value will be used and added to <argument>.",
     false, ARGUMENT_TYPE_REQUIRED, NO_DEFAULT_VALUE);
   _addNewProgramOption(programOptions, OPTION_VERBOSE, "verbose",
