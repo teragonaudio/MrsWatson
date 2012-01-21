@@ -105,6 +105,10 @@ void setTempo(const float tempo) {
 }
 
 void setTimeSignatureBeatsPerMeasure(const short beatsPerMeasure) {
+  // Bit of an easter egg :)
+  if(beatsPerMeasure < 2 || beatsPerMeasure > 12) {
+    logInfo("Freaky time signature, but whatever you say...");
+  }
   if(beatsPerMeasure == 0) {
     logCritical("Ignoring attempt to set time signature numerator to 0");
     return;
@@ -113,6 +117,10 @@ void setTimeSignatureBeatsPerMeasure(const short beatsPerMeasure) {
 }
 
 void setTimeSignatureNoteValue(const short noteValue) {
+  // Bit of an easter egg :)
+  if(!(noteValue == 2 || noteValue == 4 || noteValue == 8 || noteValue == 16) || noteValue < 2 || noteValue > 16) {
+    logInfo("Interesting time signature you've chosen. I'm sure this piece is going to sound great...");
+  }
   if(noteValue == 0) {
     logCritical("Ignoring attempt to set time signature denominator to 0");
     return;
