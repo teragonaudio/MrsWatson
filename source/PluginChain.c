@@ -178,6 +178,18 @@ void displayPluginInfo(PluginChain pluginChain) {
   }
 }
 
+int getMaximumTailTimeInMs(PluginChain pluginChain) {
+  int maxTailTime = 0;
+  for(int i = 0; i < pluginChain->numPlugins; i++) {
+    Plugin plugin = pluginChain->plugins[i];
+    int tailTime = plugin->getSetting(plugin, PLUGIN_SETTING_TAIL_TIME_IN_MS);
+    if(tailTime > maxTailTime) {
+      maxTailTime = tailTime;
+    }
+  }
+  return maxTailTime;
+}
+
 void processPluginChainAudio(PluginChain pluginChain, SampleBuffer inBuffer, SampleBuffer outBuffer, TaskTimer taskTimer) {
   logDebug("Processing plugin chain audio");
   for(int i = 0; i < pluginChain->numPlugins; i++) {

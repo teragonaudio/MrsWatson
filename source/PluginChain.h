@@ -47,7 +47,9 @@ PluginChain newPluginChain(void);
 
 boolean addPluginsFromArgumentString(PluginChain pluginChain, const CharString argumentString, const CharString pluginRoot);
 boolean initializePluginChain(PluginChain pluginChain);
+
 void displayPluginInfo(PluginChain pluginChain);
+int getMaximumTailTimeInMs(PluginChain pluginChain);
 
 void processPluginChainAudio(PluginChain pluginChain, SampleBuffer inBuffer, SampleBuffer outBuffer, TaskTimer taskTimer);
 void processPluginChainMidiEvents(PluginChain pluginChain, LinkedList midiEvents, TaskTimer taskTimer);

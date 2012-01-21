@@ -172,6 +172,9 @@ int main(int argc, char** argv) {
     displayPluginInfo(pluginChain);
   }
 
+  // Get largest tail time requested by any plugin in the chain
+  tailTimeInMs += getMaximumTailTimeInMs(pluginChain);
+
   // Verify input/output sources
   if(outputSource == NULL) {
     logError("No output source");
