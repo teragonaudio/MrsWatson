@@ -409,6 +409,27 @@ static void _displayVst2xPluginInfo(void* pluginPtr) {
   freeCharString(nameBuffer);
 }
 
+static int _getVst2xPluginSetting(void* pluginPtr, PluginSetting pluginSetting) {
+  Plugin plugin = (Plugin)pluginPtr;
+  PluginVst2xData data = (PluginVst2xData)plugin->extraData;
+  switch(pluginSetting) {
+    case PLUGIN_SETTING_TAIL_TIME_IN_MS: {
+      int tailSize = data->dispatcher(data->pluginHandle, effGetTailSize, 0, 0, NULL, 0.0f);
+      // For some reason, the VST SDK says that plugins return a 1 here for no tail.
+      if(tailSize == 1 || tailSize == 0) {
+        return 0;
+      }
+      else {
+        // If tailSize is not 0 or 1, then it is assumed to be in samples
+        return (int)((double)tailSize * getSampleRate() / 1000.0f);
+      }
+    }
+    default:
+      logUnsupportedFeature("Plugin setting for VST2.x");
+      return 0;
+  }
+}
+
 void setVst2xPluginChunk(Plugin plugin, char* chunk) {
   PluginVst2xData data = (PluginVst2xData)plugin->extraData;
   logWarn("Loading plugin chunks is known to be buggy, watch out!");
@@ -507,6 +528,7 @@ Plugin newPluginVst2x(const CharString pluginName, const CharString pluginLocati
 
   plugin->open = _openVst2xPlugin;
   plugin->displayInfo = _displayVst2xPluginInfo;
+  plugin->getSetting = _getVst2xPluginSetting;
   plugin->processAudio = _processAudioVst2xPlugin;
   plugin->processMidiEvents = _processMidiEventsVst2xPlugin;
   plugin->setParameter = _setParameterVst2xPlugin;

@@ -46,6 +46,11 @@ typedef enum {
   NUM_PLUGIN_TYPES
 } PluginType;
 
+typedef enum {
+  PLUGIN_SETTING_TAIL_TIME_IN_MS,
+  NUM_PLUGIN_SETTINGS
+} PluginSetting;
+
 typedef boolean (*OpenPluginFunc)(void* pluginPtr);
 typedef void (*PluginDisplayInfoFunc)(void* pluginPtr);
 typedef int (*PluginGetSettingFunc)(void*, PluginSetting pluginSetting);
@@ -62,6 +67,7 @@ typedef struct {
 
   OpenPluginFunc open;
   PluginDisplayInfoFunc displayInfo;
+  PluginGetSettingFunc getSetting;
   PluginProcessAudioFunc processAudio;
   PluginProcessMidiEventsFunc processMidiEvents;
   PluginSetParameterFunc setParameter;
