@@ -276,7 +276,7 @@ int main(int argc, char** argv) {
 
   if(tailTimeInMs > 0) {
     const unsigned long stopSample = (unsigned long)(getAudioClockCurrentSample() + (tailTimeInMs * getSampleRate()) / 1000);
-    logDebug("Adding %d extra samples of silence", stopSample - getAudioClockCurrentSample());
+    logInfo("Adding %d extra sample frames", stopSample - getAudioClockCurrentSample());
     SampleSource silentSampleInput = newSampleSource(SAMPLE_SOURCE_TYPE_SILENCE, NULL);
     while(getAudioClockCurrentSample() < stopSample) {
       startTimingTask(taskTimer, hostTaskId);
