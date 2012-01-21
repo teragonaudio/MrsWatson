@@ -91,7 +91,7 @@ int main(int argc, char** argv) {
 
     return RETURN_CODE_NOT_RUN;
   }
-  else if(programOptions[OPTION_FILE_TYPES]->enabled) {
+  else if(programOptions[OPTION_LIST_FILE_TYPES]->enabled) {
     printf("Supported source types: \n");
     printSupportedSourceTypes();
     return RETURN_CODE_NOT_RUN;

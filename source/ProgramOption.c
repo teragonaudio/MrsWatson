@@ -77,7 +77,7 @@ If stderr is a terminal device, color is used automatically unless 'none' is giv
     "Print information about each plugin in the chain.",
     false, ARGUMENT_TYPE_NONE, NO_DEFAULT_VALUE);
 
-  _addNewProgramOption(programOptions, OPTION_FILE_TYPES, "file-types",
+  _addNewProgramOption(programOptions, OPTION_LIST_FILE_TYPES, "list-file-types",
     "Print a list of supported file types for input/output sources.",
     false, ARGUMENT_TYPE_NONE, NO_DEFAULT_VALUE);
 
@@ -87,7 +87,7 @@ If stderr is a terminal device, color is used automatically unless 'none' is giv
 
   _addNewProgramOption(programOptions, OPTION_INPUT_SOURCE, "input",
     "Input source to use for processing, where the file type is determined from the extension. Run with \
---file-types to see a list of supported types. Use '-' to read from stdin.",
+--list-file-types to see a list of supported types. Use '-' to read from stdin.",
     true, ARGUMENT_TYPE_REQUIRED, NO_DEFAULT_VALUE);
 
   _addNewProgramOption(programOptions, OPTION_LIST_PLUGINS, "list-plugins",
@@ -100,7 +100,7 @@ If stderr is a terminal device, color is used automatically unless 'none' is giv
 
   _addNewProgramOption(programOptions, OPTION_OUTPUT_SOURCE, "output",
     "Output source to write processed data to, where the file type is determined from the extension. Run with \
---file-types to see a list of supported types. Use '-' to write to stdout.",
+--list-file-types to see a list of supported types. Use '-' to write to stdout.",
     true, ARGUMENT_TYPE_REQUIRED, NO_DEFAULT_VALUE);
 
   _addNewProgramOption(programOptions, OPTION_PCM_NUM_CHANNELS, "pcm-num-channels",
