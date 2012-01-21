@@ -257,6 +257,7 @@ int main(int argc, char** argv) {
 
   const int blocksize = getBlocksize();
   logInfo("Processing with sample rate %.0f, blocksize %d, %d channels", getSampleRate(), blocksize, getNumChannels());
+  logInfo("Starting tempo is %.1f, Time signature %d/%d", getTempo(), getTimeSignatureBeatsPerMeasure(), getTimeSignatureNoteValue());
   SampleBuffer inputSampleBuffer = newSampleBuffer(getNumChannels(), blocksize);
   SampleBuffer outputSampleBuffer = newSampleBuffer(getNumChannels(), blocksize);
   boolean finishedReading = false;
