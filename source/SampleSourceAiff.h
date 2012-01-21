@@ -28,7 +28,7 @@
 #include "SampleSource.h"
 
 #define LIBAIFF_NOCOMPAT 1
-#include "libaiff.h"
+#include "libaiff/libaiff.h"
 
 #ifndef MrsWatson_SampleSourceAiff_h
 #define MrsWatson_SampleSourceAiff_h
