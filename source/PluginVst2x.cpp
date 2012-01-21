@@ -506,7 +506,7 @@ Plugin newPluginVst2x(const CharString pluginName, const CharString pluginLocati
   copyCharStrings(plugin->pluginLocation, pluginLocation);
 
   plugin->open = _openVst2xPlugin;
-  plugin->displayPluginInfo = _displayVst2xPluginInfo;
+  plugin->displayInfo = _displayVst2xPluginInfo;
   plugin->processAudio = _processAudioVst2xPlugin;
   plugin->processMidiEvents = _processMidiEventsVst2xPlugin;
   plugin->setParameter = _setParameterVst2xPlugin;

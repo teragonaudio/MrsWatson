@@ -61,7 +61,7 @@ typedef struct {
   CharString pluginLocation;
 
   OpenPluginFunc open;
-  DisplayPluginInfoFunc displayPluginInfo;
+  PluginDisplayInfoFunc displayInfo;
   PluginProcessAudioFunc processAudio;
   PluginProcessMidiEventsFunc processMidiEvents;
   PluginSetParameterFunc setParameter;
