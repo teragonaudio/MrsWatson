@@ -25,14 +25,18 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#import "SampleSource.h"
-#include "
+#include "SampleSource.h"
+
+#define LIBAIFF_NOCOMPAT 1
+#include "libaiff.h"
 
 #ifndef MrsWatson_SampleSourceAiff_h
 #define MrsWatson_SampleSourceAiff_h
 
 typedef struct {
-
+  AIFF_Ref fileHandle;
+  float* interlacedBuffer;
+  short* pcmBuffer;
 } SampleSourceAiffDataMembers;
 
 typedef SampleSourceAiffDataMembers* SampleSourceAiffData;
