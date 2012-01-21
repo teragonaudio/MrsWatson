@@ -7,7 +7,7 @@ AC_CANONICAL_HOST
 case "${host}" in
   *-*-darwin*)
     HOST_CPPFLAGS='-arch i386 -fmessage-length=0 -pipe -Wno-trigraphs -fpascal-strings -std=c99 -O3 -Wmissing-field-initializers -Wall -Wmissing-prototypes -Wreturn-type -Wunused-variable -pedantic -Wshadow -Wsign-compare -Wnewline-eof -Wshorten-64-to-32 -DMACOSX=1 -fasm-blocks -mmacosx-version-min=10.4'
-    HOST_LDFLAGS='-arch i386 -framework Carbon -framework CoreFoundation'
+    HOST_LDFLAGS='-arch i386 -framework Carbon -framework CoreFoundation ../libs/mac/libaiff.a'
     ;;
   *-*-mingw*)
     HOST_CPPFLAGS='-m32 -O3 -std=c99 -DWINDOWS=1'
