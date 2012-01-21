@@ -196,6 +196,16 @@ static boolean _readMidiFileTrack(FILE *midiFile, const int trackNumber,
       logDebug("Parsed MIDI meta event of type 0x%02x", midiEvent->status);
       // TODO: Need to deal with certain types of meta events, like time signature, etc.
       // TODO: Also need to handle time signature changes, which really suck
+      switch(midiEvent->status) {
+        case 0x51:
+          logUnsupportedFeature("Setting tempo from MIDI files");
+          break;
+        case 0x58:
+          logUnsupportedFeature("Setting time signature from MIDI files");
+          break;
+        default:
+          break;
+      }
     }
     else {
       logDebug("MIDI event of type 0x%02x parsed at %ld", midiEvent->status, midiEvent->timestamp);
