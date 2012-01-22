@@ -35,7 +35,7 @@
 
 #define VERSION_MAJOR 0
 #define VERSION_MINOR 9
-#define VERSION_PATCH 0
+#define VERSION_PATCH 1
 
 #define OFFICIAL_WEBSITE "http://www.teragonaudio.com"
 // TODO: These URL's don't exist yet. Be sure to double-check it before releasing anything.
