@@ -158,7 +158,7 @@ static boolean _writeBlockFromPcm(void* sampleSourcePtr, const SampleBuffer samp
   return true;
 }
 
-static void _freeInputSourceDataPcm(void* sampleSourceDataPtr) {
+static void _freeSampleSourceDataPcm(void* sampleSourceDataPtr) {
   SampleSourcePcmData extraData = sampleSourceDataPtr;
   free(extraData->interlacedPcmDataBuffer);
   if(extraData->fileHandle != NULL) {
@@ -181,7 +181,7 @@ SampleSource newSampleSourcePcm(const CharString sampleSourceName) {
   sampleSource->openSampleSource = _openSampleSourcePcm;
   sampleSource->readSampleBlock = _readBlockFromPcm;
   sampleSource->writeSampleBlock = _writeBlockFromPcm;
-  sampleSource->freeSampleSourceData = _freeInputSourceDataPcm;
+  sampleSource->freeSampleSourceData = _freeSampleSourceDataPcm;
 
   SampleSourcePcmData extraData = malloc(sizeof(SampleSourcePcmDataMembers));
   extraData->isStream = false;
