@@ -27,14 +27,13 @@
 
 #include "SampleSource.h"
 
-#define LIBAIFF_NOCOMPAT 1
-#include "libaiff/libaiff.h"
+#include "audiofile.h"
 
 #ifndef MrsWatson_SampleSourceAiff_h
 #define MrsWatson_SampleSourceAiff_h
 
 typedef struct {
-  AIFF_Ref fileHandle;
+  AFfilehandle fileHandle;
   float* interlacedBuffer;
   short* pcmBuffer;
 } SampleSourceAiffDataMembers;

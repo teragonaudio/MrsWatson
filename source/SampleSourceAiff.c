@@ -28,6 +28,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
+#import <stdlib.h>
 #include "AudioSettings.h"
 #include "SampleSourceAiff.h"
 #include "EventLogger.h"
@@ -38,28 +39,20 @@ static boolean _openSampleSourceAiff(void *sampleSourcePtr, const SampleSourceOp
   SampleSourceAiffData extraData = sampleSource->extraData;
 
   if(openAs == SAMPLE_SOURCE_OPEN_READ) {
-    extraData->fileHandle = AIFF_OpenFile(sampleSource->sourceName->data, F_RDONLY);
+    extraData->fileHandle = afOpenFile(sampleSource->sourceName->data, "r", NULL);
     if(extraData->fileHandle != NULL) {
-      uint64_t numSamples;
-      int numChannels, bitsPerSample, segmentSize;
-      double sampleRate;
-      if(AIFF_GetAudioFormat(extraData->fileHandle, &numSamples, &numChannels, &sampleRate, &bitsPerSample, &segmentSize) < 1) {
-        logError("Could not read AIFF file information");
-        return false;
-      }
-      setSampleRate((float)sampleRate);
-      setNumChannels(numChannels);
+      setNumChannels(afGetVirtualChannels(extraData->fileHandle, AF_DEFAULT_TRACK));
+      setSampleRate((float)afGetRate(extraData->fileHandle, AF_DEFAULT_TRACK));
     }
   }
   else if(openAs == SAMPLE_SOURCE_OPEN_WRITE) {
-    extraData->fileHandle = AIFF_OpenFile(sampleSource->sourceName->data, F_WRONLY);
-    if(extraData->fileHandle != NULL) {
-      if(AIFF_SetAudioFormat(extraData->fileHandle, getNumChannels(), getSampleRate(), DEFAULT_BITRATE) < 1) {
-        logError("Could not set AIFF file format");
-        return false;
-      }
-      AIFF_StartWritingSamples(extraData->fileHandle);
-    }
+    AFfilesetup outfileSetup = afNewFileSetup();
+    afInitFileFormat(outfileSetup, AF_FILE_AIFF);
+    afInitByteOrder(outfileSetup, AF_DEFAULT_TRACK, AF_BYTEORDER_BIGENDIAN);
+    afInitChannels(outfileSetup, AF_DEFAULT_TRACK, getNumChannels());
+    afInitRate(outfileSetup, AF_DEFAULT_TRACK, getSampleRate());
+    afInitSampleFormat(outfileSetup, AF_DEFAULT_TRACK, AF_SAMPFMT_TWOSCOMP, DEFAULT_BITRATE);
+    extraData->fileHandle = afOpenFile(sampleSource->sourceName->data, "w", outfileSetup);
   }
   else {
     logInternalError("Invalid type for openAs in AIFF file");
@@ -80,29 +73,22 @@ static boolean _readBlockFromAiff(void* sampleSourcePtr, SampleBuffer sampleBuff
   SampleSource sampleSource = sampleSourcePtr;
   SampleSourceAiffData extraData = sampleSource->extraData;
 
-  int numFramesRead;
-  // In mono mode, we can read directly to the sampleBuffer. Cool!
-  if(getNumChannels() == 1) {
-    numFramesRead = AIFF_ReadSamplesFloat(extraData->fileHandle, sampleBuffer->samples[0], getBlocksize());
+  if(extraData->interlacedBuffer == NULL) {
+    extraData->interlacedBuffer = malloc(sizeof(float) * getNumChannels() * getBlocksize());
   }
-  // Otherwise, we must read to a temporary buffer and de-interlace.
-  else {
-    if(extraData->interlacedBuffer == NULL) {
-      extraData->interlacedBuffer = malloc(sizeof(float) * getNumChannels() * getBlocksize());
-    }
-    memset(extraData->interlacedBuffer, 0, sizeof(float) * getNumChannels() * getBlocksize());
+  memset(extraData->interlacedBuffer, 0, sizeof(float) * getNumChannels() * getBlocksize());
 
-    numFramesRead = AIFF_ReadSamplesFloat(extraData->fileHandle, extraData->interlacedBuffer, getBlocksize() * getNumChannels());
-    int currentInterlacedSample = 0;
-    int currentDeinterlacedSample = 0;
-    // Loop over the number of frames wanted, not the number we actually got. This means that the last block will
-    // be partial, but then we write empty data to the end, since the interlaced buffer gets cleared above.
-    while(currentInterlacedSample < getBlocksize() * getNumChannels()) {
-      for(int currentChannel = 0; currentChannel < sampleBuffer->numChannels; currentChannel++) {
-        sampleBuffer->samples[currentChannel][currentDeinterlacedSample] = extraData->interlacedBuffer[currentInterlacedSample++];
-      }
-      currentDeinterlacedSample++;
+  int numFramesRead;
+  numFramesRead = afReadFrames(extraData->fileHandle, AF_DEFAULT_TRACK, extraData->interlacedBuffer, getBlocksize());
+  int currentInterlacedSample = 0;
+  int currentDeinterlacedSample = 0;
+  // Loop over the number of frames wanted, not the number we actually got. This means that the last block will
+  // be partial, but then we write empty data to the end, since the interlaced buffer gets cleared above.
+  while(currentInterlacedSample < getBlocksize() * getNumChannels()) {
+    for(int currentChannel = 0; currentChannel < sampleBuffer->numChannels; currentChannel++) {
+      sampleBuffer->samples[currentChannel][currentDeinterlacedSample] = extraData->interlacedBuffer[currentInterlacedSample++];
     }
+    currentDeinterlacedSample++;
   }
 
   sampleSource->numFramesProcessed += numFramesRead;
@@ -129,7 +115,7 @@ static boolean _writeBlockFromAiff(void* sampleSourcePtr, const SampleBuffer sam
   memset(extraData->pcmBuffer, 0, sizeof(short) * getNumChannels() * getBlocksize());
   convertSampleBufferToPcmData(sampleBuffer, extraData->pcmBuffer);
 
-  int result = AIFF_WriteSamples(extraData->fileHandle, extraData->pcmBuffer, sizeof(short) * getNumChannels() * getBlocksize());
+  int result = afWriteFrames(extraData->fileHandle, AF_DEFAULT_TRACK, extraData->pcmBuffer, getBlocksize());
   sampleSource->numFramesProcessed += getBlocksize() * getNumChannels();
   return (result == 1);
 }
@@ -137,11 +123,7 @@ static boolean _writeBlockFromAiff(void* sampleSourcePtr, const SampleBuffer sam
 static void _freeInputSourceDataAiff(void* sampleSourceDataPtr) {
   SampleSourceAiffData extraData = sampleSourceDataPtr;
   if(extraData->fileHandle != NULL) {
-    // Semi-cheap hack to see if file was opened for writing
-    if(extraData->pcmBuffer != NULL) {
-      AIFF_EndWritingSamples(extraData->fileHandle);
-    }
-    AIFF_CloseFile(extraData->fileHandle);
+    afCloseFile(extraData->fileHandle);
   }
   if(extraData->interlacedBuffer != NULL) {
     free(extraData->interlacedBuffer);
