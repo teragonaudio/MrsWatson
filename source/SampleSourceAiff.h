@@ -32,14 +32,6 @@
 #ifndef MrsWatson_SampleSourceAiff_h
 #define MrsWatson_SampleSourceAiff_h
 
-typedef struct {
-  AFfilehandle fileHandle;
-  float* interlacedBuffer;
-  short* pcmBuffer;
-} SampleSourceAiffDataMembers;
-
-typedef SampleSourceAiffDataMembers* SampleSourceAiffData;
-
 SampleSource newSampleSourceAiff(const CharString sampleSourceName);
 
 #endif

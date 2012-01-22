@@ -27,16 +27,15 @@
 
 #include <stdio.h>
 #include <stdint.h>
-#include <string.h>
-#import <stdlib.h>
+#include <stdlib.h>
 #include "AudioSettings.h"
 #include "SampleSourceAiff.h"
+#include "SampleSourceAudiofile.h"
 #include "EventLogger.h"
-#include "SampleSourcePcm.h"
 
 static boolean _openSampleSourceAiff(void *sampleSourcePtr, const SampleSourceOpenAs openAs) {
   SampleSource sampleSource = sampleSourcePtr;
-  SampleSourceAiffData extraData = sampleSource->extraData;
+  SampleSourceAudiofileData extraData = sampleSource->extraData;
 
   if(openAs == SAMPLE_SOURCE_OPEN_READ) {
     extraData->fileHandle = afOpenFile(sampleSource->sourceName->data, "r", NULL);
@@ -69,71 +68,6 @@ static boolean _openSampleSourceAiff(void *sampleSourcePtr, const SampleSourceOp
   return true;
 }
 
-static boolean _readBlockFromAiff(void* sampleSourcePtr, SampleBuffer sampleBuffer) {
-  SampleSource sampleSource = sampleSourcePtr;
-  SampleSourceAiffData extraData = sampleSource->extraData;
-
-  if(extraData->interlacedBuffer == NULL) {
-    extraData->interlacedBuffer = malloc(sizeof(float) * getNumChannels() * getBlocksize());
-  }
-  memset(extraData->interlacedBuffer, 0, sizeof(float) * getNumChannels() * getBlocksize());
-
-  int numFramesRead;
-  numFramesRead = afReadFrames(extraData->fileHandle, AF_DEFAULT_TRACK, extraData->interlacedBuffer, getBlocksize());
-  int currentInterlacedSample = 0;
-  int currentDeinterlacedSample = 0;
-  // Loop over the number of frames wanted, not the number we actually got. This means that the last block will
-  // be partial, but then we write empty data to the end, since the interlaced buffer gets cleared above.
-  while(currentInterlacedSample < getBlocksize() * getNumChannels()) {
-    for(int currentChannel = 0; currentChannel < sampleBuffer->numChannels; currentChannel++) {
-      sampleBuffer->samples[currentChannel][currentDeinterlacedSample] = extraData->interlacedBuffer[currentInterlacedSample++];
-    }
-    currentDeinterlacedSample++;
-  }
-
-  sampleSource->numFramesProcessed += numFramesRead;
-  if(numFramesRead == 0) {
-    logDebug("End of AIFF file reached");
-    return false;
-  }
-  else if(numFramesRead < 0) {
-    logError("Error reading AIFF file");
-    return false;
-  }
-  else {
-    return true;
-  }
-}
-
-static boolean _writeBlockFromAiff(void* sampleSourcePtr, const SampleBuffer sampleBuffer) {
-  SampleSource sampleSource = sampleSourcePtr;
-  SampleSourceAiffData extraData = sampleSource->extraData;
-
-  if(extraData->pcmBuffer == NULL) {
-    extraData->pcmBuffer = malloc(sizeof(short) * getNumChannels() * getBlocksize());
-  }
-  memset(extraData->pcmBuffer, 0, sizeof(short) * getNumChannels() * getBlocksize());
-  convertSampleBufferToPcmData(sampleBuffer, extraData->pcmBuffer);
-
-  int result = afWriteFrames(extraData->fileHandle, AF_DEFAULT_TRACK, extraData->pcmBuffer, getBlocksize());
-  sampleSource->numFramesProcessed += getBlocksize() * getNumChannels();
-  return (result == 1);
-}
-
-static void _freeInputSourceDataAiff(void* sampleSourceDataPtr) {
-  SampleSourceAiffData extraData = sampleSourceDataPtr;
-  if(extraData->fileHandle != NULL) {
-    afCloseFile(extraData->fileHandle);
-  }
-  if(extraData->interlacedBuffer != NULL) {
-    free(extraData->interlacedBuffer);
-  }
-  if(extraData->pcmBuffer != NULL) {
-    free(extraData->pcmBuffer);
-  }
-  free(extraData);
-}
-
 SampleSource newSampleSourceAiff(const CharString sampleSourceName) {
   SampleSource sampleSource = malloc(sizeof(SampleSourceMembers));
 
@@ -146,11 +80,11 @@ SampleSource newSampleSourceAiff(const CharString sampleSourceName) {
   sampleSource->numFramesProcessed = 0;
 
   sampleSource->openSampleSource = _openSampleSourceAiff;
-  sampleSource->readSampleBlock = _readBlockFromAiff;
-  sampleSource->writeSampleBlock = _writeBlockFromAiff;
-  sampleSource->freeSampleSourceData = _freeInputSourceDataAiff;
+  sampleSource->readSampleBlock = readBlockFromAudiofile;
+  sampleSource->writeSampleBlock = writeBlockFromAudiofile;
+  sampleSource->freeSampleSourceData = freeSampleSourceDataAudiofile;
 
-  SampleSourceAiffData extraData = malloc(sizeof(SampleSourceAiffDataMembers));
+  SampleSourceAudiofileData extraData = malloc(sizeof(SampleSourceAudiofileDataMembers));
   extraData->fileHandle = NULL;
   extraData->interlacedBuffer = NULL;
   extraData->pcmBuffer = NULL;
