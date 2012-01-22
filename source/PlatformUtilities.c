@@ -68,24 +68,40 @@ boolean fileExists(const char* absolutePath) {
 }
 
 int listDirectory(const char* directory, LinkedList outItems) {
+  int numItems = 0;
+
 #if MACOSX || LINUX
   DIR* directoryPtr = opendir(directory);
   if(directoryPtr == NULL) {
     return 0;
   }
-  int numItems = 0;
   struct dirent* entry;
   while((entry = readdir(directoryPtr)) != NULL) {
     appendItemToList(outItems, entry->d_name);
     numItems++;
   }
-  return numItems;
 
 #elif WINDOWS
-  logUnsupportedFeature("List files on Windows");
-#error
+  WIN32_FIND_DATA findData;
+  CharString searchString = newCharString();
+  snprintf(searchString->data, searchString->capacity, "%s\\*", directory);
+  HANDLE findHandle = FindFirstFile(searchString->data, &findData);
+  freeCharString(searchString);
+  if(findHandle == INVALID_HANDLE_VALUE) {
+    return 0;
+  }
+  do {
+    appendItemToList(outItems, findData.cFileName);
+    numItems++;
+  } while(FindNextFile(findHandle, &findData) != 0);
+
+  FindClose(findHandle);
+
+#else
 #error Unsupported platform
 #endif
+
+  return numItems;
 }
 
 void buildAbsolutePath(const CharString directory, const CharString file, const char* fileExtension, CharString outString) {
