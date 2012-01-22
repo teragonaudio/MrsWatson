@@ -34,6 +34,7 @@
 #include "EventLogger.h"
 #include "SampleSourceSilence.h"
 #include "SampleSourceAiff.h"
+#include "SampleSourceWave.h"
 
 void printSupportedSourceTypes(void) {
   // We can theoretically support more formats, pretty much anything audiofile supports
@@ -64,6 +65,9 @@ SampleSourceType guessSampleSourceType(const CharString sampleSourceTypeString) 
       else if(!strncasecmp(fileExtension, "aif", 3)) {
         return SAMPLE_SOURCE_TYPE_AIFF;
       }
+      else if(!strcasecmp(fileExtension, "wav") || !strcasecmp(fileExtension, "wave")) {
+        return SAMPLE_SOURCE_TYPE_WAVE;
+      }
       else {
         logCritical("Sample source '%s' does not match any supported type", sampleSourceTypeString->data);
         return SAMPLE_SOURCE_TYPE_INVALID;
@@ -84,6 +88,8 @@ SampleSource newSampleSource(SampleSourceType sampleSourceType, const CharString
       return newSampleSourcePcm(sampleSourceName);
     case SAMPLE_SOURCE_TYPE_AIFF:
       return newSampleSourceAiff(sampleSourceName);
+    case SAMPLE_SOURCE_TYPE_WAVE:
+      return newSampleSourceWave(sampleSourceName);
     default:
       return NULL;
   }
