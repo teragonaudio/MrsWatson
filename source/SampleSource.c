@@ -61,8 +61,7 @@ SampleSourceType guessSampleSourceType(const CharString sampleSourceTypeString) 
       else if(!strcasecmp(fileExtension, "pcm") || !strcasecmp(fileExtension, "raw") || !strcasecmp(fileExtension, "dat")) {
         return SAMPLE_SOURCE_TYPE_PCM;
       }
-      // Will catch AIF, AIFF, and AIFC (all supported)
-      else if(!strncasecmp(fileExtension, "aif", 3)) {
+      else if(!strcasecmp(fileExtension, "aif") || !strcasecmp(fileExtension, "aiff")) {
         return SAMPLE_SOURCE_TYPE_AIFF;
       }
       else if(!strcasecmp(fileExtension, "wav") || !strcasecmp(fileExtension, "wave")) {
