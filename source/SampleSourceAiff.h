@@ -27,7 +27,11 @@
 
 #include "SampleSource.h"
 
+#if LINUX
+#include <audiofile.h>
+#else
 #include "audiofile.h"
+#endif
 
 #ifndef MrsWatson_SampleSourceAiff_h
 #define MrsWatson_SampleSourceAiff_h
