@@ -36,9 +36,12 @@
 #include "SampleSourceAiff.h"
 
 void printSupportedSourceTypes(void) {
+  // We can theoretically support more formats, pretty much anything audiofile supports
+  // would work here. However, most of those file types are rather uncommon, and require
+  // special setup when writing, so we only choose the most common ones.
   printf("- AIFF\n");
-  printf("- AIFC\n");
-  printf("- PCM, 16-bit\n");
+  printf("- WAV\n");
+  printf("- PCM\n");
 }
 
 SampleSourceType guessSampleSourceType(const CharString sampleSourceTypeString) {
