@@ -31,6 +31,8 @@
 		24CFD07B14B3736A005AF479 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 24CFD07A14B3736A005AF479 /* Carbon.framework */; };
 		24D400B114B5EAEA00531081 /* Vst2xHostCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 24D400B014B5EAEA00531081 /* Vst2xHostCallback.cpp */; };
 		24E3207A14CC14B900DA6589 /* libaudiofile.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 24E3207914CC14B900DA6589 /* libaudiofile.a */; };
+		24E3207E14CC1A3900DA6589 /* SampleSourceWave.c in Sources */ = {isa = PBXBuildFile; fileRef = 24E3207C14CC1A3900DA6589 /* SampleSourceWave.c */; };
+		24E3208114CC1B2F00DA6589 /* SampleSourceAudiofile.c in Sources */ = {isa = PBXBuildFile; fileRef = 24E3207F14CC1B2F00DA6589 /* SampleSourceAudiofile.c */; };
 		24EE33E714B3455800CFADE0 /* LinkedList.c in Sources */ = {isa = PBXBuildFile; fileRef = 24EE33E614B3455800CFADE0 /* LinkedList.c */; };
 		24F35DDB14C0204100F70074 /* PluginPreset.c in Sources */ = {isa = PBXBuildFile; fileRef = 24F35DDA14C0204100F70074 /* PluginPreset.c */; };
 		24F35DDD14C0205300F70074 /* PluginPresetFxp.c in Sources */ = {isa = PBXBuildFile; fileRef = 24F35DDC14C0205300F70074 /* PluginPresetFxp.c */; };
@@ -101,6 +103,10 @@
 		24D400B014B5EAEA00531081 /* Vst2xHostCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Vst2xHostCallback.cpp; path = source/Vst2xHostCallback.cpp; sourceTree = SOURCE_ROOT; };
 		24E3207914CC14B900DA6589 /* libaudiofile.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libaudiofile.a; path = libs/mac/libaudiofile.a; sourceTree = "<group>"; };
 		24E3207B14CC18CB00DA6589 /* audiofile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = audiofile.h; path = "vendor/audiofile-0.3.3/libaudiofile/audiofile.h"; sourceTree = "<group>"; };
+		24E3207C14CC1A3900DA6589 /* SampleSourceWave.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = SampleSourceWave.c; path = source/SampleSourceWave.c; sourceTree = SOURCE_ROOT; };
+		24E3207D14CC1A3900DA6589 /* SampleSourceWave.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SampleSourceWave.h; path = source/SampleSourceWave.h; sourceTree = SOURCE_ROOT; };
+		24E3207F14CC1B2F00DA6589 /* SampleSourceAudiofile.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = SampleSourceAudiofile.c; path = source/SampleSourceAudiofile.c; sourceTree = SOURCE_ROOT; };
+		24E3208014CC1B2F00DA6589 /* SampleSourceAudiofile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SampleSourceAudiofile.h; path = source/SampleSourceAudiofile.h; sourceTree = SOURCE_ROOT; };
 		24EE33E614B3455800CFADE0 /* LinkedList.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = LinkedList.c; path = source/LinkedList.c; sourceTree = SOURCE_ROOT; };
 		24EE33E914B3456000CFADE0 /* LinkedList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LinkedList.h; path = source/LinkedList.h; sourceTree = SOURCE_ROOT; };
 		24F35DD614C0202A00F70074 /* PluginPreset.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PluginPreset.h; path = source/PluginPreset.h; sourceTree = SOURCE_ROOT; };
@@ -232,10 +238,14 @@
 				2435638914B1FEF70049FD43 /* SampleSource.h */,
 				24476E7D14CACAB300A552A2 /* SampleSourceAiff.c */,
 				24476E7914CACA9500A552A2 /* SampleSourceAiff.h */,
+				24E3207F14CC1B2F00DA6589 /* SampleSourceAudiofile.c */,
+				24E3208014CC1B2F00DA6589 /* SampleSourceAudiofile.h */,
 				2435639614B20B960049FD43 /* SampleSourcePcm.c */,
 				2435638D14B1FF110049FD43 /* SampleSourcePcm.h */,
 				24BD3E6D14B59BD700BFA6DE /* SampleSourceSilence.c */,
 				24BD3E6F14B59BE000BFA6DE /* SampleSourceSilence.h */,
+				24E3207C14CC1A3900DA6589 /* SampleSourceWave.c */,
+				24E3207D14CC1A3900DA6589 /* SampleSourceWave.h */,
 				2458026014B4542A0030FEE9 /* StringUtilities.c */,
 				2458026314B454320030FEE9 /* StringUtilities.h */,
 				2457AB8514B5BEF7000D868C /* TaskTimer.c */,
@@ -342,6 +352,8 @@
 				24F35DDB14C0204100F70074 /* PluginPreset.c in Sources */,
 				24F35DDD14C0205300F70074 /* PluginPresetFxp.c in Sources */,
 				24476E7E14CACAB300A552A2 /* SampleSourceAiff.c in Sources */,
+				24E3207E14CC1A3900DA6589 /* SampleSourceWave.c in Sources */,
+				24E3208114CC1B2F00DA6589 /* SampleSourceAudiofile.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
