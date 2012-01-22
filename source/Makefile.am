@@ -3,4 +3,4 @@ AM_LDFLAGS = $(HOST_LDFLAGS)
 
 bin_PROGRAMS = mrswatson
 mrswatson_LDADD = $(HOST_LIBS)
-mrswatson_SOURCES = AudioClock.c AudioSettings.c BuildInfo.c CharString.c EventLogger.c LinkedList.c MidiEvent.c MidiSequence.c MidiSource.c MidiSourceFile.c MrsWatson.c PlatformUtilities.c Plugin.c PluginChain.c PluginPreset.c PluginPresetFxp.c PluginVst2x.cpp ProgramOption.c SampleBuffer.c SampleSource.c SampleSourceAiff.c SampleSourceAudioFile.c SampleSourcePcm.c SampleSourceSilence.c SampleSourceWave.c StringUtilities.c TaskTimer.c Vst2xHostCallback.cpp
+mrswatson_SOURCES = AudioClock.c AudioSettings.c BuildInfo.c CharString.c EventLogger.c LinkedList.c MidiEvent.c MidiSequence.c MidiSource.c MidiSourceFile.c MrsWatson.c PlatformUtilities.c Plugin.c PluginChain.c PluginPreset.c PluginPresetFxp.c PluginVst2x.cpp ProgramOption.c SampleBuffer.c SampleSourceAiff.c SampleSourceAudiofile.c SampleSource.c SampleSourcePcm.c SampleSourceSilence.c SampleSourceWave.c StringUtilities.c TaskTimer.c Vst2xHostCallback.cpp
