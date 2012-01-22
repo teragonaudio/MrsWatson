@@ -313,9 +313,11 @@ static boolean _doesVst2xPluginExistAtLocation(const CharString pluginName, cons
 }
 
 static boolean _fillVst2xPluginAbsolutePath(const CharString pluginName, const CharString pluginRoot, CharString outLocation) {
-  if(_doesVst2xPluginExistAtLocation(pluginName, pluginRoot)) {
-    copyCharStrings(outLocation, pluginRoot);
-    return true;
+  if(!isCharStringEmpty(pluginRoot)) {
+    if(_doesVst2xPluginExistAtLocation(pluginName, pluginRoot)) {
+      copyCharStrings(outLocation, pluginRoot);
+      return true;
+    }
   }
 
   // If the plugin wasn't found in the user's plugin root, then try searching the default locations for the platform
