@@ -31,6 +31,16 @@ directory. Otherwise, you will need to go through the tedious step of
 building the product for archiving it and copying the resulting file to a
 useful location.
 
+If you don't want to deal with Xcode, you can go the unix route and install
+using:
+
+    ./configure
+    make
+    make install
+
+Note that you will still need Xcode installed for this to work, as it provides
+gcc and other necessary build tools.
+
 Windows
 -------
 
@@ -66,6 +76,8 @@ On Ubuntu, this can be done by installing the following packages:
   * libstdc++
   * g++-multilib
   * ia32-libs
+  * libaudiofile0
+  * libaudiofile-dev
 
 This is in addition to the standard build tools (autoconf, gcc, g++, etc).
 Otherwise, building on linux should be a matter of:
