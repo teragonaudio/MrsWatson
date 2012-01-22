@@ -13,6 +13,7 @@ case "${host}" in
   *-*-mingw*)
     HOST_CPPFLAGS='-O3 -std=c99 -DWINDOWS=1'
     HOST_LDFLAGS=''
+    HOST_LIBS='../libs/windows/libaiff.a'
     ;;
   *-*-linux*)
     HOST_CPPFLAGS='-fmessage-length=0 -m32 -pipe -Wno-trigraphs -std=c99 -O3 -Wmissing-field-initializers -Wall -Wreturn-type -Wunused-variable -pedantic -Wshadow -Wsign-compare -DLINUX=1 -D__cdecl=""'
