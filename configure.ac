@@ -18,7 +18,7 @@ case "${host}" in
   *-*-linux*)
     HOST_CPPFLAGS='-fmessage-length=0 -m32 -pipe -Wno-trigraphs -std=c99 -O3 -Wmissing-field-initializers -Wall -Wreturn-type -Wunused-variable -pedantic -Wshadow -Wsign-compare -DLINUX=1 -D__cdecl=""'
     HOST_LDFLAGS='-m32'
-    HOST_LIBS='-ldl ../libs/linux/libaiff.a'
+    HOST_LIBS='-ldl -laudiofile'
     ;;
   *)
     AC_MSG_RESULT([Unsupported operating system: ${host}])
