@@ -330,7 +330,7 @@ static boolean _fillVst2xPluginAbsolutePath(const CharString pluginName, const C
 
   boolean result = false;
   LinkedListIterator iterator = pluginLocations;
-  while(iterator->nextItem != NULL) {
+  while(iterator != NULL) {
     CharString searchLocation = (CharString)(iterator->item);
     if(_doesVst2xPluginExistAtLocation(pluginName, searchLocation)) {
       copyCharStrings(outLocation, searchLocation);
