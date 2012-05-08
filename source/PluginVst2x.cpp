@@ -52,7 +52,7 @@ typedef void (*Vst2xPluginSetParameterFunc)(AEffect *effect, VstInt32 index, flo
 typedef void (*Vst2xPluginProcessFunc)(AEffect* effect, float** inputs, float** outputs, VstInt32 sampleFrames);
 
 typedef struct {
-  AEffect*pluginHandle;
+  AEffect *pluginHandle;
   Vst2xPluginDispatcherFunc dispatcher;
 
 #if MACOSX
