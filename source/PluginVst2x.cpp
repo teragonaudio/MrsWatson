@@ -433,14 +433,7 @@ static boolean _openVst2xPlugin(void* pluginPtr) {
     return false;
   }
 
-  // Create dispatcher handle
   Vst2xPluginDispatcherFunc dispatcher = (Vst2xPluginDispatcherFunc)(pluginHandle->dispatcher);
-
-  // Set up plugin callback functions
-  pluginHandle->getParameter = (Vst2xPluginGetParameterFunc)pluginHandle->getParameter;
-  pluginHandle->setParameter = (Vst2xPluginSetParameterFunc)pluginHandle->setParameter;
-  pluginHandle->processReplacing = (Vst2xPluginProcessFunc)pluginHandle->processReplacing;
-
   data->pluginHandle = pluginHandle;
   data->dispatcher = dispatcher;
   boolean result = _initVst2xPlugin(plugin);
