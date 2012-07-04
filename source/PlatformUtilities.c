@@ -33,6 +33,7 @@
 #if WINDOWS
 #define WIN32_LEAN_AND_MEAN
 #include "windows.h"
+#define snprintf _snprintf
 #elif MACOSX || LINUX
 #include <dirent.h>
 #endif
@@ -83,9 +84,10 @@ int listDirectory(const char* directory, LinkedList outItems) {
 
 #elif WINDOWS
   WIN32_FIND_DATA findData;
+  HANDLE findHandle;
   CharString searchString = newCharString();
   snprintf(searchString->data, searchString->capacity, "%s\\*", directory);
-  HANDLE findHandle = FindFirstFile(searchString->data, &findData);
+  findHandle = FindFirstFile((LPCWSTR)(searchString->data), &findData);
   freeCharString(searchString);
   if(findHandle == INVALID_HANDLE_VALUE) {
     return 0;

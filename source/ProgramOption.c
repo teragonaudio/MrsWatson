@@ -169,9 +169,13 @@ static boolean _isStringLongOption(const char* testString) {
 }
 
 static ProgramOption _findProgramOption(ProgramOptions programOptions, const char* optionString) {
+  ProgramOption potentialMatchOption, optionMatch;
+  CharString optionStringWithoutDashes;
+  int i;
+
   if(_isStringShortOption(optionString)) {
-    for(int i = 0; i < NUM_OPTIONS; i++) {
-      ProgramOption potentialMatchOption = programOptions[i];
+    for(i = 0; i < NUM_OPTIONS; i++) {
+      potentialMatchOption = programOptions[i];
       if(potentialMatchOption->hasShortForm && potentialMatchOption->name->data[0] == optionString[1]) {
         return potentialMatchOption;
       }
@@ -179,10 +183,10 @@ static ProgramOption _findProgramOption(ProgramOptions programOptions, const cha
   }
 
   if(_isStringLongOption(optionString)) {
-    ProgramOption optionMatch = NULL;
-    CharString optionStringWithoutDashes = newCharStringWithCapacity(STRING_LENGTH_SHORT);
+    optionMatch = NULL;
+    optionStringWithoutDashes = newCharStringWithCapacity(STRING_LENGTH_SHORT);
     strncpy(optionStringWithoutDashes->data, optionString + 2, strlen(optionString) - 2);
-    for(int i = 0; i < NUM_OPTIONS; i++) {
+    for(i = 0; i < NUM_OPTIONS; i++) {
       ProgramOption potentialMatchOption = programOptions[i];
       if(isCharStringEqualTo(potentialMatchOption->name, optionStringWithoutDashes, false)) {
         optionMatch = potentialMatchOption;
@@ -246,7 +250,8 @@ static boolean _fillOptionArgument(ProgramOption programOption, int* currentArgc
 }
 
 boolean parseCommandLine(ProgramOptions programOptions, int argc, char** argv) {
-  for(int argumentIndex = 1; argumentIndex < argc; argumentIndex++) {
+  int argumentIndex;
+  for(argumentIndex = 1; argumentIndex < argc; argumentIndex++) {
     const ProgramOption option = _findProgramOption(programOptions, argv[argumentIndex]);
     if(option == NULL) {
       logCritical("Invalid option '%s'", argv[argumentIndex]);
@@ -265,14 +270,18 @@ boolean parseCommandLine(ProgramOptions programOptions, int argc, char** argv) {
 }
 
 void printProgramOptions(ProgramOptions programOptions) {
-  for(int i = 0; i < NUM_OPTIONS; i++) {
+  ProgramOption programOption;
+  CharString wrappedHelpString;
+  int i;
+
+  for(i = 0; i < NUM_OPTIONS; i++) {
     // Don't print out help in help
     if(i == OPTION_HELP) {
       continue;
     }
 
     // All arguments have a long form, so that will always be printed
-    ProgramOption programOption = programOptions[i];
+    programOption = programOptions[i];
     printf("  --%s", programOption->name->data);
 
     if(programOption->hasShortForm) {
@@ -296,7 +305,7 @@ void printProgramOptions(ProgramOptions programOptions) {
     }
 
     // Newline and indentation before help
-    CharString wrappedHelpString = newCharStringWithCapacity(STRING_LENGTH_LONG);
+    wrappedHelpString = newCharStringWithCapacity(STRING_LENGTH_LONG);
     wrapStringForTerminal(programOption->help->data, wrappedHelpString->data, 4);
     printf("\n%s\n\n", wrappedHelpString->data);
     freeCharString(wrappedHelpString);
@@ -311,8 +320,11 @@ static void _freeProgramOption(ProgramOption programOption) {
 }
 
 void freeProgramOptions(ProgramOptions programOptions) {
-  for(int i = 0; i < NUM_OPTIONS; i++) {
-    ProgramOption option = programOptions[i];
+  ProgramOption option;
+  int i;
+
+  for(i = 0; i < NUM_OPTIONS; i++) {
+    option = programOptions[i];
     _freeProgramOption(option);
   }
   free(programOptions);

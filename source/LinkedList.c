@@ -42,6 +42,8 @@ LinkedList newLinkedList(void) {
 
 void appendItemToList(LinkedList list, void* item) {
   LinkedListIterator iterator = list;
+  LinkedListIterator headNode;
+  LinkedList nextItem;
 
   // First item in the list
   if(iterator->item == NULL) {
@@ -50,17 +52,17 @@ void appendItemToList(LinkedList list, void* item) {
     return;
   }
 
-  LinkedListIterator headNode = list;
+  headNode = list;
   while(true) {
     if(iterator->nextItem == NULL) {
-      LinkedList nextItem = newLinkedList();
+      nextItem = newLinkedList();
       nextItem->item = item;
       iterator->nextItem = nextItem;
       headNode->_numItems++;
       break;
     }
     else {
-      iterator = iterator->nextItem;
+      iterator = (LinkedListIterator)(iterator->nextItem);
     }
   }
 }
@@ -86,6 +88,8 @@ void freeLinkedList(LinkedList list) {
 
 void freeLinkedListAndItems(LinkedList list, LinkedListFreeItemFunc freeItem) {
   LinkedListIterator iterator = list;
+  LinkedList current;
+
   while(true) {
     if(iterator->nextItem == NULL) {
       freeItem(iterator->item);
@@ -94,8 +98,8 @@ void freeLinkedListAndItems(LinkedList list, LinkedListFreeItemFunc freeItem) {
     }
     else {
       freeItem(iterator->item);
-      LinkedList current = iterator;
-      iterator = iterator->nextItem;
+      current = iterator;
+      iterator = (LinkedListIterator)(iterator->nextItem);
       free(current);
     }
   }

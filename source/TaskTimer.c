@@ -27,16 +27,21 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#if WINDOWS
+#else
 #include <sys/time.h>
+#endif
+
 #include "TaskTimer.h"
 
 TaskTimer newTaskTimer(const int numTasks) {
-  TaskTimer taskTimer = malloc(sizeof(TaskTimerMembers));
+  TaskTimer taskTimer = (TaskTimer)malloc(sizeof(TaskTimerMembers));
+  int i;
 
   taskTimer->numTasks = numTasks;
   taskTimer->currentTask = -1;
-  taskTimer->totalTaskTimes = malloc(sizeof(unsigned long) * numTasks);
-  for(int i = 0; i < numTasks; i++) {
+  taskTimer->totalTaskTimes = (unsigned long*)malloc(sizeof(unsigned long) * numTasks);
+  for(i = 0; i < numTasks; i++) {
     taskTimer->totalTaskTimes[i] = 0;
   }
   taskTimer->startTime = malloc(sizeof(struct timeval));
@@ -54,10 +59,12 @@ void startTimingTask(TaskTimer taskTimer, const int taskId) {
 }
 
 void stopTiming(TaskTimer taskTimer) {
+  struct timeval currentTime;
+  long elapsedTimeInMs;
+
   if(taskTimer->currentTask >= 0) {
-    struct timeval currentTime;
     if(gettimeofday(&currentTime, NULL) == 0) {
-      const long elapsedTimeInMs = ((currentTime.tv_sec - (taskTimer->startTime->tv_sec + 1)) * 1000) +
+      elapsedTimeInMs = ((currentTime.tv_sec - (taskTimer->startTime->tv_sec + 1)) * 1000) +
         (currentTime.tv_usec / 1000) + (1000 - (taskTimer->startTime->tv_usec / 1000));
       taskTimer->totalTaskTimes[taskTimer->currentTask] += elapsedTimeInMs;
     }

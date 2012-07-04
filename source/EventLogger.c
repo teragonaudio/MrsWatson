@@ -28,13 +28,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
-#include <sys/time.h>
+
 #include "CharString.h"
 #include "BuildInfo.h"
 #include "EventLogger.h"
 #include "MrsWatson.h"
 
 #if ! WINDOWS
+#include <sys/time.h>
 #include <unistd.h>
 #endif
 
@@ -51,10 +52,11 @@
 EventLogger eventLoggerInstance = NULL;
 
 void initEventLogger(void) {
-  // TODO: This is never freed, but it lives for the life of the program. Do we need to worry about that?
-  eventLoggerInstance = malloc(sizeof(EventLoggerMembers));
-  eventLoggerInstance->logLevel = LOG_INFO;
   struct timeval currentTime;
+
+  // TODO: This is never freed, but it lives for the life of the program. Do we need to worry about that?
+  eventLoggerInstance = (EventLogger)malloc(sizeof(EventLoggerMembers));
+  eventLoggerInstance->logLevel = LOG_INFO;
   gettimeofday(&currentTime, NULL);
   eventLoggerInstance->startTimeInSec = currentTime.tv_sec;
   eventLoggerInstance->startTimeInMs = currentTime.tv_usec / 1000;
@@ -168,13 +170,14 @@ static void _printMessage(const LogLevel logLevel, const long elapsedTimeInMs, c
 }
 
 static void _logMessage(const LogLevel logLevel, const char* message, va_list arguments) {
+  struct timeval currentTime;
+  long elapsedTimeInMs;
   EventLogger eventLogger = _getEventLoggerInstance();
   if(logLevel >= eventLogger->logLevel) {
     CharString formattedMessage = newCharString();
     vsnprintf(formattedMessage->data, formattedMessage->capacity, message, arguments);
-    struct timeval currentTime;
     gettimeofday(&currentTime, NULL);
-    const long elapsedTimeInMs = ((currentTime.tv_sec - (eventLogger->startTimeInSec + 1)) * 1000) +
+    elapsedTimeInMs = ((currentTime.tv_sec - (eventLogger->startTimeInSec + 1)) * 1000) +
       (currentTime.tv_usec / 1000) + (1000 - eventLogger->startTimeInMs);
     _printMessage(logLevel, elapsedTimeInMs, eventLogger->colorScheme, formattedMessage->data);
     freeCharString(formattedMessage);
@@ -207,8 +210,8 @@ void logError(const char* message, ...) {
 
 void logCritical(const char* message, ...) {
   va_list arguments;
-  va_start(arguments, message);
   CharString formattedMessage = newCharString();
+  va_start(arguments, message);
   // Instead of going through the common logging method, we always dump critical messages to stderr
   vsnprintf(formattedMessage->data, formattedMessage->capacity, message, arguments);
   fprintf(stderr, "ERROR: %s\n", formattedMessage->data);
@@ -217,8 +220,10 @@ void logCritical(const char* message, ...) {
 
 void logInternalError(const char* message, ...) {
   va_list arguments;
-  va_start(arguments, message);
+  CharString versionString;
   CharString formattedMessage = newCharString();
+
+  va_start(arguments, message);
   // Instead of going through the common logging method, we always dump critical messages to stderr
   vsnprintf(formattedMessage->data, formattedMessage->capacity, message, arguments);
   fprintf(stderr, "INTERNAL ERROR: %s\n", formattedMessage->data);
@@ -228,19 +233,20 @@ void logInternalError(const char* message, ...) {
   fprintf(stderr, "  Support website: %s\n", SUPPORT_WEBSITE);
   fprintf(stderr, "  Support email: %s\n", SUPPORT_EMAIL);
 
-  CharString versionString = newCharString();
+  versionString = newCharString();
   fillVersionString(versionString);
   fprintf(stderr, "  Program version: %s, build %ld\n", versionString->data, buildDatestamp());
   freeCharString(versionString);
 }
 
 void logUnsupportedFeature(const char* featureName) {
+  CharString versionString;
   fprintf(stderr, "UNSUPPORTED FEATURE: %s\n", featureName);
   fprintf(stderr, "  This feature is not yet supported. Please help us out and submit a patch! :)\n");
   fprintf(stderr, "  Project website: %s\n", PROJECT_WEBSITE);
   fprintf(stderr, "  Support email: %s\n", SUPPORT_EMAIL);
 
-  CharString versionString = newCharString();
+  versionString = newCharString();
   fillVersionString(versionString);
   fprintf(stderr, "  Program version: %s, build %ld\n", versionString->data, buildDatestamp());
   freeCharString(versionString);

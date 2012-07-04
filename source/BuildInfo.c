@@ -33,10 +33,11 @@
 #include "BuildInfo.h"
 
 int buildYear(void) {
+  int result = 0;
   CharString buildDate = newCharStringWithCapacity(STRING_LENGTH_SHORT);
   int startingIndex = strlen(__DATE__) - 4;
   strncpy(buildDate->data, __DATE__ + startingIndex, 4);
-  int result = strtol(buildDate->data, NULL, 10);
+  result = strtol(buildDate->data, NULL, 10);
   freeCharString(buildDate);
   return result;
 }
