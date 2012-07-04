@@ -26,7 +26,6 @@
 //
 
 #include "SampleSource.h"
-
 #include "audiofile.h"
 
 #ifndef MrsWatson_SampleSourceAudiofile_h

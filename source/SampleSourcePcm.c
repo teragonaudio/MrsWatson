@@ -166,7 +166,7 @@ static boolean _writeBlockFromPcm(void* sampleSourcePtr, const SampleBuffer samp
 }
 
 static void _freeSampleSourceDataPcm(void* sampleSourceDataPtr) {
-  SampleSourcePcmData extraData = sampleSourceDataPtr;
+  SampleSourcePcmData extraData = (SampleSourcePcmData)sampleSourceDataPtr;
   free(extraData->interlacedPcmDataBuffer);
   if(extraData->fileHandle != NULL) {
     fclose(extraData->fileHandle);

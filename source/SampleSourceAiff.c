@@ -34,8 +34,8 @@
 #include "EventLogger.h"
 
 static boolean _openSampleSourceAiff(void *sampleSourcePtr, const SampleSourceOpenAs openAs) {
-  SampleSource sampleSource = sampleSourcePtr;
-  SampleSourceAudiofileData extraData = sampleSource->extraData;
+  SampleSource sampleSource = (SampleSource)sampleSourcePtr;
+  SampleSourceAudiofileData extraData = (SampleSourceAudiofileData)(sampleSource->extraData);
 
   if(openAs == SAMPLE_SOURCE_OPEN_READ) {
     extraData->fileHandle = afOpenFile(sampleSource->sourceName->data, "r", NULL);
@@ -69,7 +69,8 @@ static boolean _openSampleSourceAiff(void *sampleSourcePtr, const SampleSourceOp
 }
 
 SampleSource newSampleSourceAiff(const CharString sampleSourceName) {
-  SampleSource sampleSource = malloc(sizeof(SampleSourceMembers));
+  SampleSource sampleSource = (SampleSource)malloc(sizeof(SampleSourceMembers));
+  SampleSourceAudiofileData extraData = (SampleSourceAudiofileData)malloc(sizeof(SampleSourceAudiofileDataMembers));
 
   sampleSource->sampleSourceType = SAMPLE_SOURCE_TYPE_AIFF;
   sampleSource->openedAs = SAMPLE_SOURCE_OPEN_NOT_OPENED;
@@ -84,7 +85,6 @@ SampleSource newSampleSourceAiff(const CharString sampleSourceName) {
   sampleSource->writeSampleBlock = writeBlockFromAudiofile;
   sampleSource->freeSampleSourceData = freeSampleSourceDataAudiofile;
 
-  SampleSourceAudiofileData extraData = malloc(sizeof(SampleSourceAudiofileDataMembers));
   extraData->fileHandle = NULL;
   extraData->interlacedBuffer = NULL;
   extraData->pcmBuffer = NULL;
