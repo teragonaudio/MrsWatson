@@ -30,14 +30,18 @@
 #include <string.h>
 #include "CharString.h"
 
+#if WINDOWS
+#define strncasecmp _strnicmp
+#endif
+
 CharString newCharString(void) {
   return newCharStringWithCapacity(STRING_LENGTH_DEFAULT);
 }
 
 CharString newCharStringWithCapacity(int length) {
-  CharString charString = malloc(sizeof(CharStringMembers));
+  CharString charString = (CharString)malloc(sizeof(CharStringMembers));
   charString->capacity = length;
-  charString->data = malloc(sizeof(char) * length);
+  charString->data = (char*)malloc(sizeof(char) * length);
   clearCharString(charString);
   return charString;
 }
