@@ -32,8 +32,7 @@
 #include "EventLogger.h"
 #if WINDOWS
 #define WIN32_LEAN_AND_MEAN
-#include "windows.h"
-#define snprintf _snprintf
+#include <Windows.h>
 #elif MACOSX || LINUX
 #include <dirent.h>
 #endif
@@ -58,7 +57,7 @@ boolByte fileExists(const char* absolutePath) {
   return result;
 
 #elif WINDOWS
-  unsigned long fileAttributes = GetFileAttributes(absolutePath);
+  unsigned long fileAttributes = GetFileAttributes((LPCWSTR)absolutePath);
   if(fileAttributes == 0xffffff) {
     return false;
   }

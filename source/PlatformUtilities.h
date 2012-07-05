@@ -44,6 +44,7 @@
 #define WIN32_LEAN_AND_MEAN
 #include "Windows.h"
 #define strcasecmp _stricmp
+#define snprintf _snprintf
 #endif
 
 typedef enum {

@@ -141,7 +141,7 @@ static AEffect* _loadVst2xPluginMac(CFBundleRef bundle) {
 
 #if WINDOWS
 static HMODULE _moduleHandleForPlugin(const char* pluginAbsolutePath) {
-  HMODULE moduleHandle = LoadLibrary(pluginAbsolutePath);
+  HMODULE moduleHandle = LoadLibrary((LPCWSTR)pluginAbsolutePath);
   if(moduleHandle == NULL) {
     logError("Could not open library, error code '%d'", GetLastError());
     return NULL;
@@ -381,7 +381,7 @@ static boolByte _initVst2xPlugin(Plugin plugin) {
   }
 
   data->dispatcher(data->pluginHandle, effOpen, 0, 0, NULL, 0.0f);
-  data->dispatcher(data->pluginHandle, effSetSampleRate, 0, 0, NULL, getSampleRate());
+  data->dispatcher(data->pluginHandle, effSetSampleRate, 0, 0, NULL, (float)getSampleRate());
   data->dispatcher(data->pluginHandle, effSetBlockSize, 0, getBlocksize(), NULL, 0.0f);
 
   _resumePlugin(plugin);

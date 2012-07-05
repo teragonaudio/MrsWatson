@@ -35,6 +35,7 @@
 #include "SampleSourceSilence.h"
 #include "SampleSourceAiff.h"
 #include "SampleSourceWave.h"
+#include "PlatformUtilities.h"
 
 void printSupportedSourceTypes(void) {
   // We can theoretically support more formats, pretty much anything audiofile supports
