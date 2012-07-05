@@ -151,10 +151,20 @@ static HMODULE _moduleHandleForPlugin(const char* pluginAbsolutePath) {
 
 static AEffect* _loadVst2xPluginWindows(HMODULE moduleHandle) {
   Vst2xPluginEntryFunc entryPoint = (Vst2xPluginEntryFunc)GetProcAddress(moduleHandle, "VSTPluginMain");
+  
+  if(entryPoint == NULL) {
+    entryPoint = (Vst2xPluginEntryFunc) GetProcAddress(moduleHandle, "VstPluginMain()"); 
+  }
+
+  if(entryPoint == NULL) {
+    entryPoint = (Vst2xPluginEntryFunc) GetProcAddress(moduleHandle, "main");
+  }
+
   if(entryPoint == NULL) {
     logError("Couldn't get a pointer to plugin's main()");
     return NULL;
   }
+
   AEffect* plugin = entryPoint(vst2xPluginHostCallback);
   return plugin;
 }
