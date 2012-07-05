@@ -34,6 +34,8 @@
 #include "EventLogger.h"
 #include "SampleSourcePcm.h"
 
+#if ! WINDOWS
+
 boolByte readBlockFromAudiofile(void* sampleSourcePtr, SampleBuffer sampleBuffer) {
   SampleSource sampleSource = (SampleSource)sampleSourcePtr;
   SampleSourceAudiofileData extraData = (SampleSourceAudiofileData)(sampleSource->extraData);
@@ -44,7 +46,7 @@ boolByte readBlockFromAudiofile(void* sampleSourcePtr, SampleBuffer sampleBuffer
   int currentChannel;
   
   if(extraData->interlacedBuffer == NULL) {
-    extraData->interlacedBuffer = malloc(sizeof(float) * getNumChannels() * getBlocksize());
+    extraData->interlacedBuffer = (float*)malloc(sizeof(float) * getNumChannels() * getBlocksize());
   }
   memset(extraData->interlacedBuffer, 0, sizeof(float) * getNumChannels() * getBlocksize());
 
@@ -101,3 +103,5 @@ void freeSampleSourceDataAudiofile(void* sampleSourceDataPtr) {
   }
   free(extraData);
 }
+
+#endif

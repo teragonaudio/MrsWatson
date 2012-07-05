@@ -32,6 +32,8 @@
 #ifndef MrsWatson_SampleSourceWave_h
 #define MrsWatson_SampleSourceWave_h
 
+#if USE_SOURCE_TYPE_WAVE
 SampleSource newSampleSourceWave(const CharString sampleSourceName);
+#endif
 
 #endif

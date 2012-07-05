@@ -35,13 +35,25 @@
 // Force all samples to be within {1.0, -1.0} range. This uses a bit of extra
 // CPU, and I'm not sure it's even necessary, so it is disabled at present.
 #define USE_BRICKWALL_LIMITER 0
+#define USE_SOURCE_TYPE_PCM 1
+// Until we get libaudiofile to compile with Visual Studio, these are disabled
+#if ! WINDOWS
+#define USE_SOURCE_TYPE_AIFF 1
+#define USE_SOURCE_TYPE_WAVE 1
+#endif
 
 typedef enum {
   SAMPLE_SOURCE_TYPE_INVALID,
   SAMPLE_SOURCE_TYPE_SILENCE,
+#if USE_SOURCE_TYPE_PCM
   SAMPLE_SOURCE_TYPE_PCM,
+#endif
+#if USE_SOURCE_TYPE_AIFF
   SAMPLE_SOURCE_TYPE_AIFF,
+#endif
+#if USE_SOURCE_TYPE_WAVE
   SAMPLE_SOURCE_TYPE_WAVE,
+#endif
   NUM_SAMPLE_SOURCES
 } SampleSourceType;
 

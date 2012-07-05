@@ -32,9 +32,11 @@
 #include "EventLogger.h"
 #include "AudioSettings.h"
 
+#if USE_SOURCE_TYPE_PCM
+
 static boolByte _openSampleSourcePcm(void* sampleSourcePtr, const SampleSourceOpenAs openAs) {
-  SampleSource sampleSource = sampleSourcePtr;
-  SampleSourcePcmData extraData = sampleSource->extraData;
+  SampleSource sampleSource = (SampleSource)sampleSourcePtr;
+  SampleSourcePcmData extraData = (SampleSourcePcmData)(sampleSource->extraData);
 
   extraData->dataBufferNumItems = 0;
   if(openAs == SAMPLE_SOURCE_OPEN_READ) {
@@ -147,7 +149,7 @@ static boolByte _writeBlockFromPcm(void* sampleSourcePtr, const SampleBuffer sam
   SampleSourcePcmData extraData = (SampleSourcePcmData)(sampleSource->extraData);
   if(extraData->dataBufferNumItems == 0) {
     extraData->dataBufferNumItems = (size_t)(sampleBuffer->numChannels * sampleBuffer->blocksize);
-    extraData->interlacedPcmDataBuffer = malloc(sizeof(short) * extraData->dataBufferNumItems);
+    extraData->interlacedPcmDataBuffer = (short*)malloc(sizeof(short) * extraData->dataBufferNumItems);
   }
 
   // Clear the PCM data buffer just to be safe
@@ -199,3 +201,5 @@ SampleSource newSampleSourcePcm(const CharString sampleSourceName) {
 
   return sampleSource;
 }
+
+#endif
