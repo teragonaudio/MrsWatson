@@ -44,8 +44,8 @@ typedef struct {
 
 typedef SampleSourceAudiofileDataMembers* SampleSourceAudiofileData;
 
-boolean readBlockFromAudiofile(void* sampleSourcePtr, SampleBuffer sampleBuffer);
-boolean writeBlockFromAudiofile(void* sampleSourcePtr, const SampleBuffer sampleBuffer);
+boolByte readBlockFromAudiofile(void* sampleSourcePtr, SampleBuffer sampleBuffer);
+boolByte writeBlockFromAudiofile(void* sampleSourcePtr, const SampleBuffer sampleBuffer);
 void freeSampleSourceDataAudiofile(void* sampleSourceDataPtr);
 
 #endif

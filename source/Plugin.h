@@ -51,7 +51,7 @@ typedef enum {
   NUM_PLUGIN_SETTINGS
 } PluginSetting;
 
-typedef boolean (*OpenPluginFunc)(void* pluginPtr);
+typedef boolByte (*OpenPluginFunc)(void* pluginPtr);
 typedef void (*PluginDisplayInfoFunc)(void* pluginPtr);
 typedef int (*PluginGetSettingFunc)(void*, PluginSetting pluginSetting);
 typedef void (*PluginProcessAudioFunc)(void* pluginPtr, SampleBuffer inputs, SampleBuffer outputs);

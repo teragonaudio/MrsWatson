@@ -32,7 +32,7 @@
 #define MrsWatson_InputSourcePcm_h
 
 typedef struct {
-  boolean isStream;
+  boolByte isStream;
   FILE* fileHandle;
   size_t dataBufferNumItems;
   short* interlacedPcmDataBuffer;

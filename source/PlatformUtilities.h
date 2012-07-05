@@ -55,7 +55,7 @@ typedef enum {
 } PlatformType;
 
 PlatformType getPlatformType(void);
-boolean fileExists(const char* absolutePath);
+boolByte fileExists(const char* absolutePath);
 int listDirectory(const char* directory, LinkedList outItems);
 
 // const char* is used here as it is assumed that the extensions will be defined by the preprocessor

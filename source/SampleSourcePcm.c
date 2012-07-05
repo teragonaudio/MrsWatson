@@ -32,7 +32,7 @@
 #include "EventLogger.h"
 #include "AudioSettings.h"
 
-static boolean _openSampleSourcePcm(void* sampleSourcePtr, const SampleSourceOpenAs openAs) {
+static boolByte _openSampleSourcePcm(void* sampleSourcePtr, const SampleSourceOpenAs openAs) {
   SampleSource sampleSource = sampleSourcePtr;
   SampleSourcePcmData extraData = sampleSource->extraData;
 
@@ -94,8 +94,8 @@ static void _convertPcmDataToSampleBuffer(const short* inPcmSamples, SampleBuffe
   }
 }
 
-static boolean _readBlockFromPcm(void* sampleSourcePtr, SampleBuffer sampleBuffer) {
-  boolean result = true;
+static boolByte _readBlockFromPcm(void* sampleSourcePtr, SampleBuffer sampleBuffer) {
+  boolByte result = true;
   size_t pcmFramesRead = 0;
   SampleSource sampleSource = (SampleSource)sampleSourcePtr;
   SampleSourcePcmData extraData = (SampleSourcePcmData)(sampleSource->extraData);
@@ -141,7 +141,7 @@ void convertSampleBufferToPcmData(const SampleBuffer sampleBuffer, short* outPcm
   }
 }
 
-static boolean _writeBlockFromPcm(void* sampleSourcePtr, const SampleBuffer sampleBuffer) {
+static boolByte _writeBlockFromPcm(void* sampleSourcePtr, const SampleBuffer sampleBuffer) {
   size_t pcmFramesWritten = 0;
   SampleSource sampleSource = (SampleSource)sampleSourcePtr;
   SampleSourcePcmData extraData = (SampleSourcePcmData)(sampleSource->extraData);

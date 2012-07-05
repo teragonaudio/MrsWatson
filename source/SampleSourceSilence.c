@@ -30,18 +30,18 @@
 #include "SampleSourceSilence.h"
 #include "AudioSettings.h"
 
-static boolean _openSampleSourceSilence(void* sampleSourcePtr, const SampleSourceOpenAs openAs) {
+static boolByte _openSampleSourceSilence(void* sampleSourcePtr, const SampleSourceOpenAs openAs) {
   SampleSource sampleSource = sampleSourcePtr;
   sampleSource->openedAs = openAs;
   return true;
 }
 
-static boolean _readBlockFromSilence(void* sampleSourcePtr, SampleBuffer sampleBuffer) {
+static boolByte _readBlockFromSilence(void* sampleSourcePtr, SampleBuffer sampleBuffer) {
   clearSampleBuffer(sampleBuffer);
   return true;
 }
 
-static boolean _writeBlockFromSilence(void* sampleSourcePtr, const SampleBuffer sampleBuffer) {
+static boolByte _writeBlockFromSilence(void* sampleSourcePtr, const SampleBuffer sampleBuffer) {
   return true;
 }
 

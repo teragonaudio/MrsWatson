@@ -38,8 +38,8 @@ typedef enum {
   NUM_MIDI_SOURCE_TYPES
 } MidiSourceType;
 
-typedef boolean (*OpenMidiSourceFunc)(void*);
-typedef boolean (*ReadMidiEventsFunc)(void*, MidiSequence);
+typedef boolByte (*OpenMidiSourceFunc)(void*);
+typedef boolByte (*ReadMidiEventsFunc)(void*, MidiSequence);
 typedef void (*FreeMidiSourceDataFunc)(void*);
 
 typedef struct {

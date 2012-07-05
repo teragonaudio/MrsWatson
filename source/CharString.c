@@ -58,11 +58,11 @@ void copyCharStrings(CharString destString, const CharString srcString) {
   strncpy(destString->data, srcString->data, (size_t)(destString->capacity));
 }
 
-boolean isCharStringEmpty(const CharString charString) {
+boolByte isCharStringEmpty(const CharString charString) {
   return (charString == NULL || charString->data == NULL || charString->data[0] == '\0');
 }
 
-boolean isCharStringEqualTo(const CharString firstString, const CharString otherString, boolean caseInsensitive) {
+boolByte isCharStringEqualTo(const CharString firstString, const CharString otherString, boolByte caseInsensitive) {
   // Only compare to the length of the smaller of the two strings
   size_t comparisonSize = (size_t)((firstString->capacity < otherString->capacity) ? firstString->capacity : otherString->capacity );
   if(caseInsensitive) {
@@ -73,7 +73,7 @@ boolean isCharStringEqualTo(const CharString firstString, const CharString other
   }
 }
 
-boolean isCharStringEqualToCString(const CharString charString, const char* otherString, boolean caseInsensitive) {
+boolByte isCharStringEqualToCString(const CharString charString, const char* otherString, boolByte caseInsensitive) {
   if(caseInsensitive) {
     return strncasecmp(charString->data, otherString, (size_t)charString->capacity) == 0;
   }

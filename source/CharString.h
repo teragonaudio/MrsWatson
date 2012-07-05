@@ -50,9 +50,9 @@ void clearCharString(CharString charString);
 void copyToCharString(CharString destString, const char* srcString);
 void copyCharStrings(CharString destString, const CharString srcString);
 
-boolean isCharStringEmpty(const CharString testString);
-boolean isCharStringEqualTo(const CharString charString, const CharString otherString, boolean caseInsensitive);
-boolean isCharStringEqualToCString(const CharString charString, const char* otherString, boolean caseInsensitive);
+boolByte isCharStringEmpty(const CharString testString);
+boolByte isCharStringEqualTo(const CharString charString, const CharString otherString, boolByte caseInsensitive);
+boolByte isCharStringEqualToCString(const CharString charString, const char* otherString, boolByte caseInsensitive);
 
 void freeCharString(CharString charString);
 

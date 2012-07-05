@@ -36,7 +36,7 @@
 #define NO_DEFAULT_VALUE -1
 
 static void _addNewProgramOption(const ProgramOptions programOptions, const int optionIndex,
-  const char* name, const char* help, boolean hasShortForm, ProgramOptionArgumentType argumentType,
+  const char* name, const char* help, boolByte hasShortForm, ProgramOptionArgumentType argumentType,
   int defaultValue) {
   ProgramOption programOption = malloc(sizeof(ProgramOptionMembers));
 
@@ -160,11 +160,11 @@ value will be used and added to <argument>.",
   return programOptions;
 }
 
-static boolean _isStringShortOption(const char* testString) {
+static boolByte _isStringShortOption(const char* testString) {
   return (testString != NULL && strlen(testString) == 2 && testString[0] == '-');
 }
 
-static boolean _isStringLongOption(const char* testString) {
+static boolByte _isStringLongOption(const char* testString) {
   return (testString != NULL && strlen(testString) > 2 && testString[0] == '-' && testString[1] == '-');  
 }
 
@@ -201,7 +201,7 @@ static ProgramOption _findProgramOption(ProgramOptions programOptions, const cha
   return NULL;
 }
 
-static boolean _fillOptionArgument(ProgramOption programOption, int* currentArgc, int argc, char** argv) {
+static boolByte _fillOptionArgument(ProgramOption programOption, int* currentArgc, int argc, char** argv) {
   if(programOption->argumentType == ARGUMENT_TYPE_NONE) {
     return true;
   }
@@ -249,7 +249,7 @@ static boolean _fillOptionArgument(ProgramOption programOption, int* currentArgc
   }
 }
 
-boolean parseCommandLine(ProgramOptions programOptions, int argc, char** argv) {
+boolByte parseCommandLine(ProgramOptions programOptions, int argc, char** argv) {
   int argumentIndex;
   for(argumentIndex = 1; argumentIndex < argc; argumentIndex++) {
     const ProgramOption option = _findProgramOption(programOptions, argv[argumentIndex]);

@@ -34,7 +34,7 @@
 #include "SampleSourceAudiofile.h"
 #include "EventLogger.h"
 
-static boolean _openSampleSourceWave(void *sampleSourcePtr, const SampleSourceOpenAs openAs) {
+static boolByte _openSampleSourceWave(void *sampleSourcePtr, const SampleSourceOpenAs openAs) {
   SampleSource sampleSource = sampleSourcePtr;
   SampleSourceAudiofileData extraData = sampleSource->extraData;
 

@@ -34,7 +34,7 @@
 #include "AudioSettings.h"
 #include "PlatformUtilities.h"
 
-static boolean _openMidiSourceFile(void* midiSourcePtr) {
+static boolByte _openMidiSourceFile(void* midiSourcePtr) {
   MidiSource midiSource = midiSourcePtr;
   MidiSourceFileData extraData = midiSource->extraData;
 
@@ -47,7 +47,7 @@ static boolean _openMidiSourceFile(void* midiSourcePtr) {
   return true;
 }
 
-static boolean _readMidiFileChunkHeader(FILE *midiFile, const char* expectedChunkId) {
+static boolByte _readMidiFileChunkHeader(FILE *midiFile, const char* expectedChunkId) {
   byte chunkId[5];
   size_t itemsRead;
 
@@ -66,7 +66,7 @@ static boolean _readMidiFileChunkHeader(FILE *midiFile, const char* expectedChun
   }
 }
 
-static boolean _readMidiFileHeader(FILE *midiFile, unsigned short *formatType, unsigned short *numTracks, unsigned short *timeDivision) {
+static boolByte _readMidiFileHeader(FILE *midiFile, unsigned short *formatType, unsigned short *numTracks, unsigned short *timeDivision) {
   unsigned int numBytesBuffer;
   size_t itemsRead;
   unsigned int numBytes;
@@ -112,7 +112,7 @@ static boolean _readMidiFileHeader(FILE *midiFile, unsigned short *formatType, u
   return true;
 }
 
-static boolean _readMidiFileTrack(FILE *midiFile, const int trackNumber,
+static boolByte _readMidiFileTrack(FILE *midiFile, const int trackNumber,
   const int timeDivision, const MidiFileTimeDivisionType divisionType,
   MidiSequence midiSequence) {
   unsigned int numBytesBuffer;
@@ -227,7 +227,7 @@ static boolean _readMidiFileTrack(FILE *midiFile, const int trackNumber,
   return true;
 }
 
-static boolean _readMidiEventsFile(void* midiSourcePtr, MidiSequence midiSequence) {
+static boolByte _readMidiEventsFile(void* midiSourcePtr, MidiSequence midiSequence) {
   MidiSource midiSource = (MidiSource)midiSourcePtr;
   MidiSourceFileData extraData = (MidiSourceFileData)(midiSource->extraData);
   unsigned short formatType, numTracks, timeDivision = 0;

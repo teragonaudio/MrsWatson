@@ -31,8 +31,8 @@
 #define MrsWatson_AudioClock_h
 
 typedef struct {
-  boolean transportChanged;
-  boolean isPlaying;
+  boolByte transportChanged;
+  boolByte isPlaying;
   unsigned long currentSample;
 } AudioClockMembers;
 
@@ -44,7 +44,7 @@ void initAudioClock(void);
 void advanceAudioClock(const int blocksize);
 void stopAudioClock(void);
 unsigned long getAudioClockCurrentSample(void);
-boolean getAudioClockTransportChanged(void);
-boolean getAudioClockIsPlaying(void);
+boolByte getAudioClockTransportChanged(void);
+boolByte getAudioClockIsPlaying(void);
 
 #endif

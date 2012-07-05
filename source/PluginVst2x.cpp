@@ -300,8 +300,8 @@ void listAvailablePluginsVst2x(const CharString pluginRoot) {
   freeLinkedListAndItems(pluginLocations, (LinkedListFreeItemFunc)freeCharString);
 }
 
-static boolean _doesVst2xPluginExistAtLocation(const CharString pluginName, const CharString location) {
-  boolean result = false;
+static boolByte _doesVst2xPluginExistAtLocation(const CharString pluginName, const CharString location) {
+  boolByte result = false;
   CharString pluginSearchPath = newCharString();
   buildAbsolutePath(location, pluginName, _getVst2xPlatformExtension(), pluginSearchPath);
   if(!isCharStringEmpty(location) && fileExists(pluginSearchPath->data)) {
@@ -312,7 +312,7 @@ static boolean _doesVst2xPluginExistAtLocation(const CharString pluginName, cons
   return result;
 }
 
-static boolean _fillVst2xPluginAbsolutePath(const CharString pluginName, const CharString pluginRoot, CharString outLocation) {
+static boolByte _fillVst2xPluginAbsolutePath(const CharString pluginName, const CharString pluginRoot, CharString outLocation) {
   if(!isCharStringEmpty(pluginRoot)) {
     if(_doesVst2xPluginExistAtLocation(pluginName, pluginRoot)) {
       copyCharStrings(outLocation, pluginRoot);
@@ -328,7 +328,7 @@ static boolean _fillVst2xPluginAbsolutePath(const CharString pluginName, const C
     return false;
   }
 
-  boolean result = false;
+  boolByte result = false;
   LinkedListIterator iterator = pluginLocations;
   while(iterator != NULL) {
     CharString searchLocation = (CharString)(iterator->item);
@@ -344,11 +344,11 @@ static boolean _fillVst2xPluginAbsolutePath(const CharString pluginName, const C
   return result;
 }
 
-boolean vst2xPluginExists(const CharString pluginName, const CharString pluginRoot, CharString outLocation) {
+boolByte vst2xPluginExists(const CharString pluginName, const CharString pluginRoot, CharString outLocation) {
   return _fillVst2xPluginAbsolutePath(pluginName, pluginRoot, outLocation);
 }
 
-static boolean _canPluginDo(Plugin plugin, const char* canDoString) {
+static boolByte _canPluginDo(Plugin plugin, const char* canDoString) {
   PluginVst2xData data = (PluginVst2xData)plugin->extraData;
   VstIntPtr result = data->dispatcher(data->pluginHandle, effCanDo, 0, 0, (void *)canDoString, 0.0f);
   return result == 1;
@@ -366,7 +366,7 @@ static void _suspendPlugin(Plugin plugin) {
   data->dispatcher(data->pluginHandle, effMainsChanged, 0, 0, NULL, 0.0f);
 }
 
-static boolean _initVst2xPlugin(Plugin plugin) {
+static boolByte _initVst2xPlugin(Plugin plugin) {
   PluginVst2xData data = (PluginVst2xData)plugin->extraData;
   CharString uniqueIdString = newCharStringWithCapacity(STRING_LENGTH_SHORT);
   fillVst2xUniqueIdToString(data->pluginHandle->uniqueID, uniqueIdString);
@@ -388,7 +388,7 @@ static boolean _initVst2xPlugin(Plugin plugin) {
   return true;
 }
 
-static boolean _openVst2xPlugin(void* pluginPtr) {
+static boolByte _openVst2xPlugin(void* pluginPtr) {
   Plugin plugin = (Plugin)pluginPtr;
   PluginVst2xData data = (PluginVst2xData)plugin->extraData;
   logInfo("Opening VST2.x plugin '%s'", plugin->pluginName->data);
@@ -443,7 +443,7 @@ static boolean _openVst2xPlugin(void* pluginPtr) {
 
   data->pluginHandle = pluginHandle;
   data->dispatcher = dispatcher;
-  boolean result = _initVst2xPlugin(plugin);
+  boolByte result = _initVst2xPlugin(plugin);
 
   return result;
 }

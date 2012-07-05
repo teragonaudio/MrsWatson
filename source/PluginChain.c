@@ -42,7 +42,7 @@ PluginChain newPluginChain(void) {
   return pluginChain;
 }
 
-static boolean _addPluginToChain(PluginChain pluginChain, Plugin plugin, PluginPreset preset) {
+static boolByte _addPluginToChain(PluginChain pluginChain, Plugin plugin, PluginPreset preset) {
   if(pluginChain->numPlugins + 1 >= MAX_PLUGINS) {
     logError("Could not add plugin '%s', maximum number reached", plugin->pluginName->data);
     return false;
@@ -55,7 +55,7 @@ static boolean _addPluginToChain(PluginChain pluginChain, Plugin plugin, PluginP
   }
 }
 
-boolean addPluginsFromArgumentString(PluginChain pluginChain, const CharString argumentString, const CharString pluginRoot) {
+boolByte addPluginsFromArgumentString(PluginChain pluginChain, const CharString argumentString, const CharString pluginRoot) {
   // Expect a comma-separated string of plugins with colon separators for preset name
   // Example: plugin1:preset1name,plugin2:preset2name
   char* substringStart = argumentString->data;
@@ -124,7 +124,7 @@ boolean addPluginsFromArgumentString(PluginChain pluginChain, const CharString a
   return true;
 }
 
-static boolean _loadPresetForPlugin(Plugin plugin, PluginPreset preset) {
+static boolByte _loadPresetForPlugin(Plugin plugin, PluginPreset preset) {
   if(isPresetCompatibleWithPlugin(preset, plugin)) {
     if(!preset->openPreset(preset)) {
       logError("Could not open preset '%s'", preset->presetName->data);
@@ -143,7 +143,7 @@ static boolean _loadPresetForPlugin(Plugin plugin, PluginPreset preset) {
   }
 }
 
-boolean initializePluginChain(PluginChain pluginChain) {
+boolByte initializePluginChain(PluginChain pluginChain) {
   Plugin plugin;
   PluginPreset preset;
   int i;

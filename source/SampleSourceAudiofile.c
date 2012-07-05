@@ -34,7 +34,7 @@
 #include "EventLogger.h"
 #include "SampleSourcePcm.h"
 
-boolean readBlockFromAudiofile(void* sampleSourcePtr, SampleBuffer sampleBuffer) {
+boolByte readBlockFromAudiofile(void* sampleSourcePtr, SampleBuffer sampleBuffer) {
   SampleSource sampleSource = (SampleSource)sampleSourcePtr;
   SampleSourceAudiofileData extraData = (SampleSourceAudiofileData)(sampleSource->extraData);
 
@@ -72,7 +72,7 @@ boolean readBlockFromAudiofile(void* sampleSourcePtr, SampleBuffer sampleBuffer)
   }
 }
 
-boolean writeBlockFromAudiofile(void* sampleSourcePtr, const SampleBuffer sampleBuffer) {
+boolByte writeBlockFromAudiofile(void* sampleSourcePtr, const SampleBuffer sampleBuffer) {
   SampleSource sampleSource = (SampleSource)sampleSourcePtr;
   SampleSourceAudiofileData extraData = (SampleSourceAudiofileData)(sampleSource->extraData);
   int result = 0;

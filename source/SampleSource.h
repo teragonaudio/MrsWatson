@@ -52,9 +52,9 @@ typedef enum {
   NUM_SAMPLE_SOURCE_OPEN_AS
 } SampleSourceOpenAs;
 
-typedef boolean (*OpenSampleSourceFunc)(void*, const SampleSourceOpenAs);
-typedef boolean (*ReadSampleBlockFunc)(void*, SampleBuffer);
-typedef boolean (*WriteSampleBlockFunc)(void*, const SampleBuffer);
+typedef boolByte (*OpenSampleSourceFunc)(void*, const SampleSourceOpenAs);
+typedef boolByte (*ReadSampleBlockFunc)(void*, SampleBuffer);
+typedef boolByte (*WriteSampleBlockFunc)(void*, const SampleBuffer);
 typedef void (*FreeSampleSourceDataFunc)(void*);
 
 typedef struct {

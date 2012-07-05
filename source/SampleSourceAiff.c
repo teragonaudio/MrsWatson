@@ -33,7 +33,7 @@
 #include "SampleSourceAudiofile.h"
 #include "EventLogger.h"
 
-static boolean _openSampleSourceAiff(void *sampleSourcePtr, const SampleSourceOpenAs openAs) {
+static boolByte _openSampleSourceAiff(void *sampleSourcePtr, const SampleSourceOpenAs openAs) {
   SampleSource sampleSource = (SampleSource)sampleSourcePtr;
   SampleSourceAudiofileData extraData = (SampleSourceAudiofileData)(sampleSource->extraData);
 

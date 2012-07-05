@@ -55,7 +55,7 @@ int main(int argc, char** argv) {
   SampleSource outputSource = NULL;
   PluginChain pluginChain = newPluginChain();
   CharString pluginSearchRoot = newCharString();
-  boolean shouldDisplayPluginInfo = false;
+  boolByte shouldDisplayPluginInfo = false;
   MidiSequence midiSequence = NULL;
   MidiSource midiSource = NULL;
   long tailTimeInMs = 0;
@@ -66,7 +66,7 @@ int main(int argc, char** argv) {
   int blocksize;
   SampleBuffer inputSampleBuffer, outputSampleBuffer;
   TaskTimer taskTimer;
-  boolean finishedReading = false;
+  boolByte finishedReading = false;
   int hostTaskId;
   SampleSource silentSampleInput;
   unsigned long totalProcessingTime = 0;

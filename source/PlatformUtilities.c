@@ -50,10 +50,10 @@ PlatformType getPlatformType() {
 #endif
 }
 
-boolean fileExists(const char* absolutePath) {
+boolByte fileExists(const char* absolutePath) {
 #if MACOSX || LINUX
   struct stat* buffer = malloc(sizeof(struct stat));
-  boolean result = (stat(absolutePath, buffer) == 0);
+  boolByte result = (stat(absolutePath, buffer) == 0);
   free(buffer);
   return result;
 
@@ -110,9 +110,9 @@ void buildAbsolutePath(const CharString directory, const CharString file, const 
   snprintf(outString->data, outString->capacity, "%s%c%s.%s", directory->data, PATH_DELIMITER, file->data, fileExtension);
 }
 
-static boolean _isHostLittleEndian(void) {
+static boolByte _isHostLittleEndian(void) {
   int num = 1;
-  boolean result = (*(char*)&num == 1);
+  boolByte result = (*(char*)&num == 1);
   return result;
 }
 

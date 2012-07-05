@@ -37,8 +37,8 @@ typedef enum {
   NUM_PRESET_TYPES
 } PluginPresetType;
 
-typedef boolean (*OpenPresetFunc)(void*);
-typedef boolean (*LoadPresetFunc)(void*, Plugin);
+typedef boolByte (*OpenPresetFunc)(void*);
+typedef boolByte (*LoadPresetFunc)(void*, Plugin);
 typedef void (*FreePresetDataFunc)(void*);
 
 typedef struct {
@@ -59,7 +59,7 @@ PluginPresetType guessPluginPresetType(const CharString presetName);
 PluginPreset newPluginPreset(PluginPresetType presetType, const CharString presetName);
 // Consider this "protected"
 void _setPresetCompatibleWithPluginType(PluginPreset pluginPreset, PluginInterfaceType interfaceType);
-boolean isPresetCompatibleWithPlugin(const PluginPreset pluginPreset, const Plugin plugin);
+boolByte isPresetCompatibleWithPlugin(const PluginPreset pluginPreset, const Plugin plugin);
 void freePluginPreset(PluginPreset pluginPreset);
 
 #endif
