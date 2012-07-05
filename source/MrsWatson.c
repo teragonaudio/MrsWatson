@@ -39,11 +39,7 @@
 #include "AudioClock.h"
 #include "MidiSequence.h"
 #include "MidiSource.h"
-
-#if WINDOWS
-// TODO: This is all over the source code, move it to the precompiled header or something
-#define snprintf _snprintf
-#endif
+#include "PlatformUtilities.h"
 
 void fillVersionString(CharString outString) {
   snprintf(outString->data, outString->capacity, "%s version %d.%d.%d", PROGRAM_NAME, VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
@@ -154,13 +150,13 @@ int main(int argc, char** argv) {
           copyCharStrings(pluginSearchRoot, option->argument);
           break;
         case OPTION_SAMPLE_RATE:
-          setSampleRate(strtof(option->argument->data, NULL));
+          setSampleRate(strtod(option->argument->data, NULL));
           break;
         case OPTION_TAIL_TIME:
           tailTimeInMs = strtol(option->argument->data, NULL, 10);
           break;
         case OPTION_TEMPO:
-          setTempo(strtof(option->argument->data, NULL));
+          setTempo(strtod(option->argument->data, NULL));
           break;
         case OPTION_TIME_SIGNATURE_TOP:
           setTimeSignatureBeatsPerMeasure((short)strtol(option->argument->data, NULL, 10));
@@ -238,7 +234,7 @@ int main(int argc, char** argv) {
   }
   else if(inputSource->sampleSourceType == SAMPLE_SOURCE_TYPE_PCM) {
     if(programOptions[OPTION_PCM_SAMPLE_RATE]->enabled) {
-      inputSource->sampleRate = strtof(programOptions[OPTION_PCM_SAMPLE_RATE]->argument->data, NULL);
+      inputSource->sampleRate = strtod(programOptions[OPTION_PCM_SAMPLE_RATE]->argument->data, NULL);
       if(getSampleRate() != inputSource->sampleRate) {
         logUnsupportedFeature("Resampling input source");
         return RETURN_CODE_UNSUPPORTED_FEATURE;
