@@ -66,11 +66,11 @@ void startTimingTask(TaskTimer taskTimer, const int taskId) {
 }
 
 void stopTiming(TaskTimer taskTimer) {
-  long elapsedTimeInMs;
+  unsigned long elapsedTimeInMs;
 
 #if WINDOWS
   if(taskTimer->currentTask >= 0) {
-    elapsedTimeInMs = GetTickCount64() - taskTimer->startTime;
+    elapsedTimeInMs = (unsigned long)(GetTickCount64() - taskTimer->startTime);
     taskTimer->totalTaskTimes[taskTimer->currentTask] += elapsedTimeInMs;
   }
 #else

@@ -67,8 +67,8 @@ void initEventLogger(void) {
 
 #if WINDOWS
   currentTime = GetTickCount64();
-  eventLoggerInstance->startTimeInSec = currentTime / 1000;
-  eventLoggerInstance->startTimeInMs = currentTime;
+  eventLoggerInstance->startTimeInSec = (unsigned long)(currentTime / 1000);
+  eventLoggerInstance->startTimeInMs = (unsigned long)currentTime;
 #else
   gettimeofday(&currentTime, NULL);
   eventLoggerInstance->startTimeInSec = currentTime.tv_sec;
@@ -183,15 +183,25 @@ static void _printMessage(const LogLevel logLevel, const long elapsedTimeInMs, c
 }
 
 static void _logMessage(const LogLevel logLevel, const char* message, va_list arguments) {
-  struct timeval currentTime;
   long elapsedTimeInMs;
   EventLogger eventLogger = _getEventLoggerInstance();
+#if WINDOWS
+  ULONGLONG currentTime;
+#else
+  struct timeval currentTime;
+#endif
+
   if(logLevel >= eventLogger->logLevel) {
     CharString formattedMessage = newCharString();
     vsnprintf(formattedMessage->data, formattedMessage->capacity, message, arguments);
+#if WINDOWS
+    currentTime = GetTickCount64();
+    elapsedTimeInMs = (unsigned long)(eventLogger->startTimeInMs - currentTime);
+#else
     gettimeofday(&currentTime, NULL);
     elapsedTimeInMs = ((currentTime.tv_sec - (eventLogger->startTimeInSec + 1)) * 1000) +
       (currentTime.tv_usec / 1000) + (1000 - eventLogger->startTimeInMs);
+#endif
     _printMessage(logLevel, elapsedTimeInMs, eventLogger->colorScheme, formattedMessage->data);
     freeCharString(formattedMessage);
   }
