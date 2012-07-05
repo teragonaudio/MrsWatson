@@ -34,7 +34,9 @@
 #include "EventLogger.h"
 #include "MrsWatson.h"
 
-#if ! WINDOWS
+#if WINDOWS
+#include <Windows.h>
+#else
 #include <sys/time.h>
 #include <unistd.h>
 #endif
@@ -52,15 +54,26 @@
 EventLogger eventLoggerInstance = NULL;
 
 void initEventLogger(void) {
+#if WINDOWS
+  ULONGLONG currentTime;
+#else
   struct timeval currentTime;
+#endif
 
   // TODO: This is never freed, but it lives for the life of the program. Do we need to worry about that?
   eventLoggerInstance = (EventLogger)malloc(sizeof(EventLoggerMembers));
   eventLoggerInstance->logLevel = LOG_INFO;
+  eventLoggerInstance->colorScheme = COLOR_SCHEME_NONE;
+
+#if WINDOWS
+  currentTime = GetTickCount64();
+  eventLoggerInstance->startTimeInSec = currentTime / 1000;
+  eventLoggerInstance->startTimeInMs = currentTime;
+#else
   gettimeofday(&currentTime, NULL);
   eventLoggerInstance->startTimeInSec = currentTime.tv_sec;
   eventLoggerInstance->startTimeInMs = currentTime.tv_usec / 1000;
-  eventLoggerInstance->colorScheme = COLOR_SCHEME_NONE;
+#endif
 
 #if ! WINDOWS
   // On unix, we can detect if stderr is pointing to a terminal and set output
@@ -140,7 +153,7 @@ static const char* _logLevelStatusColor(const LogLevel logLevel, const LogColorS
 }
 
 static const char* _logTimeZebraStripeColor(const long elapsedTime, const LogColorScheme colorScheme) {
-  boolean zebraState = ((elapsedTime / ZEBRA_STRIPE_SIZE_IN_MS) % 2) == 1;
+  boolByte zebraState = ((elapsedTime / ZEBRA_STRIPE_SIZE_IN_MS) % 2) == 1;
   if(colorScheme == COLOR_SCHEME_DARK) {
     return zebraState ? ANSI_COLOR_WHITE : ANSI_COLOR_YELLOW;
   }

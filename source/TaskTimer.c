@@ -27,8 +27,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#if WINDOWS
-#else
+#if ! WINDOWS
 #include <sys/time.h>
 #endif
 
@@ -44,7 +43,11 @@ TaskTimer newTaskTimer(const int numTasks) {
   for(i = 0; i < numTasks; i++) {
     taskTimer->totalTaskTimes[i] = 0;
   }
+#if WINDOWS
+  taskTimer->startTime = 0;
+#else
   taskTimer->startTime = malloc(sizeof(struct timeval));
+#endif
 
   return taskTimer;
 }
@@ -54,13 +57,24 @@ void startTimingTask(TaskTimer taskTimer, const int taskId) {
     return;
   }
   stopTiming(taskTimer);
+#if WINDOWS
+  taskTimer->startTime = GetTickCount64();
+#else
   gettimeofday(taskTimer->startTime, NULL);
+#endif
   taskTimer->currentTask = taskId;
 }
 
 void stopTiming(TaskTimer taskTimer) {
-  struct timeval currentTime;
   long elapsedTimeInMs;
+
+#if WINDOWS
+  if(taskTimer->currentTask >= 0) {
+    elapsedTimeInMs = GetTickCount64() - taskTimer->startTime;
+    taskTimer->totalTaskTimes[taskTimer->currentTask] += elapsedTimeInMs;
+  }
+#else
+  struct timeval currentTime;
 
   if(taskTimer->currentTask >= 0) {
     if(gettimeofday(&currentTime, NULL) == 0) {
@@ -69,10 +83,13 @@ void stopTiming(TaskTimer taskTimer) {
       taskTimer->totalTaskTimes[taskTimer->currentTask] += elapsedTimeInMs;
     }
   }
+#endif
 }
 
 void freeTaskTimer(TaskTimer taskTimer) {
   free(taskTimer->totalTaskTimes);
+#if ! WINDOWS
   free(taskTimer->startTime);
+#endif
   free(taskTimer);
 }
