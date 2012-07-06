@@ -60,8 +60,10 @@ SampleSource newSampleSourceSilence(void) {
   sampleSource->numFramesProcessed = 0;
 
   sampleSource->openSampleSource = _openSampleSourceSilence;
+  // TODO: Remove all "froms" here
   sampleSource->readSampleBlock = _readBlockFromSilence;
   sampleSource->writeSampleBlock = _writeBlockFromSilence;
+  // TODO: Remove last "input" traces in names
   sampleSource->freeSampleSourceData = _freeInputSourceDataSilence;
 
   return sampleSource;
