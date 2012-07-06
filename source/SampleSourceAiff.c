@@ -35,16 +35,23 @@
 
 static boolByte _openSampleSourceAiff(void *sampleSourcePtr, const SampleSourceOpenAs openAs) {
   SampleSource sampleSource = (SampleSource)sampleSourcePtr;
+#if USE_LIBAUDIOFILE
   SampleSourceAudiofileData extraData = (SampleSourceAudiofileData)(sampleSource->extraData);
+#endif
 
   if(openAs == SAMPLE_SOURCE_OPEN_READ) {
+#if USE_LIBAUDIOFILE
     extraData->fileHandle = afOpenFile(sampleSource->sourceName->data, "r", NULL);
     if(extraData->fileHandle != NULL) {
       setNumChannels(afGetVirtualChannels(extraData->fileHandle, AF_DEFAULT_TRACK));
       setSampleRate((float)afGetRate(extraData->fileHandle, AF_DEFAULT_TRACK));
     }
+#else
+    logInternalError("Executable was not built with a library to read AIFF files");
+#endif
   }
   else if(openAs == SAMPLE_SOURCE_OPEN_WRITE) {
+#if USE_LIBAUDIOFILE
     AFfilesetup outfileSetup = afNewFileSetup();
     afInitFileFormat(outfileSetup, AF_FILE_AIFF);
     afInitByteOrder(outfileSetup, AF_DEFAULT_TRACK, AF_BYTEORDER_BIGENDIAN);
@@ -52,6 +59,9 @@ static boolByte _openSampleSourceAiff(void *sampleSourcePtr, const SampleSourceO
     afInitRate(outfileSetup, AF_DEFAULT_TRACK, getSampleRate());
     afInitSampleFormat(outfileSetup, AF_DEFAULT_TRACK, AF_SAMPFMT_TWOSCOMP, DEFAULT_BITRATE);
     extraData->fileHandle = afOpenFile(sampleSource->sourceName->data, "w", outfileSetup);
+#else
+    logInternalError("Executable was not built with a library to write AIFF files");
+#endif
   }
   else {
     logInternalError("Invalid type for openAs in AIFF file");
@@ -70,7 +80,9 @@ static boolByte _openSampleSourceAiff(void *sampleSourcePtr, const SampleSourceO
 
 SampleSource newSampleSourceAiff(const CharString sampleSourceName) {
   SampleSource sampleSource = (SampleSource)malloc(sizeof(SampleSourceMembers));
+#if USE_LIBAUDIOFILE
   SampleSourceAudiofileData extraData = (SampleSourceAudiofileData)malloc(sizeof(SampleSourceAudiofileDataMembers));
+#endif
 
   sampleSource->sampleSourceType = SAMPLE_SOURCE_TYPE_AIFF;
   sampleSource->openedAs = SAMPLE_SOURCE_OPEN_NOT_OPENED;
@@ -85,10 +97,14 @@ SampleSource newSampleSourceAiff(const CharString sampleSourceName) {
   sampleSource->writeSampleBlock = writeBlockFromAudiofile;
   sampleSource->freeSampleSourceData = freeSampleSourceDataAudiofile;
 
+#if USE_LIBAUDIOFILE
   extraData->fileHandle = NULL;
   extraData->interlacedBuffer = NULL;
   extraData->pcmBuffer = NULL;
   sampleSource->extraData = extraData;
+#else
+  sampleSource->extraData = NULL;
+#endif
 
   return sampleSource;
 }
