@@ -26,6 +26,9 @@
 		2465A2CA14B3130B00F94E84 /* Plugin.c in Sources */ = {isa = PBXBuildFile; fileRef = 2465A2C914B3130B00F94E84 /* Plugin.c */; };
 		2465A2D414B3156A00F94E84 /* PluginVst2x.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2465A2D314B3156A00F94E84 /* PluginVst2x.cpp */; };
 		2465A2D814B3313600F94E84 /* PluginChain.c in Sources */ = {isa = PBXBuildFile; fileRef = 2465A2D714B3313600F94E84 /* PluginChain.c */; };
+		24AD1DCA15A731AC00CCC6A3 /* SampleSourceFlac.c in Sources */ = {isa = PBXBuildFile; fileRef = 24AD1DC415A731AB00CCC6A3 /* SampleSourceFlac.c */; };
+		24AD1DCB15A731AC00CCC6A3 /* SampleSourceMp3.c in Sources */ = {isa = PBXBuildFile; fileRef = 24AD1DC615A731AC00CCC6A3 /* SampleSourceMp3.c */; };
+		24AD1DCC15A731AC00CCC6A3 /* SampleSourceOgg.c in Sources */ = {isa = PBXBuildFile; fileRef = 24AD1DC815A731AC00CCC6A3 /* SampleSourceOgg.c */; };
 		24BD3E6314B59B1E00BFA6DE /* MidiSource.c in Sources */ = {isa = PBXBuildFile; fileRef = 24BD3E6214B59B1E00BFA6DE /* MidiSource.c */; };
 		24BD3E6C14B59B7900BFA6DE /* MidiSequence.c in Sources */ = {isa = PBXBuildFile; fileRef = 24BD3E6B14B59B7900BFA6DE /* MidiSequence.c */; };
 		24BD3E6E14B59BD700BFA6DE /* SampleSourceSilence.c in Sources */ = {isa = PBXBuildFile; fileRef = 24BD3E6D14B59BD700BFA6DE /* SampleSourceSilence.c */; };
@@ -157,6 +160,12 @@
 		2465A2D514B3157500F94E84 /* PluginVst2x.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PluginVst2x.h; path = source/PluginVst2x.h; sourceTree = SOURCE_ROOT; };
 		2465A2D614B3312D00F94E84 /* PluginChain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PluginChain.h; path = source/PluginChain.h; sourceTree = SOURCE_ROOT; };
 		2465A2D714B3313600F94E84 /* PluginChain.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = PluginChain.c; path = source/PluginChain.c; sourceTree = SOURCE_ROOT; };
+		24AD1DC415A731AB00CCC6A3 /* SampleSourceFlac.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = SampleSourceFlac.c; path = source/SampleSourceFlac.c; sourceTree = SOURCE_ROOT; };
+		24AD1DC515A731AC00CCC6A3 /* SampleSourceFlac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SampleSourceFlac.h; path = source/SampleSourceFlac.h; sourceTree = SOURCE_ROOT; };
+		24AD1DC615A731AC00CCC6A3 /* SampleSourceMp3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = SampleSourceMp3.c; path = source/SampleSourceMp3.c; sourceTree = SOURCE_ROOT; };
+		24AD1DC715A731AC00CCC6A3 /* SampleSourceMp3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SampleSourceMp3.h; path = source/SampleSourceMp3.h; sourceTree = SOURCE_ROOT; };
+		24AD1DC815A731AC00CCC6A3 /* SampleSourceOgg.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = SampleSourceOgg.c; path = source/SampleSourceOgg.c; sourceTree = SOURCE_ROOT; };
+		24AD1DC915A731AC00CCC6A3 /* SampleSourceOgg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SampleSourceOgg.h; path = source/SampleSourceOgg.h; sourceTree = SOURCE_ROOT; };
 		24BD3E6114B59B1800BFA6DE /* MidiSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MidiSource.h; path = source/MidiSource.h; sourceTree = SOURCE_ROOT; };
 		24BD3E6214B59B1E00BFA6DE /* MidiSource.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = MidiSource.c; path = source/MidiSource.c; sourceTree = SOURCE_ROOT; };
 		24BD3E6414B59B3000BFA6DE /* MidiSequence.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MidiSequence.h; path = source/MidiSequence.h; sourceTree = SOURCE_ROOT; };
@@ -379,6 +388,12 @@
 				24476E7914CACA9500A552A2 /* SampleSourceAiff.h */,
 				24E3207F14CC1B2F00DA6589 /* SampleSourceAudiofile.c */,
 				24E3208014CC1B2F00DA6589 /* SampleSourceAudiofile.h */,
+				24AD1DC415A731AB00CCC6A3 /* SampleSourceFlac.c */,
+				24AD1DC515A731AC00CCC6A3 /* SampleSourceFlac.h */,
+				24AD1DC615A731AC00CCC6A3 /* SampleSourceMp3.c */,
+				24AD1DC715A731AC00CCC6A3 /* SampleSourceMp3.h */,
+				24AD1DC815A731AC00CCC6A3 /* SampleSourceOgg.c */,
+				24AD1DC915A731AC00CCC6A3 /* SampleSourceOgg.h */,
 				2435639614B20B960049FD43 /* SampleSourcePcm.c */,
 				2435638D14B1FF110049FD43 /* SampleSourcePcm.h */,
 				24BD3E6D14B59BD700BFA6DE /* SampleSourceSilence.c */,
@@ -570,6 +585,9 @@
 				24476E7E14CACAB300A552A2 /* SampleSourceAiff.c in Sources */,
 				24E3207E14CC1A3900DA6589 /* SampleSourceWave.c in Sources */,
 				24E3208114CC1B2F00DA6589 /* SampleSourceAudiofile.c in Sources */,
+				24AD1DCA15A731AC00CCC6A3 /* SampleSourceFlac.c in Sources */,
+				24AD1DCB15A731AC00CCC6A3 /* SampleSourceMp3.c in Sources */,
+				24AD1DCC15A731AC00CCC6A3 /* SampleSourceOgg.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
