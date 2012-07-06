@@ -187,7 +187,7 @@ static ProgramOption _findProgramOption(ProgramOptions programOptions, const cha
     optionStringWithoutDashes = newCharStringWithCapacity(STRING_LENGTH_SHORT);
     strncpy(optionStringWithoutDashes->data, optionString + 2, strlen(optionString) - 2);
     for(i = 0; i < NUM_OPTIONS; i++) {
-      ProgramOption potentialMatchOption = programOptions[i];
+      potentialMatchOption = programOptions[i];
       if(isCharStringEqualTo(potentialMatchOption->name, optionStringWithoutDashes, false)) {
         optionMatch = potentialMatchOption;
         break;
