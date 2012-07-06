@@ -25,4 +25,38 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
+#include <stdlib.h>
 #include "SampleSourceOgg.h"
+#include "EventLogger.h"
+
+static boolByte _openSampleSourceOgg(void* sampleSourcePtr, const SampleSourceOpenAs openAs) {
+  logUnsupportedFeature("Ogg file I/O");
+  return false;
+}
+
+static boolByte _readBlockFromOgg(void* sampleSourcePtr, SampleBuffer sampleBuffer) {
+  logUnsupportedFeature("Ogg file I/O");
+  return false;
+}
+
+static boolByte _writeBlockFromOgg(void* sampleSourcePtr, const SampleBuffer sampleBuffer) {
+  logUnsupportedFeature("Ogg file I/O");
+  return false;
+}
+
+static void _freeSampleSourceOgg(void* sampleSourceDataPtr) {
+  
+}
+
+SampleSource newSampleSourceOgg(const CharString sampleSourceName) {
+  SampleSource sampleSource = (SampleSource)malloc(sizeof(SampleSourceMembers));
+  
+  sampleSource->sampleSourceType = SAMPLE_SOURCE_TYPE_OGG;
+  
+  sampleSource->openSampleSource = _openSampleSourceOgg;
+  sampleSource->readSampleBlock = _readBlockFromOgg;
+  sampleSource->writeSampleBlock = _writeBlockFromOgg;
+  sampleSource->freeSampleSourceData = _freeSampleSourceOgg;
+  
+  return sampleSource;
+}

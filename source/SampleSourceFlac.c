@@ -25,4 +25,38 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
+#include <stdlib.h>
 #include "SampleSourceFlac.h"
+#include "EventLogger.h"
+
+static boolByte _openSampleSourceFlac(void* sampleSourcePtr, const SampleSourceOpenAs openAs) {
+  logUnsupportedFeature("Flac file I/O");
+  return false;
+}
+
+static boolByte _readBlockFromFlac(void* sampleSourcePtr, SampleBuffer sampleBuffer) {
+  logUnsupportedFeature("Flac file I/O");
+  return false;
+}
+
+static boolByte _writeBlockFromFlac(void* sampleSourcePtr, const SampleBuffer sampleBuffer) {
+  logUnsupportedFeature("Flac file I/O");
+  return false;
+}
+
+static void _freeSampleSourceFlac(void* sampleSourceDataPtr) {
+  
+}
+
+SampleSource newSampleSourceFlac(const CharString sampleSourceName) {
+  SampleSource sampleSource = (SampleSource)malloc(sizeof(SampleSourceMembers));
+  
+  sampleSource->sampleSourceType = SAMPLE_SOURCE_TYPE_FLAC;
+  
+  sampleSource->openSampleSource = _openSampleSourceFlac;
+  sampleSource->readSampleBlock = _readBlockFromFlac;
+  sampleSource->writeSampleBlock = _writeBlockFromFlac;
+  sampleSource->freeSampleSourceData = _freeSampleSourceFlac;
+  
+  return sampleSource;
+}

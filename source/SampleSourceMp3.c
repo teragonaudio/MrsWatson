@@ -25,4 +25,38 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
+#include <stdlib.h>
 #include "SampleSourceMp3.h"
+#include "EventLogger.h"
+
+static boolByte _openSampleSourceMp3(void* sampleSourcePtr, const SampleSourceOpenAs openAs) {
+  logUnsupportedFeature("MP3 file I/O");
+  return false;
+}
+
+static boolByte _readBlockFromMp3(void* sampleSourcePtr, SampleBuffer sampleBuffer) {
+  logUnsupportedFeature("MP3 file I/O");
+  return false;
+}
+
+static boolByte _writeBlockFromMp3(void* sampleSourcePtr, const SampleBuffer sampleBuffer) {
+  logUnsupportedFeature("MP3 file I/O");
+  return false;
+}
+
+static void _freeSampleSourceMp3(void* sampleSourceDataPtr) {
+  
+}
+
+SampleSource newSampleSourceMp3(const CharString sampleSourceName) {
+  SampleSource sampleSource = (SampleSource)malloc(sizeof(SampleSourceMembers));
+
+  sampleSource->sampleSourceType = SAMPLE_SOURCE_TYPE_MP3;
+
+  sampleSource->openSampleSource = _openSampleSourceMp3;
+  sampleSource->readSampleBlock = _readBlockFromMp3;
+  sampleSource->writeSampleBlock = _writeBlockFromMp3;
+  sampleSource->freeSampleSourceData = _freeSampleSourceMp3;
+
+  return sampleSource;
+}
