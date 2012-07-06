@@ -424,7 +424,6 @@
 				GCC_WARN_SIGN_COMPARE = YES;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/vendor/libaiff-5.0\"",
 					"\"$(SRCROOT)/libs/mac\"",
 				);
 				ONLY_ACTIVE_ARCH = NO;
@@ -446,7 +445,6 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/vendor/libaiff-5.0\"",
 					"\"$(SRCROOT)/libs/mac\"",
 				);
 				ONLY_ACTIVE_ARCH = NO;
