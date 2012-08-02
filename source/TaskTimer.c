@@ -44,7 +44,7 @@ TaskTimer newTaskTimer(const int numTasks) {
     taskTimer->totalTaskTimes[i] = 0;
   }
 #if WINDOWS
-  taskTimer->startTime = 0;
+  QueryPerformanceFrequency(&(taskTimer->counterFrequency));
 #else
   taskTimer->startTime = malloc(sizeof(struct timeval));
 #endif
@@ -58,7 +58,7 @@ void startTimingTask(TaskTimer taskTimer, const int taskId) {
   }
   stopTiming(taskTimer);
 #if WINDOWS
-  taskTimer->startTime = GetTickCount64();
+  QueryPerformanceCounter(&(taskTimer->startTime));
 #else
   gettimeofday(taskTimer->startTime, NULL);
 #endif
@@ -66,14 +66,16 @@ void startTimingTask(TaskTimer taskTimer, const int taskId) {
 }
 
 void stopTiming(TaskTimer taskTimer) {
-  unsigned long elapsedTimeInMs;
-
 #if WINDOWS
+  LONGLONG elapsedTimeInClocks;
   if(taskTimer->currentTask >= 0) {
-    elapsedTimeInMs = (unsigned long)(GetTickCount64() - taskTimer->startTime);
-    taskTimer->totalTaskTimes[taskTimer->currentTask] += elapsedTimeInMs;
+    LARGE_INTEGER stopTime;
+    QueryPerformanceCounter(&stopTime);
+    elapsedTimeInClocks = ((stopTime.QuadPart - taskTimer->startTime.QuadPart));
+    taskTimer->totalTaskTimes[taskTimer->currentTask] += elapsedTimeInClocks;
   }
 #else
+  unsigned long elapsedTimeInMs;
   struct timeval currentTime;
 
   if(taskTimer->currentTask >= 0) {
