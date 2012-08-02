@@ -325,18 +325,26 @@ int main(int argc, char** argv) {
   }
 
   // Print out statistics about each plugin's time usage
+  // TODO: On windows, the total processing time is stored in clocks and not milliseconds
+  // These values must be converted using the QueryPerformanceFrequency() function
   stopAudioClock();
   stopTiming(taskTimer);
   for(i = 0; i < taskTimer->numTasks; i++) {
     totalProcessingTime += taskTimer->totalTaskTimes[i];
   }
-  logInfo("Total processing time %ldms, approximate breakdown by component:", totalProcessingTime);
-  for(i = 0; i < pluginChain->numPlugins; i++) {
-    timePercentage = 100.0f * ((double)taskTimer->totalTaskTimes[i]) / ((double)totalProcessingTime);
-    logInfo("  %s: %ldms, %2.1f%%", pluginChain->plugins[i]->pluginName->data, taskTimer->totalTaskTimes[i], timePercentage);
+
+  if(totalProcessingTime > 0) {
+    logInfo("Total processing time %ldms, approximate breakdown by component:", totalProcessingTime);
+    for(i = 0; i < pluginChain->numPlugins; i++) {
+      timePercentage = 100.0f * ((double)taskTimer->totalTaskTimes[i]) / ((double)totalProcessingTime);
+      logInfo("  %s: %ldms, %2.1f%%", pluginChain->plugins[i]->pluginName->data, taskTimer->totalTaskTimes[i], timePercentage);
+    }
+    timePercentage = 100.0f * ((double)taskTimer->totalTaskTimes[hostTaskId]) / ((double)totalProcessingTime);
+    logInfo("  %s: %ldms, %2.1f%%", PROGRAM_NAME, taskTimer->totalTaskTimes[hostTaskId], timePercentage);
   }
-  timePercentage = 100.0f * ((double)taskTimer->totalTaskTimes[hostTaskId]) / ((double)totalProcessingTime);
-  logInfo("  %s: %ldms, %2.1f%%", PROGRAM_NAME, taskTimer->totalTaskTimes[hostTaskId], timePercentage);
+  else {
+    logInfo("Total processing time <1ms, your computer is smokin' fast!");
+  }
   freeTaskTimer(taskTimer);
 
   if(midiSequence != NULL) {
