@@ -55,7 +55,7 @@ int main(int argc, char** argv) {
   MidiSequence midiSequence = NULL;
   MidiSource midiSource = NULL;
   long tailTimeInMs = 0;
-  ProgramOptions programOptions = newProgramOptions();
+  ProgramOptions programOptions;
   ProgramOption option;
   CharString versionString, wrappedLicenseInfo;
   Plugin headPlugin;
@@ -73,6 +73,7 @@ int main(int argc, char** argv) {
   initEventLogger();
   initAudioSettings();
   initAudioClock();
+  programOptions = newProgramOptions();
 
   if(!parseCommandLine(programOptions, argc, argv)) {
     printf("Run %s --help to see possible options\n", getFileBasename(argv[0]));
