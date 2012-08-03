@@ -66,7 +66,7 @@ void initEventLogger(void) {
   eventLoggerInstance->colorScheme = COLOR_SCHEME_NONE;
 
 #if WINDOWS
-  currentTime = GetTickCount64();
+  currentTime = GetTickCount();
   eventLoggerInstance->startTimeInSec = (unsigned long)(currentTime / 1000);
   eventLoggerInstance->startTimeInMs = (unsigned long)currentTime;
 #else
@@ -195,7 +195,7 @@ static void _logMessage(const LogLevel logLevel, const char* message, va_list ar
     CharString formattedMessage = newCharString();
     vsnprintf(formattedMessage->data, formattedMessage->capacity, message, arguments);
 #if WINDOWS
-    currentTime = GetTickCount64();
+    currentTime = GetTickCount();
     elapsedTimeInMs = (unsigned long)(eventLogger->startTimeInMs - currentTime);
 #else
     gettimeofday(&currentTime, NULL);
