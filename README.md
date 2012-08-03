@@ -8,13 +8,13 @@ actually done offline (this is not the same as the "offline" processing in VST
 terminology). This makes MrsWatson ideal for developing or debugging plugins,
 or processing audio on a server.
 
+
 History
 -------
 
-MrsWatson takes its name from a prior product from [Teragon Audio]
-(http://www.teragonaudio.com) called *MissWatson* (and the original name there,
-in case you were wondering, is a bit of a joke on the [Dr.  Watson]
-(http://en.wikipedia.org/wiki/Dr._Watson_(debugger)) utility).
+MrsWatson takes its name from a prior product from [Teragon Audio][1] called
+*MissWatson* (and the original name there, in case you were wondering, is a
+bit of a joke on the [Dr. Watson][2] utility).
 
 In 2009 I sold the exclusive rights to MissWatson to a company interested in
 using it for server-side audio processing. As per the terms of our agreement,
@@ -39,6 +39,7 @@ will likely have to make some big changes to migrate to MrsWatson. Likewise,
 if you were using some of the original MissWatson code in your project, you
 will *not* be able to replace it with MrsWatson without significant work on
 your end.
+
 
 Examples
 --------
@@ -80,6 +81,7 @@ preset file to be loaded before processing.
 Complete help for MrsWatson can be found by running the program with no
 arguments, or with `--help`.
 
+
 Loading Plugins
 ---------------
 
@@ -93,6 +95,7 @@ passing a huge list of comma/colon separated parameters/values on the command
 line, users should instead create a preset for the plugin and load it with the
 colon-separated syntax as shown above.
 
+
 Limitations
 -----------
 
@@ -101,19 +104,19 @@ important than others. To encourage a quick initial release, the following
 features are not yet present in MrsWatson, but may be added at some point in
 the future:
 
-  * AudioUnit plugins on Mac OSX
-  * File support for WAV/AIFF/MP3/OGG
-  * Resampling of input source if desired
-  * True realtime mode
+* AudioUnit plugins on Mac OSX
+* File support for WAV/AIFF/MP3/OGG
+* Resampling of input source if desired
+* True realtime mode
 
 I have also tried to identify incomplete areas of the code and log them to the
 console, which means that we are aware that this feature is missing and will
 be added soon. If you see some other missing functionality or experience a
-crash or other bug, please report an issue on our [project page]
-(http://github.com/teragonaudio/MrsWatson).
+crash or other bug, please report an issue on our [project page][3].
 
 Please Help!
 ------------
+
 
 As mentioned, MrsWatson is fully functional but needs a lot of polish. If you
 find areas of the code which are incomplete or not compatible with some
@@ -121,6 +124,7 @@ plugins, please make a pull request.
 
 Likewise, if you want to help out without programming, the best way to do so
 is to test and report any problems with given plugins or platforms.
+
 
 Donate
 ------
@@ -130,11 +134,12 @@ project! If you appreciate MrsWatson and would like to donate money, please
 instead make a donation to a charity on our behalf, and let us know about it.
 The organizations which have helped us the most are:
 
-  * [EFF](https://supporters.eff.org/donate): Without the EFF, programs like
-    MrsWatson would be significantly harder to create and distribute.
-  * [Wikipedia](http://wikimediafoundation.org/wiki/WMFJA085/en): Writing
-    MrsWatson involves a lot of research as well as coding, and Wikipedia is
-    an essential part of this.
+* [EFF](https://supporters.eff.org/donate): Without the EFF, programs like
+  MrsWatson would be significantly harder to create and distribute.
+* [Wikipedia](http://wikimediafoundation.org/wiki/WMFJA085/en): Writing
+  MrsWatson involves a lot of research as well as coding, and Wikipedia is
+  an essential part of this.
+
 
 Licensing
 ---------
@@ -144,10 +149,14 @@ MrsWatson is made available under the BSD license. For more details, see the
 following third-party libraries, which are licensed under the respective
 agreements:
 
-  * [VST](http://www.steinberg.net/en/company/developer.html): Licensed under
-    Steinberg's VST SDK license agreement, version 2.4. For more information,
-    see Steinberg's developer portal.
-  * [LibAiff](http://aifftools.sourceforge.net/libaiff/): Written by Marco
-    Trillo, made under the BSD license. For more details, see the LICENSE file
-    in the LibAiff source code.
+* [VST](http://www.steinberg.net/en/company/developer.html): Licensed under
+  Steinberg's VST SDK license agreement, version 2.4. For more information,
+  see Steinberg's developer portal.
+* [LibAiff](http://aifftools.sourceforge.net/libaiff/): Written by Marco
+  Trillo, made under the BSD license. For more details, see the LICENSE file
+  in the LibAiff source code.
 
+
+[1]: http://www.teragonaudio.com
+[2]: http://en.wikipedia.org/wiki/Dr._Watson_(debugger)
+[3]: http://github.com/teragonaudio/MrsWatson

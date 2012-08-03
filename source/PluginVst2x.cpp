@@ -52,7 +52,7 @@ typedef void (*Vst2xPluginSetParameterFunc)(AEffect *effect, VstInt32 index, flo
 typedef void (*Vst2xPluginProcessFunc)(AEffect* effect, float** inputs, float** outputs, VstInt32 sampleFrames);
 
 typedef struct {
-  AEffect*pluginHandle;
+  AEffect *pluginHandle;
   Vst2xPluginDispatcherFunc dispatcher;
 
 #if MACOSX
@@ -447,14 +447,7 @@ static boolByte _openVst2xPlugin(void* pluginPtr) {
     return false;
   }
 
-  // Create dispatcher handle
   Vst2xPluginDispatcherFunc dispatcher = (Vst2xPluginDispatcherFunc)(pluginHandle->dispatcher);
-
-  // Set up plugin callback functions
-  pluginHandle->getParameter = (Vst2xPluginGetParameterFunc)pluginHandle->getParameter;
-  pluginHandle->setParameter = (Vst2xPluginSetParameterFunc)pluginHandle->setParameter;
-  pluginHandle->processReplacing = (Vst2xPluginProcessFunc)pluginHandle->processReplacing;
-
   data->pluginHandle = pluginHandle;
   data->dispatcher = dispatcher;
   boolByte result = _initVst2xPlugin(plugin);
