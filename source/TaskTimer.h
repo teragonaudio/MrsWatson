@@ -39,7 +39,8 @@ typedef struct {
   int currentTask;
   unsigned long* totalTaskTimes;
 #if WINDOWS
-  ULONGLONG startTime;
+  LARGE_INTEGER startTime;
+  LARGE_INTEGER counterFrequency;
 #else
   struct timeval* startTime;
 #endif

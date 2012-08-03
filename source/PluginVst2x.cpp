@@ -141,7 +141,7 @@ static AEffect* _loadVst2xPluginMac(CFBundleRef bundle) {
 
 #if WINDOWS
 static HMODULE _moduleHandleForPlugin(const char* pluginAbsolutePath) {
-  HMODULE moduleHandle = LoadLibrary((LPCWSTR)pluginAbsolutePath);
+  HMODULE moduleHandle = LoadLibraryA((LPCSTR)pluginAbsolutePath);
   if(moduleHandle == NULL) {
     logError("Could not open library, error code '%d'", GetLastError());
     return NULL;
@@ -210,8 +210,12 @@ static void _appendDefaultPluginLocations(PlatformType platformType, LinkedList 
     case PLATFORM_WINDOWS:
     {
       CharString locationBuffer1 = newCharString();
-      snprintf(locationBuffer1->data, (size_t)(locationBuffer1->capacity), "C:\\Program Files\\Common Files\\VstPlugins");
+      snprintf(locationBuffer1->data, (size_t)(locationBuffer1->capacity), "C:\\VstPlugins");
       appendItemToList(outLocations, locationBuffer1);
+
+      CharString locationBuffer2 = newCharString();
+      snprintf(locationBuffer2->data, (size_t)(locationBuffer2->capacity), "C:\\Program Files\\Common Files\\VstPlugins");
+      appendItemToList(outLocations, locationBuffer2);
 
       // TODO: Ugh, VST storage locations on windows are really messy. What should be included?
     }
