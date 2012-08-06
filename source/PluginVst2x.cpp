@@ -52,7 +52,7 @@ typedef void (*Vst2xPluginSetParameterFunc)(AEffect *effect, VstInt32 index, flo
 typedef void (*Vst2xPluginProcessFunc)(AEffect* effect, float** inputs, float** outputs, VstInt32 sampleFrames);
 
 typedef struct {
-  AEffect*pluginHandle;
+  AEffect *pluginHandle;
   Vst2xPluginDispatcherFunc dispatcher;
 
 #if MACOSX
@@ -206,6 +206,15 @@ static AEffect* _loadVst2xPluginLinux(void* libraryHandle) {
 #endif
 
 static void _appendDefaultPluginLocations(PlatformType platformType, LinkedList outLocations) {
+  // Regardless of platform, the current directory should be searched first. This is most useful when debugging
+  CharString pwdLocationBuffer = newCharString();
+#if WINDOWS
+  GetCurrentDirectory(pwdLocationBuffer->capacity, pwdLocationBuffer->data);
+#else
+  snprintf(pwdLocationBuffer->data, (size_t)pwdLocationBuffer->capacity, "%s", getenv("PWD"));
+#endif
+  appendItemToList(outLocations, pwdLocationBuffer);
+
   switch(platformType) {
     case PLATFORM_WINDOWS:
     {
@@ -323,6 +332,13 @@ static boolean _doesVst2xPluginExistAtLocation(const CharString pluginName, cons
 }
 
 static boolean _fillVst2xPluginAbsolutePath(const CharString pluginName, const CharString pluginRoot, CharString outLocation) {
+  // First see if an absolute path was given as the plugin name
+  if(isAbsolutePath(pluginName) && fileExists(pluginName->data)) {
+    copyCharStrings(outLocation, pluginName);
+    return true;
+  }
+
+  // Then search the path given to --plugin-root, if given
   if(!isCharStringEmpty(pluginRoot)) {
     if(_doesVst2xPluginExistAtLocation(pluginName, pluginRoot)) {
       copyCharStrings(outLocation, pluginRoot);
@@ -330,7 +346,8 @@ static boolean _fillVst2xPluginAbsolutePath(const CharString pluginName, const C
     }
   }
 
-  // If the plugin wasn't found in the user's plugin root, then try searching the default locations for the platform
+  // If the plugin wasn't found in the user's plugin root, then try searching the default locations for the platform,
+  // which includes the current directory.
   LinkedList pluginLocations = newLinkedList();
   _appendDefaultPluginLocations(getPlatformType(), pluginLocations);
   if(pluginLocations->item == NULL) {
@@ -403,7 +420,12 @@ static boolean _openVst2xPlugin(void* pluginPtr) {
   PluginVst2xData data = (PluginVst2xData)plugin->extraData;
   logInfo("Opening VST2.x plugin '%s'", plugin->pluginName->data);
   CharString pluginAbsolutePath = newCharString();
-  buildAbsolutePath(plugin->pluginLocation, plugin->pluginName, _getVst2xPlatformExtension(), pluginAbsolutePath);
+  if(isAbsolutePath(plugin->pluginName)) {
+    copyCharStrings(pluginAbsolutePath, plugin->pluginName);
+  }
+  else {
+    buildAbsolutePath(plugin->pluginLocation, plugin->pluginName, _getVst2xPlatformExtension(), pluginAbsolutePath);
+  }
 
   AEffect* pluginHandle;
 #if MACOSX
@@ -443,14 +465,7 @@ static boolean _openVst2xPlugin(void* pluginPtr) {
     return false;
   }
 
-  // Create dispatcher handle
   Vst2xPluginDispatcherFunc dispatcher = (Vst2xPluginDispatcherFunc)(pluginHandle->dispatcher);
-
-  // Set up plugin callback functions
-  pluginHandle->getParameter = (Vst2xPluginGetParameterFunc)pluginHandle->getParameter;
-  pluginHandle->setParameter = (Vst2xPluginSetParameterFunc)pluginHandle->setParameter;
-  pluginHandle->processReplacing = (Vst2xPluginProcessFunc)pluginHandle->processReplacing;
-
   data->pluginHandle = pluginHandle;
   data->dispatcher = dispatcher;
   boolean result = _initVst2xPlugin(plugin);

@@ -29,7 +29,7 @@
 #include <stdlib.h>
 #include <sys/stat.h>
 #include "PlatformUtilities.h"
-#include "EventLogger.h"
+
 #if WINDOWS
 #define WIN32_LEAN_AND_MEAN
 #include "windows.h"
@@ -106,6 +106,21 @@ int listDirectory(const char* directory, LinkedList outItems) {
 
 void buildAbsolutePath(const CharString directory, const CharString file, const char* fileExtension, CharString outString) {
   snprintf(outString->data, outString->capacity, "%s%c%s.%s", directory->data, PATH_DELIMITER, file->data, fileExtension);
+}
+
+boolean isAbsolutePath(const CharString path) {
+#if WINDOWS
+  if(path->capacity > 3) {
+    if(path->data[1] == ':' && path->data[2] == PATH_DELIMITER) {
+      return true;
+    }
+  }
+#else
+  if(path->capacity > 1 && path->data[0] == PATH_DELIMITER) {
+    return true;
+  }
+#endif
+  return false;
 }
 
 static boolean _isHostLittleEndian(void) {
