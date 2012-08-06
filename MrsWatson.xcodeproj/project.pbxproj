@@ -284,7 +284,7 @@
 		24FDFBA1148CC6AF0074D3A1 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0420;
+				LastUpgradeCheck = 0440;
 				ORGANIZATIONNAME = "Teragon Audio";
 			};
 			buildConfigurationList = 24FDFBA4148CC6AF0074D3A1 /* Build configuration list for PBXProject "MrsWatson" */;
@@ -416,7 +416,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
 				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
 				GCC_WARN_PEDANTIC = YES;
@@ -424,7 +424,6 @@
 				GCC_WARN_SIGN_COMPARE = YES;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/vendor/libaiff-5.0\"",
 					"\"$(SRCROOT)/libs/mac\"",
 				);
 				ONLY_ACTIVE_ARCH = NO;
@@ -437,7 +436,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
 				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
 				GCC_WARN_PEDANTIC = YES;
@@ -446,7 +445,6 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/vendor/libaiff-5.0\"",
 					"\"$(SRCROOT)/libs/mac\"",
 				);
 				ONLY_ACTIVE_ARCH = NO;
