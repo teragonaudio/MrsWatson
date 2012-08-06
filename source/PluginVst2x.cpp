@@ -196,6 +196,15 @@ static AEffect* _loadVst2xPluginLinux(void* libraryHandle) {
 #endif
 
 static void _appendDefaultPluginLocations(PlatformType platformType, LinkedList outLocations) {
+  // Regardless of platform, the current directory should be searched first. This is most useful when debugging
+  CharString pwdLocationBuffer = newCharString();
+#if WINDOWS
+  GetCurrentDirectory(pwdLocationBuffer->capacity, pwdLocationBuffer->data);
+#else
+  snprintf(pwdLocationBuffer->data, (size_t)pwdLocationBuffer->capacity, "%s", getenv("PWD"));
+#endif
+  appendItemToList(outLocations, pwdLocationBuffer);
+
   switch(platformType) {
     case PLATFORM_WINDOWS:
     {
