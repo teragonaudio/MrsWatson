@@ -108,6 +108,21 @@ void buildAbsolutePath(const CharString directory, const CharString file, const 
   snprintf(outString->data, outString->capacity, "%s%c%s.%s", directory->data, PATH_DELIMITER, file->data, fileExtension);
 }
 
+boolean isAbsolutePath(const CharString path) {
+#if WINDOWS
+  if(path->capacity > 3) {
+    if(path->data[1] == ':' && path->data[2] == PATH_DELIMITER) {
+      return true;
+    }
+  }
+#else
+  if(path->capacity > 1 && path->data[0] == PATH_DELIMITER) {
+    return true;
+  }
+#endif
+  return false;
+}
+
 static boolean _isHostLittleEndian(void) {
   int num = 1;
   boolean result = (*(char*)&num == 1);
