@@ -336,7 +336,8 @@ static boolean _fillVst2xPluginAbsolutePath(const CharString pluginName, const C
     }
   }
 
-  // If the plugin wasn't found in the user's plugin root, then try searching the default locations for the platform
+  // If the plugin wasn't found in the user's plugin root, then try searching the default locations for the platform,
+  // which includes the current directory.
   LinkedList pluginLocations = newLinkedList();
   _appendDefaultPluginLocations(getPlatformType(), pluginLocations);
   if(pluginLocations->item == NULL) {
