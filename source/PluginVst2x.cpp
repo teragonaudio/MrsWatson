@@ -322,6 +322,13 @@ static boolean _doesVst2xPluginExistAtLocation(const CharString pluginName, cons
 }
 
 static boolean _fillVst2xPluginAbsolutePath(const CharString pluginName, const CharString pluginRoot, CharString outLocation) {
+  // First see if an absolute path was given as the plugin name
+  if(isAbsolutePath(pluginName) && fileExists(pluginName->data)) {
+    copyCharStrings(outLocation, pluginName);
+    return true;
+  }
+
+  // Then search the path given to --plugin-root, if given
   if(!isCharStringEmpty(pluginRoot)) {
     if(_doesVst2xPluginExistAtLocation(pluginName, pluginRoot)) {
       copyCharStrings(outLocation, pluginRoot);
@@ -402,7 +409,12 @@ static boolean _openVst2xPlugin(void* pluginPtr) {
   PluginVst2xData data = (PluginVst2xData)plugin->extraData;
   logInfo("Opening VST2.x plugin '%s'", plugin->pluginName->data);
   CharString pluginAbsolutePath = newCharString();
-  buildAbsolutePath(plugin->pluginLocation, plugin->pluginName, _getVst2xPlatformExtension(), pluginAbsolutePath);
+  if(isAbsolutePath(plugin->pluginName)) {
+    copyCharStrings(pluginAbsolutePath, plugin->pluginName);
+  }
+  else {
+    buildAbsolutePath(plugin->pluginLocation, plugin->pluginName, _getVst2xPlatformExtension(), pluginAbsolutePath);
+  }
 
   AEffect* pluginHandle;
 #if MACOSX
