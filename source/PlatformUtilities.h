@@ -62,6 +62,7 @@ int listDirectory(const char* directory, LinkedList outItems);
 // const char* is used here as it is assumed that the extensions will be defined by the preprocessor
 // for given platforms, not kept in stack memory.
 void buildAbsolutePath(const CharString directory, const CharString file, const char* fileExtension, CharString outString);
+boolean isAbsolutePath(const CharString path);
 
 unsigned short convertBigEndianShortToPlatform(const unsigned short value);
 unsigned int convertBigEndianIntToPlatform(const unsigned int value);

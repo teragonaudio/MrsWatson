@@ -206,16 +206,25 @@ static AEffect* _loadVst2xPluginLinux(void* libraryHandle) {
 #endif
 
 static void _appendDefaultPluginLocations(PlatformType platformType, LinkedList outLocations) {
+  // Regardless of platform, the current directory should be searched first. This is most useful when debugging
+  CharString pwdLocationBuffer = newCharString();
+#if WINDOWS
+  GetCurrentDirectory(pwdLocationBuffer->capacity, pwdLocationBuffer->data);
+#else
+  snprintf(pwdLocationBuffer->data, (size_t)pwdLocationBuffer->capacity, "%s", getenv("PWD"));
+#endif
+  appendItemToList(outLocations, pwdLocationBuffer);
+
   switch(platformType) {
     case PLATFORM_WINDOWS:
     {
-      CharString locationBuffer1 = newCharString();
       snprintf(locationBuffer1->data, (size_t)(locationBuffer1->capacity), "C:\\VstPlugins");
+      snprintf(locationBuffer1->data, (size_t)(locationBuffer1->capacity), "C:\\Program Files\\Common Files\\VstPlugins");
       appendItemToList(outLocations, locationBuffer1);
-
       CharString locationBuffer2 = newCharString();
       snprintf(locationBuffer2->data, (size_t)(locationBuffer2->capacity), "C:\\Program Files\\Common Files\\VstPlugins");
       appendItemToList(outLocations, locationBuffer2);
+
 
       // TODO: Ugh, VST storage locations on windows are really messy. What should be included?
     }
@@ -313,9 +322,9 @@ void listAvailablePluginsVst2x(const CharString pluginRoot) {
 
   freeLinkedListAndItems(pluginLocations, (LinkedListFreeItemFunc)freeCharString);
 }
-
 static boolByte _doesVst2xPluginExistAtLocation(const CharString pluginName, const CharString location) {
   boolByte result = false;
+  boolean result = false;
   CharString pluginSearchPath = newCharString();
   buildAbsolutePath(location, pluginName, _getVst2xPlatformExtension(), pluginSearchPath);
   if(!isCharStringEmpty(location) && fileExists(pluginSearchPath->data)) {
@@ -325,8 +334,15 @@ static boolByte _doesVst2xPluginExistAtLocation(const CharString pluginName, con
   freeCharString(pluginSearchPath);
   return result;
 }
+static boolean _fillVst2xPluginAbsolutePath(const CharString pluginName, const CharString pluginRoot, CharString outLocation) {
+  // First see if an absolute path was given as the plugin name
+  if(isAbsolutePath(pluginName) && fileExists(pluginName->data)) {
+    copyCharStrings(outLocation, pluginName);
+    return true;
+  }
 
-static boolByte _fillVst2xPluginAbsolutePath(const CharString pluginName, const CharString pluginRoot, CharString outLocation) {
+  // Then search the path given to --plugin-root, if given
+  // Then search the path given to --plugin-root, if given
   if(!isCharStringEmpty(pluginRoot)) {
     if(_doesVst2xPluginExistAtLocation(pluginName, pluginRoot)) {
       copyCharStrings(outLocation, pluginRoot);
@@ -334,15 +350,16 @@ static boolByte _fillVst2xPluginAbsolutePath(const CharString pluginName, const 
     }
   }
 
-  // If the plugin wasn't found in the user's plugin root, then try searching the default locations for the platform
+  // If the plugin wasn't found in the user's plugin root, then try searching the default locations for the platform,
+  // which includes the current directory.
   LinkedList pluginLocations = newLinkedList();
   _appendDefaultPluginLocations(getPlatformType(), pluginLocations);
   if(pluginLocations->item == NULL) {
     freeLinkedList(pluginLocations);
     return false;
   }
-
   boolByte result = false;
+  boolean result = false;
   LinkedListIterator iterator = pluginLocations;
   while(iterator != NULL) {
     CharString searchLocation = (CharString)(iterator->item);
@@ -357,12 +374,12 @@ static boolByte _fillVst2xPluginAbsolutePath(const CharString pluginName, const 
   freeLinkedListAndItems(pluginLocations, (LinkedListFreeItemFunc)freeCharString);
   return result;
 }
-
 boolByte vst2xPluginExists(const CharString pluginName, const CharString pluginRoot, CharString outLocation) {
+boolean vst2xPluginExists(const CharString pluginName, const CharString pluginRoot, CharString outLocation) {
   return _fillVst2xPluginAbsolutePath(pluginName, pluginRoot, outLocation);
 }
-
 static boolByte _canPluginDo(Plugin plugin, const char* canDoString) {
+static boolean _canPluginDo(Plugin plugin, const char* canDoString) {
   PluginVst2xData data = (PluginVst2xData)plugin->extraData;
   VstIntPtr result = data->dispatcher(data->pluginHandle, effCanDo, 0, 0, (void *)canDoString, 0.0f);
   return result == 1;
@@ -379,8 +396,8 @@ static void _suspendPlugin(Plugin plugin) {
   PluginVst2xData data = (PluginVst2xData)plugin->extraData;
   data->dispatcher(data->pluginHandle, effMainsChanged, 0, 0, NULL, 0.0f);
 }
-
 static boolByte _initVst2xPlugin(Plugin plugin) {
+static boolean _initVst2xPlugin(Plugin plugin) {
   PluginVst2xData data = (PluginVst2xData)plugin->extraData;
   CharString uniqueIdString = newCharStringWithCapacity(STRING_LENGTH_SHORT);
   fillVst2xUniqueIdToString(data->pluginHandle->uniqueID, uniqueIdString);
@@ -394,20 +411,25 @@ static boolByte _initVst2xPlugin(Plugin plugin) {
     plugin->pluginType = PLUGIN_TYPE_EFFECT;
   }
 
-  data->dispatcher(data->pluginHandle, effOpen, 0, 0, NULL, 0.0f);
   data->dispatcher(data->pluginHandle, effSetSampleRate, 0, 0, NULL, (float)getSampleRate());
+  data->dispatcher(data->pluginHandle, effSetSampleRate, 0, 0, NULL, getSampleRate());
   data->dispatcher(data->pluginHandle, effSetBlockSize, 0, getBlocksize(), NULL, 0.0f);
 
   _resumePlugin(plugin);
   return true;
 }
-
 static boolByte _openVst2xPlugin(void* pluginPtr) {
+static boolean _openVst2xPlugin(void* pluginPtr) {
   Plugin plugin = (Plugin)pluginPtr;
   PluginVst2xData data = (PluginVst2xData)plugin->extraData;
   logInfo("Opening VST2.x plugin '%s'", plugin->pluginName->data);
   CharString pluginAbsolutePath = newCharString();
-  buildAbsolutePath(plugin->pluginLocation, plugin->pluginName, _getVst2xPlatformExtension(), pluginAbsolutePath);
+  if(isAbsolutePath(plugin->pluginName)) {
+    copyCharStrings(pluginAbsolutePath, plugin->pluginName);
+  }
+  else {
+    buildAbsolutePath(plugin->pluginLocation, plugin->pluginName, _getVst2xPlatformExtension(), pluginAbsolutePath);
+  }
 
   AEffect* pluginHandle;
 #if MACOSX
@@ -449,8 +471,8 @@ static boolByte _openVst2xPlugin(void* pluginPtr) {
 
   Vst2xPluginDispatcherFunc dispatcher = (Vst2xPluginDispatcherFunc)(pluginHandle->dispatcher);
   data->pluginHandle = pluginHandle;
-  data->dispatcher = dispatcher;
   boolByte result = _initVst2xPlugin(plugin);
+  boolean result = _initVst2xPlugin(plugin);
 
   return result;
 }
