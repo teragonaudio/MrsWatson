@@ -72,7 +72,7 @@ void stopTiming(TaskTimer taskTimer) {
     LARGE_INTEGER stopTime;
     QueryPerformanceCounter(&stopTime);
     elapsedTimeInClocks = ((stopTime.QuadPart - taskTimer->startTime.QuadPart));
-    taskTimer->totalTaskTimes[taskTimer->currentTask] += elapsedTimeInClocks;
+    taskTimer->totalTaskTimes[taskTimer->currentTask] += (unsigned long)elapsedTimeInClocks;
   }
 #else
   unsigned long elapsedTimeInMs;
