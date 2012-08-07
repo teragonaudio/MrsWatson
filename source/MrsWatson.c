@@ -292,6 +292,7 @@ int main(int argc, char** argv) {
       freeLinkedList(midiEventsForBlock);
     }
 
+    logDebug("Processing plugin chain, current sample is %d", outputSource->numFramesProcessed / outputSource->numChannels);
     processPluginChainAudio(pluginChain, inputSampleBuffer, outputSampleBuffer, taskTimer);
     startTimingTask(taskTimer, hostTaskId);
     outputSource->writeSampleBlock(outputSource, outputSampleBuffer);
