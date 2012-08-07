@@ -123,7 +123,7 @@ be of the corresponding file format for the respective plugin.\
     true, ARGUMENT_TYPE_REQUIRED, NO_DEFAULT_VALUE);
 
   _addNewProgramOption(programOptions, OPTION_PLUGIN_ROOT, "plugin-root",
-    "Directory to use when searching for plugins.",
+    "Custom non-system directory to use when searching for plugins.",
     false, ARGUMENT_TYPE_REQUIRED, NO_DEFAULT_VALUE);
 
   _addNewProgramOption(programOptions, OPTION_QUIET, "quiet",
