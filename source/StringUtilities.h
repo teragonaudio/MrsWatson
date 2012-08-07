@@ -28,6 +28,7 @@
 #ifndef MrsWatson_StringUtilities_h
 #define MrsWatson_StringUtilities_h
 
+#define DEFAULT_INDENT_SIZE 2
 #define TERMINAL_LINE_LENGTH 80
 
 char* getFileBasename(const char* filename);
