@@ -150,7 +150,7 @@ static const char* _logTimeColor(const LogColorScheme colorScheme) {
     return ANSI_COLOR_CYAN;
   }
   else if(colorScheme == COLOR_SCHEME_LIGHT) {
-    return ANSI_COLOR_BLUE;
+    return ANSI_COLOR_GREEN;
   }
   else {
     logInternalError("Invalid color scheme for status char");
