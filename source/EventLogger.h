@@ -54,7 +54,7 @@ typedef struct {
   long startTimeInSec;
   long startTimeInMs;
   LogColorScheme colorScheme;
-  int zebraStripeSizeInMs;
+  long zebraStripeSize;
 } EventLoggerMembers;
 
 typedef EventLoggerMembers* EventLogger;
@@ -65,7 +65,7 @@ void initEventLogger(void);
 void setLogLevel(LogLevel logLevel);
 void setLoggingColorScheme(const LogColorScheme colorScheme);
 void setLoggingColorSchemeWithString(const CharString colorSchemeName);
-void setLoggingZebraSizeInMs(const int zebraSizeInMs);
+void setLoggingZebraSize(const long zebraStripeSize);
 
 void logDebug(const char* message, ...);
 void logInfo(const char* message, ...);

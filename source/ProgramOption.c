@@ -162,8 +162,8 @@ value will be used and added to <argument>.",
     false, ARGUMENT_TYPE_NONE, NO_DEFAULT_VALUE);
 
   _addNewProgramOption(programOptions, OPTION_ZEBRA_SIZE, "zebra-size",
-    "Alternate logging output colors every <argument> milliseconds.",
-    false, ARGUMENT_TYPE_REQUIRED, DEFAULT_ZEBRA_STRIPE_SIZE_IN_MS);
+    "Alternate logging output colors every <argument> samples.",
+    false, ARGUMENT_TYPE_REQUIRED, (int)getSampleRate());
 
   return programOptions;
 }

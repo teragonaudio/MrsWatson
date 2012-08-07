@@ -105,9 +105,9 @@ void setLoggingColorSchemeWithString(const CharString colorSchemeName) {
   }
 }
 
-void setLoggingZebraSizeInMs(const int zebraSizeInMs) {
+void setLoggingZebraSize(const long zebraStripeSize) {
   EventLogger eventLogger = _getEventLoggerInstance();
-  eventLogger->zebraStripeSizeInMs = zebraSizeInMs;
+  eventLogger->zebraStripeSize = zebraStripeSize;
 }
 
 static char _logLevelStatusChar(const LogLevel logLevel) {
@@ -200,7 +200,7 @@ static void _logMessage(const LogLevel logLevel, const char* message, va_list ar
     const long elapsedTimeInMs = ((currentTime.tv_sec - (eventLogger->startTimeInSec + 1)) * 1000) +
       (currentTime.tv_usec / 1000) + (1000 - eventLogger->startTimeInMs);
     _printMessage(logLevel, elapsedTimeInMs, getAudioClockCurrentSample(),
-      eventLogger->colorScheme, formattedMessage->data, eventLogger->zebraStripeSizeInMs);
+      eventLogger->colorScheme, formattedMessage->data, eventLogger->zebraStripeSize);
     freeCharString(formattedMessage);
   }
 }
