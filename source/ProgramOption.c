@@ -153,7 +153,8 @@ value will be used and added to <argument>.",
     false, ARGUMENT_TYPE_REQUIRED, getTimeSignatureNoteValue());
 
   _addNewProgramOption(programOptions, OPTION_VERBOSE, "verbose",
-    "Verbose logging.",
+    "Verbose logging. Logging output is printed in the following form:\n\
+(Level) (Frames processed) (Elapsed time in ms) (Logging message)",
     true, ARGUMENT_TYPE_NONE, NO_DEFAULT_VALUE);
 
   _addNewProgramOption(programOptions, OPTION_VERSION, "version",
