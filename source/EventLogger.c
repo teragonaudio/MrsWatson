@@ -34,6 +34,7 @@
 #include "EventLogger.h"
 #include "MrsWatson.h"
 #include "AudioClock.h"
+#include "AudioSettings.h"
 
 #if ! WINDOWS
 #include <unistd.h>
@@ -60,7 +61,7 @@ void initEventLogger(void) {
   eventLoggerInstance->startTimeInSec = currentTime.tv_sec;
   eventLoggerInstance->startTimeInMs = currentTime.tv_usec / 1000;
   eventLoggerInstance->colorScheme = COLOR_SCHEME_NONE;
-  eventLoggerInstance->zebraStripeSizeInMs = DEFAULT_ZEBRA_STRIPE_SIZE_IN_MS;
+  eventLoggerInstance->zebraStripeSize = (long)DEFAULT_SAMPLE_RATE;
 
 #if ! WINDOWS
   // On unix, we can detect if stderr is pointing to a terminal and set output
