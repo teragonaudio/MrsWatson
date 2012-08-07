@@ -62,6 +62,7 @@ int main(int argc, char** argv) {
   ProgramOptions programOptions = newProgramOptions();
   if(!parseCommandLine(programOptions, argc, argv)) {
     printf("Run %s --help to see possible options\n", getFileBasename(argv[0]));
+    printf("Or run %s --help (option) to see help for a single option\n", getFileBasename(argv[0]));
     return RETURN_CODE_INVALID_ARGUMENT;
   }
 
