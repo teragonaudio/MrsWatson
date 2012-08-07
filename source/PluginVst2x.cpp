@@ -141,7 +141,7 @@ static AEffect* _loadVst2xPluginMac(CFBundleRef bundle) {
 
 #if WINDOWS
 static HMODULE _moduleHandleForPlugin(const char* pluginAbsolutePath) {
-  HMODULE moduleHandle = LoadLibraryA((LPCSTR)pluginAbsolutePath);
+  HMODULE moduleHandle = LoadLibraryExA((LPCSTR)pluginAbsolutePath, NULL, LOAD_WITH_ALTERED_SEARCH_PATH);
   if(moduleHandle == NULL) {
     logError("Could not open library, error code '%d'", GetLastError());
     return NULL;
