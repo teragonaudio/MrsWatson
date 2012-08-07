@@ -56,26 +56,26 @@ static boolean _addPluginToChain(PluginChain pluginChain, Plugin plugin, PluginP
 }
 
 boolean addPluginsFromArgumentString(PluginChain pluginChain, const CharString argumentString, const CharString pluginRoot) {
-  // Expect a comma-separated string of plugins with colon separators for preset name
-  // Example: plugin1:preset1name,plugin2:preset2name
+  // Expect a semicolon-separated string of plugins with comma separators for preset names
+  // Example: plugin1,preset1name;plugin2,preset2name
   char* substringStart = argumentString->data;
-  char* comma = strchr(argumentString->data, ',');
+  char*pluginSeparator = strchr(argumentString->data, CHAIN_STRING_PLUGIN_SEPARATOR);
   char* endChar = argumentString->data + strlen(argumentString->data);
   CharString pluginNameBuffer = newCharString();
 
   do {
     size_t substringLength;
-    if(comma == NULL) {
+    if(pluginSeparator == NULL) {
       substringLength = strlen(argumentString->data);
     }
     else {
-      substringLength = comma - substringStart;      
+      substringLength = pluginSeparator - substringStart;
     }
     strncpy(pluginNameBuffer->data, substringStart, substringLength);
 
     // Use colon as a separator for presets to load into these plugins
     CharString presetNameBuffer = newCharString();
-    char* colon = strchr(pluginNameBuffer->data, ':');
+    char* colon = strchr(pluginNameBuffer->data, CHAIN_STRING_PROGRAM_SEPARATOR);
     if(colon != NULL) {
       // Null-terminate this string to force it to end, then extract preset name from next char
       *colon = '\0';
@@ -105,12 +105,12 @@ boolean addPluginsFromArgumentString(PluginChain pluginChain, const CharString a
     }
     freeCharString(pluginLocationBuffer);
 
-    if(comma == NULL) {
+    if(pluginSeparator == NULL) {
       break;
     }
     else {
-      substringStart = comma + 1;
-      comma = strchr(comma + 1, ',');
+      substringStart = pluginSeparator + 1;
+      pluginSeparator = strchr(pluginSeparator + 1, CHAIN_STRING_PLUGIN_SEPARATOR);
     }
   } while(substringStart < endChar);
 
@@ -191,11 +191,10 @@ int getMaximumTailTimeInMs(PluginChain pluginChain) {
 }
 
 void processPluginChainAudio(PluginChain pluginChain, SampleBuffer inBuffer, SampleBuffer outBuffer, TaskTimer taskTimer) {
-  logDebug("Processing plugin chain audio");
   for(int i = 0; i < pluginChain->numPlugins; i++) {
     clearSampleBuffer(outBuffer);
     Plugin plugin = pluginChain->plugins[i];
-    logDebug("Plugin '%s' processing audio", plugin->pluginName->data);
+    logDebug("Processing audio with plugin '%s'", plugin->pluginName->data);
     startTimingTask(taskTimer, i);
     plugin->processAudio(plugin, inBuffer, outBuffer);
     // TODO: Last task ID is the host, but this is a bit hacky

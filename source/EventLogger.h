@@ -32,8 +32,6 @@
 #ifndef MrsWatson_EventLogger_h
 #define MrsWatson_EventLogger_h
 
-#define ZEBRA_STRIPE_SIZE_IN_MS 100
-
 typedef enum {
   LOG_DEBUG,
   LOG_INFO,
@@ -56,6 +54,7 @@ typedef struct {
   long startTimeInSec;
   long startTimeInMs;
   LogColorScheme colorScheme;
+  long zebraStripeSize;
 } EventLoggerMembers;
 
 typedef EventLoggerMembers* EventLogger;
@@ -66,6 +65,7 @@ void initEventLogger(void);
 void setLogLevel(LogLevel logLevel);
 void setLoggingColorScheme(const LogColorScheme colorScheme);
 void setLoggingColorSchemeWithString(const CharString colorSchemeName);
+void setLoggingZebraSize(const long zebraStripeSize);
 
 void logDebug(const char* message, ...);
 void logInfo(const char* message, ...);
