@@ -156,6 +156,9 @@ int main(int argc, char** argv) {
         case OPTION_TIME_SIGNATURE_BOTTOM:
           setTimeSignatureNoteValue((short)strtol(option->argument->data, NULL, 10));
           break;
+        case OPTION_ZEBRA_SIZE:
+          setLoggingZebraSizeInMs((int)strtol(option->argument->data, NULL, 10));
+          break;
         default:
           // Ignore -- no special handling needs to be performed here
           break;

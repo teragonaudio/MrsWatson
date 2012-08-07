@@ -160,6 +160,10 @@ value will be used and added to <argument>.",
     "Print full program version and copyright information.",
     false, ARGUMENT_TYPE_NONE, NO_DEFAULT_VALUE);
 
+  _addNewProgramOption(programOptions, OPTION_ZEBRA_SIZE, "zebra-size",
+    "Alternate logging output colors every <argument> milliseconds.",
+    false, ARGUMENT_TYPE_REQUIRED, DEFAULT_ZEBRA_STRIPE_SIZE_IN_MS);
+
   return programOptions;
 }
 
