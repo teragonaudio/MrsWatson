@@ -194,7 +194,7 @@ void processPluginChainAudio(PluginChain pluginChain, SampleBuffer inBuffer, Sam
   for(int i = 0; i < pluginChain->numPlugins; i++) {
     clearSampleBuffer(outBuffer);
     Plugin plugin = pluginChain->plugins[i];
-    logDebug("Plugin '%s' processing audio", plugin->pluginName->data);
+    logDebug("Processing audio with plugin '%s'", plugin->pluginName->data);
     startTimingTask(taskTimer, i);
     plugin->processAudio(plugin, inBuffer, outBuffer);
     // TODO: Last task ID is the host, but this is a bit hacky
