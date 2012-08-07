@@ -480,7 +480,7 @@ static boolByte _openVst2xPlugin(void* pluginPtr) {
     return false;
   }
 
-  Vst2xPluginDispatcherFunc dispatcher = (Vst2xPluginDispatcherFunc)(pluginHandle->dispatcher);
+  data->dispatcher = (Vst2xPluginDispatcherFunc)(pluginHandle->dispatcher);
   data->pluginHandle = pluginHandle;
   boolByte result = _initVst2xPlugin(plugin);
 
