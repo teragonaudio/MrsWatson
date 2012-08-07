@@ -441,6 +441,7 @@ static boolByte _openVst2xPlugin(void* pluginPtr) {
   else {
     buildAbsolutePath(plugin->pluginLocation, plugin->pluginName, _getVst2xPlatformExtension(), pluginAbsolutePath);
   }
+  logDebug("Plugin location is '%s'", plugin->pluginLocation->data);
 
 #if MACOSX
   data->bundleRef = _bundleRefForVst2xPlugin(pluginAbsolutePath->data);
