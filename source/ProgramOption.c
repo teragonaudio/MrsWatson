@@ -114,9 +114,12 @@ from the --channels option.",
     false, ARGUMENT_TYPE_REQUIRED, (int)getSampleRate());
 
   _addNewProgramOption(programOptions, OPTION_PLUGIN, "plugin",
-    "Plugin(s) to process. Multiple plugins can given in a comma-separated list, in which case they will be \
-placed into a chain in the order specified. Instrument plugins must appear first in any chains. Plugins are \
-loaded from the standard locations for the OS.",
+    "Plugin(s) to process. Multiple plugins can given in a semicolon-separated list, in which case they will be \
+placed into a chain in the order specified. Instrument plugins must appear first in any chains. Plugins are searched \
+for in the --plugin-root directory, the current directory, and the standard locations for the OS. File extensions are \
+added automatically to plugin names. Each plugin may be followed by a comma with a program to be loaded, which should \
+be of the corresponding file format for the respective plugin.\
+\nExample: --plugin 'AutoTune,KayneWest.fxp;Compressor,SoftKnee.fxp;Limiter'",
     true, ARGUMENT_TYPE_REQUIRED, NO_DEFAULT_VALUE);
 
   _addNewProgramOption(programOptions, OPTION_PLUGIN_ROOT, "plugin-root",
