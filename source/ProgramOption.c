@@ -267,43 +267,69 @@ boolean parseCommandLine(ProgramOptions programOptions, int argc, char** argv) {
   return true;
 }
 
-void printProgramOptions(ProgramOptions programOptions) {
+void printProgramQuickHelp(const char* argvName) {
+  char *programBasename = getFileBasename(argvName);
+  printf("Usage: %s (options), where <argument> is required and [argument] is optional.\n", programBasename);
+  printf("Quickstart for effects: %s --plugin <name> --input <name> --output <name>\n", programBasename);
+  printf("Quickstart for instruments: %s --plugin <name> --midi-file <name> --output <name>\n", programBasename);
+  printf("\n");
+}
+
+void printProgramOptionsHelp(const ProgramOptions programOptions, int indentSize) {
   for(int i = 0; i < NUM_OPTIONS; i++) {
-    // Don't print out help in help
-    if(i == OPTION_HELP) {
-      continue;
-    }
-
-    // All arguments have a long form, so that will always be printed
-    ProgramOption programOption = programOptions[i];
-    printf("  --%s", programOption->name->data);
-
-    if(programOption->hasShortForm) {
-      printf(", -%c", programOption->name->data[0]);
-    }
-
-    switch(programOption->argumentType) {
-      case ARGUMENT_TYPE_REQUIRED:
-        printf(" <argument>");
-        break;
-      case ARGUMENT_TYPE_OPTIONAL:
-        printf(" [argument]");
-        break;
-      case ARGUMENT_TYPE_NONE:
-      default:
-        break;
-    }
-
-    if(programOption->helpDefaultValue != NO_DEFAULT_VALUE) {
-      printf(", default value: %d", programOption->helpDefaultValue);
-    }
-
-    // Newline and indentation before help
-    CharString wrappedHelpString = newCharStringWithCapacity(STRING_LENGTH_LONG);
-    wrapStringForTerminal(programOption->help->data, wrappedHelpString->data, 4);
-    printf("\n%s\n\n", wrappedHelpString->data);
-    freeCharString(wrappedHelpString);
+    printProgramOptionHelp(programOptions[i], indentSize, indentSize);
   }
+}
+
+void printProgramOptionHelp(const ProgramOption programOption, int indentSize, int initialIndent) {
+  int i;
+  if(programOption == NULL) {
+    logError("Can't find help for that option. Try running with --help to see all options\n");
+    return;
+  }
+
+  // Initial argument indent
+  for(i = 0; i < initialIndent; i ++) {
+    printf(" ");
+  }
+
+  // All arguments have a long form, so that will always be printed
+  printf("--%s", programOption->name->data);
+
+  if(programOption->hasShortForm) {
+    printf(" (or -%c)", programOption->name->data[0]);
+  }
+
+  switch(programOption->argumentType) {
+    case ARGUMENT_TYPE_REQUIRED:
+      printf(" <argument>");
+      break;
+    case ARGUMENT_TYPE_OPTIONAL:
+      printf(" [argument]");
+      break;
+    case ARGUMENT_TYPE_NONE:
+    default:
+      break;
+  }
+
+  if(programOption->helpDefaultValue != NO_DEFAULT_VALUE) {
+    printf(", default value: %d", programOption->helpDefaultValue);
+  }
+
+  // Newline and indentation before help
+  CharString wrappedHelpString = newCharStringWithCapacity(STRING_LENGTH_LONG);
+  wrapStringForTerminal(programOption->help->data, wrappedHelpString->data, initialIndent + indentSize);
+  printf("\n%s\n\n", wrappedHelpString->data);
+  freeCharString(wrappedHelpString);
+}
+
+const ProgramOption findProgramOptionFromString(const ProgramOptions programOptions, const CharString string) {
+  for(int i = 0; i < NUM_OPTIONS; i++) {
+    if(isCharStringEqualTo(string, programOptions[i]->name, true)) {
+      return programOptions[i];
+    }
+  }
+  return NULL;
 }
 
 static void _freeProgramOption(ProgramOption programOption) {

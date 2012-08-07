@@ -80,7 +80,10 @@ typedef ProgramOption* ProgramOptions;
 
 ProgramOptions newProgramOptions(void);
 boolean parseCommandLine(ProgramOptions programOptions, int argc, char** argv);
-void printProgramOptions(ProgramOptions programOptions);
+const ProgramOption findProgramOptionFromString(const ProgramOptions programOptions, const CharString string);
+void printProgramQuickHelp(const char* argvName);
+void printProgramOptionsHelp(const ProgramOptions programOptions, int indentSize);
+void printProgramOptionHelp(const ProgramOption programOption, int indentSize, int initialIndent);
 void freeProgramOptions(ProgramOptions programOptions);
 
 #endif
