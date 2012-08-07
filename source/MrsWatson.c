@@ -76,7 +76,7 @@ int main(int argc, char** argv) {
   else if(programOptions[OPTION_HELP]->enabled) {
     printProgramQuickHelp(argv[0]);
     if(isCharStringEmpty(programOptions[OPTION_HELP]->argument)) {
-      printf("Options:\n");
+      printf("All options:\n");
       printProgramOptionsHelp(programOptions, DEFAULT_INDENT_SIZE);
     }
     else {
