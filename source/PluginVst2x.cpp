@@ -141,7 +141,7 @@ static AEffect* _loadVst2xPluginMac(CFBundleRef bundle) {
 
 #if WINDOWS
 static HMODULE _moduleHandleForPlugin(const char* pluginAbsolutePath) {
-  HMODULE moduleHandle = LoadLibraryA((LPCSTR)pluginAbsolutePath);
+  HMODULE moduleHandle = LoadLibraryExA((LPCSTR)pluginAbsolutePath, NULL, LOAD_WITH_ALTERED_SEARCH_PATH);
   if(moduleHandle == NULL) {
     logError("Could not open library, error code '%d'", GetLastError());
     return NULL;
@@ -206,10 +206,13 @@ static AEffect* _loadVst2xPluginLinux(void* libraryHandle) {
 #endif
 
 static void _appendDefaultPluginLocations(PlatformType platformType, LinkedList outLocations) {
+  CharString pwdLocationBuffer, locationBuffer1, locationBuffer2;
+  const char* vstPathEnv;
+
   // Regardless of platform, the current directory should be searched first. This is most useful when debugging
-  CharString pwdLocationBuffer = newCharString();
+  pwdLocationBuffer = newCharString();
 #if WINDOWS
-  GetCurrentDirectory(pwdLocationBuffer->capacity, pwdLocationBuffer->data);
+  GetCurrentDirectoryA(pwdLocationBuffer->capacity, pwdLocationBuffer->data);
 #else
   snprintf(pwdLocationBuffer->data, (size_t)pwdLocationBuffer->capacity, "%s", getenv("PWD"));
 #endif
@@ -218,38 +221,36 @@ static void _appendDefaultPluginLocations(PlatformType platformType, LinkedList 
   switch(platformType) {
     case PLATFORM_WINDOWS:
     {
+      locationBuffer1 = newCharString();
       snprintf(locationBuffer1->data, (size_t)(locationBuffer1->capacity), "C:\\VstPlugins");
-      snprintf(locationBuffer1->data, (size_t)(locationBuffer1->capacity), "C:\\Program Files\\Common Files\\VstPlugins");
       appendItemToList(outLocations, locationBuffer1);
-      CharString locationBuffer2 = newCharString();
+
+      locationBuffer2 = newCharString();
       snprintf(locationBuffer2->data, (size_t)(locationBuffer2->capacity), "C:\\Program Files\\Common Files\\VstPlugins");
       appendItemToList(outLocations, locationBuffer2);
-
-
-      // TODO: Ugh, VST storage locations on windows are really messy. What should be included?
     }
       break;
     case PLATFORM_MACOSX:
     {
-      CharString locationBuffer1 = newCharString();
+      locationBuffer1 = newCharString();
       snprintf(locationBuffer1->data, (size_t)(locationBuffer1->capacity), "/Library/Audio/Plug-Ins/VST");
       appendItemToList(outLocations, locationBuffer1);
 
-      CharString locationBuffer2 = newCharString();
+      locationBuffer2 = newCharString();
       snprintf(locationBuffer2->data, (size_t)(locationBuffer2->capacity), "%s/Library/Audio/Plug-Ins/VST", getenv("HOME"));
       appendItemToList(outLocations, locationBuffer2);
     }
       break;
     case PLATFORM_LINUX:
     {
-      CharString locationBuffer1 = newCharString();
+      locationBuffer1 = newCharString();
       snprintf(locationBuffer1->data, (size_t)(locationBuffer1->capacity), "%s/.vst", getenv("HOME"));
       appendItemToList(outLocations, locationBuffer1);
 
-      CharString locationBuffer2 = newCharString();
-      const char* vstPath = getenv("VST_PATH");
-      if(vstPath != NULL) {
-        snprintf(locationBuffer2->data, (size_t)(locationBuffer2->capacity), "%s", getenv("VST_PATH"));
+      locationBuffer2 = newCharString();
+      vstPathEnv = getenv("VST_PATH");
+      if(vstPathEnv != NULL) {
+        snprintf(locationBuffer2->data, (size_t)(locationBuffer2->capacity), "%s", vstPathEnv);
         appendItemToList(outLocations, locationBuffer2);
       }
     }
@@ -276,24 +277,30 @@ static const char* _getVst2xPlatformExtension(void) {
 }
 
 static void _listPluginsVst2xInLocation(const CharString location) {
+  LinkedList locationItems;
+  LinkedListIterator iterator;
+  char* itemName;
+  char* dot;
+  int numItems, numPlugins = 0;
+  const char* platformVstExtension = _getVst2xPlatformExtension();
+
   logInfo("Location '%s':", location->data);
-  LinkedList locationItems = newLinkedList();
-  int numItems = listDirectory(location->data, locationItems);
+  locationItems = newLinkedList();
+  numItems = listDirectory(location->data, locationItems);
   if(numItems == 0) {
     logInfo("  Directory does not exist");
     freeLinkedList(locationItems);
     return;
   }
 
-  LinkedListIterator iterator = locationItems;
-  int numPlugins = 0;
+  iterator = locationItems;
   while(iterator != NULL) {
-    char* itemName = (char*)iterator->item;
-    char* dot = strrchr(itemName, '.');
+    itemName = (char*)(iterator->item);
+    dot = strrchr(itemName, '.');
     if(dot != NULL) {
-      if(!strncmp(dot + 1, _getVst2xPlatformExtension(), 3)) {
+      if(!strncmp(dot + 1, platformVstExtension, 3)) {
         *dot = '\0';
-        logInfo("  %s", iterator->item);
+        logInfo("  %s", itemName);
         numPlugins++;
       }
     }
@@ -303,6 +310,7 @@ static void _listPluginsVst2xInLocation(const CharString location) {
   if(numPlugins == 0) {
     logInfo("  No plugins found");
   }
+  // TODO: Memory leak here! The list is freed, but not the char* pointers in it
   freeLinkedList(locationItems);
 }
 
@@ -322,9 +330,9 @@ void listAvailablePluginsVst2x(const CharString pluginRoot) {
 
   freeLinkedListAndItems(pluginLocations, (LinkedListFreeItemFunc)freeCharString);
 }
+
 static boolByte _doesVst2xPluginExistAtLocation(const CharString pluginName, const CharString location) {
   boolByte result = false;
-  boolean result = false;
   CharString pluginSearchPath = newCharString();
   buildAbsolutePath(location, pluginName, _getVst2xPlatformExtension(), pluginSearchPath);
   if(!isCharStringEmpty(location) && fileExists(pluginSearchPath->data)) {
@@ -334,14 +342,16 @@ static boolByte _doesVst2xPluginExistAtLocation(const CharString pluginName, con
   freeCharString(pluginSearchPath);
   return result;
 }
-static boolean _fillVst2xPluginAbsolutePath(const CharString pluginName, const CharString pluginRoot, CharString outLocation) {
+
+static boolByte _fillVst2xPluginAbsolutePath(const CharString pluginName, const CharString pluginRoot, CharString outLocation) {
+  boolByte result = false;
+
   // First see if an absolute path was given as the plugin name
   if(isAbsolutePath(pluginName) && fileExists(pluginName->data)) {
     copyCharStrings(outLocation, pluginName);
     return true;
   }
 
-  // Then search the path given to --plugin-root, if given
   // Then search the path given to --plugin-root, if given
   if(!isCharStringEmpty(pluginRoot)) {
     if(_doesVst2xPluginExistAtLocation(pluginName, pluginRoot)) {
@@ -358,8 +368,7 @@ static boolean _fillVst2xPluginAbsolutePath(const CharString pluginName, const C
     freeLinkedList(pluginLocations);
     return false;
   }
-  boolByte result = false;
-  boolean result = false;
+
   LinkedListIterator iterator = pluginLocations;
   while(iterator != NULL) {
     CharString searchLocation = (CharString)(iterator->item);
@@ -374,12 +383,12 @@ static boolean _fillVst2xPluginAbsolutePath(const CharString pluginName, const C
   freeLinkedListAndItems(pluginLocations, (LinkedListFreeItemFunc)freeCharString);
   return result;
 }
+
 boolByte vst2xPluginExists(const CharString pluginName, const CharString pluginRoot, CharString outLocation) {
-boolean vst2xPluginExists(const CharString pluginName, const CharString pluginRoot, CharString outLocation) {
   return _fillVst2xPluginAbsolutePath(pluginName, pluginRoot, outLocation);
 }
+
 static boolByte _canPluginDo(Plugin plugin, const char* canDoString) {
-static boolean _canPluginDo(Plugin plugin, const char* canDoString) {
   PluginVst2xData data = (PluginVst2xData)plugin->extraData;
   VstIntPtr result = data->dispatcher(data->pluginHandle, effCanDo, 0, 0, (void *)canDoString, 0.0f);
   return result == 1;
@@ -396,8 +405,8 @@ static void _suspendPlugin(Plugin plugin) {
   PluginVst2xData data = (PluginVst2xData)plugin->extraData;
   data->dispatcher(data->pluginHandle, effMainsChanged, 0, 0, NULL, 0.0f);
 }
+
 static boolByte _initVst2xPlugin(Plugin plugin) {
-static boolean _initVst2xPlugin(Plugin plugin) {
   PluginVst2xData data = (PluginVst2xData)plugin->extraData;
   CharString uniqueIdString = newCharStringWithCapacity(STRING_LENGTH_SHORT);
   fillVst2xUniqueIdToString(data->pluginHandle->uniqueID, uniqueIdString);
@@ -411,17 +420,19 @@ static boolean _initVst2xPlugin(Plugin plugin) {
     plugin->pluginType = PLUGIN_TYPE_EFFECT;
   }
 
+  data->dispatcher(data->pluginHandle, effOpen, 0, 0, NULL, 0.0f);
   data->dispatcher(data->pluginHandle, effSetSampleRate, 0, 0, NULL, (float)getSampleRate());
-  data->dispatcher(data->pluginHandle, effSetSampleRate, 0, 0, NULL, getSampleRate());
   data->dispatcher(data->pluginHandle, effSetBlockSize, 0, getBlocksize(), NULL, 0.0f);
 
   _resumePlugin(plugin);
   return true;
 }
+
 static boolByte _openVst2xPlugin(void* pluginPtr) {
-static boolean _openVst2xPlugin(void* pluginPtr) {
+  AEffect* pluginHandle;
   Plugin plugin = (Plugin)pluginPtr;
   PluginVst2xData data = (PluginVst2xData)plugin->extraData;
+
   logInfo("Opening VST2.x plugin '%s'", plugin->pluginName->data);
   CharString pluginAbsolutePath = newCharString();
   if(isAbsolutePath(plugin->pluginName)) {
@@ -430,8 +441,8 @@ static boolean _openVst2xPlugin(void* pluginPtr) {
   else {
     buildAbsolutePath(plugin->pluginLocation, plugin->pluginName, _getVst2xPlatformExtension(), pluginAbsolutePath);
   }
+  logDebug("Plugin location is '%s'", plugin->pluginLocation->data);
 
-  AEffect* pluginHandle;
 #if MACOSX
   data->bundleRef = _bundleRefForVst2xPlugin(pluginAbsolutePath->data);
   if(data->bundleRef == NULL) {
@@ -469,10 +480,9 @@ static boolean _openVst2xPlugin(void* pluginPtr) {
     return false;
   }
 
-  Vst2xPluginDispatcherFunc dispatcher = (Vst2xPluginDispatcherFunc)(pluginHandle->dispatcher);
+  data->dispatcher = (Vst2xPluginDispatcherFunc)(pluginHandle->dispatcher);
   data->pluginHandle = pluginHandle;
   boolByte result = _initVst2xPlugin(plugin);
-  boolean result = _initVst2xPlugin(plugin);
 
   return result;
 }
