@@ -219,7 +219,7 @@ static void _logMessage(const LogLevel logLevel, const char* message, va_list ar
     vsnprintf(formattedMessage->data, formattedMessage->capacity, message, arguments);
 #if WINDOWS
     currentTime = GetTickCount();
-    elapsedTimeInMs = (unsigned long)(eventLogger->startTimeInMs - currentTime);
+    elapsedTimeInMs = (unsigned long)(currentTime - eventLogger->startTimeInMs);
 #else
     gettimeofday(&currentTime, NULL);
     elapsedTimeInMs = ((currentTime.tv_sec - (eventLogger->startTimeInSec + 1)) * 1000) +
