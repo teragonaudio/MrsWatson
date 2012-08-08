@@ -38,7 +38,7 @@
 static void _addNewProgramOption(const ProgramOptions programOptions, const int optionIndex,
   const char* name, const char* help, boolByte hasShortForm, ProgramOptionArgumentType argumentType,
   int defaultValue) {
-  ProgramOption programOption = malloc(sizeof(ProgramOptionMembers));
+  ProgramOption programOption = (ProgramOption)malloc(sizeof(ProgramOptionMembers));
 
   programOption->index = optionIndex;
   programOption->name = newCharStringWithCapacity(STRING_LENGTH_SHORT);
@@ -97,6 +97,10 @@ If stderr is a terminal device, color is used automatically unless 'none' is giv
   _addNewProgramOption(programOptions, OPTION_MIDI_SOURCE, "midi-file",
     "MIDI file to read events from. Required if processing an instrument plugin.",
     true, ARGUMENT_TYPE_REQUIRED, NO_DEFAULT_VALUE);
+
+  _addNewProgramOption(programOptions, OPTION_OPTIONS, "options",
+    "Show program options and their default values.",
+    false, ARGUMENT_TYPE_NONE, NO_DEFAULT_VALUE);
 
   _addNewProgramOption(programOptions, OPTION_OUTPUT_SOURCE, "output",
     "Output source to write processed data to, where the file type is determined from the extension. Run with \
@@ -285,14 +289,14 @@ void printProgramQuickHelp(const char* argvName) {
   printf("\n");
 }
 
-void printProgramOptionsHelp(const ProgramOptions programOptions, int indentSize) {
+void printProgramOptions(const ProgramOptions programOptions, boolByte withFullHelp, int indentSize) {
   int i;
   for(i = 0; i < NUM_OPTIONS; i++) {
-    printProgramOptionHelp(programOptions[i], indentSize, indentSize);
+    printProgramOption(programOptions[i], withFullHelp, indentSize, indentSize);
   }
 }
 
-void printProgramOptionHelp(const ProgramOption programOption, int indentSize, int initialIndent) {
+void printProgramOption(const ProgramOption programOption, boolByte withFullHelp, int indentSize, int initialIndent) {
   CharString wrappedHelpString;
   int i;
 
@@ -329,11 +333,16 @@ void printProgramOptionHelp(const ProgramOption programOption, int indentSize, i
     printf(", default value: %d", programOption->helpDefaultValue);
   }
 
-  // Newline and indentation before help
-  wrappedHelpString = newCharStringWithCapacity(STRING_LENGTH_LONG);
-  wrapStringForTerminal(programOption->help->data, wrappedHelpString->data, initialIndent + indentSize);
-  printf("\n%s\n\n", wrappedHelpString->data);
-  freeCharString(wrappedHelpString);
+  if(withFullHelp) {
+    // Newline and indentation before help
+    wrappedHelpString = newCharStringWithCapacity(STRING_LENGTH_LONG);
+    wrapStringForTerminal(programOption->help->data, wrappedHelpString->data, initialIndent + indentSize);
+    printf("\n%s\n\n", wrappedHelpString->data);
+    freeCharString(wrappedHelpString);
+  }
+  else {
+    printf("\n");
+  }
 }
 
 const ProgramOption findProgramOptionFromString(const ProgramOptions programOptions, const CharString string) {

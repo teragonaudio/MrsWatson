@@ -59,6 +59,7 @@ typedef enum {
   OPTION_LIST_FILE_TYPES,
   OPTION_LIST_PLUGINS,
   OPTION_MIDI_SOURCE,
+  OPTION_OPTIONS,
   OPTION_OUTPUT_SOURCE,
   OPTION_PCM_NUM_CHANNELS,
   OPTION_PCM_SAMPLE_RATE,
@@ -83,8 +84,8 @@ ProgramOptions newProgramOptions(void);
 boolByte parseCommandLine(ProgramOptions programOptions, int argc, char** argv);
 const ProgramOption findProgramOptionFromString(const ProgramOptions programOptions, const CharString string);
 void printProgramQuickHelp(const char* argvName);
-void printProgramOptionsHelp(const ProgramOptions programOptions, int indentSize);
-void printProgramOptionHelp(const ProgramOption programOption, int indentSize, int initialIndent);
+void printProgramOptions(const ProgramOptions programOptions, boolByte withFullHelp, int indentSize);
+void printProgramOption(const ProgramOption programOption, boolByte withFullHelp, int indentSize, int initialIndent);
 void freeProgramOptions(ProgramOptions programOptions);
 
 #endif

@@ -85,19 +85,24 @@ int main(int argc, char** argv) {
   // of these and then exit right away.
   if(argc == 1) {
     printProgramQuickHelp(argv[0]);
-    printf("Run %s --help to see all possible options\n", getFileBasename(argv[0]));
+    printf("Run with --options to see all options, or with --help for full help\n");
     return RETURN_CODE_NOT_RUN;
   }
   else if(programOptions[OPTION_HELP]->enabled) {
     printProgramQuickHelp(argv[0]);
     if(isCharStringEmpty(programOptions[OPTION_HELP]->argument)) {
       printf("All options:\n");
-      printProgramOptionsHelp(programOptions, DEFAULT_INDENT_SIZE);
+      printProgramOptions(programOptions, true, DEFAULT_INDENT_SIZE);
     }
     else {
       printf("Help for option '%s':\n", programOptions[OPTION_HELP]->argument->data);
-      printProgramOptionHelp(findProgramOptionFromString(programOptions, programOptions[OPTION_HELP]->argument), DEFAULT_INDENT_SIZE, 0);
+      printProgramOption(findProgramOptionFromString(programOptions, programOptions[OPTION_HELP]->argument), true, DEFAULT_INDENT_SIZE, 0);
     }
+    return RETURN_CODE_NOT_RUN;
+  }
+  else if(programOptions[OPTION_OPTIONS]->enabled) {
+    printf("Recognized options and their default values:\n");
+    printProgramOptions(programOptions, false, DEFAULT_INDENT_SIZE);
     return RETURN_CODE_NOT_RUN;
   }
   else if(programOptions[OPTION_VERSION]->enabled) {
