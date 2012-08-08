@@ -283,9 +283,8 @@ boolByte parseCommandLine(ProgramOptions programOptions, int argc, char** argv) 
 
 void printProgramQuickHelp(const char* argvName) {
   const char *programBasename = getFileBasename(argvName);
-  printf("Usage: %s (options), where <argument> is required and [argument] is optional.\n", programBasename);
-  printf("Quickstart for effects: %s --plugin <name> --input <name> --output <name>\n", programBasename);
-  printf("Quickstart for instruments: %s --plugin <name> --midi-file <name> --output <name>\n", programBasename);
+  printf("Quickstart for effects: %s -p <plugin> -i <input file> -o <output>\n", programBasename);
+  printf("Quickstart for instruments: %s -p <name> -m <midi file> -o <output>\n", programBasename);
   printf("\n");
 }
 

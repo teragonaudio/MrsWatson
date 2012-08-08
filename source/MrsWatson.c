@@ -84,6 +84,7 @@ int main(int argc, char** argv) {
   // These options conflict with standard processing (more or less), so check to see if the user wanted one
   // of these and then exit right away.
   if(argc == 1) {
+    printf("%s needs at least a plugin, input source, and output source to run.\n\n", PROGRAM_NAME);
     printProgramQuickHelp(argv[0]);
     printf("Run with --options to see all options, or with --help for full help\n");
     return RETURN_CODE_NOT_RUN;
@@ -91,7 +92,7 @@ int main(int argc, char** argv) {
   else if(programOptions[OPTION_HELP]->enabled) {
     printProgramQuickHelp(argv[0]);
     if(isCharStringEmpty(programOptions[OPTION_HELP]->argument)) {
-      printf("All options:\n");
+      printf("All options, where <argument> is required and [argument] is optional:\n");
       printProgramOptions(programOptions, true, DEFAULT_INDENT_SIZE);
     }
     else {
