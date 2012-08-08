@@ -82,8 +82,8 @@ If stderr is a terminal device, color is used automatically unless 'none' is giv
     false, ARGUMENT_TYPE_NONE, NO_DEFAULT_VALUE);
 
   _addNewProgramOption(programOptions, OPTION_HELP, "help",
-    "Print help (this screen).",
-    true, ARGUMENT_TYPE_NONE, NO_DEFAULT_VALUE);
+    "Print full program help (this screen), or just the help for a single argument.",
+    true, ARGUMENT_TYPE_OPTIONAL, NO_DEFAULT_VALUE);
 
   _addNewProgramOption(programOptions, OPTION_INPUT_SOURCE, "input",
     "Input source to use for processing, where the file type is determined from the extension. Run with \
@@ -114,13 +114,16 @@ from the --channels option.",
     false, ARGUMENT_TYPE_REQUIRED, (int)getSampleRate());
 
   _addNewProgramOption(programOptions, OPTION_PLUGIN, "plugin",
-    "Plugin(s) to process. Multiple plugins can given in a comma-separated list, in which case they will be \
-placed into a chain in the order specified. Instrument plugins must appear first in any chains. Plugins are \
-loaded from the standard locations for the OS.",
+    "Plugin(s) to process. Multiple plugins can given in a semicolon-separated list, in which case they will be \
+placed into a chain in the order specified. Instrument plugins must appear first in any chains. Plugins are searched \
+for in the --plugin-root directory, the current directory, and the standard locations for the OS. File extensions are \
+added automatically to plugin names. Each plugin may be followed by a comma with a program to be loaded, which should \
+be of the corresponding file format for the respective plugin.\
+\nExample: --plugin 'AutoTune,KayneWest.fxp;Compressor,SoftKnee.fxp;Limiter'",
     true, ARGUMENT_TYPE_REQUIRED, NO_DEFAULT_VALUE);
 
   _addNewProgramOption(programOptions, OPTION_PLUGIN_ROOT, "plugin-root",
-    "Directory to use when searching for plugins.",
+    "Custom non-system directory to use when searching for plugins.",
     false, ARGUMENT_TYPE_REQUIRED, NO_DEFAULT_VALUE);
 
   _addNewProgramOption(programOptions, OPTION_QUIET, "quiet",
@@ -150,22 +153,27 @@ value will be used and added to <argument>.",
     false, ARGUMENT_TYPE_REQUIRED, getTimeSignatureNoteValue());
 
   _addNewProgramOption(programOptions, OPTION_VERBOSE, "verbose",
-    "Verbose logging.",
+    "Verbose logging. Logging output is printed in the following form:\n\
+(Level) (Frames processed) (Elapsed time in ms) (Logging message)",
     true, ARGUMENT_TYPE_NONE, NO_DEFAULT_VALUE);
 
   _addNewProgramOption(programOptions, OPTION_VERSION, "version",
     "Print full program version and copyright information.",
     false, ARGUMENT_TYPE_NONE, NO_DEFAULT_VALUE);
 
+  _addNewProgramOption(programOptions, OPTION_ZEBRA_SIZE, "zebra-size",
+    "Alternate logging output colors every <argument> samples.",
+    false, ARGUMENT_TYPE_REQUIRED, (int)getSampleRate());
+
   return programOptions;
 }
 
 static boolByte _isStringShortOption(const char* testString) {
-  return (testString != NULL && strlen(testString) == 2 && testString[0] == '-');
+  return (boolByte)(testString != NULL && strlen(testString) == 2 && testString[0] == '-');
 }
 
 static boolByte _isStringLongOption(const char* testString) {
-  return (testString != NULL && strlen(testString) > 2 && testString[0] == '-' && testString[1] == '-');  
+  return (boolByte)(testString != NULL && strlen(testString) > 2 && testString[0] == '-' && testString[1] == '-');
 }
 
 static ProgramOption _findProgramOption(ProgramOptions programOptions, const char* optionString) {
@@ -269,47 +277,71 @@ boolByte parseCommandLine(ProgramOptions programOptions, int argc, char** argv) 
   return true;
 }
 
-void printProgramOptions(ProgramOptions programOptions) {
-  ProgramOption programOption;
+void printProgramQuickHelp(const char* argvName) {
+  const char *programBasename = getFileBasename(argvName);
+  printf("Usage: %s (options), where <argument> is required and [argument] is optional.\n", programBasename);
+  printf("Quickstart for effects: %s --plugin <name> --input <name> --output <name>\n", programBasename);
+  printf("Quickstart for instruments: %s --plugin <name> --midi-file <name> --output <name>\n", programBasename);
+  printf("\n");
+}
+
+void printProgramOptionsHelp(const ProgramOptions programOptions, int indentSize) {
+  for(int i = 0; i < NUM_OPTIONS; i++) {
+    printProgramOptionHelp(programOptions[i], indentSize, indentSize);
+  }
+}
+
+void printProgramOptionHelp(const ProgramOption programOption, int indentSize, int initialIndent) {
   CharString wrappedHelpString;
   int i;
 
-  for(i = 0; i < NUM_OPTIONS; i++) {
-    // Don't print out help in help
-    if(i == OPTION_HELP) {
-      continue;
-    }
-
-    // All arguments have a long form, so that will always be printed
-    programOption = programOptions[i];
-    printf("  --%s", programOption->name->data);
-
-    if(programOption->hasShortForm) {
-      printf(", -%c", programOption->name->data[0]);
-    }
-
-    switch(programOption->argumentType) {
-      case ARGUMENT_TYPE_REQUIRED:
-        printf(" <argument>");
-        break;
-      case ARGUMENT_TYPE_OPTIONAL:
-        printf(" [argument]");
-        break;
-      case ARGUMENT_TYPE_NONE:
-      default:
-        break;
-    }
-
-    if(programOption->helpDefaultValue != NO_DEFAULT_VALUE) {
-      printf(", default value: %d", programOption->helpDefaultValue);
-    }
-
-    // Newline and indentation before help
-    wrappedHelpString = newCharStringWithCapacity(STRING_LENGTH_LONG);
-    wrapStringForTerminal(programOption->help->data, wrappedHelpString->data, 4);
-    printf("\n%s\n\n", wrappedHelpString->data);
-    freeCharString(wrappedHelpString);
+  if(programOption == NULL) {
+    logError("Can't find help for that option. Try running with --help to see all options\n");
+    return;
   }
+
+  // Initial argument indent
+  for(i = 0; i < initialIndent; i ++) {
+    printf(" ");
+  }
+
+  // All arguments have a long form, so that will always be printed
+  printf("--%s", programOption->name->data);
+
+  if(programOption->hasShortForm) {
+    printf(" (or -%c)", programOption->name->data[0]);
+  }
+
+  switch(programOption->argumentType) {
+    case ARGUMENT_TYPE_REQUIRED:
+      printf(" <argument>");
+      break;
+    case ARGUMENT_TYPE_OPTIONAL:
+      printf(" [argument]");
+      break;
+    case ARGUMENT_TYPE_NONE:
+    default:
+      break;
+  }
+
+  if(programOption->helpDefaultValue != NO_DEFAULT_VALUE) {
+    printf(", default value: %d", programOption->helpDefaultValue);
+  }
+
+  // Newline and indentation before help
+  wrappedHelpString = newCharStringWithCapacity(STRING_LENGTH_LONG);
+  wrapStringForTerminal(programOption->help->data, wrappedHelpString->data, initialIndent + indentSize);
+  printf("\n%s\n\n", wrappedHelpString->data);
+  freeCharString(wrappedHelpString);
+}
+
+const ProgramOption findProgramOptionFromString(const ProgramOptions programOptions, const CharString string) {
+  for(int i = 0; i < NUM_OPTIONS; i++) {
+    if(isCharStringEqualTo(string, programOptions[i]->name, true)) {
+      return programOptions[i];
+    }
+  }
+  return NULL;
 }
 
 static void _freeProgramOption(ProgramOption programOption) {

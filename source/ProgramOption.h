@@ -72,6 +72,7 @@ typedef enum {
   OPTION_TIME_SIGNATURE_BOTTOM,
   OPTION_VERBOSE,
   OPTION_VERSION,
+  OPTION_ZEBRA_SIZE,
   NUM_OPTIONS
 } ProgramOptionIndex;
 
@@ -80,7 +81,10 @@ typedef ProgramOption* ProgramOptions;
 
 ProgramOptions newProgramOptions(void);
 boolByte parseCommandLine(ProgramOptions programOptions, int argc, char** argv);
-void printProgramOptions(ProgramOptions programOptions);
+const ProgramOption findProgramOptionFromString(const ProgramOptions programOptions, const CharString string);
+void printProgramQuickHelp(const char* argvName);
+void printProgramOptionsHelp(const ProgramOptions programOptions, int indentSize);
+void printProgramOptionHelp(const ProgramOption programOption, int indentSize, int initialIndent);
 void freeProgramOptions(ProgramOptions programOptions);
 
 #endif

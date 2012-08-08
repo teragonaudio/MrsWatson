@@ -77,20 +77,27 @@ int main(int argc, char** argv) {
 
   if(!parseCommandLine(programOptions, argc, argv)) {
     printf("Run %s --help to see possible options\n", getFileBasename(argv[0]));
+    printf("Or run %s --help (option) to see help for a single option\n", getFileBasename(argv[0]));
     return RETURN_CODE_INVALID_ARGUMENT;
   }
 
   // These options conflict with standard processing (more or less), so check to see if the user wanted one
   // of these and then exit right away.
   if(argc == 1) {
-    printf("Quickstart for effects: %s --plugin <name> --input <name> --output <name>\n", getFileBasename(argv[0]));
-    printf("Quickstart for instruments: %s --plugin <name> --midi-file <name> --output <name>\n", getFileBasename(argv[0]));
+    printProgramQuickHelp(argv[0]);
     printf("Run %s --help to see all possible options\n", getFileBasename(argv[0]));
     return RETURN_CODE_NOT_RUN;
   }
   else if(programOptions[OPTION_HELP]->enabled) {
-    printf("Usage: %s (options), where <argument> is required and [argument] is optional:\n", getFileBasename(argv[0]));
-    printProgramOptions(programOptions);
+    printProgramQuickHelp(argv[0]);
+    if(isCharStringEmpty(programOptions[OPTION_HELP]->argument)) {
+      printf("All options:\n");
+      printProgramOptionsHelp(programOptions, DEFAULT_INDENT_SIZE);
+    }
+    else {
+      printf("Help for option '%s':\n", programOptions[OPTION_HELP]->argument->data);
+      printProgramOptionHelp(findProgramOptionFromString(programOptions, programOptions[OPTION_HELP]->argument), DEFAULT_INDENT_SIZE, 0);
+    }
     return RETURN_CODE_NOT_RUN;
   }
   else if(programOptions[OPTION_VERSION]->enabled) {
@@ -164,6 +171,9 @@ int main(int argc, char** argv) {
           break;
         case OPTION_TIME_SIGNATURE_BOTTOM:
           setTimeSignatureNoteValue((short)strtol(option->argument->data, NULL, 10));
+          break;
+        case OPTION_ZEBRA_SIZE:
+          setLoggingZebraSize((int)strtol(option->argument->data, NULL, 10));
           break;
         default:
           // Ignore -- no special handling needs to be performed here

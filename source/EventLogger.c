@@ -33,6 +33,8 @@
 #include "BuildInfo.h"
 #include "EventLogger.h"
 #include "MrsWatson.h"
+#include "AudioClock.h"
+#include "AudioSettings.h"
 
 #if WINDOWS
 #include <Windows.h>
@@ -64,6 +66,7 @@ void initEventLogger(void) {
   eventLoggerInstance = (EventLogger)malloc(sizeof(EventLoggerMembers));
   eventLoggerInstance->logLevel = LOG_INFO;
   eventLoggerInstance->colorScheme = COLOR_SCHEME_NONE;
+  eventLoggerInstance->zebraStripeSize = (long)DEFAULT_SAMPLE_RATE;
 
 #if WINDOWS
   currentTime = GetTickCount();
@@ -117,6 +120,11 @@ void setLoggingColorSchemeWithString(const CharString colorSchemeName) {
   }
 }
 
+void setLoggingZebraSize(const long zebraStripeSize) {
+  EventLogger eventLogger = _getEventLoggerInstance();
+  eventLogger->zebraStripeSize = zebraStripeSize;
+}
+
 static char _logLevelStatusChar(const LogLevel logLevel) {
   switch(logLevel) {
     case LOG_DEBUG: return '.';
@@ -152,8 +160,21 @@ static const char* _logLevelStatusColor(const LogLevel logLevel, const LogColorS
   }
 }
 
-static const char* _logTimeZebraStripeColor(const long elapsedTime, const LogColorScheme colorScheme) {
-  boolByte zebraState = ((elapsedTime / ZEBRA_STRIPE_SIZE_IN_MS) % 2) == 1;
+static const char* _logTimeColor(const LogColorScheme colorScheme) {
+  if(colorScheme == COLOR_SCHEME_DARK) {
+    return ANSI_COLOR_CYAN;
+  }
+  else if(colorScheme == COLOR_SCHEME_LIGHT) {
+    return ANSI_COLOR_GREEN;
+  }
+  else {
+    logInternalError("Invalid color scheme for status char");
+    return ANSI_COLOR_WHITE;
+  }
+}
+
+static const char* _logTimeZebraStripeColor(const long elapsedTime, const LogColorScheme colorScheme, const int zebraSizeInMs) {
+  boolByte zebraState = (boolByte)((elapsedTime / zebraSizeInMs) % 2);
   if(colorScheme == COLOR_SCHEME_DARK) {
     return zebraState ? ANSI_COLOR_WHITE : ANSI_COLOR_YELLOW;
   }
@@ -166,13 +187,15 @@ static const char* _logTimeZebraStripeColor(const long elapsedTime, const LogCol
   }
 }
 
-static void _printMessage(const LogLevel logLevel, const long elapsedTimeInMs, const LogColorScheme colorScheme, const char* message) {
+static void _printMessage(const LogLevel logLevel, const long elapsedTimeInMs, const long numFramesProcessed,
+  const LogColorScheme colorScheme, const char* message, const int zebraSizeInMs) {
   if(colorScheme == COLOR_SCHEME_NONE) {
-    fprintf(stderr, "%c %06ld %s\n", _logLevelStatusChar(logLevel), elapsedTimeInMs, message);
+    fprintf(stderr, "%c %08ld %06ld %s\n", _logLevelStatusChar(logLevel), numFramesProcessed, elapsedTimeInMs, message);
   }
   else {
     fprintf(stderr, "\x1b%s%c\x1b%s ", _logLevelStatusColor(logLevel, colorScheme), _logLevelStatusChar(logLevel), ANSI_COLOR_RESET);
-    fprintf(stderr, "\x1b%s%06ld\x1b%s ", _logTimeZebraStripeColor(elapsedTimeInMs, colorScheme), elapsedTimeInMs, ANSI_COLOR_RESET);
+    fprintf(stderr, "\x1b%s%08ld\x1b%s ", _logTimeZebraStripeColor(numFramesProcessed, colorScheme, zebraSizeInMs), numFramesProcessed, ANSI_COLOR_RESET);
+    fprintf(stderr, "\x1b%s%06ld\x1b%s ", _logTimeColor(colorScheme), elapsedTimeInMs, ANSI_COLOR_RESET);
     if(logLevel == LOG_ERROR) {
       fprintf(stderr, "\x1b%s%s\x1b%s\n", ANSI_COLOR_RED, message, ANSI_COLOR_RESET);
     }
@@ -202,7 +225,8 @@ static void _logMessage(const LogLevel logLevel, const char* message, va_list ar
     elapsedTimeInMs = ((currentTime.tv_sec - (eventLogger->startTimeInSec + 1)) * 1000) +
       (currentTime.tv_usec / 1000) + (1000 - eventLogger->startTimeInMs);
 #endif
-    _printMessage(logLevel, elapsedTimeInMs, eventLogger->colorScheme, formattedMessage->data);
+    _printMessage(logLevel, elapsedTimeInMs, getAudioClockCurrentSample(),
+      eventLogger->colorScheme, formattedMessage->data, eventLogger->zebraStripeSize);
     freeCharString(formattedMessage);
   }
 }
