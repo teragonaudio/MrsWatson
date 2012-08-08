@@ -34,7 +34,7 @@
 #include "AudioSettings.h"
 #include "PlatformUtilities.h"
 
-static boolean _openMidiSourceFile(void* midiSourcePtr) {
+static boolByte _openMidiSourceFile(void* midiSourcePtr) {
   MidiSource midiSource = midiSourcePtr;
   MidiSourceFileData extraData = midiSource->extraData;
 
@@ -47,10 +47,12 @@ static boolean _openMidiSourceFile(void* midiSourcePtr) {
   return true;
 }
 
-static boolean _readMidiFileChunkHeader(FILE *midiFile, const char* expectedChunkId) {
+static boolByte _readMidiFileChunkHeader(FILE *midiFile, const char* expectedChunkId) {
   byte chunkId[5];
+  size_t itemsRead;
+
   memset(chunkId, 0, 5);
-  size_t itemsRead = fread(chunkId, sizeof(byte), 4, midiFile);
+  itemsRead = fread(chunkId, sizeof(byte), 4, midiFile);
   if(itemsRead < 4) {
     logError("Short read of MIDI file (at chunk ID)");
     return false;
@@ -64,25 +66,28 @@ static boolean _readMidiFileChunkHeader(FILE *midiFile, const char* expectedChun
   }
 }
 
-static boolean _readMidiFileHeader(FILE *midiFile, unsigned short *formatType, unsigned short *numTracks, unsigned short *timeDivision) {
+static boolByte _readMidiFileHeader(FILE *midiFile, unsigned short *formatType, unsigned short *numTracks, unsigned short *timeDivision) {
+  unsigned int numBytesBuffer;
+  size_t itemsRead;
+  unsigned int numBytes;
+  unsigned short wordBuffer;
+
   if(!_readMidiFileChunkHeader(midiFile, "MThd")) {
     return false;
   }
 
-  unsigned int numBytesBuffer;
-  size_t itemsRead = fread(&numBytesBuffer, sizeof(unsigned int), 1, midiFile);
+  itemsRead = fread(&numBytesBuffer, sizeof(unsigned int), 1, midiFile);
   if(itemsRead < 1) {
     logError("Short read of MIDI file (at header, num items)");
     return false;
   }
 
-  unsigned int numBytes = convertBigEndianIntToPlatform(numBytesBuffer);
+  numBytes = convertBigEndianIntToPlatform(numBytesBuffer);
   if(numBytes != 6) {
     logError("MIDI file has %d bytes in header chunk, expected 6", numBytes);
     return false;
   }
 
-  unsigned short wordBuffer;
   itemsRead = fread(&wordBuffer, sizeof(unsigned short), 1, midiFile);
   if(itemsRead != 1) {
     logError("Short read of MIDI file (at header, format type)");
@@ -107,15 +112,22 @@ static boolean _readMidiFileHeader(FILE *midiFile, unsigned short *formatType, u
   return true;
 }
 
-static boolean _readMidiFileTrack(FILE *midiFile, const int trackNumber,
+static boolByte _readMidiFileTrack(FILE *midiFile, const int trackNumber,
   const int timeDivision, const MidiFileTimeDivisionType divisionType,
   MidiSequence midiSequence) {
+  unsigned int numBytesBuffer;
+  byte *trackData, *currentByte, *endByte;
+  size_t itemsRead, numBytes;
+  unsigned long currentTimeInSampleFrames = 0;
+  unsigned long unpackedVariableLength;
+  MidiEvent midiEvent;
+  unsigned int i;
+
   if(!_readMidiFileChunkHeader(midiFile, "MTrk")) {
     return false;
   }
 
-  unsigned int numBytesBuffer;
-  size_t itemsRead = fread(&numBytesBuffer, sizeof(unsigned int), 1, midiFile);
+  itemsRead = fread(&numBytesBuffer, sizeof(unsigned int), 1, midiFile);
   if(itemsRead < 1) {
     logError("Short read of MIDI file (at track %d header, num items)", trackNumber);
     return false;
@@ -123,18 +135,16 @@ static boolean _readMidiFileTrack(FILE *midiFile, const int trackNumber,
 
   // Read in the entire track in one pass and parse the events from the buffer data. Much easier
   // than having to call fread() for each event.
-  size_t numBytes = (size_t)convertBigEndianIntToPlatform(numBytesBuffer);
-  byte* trackData = malloc(numBytes);
+  numBytes = (size_t)convertBigEndianIntToPlatform(numBytesBuffer);
+  trackData = (byte*)malloc(numBytes);
   itemsRead = fread(trackData, 1, numBytes, midiFile);
   if(itemsRead != numBytes) {
     logError("Short read of MIDI file (at track %d)", trackNumber);
     return false;
   }
 
-  unsigned long currentTimeInSampleFrames = 0;
-  unsigned long unpackedVariableLength;
-  byte* currentByte = trackData;
-  byte* endByte = trackData + numBytes;
+  currentByte = trackData;
+  endByte = trackData + numBytes;
   while(currentByte < endByte) {
     // Unpack variable length timestamp
     unpackedVariableLength = *currentByte;
@@ -146,15 +156,15 @@ static boolean _readMidiFileTrack(FILE *midiFile, const int trackNumber,
     }
 
     currentByte++;
-    MidiEvent midiEvent = newMidiEvent();
+    midiEvent = newMidiEvent();
     switch(*currentByte) {
       case 0xff:
         midiEvent->eventType = MIDI_TYPE_META;
         currentByte++;
         midiEvent->status = *(currentByte++);
         numBytes = *(currentByte++);
-        midiEvent->extraData = malloc(numBytes);
-        for(unsigned int i = 0; i < numBytes; i++) {
+        midiEvent->extraData = (byte*)malloc(numBytes);
+        for(i = 0; i < numBytes; i++) {
           midiEvent->extraData[i] = *(currentByte++);
         }
         break;
@@ -217,10 +227,12 @@ static boolean _readMidiFileTrack(FILE *midiFile, const int trackNumber,
   return true;
 }
 
-static boolean _readMidiEventsFile(void* midiSourcePtr, MidiSequence midiSequence) {
-  MidiSource midiSource = midiSourcePtr;
-  MidiSourceFileData extraData = midiSource->extraData;
+static boolByte _readMidiEventsFile(void* midiSourcePtr, MidiSequence midiSequence) {
+  MidiSource midiSource = (MidiSource)midiSourcePtr;
+  MidiSourceFileData extraData = (MidiSourceFileData)(midiSource->extraData);
   unsigned short formatType, numTracks, timeDivision = 0;
+  int track;
+
   if(!_readMidiFileHeader(extraData->fileHandle, &formatType, &numTracks, &timeDivision)) {
     return false;
   }
@@ -246,7 +258,7 @@ static boolean _readMidiEventsFile(void* midiSourcePtr, MidiSequence midiSequenc
   logDebug("MIDI file is type %d, has %d tracks, and time division %d (type %d)",
     formatType, numTracks, timeDivision, extraData->divisionType);
 
-  for(int track = 0; track < numTracks; track++) {
+  for(track = 0; track < numTracks; track++) {
     if(!_readMidiFileTrack(extraData->fileHandle, track, timeDivision, extraData->divisionType, midiSequence)) {
       return false;
     }
@@ -264,7 +276,8 @@ static void _freeMidiEventsFile(void *midiSourceDataPtr) {
 }
 
 MidiSource newMidiSourceFile(const CharString midiSourceName) {
-  MidiSource midiSource = malloc(sizeof(MidiSourceMembers));
+  MidiSource midiSource = (MidiSource)malloc(sizeof(MidiSourceMembers));
+  MidiSourceFileData extraData = (MidiSourceFileData)malloc(sizeof(MidiSourceFileDataMembers));
 
   midiSource->midiSourceType = MIDI_SOURCE_TYPE_FILE;
   midiSource->sourceName = newCharString();
@@ -274,7 +287,6 @@ MidiSource newMidiSourceFile(const CharString midiSourceName) {
   midiSource->readMidiEvents = _readMidiEventsFile;
   midiSource->freeMidiSourceData = _freeMidiEventsFile;
 
-  MidiSourceFileData extraData = malloc(sizeof(MidiSourceFileDataMembers));
   extraData->divisionType = TIME_DIVISION_TYPE_INVALID;
   extraData->fileHandle = NULL;
   midiSource->extraData = extraData;

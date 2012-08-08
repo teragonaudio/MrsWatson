@@ -32,7 +32,7 @@
 AudioClock audioClockInstance = NULL;
 
 void initAudioClock(void) {
-  audioClockInstance = malloc(sizeof(AudioClockMembers));
+  audioClockInstance = (AudioClock)malloc(sizeof(AudioClockMembers));
   audioClockInstance->currentSample = 0;
 }
 
@@ -61,10 +61,10 @@ unsigned long getAudioClockCurrentSample(void) {
   return _getAudioClockInstance()->currentSample;
 }
 
-boolean getAudioClockTransportChanged(void) {
+boolByte getAudioClockTransportChanged(void) {
   return _getAudioClockInstance()->transportChanged;
 }
 
-boolean getAudioClockIsPlaying(void) {
+boolByte getAudioClockIsPlaying(void) {
   return _getAudioClockInstance()->isPlaying;
 }

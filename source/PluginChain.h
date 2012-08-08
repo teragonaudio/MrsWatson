@@ -47,8 +47,8 @@ typedef PluginChainMembers* PluginChain;
 
 PluginChain newPluginChain(void);
 
-boolean addPluginsFromArgumentString(PluginChain pluginChain, const CharString argumentString, const CharString pluginRoot);
-boolean initializePluginChain(PluginChain pluginChain);
+boolByte addPluginsFromArgumentString(PluginChain pluginChain, const CharString argumentString, const CharString pluginRoot);
+boolByte initializePluginChain(PluginChain pluginChain);
 
 void displayPluginInfo(PluginChain pluginChain);
 int getMaximumTailTimeInMs(PluginChain pluginChain);

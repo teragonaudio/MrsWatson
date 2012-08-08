@@ -32,7 +32,7 @@
 
 #if WINDOWS
 #define WIN32_LEAN_AND_MEAN
-#include "windows.h"
+#include <Windows.h>
 #elif MACOSX || LINUX
 #include <dirent.h>
 #endif
@@ -49,15 +49,15 @@ PlatformType getPlatformType() {
 #endif
 }
 
-boolean fileExists(const char* absolutePath) {
+boolByte fileExists(const char* absolutePath) {
 #if MACOSX || LINUX
   struct stat* buffer = malloc(sizeof(struct stat));
-  boolean result = (stat(absolutePath, buffer) == 0);
+  boolByte result = (stat(absolutePath, buffer) == 0);
   free(buffer);
   return result;
 
 #elif WINDOWS
-  unsigned long fileAttributes = GetFileAttributes(absolutePath);
+  unsigned long fileAttributes = GetFileAttributes((LPCWSTR)absolutePath);
   if(fileAttributes == 0xffffff) {
     return false;
   }
@@ -80,20 +80,25 @@ int listDirectory(const char* directory, LinkedList outItems) {
     appendItemToList(outItems, entry->d_name);
     numItems++;
   }
-
+  
 #elif WINDOWS
-  WIN32_FIND_DATA findData;
+  WIN32_FIND_DATAA findData;
+  HANDLE findHandle;
+  char* filename;
   CharString searchString = newCharString();
+
   snprintf(searchString->data, searchString->capacity, "%s\\*", directory);
-  HANDLE findHandle = FindFirstFile(searchString->data, &findData);
+  findHandle = FindFirstFileA((LPCSTR)(searchString->data), &findData);
   freeCharString(searchString);
   if(findHandle == INVALID_HANDLE_VALUE) {
     return 0;
   }
   do {
-    appendItemToList(outItems, findData.cFileName);
+    filename = (char*)malloc(sizeof(char) * STRING_LENGTH_DEFAULT);
+    strncpy(filename, findData.cFileName, STRING_LENGTH_DEFAULT);
+    appendItemToList(outItems, filename);
     numItems++;
-  } while(FindNextFile(findHandle, &findData) != 0);
+  } while(FindNextFileA(findHandle, &findData) != 0);
 
   FindClose(findHandle);
 
@@ -108,7 +113,7 @@ void buildAbsolutePath(const CharString directory, const CharString file, const 
   snprintf(outString->data, outString->capacity, "%s%c%s.%s", directory->data, PATH_DELIMITER, file->data, fileExtension);
 }
 
-boolean isAbsolutePath(const CharString path) {
+boolByte isAbsolutePath(const CharString path) {
 #if WINDOWS
   if(path->capacity > 3) {
     if(path->data[1] == ':' && path->data[2] == PATH_DELIMITER) {
@@ -123,9 +128,9 @@ boolean isAbsolutePath(const CharString path) {
   return false;
 }
 
-static boolean _isHostLittleEndian(void) {
+static boolByte _isHostLittleEndian(void) {
   int num = 1;
-  boolean result = (*(char*)&num == 1);
+  boolByte result = (*(char*)&num == 1);
   return result;
 }
 

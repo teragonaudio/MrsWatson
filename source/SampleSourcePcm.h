@@ -31,8 +31,9 @@
 #ifndef MrsWatson_InputSourcePcm_h
 #define MrsWatson_InputSourcePcm_h
 
+#if USE_SOURCE_TYPE_PCM
 typedef struct {
-  boolean isStream;
+  boolByte isStream;
   FILE* fileHandle;
   size_t dataBufferNumItems;
   short* interlacedPcmDataBuffer;
@@ -42,5 +43,6 @@ typedef SampleSourcePcmDataMembers *SampleSourcePcmData;
 
 SampleSource newSampleSourcePcm(const CharString sampleSourceName);
 void convertSampleBufferToPcmData(const SampleBuffer sampleBuffer, short* outPcmSamples);
+#endif
 
 #endif

@@ -39,27 +39,42 @@
 #include "AudioClock.h"
 #include "MidiSequence.h"
 #include "MidiSource.h"
+#include "PlatformUtilities.h"
 
 void fillVersionString(CharString outString) {
   snprintf(outString->data, outString->capacity, "%s version %d.%d.%d", PROGRAM_NAME, VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
 }
 
 int main(int argc, char** argv) {
-  initEventLogger();
-  initAudioSettings();
-  initAudioClock();
-
   // Input/Output sources, plugin chain, and other required objects
   SampleSource inputSource = NULL;
   SampleSource outputSource = NULL;
   PluginChain pluginChain = newPluginChain();
   CharString pluginSearchRoot = newCharString();
-  boolean shouldDisplayPluginInfo = false;
+  boolByte shouldDisplayPluginInfo = false;
   MidiSequence midiSequence = NULL;
   MidiSource midiSource = NULL;
   long tailTimeInMs = 0;
+  ProgramOptions programOptions;
+  ProgramOption option;
+  CharString versionString, wrappedLicenseInfo;
+  Plugin headPlugin;
+  int blocksize;
+  SampleBuffer inputSampleBuffer, outputSampleBuffer;
+  TaskTimer taskTimer;
+  boolByte finishedReading = false;
+  int hostTaskId;
+  SampleSource silentSampleInput;
+  unsigned long totalProcessingTime = 0;
+  unsigned long stopSample;
+  double timePercentage;
+  int i;
 
-  ProgramOptions programOptions = newProgramOptions();
+  initEventLogger();
+  initAudioSettings();
+  initAudioClock();
+  programOptions = newProgramOptions();
+
   if(!parseCommandLine(programOptions, argc, argv)) {
     printf("Run %s --help to see possible options\n", getFileBasename(argv[0]));
     printf("Or run %s --help (option) to see help for a single option\n", getFileBasename(argv[0]));
@@ -86,13 +101,13 @@ int main(int argc, char** argv) {
     return RETURN_CODE_NOT_RUN;
   }
   else if(programOptions[OPTION_VERSION]->enabled) {
-    CharString versionString = newCharString();
+    versionString = newCharString();
     fillVersionString(versionString);
     printf("%s, build %ld\nCopyright (c) %d, %s. All rights reserved.\n\n",
       versionString->data, buildDatestamp(), buildYear(), VENDOR_NAME);
     freeCharString(versionString);
 
-    CharString wrappedLicenseInfo = newCharStringWithCapacity(STRING_LENGTH_LONG);
+    wrappedLicenseInfo = newCharStringWithCapacity(STRING_LENGTH_LONG);
     wrapStringForTerminal(LICENSE_STRING, wrappedLicenseInfo->data, 0);
     printf("%s\n\n", wrappedLicenseInfo->data);
     freeCharString(wrappedLicenseInfo);
@@ -117,8 +132,8 @@ int main(int argc, char** argv) {
   }
 
   // Parse other options and set up necessary objects
-  for(int i = 0; i < NUM_OPTIONS; i++) {
-    ProgramOption option = programOptions[i];
+  for(i = 0; i < NUM_OPTIONS; i++) {
+    option = programOptions[i];
     if(option->enabled) {
       switch(option->index) {
         case OPTION_BLOCKSIZE:
@@ -143,13 +158,13 @@ int main(int argc, char** argv) {
           copyCharStrings(pluginSearchRoot, option->argument);
           break;
         case OPTION_SAMPLE_RATE:
-          setSampleRate(strtof(option->argument->data, NULL));
+          setSampleRate(strtod(option->argument->data, NULL));
           break;
         case OPTION_TAIL_TIME:
           tailTimeInMs = strtol(option->argument->data, NULL, 10);
           break;
         case OPTION_TEMPO:
-          setTempo(strtof(option->argument->data, NULL));
+          setTempo(strtod(option->argument->data, NULL));
           break;
         case OPTION_TIME_SIGNATURE_TOP:
           setTimeSignatureBeatsPerMeasure((short)strtol(option->argument->data, NULL, 10));
@@ -173,7 +188,7 @@ int main(int argc, char** argv) {
   }
 
   // Say hello!
-  CharString versionString = newCharString();
+  versionString = newCharString();
   fillVersionString(versionString);
   logInfo("%s initialized", versionString->data);
   freeCharString(versionString);
@@ -209,7 +224,7 @@ int main(int argc, char** argv) {
   if(inputSource == NULL) {
     // If the first plugin in the chain is an instrument, use the silent source as our input and
     // make sure that there is a corresponding MIDI file
-    Plugin headPlugin = pluginChain->plugins[0];
+    headPlugin = pluginChain->plugins[0];
     if(headPlugin->pluginType == PLUGIN_TYPE_INSTRUMENT) {
       inputSource = newSampleSource(SAMPLE_SOURCE_TYPE_SILENCE, NULL);
       if(midiSource == NULL) {
@@ -230,7 +245,7 @@ int main(int argc, char** argv) {
   }
   else if(inputSource->sampleSourceType == SAMPLE_SOURCE_TYPE_PCM) {
     if(programOptions[OPTION_PCM_SAMPLE_RATE]->enabled) {
-      inputSource->sampleRate = strtof(programOptions[OPTION_PCM_SAMPLE_RATE]->argument->data, NULL);
+      inputSource->sampleRate = strtod(programOptions[OPTION_PCM_SAMPLE_RATE]->argument->data, NULL);
       if(getSampleRate() != inputSource->sampleRate) {
         logUnsupportedFeature("Resampling input source");
         return RETURN_CODE_UNSUPPORTED_FEATURE;
@@ -266,17 +281,16 @@ int main(int argc, char** argv) {
     return RETURN_CODE_UNSUPPORTED_FEATURE;
   }
 
-  const int blocksize = getBlocksize();
+  blocksize = getBlocksize();
   logInfo("Processing with sample rate %.0f, blocksize %d, %d channels", getSampleRate(), blocksize, getNumChannels());
   logInfo("Starting tempo is %.1f, Time signature %d/%d", getTempo(), getTimeSignatureBeatsPerMeasure(), getTimeSignatureNoteValue());
-  SampleBuffer inputSampleBuffer = newSampleBuffer(getNumChannels(), blocksize);
-  SampleBuffer outputSampleBuffer = newSampleBuffer(getNumChannels(), blocksize);
-  boolean finishedReading = false;
+  inputSampleBuffer = newSampleBuffer(getNumChannels(), blocksize);
+  outputSampleBuffer = newSampleBuffer(getNumChannels(), blocksize);
 
   // Initialize task timer to record how much time was used by each plugin (and us). The
   // last index in the task timer will be reserved for the host.
-  TaskTimer taskTimer = newTaskTimer(pluginChain->numPlugins + 1);
-  const int hostTaskId = taskTimer->numTasks - 1;
+  taskTimer = newTaskTimer(pluginChain->numPlugins + 1);
+  hostTaskId = taskTimer->numTasks - 1;
 
   // Initialization is finished, we should be able to free this memory now
   freeProgramOptions(programOptions);
@@ -305,9 +319,9 @@ int main(int argc, char** argv) {
   logInfo("Finished processing input source");
 
   if(tailTimeInMs > 0) {
-    const unsigned long stopSample = (unsigned long)(getAudioClockCurrentSample() + (tailTimeInMs * getSampleRate()) / 1000);
+    stopSample = (unsigned long)(getAudioClockCurrentSample() + (tailTimeInMs * getSampleRate()) / 1000);
     logInfo("Adding %d extra sample frames", stopSample - getAudioClockCurrentSample());
-    SampleSource silentSampleInput = newSampleSource(SAMPLE_SOURCE_TYPE_SILENCE, NULL);
+    silentSampleInput = newSampleSource(SAMPLE_SOURCE_TYPE_SILENCE, NULL);
     while(getAudioClockCurrentSample() < stopSample) {
       startTimingTask(taskTimer, hostTaskId);
       silentSampleInput->readSampleBlock(silentSampleInput, inputSampleBuffer);
@@ -321,19 +335,26 @@ int main(int argc, char** argv) {
   }
 
   // Print out statistics about each plugin's time usage
+  // TODO: On windows, the total processing time is stored in clocks and not milliseconds
+  // These values must be converted using the QueryPerformanceFrequency() function
   stopAudioClock();
   stopTiming(taskTimer);
-  unsigned long totalProcessingTime  = 0;
-  for(int i = 0; i < taskTimer->numTasks; i++) {
+  for(i = 0; i < taskTimer->numTasks; i++) {
     totalProcessingTime += taskTimer->totalTaskTimes[i];
   }
-  logInfo("Total processing time %ldms, approximate breakdown by component:", totalProcessingTime);
-  for(int i = 0; i < pluginChain->numPlugins; i++) {
-    double timePercentage = 100.0f * ((double)taskTimer->totalTaskTimes[i]) / ((double)totalProcessingTime);
-    logInfo("  %s: %ldms, %2.1f%%", pluginChain->plugins[i]->pluginName->data, taskTimer->totalTaskTimes[i], timePercentage);
+
+  if(totalProcessingTime > 0) {
+    logInfo("Total processing time %ldms, approximate breakdown by component:", totalProcessingTime);
+    for(i = 0; i < pluginChain->numPlugins; i++) {
+      timePercentage = 100.0f * ((double)taskTimer->totalTaskTimes[i]) / ((double)totalProcessingTime);
+      logInfo("  %s: %ldms, %2.1f%%", pluginChain->plugins[i]->pluginName->data, taskTimer->totalTaskTimes[i], timePercentage);
+    }
+    timePercentage = 100.0f * ((double)taskTimer->totalTaskTimes[hostTaskId]) / ((double)totalProcessingTime);
+    logInfo("  %s: %ldms, %2.1f%%", PROGRAM_NAME, taskTimer->totalTaskTimes[hostTaskId], timePercentage);
   }
-  double timePercentage = 100.0f * ((double)taskTimer->totalTaskTimes[hostTaskId]) / ((double)totalProcessingTime);
-  logInfo("  %s: %ldms, %2.1f%%", PROGRAM_NAME, taskTimer->totalTaskTimes[hostTaskId], timePercentage);
+  else {
+    logInfo("Total processing time <1ms, your computer is smokin' fast!");
+  }
   freeTaskTimer(taskTimer);
 
   if(midiSequence != NULL) {

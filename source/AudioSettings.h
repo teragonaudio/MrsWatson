@@ -37,10 +37,10 @@
 #define DEFAULT_TIMESIG_NOTE_VALUE 4
 
 typedef struct {
-  float sampleRate;
+  double sampleRate;
   int numChannels;
   int blocksize;
-  float tempo;
+  double tempo;
   short timeSignatureBeatsPerMeasure;
   short timeSignatureNoteValue;
 } AudioSettingsMembers;
@@ -50,17 +50,17 @@ extern AudioSettings audioSettingsInstance;
 
 void initAudioSettings(void);
 
-float getSampleRate(void);
+double getSampleRate(void);
 int getNumChannels(void);
 int getBlocksize(void);
-float getTempo(void);
+double getTempo(void);
 short getTimeSignatureBeatsPerMeasure(void);
 short getTimeSignatureNoteValue(void);
 
-void setSampleRate(const float sampleRate);
+void setSampleRate(const double sampleRate);
 void setNumChannels(const int numChannels);
 void setBlocksize(const int blocksize);
-void setTempo(const float tempo);
+void setTempo(const double tempo);
 void setTimeSignatureBeatsPerMeasure(const short beatsPerMeasure);
 void setTimeSignatureNoteValue(const short noteValue);
 

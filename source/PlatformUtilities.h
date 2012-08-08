@@ -44,6 +44,7 @@
 #define WIN32_LEAN_AND_MEAN
 #include "Windows.h"
 #define strcasecmp _stricmp
+#define snprintf _snprintf
 #endif
 
 typedef enum {
@@ -55,13 +56,13 @@ typedef enum {
 } PlatformType;
 
 PlatformType getPlatformType(void);
-boolean fileExists(const char* absolutePath);
+boolByte fileExists(const char* absolutePath);
 int listDirectory(const char* directory, LinkedList outItems);
 
 // const char* is used here as it is assumed that the extensions will be defined by the preprocessor
 // for given platforms, not kept in stack memory.
 void buildAbsolutePath(const CharString directory, const CharString file, const char* fileExtension, CharString outString);
-boolean isAbsolutePath(const CharString path);
+boolByte isAbsolutePath(const CharString path);
 
 unsigned short convertBigEndianShortToPlatform(const unsigned short value);
 unsigned int convertBigEndianIntToPlatform(const unsigned int value);

@@ -35,6 +35,7 @@
 #include "SampleSourceSilence.h"
 #include "SampleSourceAiff.h"
 #include "SampleSourceWave.h"
+#include "PlatformUtilities.h"
 
 void printSupportedSourceTypes(void) {
   // We can theoretically support more formats, pretty much anything audiofile supports
@@ -57,16 +58,22 @@ SampleSourceType guessSampleSourceType(const CharString sampleSourceTypeString) 
       if(fileExtension == NULL) {
         return SAMPLE_SOURCE_TYPE_PCM;
       }
+#if USE_SOURCE_TYPE_PCM
       // Possible file extensions for raw PCM data
       else if(!strcasecmp(fileExtension, "pcm") || !strcasecmp(fileExtension, "raw") || !strcasecmp(fileExtension, "dat")) {
         return SAMPLE_SOURCE_TYPE_PCM;
       }
+#endif
+#if USE_SOURCE_TYPE_AIFF
       else if(!strcasecmp(fileExtension, "aif") || !strcasecmp(fileExtension, "aiff")) {
         return SAMPLE_SOURCE_TYPE_AIFF;
       }
+#endif
+#if USE_SOURCE_TYPE_WAVE
       else if(!strcasecmp(fileExtension, "wav") || !strcasecmp(fileExtension, "wave")) {
         return SAMPLE_SOURCE_TYPE_WAVE;
       }
+#endif
       else {
         logCritical("Sample source '%s' does not match any supported type", sampleSourceTypeString->data);
         return SAMPLE_SOURCE_TYPE_INVALID;
@@ -83,12 +90,18 @@ SampleSource newSampleSource(SampleSourceType sampleSourceType, const CharString
   switch(sampleSourceType) {
     case SAMPLE_SOURCE_TYPE_SILENCE:
       return newSampleSourceSilence();
+#if USE_SOURCE_TYPE_PCM
     case SAMPLE_SOURCE_TYPE_PCM:
       return newSampleSourcePcm(sampleSourceName);
+#endif
+#if USE_SOURCE_TYPE_AIFF
     case SAMPLE_SOURCE_TYPE_AIFF:
       return newSampleSourceAiff(sampleSourceName);
+#endif
+#if USE_SOURCE_TYPE_WAVE
     case SAMPLE_SOURCE_TYPE_WAVE:
       return newSampleSourceWave(sampleSourceName);
+#endif
     default:
       return NULL;
   }

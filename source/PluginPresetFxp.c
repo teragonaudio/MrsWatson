@@ -33,9 +33,9 @@
 #include "PlatformUtilities.h"
 #include "PluginVst2x.h"
 
-static boolean _openPluginPresetFxp(void* pluginPresetPtr) {
-  PluginPreset pluginPreset = pluginPresetPtr;
-  PluginPresetFxpData extraData = pluginPreset->extraData;
+static boolByte _openPluginPresetFxp(void* pluginPresetPtr) {
+  PluginPreset pluginPreset = (PluginPreset)pluginPresetPtr;
+  PluginPresetFxpData extraData = (PluginPresetFxpData)(pluginPreset->extraData);
   extraData->fileHandle = fopen(pluginPreset->presetName->data, "rb");
   if(extraData->fileHandle == NULL) {
     logError("Preset '%s' could not be opened for reading", pluginPreset->presetName->data);
@@ -44,13 +44,20 @@ static boolean _openPluginPresetFxp(void* pluginPresetPtr) {
   return true;
 }
 
-static boolean _loadPluginPresetFxp(void* pluginPresetPtr, Plugin plugin) {
-  PluginPreset pluginPreset = pluginPresetPtr;
-  PluginPresetFxpData extraData = pluginPreset->extraData;
-  fxpProgram inProgram = malloc(sizeof(fxpProgramMembers));
+static boolByte _loadPluginPresetFxp(void* pluginPresetPtr, Plugin plugin) {
+  PluginPreset pluginPreset = (PluginPreset)pluginPresetPtr;
+  PluginPresetFxpData extraData = (PluginPresetFxpData)(pluginPreset->extraData);
+  fxpProgram inProgram = (fxpProgram)malloc(sizeof(fxpProgramMembers));
+  PluginPresetFxpProgramType programType;
 
+  char* chunk;
+  unsigned int chunkSize;
   unsigned int valueBuffer;
-  unsigned int numObjectsRead = fread(&valueBuffer, sizeof(unsigned int), 1, extraData->fileHandle);
+  unsigned int numObjectsRead;
+  float parameterValue;
+  unsigned int i;
+
+  numObjectsRead = fread(&valueBuffer, sizeof(unsigned int), 1, extraData->fileHandle);
   if(numObjectsRead != 1) {
     logError("Short read of FXP preset file at chunkMagic");
     return false;
@@ -69,7 +76,6 @@ static boolean _loadPluginPresetFxp(void* pluginPresetPtr, Plugin plugin) {
   inProgram->byteSize = convertBigEndianIntToPlatform(valueBuffer);
   logDebug("FXP program has %d bytes in main chunk", inProgram->byteSize);
 
-  PluginPresetFxpProgramType programType;
   numObjectsRead = fread(&valueBuffer, sizeof(unsigned int), 1, extraData->fileHandle);
   if(numObjectsRead != 1) {
     logError("Short read of FXP preset file at fxMagic");
@@ -126,14 +132,14 @@ static boolean _loadPluginPresetFxp(void* pluginPresetPtr, Plugin plugin) {
   copyToCharString(pluginPreset->presetName, inProgram->prgName);
 
   if(programType == FXP_TYPE_REGULAR) {
-    for(unsigned int i = 0; i < inProgram->numParams; i++) {
+    for(i = 0; i < inProgram->numParams; i++) {
       float parameterBuffer = 0.0f;
       numObjectsRead = fread(&parameterBuffer, sizeof(float), 1, extraData->fileHandle);
       if(numObjectsRead != 1) {
         logError("Short read of FXP preset at parameter data");
         return false;
       }
-      float parameterValue = convertBigEndianFloatToPlatform(parameterBuffer);
+      parameterValue = convertBigEndianFloatToPlatform(parameterBuffer);
       plugin->setParameter(plugin, i, parameterValue);
     }
   }
@@ -144,13 +150,13 @@ static boolean _loadPluginPresetFxp(void* pluginPresetPtr, Plugin plugin) {
       return false;
     }
     inProgram->content.data.size = convertBigEndianIntToPlatform(valueBuffer);
-    unsigned int chunkSize = inProgram->content.data.size;
+    chunkSize = inProgram->content.data.size;
     if(chunkSize == 0) {
       logError("FXP preset has chunk of 0 bytes");
       return false;
     }
 
-    char* chunk = (char*)malloc(sizeof(char) * chunkSize);
+    chunk = (char*)malloc(sizeof(char) * chunkSize);
     memset(chunk, 0, sizeof(char) * chunkSize);
     numObjectsRead = fread(chunk, sizeof(char), chunkSize, extraData->fileHandle);
     if(numObjectsRead != chunkSize) {
@@ -187,7 +193,9 @@ static void _freePluginPresetDataFxp(void* extraDataPtr) {
 }
 
 PluginPreset newPluginPresetFxp(const CharString presetName) {
-  PluginPreset pluginPreset = malloc(sizeof(PluginPresetMembers));
+  PluginPreset pluginPreset = (PluginPreset)malloc(sizeof(PluginPresetMembers));
+  PluginPresetFxpData extraData = (PluginPresetFxpData)malloc(sizeof(PluginPresetFxpDataMembers));
+
   pluginPreset->presetType = PRESET_TYPE_FXP;
   pluginPreset->presetName = newCharString();
   copyCharStrings(pluginPreset->presetName, presetName);
@@ -198,7 +206,6 @@ PluginPreset newPluginPresetFxp(const CharString presetName) {
   pluginPreset->loadPreset = _loadPluginPresetFxp;
   pluginPreset->freePresetData = _freePluginPresetDataFxp;
 
-  PluginPresetFxpData extraData = malloc(sizeof(PluginPresetFxpDataMembers));
   pluginPreset->extraData = extraData;
   return pluginPreset;
 }

@@ -28,7 +28,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
-#include <sys/time.h>
+
 #include "CharString.h"
 #include "BuildInfo.h"
 #include "EventLogger.h"
@@ -36,7 +36,10 @@
 #include "AudioClock.h"
 #include "AudioSettings.h"
 
-#if ! WINDOWS
+#if WINDOWS
+#include <Windows.h>
+#else
+#include <sys/time.h>
 #include <unistd.h>
 #endif
 
@@ -53,15 +56,27 @@
 EventLogger eventLoggerInstance = NULL;
 
 void initEventLogger(void) {
-  // TODO: This is never freed, but it lives for the life of the program. Do we need to worry about that?
-  eventLoggerInstance = malloc(sizeof(EventLoggerMembers));
-  eventLoggerInstance->logLevel = LOG_INFO;
+#if WINDOWS
+  ULONGLONG currentTime;
+#else
   struct timeval currentTime;
+#endif
+
+  // TODO: This is never freed, but it lives for the life of the program. Do we need to worry about that?
+  eventLoggerInstance = (EventLogger)malloc(sizeof(EventLoggerMembers));
+  eventLoggerInstance->logLevel = LOG_INFO;
+  eventLoggerInstance->colorScheme = COLOR_SCHEME_NONE;
+  eventLoggerInstance->zebraStripeSize = (long)DEFAULT_SAMPLE_RATE;
+
+#if WINDOWS
+  currentTime = GetTickCount();
+  eventLoggerInstance->startTimeInSec = (unsigned long)(currentTime / 1000);
+  eventLoggerInstance->startTimeInMs = (unsigned long)currentTime;
+#else
   gettimeofday(&currentTime, NULL);
   eventLoggerInstance->startTimeInSec = currentTime.tv_sec;
   eventLoggerInstance->startTimeInMs = currentTime.tv_usec / 1000;
-  eventLoggerInstance->colorScheme = COLOR_SCHEME_NONE;
-  eventLoggerInstance->zebraStripeSize = (long)DEFAULT_SAMPLE_RATE;
+#endif
 
 #if ! WINDOWS
   // On unix, we can detect if stderr is pointing to a terminal and set output
@@ -159,7 +174,7 @@ static const char* _logTimeColor(const LogColorScheme colorScheme) {
 }
 
 static const char* _logTimeZebraStripeColor(const long elapsedTime, const LogColorScheme colorScheme, const int zebraSizeInMs) {
-  boolean zebraState = ((elapsedTime / zebraSizeInMs) % 2) == 1;
+  boolByte zebraState = (boolByte)((elapsedTime / zebraSizeInMs) % 2);
   if(colorScheme == COLOR_SCHEME_DARK) {
     return zebraState ? ANSI_COLOR_WHITE : ANSI_COLOR_YELLOW;
   }
@@ -191,14 +206,25 @@ static void _printMessage(const LogLevel logLevel, const long elapsedTimeInMs, c
 }
 
 static void _logMessage(const LogLevel logLevel, const char* message, va_list arguments) {
+  long elapsedTimeInMs;
   EventLogger eventLogger = _getEventLoggerInstance();
+#if WINDOWS
+  ULONGLONG currentTime;
+#else
+  struct timeval currentTime;
+#endif
+
   if(logLevel >= eventLogger->logLevel) {
     CharString formattedMessage = newCharString();
     vsnprintf(formattedMessage->data, formattedMessage->capacity, message, arguments);
-    struct timeval currentTime;
+#if WINDOWS
+    currentTime = GetTickCount();
+    elapsedTimeInMs = (unsigned long)(eventLogger->startTimeInMs - currentTime);
+#else
     gettimeofday(&currentTime, NULL);
-    const long elapsedTimeInMs = ((currentTime.tv_sec - (eventLogger->startTimeInSec + 1)) * 1000) +
+    elapsedTimeInMs = ((currentTime.tv_sec - (eventLogger->startTimeInSec + 1)) * 1000) +
       (currentTime.tv_usec / 1000) + (1000 - eventLogger->startTimeInMs);
+#endif
     _printMessage(logLevel, elapsedTimeInMs, getAudioClockCurrentSample(),
       eventLogger->colorScheme, formattedMessage->data, eventLogger->zebraStripeSize);
     freeCharString(formattedMessage);
@@ -231,8 +257,8 @@ void logError(const char* message, ...) {
 
 void logCritical(const char* message, ...) {
   va_list arguments;
-  va_start(arguments, message);
   CharString formattedMessage = newCharString();
+  va_start(arguments, message);
   // Instead of going through the common logging method, we always dump critical messages to stderr
   vsnprintf(formattedMessage->data, formattedMessage->capacity, message, arguments);
   fprintf(stderr, "ERROR: %s\n", formattedMessage->data);
@@ -241,8 +267,10 @@ void logCritical(const char* message, ...) {
 
 void logInternalError(const char* message, ...) {
   va_list arguments;
-  va_start(arguments, message);
+  CharString versionString;
   CharString formattedMessage = newCharString();
+
+  va_start(arguments, message);
   // Instead of going through the common logging method, we always dump critical messages to stderr
   vsnprintf(formattedMessage->data, formattedMessage->capacity, message, arguments);
   fprintf(stderr, "INTERNAL ERROR: %s\n", formattedMessage->data);
@@ -252,19 +280,20 @@ void logInternalError(const char* message, ...) {
   fprintf(stderr, "  Support website: %s\n", SUPPORT_WEBSITE);
   fprintf(stderr, "  Support email: %s\n", SUPPORT_EMAIL);
 
-  CharString versionString = newCharString();
+  versionString = newCharString();
   fillVersionString(versionString);
   fprintf(stderr, "  Program version: %s, build %ld\n", versionString->data, buildDatestamp());
   freeCharString(versionString);
 }
 
 void logUnsupportedFeature(const char* featureName) {
+  CharString versionString;
   fprintf(stderr, "UNSUPPORTED FEATURE: %s\n", featureName);
   fprintf(stderr, "  This feature is not yet supported. Please help us out and submit a patch! :)\n");
   fprintf(stderr, "  Project website: %s\n", PROJECT_WEBSITE);
   fprintf(stderr, "  Support email: %s\n", SUPPORT_EMAIL);
 
-  CharString versionString = newCharString();
+  versionString = newCharString();
   fillVersionString(versionString);
   fprintf(stderr, "  Program version: %s, build %ld\n", versionString->data, buildDatestamp());
   freeCharString(versionString);

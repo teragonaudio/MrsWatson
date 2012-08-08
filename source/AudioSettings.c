@@ -47,7 +47,7 @@ static AudioSettings _getAudioSettings(void) {
   return audioSettingsInstance;
 }
 
-float getSampleRate(void) {
+double getSampleRate(void) {
   return _getAudioSettings()->sampleRate;
 }
 
@@ -59,7 +59,7 @@ int getBlocksize(void) {
   return _getAudioSettings()->blocksize;
 }
 
-float getTempo(void) {
+double getTempo(void) {
   return _getAudioSettings()->tempo;
 }
 
@@ -72,7 +72,7 @@ short getTimeSignatureNoteValue(void) {
 }
 
 
-void setSampleRate(const float sampleRate) {
+void setSampleRate(const double sampleRate) {
   if(sampleRate == 0.0f) {
     logCritical("Ignoring attempt to set sample rate to 0");
     return;
@@ -96,7 +96,7 @@ void setBlocksize(const int blocksize) {
   _getAudioSettings()->blocksize = blocksize;
 }
 
-void setTempo(const float tempo) {
+void setTempo(const double tempo) {
   if(tempo == 0.0f) {
     logCritical("Ignoring attempt to set tempo to 0");
     return;

@@ -28,9 +28,10 @@
 #ifndef MrsWatson_Types_h
 #define MrsWatson_Types_h
 
-#ifndef boolean
-#define boolean short
-#endif
+// Using "bool" or "boolByte" (or their uppercase equivalents) is a bit dangerous
+// since compilers on some platforms define this for us. This gets tricky when
+// mixing C89/C99 syntax, so to be safe, we will use a new made-up type instead.
+typedef unsigned char boolByte;
 
 #ifndef byte
 typedef unsigned char byte;

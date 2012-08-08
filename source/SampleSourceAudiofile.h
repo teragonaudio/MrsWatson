@@ -26,11 +26,13 @@
 //
 
 #include "SampleSource.h"
-
 #include "audiofile.h"
 
 #ifndef MrsWatson_SampleSourceAudiofile_h
 #define MrsWatson_SampleSourceAudiofile_h
+
+// This must be disabled until libaudiofile can be compiled with Visual Studio
+#if ! WINDOWS
 
 // This isn't a real SampleSource class, but rather a base class to facilitate
 // in reading and writing any file supported via the audiofile library. As each
@@ -45,8 +47,9 @@ typedef struct {
 
 typedef SampleSourceAudiofileDataMembers* SampleSourceAudiofileData;
 
-boolean readBlockFromAudiofile(void* sampleSourcePtr, SampleBuffer sampleBuffer);
-boolean writeBlockFromAudiofile(void* sampleSourcePtr, const SampleBuffer sampleBuffer);
+boolByte readBlockFromAudiofile(void* sampleSourcePtr, SampleBuffer sampleBuffer);
+boolByte writeBlockFromAudiofile(void* sampleSourcePtr, const SampleBuffer sampleBuffer);
 void freeSampleSourceDataAudiofile(void* sampleSourceDataPtr);
 
+#endif
 #endif

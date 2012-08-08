@@ -44,10 +44,10 @@ void appendMidiEventToSequence(MidiSequence midiSequence, MidiEvent midiEvent) {
   appendItemToList(midiSequence->midiEvents, midiEvent);
 }
 
-boolean fillMidiEventsFromRange(MidiSequence midiSequence, const unsigned long startTimestamp, const int blocksize, LinkedList outMidiEvents) {
+boolByte fillMidiEventsFromRange(MidiSequence midiSequence, const unsigned long startTimestamp, const int blocksize, LinkedList outMidiEvents) {
   LinkedListIterator iterator = midiSequence->_lastEvent;
   const unsigned long stopTimestamp = startTimestamp + blocksize;
-  boolean result = true;
+  boolByte result = true;
 
   while(true) {
     MidiEvent midiEvent = iterator->item;

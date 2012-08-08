@@ -31,8 +31,8 @@
 #define DEFAULT_INDENT_SIZE 2
 #define TERMINAL_LINE_LENGTH 80
 
-char* getFileBasename(const char* filename);
-char* getFileExtension(const char* filename);
+const char* getFileBasename(const char* filename);
+const char* getFileExtension(const char* filename);
 
 void wrapString(const char* srcString, char* destString, int indentSize, int lineLength);
 void wrapStringForTerminal(const char* srcString, char* destString, int indentSize);

@@ -1,0 +1,149 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{2AABEEE4-5AFE-4953-BDF8-F0AE6D543A72}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>MrsWatson</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(SolutionDir)\build\$(Configuration)\</OutDir>
+    <IntDir>build\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(SolutionDir)\build\$(Configuration)\</OutDir>
+    <IntDir>build\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;WINDOWS=1;_CRT_SECURE_NO_WARNINGS;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)\vendor\vstsdk2.4;$(SolutionDir)\vendor\vstsdk2.4\pluginterfaces\vst2.x;$(SolutionDir)\vendor\audiofile-0.3.3\libaudiofile;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;WINDOWS=1;_CRT_SECURE_NO_WARNINGS;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)\vendor\vstsdk2.4;$(SolutionDir)\vendor\vstsdk2.4\pluginterfaces\vst2.x;$(SolutionDir)\vendor\audiofile-0.3.3\libaudiofile;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="source\AudioClock.c" />
+    <ClCompile Include="source\AudioSettings.c" />
+    <ClCompile Include="source\BuildInfo.c" />
+    <ClCompile Include="source\CharString.c" />
+    <ClCompile Include="source\EventLogger.c" />
+    <ClCompile Include="source\LinkedList.c" />
+    <ClCompile Include="source\MidiEvent.c" />
+    <ClCompile Include="source\MidiSequence.c" />
+    <ClCompile Include="source\MidiSource.c" />
+    <ClCompile Include="source\MidiSourceFile.c" />
+    <ClCompile Include="source\MrsWatson.c" />
+    <ClCompile Include="source\PlatformUtilities.c" />
+    <ClCompile Include="source\Plugin.c" />
+    <ClCompile Include="source\PluginChain.c" />
+    <ClCompile Include="source\PluginPreset.c" />
+    <ClCompile Include="source\PluginPresetFxp.c" />
+    <ClCompile Include="source\PluginVst2x.cpp" />
+    <ClCompile Include="source\ProgramOption.c" />
+    <ClCompile Include="source\SampleBuffer.c" />
+    <ClCompile Include="source\SampleSource.c" />
+    <ClCompile Include="source\SampleSourceAiff.c" />
+    <ClCompile Include="source\SampleSourceAudiofile.c" />
+    <ClCompile Include="source\SampleSourcePcm.c" />
+    <ClCompile Include="source\SampleSourceSilence.c" />
+    <ClCompile Include="source\SampleSourceWave.c" />
+    <ClCompile Include="source\StringUtilities.c" />
+    <ClCompile Include="source\TaskTimer.c" />
+    <ClCompile Include="source\Vst2xHostCallback.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="source\AudioClock.h" />
+    <ClInclude Include="source\AudioSettings.h" />
+    <ClInclude Include="source\BuildInfo.h" />
+    <ClInclude Include="source\CharString.h" />
+    <ClInclude Include="source\EventLogger.h" />
+    <ClInclude Include="source\LinkedList.h" />
+    <ClInclude Include="source\MidiEvent.h" />
+    <ClInclude Include="source\MidiSequence.h" />
+    <ClInclude Include="source\MidiSource.h" />
+    <ClInclude Include="source\MidiSourceFile.h" />
+    <ClInclude Include="source\MrsWatson.h" />
+    <ClInclude Include="source\PlatformUtilities.h" />
+    <ClInclude Include="source\Plugin.h" />
+    <ClInclude Include="source\PluginChain.h" />
+    <ClInclude Include="source\PluginPreset.h" />
+    <ClInclude Include="source\PluginPresetFxp.h" />
+    <ClInclude Include="source\PluginVst2x.h" />
+    <ClInclude Include="source\ProgramOption.h" />
+    <ClInclude Include="source\SampleBuffer.h" />
+    <ClInclude Include="source\SampleSource.h" />
+    <ClInclude Include="source\SampleSourceAiff.h" />
+    <ClInclude Include="source\SampleSourceAudiofile.h" />
+    <ClInclude Include="source\SampleSourcePcm.h" />
+    <ClInclude Include="source\SampleSourceSilence.h" />
+    <ClInclude Include="source\SampleSourceWave.h" />
+    <ClInclude Include="source\StringUtilities.h" />
+    <ClInclude Include="source\TaskTimer.h" />
+    <ClInclude Include="source\Types.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

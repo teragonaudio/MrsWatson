@@ -30,7 +30,6 @@
 #include <string.h>
 #include "PluginChain.h"
 #include "EventLogger.h"
-#include "PluginPreset.h"
 
 PluginChain newPluginChain(void) {
   PluginChain pluginChain = malloc(sizeof(PluginChainMembers));
@@ -42,7 +41,7 @@ PluginChain newPluginChain(void) {
   return pluginChain;
 }
 
-static boolean _addPluginToChain(PluginChain pluginChain, Plugin plugin, PluginPreset preset) {
+static boolByte _addPluginToChain(PluginChain pluginChain, Plugin plugin, PluginPreset preset) {
   if(pluginChain->numPlugins + 1 >= MAX_PLUGINS) {
     logError("Could not add plugin '%s', maximum number reached", plugin->pluginName->data);
     return false;
@@ -55,16 +54,23 @@ static boolean _addPluginToChain(PluginChain pluginChain, Plugin plugin, PluginP
   }
 }
 
-boolean addPluginsFromArgumentString(PluginChain pluginChain, const CharString argumentString, const CharString pluginRoot) {
+boolByte addPluginsFromArgumentString(PluginChain pluginChain, const CharString argumentString, const CharString pluginRoot) {
   // Expect a semicolon-separated string of plugins with comma separators for preset names
   // Example: plugin1,preset1name;plugin2,preset2name
   char* substringStart = argumentString->data;
   char*pluginSeparator = strchr(argumentString->data, CHAIN_STRING_PLUGIN_SEPARATOR);
   char* endChar = argumentString->data + strlen(argumentString->data);
   CharString pluginNameBuffer = newCharString();
+  CharString presetNameBuffer;
+  char* presetSeparator;
+  PluginPreset preset = NULL;
+  PluginPresetType presetType;
+  Plugin plugin;
+  size_t substringLength;
+  CharString pluginLocationBuffer;
+  PluginInterfaceType pluginType;
 
   do {
-    size_t substringLength;
     if(pluginSeparator == NULL) {
       substringLength = strlen(argumentString->data);
     }
@@ -74,19 +80,18 @@ boolean addPluginsFromArgumentString(PluginChain pluginChain, const CharString a
     strncpy(pluginNameBuffer->data, substringStart, substringLength);
 
     // Use colon as a separator for presets to load into these plugins
-    CharString presetNameBuffer = newCharString();
-    char* colon = strchr(pluginNameBuffer->data, CHAIN_STRING_PROGRAM_SEPARATOR);
-    if(colon != NULL) {
+    presetNameBuffer = newCharString();
+    presetSeparator = strchr(pluginNameBuffer->data, CHAIN_STRING_PROGRAM_SEPARATOR);
+    if(presetSeparator != NULL) {
       // Null-terminate this string to force it to end, then extract preset name from next char
-      *colon = '\0';
-      strncpy(presetNameBuffer->data, colon + 1, strlen(colon + 1));
+      *presetSeparator = '\0';
+      strncpy(presetNameBuffer->data, presetSeparator + 1, strlen(presetSeparator + 1));
     }
 
     // Find preset for this plugin (if given)
-    PluginPreset preset = NULL;
     if(strlen(presetNameBuffer->data) > 0) {
       logInfo("Opening preset '%s' for plugin", presetNameBuffer->data);
-      PluginPresetType presetType = guessPluginPresetType(presetNameBuffer);
+      presetType = guessPluginPresetType(presetNameBuffer);
       if(presetType != PRESET_TYPE_INVALID) {
         preset = newPluginPreset(presetType, presetNameBuffer);
       }
@@ -94,10 +99,10 @@ boolean addPluginsFromArgumentString(PluginChain pluginChain, const CharString a
     freeCharString(presetNameBuffer);
 
     // Guess the plugin type from the file extension, search root, etc.
-    CharString pluginLocationBuffer = newCharString();
-    PluginInterfaceType pluginType = guessPluginInterfaceType(pluginNameBuffer, pluginRoot, pluginLocationBuffer);
+    pluginLocationBuffer = newCharString();
+    pluginType = guessPluginInterfaceType(pluginNameBuffer, pluginRoot, pluginLocationBuffer);
     if(pluginType != PLUGIN_TYPE_INVALID) {
-      Plugin plugin = newPlugin(pluginType, pluginNameBuffer, pluginLocationBuffer);
+      plugin = newPlugin(pluginType, pluginNameBuffer, pluginLocationBuffer);
       if(!_addPluginToChain(pluginChain, plugin, preset)) {
         logError("Plugin chain could not be constructed");
         return false;
@@ -118,7 +123,7 @@ boolean addPluginsFromArgumentString(PluginChain pluginChain, const CharString a
   return true;
 }
 
-static boolean _loadPresetForPlugin(Plugin plugin, PluginPreset preset) {
+static boolByte _loadPresetForPlugin(Plugin plugin, PluginPreset preset) {
   if(isPresetCompatibleWithPlugin(preset, plugin)) {
     if(!preset->openPreset(preset)) {
       logError("Could not open preset '%s'", preset->presetName->data);
@@ -137,9 +142,13 @@ static boolean _loadPresetForPlugin(Plugin plugin, PluginPreset preset) {
   }
 }
 
-boolean initializePluginChain(PluginChain pluginChain) {
-  for(int i = 0; i < pluginChain->numPlugins; i++) {
-    Plugin plugin = pluginChain->plugins[i];
+boolByte initializePluginChain(PluginChain pluginChain) {
+  Plugin plugin;
+  PluginPreset preset;
+  int i;
+
+  for(i = 0; i < pluginChain->numPlugins; i++) {
+    plugin = pluginChain->plugins[i];
     if(!plugin->open(plugin)) {
       logError("Plugin '%s' could not be opened", plugin->pluginName->data);
       return false;
@@ -158,7 +167,7 @@ boolean initializePluginChain(PluginChain pluginChain) {
         return false;
       }
 
-      PluginPreset preset = pluginChain->presets[i];
+      preset = pluginChain->presets[i];
       if(preset != NULL) {
         if(!_loadPresetForPlugin(plugin, preset)) {
           logError("Could not load preset '%s' for plugin '%s'", preset->presetName->data, plugin->pluginName->data);
@@ -172,17 +181,22 @@ boolean initializePluginChain(PluginChain pluginChain) {
 }
 
 void displayPluginInfo(PluginChain pluginChain) {
-  for(int i = 0; i < pluginChain->numPlugins; i++) {
-    Plugin plugin = pluginChain->plugins[i];
+  Plugin plugin;
+  int i;
+  for(i = 0; i < pluginChain->numPlugins; i++) {
+    plugin = pluginChain->plugins[i];
     plugin->displayInfo(plugin);
   }
 }
 
 int getMaximumTailTimeInMs(PluginChain pluginChain) {
+  Plugin plugin;
+  int tailTime;
   int maxTailTime = 0;
-  for(int i = 0; i < pluginChain->numPlugins; i++) {
-    Plugin plugin = pluginChain->plugins[i];
-    int tailTime = plugin->getSetting(plugin, PLUGIN_SETTING_TAIL_TIME_IN_MS);
+  int i;
+  for(i = 0; i < pluginChain->numPlugins; i++) {
+    plugin = pluginChain->plugins[i];
+    tailTime = plugin->getSetting(plugin, PLUGIN_SETTING_TAIL_TIME_IN_MS);
     if(tailTime > maxTailTime) {
       maxTailTime = tailTime;
     }
@@ -191,9 +205,12 @@ int getMaximumTailTimeInMs(PluginChain pluginChain) {
 }
 
 void processPluginChainAudio(PluginChain pluginChain, SampleBuffer inBuffer, SampleBuffer outBuffer, TaskTimer taskTimer) {
-  for(int i = 0; i < pluginChain->numPlugins; i++) {
+  Plugin plugin;
+  int i;
+
+  for(i = 0; i < pluginChain->numPlugins; i++) {
     clearSampleBuffer(outBuffer);
-    Plugin plugin = pluginChain->plugins[i];
+    plugin = pluginChain->plugins[i];
     logDebug("Processing audio with plugin '%s'", plugin->pluginName->data);
     startTimingTask(taskTimer, i);
     plugin->processAudio(plugin, inBuffer, outBuffer);
@@ -209,19 +226,22 @@ void processPluginChainAudio(PluginChain pluginChain, SampleBuffer inBuffer, Sam
 }
 
 void processPluginChainMidiEvents(PluginChain pluginChain, LinkedList midiEvents, TaskTimer taskTimer) {
+  Plugin plugin;
   if(midiEvents->item != NULL) {
     logDebug("Processing plugin chain MIDI events");
     // Right now, we only process MIDI in the first plugin in the chain
     // TODO: Is this really the correct behavior? How do other sequencers do it?
-    Plugin plugin = pluginChain->plugins[0];
+    plugin = pluginChain->plugins[0];
     startTimingTask(taskTimer, 0);
     plugin->processMidiEvents(plugin, midiEvents);
   }
 }
 
 void freePluginChain(PluginChain pluginChain) {
-  for(int i = 0; i < pluginChain->numPlugins; i++) {
-    Plugin plugin = pluginChain->plugins[i];
+  Plugin plugin;
+  int i;
+  for(i = 0; i < pluginChain->numPlugins; i++) {
+    plugin = pluginChain->plugins[i];
     logInfo("Closing plugin '%s'", plugin->pluginName->data);
     freePlugin(plugin);
   }

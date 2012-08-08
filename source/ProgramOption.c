@@ -36,7 +36,7 @@
 #define NO_DEFAULT_VALUE -1
 
 static void _addNewProgramOption(const ProgramOptions programOptions, const int optionIndex,
-  const char* name, const char* help, boolean hasShortForm, ProgramOptionArgumentType argumentType,
+  const char* name, const char* help, boolByte hasShortForm, ProgramOptionArgumentType argumentType,
   int defaultValue) {
   ProgramOption programOption = malloc(sizeof(ProgramOptionMembers));
 
@@ -168,18 +168,22 @@ value will be used and added to <argument>.",
   return programOptions;
 }
 
-static boolean _isStringShortOption(const char* testString) {
-  return (testString != NULL && strlen(testString) == 2 && testString[0] == '-');
+static boolByte _isStringShortOption(const char* testString) {
+  return (boolByte)(testString != NULL && strlen(testString) == 2 && testString[0] == '-');
 }
 
-static boolean _isStringLongOption(const char* testString) {
-  return (testString != NULL && strlen(testString) > 2 && testString[0] == '-' && testString[1] == '-');  
+static boolByte _isStringLongOption(const char* testString) {
+  return (boolByte)(testString != NULL && strlen(testString) > 2 && testString[0] == '-' && testString[1] == '-');
 }
 
 static ProgramOption _findProgramOption(ProgramOptions programOptions, const char* optionString) {
+  ProgramOption potentialMatchOption, optionMatch;
+  CharString optionStringWithoutDashes;
+  int i;
+
   if(_isStringShortOption(optionString)) {
-    for(int i = 0; i < NUM_OPTIONS; i++) {
-      ProgramOption potentialMatchOption = programOptions[i];
+    for(i = 0; i < NUM_OPTIONS; i++) {
+      potentialMatchOption = programOptions[i];
       if(potentialMatchOption->hasShortForm && potentialMatchOption->name->data[0] == optionString[1]) {
         return potentialMatchOption;
       }
@@ -187,11 +191,11 @@ static ProgramOption _findProgramOption(ProgramOptions programOptions, const cha
   }
 
   if(_isStringLongOption(optionString)) {
-    ProgramOption optionMatch = NULL;
-    CharString optionStringWithoutDashes = newCharStringWithCapacity(STRING_LENGTH_SHORT);
+    optionMatch = NULL;
+    optionStringWithoutDashes = newCharStringWithCapacity(STRING_LENGTH_SHORT);
     strncpy(optionStringWithoutDashes->data, optionString + 2, strlen(optionString) - 2);
-    for(int i = 0; i < NUM_OPTIONS; i++) {
-      ProgramOption potentialMatchOption = programOptions[i];
+    for(i = 0; i < NUM_OPTIONS; i++) {
+      potentialMatchOption = programOptions[i];
       if(isCharStringEqualTo(potentialMatchOption->name, optionStringWithoutDashes, false)) {
         optionMatch = potentialMatchOption;
         break;
@@ -205,7 +209,7 @@ static ProgramOption _findProgramOption(ProgramOptions programOptions, const cha
   return NULL;
 }
 
-static boolean _fillOptionArgument(ProgramOption programOption, int* currentArgc, int argc, char** argv) {
+static boolByte _fillOptionArgument(ProgramOption programOption, int* currentArgc, int argc, char** argv) {
   if(programOption->argumentType == ARGUMENT_TYPE_NONE) {
     return true;
   }
@@ -253,8 +257,9 @@ static boolean _fillOptionArgument(ProgramOption programOption, int* currentArgc
   }
 }
 
-boolean parseCommandLine(ProgramOptions programOptions, int argc, char** argv) {
-  for(int argumentIndex = 1; argumentIndex < argc; argumentIndex++) {
+boolByte parseCommandLine(ProgramOptions programOptions, int argc, char** argv) {
+  int argumentIndex;
+  for(argumentIndex = 1; argumentIndex < argc; argumentIndex++) {
     const ProgramOption option = _findProgramOption(programOptions, argv[argumentIndex]);
     if(option == NULL) {
       logCritical("Invalid option '%s'", argv[argumentIndex]);
@@ -273,7 +278,7 @@ boolean parseCommandLine(ProgramOptions programOptions, int argc, char** argv) {
 }
 
 void printProgramQuickHelp(const char* argvName) {
-  char *programBasename = getFileBasename(argvName);
+  const char *programBasename = getFileBasename(argvName);
   printf("Usage: %s (options), where <argument> is required and [argument] is optional.\n", programBasename);
   printf("Quickstart for effects: %s --plugin <name> --input <name> --output <name>\n", programBasename);
   printf("Quickstart for instruments: %s --plugin <name> --midi-file <name> --output <name>\n", programBasename);
@@ -281,13 +286,16 @@ void printProgramQuickHelp(const char* argvName) {
 }
 
 void printProgramOptionsHelp(const ProgramOptions programOptions, int indentSize) {
-  for(int i = 0; i < NUM_OPTIONS; i++) {
+  int i;
+  for(i = 0; i < NUM_OPTIONS; i++) {
     printProgramOptionHelp(programOptions[i], indentSize, indentSize);
   }
 }
 
 void printProgramOptionHelp(const ProgramOption programOption, int indentSize, int initialIndent) {
+  CharString wrappedHelpString;
   int i;
+
   if(programOption == NULL) {
     logError("Can't find help for that option. Try running with --help to see all options\n");
     return;
@@ -322,14 +330,15 @@ void printProgramOptionHelp(const ProgramOption programOption, int indentSize, i
   }
 
   // Newline and indentation before help
-  CharString wrappedHelpString = newCharStringWithCapacity(STRING_LENGTH_LONG);
+  wrappedHelpString = newCharStringWithCapacity(STRING_LENGTH_LONG);
   wrapStringForTerminal(programOption->help->data, wrappedHelpString->data, initialIndent + indentSize);
   printf("\n%s\n\n", wrappedHelpString->data);
   freeCharString(wrappedHelpString);
 }
 
 const ProgramOption findProgramOptionFromString(const ProgramOptions programOptions, const CharString string) {
-  for(int i = 0; i < NUM_OPTIONS; i++) {
+  int i;
+  for(i = 0; i < NUM_OPTIONS; i++) {
     if(isCharStringEqualTo(string, programOptions[i]->name, true)) {
       return programOptions[i];
     }
@@ -345,8 +354,11 @@ static void _freeProgramOption(ProgramOption programOption) {
 }
 
 void freeProgramOptions(ProgramOptions programOptions) {
-  for(int i = 0; i < NUM_OPTIONS; i++) {
-    ProgramOption option = programOptions[i];
+  ProgramOption option;
+  int i;
+
+  for(i = 0; i < NUM_OPTIONS; i++) {
+    option = programOptions[i];
     _freeProgramOption(option);
   }
   free(programOptions);

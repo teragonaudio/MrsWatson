@@ -34,23 +34,27 @@
 #include "EventLogger.h"
 #include "SampleSourcePcm.h"
 
-boolean readBlockFromAudiofile(void* sampleSourcePtr, SampleBuffer sampleBuffer) {
-  SampleSource sampleSource = sampleSourcePtr;
-  SampleSourceAudiofileData extraData = sampleSource->extraData;
+#if ! WINDOWS
 
+boolByte readBlockFromAudiofile(void* sampleSourcePtr, SampleBuffer sampleBuffer) {
+  SampleSource sampleSource = (SampleSource)sampleSourcePtr;
+  SampleSourceAudiofileData extraData = (SampleSourceAudiofileData)(sampleSource->extraData);
+
+  int numFramesRead;
+  int currentInterlacedSample = 0;
+  int currentDeinterlacedSample = 0;
+  int currentChannel;
+  
   if(extraData->interlacedBuffer == NULL) {
-    extraData->interlacedBuffer = malloc(sizeof(float) * getNumChannels() * getBlocksize());
+    extraData->interlacedBuffer = (float*)malloc(sizeof(float) * getNumChannels() * getBlocksize());
   }
   memset(extraData->interlacedBuffer, 0, sizeof(float) * getNumChannels() * getBlocksize());
 
-  int numFramesRead;
   numFramesRead = afReadFrames(extraData->fileHandle, AF_DEFAULT_TRACK, extraData->interlacedBuffer, getBlocksize());
-  int currentInterlacedSample = 0;
-  int currentDeinterlacedSample = 0;
   // Loop over the number of frames wanted, not the number we actually got. This means that the last block will
   // be partial, but then we write empty data to the end, since the interlaced buffer gets cleared above.
   while(currentInterlacedSample < getBlocksize() * getNumChannels()) {
-    for(int currentChannel = 0; currentChannel < sampleBuffer->numChannels; currentChannel++) {
+    for(currentChannel = 0; currentChannel < sampleBuffer->numChannels; currentChannel++) {
       sampleBuffer->samples[currentChannel][currentDeinterlacedSample] = extraData->interlacedBuffer[currentInterlacedSample++];
     }
     currentDeinterlacedSample++;
@@ -70,23 +74,24 @@ boolean readBlockFromAudiofile(void* sampleSourcePtr, SampleBuffer sampleBuffer)
   }
 }
 
-boolean writeBlockFromAudiofile(void* sampleSourcePtr, const SampleBuffer sampleBuffer) {
-  SampleSource sampleSource = sampleSourcePtr;
-  SampleSourceAudiofileData extraData = sampleSource->extraData;
+boolByte writeBlockFromAudiofile(void* sampleSourcePtr, const SampleBuffer sampleBuffer) {
+  SampleSource sampleSource = (SampleSource)sampleSourcePtr;
+  SampleSourceAudiofileData extraData = (SampleSourceAudiofileData)(sampleSource->extraData);
+  int result = 0;
 
   if(extraData->pcmBuffer == NULL) {
-    extraData->pcmBuffer = malloc(sizeof(short) * getNumChannels() * getBlocksize());
+    extraData->pcmBuffer = (short*)malloc(sizeof(short) * getNumChannels() * getBlocksize());
   }
   memset(extraData->pcmBuffer, 0, sizeof(short) * getNumChannels() * getBlocksize());
   convertSampleBufferToPcmData(sampleBuffer, extraData->pcmBuffer);
 
-  int result = afWriteFrames(extraData->fileHandle, AF_DEFAULT_TRACK, extraData->pcmBuffer, getBlocksize());
+  result = afWriteFrames(extraData->fileHandle, AF_DEFAULT_TRACK, extraData->pcmBuffer, getBlocksize());
   sampleSource->numFramesProcessed += getBlocksize() * getNumChannels();
   return (result == 1);
 }
 
 void freeSampleSourceDataAudiofile(void* sampleSourceDataPtr) {
-  SampleSourceAudiofileData extraData = sampleSourceDataPtr;
+  SampleSourceAudiofileData extraData = (SampleSourceAudiofileData)sampleSourceDataPtr;
   if(extraData->fileHandle != NULL) {
     afCloseFile(extraData->fileHandle);
   }
@@ -98,3 +103,5 @@ void freeSampleSourceDataAudiofile(void* sampleSourceDataPtr) {
   }
   free(extraData);
 }
+
+#endif

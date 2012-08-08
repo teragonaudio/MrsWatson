@@ -42,11 +42,11 @@ typedef struct {
   CharString name;
   CharString help;
   int helpDefaultValue;
-  boolean hasShortForm;
+  boolByte hasShortForm;
 
   ProgramOptionArgumentType argumentType;
   CharString argument;
-  boolean enabled;
+  boolByte enabled;
 } ProgramOptionMembers;
 
 typedef enum {
@@ -80,7 +80,7 @@ typedef ProgramOptionMembers* ProgramOption;
 typedef ProgramOption* ProgramOptions;
 
 ProgramOptions newProgramOptions(void);
-boolean parseCommandLine(ProgramOptions programOptions, int argc, char** argv);
+boolByte parseCommandLine(ProgramOptions programOptions, int argc, char** argv);
 const ProgramOption findProgramOptionFromString(const ProgramOptions programOptions, const CharString string);
 void printProgramQuickHelp(const char* argvName);
 void printProgramOptionsHelp(const ProgramOptions programOptions, int indentSize);

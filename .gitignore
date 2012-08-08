@@ -26,3 +26,8 @@ Makefile
 stamp-h1
 source/mrswatson
 source/mrswatson.exe
+ipch/*
+*.user
+*.sdf
+*.opensdf
+*.suo

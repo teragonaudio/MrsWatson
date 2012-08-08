@@ -27,6 +27,10 @@
 
 #include "CharString.h"
 
+#if WINDOWS
+#include <Windows.h>
+#endif
+
 #ifndef MrsWatson_TaskTimer_h
 #define MrsWatson_TaskTimer_h
 
@@ -34,7 +38,12 @@ typedef struct {
   int numTasks;
   int currentTask;
   unsigned long* totalTaskTimes;
+#if WINDOWS
+  LARGE_INTEGER startTime;
+  LARGE_INTEGER counterFrequency;
+#else
   struct timeval* startTime;
+#endif
 } TaskTimerMembers;
 
 typedef TaskTimerMembers* TaskTimer;

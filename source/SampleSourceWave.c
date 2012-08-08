@@ -34,7 +34,9 @@
 #include "SampleSourceAudiofile.h"
 #include "EventLogger.h"
 
-static boolean _openSampleSourceWave(void *sampleSourcePtr, const SampleSourceOpenAs openAs) {
+#if USE_SOURCE_TYPE_WAVE
+
+static boolByte _openSampleSourceWave(void *sampleSourcePtr, const SampleSourceOpenAs openAs) {
   SampleSource sampleSource = sampleSourcePtr;
   SampleSourceAudiofileData extraData = sampleSource->extraData;
 
@@ -70,7 +72,8 @@ static boolean _openSampleSourceWave(void *sampleSourcePtr, const SampleSourceOp
 }
 
 SampleSource newSampleSourceWave(const CharString sampleSourceName) {
-  SampleSource sampleSource = malloc(sizeof(SampleSourceMembers));
+  SampleSource sampleSource = (SampleSource)malloc(sizeof(SampleSourceMembers));
+  SampleSourceAudiofileData extraData = (SampleSourceAudiofileData)malloc(sizeof(SampleSourceAudiofileDataMembers));
 
   sampleSource->sampleSourceType = SAMPLE_SOURCE_TYPE_WAVE;
   sampleSource->openedAs = SAMPLE_SOURCE_OPEN_NOT_OPENED;
@@ -85,7 +88,6 @@ SampleSource newSampleSourceWave(const CharString sampleSourceName) {
   sampleSource->writeSampleBlock = writeBlockFromAudiofile;
   sampleSource->freeSampleSourceData = freeSampleSourceDataAudiofile;
 
-  SampleSourceAudiofileData extraData = malloc(sizeof(SampleSourceAudiofileDataMembers));
   extraData->fileHandle = NULL;
   extraData->interlacedBuffer = NULL;
   extraData->pcmBuffer = NULL;
@@ -93,3 +95,5 @@ SampleSource newSampleSourceWave(const CharString sampleSourceName) {
 
   return sampleSource;
 }
+
+#endif
