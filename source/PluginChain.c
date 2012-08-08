@@ -206,7 +206,9 @@ int getMaximumTailTimeInMs(PluginChain pluginChain) {
 
 void processPluginChainAudio(PluginChain pluginChain, SampleBuffer inBuffer, SampleBuffer outBuffer, TaskTimer taskTimer) {
   Plugin plugin;
-  for(int i = 0; i < pluginChain->numPlugins; i++) {
+  int i;
+
+  for(i = 0; i < pluginChain->numPlugins; i++) {
     clearSampleBuffer(outBuffer);
     plugin = pluginChain->plugins[i];
     logDebug("Processing audio with plugin '%s'", plugin->pluginName->data);

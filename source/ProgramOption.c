@@ -286,7 +286,8 @@ void printProgramQuickHelp(const char* argvName) {
 }
 
 void printProgramOptionsHelp(const ProgramOptions programOptions, int indentSize) {
-  for(int i = 0; i < NUM_OPTIONS; i++) {
+  int i;
+  for(i = 0; i < NUM_OPTIONS; i++) {
     printProgramOptionHelp(programOptions[i], indentSize, indentSize);
   }
 }
@@ -336,7 +337,8 @@ void printProgramOptionHelp(const ProgramOption programOption, int indentSize, i
 }
 
 const ProgramOption findProgramOptionFromString(const ProgramOptions programOptions, const CharString string) {
-  for(int i = 0; i < NUM_OPTIONS; i++) {
+  int i;
+  for(i = 0; i < NUM_OPTIONS; i++) {
     if(isCharStringEqualTo(string, programOptions[i]->name, true)) {
       return programOptions[i];
     }
