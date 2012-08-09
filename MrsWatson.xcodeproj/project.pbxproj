@@ -37,7 +37,6 @@
 		24ED068915D3CAC5007CDA69 /* AudioClockTest.c in Sources */ = {isa = PBXBuildFile; fileRef = 24ED068715D3CAC5007CDA69 /* AudioClockTest.c */; };
 		24ED06C315D3CCE5007CDA69 /* AudioClock.c in Sources */ = {isa = PBXBuildFile; fileRef = 2457AB8814B5BF0F000D868C /* AudioClock.c */; };
 		24ED06EA15D3F3AF007CDA69 /* AudioSettingsTest.c in Sources */ = {isa = PBXBuildFile; fileRef = 24ED06D215D3F3AF007CDA69 /* AudioSettingsTest.c */; };
-		24ED06EB15D3F3AF007CDA69 /* BuildInfoTest.c in Sources */ = {isa = PBXBuildFile; fileRef = 24ED06D315D3F3AF007CDA69 /* BuildInfoTest.c */; };
 		24ED06EC15D3F3AF007CDA69 /* CharStringTest.c in Sources */ = {isa = PBXBuildFile; fileRef = 24ED06D415D3F3AF007CDA69 /* CharStringTest.c */; };
 		24ED06ED15D3F3AF007CDA69 /* EventLoggerTest.c in Sources */ = {isa = PBXBuildFile; fileRef = 24ED06D515D3F3AF007CDA69 /* EventLoggerTest.c */; };
 		24ED06EE15D3F3AF007CDA69 /* LinkedListTest.c in Sources */ = {isa = PBXBuildFile; fileRef = 24ED06D615D3F3AF007CDA69 /* LinkedListTest.c */; };
@@ -176,7 +175,6 @@
 		24ED068715D3CAC5007CDA69 /* AudioClockTest.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = AudioClockTest.c; path = test/AudioClockTest.c; sourceTree = SOURCE_ROOT; };
 		24ED068A15D3CAEC007CDA69 /* TestRunner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TestRunner.h; path = test/TestRunner.h; sourceTree = SOURCE_ROOT; };
 		24ED06D215D3F3AF007CDA69 /* AudioSettingsTest.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = AudioSettingsTest.c; path = test/AudioSettingsTest.c; sourceTree = SOURCE_ROOT; };
-		24ED06D315D3F3AF007CDA69 /* BuildInfoTest.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = BuildInfoTest.c; path = test/BuildInfoTest.c; sourceTree = SOURCE_ROOT; };
 		24ED06D415D3F3AF007CDA69 /* CharStringTest.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = CharStringTest.c; path = test/CharStringTest.c; sourceTree = SOURCE_ROOT; };
 		24ED06D515D3F3AF007CDA69 /* EventLoggerTest.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = EventLoggerTest.c; path = test/EventLoggerTest.c; sourceTree = SOURCE_ROOT; };
 		24ED06D615D3F3AF007CDA69 /* LinkedListTest.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = LinkedListTest.c; path = test/LinkedListTest.c; sourceTree = SOURCE_ROOT; };
@@ -280,7 +278,6 @@
 			children = (
 				24ED068715D3CAC5007CDA69 /* AudioClockTest.c */,
 				24ED06D215D3F3AF007CDA69 /* AudioSettingsTest.c */,
-				24ED06D315D3F3AF007CDA69 /* BuildInfoTest.c */,
 				24ED06D415D3F3AF007CDA69 /* CharStringTest.c */,
 				24ED06D515D3F3AF007CDA69 /* EventLoggerTest.c */,
 				24ED06D615D3F3AF007CDA69 /* LinkedListTest.c */,
@@ -488,7 +485,6 @@
 				24ED071715D4035A007CDA69 /* AudioSettings.c in Sources */,
 				24ED06EA15D3F3AF007CDA69 /* AudioSettingsTest.c in Sources */,
 				24ED071815D4035D007CDA69 /* BuildInfo.c in Sources */,
-				24ED06EB15D3F3AF007CDA69 /* BuildInfoTest.c in Sources */,
 				24ED071915D40374007CDA69 /* CharString.c in Sources */,
 				24ED06EC15D3F3AF007CDA69 /* CharStringTest.c in Sources */,
 				24ED071A15D40378007CDA69 /* EventLogger.c in Sources */,
