@@ -23,6 +23,6 @@ int main(int argc, char* argv[]) {
   testsFailed = 0;
   int result = runAllTests();
 
-  printf("\nRan %d tests: %d passed, %d failed\n", testsPassed + testsPassed, testsPassed, testsFailed);
+  printf("\nRan %d tests: %d passed, %d failed\n", testsPassed + testsFailed, testsPassed, testsFailed);
   return result != 0;
 }
