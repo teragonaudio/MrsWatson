@@ -4,7 +4,18 @@
 #define _assert(condition) \
   { \
     if(!(condition)) { \
-      printTestFailed(__func__, __LINE__); \
+      printf("FAIL at %s(), line %d\n", __func__, __LINE__); \
+      return 1; \
+    } \
+  }
+
+#define _assertFalse(condition) _assert((condition) == false)
+
+#define _assertIntEquals(condition, expected) \
+  { \
+    int result = condition; \
+    if(result != expected) { \
+      printf("FAIL at %s(), line %d. Expected %d, got %d.\n", __func__, __LINE__, expected, result); \
       return 1; \
     } \
   }
@@ -43,8 +54,4 @@ static void printTestStarted(const char* testName) {
 
 static void printTestSuccess(void) {
   printf("OK\n");
-}
-
-static void printTestFailed(const char* functionName, const int lineNumber) {
-  printf("FAIL at %s(), line %d\n", functionName, lineNumber);
 }
