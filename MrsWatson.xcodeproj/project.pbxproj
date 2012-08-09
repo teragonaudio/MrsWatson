@@ -60,6 +60,34 @@
 		24ED06FF15D3F3AF007CDA69 /* SampleSourceWaveTest.c in Sources */ = {isa = PBXBuildFile; fileRef = 24ED06E715D3F3AF007CDA69 /* SampleSourceWaveTest.c */; };
 		24ED070015D3F3AF007CDA69 /* StringUtilitiesTest.c in Sources */ = {isa = PBXBuildFile; fileRef = 24ED06E815D3F3AF007CDA69 /* StringUtilitiesTest.c */; };
 		24ED070115D3F3AF007CDA69 /* TaskTimerTest.c in Sources */ = {isa = PBXBuildFile; fileRef = 24ED06E915D3F3AF007CDA69 /* TaskTimerTest.c */; };
+		24ED071715D4035A007CDA69 /* AudioSettings.c in Sources */ = {isa = PBXBuildFile; fileRef = 24182A8214B492DD009F0A5D /* AudioSettings.c */; };
+		24ED071815D4035D007CDA69 /* BuildInfo.c in Sources */ = {isa = PBXBuildFile; fileRef = 2435639214B20B5A0049FD43 /* BuildInfo.c */; };
+		24ED071915D40374007CDA69 /* CharString.c in Sources */ = {isa = PBXBuildFile; fileRef = 2435636A14B1B4FE0049FD43 /* CharString.c */; };
+		24ED071A15D40378007CDA69 /* EventLogger.c in Sources */ = {isa = PBXBuildFile; fileRef = 2435636714B1A2D50049FD43 /* EventLogger.c */; };
+		24ED071B15D4037E007CDA69 /* LinkedList.c in Sources */ = {isa = PBXBuildFile; fileRef = 24EE33E614B3455800CFADE0 /* LinkedList.c */; };
+		24ED071C15D40382007CDA69 /* MidiEvent.c in Sources */ = {isa = PBXBuildFile; fileRef = 24BD3E7914B5A60F00BFA6DE /* MidiEvent.c */; };
+		24ED071D15D40385007CDA69 /* MidiSequence.c in Sources */ = {isa = PBXBuildFile; fileRef = 24BD3E6B14B59B7900BFA6DE /* MidiSequence.c */; };
+		24ED071E15D4038A007CDA69 /* MidiSourceFile.c in Sources */ = {isa = PBXBuildFile; fileRef = 24BD3E7614B5A5C900BFA6DE /* MidiSourceFile.c */; };
+		24ED071F15D40397007CDA69 /* PlatformUtilities.c in Sources */ = {isa = PBXBuildFile; fileRef = 2435639914B22B990049FD43 /* PlatformUtilities.c */; };
+		24ED072015D4039E007CDA69 /* MidiSource.c in Sources */ = {isa = PBXBuildFile; fileRef = 24BD3E6214B59B1E00BFA6DE /* MidiSource.c */; };
+		24ED072115D403A3007CDA69 /* Plugin.c in Sources */ = {isa = PBXBuildFile; fileRef = 2465A2C914B3130B00F94E84 /* Plugin.c */; };
+		24ED072215D403A9007CDA69 /* PluginPresetFxp.c in Sources */ = {isa = PBXBuildFile; fileRef = 24F35DDC14C0205300F70074 /* PluginPresetFxp.c */; };
+		24ED072315D403BB007CDA69 /* ProgramOption.c in Sources */ = {isa = PBXBuildFile; fileRef = 2435637A14B1BF3F0049FD43 /* ProgramOption.c */; };
+		24ED072415D403C0007CDA69 /* PluginChain.c in Sources */ = {isa = PBXBuildFile; fileRef = 2465A2D714B3313600F94E84 /* PluginChain.c */; };
+		24ED072515D403C5007CDA69 /* PluginPreset.c in Sources */ = {isa = PBXBuildFile; fileRef = 24F35DDA14C0204100F70074 /* PluginPreset.c */; };
+		24ED072615D403CD007CDA69 /* SampleBuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = 2435639B14B22FFB0049FD43 /* SampleBuffer.c */; };
+		24ED072715D403D0007CDA69 /* SampleSourceAiff.c in Sources */ = {isa = PBXBuildFile; fileRef = 24476E7D14CACAB300A552A2 /* SampleSourceAiff.c */; };
+		24ED072815D403D3007CDA69 /* SampleSourceAudiofile.c in Sources */ = {isa = PBXBuildFile; fileRef = 24E3207F14CC1B2F00DA6589 /* SampleSourceAudiofile.c */; };
+		24ED072915D403D7007CDA69 /* SampleSourcePcm.c in Sources */ = {isa = PBXBuildFile; fileRef = 2435639614B20B960049FD43 /* SampleSourcePcm.c */; };
+		24ED072A15D403DA007CDA69 /* SampleSourceSilence.c in Sources */ = {isa = PBXBuildFile; fileRef = 24BD3E6D14B59BD700BFA6DE /* SampleSourceSilence.c */; };
+		24ED072B15D403E1007CDA69 /* SampleSource.c in Sources */ = {isa = PBXBuildFile; fileRef = 2435638B14B1FF010049FD43 /* SampleSource.c */; };
+		24ED072C15D403E5007CDA69 /* SampleSourceWave.c in Sources */ = {isa = PBXBuildFile; fileRef = 24E3207C14CC1A3900DA6589 /* SampleSourceWave.c */; };
+		24ED072D15D403E9007CDA69 /* StringUtilities.c in Sources */ = {isa = PBXBuildFile; fileRef = 2458026014B4542A0030FEE9 /* StringUtilities.c */; };
+		24ED072E15D403EC007CDA69 /* TaskTimer.c in Sources */ = {isa = PBXBuildFile; fileRef = 2457AB8514B5BEF7000D868C /* TaskTimer.c */; };
+		24ED072F15D40402007CDA69 /* libaudiofile.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 24E3207914CC14B900DA6589 /* libaudiofile.a */; };
+		24ED073015D40439007CDA69 /* Vst2xHostCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 24D400B014B5EAEA00531081 /* Vst2xHostCallback.cpp */; };
+		24ED073115D4045E007CDA69 /* PluginVst2x.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2465A2D314B3156A00F94E84 /* PluginVst2x.cpp */; };
+		24ED073215D4046D007CDA69 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 24CFD07A14B3736A005AF479 /* Carbon.framework */; };
 		24EE33E714B3455800CFADE0 /* LinkedList.c in Sources */ = {isa = PBXBuildFile; fileRef = 24EE33E614B3455800CFADE0 /* LinkedList.c */; };
 		24F35DDB14C0204100F70074 /* PluginPreset.c in Sources */ = {isa = PBXBuildFile; fileRef = 24F35DDA14C0204100F70074 /* PluginPreset.c */; };
 		24F35DDD14C0205300F70074 /* PluginPresetFxp.c in Sources */ = {isa = PBXBuildFile; fileRef = 24F35DDC14C0205300F70074 /* PluginPresetFxp.c */; };
@@ -186,6 +214,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				24ED073215D4046D007CDA69 /* Carbon.framework in Frameworks */,
+				24ED072F15D40402007CDA69 /* libaudiofile.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -452,33 +482,59 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				24ED06C315D3CCE5007CDA69 /* AudioClock.c in Sources */,
 				24ED068615D3C880007CDA69 /* TestSuite.c in Sources */,
+				24ED06C315D3CCE5007CDA69 /* AudioClock.c in Sources */,
 				24ED068915D3CAC5007CDA69 /* AudioClockTest.c in Sources */,
+				24ED071715D4035A007CDA69 /* AudioSettings.c in Sources */,
 				24ED06EA15D3F3AF007CDA69 /* AudioSettingsTest.c in Sources */,
+				24ED071815D4035D007CDA69 /* BuildInfo.c in Sources */,
 				24ED06EB15D3F3AF007CDA69 /* BuildInfoTest.c in Sources */,
+				24ED071915D40374007CDA69 /* CharString.c in Sources */,
 				24ED06EC15D3F3AF007CDA69 /* CharStringTest.c in Sources */,
+				24ED071A15D40378007CDA69 /* EventLogger.c in Sources */,
 				24ED06ED15D3F3AF007CDA69 /* EventLoggerTest.c in Sources */,
+				24ED071B15D4037E007CDA69 /* LinkedList.c in Sources */,
 				24ED06EE15D3F3AF007CDA69 /* LinkedListTest.c in Sources */,
+				24ED071C15D40382007CDA69 /* MidiEvent.c in Sources */,
 				24ED06EF15D3F3AF007CDA69 /* MidiEventTest.c in Sources */,
+				24ED071D15D40385007CDA69 /* MidiSequence.c in Sources */,
 				24ED06F015D3F3AF007CDA69 /* MidiSequenceTest.c in Sources */,
+				24ED071E15D4038A007CDA69 /* MidiSourceFile.c in Sources */,
 				24ED06F115D3F3AF007CDA69 /* MidiSourceFileTest.c in Sources */,
+				24ED072015D4039E007CDA69 /* MidiSource.c in Sources */,
 				24ED06F215D3F3AF007CDA69 /* MidiSourceTest.c in Sources */,
+				24ED071F15D40397007CDA69 /* PlatformUtilities.c in Sources */,
 				24ED06F315D3F3AF007CDA69 /* PlatformUtilitiesTest.c in Sources */,
+				24ED072415D403C0007CDA69 /* PluginChain.c in Sources */,
 				24ED06F415D3F3AF007CDA69 /* PluginChainTest.c in Sources */,
+				24ED072515D403C5007CDA69 /* PluginPreset.c in Sources */,
+				24ED072215D403A9007CDA69 /* PluginPresetFxp.c in Sources */,
 				24ED06F515D3F3AF007CDA69 /* PluginPresetFxpTest.c in Sources */,
 				24ED06F615D3F3AF007CDA69 /* PluginPresetTest.c in Sources */,
+				24ED072115D403A3007CDA69 /* Plugin.c in Sources */,
 				24ED06F715D3F3AF007CDA69 /* PluginTest.c in Sources */,
+				24ED072315D403BB007CDA69 /* ProgramOption.c in Sources */,
 				24ED06F815D3F3AF007CDA69 /* ProgramOptionTest.c in Sources */,
+				24ED072615D403CD007CDA69 /* SampleBuffer.c in Sources */,
 				24ED06F915D3F3AF007CDA69 /* SampleBufferTest.c in Sources */,
+				24ED072715D403D0007CDA69 /* SampleSourceAiff.c in Sources */,
 				24ED06FA15D3F3AF007CDA69 /* SampleSourceAiffTest.c in Sources */,
+				24ED072815D403D3007CDA69 /* SampleSourceAudiofile.c in Sources */,
 				24ED06FB15D3F3AF007CDA69 /* SampleSourceAudiofileTest.c in Sources */,
+				24ED072915D403D7007CDA69 /* SampleSourcePcm.c in Sources */,
 				24ED06FC15D3F3AF007CDA69 /* SampleSourcePcmTest.c in Sources */,
+				24ED072A15D403DA007CDA69 /* SampleSourceSilence.c in Sources */,
 				24ED06FD15D3F3AF007CDA69 /* SampleSourceSilenceTest.c in Sources */,
+				24ED072B15D403E1007CDA69 /* SampleSource.c in Sources */,
 				24ED06FE15D3F3AF007CDA69 /* SampleSourceTest.c in Sources */,
+				24ED072C15D403E5007CDA69 /* SampleSourceWave.c in Sources */,
 				24ED06FF15D3F3AF007CDA69 /* SampleSourceWaveTest.c in Sources */,
+				24ED072D15D403E9007CDA69 /* StringUtilities.c in Sources */,
 				24ED070015D3F3AF007CDA69 /* StringUtilitiesTest.c in Sources */,
+				24ED072E15D403EC007CDA69 /* TaskTimer.c in Sources */,
 				24ED070115D3F3AF007CDA69 /* TaskTimerTest.c in Sources */,
+				24ED073115D4045E007CDA69 /* PluginVst2x.cpp in Sources */,
+				24ED073015D40439007CDA69 /* Vst2xHostCallback.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -523,6 +579,10 @@
 		24ED068115D3C834007CDA69 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/libs/mac\"",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -530,6 +590,10 @@
 		24ED068215D3C834007CDA69 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/libs/mac\"",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
