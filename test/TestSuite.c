@@ -8,9 +8,9 @@
 
 #include <stdio.h>
 #include "TestRunner.h"
-#include "AudioClockTest.h"
 
 int testsPassed, testsFailed;
+extern int runAudioClockTests(void);
 
 static int runAllTests() {
   int result = 0;
