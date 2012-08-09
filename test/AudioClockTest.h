@@ -1,1 +1,0 @@
-int runAudioClockTests(void);
