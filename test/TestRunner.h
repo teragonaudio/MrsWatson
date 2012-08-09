@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include "CharString.h"
 
 #define _assert(condition) \
   { \
@@ -25,6 +26,14 @@
     double result = condition; \
     if(result != expected) { \
       printf("FAIL at %s(), line %d. Expected %g, got %g.\n", __func__, __LINE__, expected, result); \
+      return 1; \
+    } \
+  }
+
+#define _assertCharStringEquals(result, expected) \
+  { \
+    if(!isCharStringEqualToCString(result, expected, false)) { \
+      printf("FAIL at %s(), line %d. Expected %s, got %s.\n", __func__, __LINE__, expected, result->data); \
       return 1; \
     } \
   }
