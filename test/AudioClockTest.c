@@ -55,14 +55,12 @@ static int _testAdvanceClockMulitpleTimes(void) {
   return 0;
 }
 
-int runAudioClockTests(void);
-int runAudioClockTests(void) {
-  int numFailedTests = 0;
+void runAudioClockTests(void);
+void runAudioClockTests(void) {
   _startTestSection();
   _runTest("Initialization", _testInitAudioClock, _audioClockTestSetup, _audioClockTestTeardown);
   _runTest("Advance clock", _testAdvanceAudioClock, _audioClockTestSetup, _audioClockTestTeardown);
   _runTest("Stop clock", _testStopAudioClock, _audioClockTestSetup, _audioClockTestTeardown);
   _runTest("Restart clock", _testRestartAudioClock, _audioClockTestSetup, _audioClockTestTeardown);
   _runTest("Multiple advance", _testAdvanceClockMulitpleTimes, _audioClockTestSetup, _audioClockTestTeardown);
-  return numFailedTests;
 }

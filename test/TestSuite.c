@@ -10,19 +10,17 @@
 #include "TestRunner.h"
 
 int testsPassed, testsFailed;
-extern int runAudioClockTests(void);
+extern void runAudioClockTests(void);
+extern void runAudioSettingsTests(void);
 
-static int runAllTests() {
-  int result = 0;
-  result += runAudioClockTests();
-  return result;
+static void runAllTests(void) {
+  runAudioClockTests();
+  runAudioSettingsTests();
 }
 
 int main(int argc, char* argv[]) {
-  testsPassed = 0;
-  testsFailed = 0;
-  int result = runAllTests();
-
+  testsPassed = testsFailed = 0;
+  runAllTests();
   printf("\nRan %d tests: %d passed, %d failed\n", testsPassed + testsFailed, testsPassed, testsFailed);
-  return result != 0;
+  return (testsFailed == 0);
 }
