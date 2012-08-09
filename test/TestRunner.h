@@ -66,6 +66,9 @@
 extern int testsPassed;
 extern int testsFailed;
 
+static void emptySetup(void) { }
+static void emptyTeardown(void) { }
+
 static void printTestStarted(const char* testName) {
   printf("  %s: ", testName);
 }
