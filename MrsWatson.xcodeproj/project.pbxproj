@@ -33,6 +33,9 @@
 		24E3207A14CC14B900DA6589 /* libaudiofile.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 24E3207914CC14B900DA6589 /* libaudiofile.a */; };
 		24E3207E14CC1A3900DA6589 /* SampleSourceWave.c in Sources */ = {isa = PBXBuildFile; fileRef = 24E3207C14CC1A3900DA6589 /* SampleSourceWave.c */; };
 		24E3208114CC1B2F00DA6589 /* SampleSourceAudiofile.c in Sources */ = {isa = PBXBuildFile; fileRef = 24E3207F14CC1B2F00DA6589 /* SampleSourceAudiofile.c */; };
+		24ED068615D3C880007CDA69 /* TestSuite.c in Sources */ = {isa = PBXBuildFile; fileRef = 24ED068515D3C880007CDA69 /* TestSuite.c */; };
+		24ED068915D3CAC5007CDA69 /* AudioClockTest.c in Sources */ = {isa = PBXBuildFile; fileRef = 24ED068715D3CAC5007CDA69 /* AudioClockTest.c */; };
+		24ED06C315D3CCE5007CDA69 /* AudioClock.c in Sources */ = {isa = PBXBuildFile; fileRef = 2457AB8814B5BF0F000D868C /* AudioClock.c */; };
 		24EE33E714B3455800CFADE0 /* LinkedList.c in Sources */ = {isa = PBXBuildFile; fileRef = 24EE33E614B3455800CFADE0 /* LinkedList.c */; };
 		24F35DDB14C0204100F70074 /* PluginPreset.c in Sources */ = {isa = PBXBuildFile; fileRef = 24F35DDA14C0204100F70074 /* PluginPreset.c */; };
 		24F35DDD14C0205300F70074 /* PluginPresetFxp.c in Sources */ = {isa = PBXBuildFile; fileRef = 24F35DDC14C0205300F70074 /* PluginPresetFxp.c */; };
@@ -40,6 +43,15 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		24ED067815D3C833007CDA69 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
 		24FDFBA8148CC6AF0074D3A1 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 12;
@@ -107,6 +119,11 @@
 		24E3207D14CC1A3900DA6589 /* SampleSourceWave.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SampleSourceWave.h; path = source/SampleSourceWave.h; sourceTree = SOURCE_ROOT; };
 		24E3207F14CC1B2F00DA6589 /* SampleSourceAudiofile.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = SampleSourceAudiofile.c; path = source/SampleSourceAudiofile.c; sourceTree = SOURCE_ROOT; };
 		24E3208014CC1B2F00DA6589 /* SampleSourceAudiofile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SampleSourceAudiofile.h; path = source/SampleSourceAudiofile.h; sourceTree = SOURCE_ROOT; };
+		24ED067A15D3C833007CDA69 /* MrsWatsonTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = MrsWatsonTest; sourceTree = BUILT_PRODUCTS_DIR; };
+		24ED068515D3C880007CDA69 /* TestSuite.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = TestSuite.c; path = test/TestSuite.c; sourceTree = SOURCE_ROOT; };
+		24ED068715D3CAC5007CDA69 /* AudioClockTest.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = AudioClockTest.c; path = test/AudioClockTest.c; sourceTree = SOURCE_ROOT; };
+		24ED068815D3CAC5007CDA69 /* AudioClockTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioClockTest.h; path = test/AudioClockTest.h; sourceTree = SOURCE_ROOT; };
+		24ED068A15D3CAEC007CDA69 /* TestRunner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TestRunner.h; path = test/TestRunner.h; sourceTree = SOURCE_ROOT; };
 		24EE33E614B3455800CFADE0 /* LinkedList.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = LinkedList.c; path = source/LinkedList.c; sourceTree = SOURCE_ROOT; };
 		24EE33E914B3456000CFADE0 /* LinkedList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LinkedList.h; path = source/LinkedList.h; sourceTree = SOURCE_ROOT; };
 		24F35DD614C0202A00F70074 /* PluginPreset.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PluginPreset.h; path = source/PluginPreset.h; sourceTree = SOURCE_ROOT; };
@@ -118,6 +135,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		24ED067715D3C833007CDA69 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		24FDFBA7148CC6AF0074D3A1 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -174,6 +198,18 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		24ED067C15D3C834007CDA69 /* Test */ = {
+			isa = PBXGroup;
+			children = (
+				24ED068715D3CAC5007CDA69 /* AudioClockTest.c */,
+				24ED068815D3CAC5007CDA69 /* AudioClockTest.h */,
+				24ED068A15D3CAEC007CDA69 /* TestRunner.h */,
+				24ED068515D3C880007CDA69 /* TestSuite.c */,
+			);
+			name = Test;
+			path = MrsWatsonTest;
+			sourceTree = "<group>";
+		};
 		24FDFB9F148CC6AF0074D3A1 = {
 			isa = PBXGroup;
 			children = (
@@ -181,6 +217,7 @@
 				24667E1014CAD1FD0065FA1D /* Libraries */,
 				24FDFBAB148CC6AF0074D3A1 /* Products */,
 				24FDFBAD148CC6AF0074D3A1 /* Source */,
+				24ED067C15D3C834007CDA69 /* Test */,
 				2465A2CB14B3145F00F94E84 /* Vendor */,
 			);
 			sourceTree = "<group>";
@@ -189,6 +226,7 @@
 			isa = PBXGroup;
 			children = (
 				24FDFBAA148CC6AF0074D3A1 /* mrswatson */,
+				24ED067A15D3C833007CDA69 /* MrsWatsonTest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -260,6 +298,23 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		24ED067915D3C833007CDA69 /* MrsWatsonTest */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 24ED068315D3C834007CDA69 /* Build configuration list for PBXNativeTarget "MrsWatsonTest" */;
+			buildPhases = (
+				24ED067615D3C833007CDA69 /* Sources */,
+				24ED067715D3C833007CDA69 /* Frameworks */,
+				24ED067815D3C833007CDA69 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MrsWatsonTest;
+			productName = MrsWatsonTest;
+			productReference = 24ED067A15D3C833007CDA69 /* MrsWatsonTest */;
+			productType = "com.apple.product-type.tool";
+		};
 		24FDFBA9148CC6AF0074D3A1 /* MrsWatson */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 24FDFBB4148CC6AF0074D3A1 /* Build configuration list for PBXNativeTarget "MrsWatson" */;
@@ -300,6 +355,7 @@
 			projectRoot = "";
 			targets = (
 				24FDFBA9148CC6AF0074D3A1 /* MrsWatson */,
+				24ED067915D3C833007CDA69 /* MrsWatsonTest */,
 			);
 		};
 /* End PBXProject section */
@@ -322,6 +378,16 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		24ED067615D3C833007CDA69 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				24ED06C315D3CCE5007CDA69 /* AudioClock.c in Sources */,
+				24ED068615D3C880007CDA69 /* TestSuite.c in Sources */,
+				24ED068915D3CAC5007CDA69 /* AudioClockTest.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		24FDFBA6148CC6AF0074D3A1 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -360,6 +426,20 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
+		24ED068115D3C834007CDA69 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		24ED068215D3C834007CDA69 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		24FDFBB2148CC6AF0074D3A1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -456,6 +536,14 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		24ED068315D3C834007CDA69 /* Build configuration list for PBXNativeTarget "MrsWatsonTest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				24ED068115D3C834007CDA69 /* Debug */,
+				24ED068215D3C834007CDA69 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
 		24FDFBA4148CC6AF0074D3A1 /* Build configuration list for PBXProject "MrsWatson" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
