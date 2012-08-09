@@ -63,8 +63,12 @@ boolByte isCharStringEmpty(const CharString charString) {
 }
 
 boolByte isCharStringEqualTo(const CharString firstString, const CharString otherString, boolByte caseInsensitive) {
+  if(firstString == NULL || otherString == NULL) {
+    return false;
+  }
+
   // Only compare to the length of the smaller of the two strings
-  size_t comparisonSize = (size_t)((firstString->capacity < otherString->capacity) ? firstString->capacity : otherString->capacity );
+  size_t comparisonSize = (size_t)((firstString->capacity < otherString->capacity) ? firstString->capacity : otherString->capacity);
   if(caseInsensitive) {
     return strncasecmp(firstString->data, otherString->data, comparisonSize) == 0;
   }
@@ -74,7 +78,10 @@ boolByte isCharStringEqualTo(const CharString firstString, const CharString othe
 }
 
 boolByte isCharStringEqualToCString(const CharString charString, const char* otherString, boolByte caseInsensitive) {
-  if(caseInsensitive) {
+  if(charString == NULL || otherString == NULL) {
+    return false;
+  }
+  else if(caseInsensitive) {
     return strncasecmp(charString->data, otherString, (size_t)charString->capacity) == 0;
   }
   else {
