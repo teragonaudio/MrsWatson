@@ -344,7 +344,7 @@ void printProgramOption(const ProgramOption programOption, boolByte withFullHelp
   }
 }
 
-const ProgramOption findProgramOptionFromString(const ProgramOptions programOptions, const CharString string) {
+ProgramOption findProgramOptionFromString(const ProgramOptions programOptions, const CharString string) {
   int i;
   for(i = 0; i < NUM_OPTIONS; i++) {
     if(isCharStringEqualTo(string, programOptions[i]->name, true)) {

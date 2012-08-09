@@ -82,7 +82,7 @@ typedef ProgramOption* ProgramOptions;
 
 ProgramOptions newProgramOptions(void);
 boolByte parseCommandLine(ProgramOptions programOptions, int argc, char** argv);
-const ProgramOption findProgramOptionFromString(const ProgramOptions programOptions, const CharString string);
+ProgramOption findProgramOptionFromString(const ProgramOptions programOptions, const CharString string);
 void printProgramQuickHelp(const char* argvName);
 void printProgramOptions(const ProgramOptions programOptions, boolByte withFullHelp, int indentSize);
 void printProgramOption(const ProgramOption programOption, boolByte withFullHelp, int indentSize, int initialIndent);
