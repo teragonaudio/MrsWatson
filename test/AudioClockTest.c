@@ -55,6 +55,7 @@ static int _testAdvanceClockMulitpleTimes(void) {
   return 0;
 }
 
+int runAudioClockTests(void);
 int runAudioClockTests(void) {
   int numFailedTests = 0;
   _startTestSection();
