@@ -44,7 +44,7 @@ static AudioClock _getAudioClockInstance(void) {
 
 void advanceAudioClock(const int blocksize) {
   AudioClock audioClock = _getAudioClockInstance();
-  if(audioClock->currentSample == 0) {
+  if(audioClock->currentSample == 0 || !audioClock->isPlaying) {
     audioClock->transportChanged = true;
     audioClock->isPlaying = true;
   }
