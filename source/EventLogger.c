@@ -62,7 +62,6 @@ void initEventLogger(void) {
   struct timeval currentTime;
 #endif
 
-  // TODO: This is never freed, but it lives for the life of the program. Do we need to worry about that?
   eventLoggerInstance = (EventLogger)malloc(sizeof(EventLoggerMembers));
   eventLoggerInstance->logLevel = LOG_INFO;
   eventLoggerInstance->colorScheme = COLOR_SCHEME_NONE;
