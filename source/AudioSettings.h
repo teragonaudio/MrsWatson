@@ -64,4 +64,6 @@ void setTempo(const double tempo);
 void setTimeSignatureBeatsPerMeasure(const short beatsPerMeasure);
 void setTimeSignatureNoteValue(const short noteValue);
 
+void freeAudioSettings(void);
+
 #endif

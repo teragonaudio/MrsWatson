@@ -127,3 +127,8 @@ void setTimeSignatureNoteValue(const short noteValue) {
   }
   _getAudioSettings()->timeSignatureNoteValue = noteValue;
 }
+
+void freeAudioSettings(void) {
+  free(audioSettingsInstance);
+  audioSettingsInstance = NULL;
+}
