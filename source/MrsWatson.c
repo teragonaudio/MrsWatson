@@ -387,6 +387,9 @@ int main(int argc, char** argv) {
     freeMidiSequence(midiSequence);
   }
 
+  freeAudioSettings();
   logInfo("Goodbye!");
+  freeEventLogger();
+
   return RETURN_CODE_SUCCESS;
 }
