@@ -76,4 +76,6 @@ void logCritical(const char* message, ...);
 void logInternalError(const char* message, ...);
 void logUnsupportedFeature(const char* featureName);
 
+void freeEventLogger(void);
+
 #endif

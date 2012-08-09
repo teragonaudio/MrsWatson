@@ -298,3 +298,8 @@ void logUnsupportedFeature(const char* featureName) {
   fprintf(stderr, "  Program version: %s, build %ld\n", versionString->data, buildDatestamp());
   freeCharString(versionString);
 }
+
+void freeEventLogger(void) {
+  free(eventLoggerInstance);
+  eventLoggerInstance = NULL;
+}
