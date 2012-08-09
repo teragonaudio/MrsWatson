@@ -71,6 +71,4 @@ typedef enum {
   NUM_RETURN_CODES
 } ReturnCodes;
 
-void fillVersionString(CharString outString);
-
 #endif

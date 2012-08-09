@@ -90,6 +90,10 @@ static EventLogger _getEventLoggerInstance(void) {
   return eventLoggerInstance;
 }
 
+void fillVersionString(CharString outString) {
+  snprintf(outString->data, outString->capacity, "%s version %d.%d.%d", PROGRAM_NAME, VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
+}
+
 void setLogLevel(LogLevel logLevel) {
   EventLogger eventLogger = _getEventLoggerInstance();
   eventLogger->logLevel = logLevel;

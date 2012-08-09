@@ -62,6 +62,8 @@ extern EventLogger eventLoggerInstance;
 
 void initEventLogger(void);
 
+void fillVersionString(CharString outString);
+
 void setLogLevel(LogLevel logLevel);
 void setLoggingColorScheme(const LogColorScheme colorScheme);
 void setLoggingColorSchemeWithString(const CharString colorSchemeName);
