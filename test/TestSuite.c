@@ -12,10 +12,12 @@
 int testsPassed, testsFailed;
 extern void runAudioClockTests(void);
 extern void runAudioSettingsTests(void);
+extern void runCharStringTests(void);
 
 static void runAllTests(void) {
   runAudioClockTests();
   runAudioSettingsTests();
+  runCharStringTests();
 }
 
 int main(int argc, char* argv[]) {
