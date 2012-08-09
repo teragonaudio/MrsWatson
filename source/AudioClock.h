@@ -47,4 +47,6 @@ unsigned long getAudioClockCurrentSample(void);
 boolByte getAudioClockTransportChanged(void);
 boolByte getAudioClockIsPlaying(void);
 
+void freeAudioClock(void);
+
 #endif

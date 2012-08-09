@@ -68,3 +68,8 @@ boolByte getAudioClockTransportChanged(void) {
 boolByte getAudioClockIsPlaying(void) {
   return _getAudioClockInstance()->isPlaying;
 }
+
+void freeAudioClock(void) {
+  free(audioClockInstance);
+  audioClockInstance = NULL;
+}
