@@ -20,6 +20,15 @@
     } \
   }
 
+#define _assertDoubleEquals(condition, expected) \
+  { \
+    int result = condition; \
+    if(result != expected) { \
+      printf("FAIL at %s(), line %d. Expected %l, got %l.\n", __func__, __LINE__, expected, result); \
+      return 1; \
+    } \
+  }
+
 #define _runTest(testName, test, setup, teardown) \
   { \
     printTestStarted(testName); \
