@@ -10,19 +10,19 @@
 #include "TestRunner.h"
 #include "AudioClockTest.h"
 
+int testsPassed, testsFailed;
+
 static int runAllTests() {
   int result = 0;
-  result |= runAudioClockTests();
+  result += runAudioClockTests();
   return result;
 }
 
 int main(int argc, char* argv[]) {
+  testsPassed = 0;
+  testsFailed = 0;
   int result = runAllTests();
 
-  if(!result) {
-    printf("All tests passed\n");
-  }
-  printf("Tests run: %d\n", testsRun);
-
+  printf("\nRan %d tests: %d passed, %d failed\n", testsPassed + testsPassed, testsPassed, testsFailed);
   return result != 0;
 }
