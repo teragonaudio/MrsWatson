@@ -34,6 +34,8 @@ AudioClock audioClockInstance = NULL;
 void initAudioClock(void) {
   audioClockInstance = (AudioClock)malloc(sizeof(AudioClockMembers));
   audioClockInstance->currentSample = 0;
+  audioClockInstance->transportChanged = false;
+  audioClockInstance->isPlaying = false;
 }
 
 static AudioClock _getAudioClockInstance(void) {
