@@ -13,16 +13,18 @@ int testsPassed, testsFailed;
 extern void runAudioClockTests(void);
 extern void runAudioSettingsTests(void);
 extern void runCharStringTests(void);
+extern void runLinkedListTests(void);
 
 static void runAllTests(void) {
   runAudioClockTests();
   runAudioSettingsTests();
   runCharStringTests();
+  runLinkedListTests();
 }
 
 int main(int argc, char* argv[]) {
   testsPassed = testsFailed = 0;
   runAllTests();
   printf("\nRan %d tests: %d passed, %d failed\n", testsPassed + testsFailed, testsPassed, testsFailed);
-  return (testsFailed == 0);
+  return testsFailed;
 }
