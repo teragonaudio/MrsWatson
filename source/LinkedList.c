@@ -45,6 +45,10 @@ void appendItemToList(LinkedList list, void* item) {
   LinkedListIterator headNode;
   LinkedList nextItem;
 
+  if(list == NULL || item == NULL) {
+    return;
+  }
+
   // First item in the list
   if(iterator->item == NULL) {
     iterator->item = item;
@@ -68,7 +72,7 @@ void appendItemToList(LinkedList list, void* item) {
 }
 
 int numItemsInList(LinkedList list) {
-  return list->_numItems;
+  return list != NULL ? list->_numItems : 0;
 }
 
 void freeLinkedList(LinkedList list) {
