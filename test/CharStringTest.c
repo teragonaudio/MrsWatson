@@ -156,15 +156,15 @@ void runCharStringTests(void) {
   _runTest("Null is empty", _testIsNullEmptyString, emptySetup, emptyTeardown);
   _runTest("Regular string is not empty", _testIsRegularStringNotEmpty, emptySetup, emptyTeardown);
 
-  _runTest("CharString equals same string", _testCharStringEqualsSameString, emptySetup, emptyTeardown);
-  _runTest("CharString does not equal different string", _testCharStringDoesEqualDifferentString, emptySetup, emptyTeardown);
-  _runTest("CharString equals same string with case insensitive", _testCharStringEqualsSameStringInsensitive, emptySetup, emptyTeardown);
-  _runTest("CharString does equal same string with different case", _testCharStringDoesNotEqualSameStringInsensitive, emptySetup, emptyTeardown);
-  _runTest("CharString equals null", _testCharStringEqualsNull, emptySetup, emptyTeardown);
+  _runTest("Equals same string", _testCharStringEqualsSameString, emptySetup, emptyTeardown);
+  _runTest("Does not equal different string", _testCharStringDoesEqualDifferentString, emptySetup, emptyTeardown);
+  _runTest("Equals same string with case insensitive", _testCharStringEqualsSameStringInsensitive, emptySetup, emptyTeardown);
+  _runTest("Does not equal same string with different case", _testCharStringDoesNotEqualSameStringInsensitive, emptySetup, emptyTeardown);
+  _runTest("Equals null", _testCharStringEqualsNull, emptySetup, emptyTeardown);
 
-  _runTest("CharString equals same C-string", _testCharStringEqualsSameCString, emptySetup, emptyTeardown);
-  _runTest("CharString does not equal different C-string", _testCharStringNotEqualToDifferentCString, emptySetup, emptyTeardown);
-  _runTest("CharString equals same C-string with case insensitive", _testCharStringEqualsSameCStringInsensitive, emptySetup, emptyTeardown);
-  _runTest("CharString does equal same C-string with different case", _testCharStringNotEqualsCStringInsensitive, emptySetup, emptyTeardown);
-  _runTest("CharString equals C-string null", _testCharStringEqualsCStringNull, emptySetup, emptyTeardown);
+  _runTest("Equals same C-string", _testCharStringEqualsSameCString, emptySetup, emptyTeardown);
+  _runTest("Does not equal different C-string", _testCharStringNotEqualToDifferentCString, emptySetup, emptyTeardown);
+  _runTest("Equals same C-string with case insensitive", _testCharStringEqualsSameCStringInsensitive, emptySetup, emptyTeardown);
+  _runTest("Does not equal same C-string with different case", _testCharStringNotEqualsCStringInsensitive, emptySetup, emptyTeardown);
+  _runTest("Equals C-string null", _testCharStringEqualsCStringNull, emptySetup, emptyTeardown);
 }
