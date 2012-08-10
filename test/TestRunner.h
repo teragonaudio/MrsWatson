@@ -11,6 +11,8 @@
   }
 
 #define _assertFalse(condition) _assert((condition) == false)
+#define _assertIsNull(condition) _assert((condition) == NULL)
+#define _assertNotNull(condition) _assert((condition) != NULL)
 
 #define _assertIntEquals(condition, expected) \
   { \
