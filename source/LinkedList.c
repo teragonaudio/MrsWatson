@@ -75,6 +75,17 @@ int numItemsInList(LinkedList list) {
   return list != NULL ? list->_numItems : 0;
 }
 
+void foreachItemInList(LinkedList list, LinkedListForeachFunc foreachFunc, void* userData) {
+  LinkedListIterator iterator = list;
+
+  while(iterator != NULL) {
+    if(iterator->item != NULL) {
+      foreachFunc(iterator->item, userData);
+    }
+    iterator = iterator->nextItem;
+  }
+}
+
 void freeLinkedList(LinkedList list) {
   LinkedListIterator iterator = list;
   while(true) {

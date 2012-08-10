@@ -39,12 +39,14 @@ typedef struct {
 typedef LinkedListMembers *LinkedList;
 typedef LinkedListMembers *LinkedListIterator;
 
+typedef void (*LinkedListForeachFunc)(void*, void*);
 typedef void (*LinkedListFreeItemFunc)(void*);
 
 LinkedList newLinkedList(void);
 
 void appendItemToList(LinkedList list, void* item);
 int numItemsInList(LinkedList list);
+void foreachItemInList(LinkedList list, LinkedListForeachFunc foreachFunc, void* userData);
 
 void freeLinkedList(LinkedList list);
 void freeLinkedListAndItems(LinkedList list, LinkedListFreeItemFunc freeItem);
