@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1AA1038F200C196359C875BD /* MrsWatsonTest.c in Sources */ = {isa = PBXBuildFile; fileRef = 1AA1011A4AC85E150103BEAD /* MrsWatsonTest.c */; };
+		1AA10D2473A937FCCB7C4E33 /* ApplicationRunner.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 1AA104785CFF2916EDE09588 /* ApplicationRunner.h */; };
+		1AA10ECDF0C06A67312481E8 /* ApplicationRunner.c in Sources */ = {isa = PBXBuildFile; fileRef = 1AA10ED6C7E7B8CFF8A48159 /* ApplicationRunner.c */; };
 		24182A8314B492DD009F0A5D /* AudioSettings.c in Sources */ = {isa = PBXBuildFile; fileRef = 24182A8214B492DD009F0A5D /* AudioSettings.c */; };
 		2435636814B1A2D50049FD43 /* EventLogger.c in Sources */ = {isa = PBXBuildFile; fileRef = 2435636714B1A2D50049FD43 /* EventLogger.c */; };
 		2435636B14B1B4FE0049FD43 /* CharString.c in Sources */ = {isa = PBXBuildFile; fileRef = 2435636A14B1B4FE0049FD43 /* CharString.c */; };
@@ -99,6 +102,7 @@
 			dstPath = /usr/share/man/man1/;
 			dstSubfolderSpec = 0;
 			files = (
+				1AA10D2473A937FCCB7C4E33 /* ApplicationRunner.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 		};
@@ -114,6 +118,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		1AA1011A4AC85E150103BEAD /* MrsWatsonTest.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = MrsWatsonTest.c; path = ../test/MrsWatsonTest.c; sourceTree = "<group>"; };
+		1AA104785CFF2916EDE09588 /* ApplicationRunner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ApplicationRunner.h; path = ../test/ApplicationRunner.h; sourceTree = "<group>"; };
+		1AA10ED6C7E7B8CFF8A48159 /* ApplicationRunner.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ApplicationRunner.c; path = ../test/ApplicationRunner.c; sourceTree = "<group>"; };
 		24182A8014B492D6009F0A5D /* AudioSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioSettings.h; path = source/AudioSettings.h; sourceTree = SOURCE_ROOT; };
 		24182A8214B492DD009F0A5D /* AudioSettings.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = AudioSettings.c; path = source/AudioSettings.c; sourceTree = SOURCE_ROOT; };
 		2435636614B1A2C50049FD43 /* EventLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EventLogger.h; path = source/EventLogger.h; sourceTree = SOURCE_ROOT; };
@@ -274,6 +281,9 @@
 		24ED067C15D3C834007CDA69 /* Test */ = {
 			isa = PBXGroup;
 			children = (
+				1AA1011A4AC85E150103BEAD /* MrsWatsonTest.c */,
+				1AA10ED6C7E7B8CFF8A48159 /* ApplicationRunner.c */,
+				1AA104785CFF2916EDE09588 /* ApplicationRunner.h */,
 				24ED068715D3CAC5007CDA69 /* AudioClockTest.c */,
 				24ED06D215D3F3AF007CDA69 /* AudioSettingsTest.c */,
 				24ED06D415D3F3AF007CDA69 /* CharStringTest.c */,
@@ -527,6 +537,8 @@
 				24ED070115D3F3AF007CDA69 /* TaskTimerTest.c in Sources */,
 				24ED073115D4045E007CDA69 /* PluginVst2x.cpp in Sources */,
 				24ED073015D40439007CDA69 /* Vst2xHostCallback.cpp in Sources */,
+				1AA10ECDF0C06A67312481E8 /* ApplicationRunner.c in Sources */,
+				1AA1038F200C196359C875BD /* MrsWatsonTest.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
