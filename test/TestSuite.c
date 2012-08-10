@@ -14,6 +14,7 @@ extern void runAudioClockTests(void);
 extern void runAudioSettingsTests(void);
 extern void runCharStringTests(void);
 extern void runLinkedListTests(void);
+extern void runMrsWatsonTests(void);
 
 static void runAllTests(void) {
   runAudioClockTests();
@@ -23,8 +24,19 @@ static void runAllTests(void) {
 }
 
 int main(int argc, char* argv[]) {
+  int totalTestsFailed = 0;
+
+  printf("=== Function tests ===\n");
   testsPassed = testsFailed = 0;
   runAllTests();
   printf("\nRan %d tests: %d passed, %d failed\n", testsPassed + testsFailed, testsPassed, testsFailed);
-  return testsFailed;
+  totalTestsFailed = testsFailed;
+
+  printf("=== Application tests ===\n");
+  testsPassed = testsFailed = 0;
+  runMrsWatsonTests();
+  printf("\nRan %d tests: %d passed, %d failed\n", testsPassed + testsFailed, testsPassed, testsFailed);
+
+  printf("\n=== Finished with %d total failed tests ===\n", totalTestsFailed);
+  return totalTestsFailed;
 }
