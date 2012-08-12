@@ -2,6 +2,10 @@
 #include <string.h>
 #include "CharString.h"
 
+#ifndef __func__
+#define __func__ __FUNCTION__
+#endif
+
 #define _assert(condition) \
   { \
     if(!(condition)) { \
@@ -42,9 +46,10 @@
 
 #define _runTest(testName, test, setup, teardown) \
   { \
+    int result; \
     printTestStarted(testName); \
     setup(); \
-    int result = test(); \
+    result = test(); \
     if(!result) { \
       testsPassed++; \
       printTestSuccess(); \
