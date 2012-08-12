@@ -63,12 +63,13 @@ boolByte isCharStringEmpty(const CharString charString) {
 }
 
 boolByte isCharStringEqualTo(const CharString firstString, const CharString otherString, boolByte caseInsensitive) {
+  size_t comparisonSize;
   if(firstString == NULL || otherString == NULL) {
     return false;
   }
 
   // Only compare to the length of the smaller of the two strings
-  size_t comparisonSize = (size_t)((firstString->capacity < otherString->capacity) ? firstString->capacity : otherString->capacity);
+  comparisonSize = (size_t)((firstString->capacity < otherString->capacity) ? firstString->capacity : otherString->capacity);
   if(caseInsensitive) {
     return strncasecmp(firstString->data, otherString->data, comparisonSize) == 0;
   }
