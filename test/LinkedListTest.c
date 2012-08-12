@@ -63,7 +63,8 @@ static int _testAppendItemToNullList(void) {
 static int _testNumItemsInList(void) {
   CharString c;
   LinkedList l = newLinkedList();
-  for(int i = 0; i < 100; i++) {
+  int i;
+  for(i = 0; i < 100; i++) {
     c = newCharString();
     copyToCharString(c, TEST_ITEM_STRING);
     appendItemToList(l, c);

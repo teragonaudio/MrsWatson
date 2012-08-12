@@ -22,13 +22,7 @@
     <ClCompile Include="test\CharStringTest.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="test\EventLoggerTest.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="test\LinkedListTest.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="test\MidiEventTest.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="test\MidiSequenceTest.c">

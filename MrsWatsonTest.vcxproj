@@ -110,9 +110,7 @@
     <ClCompile Include="test\AudioClockTest.c" />
     <ClCompile Include="test\AudioSettingsTest.c" />
     <ClCompile Include="test\CharStringTest.c" />
-    <ClCompile Include="test\EventLoggerTest.c" />
     <ClCompile Include="test\LinkedListTest.c" />
-    <ClCompile Include="test\MidiEventTest.c" />
     <ClCompile Include="test\MidiSequenceTest.c" />
     <ClCompile Include="test\MidiSourceFileTest.c" />
     <ClCompile Include="test\MidiSourceTest.c" />
