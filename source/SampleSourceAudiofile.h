@@ -26,13 +26,14 @@
 //
 
 #include "SampleSource.h"
-#include "audiofile.h"
 
 #ifndef MrsWatson_SampleSourceAudiofile_h
 #define MrsWatson_SampleSourceAudiofile_h
 
 // This must be disabled until libaudiofile can be compiled with Visual Studio
 #if ! WINDOWS
+
+#include "audiofile.h"
 
 // This isn't a real SampleSource class, but rather a base class to facilitate
 // in reading and writing any file supported via the audiofile library. As each

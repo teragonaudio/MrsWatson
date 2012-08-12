@@ -27,8 +27,6 @@
 
 #include "SampleSource.h"
 
-#include "audiofile.h"
-
 #ifndef MrsWatson_SampleSourceWave_h
 #define MrsWatson_SampleSourceWave_h
 
