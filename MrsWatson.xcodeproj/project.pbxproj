@@ -42,7 +42,6 @@
 		24ED06EA15D3F3AF007CDA69 /* AudioSettingsTest.c in Sources */ = {isa = PBXBuildFile; fileRef = 24ED06D215D3F3AF007CDA69 /* AudioSettingsTest.c */; };
 		24ED06EC15D3F3AF007CDA69 /* CharStringTest.c in Sources */ = {isa = PBXBuildFile; fileRef = 24ED06D415D3F3AF007CDA69 /* CharStringTest.c */; };
 		24ED06EE15D3F3AF007CDA69 /* LinkedListTest.c in Sources */ = {isa = PBXBuildFile; fileRef = 24ED06D615D3F3AF007CDA69 /* LinkedListTest.c */; };
-		24ED06EF15D3F3AF007CDA69 /* MidiEventTest.c in Sources */ = {isa = PBXBuildFile; fileRef = 24ED06D715D3F3AF007CDA69 /* MidiEventTest.c */; };
 		24ED06F015D3F3AF007CDA69 /* MidiSequenceTest.c in Sources */ = {isa = PBXBuildFile; fileRef = 24ED06D815D3F3AF007CDA69 /* MidiSequenceTest.c */; };
 		24ED06F115D3F3AF007CDA69 /* MidiSourceFileTest.c in Sources */ = {isa = PBXBuildFile; fileRef = 24ED06D915D3F3AF007CDA69 /* MidiSourceFileTest.c */; };
 		24ED06F215D3F3AF007CDA69 /* MidiSourceTest.c in Sources */ = {isa = PBXBuildFile; fileRef = 24ED06DA15D3F3AF007CDA69 /* MidiSourceTest.c */; };
@@ -183,7 +182,6 @@
 		24ED06D215D3F3AF007CDA69 /* AudioSettingsTest.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = AudioSettingsTest.c; path = test/AudioSettingsTest.c; sourceTree = SOURCE_ROOT; };
 		24ED06D415D3F3AF007CDA69 /* CharStringTest.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = CharStringTest.c; path = test/CharStringTest.c; sourceTree = SOURCE_ROOT; };
 		24ED06D615D3F3AF007CDA69 /* LinkedListTest.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = LinkedListTest.c; path = test/LinkedListTest.c; sourceTree = SOURCE_ROOT; };
-		24ED06D715D3F3AF007CDA69 /* MidiEventTest.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = MidiEventTest.c; path = test/MidiEventTest.c; sourceTree = SOURCE_ROOT; };
 		24ED06D815D3F3AF007CDA69 /* MidiSequenceTest.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = MidiSequenceTest.c; path = test/MidiSequenceTest.c; sourceTree = SOURCE_ROOT; };
 		24ED06D915D3F3AF007CDA69 /* MidiSourceFileTest.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = MidiSourceFileTest.c; path = test/MidiSourceFileTest.c; sourceTree = SOURCE_ROOT; };
 		24ED06DA15D3F3AF007CDA69 /* MidiSourceTest.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = MidiSourceTest.c; path = test/MidiSourceTest.c; sourceTree = SOURCE_ROOT; };
@@ -288,7 +286,6 @@
 				24ED06D215D3F3AF007CDA69 /* AudioSettingsTest.c */,
 				24ED06D415D3F3AF007CDA69 /* CharStringTest.c */,
 				24ED06D615D3F3AF007CDA69 /* LinkedListTest.c */,
-				24ED06D715D3F3AF007CDA69 /* MidiEventTest.c */,
 				24ED06D815D3F3AF007CDA69 /* MidiSequenceTest.c */,
 				24ED06D915D3F3AF007CDA69 /* MidiSourceFileTest.c */,
 				24ED06DA15D3F3AF007CDA69 /* MidiSourceTest.c */,
@@ -498,7 +495,6 @@
 				24ED071B15D4037E007CDA69 /* LinkedList.c in Sources */,
 				24ED06EE15D3F3AF007CDA69 /* LinkedListTest.c in Sources */,
 				24ED071C15D40382007CDA69 /* MidiEvent.c in Sources */,
-				24ED06EF15D3F3AF007CDA69 /* MidiEventTest.c in Sources */,
 				24ED071D15D40385007CDA69 /* MidiSequence.c in Sources */,
 				24ED06F015D3F3AF007CDA69 /* MidiSequenceTest.c in Sources */,
 				24ED071E15D4038A007CDA69 /* MidiSourceFile.c in Sources */,
