@@ -35,6 +35,7 @@
 #include "MrsWatson.h"
 #include "AudioClock.h"
 #include "AudioSettings.h"
+#include "PlatformUtilities.h"
 
 #if WINDOWS
 #include <Windows.h>
