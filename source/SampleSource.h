@@ -37,9 +37,7 @@
 #define USE_BRICKWALL_LIMITER 0
 
 // Library dependencies
-#define USE_LIBAUDIOFILE ( ! WINDOWS )
-#define USE_LIBSNDFILE 0
-#define USE_INTERNAL_WAVLIB 1
+#define USE_LIBAUDIOFILE 0
 
 typedef enum {
   SAMPLE_SOURCE_TYPE_INVALID,
