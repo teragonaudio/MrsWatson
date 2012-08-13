@@ -218,7 +218,7 @@ static void _logMessage(const LogLevel logLevel, const char* message, va_list ar
   struct timeval currentTime;
 #endif
 
-  if(logLevel >= eventLogger->logLevel) {
+  if(eventLogger != NULL && logLevel >= eventLogger->logLevel) {
     CharString formattedMessage = newCharString();
     vsnprintf(formattedMessage->data, formattedMessage->capacity, message, arguments);
 #if WINDOWS
