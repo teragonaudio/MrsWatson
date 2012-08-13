@@ -34,6 +34,7 @@
 typedef struct {
   LinkedList midiEvents;
   LinkedListIterator _lastEvent;
+  int _lastTimestamp;
   int numMidiEventsProcessed;
 } MidiSequenceMembers;
 

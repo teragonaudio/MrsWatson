@@ -35,22 +35,29 @@ MidiSequence newMidiSequence(void) {
 
   midiSequence->midiEvents = newLinkedList();
   midiSequence->_lastEvent = midiSequence->midiEvents;
+  midiSequence->_lastTimestamp = 0;
   midiSequence->numMidiEventsProcessed = 0;
 
   return midiSequence;
 }
 
 void appendMidiEventToSequence(MidiSequence midiSequence, MidiEvent midiEvent) {
-  appendItemToList(midiSequence->midiEvents, midiEvent);
+  if(midiSequence != NULL && midiEvent != NULL) {
+    appendItemToList(midiSequence->midiEvents, midiEvent);
+  }
 }
 
 boolByte fillMidiEventsFromRange(MidiSequence midiSequence, const unsigned long startTimestamp, const int blocksize, LinkedList outMidiEvents) {
+  MidiEvent midiEvent;
   LinkedListIterator iterator = midiSequence->_lastEvent;
   const unsigned long stopTimestamp = startTimestamp + blocksize;
-  boolByte result = true;
 
   while(true) {
-    MidiEvent midiEvent = iterator->item;
+    if(iterator == NULL) {
+      return false;
+    }
+
+    midiEvent = iterator->item;
     if(stopTimestamp < midiEvent->timestamp) {
       // We have not yet reached this event, stop iterating
       break;
@@ -68,14 +75,14 @@ boolByte fillMidiEventsFromRange(MidiSequence midiSequence, const unsigned long 
     // Last item in the list
     if(iterator->nextItem == NULL) {
       if(startTimestamp <= midiEvent->timestamp && stopTimestamp > midiEvent->timestamp) {
-        result = false;
+        return false;
       }
       break;
     }
     iterator = iterator->nextItem;
   }
 
-  return result;
+  return true;
 }
 
 void freeMidiSequence(MidiSequence midiSequence) {
