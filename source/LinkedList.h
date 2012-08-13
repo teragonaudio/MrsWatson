@@ -46,6 +46,7 @@ LinkedList newLinkedList(void);
 
 void appendItemToList(LinkedList list, void* item);
 int numItemsInList(LinkedList list);
+// TODO: Test cases
 void foreachItemInList(LinkedList list, LinkedListForeachFunc foreachFunc, void* userData);
 
 void freeLinkedList(LinkedList list);
