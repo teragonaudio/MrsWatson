@@ -10,6 +10,11 @@
 		1AA1038F200C196359C875BD /* MrsWatsonTest.c in Sources */ = {isa = PBXBuildFile; fileRef = 1AA1011A4AC85E150103BEAD /* MrsWatsonTest.c */; };
 		1AA10D2473A937FCCB7C4E33 /* ApplicationRunner.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 1AA104785CFF2916EDE09588 /* ApplicationRunner.h */; };
 		1AA10ECDF0C06A67312481E8 /* ApplicationRunner.c in Sources */ = {isa = PBXBuildFile; fileRef = 1AA10ED6C7E7B8CFF8A48159 /* ApplicationRunner.c */; };
+		2402CA8615D907C000213C69 /* SampleSourceFlac.c in Sources */ = {isa = PBXBuildFile; fileRef = 24AD1DC415A731AB00CCC6A3 /* SampleSourceFlac.c */; };
+		2402CA8715D907C000213C69 /* SampleSourceMp3.c in Sources */ = {isa = PBXBuildFile; fileRef = 24AD1DC615A731AC00CCC6A3 /* SampleSourceMp3.c */; };
+		2402CA8815D907C000213C69 /* SampleSourceOgg.c in Sources */ = {isa = PBXBuildFile; fileRef = 24AD1DC815A731AC00CCC6A3 /* SampleSourceOgg.c */; };
+		2402CA8C15D9090E00213C69 /* RiffFile.c in Sources */ = {isa = PBXBuildFile; fileRef = 2402CA8A15D9090E00213C69 /* RiffFile.c */; };
+		2402CA8D15D9090E00213C69 /* RiffFile.c in Sources */ = {isa = PBXBuildFile; fileRef = 2402CA8A15D9090E00213C69 /* RiffFile.c */; };
 		24182A8314B492DD009F0A5D /* AudioSettings.c in Sources */ = {isa = PBXBuildFile; fileRef = 24182A8214B492DD009F0A5D /* AudioSettings.c */; };
 		2435636814B1A2D50049FD43 /* EventLogger.c in Sources */ = {isa = PBXBuildFile; fileRef = 2435636714B1A2D50049FD43 /* EventLogger.c */; };
 		2435636B14B1B4FE0049FD43 /* CharString.c in Sources */ = {isa = PBXBuildFile; fileRef = 2435636A14B1B4FE0049FD43 /* CharString.c */; };
@@ -123,6 +128,8 @@
 		1AA1011A4AC85E150103BEAD /* MrsWatsonTest.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = MrsWatsonTest.c; path = ../test/MrsWatsonTest.c; sourceTree = "<group>"; };
 		1AA104785CFF2916EDE09588 /* ApplicationRunner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ApplicationRunner.h; path = ../test/ApplicationRunner.h; sourceTree = "<group>"; };
 		1AA10ED6C7E7B8CFF8A48159 /* ApplicationRunner.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ApplicationRunner.c; path = ../test/ApplicationRunner.c; sourceTree = "<group>"; };
+		2402CA8A15D9090E00213C69 /* RiffFile.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = RiffFile.c; path = source/RiffFile.c; sourceTree = SOURCE_ROOT; };
+		2402CA8B15D9090E00213C69 /* RiffFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RiffFile.h; path = source/RiffFile.h; sourceTree = SOURCE_ROOT; };
 		24182A8014B492D6009F0A5D /* AudioSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioSettings.h; path = source/AudioSettings.h; sourceTree = SOURCE_ROOT; };
 		24182A8214B492DD009F0A5D /* AudioSettings.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = AudioSettings.c; path = source/AudioSettings.c; sourceTree = SOURCE_ROOT; };
 		2435636614B1A2C50049FD43 /* EventLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EventLogger.h; path = source/EventLogger.h; sourceTree = SOURCE_ROOT; };
@@ -380,6 +387,8 @@
 				2465A2D514B3157500F94E84 /* PluginVst2x.h */,
 				2435637A14B1BF3F0049FD43 /* ProgramOption.c */,
 				2435637C14B1BF4B0049FD43 /* ProgramOption.h */,
+				2402CA8A15D9090E00213C69 /* RiffFile.c */,
+				2402CA8B15D9090E00213C69 /* RiffFile.h */,
 				2435639B14B22FFB0049FD43 /* SampleBuffer.c */,
 				2435639D14B230070049FD43 /* SampleBuffer.h */,
 				2435638B14B1FF010049FD43 /* SampleSource.c */,
@@ -498,6 +507,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2402CA8615D907C000213C69 /* SampleSourceFlac.c in Sources */,
+				2402CA8715D907C000213C69 /* SampleSourceMp3.c in Sources */,
+				2402CA8815D907C000213C69 /* SampleSourceOgg.c in Sources */,
 				24ED068615D3C880007CDA69 /* TestSuite.c in Sources */,
 				24ED06C315D3CCE5007CDA69 /* AudioClock.c in Sources */,
 				24ED068915D3CAC5007CDA69 /* AudioClockTest.c in Sources */,
@@ -550,6 +562,7 @@
 				24ED073015D40439007CDA69 /* Vst2xHostCallback.cpp in Sources */,
 				1AA10ECDF0C06A67312481E8 /* ApplicationRunner.c in Sources */,
 				1AA1038F200C196359C875BD /* MrsWatsonTest.c in Sources */,
+				2402CA8D15D9090E00213C69 /* RiffFile.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -588,6 +601,7 @@
 				24AD1DCA15A731AC00CCC6A3 /* SampleSourceFlac.c in Sources */,
 				24AD1DCB15A731AC00CCC6A3 /* SampleSourceMp3.c in Sources */,
 				24AD1DCC15A731AC00CCC6A3 /* SampleSourceOgg.c in Sources */,
+				2402CA8C15D9090E00213C69 /* RiffFile.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
