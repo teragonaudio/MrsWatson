@@ -152,6 +152,15 @@ unsigned int convertBigEndianIntToPlatform(const unsigned int value) {
   }
 }
 
+unsigned int convertLittleEndianIntToPlatform(const unsigned int value) {
+  if(!_isHostLittleEndian()) {
+    return (value << 24) | ((value << 8) & 0x00ff0000) | ((value >> 8) & 0x0000ff00) | (value >> 24);
+  }
+  else {
+    return value;
+  }
+}
+
 float convertBigEndianFloatToPlatform(const float value) {
   float result = 0.0f;
   byte* floatToConvert = (byte*)&value;

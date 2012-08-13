@@ -66,6 +66,7 @@ boolByte isAbsolutePath(const CharString path);
 
 unsigned short convertBigEndianShortToPlatform(const unsigned short value);
 unsigned int convertBigEndianIntToPlatform(const unsigned int value);
+unsigned int convertLittleEndianIntToPlatform(const unsigned int value);
 float convertBigEndianFloatToPlatform(const float value);
 
 #endif
