@@ -19,6 +19,7 @@ extern void runCharStringTests(void);
 extern void runLinkedListTests(void);
 extern void runMrsWatsonTests(void);
 extern void runMidiSequenceTests(void);
+extern void runSampleSourceWaveFileTests(void);
 
 static void runAllTests(void) {
   runAudioClockTests();
@@ -26,6 +27,7 @@ static void runAllTests(void) {
   runCharStringTests();
   runLinkedListTests();
   runMidiSequenceTests();
+  runSampleSourceWaveFileTests();
 }
 
 int main(int argc, char* argv[]) {
