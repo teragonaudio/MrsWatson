@@ -40,14 +40,14 @@
 #endif
 
 #if ! USE_LIBAUDIOFILE
-static boolByte _readWaveFileInfo(SampleSourceWaveData extraData) {
+static boolByte _readWaveFileInfo(const char* filename, SampleSourceWaveData extraData) {
   int chunkOffset = 0;
   RiffChunk chunk = newRiffChunk();
   char format[4];
 
   if(readNextChunk(extraData->fileHandle, chunk, false)) {
     if(!isChunkIdEqualTo(chunk, "RIFF")) {
-      logError("WAVE file has invalid RIFF chunk descriptor");
+      logFileError(filename, "Invalid RIFF chunk descriptor");
       freeRiffChunk(chunk);
       return false;
     }
@@ -57,25 +57,25 @@ static boolByte _readWaveFileInfo(SampleSourceWaveData extraData) {
     // that before either of the subchunks can be parsed.
     fread(format, sizeof(byte), 4, extraData->fileHandle);
     if(strncmp(format, "WAVE", 4)) {
-      logError("WAVE file has invalid format");
+      logFileError(filename, "Invalid format description");
       freeRiffChunk(chunk);
       return false;
     }
   }
   else {
-    logError("WAVE file has no chunks following descriptor");
+    logFileError(filename, "No chunks following descriptor");
     freeRiffChunk(chunk);
     return false;
   }
 
   if(readNextChunk(extraData->fileHandle, chunk, true)) {
     if(!isChunkIdEqualTo(chunk, "fmt ")) {
-      logError("WAVE file has invalid format chunk header");
+      logError(filename, "Invalid format chunk header");
       freeRiffChunk(chunk);
       return false;
     }
-    if(chunk->size != 20) {
-      logError("WAVE file has invalid format chunk size");
+    if(chunk->size < 20) {
+      logFileError(filename, "Invalid format chunk size");
       freeRiffChunk(chunk);
       return false;
     }
@@ -95,10 +95,15 @@ static boolByte _readWaveFileInfo(SampleSourceWaveData extraData) {
     chunkOffset += 2;
     extraData->bitsPerSample = ((chunk->data[chunkOffset + 1] << 8) & 0x0000ff00) | chunk->data[chunkOffset];
 
-    // TODO: Bail out if invalid bits per sample, byte rate, etc.
+    if(extraData->bitsPerSample > 16) {
+      logUnsupportedFeature("Bitrates greater than 16");
+    }
+    else if(extraData->bitsPerSample < 16) {
+      logUnsupportedFeature("Bitrates lower than 16");
+    }
   }
   else {
-    logError("WAVE file has no chunks following format");
+    logFileError(filename, "WAVE file has no chunks following format");
     freeRiffChunk(chunk);
     return false;
   }
@@ -110,7 +115,7 @@ static boolByte _readWaveFileInfo(SampleSourceWaveData extraData) {
   // TODO: Option for reading entire file into memory
   if(readNextChunk(extraData->fileHandle, chunk, false)) {
     if(!isChunkIdEqualTo(chunk, "data")) {
-      logError("WAVE file has invalid data chunk header");
+      logFileError(filename, "WAVE file has invalid data chunk header");
       freeRiffChunk(chunk);
       return false;
     }
@@ -141,7 +146,7 @@ static boolByte _openSampleSourceWave(void *sampleSourcePtr, const SampleSourceO
 #else
     extraData->fileHandle = fopen(sampleSource->sourceName->data, "r");
     if(extraData->fileHandle != NULL) {
-      if(_readWaveFileInfo(extraData)) {
+      if(_readWaveFileInfo(sampleSource->sourceName->data, extraData)) {
         setNumChannels(extraData->numChannels);
         setSampleRate(extraData->sampleRate);
       }
