@@ -355,7 +355,7 @@ int main(int argc, char** argv) {
     logInfo("  %s: %ldms, %2.1f%%", PROGRAM_NAME, taskTimer->totalTaskTimes[hostTaskId], timePercentage);
   }
   else {
-    logInfo("Total processing time <1ms, your computer is smokin' fast!");
+    logInfo("Total processing time <1ms. Either something went wrong, or your computer is smokin' fast!");
   }
   freeTaskTimer(taskTimer);
 
