@@ -31,6 +31,7 @@
 #include "SampleSourcePcm.h"
 #include "EventLogger.h"
 #include "AudioSettings.h"
+#include "SampleSource.h"
 
 static boolByte _openSampleSourcePcm(void* sampleSourcePtr, const SampleSourceOpenAs openAs) {
   SampleSource sampleSource = (SampleSource)sampleSourcePtr;
@@ -94,30 +95,34 @@ static void _convertPcmDataToSampleBuffer(const short* inPcmSamples, SampleBuffe
   }
 }
 
-static boolByte _readBlockFromPcm(void* sampleSourcePtr, SampleBuffer sampleBuffer) {
+boolByte readPcmDataFromFile(SampleSourcePcmData pcmData, SampleBuffer sampleBuffer, unsigned long* numFramesProcessed) {
   boolByte result = true;
   size_t pcmFramesRead = 0;
-  SampleSource sampleSource = (SampleSource)sampleSourcePtr;
-  SampleSourcePcmData extraData = (SampleSourcePcmData)(sampleSource->extraData);
 
-  if(extraData->dataBufferNumItems == 0) {
-    extraData->dataBufferNumItems = (size_t)(sampleBuffer->numChannels * sampleBuffer->blocksize);
-    extraData->interlacedPcmDataBuffer = (short*)malloc(sizeof(short) * extraData->dataBufferNumItems);
+  if(pcmData->dataBufferNumItems == 0) {
+    pcmData->dataBufferNumItems = (size_t)(sampleBuffer->numChannels * sampleBuffer->blocksize);
+    pcmData->interlacedPcmDataBuffer = (short*)malloc(sizeof(short) * pcmData->dataBufferNumItems);
   }
 
   // Clear the PCM data buffer, or else the last block will have dirty samples in the end
-  memset(extraData->interlacedPcmDataBuffer, 0, sizeof(short) * extraData->dataBufferNumItems);
+  memset(pcmData->interlacedPcmDataBuffer, 0, sizeof(short) * pcmData->dataBufferNumItems);
 
-  pcmFramesRead = fread(extraData->interlacedPcmDataBuffer, sizeof(short), extraData->dataBufferNumItems, extraData->fileHandle);
-  if(pcmFramesRead < extraData->dataBufferNumItems) {
+  pcmFramesRead = fread(pcmData->interlacedPcmDataBuffer, sizeof(short), pcmData->dataBufferNumItems, pcmData->fileHandle);
+  if(pcmFramesRead < pcmData->dataBufferNumItems) {
     logDebug("End of PCM file reached");
     result = false;
   }
-  sampleSource->numFramesProcessed += pcmFramesRead;
+  *numFramesProcessed += pcmFramesRead;
   logDebug("Read %d sample frames from PCM file", pcmFramesRead);
 
-  _convertPcmDataToSampleBuffer(extraData->interlacedPcmDataBuffer, sampleBuffer);
+  _convertPcmDataToSampleBuffer(pcmData->interlacedPcmDataBuffer, sampleBuffer);
   return result;
+}
+
+static boolByte _readBlockFromPcm(void* sampleSourcePtr, SampleBuffer sampleBuffer) {
+  SampleSource sampleSource = (SampleSource)sampleSourcePtr;
+  SampleSourcePcmData extraData = (SampleSourcePcmData)(sampleSource->extraData);
+  return readPcmDataFromFile(extraData, sampleBuffer, &(sampleSource->numFramesProcessed));
 }
 
 void convertSampleBufferToPcmData(const SampleBuffer sampleBuffer, short* outPcmSamples) {
@@ -165,7 +170,7 @@ static boolByte _writeBlockFromPcm(void* sampleSourcePtr, const SampleBuffer sam
   return true;
 }
 
-static void _freeSampleSourceDataPcm(void* sampleSourceDataPtr) {
+void freeSampleSourceDataPcm(void* sampleSourceDataPtr) {
   SampleSourcePcmData extraData = (SampleSourcePcmData)sampleSourceDataPtr;
   free(extraData->interlacedPcmDataBuffer);
   if(extraData->fileHandle != NULL) {
@@ -189,7 +194,7 @@ SampleSource newSampleSourcePcm(const CharString sampleSourceName) {
   sampleSource->openSampleSource = _openSampleSourcePcm;
   sampleSource->readSampleBlock = _readBlockFromPcm;
   sampleSource->writeSampleBlock = _writeBlockFromPcm;
-  sampleSource->freeSampleSourceData = _freeSampleSourceDataPcm;
+  sampleSource->freeSampleSourceData = freeSampleSourceDataPcm;
 
   extraData->isStream = false;
   extraData->fileHandle = NULL;

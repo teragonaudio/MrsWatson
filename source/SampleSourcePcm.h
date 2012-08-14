@@ -41,6 +41,9 @@ typedef struct {
 typedef SampleSourcePcmDataMembers *SampleSourcePcmData;
 
 SampleSource newSampleSourcePcm(const CharString sampleSourceName);
+boolByte readPcmDataFromFile(SampleSourcePcmData pcmData, SampleBuffer sampleBuffer, unsigned long* numFramesProcessed);
 void convertSampleBufferToPcmData(const SampleBuffer sampleBuffer, short* outPcmSamples);
+
+void freeSampleSourceDataPcm(void* sampleSourceDataPtr);
 
 #endif
