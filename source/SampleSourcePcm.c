@@ -146,28 +146,32 @@ void convertSampleBufferToPcmData(const SampleBuffer sampleBuffer, short* outPcm
   }
 }
 
-static boolByte _writeBlockFromPcm(void* sampleSourcePtr, const SampleBuffer sampleBuffer) {
+boolByte writePcmDataToFile(SampleSourcePcmData pcmData, const SampleBuffer sampleBuffer, unsigned long* numFramesProcessed) {
   size_t pcmFramesWritten = 0;
-  SampleSource sampleSource = (SampleSource)sampleSourcePtr;
-  SampleSourcePcmData extraData = (SampleSourcePcmData)(sampleSource->extraData);
-  if(extraData->dataBufferNumItems == 0) {
-    extraData->dataBufferNumItems = (size_t)(sampleBuffer->numChannels * sampleBuffer->blocksize);
-    extraData->interlacedPcmDataBuffer = (short*)malloc(sizeof(short) * extraData->dataBufferNumItems);
+  if(pcmData->dataBufferNumItems == 0) {
+    pcmData->dataBufferNumItems = (size_t)(sampleBuffer->numChannels * sampleBuffer->blocksize);
+    pcmData->interlacedPcmDataBuffer = (short*)malloc(sizeof(short) * pcmData->dataBufferNumItems);
   }
 
   // Clear the PCM data buffer just to be safe
-  memset(extraData->interlacedPcmDataBuffer, 0, sizeof(short) * extraData->dataBufferNumItems);
+  memset(pcmData->interlacedPcmDataBuffer, 0, sizeof(short) * pcmData->dataBufferNumItems);
 
-  convertSampleBufferToPcmData(sampleBuffer, extraData->interlacedPcmDataBuffer);
-  pcmFramesWritten = fwrite(extraData->interlacedPcmDataBuffer, sizeof(short), extraData->dataBufferNumItems, extraData->fileHandle);
-  if(pcmFramesWritten < extraData->dataBufferNumItems) {
+  convertSampleBufferToPcmData(sampleBuffer, pcmData->interlacedPcmDataBuffer);
+  pcmFramesWritten = fwrite(pcmData->interlacedPcmDataBuffer, sizeof(short), pcmData->dataBufferNumItems, pcmData->fileHandle);
+  if(pcmFramesWritten < pcmData->dataBufferNumItems) {
     logWarn("Short write to PCM file");
     return false;
   }
 
-  sampleSource->numFramesProcessed += pcmFramesWritten;
+  *numFramesProcessed += pcmFramesWritten;
   logDebug("Wrote %d sample frames to PCM file", pcmFramesWritten);
   return true;
+}
+
+static boolByte _writeBlockFromPcm(void* sampleSourcePtr, const SampleBuffer sampleBuffer) {
+  SampleSource sampleSource = (SampleSource)sampleSourcePtr;
+  SampleSourcePcmData extraData = (SampleSourcePcmData)(sampleSource->extraData);
+  return writePcmDataToFile(extraData, sampleBuffer, &(sampleSource->numFramesProcessed));
 }
 
 void freeSampleSourceDataPcm(void* sampleSourceDataPtr) {
