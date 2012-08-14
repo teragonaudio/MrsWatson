@@ -65,6 +65,10 @@ boolByte readNextChunk(FILE* fileHandle, RiffChunk outChunk, boolByte readData) 
   return !feof(fileHandle);
 }
 
+boolByte isChunkIdEqualTo(const RiffChunk chunk, const char*id) {
+  return strncmp(chunk->id, id, 4) == 0;
+}
+
 void freeRiffChunk(RiffChunk chunk) {
   if(chunk->data) {
     free(chunk->data);

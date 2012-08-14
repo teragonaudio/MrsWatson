@@ -41,7 +41,10 @@ typedef struct {
 typedef RiffChunkMembers* RiffChunk;
 
 RiffChunk newRiffChunk(void);
+
 boolByte readNextChunk(FILE* fileHandle, RiffChunk outChunk, boolByte readData);
+boolByte isChunkIdEqualTo(const RiffChunk chunk, const char* id);
+
 void freeRiffChunk(RiffChunk chunk);
 
 #endif
