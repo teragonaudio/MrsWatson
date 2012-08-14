@@ -83,23 +83,36 @@ static boolByte _readWaveFileInfo(const char* filename, SampleSourceWaveData ext
     // TODO: Move these conversion routines to PlatformUtilities
     extraData->audioFormat = (chunk->data[chunkOffset + 1] << 8) | chunk->data[chunkOffset];
     chunkOffset += 2;
+    if(extraData->audioFormat != 1) {
+      logUnsupportedFeature("Compressed WAVE files");
+      freeRiffChunk(chunk);
+      return false;
+    }
+
     extraData->numChannels = (chunk->data[chunkOffset + 1] << 8) | chunk->data[chunkOffset];
     chunkOffset += 2;
+
     extraData->sampleRate = (unsigned int)((chunk->data[chunkOffset + 3] << 24) | ((chunk->data[chunkOffset + 2] << 16) & 0x00ff0000) |
       ((chunk->data[chunkOffset + 1] << 8) & 0x0000ff00) | (chunk->data[chunkOffset]));
     chunkOffset += 4;
+
     extraData->byteRate = (unsigned int)((chunk->data[chunkOffset + 3] << 24) | ((chunk->data[chunkOffset + 2] << 16) & 0x00ff0000) |
       ((chunk->data[chunkOffset + 1] << 8) & 0x0000ff00) | (chunk->data[chunkOffset]));
     chunkOffset += 4;
+
     extraData->blockAlign = ((chunk->data[chunkOffset + 1] << 8) & 0x0000ff00) | chunk->data[chunkOffset];
     chunkOffset += 2;
-    extraData->bitsPerSample = ((chunk->data[chunkOffset + 1] << 8) & 0x0000ff00) | chunk->data[chunkOffset];
 
+    extraData->bitsPerSample = ((chunk->data[chunkOffset + 1] << 8) & 0x0000ff00) | chunk->data[chunkOffset];
     if(extraData->bitsPerSample > 16) {
       logUnsupportedFeature("Bitrates greater than 16");
+      freeRiffChunk(chunk);
+      return false;
     }
     else if(extraData->bitsPerSample < 16) {
       logUnsupportedFeature("Bitrates lower than 16");
+      freeRiffChunk(chunk);
+      return false;
     }
   }
   else {
