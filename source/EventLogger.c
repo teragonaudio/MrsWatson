@@ -303,6 +303,21 @@ void logUnsupportedFeature(const char* featureName) {
   freeCharString(versionString);
 }
 
+void logFileError(const char* filename, const char* message) {
+  CharString versionString;
+  fprintf(stderr, "ERROR PARSING FILE: %s: %s\n", filename, message);
+  fprintf(stderr, "  This file is either corrupt or was parsed incorrectly.\n");
+  fprintf(stderr, "  If you believe this to be a bug, please take a minute and report a bug.\n");
+  fprintf(stderr, "  Project website: %s\n", PROJECT_WEBSITE);
+  fprintf(stderr, "  Support email: %s\n", SUPPORT_EMAIL);
+  fprintf(stderr, "  (Please attach the file and command line arguments used.)\n");
+
+  versionString = newCharString();
+  fillVersionString(versionString);
+  fprintf(stderr, "  Program version: %s, build %ld\n", versionString->data, buildDatestamp());
+  freeCharString(versionString);
+}
+
 void freeEventLogger(void) {
   free(eventLoggerInstance);
   eventLoggerInstance = NULL;

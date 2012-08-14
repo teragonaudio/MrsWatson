@@ -77,6 +77,7 @@ void logError(const char* message, ...);
 void logCritical(const char* message, ...);
 void logInternalError(const char* message, ...);
 void logUnsupportedFeature(const char* featureName);
+void logFileError(const char* filename, const char* message);
 
 void freeEventLogger(void);
 
