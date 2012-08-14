@@ -56,13 +56,13 @@ boolByte readNextChunk(FILE* fileHandle, RiffChunk outChunk, boolByte readData) 
     if(outChunk->size > 0 && readData) {
       outChunk->data = malloc(outChunk->size);
       itemsRead = fread(outChunk->data, sizeof(byte), outChunk->size, fileHandle);
-      if(itemsRead == outChunk->size) {
-        return true;
+      if(itemsRead != outChunk->size) {
+        return false;
       }
     }
   }
 
-  return false;
+  return !feof(fileHandle);
 }
 
 void freeRiffChunk(RiffChunk chunk) {
