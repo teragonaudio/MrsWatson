@@ -360,13 +360,12 @@ int main(int argc, char** argv) {
   freeTaskTimer(taskTimer);
 
   if(midiSequence != NULL) {
-    logInfo("Read %ld MIDI events from %s, wrote %ld frames to %s",
-      midiSequence->numMidiEventsProcessed, midiSource->sourceName->data, outputSource->numFramesProcessed, outputSource->sourceName->data);
+    logInfo("Read %ld MIDI events from %s", midiSequence->numMidiEventsProcessed, midiSource->sourceName->data);
   }
   else {
-    logInfo("Read %ld frames from %s, wrote %ld frames to %s",
-      inputSource->numFramesProcessed, inputSource->sourceName->data, outputSource->numFramesProcessed, outputSource->sourceName->data);
+    logInfo("Read %ld frames from %s", inputSource->numFramesProcessed, inputSource->sourceName->data);
   }
+  logInfo("Wrote %ld frames to %s", outputSource->numFramesProcessed, outputSource->sourceName->data);
 
   // Shut down and free data (will also close open files, plugins, etc)
   logInfo("Shutting down");
