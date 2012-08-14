@@ -47,6 +47,7 @@ boolByte readNextChunk(FILE* fileHandle, RiffChunk outChunk, boolByte readData) 
       return false;
     }
 
+    // TODO: This will not work on big-endian platforms
     itemsRead = fread(&chunkSize, sizeof(unsigned int), 1, fileHandle);
     if(itemsRead != 1) {
       return false;
