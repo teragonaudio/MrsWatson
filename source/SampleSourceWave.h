@@ -35,12 +35,14 @@
 
 typedef struct {
   FILE* fileHandle;
-  unsigned int audioFormat;
-  unsigned int numChannels;
+  unsigned short audioFormat;
+  unsigned short numChannels;
   unsigned int sampleRate;
   unsigned int byteRate;
-  unsigned int blockAlign;
-  unsigned int bitsPerSample;
+  unsigned short blockAlign;
+  unsigned short bitsPerSample;
+  unsigned int extraParams;
+  unsigned long numSamplesWritten;
   SampleSourcePcmData pcmData;
 } SampleSourceWaveDataMembers;
 

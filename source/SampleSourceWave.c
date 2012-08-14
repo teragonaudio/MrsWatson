@@ -136,7 +136,98 @@ static boolByte _readWaveFileInfo(const char* filename, SampleSourceWaveData ext
     logDebug("WAVE file has %d bytes", chunk->size);
   }
 
-  extraData->pcmData->fileHandle = extraData->fileHandle;
+  return true;
+}
+
+static boolByte _writeWaveFileInfo(SampleSourceWaveData extraData) {
+  RiffChunk chunk = newRiffChunk();
+
+  memcpy(chunk->id, "RIFF", 4);
+  if(fwrite(chunk->id, sizeof(byte), 4, extraData->fileHandle) != 4) {
+    logError("Could not write RIFF header");
+    freeRiffChunk(chunk);
+    return false;
+  }
+
+  // Write the size, but this will need to be set again when the file is finished writing
+  if(fwrite(&(chunk->size), sizeof(unsigned int), 1, extraData->fileHandle) != 1) {
+    logError("Could not write RIFF chunk size");
+    freeRiffChunk(chunk);
+    return false;
+  }
+
+  memcpy(chunk->id, "WAVE", 4);
+  if(fwrite(chunk->id, sizeof(byte), 4, extraData->fileHandle) != 4) {
+    logError("Could not WAVE format");
+    freeRiffChunk(chunk);
+    return false;
+  }
+
+  // Write the format header
+  memcpy(chunk->id, "fmt ", 4);
+  chunk->size = 20;
+  if(fwrite(chunk->id, sizeof(byte), 4, extraData->fileHandle) != 4) {
+    logError("Could not write format header");
+    freeRiffChunk(chunk);
+    return false;
+  }
+
+  if(fwrite(&(chunk->size), sizeof(unsigned int), 1, extraData->fileHandle) != 1) {
+    logError("Could not write format chunk size");
+    freeRiffChunk(chunk);
+    return false;
+  }
+
+  // TODO: These calls will not work on big-endian platforms
+
+  if(fwrite(&(extraData->audioFormat), sizeof(unsigned short), 1, extraData->fileHandle) != 1) {
+    logError("Could not write audio format");
+    freeRiffChunk(chunk);
+    return false;
+  }
+  if(fwrite(&(extraData->numChannels), sizeof(unsigned short), 1, extraData->fileHandle) != 1) {
+    logError("Could not write channel count");
+    freeRiffChunk(chunk);
+    return false;
+  }
+  if(fwrite(&(extraData->sampleRate), sizeof(unsigned int), 1, extraData->fileHandle) != 1) {
+    logError("Could not write sample rate");
+    freeRiffChunk(chunk);
+    return false;
+  }
+  if(fwrite(&(extraData->byteRate), sizeof(unsigned int), 1, extraData->fileHandle) != 1) {
+    logError("Could not write byte rate");
+    freeRiffChunk(chunk);
+    return false;
+  }
+  if(fwrite(&(extraData->blockAlign), sizeof(unsigned short), 1, extraData->fileHandle) != 1) {
+    logError("Could not write block align");
+    freeRiffChunk(chunk);
+    return false;
+  }
+  if(fwrite(&(extraData->bitsPerSample), sizeof(unsigned short), 1, extraData->fileHandle) != 1) {
+    logError("Could not write bits per sample");
+    freeRiffChunk(chunk);
+    return false;
+  }
+  if(fwrite(&(extraData->extraParams), sizeof(byte), 4, extraData->fileHandle) != 4) {
+    logError("Could not write extra PCM parameters");
+    freeRiffChunk(chunk);
+    return false;
+  }
+
+  memcpy(chunk->id, "data", 4);
+  if(fwrite(chunk->id, sizeof(byte), 4, extraData->fileHandle) != 4) {
+    logError("Could not write format header");
+    freeRiffChunk(chunk);
+    return false;
+  }
+  if(fwrite(&(chunk->size), sizeof(unsigned int), 1, extraData->fileHandle) != 1) {
+    logError("Could not write data chunk size");
+    freeRiffChunk(chunk);
+    return false;
+  }
+
   return true;
 }
 #endif
@@ -160,11 +251,13 @@ static boolByte _openSampleSourceWave(void *sampleSourcePtr, const SampleSourceO
     extraData->fileHandle = fopen(sampleSource->sourceName->data, "r");
     if(extraData->fileHandle != NULL) {
       if(_readWaveFileInfo(sampleSource->sourceName->data, extraData)) {
+        extraData->pcmData->fileHandle = extraData->fileHandle;
         setNumChannels(extraData->numChannels);
         setSampleRate(extraData->sampleRate);
       }
       else {
-        return false;
+        fclose(extraData->fileHandle);
+        extraData->fileHandle = NULL;
       }
     }
 #endif
@@ -179,6 +272,22 @@ static boolByte _openSampleSourceWave(void *sampleSourcePtr, const SampleSourceO
     afInitSampleFormat(outfileSetup, AF_DEFAULT_TRACK, AF_SAMPFMT_TWOSCOMP, DEFAULT_BITRATE);
     extraData->fileHandle = afOpenFile(sampleSource->sourceName->data, "w", outfileSetup);
 #else
+    extraData->fileHandle = fopen(sampleSource->sourceName->data, "w");
+    if(extraData->fileHandle != NULL) {
+      extraData->audioFormat = 1;
+      extraData->numChannels = (unsigned short)getNumChannels();
+      extraData->sampleRate = (unsigned int)getSampleRate();
+      extraData->bitsPerSample = 16;
+      extraData->byteRate = extraData->sampleRate * extraData->numChannels * extraData->bitsPerSample / 8;
+      extraData->blockAlign = extraData->numChannels * extraData->bitsPerSample / 8;
+      if(_writeWaveFileInfo(extraData)) {
+        extraData->pcmData->fileHandle = extraData->fileHandle;
+      }
+      else {
+        fclose(extraData->fileHandle);
+        extraData->fileHandle = NULL;
+      }
+    }
 #endif
   }
   else {
@@ -204,11 +313,27 @@ static boolByte _readBlockFromWaveFile(void* sampleSourcePtr, SampleBuffer sampl
 }
 
 static boolByte _writeBlockFromWaveFile(void* sampleSourcePtr, const SampleBuffer sampleBuffer) {
-  return false;
+  boolByte result;
+  SampleSource sampleSource = (SampleSource)sampleSourcePtr;
+  SampleSourceWaveData extraData = (SampleSourceWaveData)(sampleSource->extraData);
+  result = writePcmDataToFile(extraData->pcmData, sampleBuffer, &(extraData->numSamplesWritten));
+  sampleSource->numFramesProcessed = extraData->numSamplesWritten;
+  return result;
 }
 
 static void _freeSampleSourceDataWave(void* sampleSourceDataPtr) {
   SampleSourceWaveData extraData = sampleSourceDataPtr;
+
+  // Write correct chunk sizes to file's data chunk
+  fseek(extraData->fileHandle, 44, SEEK_SET);
+  unsigned int numBytesWritten = extraData->numSamplesWritten * extraData->bitsPerSample / 8;
+  fwrite(&numBytesWritten, sizeof(unsigned int), 1, extraData->fileHandle);
+  // Add 40 bytes for fmt chunk size and write the RIFF chunk size
+  numBytesWritten += 40;
+  fseek(extraData->fileHandle, 4, SEEK_SET);
+  fwrite(&numBytesWritten, sizeof(unsigned int), 1, extraData->fileHandle);
+  fflush(extraData->fileHandle);
+
   freeSampleSourceDataPcm(extraData->pcmData);
   if(extraData->fileHandle != NULL) {
     fclose(extraData->fileHandle);
@@ -257,6 +382,8 @@ SampleSource newSampleSourceWave(const CharString sampleSourceName) {
   extraData->byteRate = 0;
   extraData->blockAlign = 0;
   extraData->bitsPerSample = 0;
+  extraData->extraParams = 0;
+  extraData->numSamplesWritten = 0;
 
   extraData->pcmData = (SampleSourcePcmData)malloc(sizeof(SampleSourcePcmDataMembers));
   extraData->pcmData->isStream = false;
