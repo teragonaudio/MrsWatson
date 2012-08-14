@@ -73,7 +73,7 @@ short getTimeSignatureNoteValue(void) {
 
 void setSampleRate(const double sampleRate) {
   if(sampleRate == 0.0f) {
-    logCritical("Ignoring attempt to set sample rate to 0");
+    logError("Ignoring attempt to set sample rate to 0");
     return;
   }
   _getAudioSettings()->sampleRate = sampleRate;
@@ -81,7 +81,7 @@ void setSampleRate(const double sampleRate) {
 
 void setNumChannels(const int numChannels) {
   if(numChannels == 0) {
-    logCritical("Ignoring attempt to set num channels to 0");
+    logError("Ignoring attempt to set num channels to 0");
     return;
   }
   _getAudioSettings()->numChannels = numChannels;
@@ -89,7 +89,7 @@ void setNumChannels(const int numChannels) {
 
 void setBlocksize(const int blocksize) {
   if(blocksize == 0) {
-    logCritical("Ignoring attempt to set blocksize to 0");
+    logError("Ignoring attempt to set blocksize to 0");
     return;
   }
   _getAudioSettings()->blocksize = blocksize;
@@ -97,7 +97,7 @@ void setBlocksize(const int blocksize) {
 
 void setTempo(const double tempo) {
   if(tempo == 0.0f) {
-    logCritical("Ignoring attempt to set tempo to 0");
+    logError("Ignoring attempt to set tempo to 0");
     return;
   }
   _getAudioSettings()->tempo = tempo;
@@ -109,7 +109,7 @@ void setTimeSignatureBeatsPerMeasure(const short beatsPerMeasure) {
     logInfo("Freaky time signature, but whatever you say...");
   }
   if(beatsPerMeasure == 0) {
-    logCritical("Ignoring attempt to set time signature numerator to 0");
+    logError("Ignoring attempt to set time signature numerator to 0");
     return;
   }
   _getAudioSettings()->timeSignatureBeatsPerMeasure = beatsPerMeasure;
@@ -121,7 +121,7 @@ void setTimeSignatureNoteValue(const short noteValue) {
     logInfo("Interesting time signature you've chosen. I'm sure this piece is going to sound great...");
   }
   if(noteValue == 0) {
-    logCritical("Ignoring attempt to set time signature denominator to 0");
+    logError("Ignoring attempt to set time signature denominator to 0");
     return;
   }
   _getAudioSettings()->timeSignatureNoteValue = noteValue;
