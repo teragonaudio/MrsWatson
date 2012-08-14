@@ -26,6 +26,7 @@
 //
 
 #include "SampleSource.h"
+#include "SampleSourcePcm.h"
 
 #ifndef MrsWatson_SampleSourceWave_h
 #define MrsWatson_SampleSourceWave_h
@@ -40,6 +41,7 @@ typedef struct {
   unsigned int byteRate;
   unsigned int blockAlign;
   unsigned int bitsPerSample;
+  SampleSourcePcmData pcmData;
 } SampleSourceWaveDataMembers;
 
 typedef SampleSourceWaveDataMembers* SampleSourceWaveData;

@@ -28,13 +28,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <errno.h>
 #include "AudioSettings.h"
 #include "SampleSourceWave.h"
 #include "EventLogger.h"
-#include "SampleSource.h"
-#include "CharString.h"
 #include "RiffFile.h"
+#include "SampleSource.h"
+#include "SampleSourcePcm.h"
 
 #if USE_LIBAUDIOFILE
 #include "SampleSourceAudiofile.h"
@@ -42,28 +41,84 @@
 
 #if ! USE_LIBAUDIOFILE
 static boolByte _readWaveFileInfo(SampleSourceWaveData extraData) {
+  int chunkOffset = 0;
   RiffChunk chunk = newRiffChunk();
+  char format[4];
+
   if(readNextChunk(extraData->fileHandle, chunk, false)) {
-    if(strncmp(chunk->id, "RIFF", 4)) {
+    if(!isChunkIdEqualTo(chunk, "RIFF")) {
       logError("WAVE file has invalid RIFF chunk descriptor");
       freeRiffChunk(chunk);
       return false;
     }
+
+    // The WAVE file format has two sub-chunks, with the size of both calculated in the size field. Before
+    // either of the subchunks, there are an extra 4 bytes which indicate the format type. We need to read
+    // that before either of the subchunks can be parsed.
+    fread(format, sizeof(byte), 4, extraData->fileHandle);
+    if(strncmp(format, "WAVE", 4)) {
+      logError("WAVE file has invalid format");
+      freeRiffChunk(chunk);
+      return false;
+    }
+  }
+  else {
+    logError("WAVE file has no chunks following descriptor");
+    freeRiffChunk(chunk);
+    return false;
   }
 
   if(readNextChunk(extraData->fileHandle, chunk, true)) {
-    if(strncmp(chunk->id, "fmt ", 4)) {
+    if(!isChunkIdEqualTo(chunk, "fmt ")) {
       logError("WAVE file has invalid format chunk header");
       freeRiffChunk(chunk);
       return false;
     }
-    if(chunk->size != 16) {
+    if(chunk->size != 20) {
       logError("WAVE file has invalid format chunk size");
       freeRiffChunk(chunk);
       return false;
     }
+
+    // TODO: Move these conversion routines to PlatformUtilities
+    extraData->audioFormat = (chunk->data[chunkOffset + 1] << 8) | chunk->data[chunkOffset];
+    chunkOffset += 2;
+    extraData->numChannels = (chunk->data[chunkOffset + 1] << 8) | chunk->data[chunkOffset];
+    chunkOffset += 2;
+    extraData->sampleRate = (unsigned int)((chunk->data[chunkOffset + 3] << 24) | ((chunk->data[chunkOffset + 2] << 16) & 0x00ff0000) |
+      ((chunk->data[chunkOffset + 1] << 8) & 0x0000ff00) | (chunk->data[chunkOffset]));
+    chunkOffset += 4;
+    extraData->byteRate = (unsigned int)((chunk->data[chunkOffset + 3] << 24) | ((chunk->data[chunkOffset + 2] << 16) & 0x00ff0000) |
+      ((chunk->data[chunkOffset + 1] << 8) & 0x0000ff00) | (chunk->data[chunkOffset]));
+    chunkOffset += 4;
+    extraData->blockAlign = ((chunk->data[chunkOffset + 1] << 8) & 0x0000ff00) | chunk->data[chunkOffset];
+    chunkOffset += 2;
+    extraData->bitsPerSample = ((chunk->data[chunkOffset + 1] << 8) & 0x0000ff00) | chunk->data[chunkOffset];
+
+    // TODO: Bail out if invalid bits per sample, byte rate, etc.
+  }
+  else {
+    logError("WAVE file has no chunks following format");
+    freeRiffChunk(chunk);
+    return false;
   }
 
+  // We don't need the format data anymore, so free and re-alloc the chunk to avoid a small memory leak
+  freeRiffChunk(chunk);
+  chunk = newRiffChunk();
+
+  // TODO: Option for reading entire file into memory
+  if(readNextChunk(extraData->fileHandle, chunk, false)) {
+    if(!isChunkIdEqualTo(chunk, "data")) {
+      logError("WAVE file has invalid data chunk header");
+      freeRiffChunk(chunk);
+      return false;
+    }
+
+    logDebug("WAVE file has %d bytes", chunk->size);
+  }
+
+  extraData->pcmData->fileHandle = extraData->fileHandle;
   return true;
 }
 #endif
@@ -125,7 +180,9 @@ static boolByte _openSampleSourceWave(void *sampleSourcePtr, const SampleSourceO
 
 #if ! USE_LIBAUDIOFILE
 static boolByte _readBlockFromWaveFile(void* sampleSourcePtr, SampleBuffer sampleBuffer) {
-  return false;
+  SampleSource sampleSource = (SampleSource)sampleSourcePtr;
+  SampleSourceWaveData extraData = (SampleSourceWaveData)(sampleSource->extraData);
+  return readPcmDataFromFile(extraData->pcmData, sampleBuffer, &(sampleSource->numFramesProcessed));
 }
 
 static boolByte _writeBlockFromWaveFile(void* sampleSourcePtr, const SampleBuffer sampleBuffer) {
@@ -134,10 +191,12 @@ static boolByte _writeBlockFromWaveFile(void* sampleSourcePtr, const SampleBuffe
 
 static void _freeSampleSourceDataWave(void* sampleSourceDataPtr) {
   SampleSourceWaveData extraData = sampleSourceDataPtr;
+  freeSampleSourceDataPcm(extraData->pcmData);
   if(extraData->fileHandle != NULL) {
     fclose(extraData->fileHandle);
+    extraData->fileHandle = NULL;
   }
-  free(extraData->fileHandle);
+  free(extraData);
 }
 #endif
 
@@ -180,6 +239,12 @@ SampleSource newSampleSourceWave(const CharString sampleSourceName) {
   extraData->byteRate = 0;
   extraData->blockAlign = 0;
   extraData->bitsPerSample = 0;
+
+  extraData->pcmData = (SampleSourcePcmData)malloc(sizeof(SampleSourcePcmDataMembers));
+  extraData->pcmData->isStream = false;
+  extraData->pcmData->fileHandle = NULL;
+  extraData->pcmData->dataBufferNumItems = 0;
+  extraData->pcmData->interlacedPcmDataBuffer = NULL;
 #endif
 
   sampleSource->extraData = extraData;
