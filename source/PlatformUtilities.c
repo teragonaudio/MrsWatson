@@ -57,8 +57,8 @@ boolByte fileExists(const char* absolutePath) {
   return result;
 
 #elif WINDOWS
-  unsigned long fileAttributes = GetFileAttributes((LPCWSTR)absolutePath);
-  if(fileAttributes == 0xffffff) {
+  unsigned long fileAttributes = GetFileAttributesA((LPCSTR)absolutePath);
+  if(fileAttributes == INVALID_FILE_ATTRIBUTES) {
     return false;
   }
   return true;
