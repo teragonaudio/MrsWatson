@@ -110,7 +110,12 @@ int listDirectory(const char* directory, LinkedList outItems) {
 }
 
 void buildAbsolutePath(const CharString directory, const CharString file, const char* fileExtension, CharString outString) {
-  snprintf(outString->data, outString->capacity, "%s%c%s.%s", directory->data, PATH_DELIMITER, file->data, fileExtension);
+  if(fileExtension != NULL) {
+    snprintf(outString->data, outString->capacity, "%s%c%s.%s", directory->data, PATH_DELIMITER, file->data, fileExtension);
+  }
+  else {
+    snprintf(outString->data, outString->capacity, "%s%c%s", directory->data, PATH_DELIMITER, file->data);
+  }
 }
 
 boolByte isAbsolutePath(const CharString path) {
