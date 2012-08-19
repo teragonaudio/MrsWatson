@@ -30,10 +30,6 @@
 #include <string.h>
 #include "CharString.h"
 
-#if WINDOWS
-#define strncasecmp _strnicmp
-#endif
-
 CharString newCharString(void) {
   return newCharStringWithCapacity(STRING_LENGTH_DEFAULT);
 }

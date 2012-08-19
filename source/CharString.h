@@ -36,6 +36,10 @@
 
 #define EMPTY_STRING ""
 
+#if WINDOWS
+#define strncasecmp _strnicmp
+#endif
+
 typedef struct {
   int capacity;
   char* data;
