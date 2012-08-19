@@ -161,6 +161,26 @@ unsigned int convertLittleEndianIntToPlatform(const unsigned int value) {
   }
 }
 
+unsigned short convertByteArrayToUnsignedShort(const byte* value) {
+  if(_isHostLittleEndian()) {
+    return ((value[1] << 8) & 0x0000ff00) | value[0];
+  }
+  else {
+    return ((value[0] << 8) & 0x0000ff00) | value[1];
+  }
+}
+
+unsigned int convertByteArrayToUnsignedInt(const byte* value) {
+  if(_isHostLittleEndian()) {
+    return ((value[3] << 24) | ((value[2] << 16) & 0x00ff0000) |
+      ((value[1] << 8) & 0x0000ff00) | value[0]);
+  }
+  else {
+    return ((value[0] << 24) | ((value[1] << 16) & 0x00ff0000) |
+      ((value[2] << 8) & 0x0000ff00) | value[0]);
+  }
+}
+
 float convertBigEndianFloatToPlatform(const float value) {
   float result = 0.0f;
   byte* floatToConvert = (byte*)&value;

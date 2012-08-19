@@ -69,4 +69,7 @@ unsigned int convertBigEndianIntToPlatform(const unsigned int value);
 unsigned int convertLittleEndianIntToPlatform(const unsigned int value);
 float convertBigEndianFloatToPlatform(const float value);
 
+unsigned short convertByteArrayToUnsignedShort(const byte* value);
+unsigned int convertByteArrayToUnsignedInt(const byte* value);
+
 #endif
