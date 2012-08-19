@@ -40,7 +40,7 @@ RiffChunk newRiffChunk(void) {
 
 boolByte readNextChunk(FILE* fileHandle, RiffChunk outChunk, boolByte readData) {
   unsigned int itemsRead = 0;
-  byte* chunkSize = (byte*)malloc(sizeof(byte) * 4);
+  byte* chunkSize;
 
   if(fileHandle != NULL && outChunk != NULL) {
     itemsRead = fread(outChunk->id, 1, 4, fileHandle);
@@ -48,12 +48,15 @@ boolByte readNextChunk(FILE* fileHandle, RiffChunk outChunk, boolByte readData) 
       return false;
     }
 
+    chunkSize = (byte*)malloc(sizeof(byte) * 4);
     memset(chunkSize, 0, 4);
     itemsRead = fread(chunkSize, 1, 4, fileHandle);
     if(itemsRead != 4) {
+      free(chunkSize);
       return false;
     }
     outChunk->size = convertByteArrayToUnsignedInt(chunkSize);
+    free(chunkSize);
 
     if(outChunk->size > 0 && readData) {
       outChunk->data = (byte*)malloc(outChunk->size);
