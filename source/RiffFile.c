@@ -31,32 +31,33 @@
 #include "PlatformUtilities.h"
 
 RiffChunk newRiffChunk(void) {
-  RiffChunk chunk = malloc(sizeof(RiffChunkMembers));
+  RiffChunk chunk = (RiffChunk)malloc(sizeof(RiffChunkMembers));
   memset(chunk->id, 0, 5);
   chunk->size = 0;
+  chunk->data = NULL;
   return chunk;
 }
 
 boolByte readNextChunk(FILE* fileHandle, RiffChunk outChunk, boolByte readData) {
   unsigned int itemsRead = 0;
-  unsigned int chunkSize = 0;
+  byte* chunkSize = (byte*)malloc(sizeof(byte) * 4);
 
   if(fileHandle != NULL && outChunk != NULL) {
-    itemsRead = fread(outChunk->id, sizeof(byte), 4, fileHandle);
+    itemsRead = fread(outChunk->id, 1, 4, fileHandle);
     if(itemsRead != 4) {
       return false;
     }
 
-    // TODO: This will not work on big-endian platforms
-    itemsRead = fread(&chunkSize, sizeof(unsigned int), 1, fileHandle);
-    if(itemsRead != 1) {
+    memset(chunkSize, 0, 4);
+    itemsRead = fread(chunkSize, 1, 4, fileHandle);
+    if(itemsRead != 4) {
       return false;
     }
-    outChunk->size = convertLittleEndianIntToPlatform(chunkSize);
+    outChunk->size = convertByteArrayToUnsignedInt(chunkSize);
 
     if(outChunk->size > 0 && readData) {
-      outChunk->data = malloc(outChunk->size);
-      itemsRead = fread(outChunk->data, sizeof(byte), outChunk->size, fileHandle);
+      outChunk->data = (byte*)malloc(outChunk->size);
+      itemsRead = fread(outChunk->data, 1, outChunk->size, fileHandle);
       if(itemsRead != outChunk->size) {
         return false;
       }
