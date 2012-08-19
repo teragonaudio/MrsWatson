@@ -322,11 +322,12 @@ static boolByte _writeBlockFromWaveFile(void* sampleSourcePtr, const SampleBuffe
 }
 
 static void _freeSampleSourceDataWave(void* sampleSourceDataPtr) {
-  SampleSourceWaveData extraData = sampleSourceDataPtr;
+  SampleSourceWaveData extraData = (SampleSourceWaveData)sampleSourceDataPtr;
+  unsigned int numBytesWritten;
 
   // Write correct chunk sizes to file's data chunk
   fseek(extraData->fileHandle, 44, SEEK_SET);
-  unsigned int numBytesWritten = extraData->numSamplesWritten * extraData->bitsPerSample / 8;
+  numBytesWritten = extraData->numSamplesWritten * extraData->bitsPerSample / 8;
   fwrite(&numBytesWritten, sizeof(unsigned int), 1, extraData->fileHandle);
   // Add 40 bytes for fmt chunk size and write the RIFF chunk size
   numBytesWritten += 40;
