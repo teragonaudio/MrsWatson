@@ -34,6 +34,7 @@
 #include "RiffFile.h"
 #include "SampleSource.h"
 #include "SampleSourcePcm.h"
+#include "PlatformUtilities.h"
 
 #if USE_LIBAUDIOFILE
 #include "SampleSourceAudiofile.h"
@@ -80,8 +81,7 @@ static boolByte _readWaveFileInfo(const char* filename, SampleSourceWaveData ext
       return false;
     }
 
-    // TODO: Move these conversion routines to PlatformUtilities
-    extraData->audioFormat = (chunk->data[chunkOffset + 1] << 8) | chunk->data[chunkOffset];
+    extraData->audioFormat = convertByteArrayToUnsignedShort(chunk->data + chunkOffset);
     chunkOffset += 2;
     if(extraData->audioFormat != 1) {
       logUnsupportedFeature("Compressed WAVE files");
@@ -89,21 +89,19 @@ static boolByte _readWaveFileInfo(const char* filename, SampleSourceWaveData ext
       return false;
     }
 
-    extraData->numChannels = (chunk->data[chunkOffset + 1] << 8) | chunk->data[chunkOffset];
+    extraData->numChannels = convertByteArrayToUnsignedShort(chunk->data + chunkOffset);
     chunkOffset += 2;
 
-    extraData->sampleRate = (unsigned int)((chunk->data[chunkOffset + 3] << 24) | ((chunk->data[chunkOffset + 2] << 16) & 0x00ff0000) |
-      ((chunk->data[chunkOffset + 1] << 8) & 0x0000ff00) | (chunk->data[chunkOffset]));
+    extraData->sampleRate = convertByteArrayToUnsignedInt(chunk->data + chunkOffset);
     chunkOffset += 4;
 
-    extraData->byteRate = (unsigned int)((chunk->data[chunkOffset + 3] << 24) | ((chunk->data[chunkOffset + 2] << 16) & 0x00ff0000) |
-      ((chunk->data[chunkOffset + 1] << 8) & 0x0000ff00) | (chunk->data[chunkOffset]));
+    extraData->byteRate = convertByteArrayToUnsignedInt(chunk->data + chunkOffset);
     chunkOffset += 4;
 
-    extraData->blockAlign = ((chunk->data[chunkOffset + 1] << 8) & 0x0000ff00) | chunk->data[chunkOffset];
+    extraData->blockAlign = convertByteArrayToUnsignedShort(chunk->data + chunkOffset);
     chunkOffset += 2;
 
-    extraData->bitsPerSample = ((chunk->data[chunkOffset + 1] << 8) & 0x0000ff00) | chunk->data[chunkOffset];
+    extraData->bitsPerSample = convertByteArrayToUnsignedShort(chunk->data + chunkOffset);
     if(extraData->bitsPerSample > 16) {
       logUnsupportedFeature("Bitrates greater than 16");
       freeRiffChunk(chunk);
@@ -233,11 +231,11 @@ static boolByte _writeWaveFileInfo(SampleSourceWaveData extraData) {
 #endif
 
 static boolByte _openSampleSourceWave(void *sampleSourcePtr, const SampleSourceOpenAs openAs) {
-  SampleSource sampleSource = sampleSourcePtr;
+  SampleSource sampleSource = (SampleSource)sampleSourcePtr;
 #if USE_LIBAUDIOFILE
   SampleSourceAudiofileData extraData = sampleSource->extraData;
 #else
-  SampleSourceWaveData extraData = sampleSource->extraData;
+  SampleSourceWaveData extraData = (SampleSourceWaveData)sampleSource->extraData;
 #endif
 
   if(openAs == SAMPLE_SOURCE_OPEN_READ) {
@@ -248,7 +246,7 @@ static boolByte _openSampleSourceWave(void *sampleSourcePtr, const SampleSourceO
       setSampleRate((float)afGetRate(extraData->fileHandle, AF_DEFAULT_TRACK));
     }
 #else
-    extraData->fileHandle = fopen(sampleSource->sourceName->data, "r");
+    extraData->fileHandle = fopen(sampleSource->sourceName->data, "rb");
     if(extraData->fileHandle != NULL) {
       if(_readWaveFileInfo(sampleSource->sourceName->data, extraData)) {
         extraData->pcmData->fileHandle = extraData->fileHandle;
@@ -272,7 +270,7 @@ static boolByte _openSampleSourceWave(void *sampleSourcePtr, const SampleSourceO
     afInitSampleFormat(outfileSetup, AF_DEFAULT_TRACK, AF_SAMPFMT_TWOSCOMP, DEFAULT_BITRATE);
     extraData->fileHandle = afOpenFile(sampleSource->sourceName->data, "w", outfileSetup);
 #else
-    extraData->fileHandle = fopen(sampleSource->sourceName->data, "w");
+    extraData->fileHandle = fopen(sampleSource->sourceName->data, "wb");
     if(extraData->fileHandle != NULL) {
       extraData->audioFormat = 1;
       extraData->numChannels = (unsigned short)getNumChannels();
