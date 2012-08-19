@@ -97,10 +97,14 @@
     <ClCompile Include="source\PluginPresetFxp.c" />
     <ClCompile Include="source\PluginVst2x.cpp" />
     <ClCompile Include="source\ProgramOption.c" />
+    <ClCompile Include="source\RiffFile.c" />
     <ClCompile Include="source\SampleBuffer.c" />
     <ClCompile Include="source\SampleSource.c" />
     <ClCompile Include="source\SampleSourceAiff.c" />
     <ClCompile Include="source\SampleSourceAudiofile.c" />
+    <ClCompile Include="source\SampleSourceFlac.c" />
+    <ClCompile Include="source\SampleSourceMp3.c" />
+    <ClCompile Include="source\SampleSourceOgg.c" />
     <ClCompile Include="source\SampleSourcePcm.c" />
     <ClCompile Include="source\SampleSourceSilence.c" />
     <ClCompile Include="source\SampleSourceWave.c" />

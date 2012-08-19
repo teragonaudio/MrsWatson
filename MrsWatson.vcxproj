@@ -81,6 +81,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <IgnoreSpecificDefaultLibraries>msvcrt</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -102,10 +103,14 @@
     <ClCompile Include="source\PluginPresetFxp.c" />
     <ClCompile Include="source\PluginVst2x.cpp" />
     <ClCompile Include="source\ProgramOption.c" />
+    <ClCompile Include="source\RiffFile.c" />
     <ClCompile Include="source\SampleBuffer.c" />
     <ClCompile Include="source\SampleSource.c" />
     <ClCompile Include="source\SampleSourceAiff.c" />
     <ClCompile Include="source\SampleSourceAudiofile.c" />
+    <ClCompile Include="source\SampleSourceFlac.c" />
+    <ClCompile Include="source\SampleSourceMp3.c" />
+    <ClCompile Include="source\SampleSourceOgg.c" />
     <ClCompile Include="source\SampleSourcePcm.c" />
     <ClCompile Include="source\SampleSourceSilence.c" />
     <ClCompile Include="source\SampleSourceWave.c" />
@@ -132,10 +137,14 @@
     <ClInclude Include="source\PluginPresetFxp.h" />
     <ClInclude Include="source\PluginVst2x.h" />
     <ClInclude Include="source\ProgramOption.h" />
+    <ClInclude Include="source\RiffFile.h" />
     <ClInclude Include="source\SampleBuffer.h" />
     <ClInclude Include="source\SampleSource.h" />
     <ClInclude Include="source\SampleSourceAiff.h" />
     <ClInclude Include="source\SampleSourceAudiofile.h" />
+    <ClInclude Include="source\SampleSourceFlac.h" />
+    <ClInclude Include="source\SampleSourceMp3.h" />
+    <ClInclude Include="source\SampleSourceOgg.h" />
     <ClInclude Include="source\SampleSourcePcm.h" />
     <ClInclude Include="source\SampleSourceSilence.h" />
     <ClInclude Include="source\SampleSourceWave.h" />
