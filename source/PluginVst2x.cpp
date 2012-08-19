@@ -40,6 +40,7 @@ extern "C" {
 #include "AudioSettings.h"
 #include "MrsWatson.h"
 #include "MidiEvent.h"
+#include "StringUtilities.h"
 }
 
 #define VST_FORCE_DEPRECATED 0
@@ -334,7 +335,18 @@ void listAvailablePluginsVst2x(const CharString pluginRoot) {
 static boolByte _doesVst2xPluginExistAtLocation(const CharString pluginName, const CharString location) {
   boolByte result = false;
   CharString pluginSearchPath = newCharString();
-  buildAbsolutePath(location, pluginName, _getVst2xPlatformExtension(), pluginSearchPath);
+  const char* pluginFileExtension = getFileExtension(pluginName->data);
+  const char* platformFileExtension = _getVst2xPlatformExtension();
+
+  if(pluginFileExtension == NULL || strncasecmp(platformFileExtension, pluginFileExtension, strlen(platformFileExtension))) {
+    pluginFileExtension = platformFileExtension;
+  }
+  else {
+    // Set to NULL to skip appending an extension in the below call to buildAbsolutePath()
+    pluginFileExtension = NULL;
+  }
+
+  buildAbsolutePath(location, pluginName, pluginFileExtension, pluginSearchPath);
   if(!isCharStringEmpty(location) && fileExists(pluginSearchPath->data)) {
     result = true;
   }
