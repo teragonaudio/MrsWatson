@@ -32,8 +32,6 @@
 #include "EventLogger.h"
 #include "AudioSettings.h"
 
-#if USE_SOURCE_TYPE_PCM
-
 static boolByte _openSampleSourcePcm(void* sampleSourcePtr, const SampleSourceOpenAs openAs) {
   SampleSource sampleSource = (SampleSource)sampleSourcePtr;
   SampleSourcePcmData extraData = (SampleSourcePcmData)(sampleSource->extraData);
@@ -201,5 +199,3 @@ SampleSource newSampleSourcePcm(const CharString sampleSourceName) {
 
   return sampleSource;
 }
-
-#endif

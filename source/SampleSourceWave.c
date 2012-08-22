@@ -34,8 +34,6 @@
 #include "SampleSourceAudiofile.h"
 #include "EventLogger.h"
 
-#if USE_SOURCE_TYPE_WAVE
-
 static boolByte _openSampleSourceWave(void *sampleSourcePtr, const SampleSourceOpenAs openAs) {
   SampleSource sampleSource = sampleSourcePtr;
   SampleSourceAudiofileData extraData = sampleSource->extraData;
@@ -95,5 +93,3 @@ SampleSource newSampleSourceWave(const CharString sampleSourceName) {
 
   return sampleSource;
 }
-
-#endif

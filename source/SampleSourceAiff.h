@@ -30,8 +30,6 @@
 #ifndef MrsWatson_SampleSourceAiff_h
 #define MrsWatson_SampleSourceAiff_h
 
-#if USE_SOURCE_TYPE_AIFF
 SampleSource newSampleSourceAiff(const CharString sampleSourceName);
-#endif
 
 #endif

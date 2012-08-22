@@ -33,14 +33,6 @@
 #include "SampleSourceAudiofile.h"
 #include "EventLogger.h"
 
-#if USE_SOURCE_TYPE_AIFF
-
-#if LINUX
-#include <audiofile.h>
-#else
-#include "audiofile.h"
-#endif
-
 static boolByte _openSampleSourceAiff(void *sampleSourcePtr, const SampleSourceOpenAs openAs) {
   SampleSource sampleSource = (SampleSource)sampleSourcePtr;
   SampleSourceAudiofileData extraData = (SampleSourceAudiofileData)(sampleSource->extraData);
@@ -100,5 +92,3 @@ SampleSource newSampleSourceAiff(const CharString sampleSourceName) {
 
   return sampleSource;
 }
-
-#endif

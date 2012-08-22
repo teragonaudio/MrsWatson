@@ -34,7 +34,7 @@
 #include "EventLogger.h"
 #include "SampleSourcePcm.h"
 
-#if ! WINDOWS
+#if USE_LIBAUDIOFILE
 
 boolByte readBlockFromAudiofile(void* sampleSourcePtr, SampleBuffer sampleBuffer) {
   SampleSource sampleSource = (SampleSource)sampleSourcePtr;
