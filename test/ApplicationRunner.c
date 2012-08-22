@@ -26,6 +26,7 @@ void runApplicationTest(const char *testName, LinkedList arguments, ReturnCodes 
   }
 
 #if WINDOWS
+  logUnsupportedFeature("Application testing");
 #else
   int numArgs = numItemsInList(arguments);
   // Add two extra items to the array, one for the application path and another for a NULL object.
