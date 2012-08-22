@@ -30,6 +30,16 @@
 #ifndef MrsWatson_SampleSourceAiff_h
 #define MrsWatson_SampleSourceAiff_h
 
+#if ! USE_LIBAUDIOFILE
+
+typedef struct {
+  FILE *fileHandle;
+} SampleSourceAiffDataMembers;
+
+typedef SampleSourceAiffDataMembers* SampleSourceAiffData;
+
+#endif
+
 SampleSource newSampleSourceAiff(const CharString sampleSourceName);
 
 #endif

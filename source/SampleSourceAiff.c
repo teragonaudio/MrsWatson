@@ -26,17 +26,28 @@
 //
 
 #include <stdio.h>
-#include <stdint.h>
 #include <stdlib.h>
 #include "AudioSettings.h"
 #include "SampleSourceAiff.h"
-#include "SampleSourceAudiofile.h"
 #include "EventLogger.h"
+#include "SampleSource.h"
+
+#if USE_LIBAUDIOFILE
+#include "SampleSourceAudiofile.h"
+
+#if LINUX
+#include <audiofile.h>
+#else
+#include "audiofile.h"
+#endif
+#endif
 
 static boolByte _openSampleSourceAiff(void *sampleSourcePtr, const SampleSourceOpenAs openAs) {
   SampleSource sampleSource = (SampleSource)sampleSourcePtr;
 #if USE_LIBAUDIOFILE
   SampleSourceAudiofileData extraData = (SampleSourceAudiofileData)(sampleSource->extraData);
+#else
+  SampleSourceAiffData extraData = (SampleSourceAiffData)(sampleSource->extraData);
 #endif
 
   if(openAs == SAMPLE_SOURCE_OPEN_READ) {
@@ -78,10 +89,32 @@ static boolByte _openSampleSourceAiff(void *sampleSourcePtr, const SampleSourceO
   return true;
 }
 
+#if ! USE_LIBAUDIOFILE
+
+static boolByte _readBlockFromAiffFile(void* sampleSourcePtr, SampleBuffer sampleBuffer) {
+  return false;
+}
+
+static boolByte _writeBlockFromAiffFile(void* sampleSourcePtr, const SampleBuffer sampleBuffer) {
+  return false;
+}
+
+static void _freeSampleSourceDataAiff(void* sampleSourceDataPtr) {
+  SampleSourceAiffData extraData = sampleSourceDataPtr;
+  if(extraData->fileHandle != NULL) {
+    fclose(extraData->fileHandle);
+  }
+  free(extraData);
+}
+
+#endif
+
 SampleSource newSampleSourceAiff(const CharString sampleSourceName) {
   SampleSource sampleSource = (SampleSource)malloc(sizeof(SampleSourceMembers));
 #if USE_LIBAUDIOFILE
   SampleSourceAudiofileData extraData = (SampleSourceAudiofileData)malloc(sizeof(SampleSourceAudiofileDataMembers));
+#else
+  SampleSourceAiffData extraData = (SampleSourceAiffData)malloc(sizeof(SampleSourceAiffDataMembers));
 #endif
 
   sampleSource->sampleSourceType = SAMPLE_SOURCE_TYPE_AIFF;
@@ -93,18 +126,25 @@ SampleSource newSampleSourceAiff(const CharString sampleSourceName) {
   sampleSource->numFramesProcessed = 0;
 
   sampleSource->openSampleSource = _openSampleSourceAiff;
+#if USE_LIBAUDIOFILE
   sampleSource->readSampleBlock = readBlockFromAudiofile;
   sampleSource->writeSampleBlock = writeBlockFromAudiofile;
   sampleSource->freeSampleSourceData = freeSampleSourceDataAudiofile;
+#else
+  sampleSource->readSampleBlock = _readBlockFromAiffFile;
+  sampleSource->writeSampleBlock = _writeBlockFromAiffFile;
+  sampleSource->freeSampleSourceData = _freeSampleSourceDataAiff;
+#endif
 
 #if USE_LIBAUDIOFILE
   extraData->fileHandle = NULL;
   extraData->interlacedBuffer = NULL;
   extraData->pcmBuffer = NULL;
-  sampleSource->extraData = extraData;
 #else
-  sampleSource->extraData = NULL;
+  extraData->fileHandle = NULL;
 #endif
+
+  sampleSource->extraData = extraData;
 
   return sampleSource;
 }

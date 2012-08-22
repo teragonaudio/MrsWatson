@@ -26,26 +26,78 @@
 //
 
 #include <stdio.h>
-#include <stdint.h>
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
+#include <errno.h>
 #include "AudioSettings.h"
 #include "SampleSourceWave.h"
-#include "SampleSourceAudiofile.h"
 #include "EventLogger.h"
+#include "SampleSource.h"
+#include "CharString.h"
+#include "RiffFile.h"
+
+#if USE_LIBAUDIOFILE
+#include "SampleSourceAudiofile.h"
+#endif
+
+#if ! USE_LIBAUDIOFILE
+static boolByte _readWaveFileInfo(SampleSourceWaveData extraData) {
+  RiffChunk chunk = newRiffChunk();
+  if(readNextChunk(extraData->fileHandle, chunk, false)) {
+    if(strncmp(chunk->id, "RIFF", 4)) {
+      logError("WAVE file has invalid RIFF chunk descriptor");
+      freeRiffChunk(chunk);
+      return false;
+    }
+  }
+
+  if(readNextChunk(extraData->fileHandle, chunk, true)) {
+    if(strncmp(chunk->id, "fmt ", 4)) {
+      logError("WAVE file has invalid format chunk header");
+      freeRiffChunk(chunk);
+      return false;
+    }
+    if(chunk->size != 16) {
+      logError("WAVE file has invalid format chunk size");
+      freeRiffChunk(chunk);
+      return false;
+    }
+  }
+
+  return true;
+}
+#endif
 
 static boolByte _openSampleSourceWave(void *sampleSourcePtr, const SampleSourceOpenAs openAs) {
   SampleSource sampleSource = sampleSourcePtr;
+#if USE_LIBAUDIOFILE
   SampleSourceAudiofileData extraData = sampleSource->extraData;
+#else
+  SampleSourceWaveData extraData = sampleSource->extraData;
+#endif
 
   if(openAs == SAMPLE_SOURCE_OPEN_READ) {
+#if USE_LIBAUDIOFILE
     extraData->fileHandle = afOpenFile(sampleSource->sourceName->data, "r", NULL);
     if(extraData->fileHandle != NULL) {
       setNumChannels(afGetVirtualChannels(extraData->fileHandle, AF_DEFAULT_TRACK));
       setSampleRate((float)afGetRate(extraData->fileHandle, AF_DEFAULT_TRACK));
     }
+#else
+    extraData->fileHandle = fopen(sampleSource->sourceName->data, "r");
+    if(extraData->fileHandle != NULL) {
+      if(_readWaveFileInfo(extraData)) {
+        setNumChannels(extraData->numChannels);
+        setSampleRate(extraData->sampleRate);
+      }
+      else {
+        return false;
+      }
+    }
+#endif
   }
   else if(openAs == SAMPLE_SOURCE_OPEN_WRITE) {
+#if USE_LIBAUDIOFILE
     AFfilesetup outfileSetup = afNewFileSetup();
     afInitFileFormat(outfileSetup, AF_FILE_WAVE);
     afInitByteOrder(outfileSetup, AF_DEFAULT_TRACK, AF_BYTEORDER_LITTLEENDIAN);
@@ -53,6 +105,8 @@ static boolByte _openSampleSourceWave(void *sampleSourcePtr, const SampleSourceO
     afInitRate(outfileSetup, AF_DEFAULT_TRACK, getSampleRate());
     afInitSampleFormat(outfileSetup, AF_DEFAULT_TRACK, AF_SAMPFMT_TWOSCOMP, DEFAULT_BITRATE);
     extraData->fileHandle = afOpenFile(sampleSource->sourceName->data, "w", outfileSetup);
+#else
+#endif
   }
   else {
     logInternalError("Invalid type for openAs in WAVE file");
@@ -69,9 +123,31 @@ static boolByte _openSampleSourceWave(void *sampleSourcePtr, const SampleSourceO
   return true;
 }
 
+#if ! USE_LIBAUDIOFILE
+static boolByte _readBlockFromWaveFile(void* sampleSourcePtr, SampleBuffer sampleBuffer) {
+  return false;
+}
+
+static boolByte _writeBlockFromWaveFile(void* sampleSourcePtr, const SampleBuffer sampleBuffer) {
+  return false;
+}
+
+static void _freeSampleSourceDataWave(void* sampleSourceDataPtr) {
+  SampleSourceWaveData extraData = sampleSourceDataPtr;
+  if(extraData->fileHandle != NULL) {
+    fclose(extraData->fileHandle);
+  }
+  free(extraData->fileHandle);
+}
+#endif
+
 SampleSource newSampleSourceWave(const CharString sampleSourceName) {
   SampleSource sampleSource = (SampleSource)malloc(sizeof(SampleSourceMembers));
+#if USE_LIBAUDIOFILE
   SampleSourceAudiofileData extraData = (SampleSourceAudiofileData)malloc(sizeof(SampleSourceAudiofileDataMembers));
+#else
+  SampleSourceWaveData extraData = (SampleSourceWaveData)malloc(sizeof(SampleSourceWaveDataMembers));
+#endif
 
   sampleSource->sampleSourceType = SAMPLE_SOURCE_TYPE_WAVE;
   sampleSource->openedAs = SAMPLE_SOURCE_OPEN_NOT_OPENED;
@@ -82,13 +158,30 @@ SampleSource newSampleSourceWave(const CharString sampleSourceName) {
   sampleSource->numFramesProcessed = 0;
 
   sampleSource->openSampleSource = _openSampleSourceWave;
+#if USE_LIBAUDIOFILE
   sampleSource->readSampleBlock = readBlockFromAudiofile;
   sampleSource->writeSampleBlock = writeBlockFromAudiofile;
   sampleSource->freeSampleSourceData = freeSampleSourceDataAudiofile;
+#else
+  sampleSource->readSampleBlock = _readBlockFromWaveFile;
+  sampleSource->writeSampleBlock = _writeBlockFromWaveFile;
+  sampleSource->freeSampleSourceData = _freeSampleSourceDataWave;
+#endif
 
+#if USE_LIBAUDIOFILE
   extraData->fileHandle = NULL;
   extraData->interlacedBuffer = NULL;
   extraData->pcmBuffer = NULL;
+#else
+  extraData->fileHandle = NULL;
+  extraData->audioFormat = 0;
+  extraData->numChannels = 0;
+  extraData->sampleRate = 0;
+  extraData->byteRate = 0;
+  extraData->blockAlign = 0;
+  extraData->bitsPerSample = 0;
+#endif
+
   sampleSource->extraData = extraData;
 
   return sampleSource;
