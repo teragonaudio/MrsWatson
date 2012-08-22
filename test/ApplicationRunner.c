@@ -9,21 +9,10 @@ static void copyArgumentToArray(void* item, void* userData) {
   copyData->currentIndex++;
 }
 
-void runApplicationTest(const char *testName, LinkedList arguments, ReturnCodes expectedResultCode, AnalysisFuncPtr analysisFunction) {
-  char* applicationPath;
+void runApplicationTest(char *applicationPath, const char *testName, LinkedList arguments, ReturnCodes expectedResultCode, AnalysisFuncPtr analysisFunction) {
   char** applicationArguments;
   ArgumentsCopyData argumentsCopyData;
   int resultCode = -1;
-
-  switch(getPlatformType()) {
-    case PLATFORM_MACOSX:
-      // Xcode should copy the executable to /usr/local/bin during build
-      applicationPath = "/usr/local/bin/mrswatson";
-      break;
-    default:
-      logUnsupportedFeature("Application testing");
-      return;
-  }
 
 #if WINDOWS
   logUnsupportedFeature("Application testing");

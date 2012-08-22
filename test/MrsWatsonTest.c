@@ -11,7 +11,7 @@ static LinkedList _argsForRunWithNoArgs() {
   return args;
 }
 
-void runMrsWatsonTests(void);
-void runMrsWatsonTests(void) {
-  runApplicationTest("Run with no arguments", newLinkedList(), RETURN_CODE_NOT_RUN, NULL);
+void runMrsWatsonTests(char *applicationPath);
+void runMrsWatsonTests(char *applicationPath) {
+  runApplicationTest(applicationPath, "Run with no arguments", newLinkedList(), RETURN_CODE_NOT_RUN, NULL);
 }
