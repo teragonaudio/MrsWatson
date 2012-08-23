@@ -14,4 +14,5 @@ typedef struct {
   char** outArray;
 } ArgumentsCopyData;
 
-void runApplicationTest(char *applicationPath, const char *testName, LinkedList arguments, ReturnCodes expectedResultCode, AnalysisFuncPtr analysisFunction);
+LinkedList getDefaultArguments(const char *testName);
+void runApplicationTest(char *applicationPath, const char *testName, LinkedList testArguments, ReturnCodes expectedResultCode, AnalysisFuncPtr analysisFunction);
