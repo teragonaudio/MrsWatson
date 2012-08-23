@@ -199,15 +199,17 @@ static const char* _logTimeZebraStripeColor(const long elapsedTime, const LogCol
   }
 }
 
-static void _printMessage(const LogLevel logLevel, const long elapsedTimeInMs, const long numFramesProcessed,
-  const LogColorScheme colorScheme, const char* message, const int zebraSizeInMs) {
-  if(colorScheme == COLOR_SCHEME_NONE) {
+static void _printMessage(const LogLevel logLevel, const long elapsedTimeInMs, const long numFramesProcessed, const char* message, const EventLogger eventLogger) {
+  if(eventLogger->logFile != NULL) {
+    fprintf(eventLogger->logFile, "%c %08ld %06ld %s\n", _logLevelStatusChar(logLevel), numFramesProcessed, elapsedTimeInMs, message);
+  }
+  else if(eventLogger->colorScheme == COLOR_SCHEME_NONE) {
     fprintf(stderr, "%c %08ld %06ld %s\n", _logLevelStatusChar(logLevel), numFramesProcessed, elapsedTimeInMs, message);
   }
   else {
-    fprintf(stderr, "\x1b%s%c\x1b%s ", _logLevelStatusColor(logLevel, colorScheme), _logLevelStatusChar(logLevel), ANSI_COLOR_RESET);
-    fprintf(stderr, "\x1b%s%08ld\x1b%s ", _logTimeZebraStripeColor(numFramesProcessed, colorScheme, zebraSizeInMs), numFramesProcessed, ANSI_COLOR_RESET);
-    fprintf(stderr, "\x1b%s%06ld\x1b%s ", _logTimeColor(colorScheme), elapsedTimeInMs, ANSI_COLOR_RESET);
+    fprintf(stderr, "\x1b%s%c\x1b%s ", _logLevelStatusColor(logLevel, eventLogger->colorScheme), _logLevelStatusChar(logLevel), ANSI_COLOR_RESET);
+    fprintf(stderr, "\x1b%s%08ld\x1b%s ", _logTimeZebraStripeColor(numFramesProcessed, eventLogger->colorScheme, eventLogger->zebraStripeSize), numFramesProcessed, ANSI_COLOR_RESET);
+    fprintf(stderr, "\x1b%s%06ld\x1b%s ", _logTimeColor(eventLogger->colorScheme), elapsedTimeInMs, ANSI_COLOR_RESET);
     if(logLevel == LOG_ERROR) {
       fprintf(stderr, "\x1b%s%s\x1b%s\n", ANSI_COLOR_RED, message, ANSI_COLOR_RESET);
     }
@@ -237,8 +239,7 @@ static void _logMessage(const LogLevel logLevel, const char* message, va_list ar
     elapsedTimeInMs = ((currentTime.tv_sec - (eventLogger->startTimeInSec + 1)) * 1000) +
       (currentTime.tv_usec / 1000) + (1000 - eventLogger->startTimeInMs);
 #endif
-    _printMessage(logLevel, elapsedTimeInMs, getAudioClockCurrentSample(),
-      eventLogger->colorScheme, formattedMessage->data, eventLogger->zebraStripeSize);
+    _printMessage(logLevel, elapsedTimeInMs, getAudioClockCurrentSample(), formattedMessage->data, eventLogger);
     freeCharString(formattedMessage);
   }
 }
