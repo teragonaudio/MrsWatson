@@ -37,7 +37,7 @@ int main(int argc, char* argv[]) {
   printf("\nRan %d function tests: %d passed, %d failed\n", testsPassed + testsFailed, testsPassed, testsFailed);
   totalTestsFailed = testsFailed;
 
-  printf("=== Application tests ===\n");
+  printf("\n=== Application tests ===\n");
   if(argc <= 1) {
     printf("Skipping application tests, no path to MrsWatson executable\n");
     printf("Usage: MrsWatsonTest [path to MrsWatson]\n");
