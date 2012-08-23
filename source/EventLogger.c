@@ -100,6 +100,14 @@ void setLogLevel(LogLevel logLevel) {
   eventLogger->logLevel = logLevel;
 }
 
+void setLogFile(const CharString logFileName) {
+  EventLogger eventLogger = _getEventLoggerInstance();
+  eventLogger->logFile = fopen(logFileName->data, "a");
+  if(eventLogger->logFile == NULL) {
+    logCritical("Could not open file '%s' for logging", logFileName->data);
+  }
+}
+
 void setLoggingColorScheme(const LogColorScheme colorScheme) {
   EventLogger eventLogger = _getEventLoggerInstance();
   eventLogger->colorScheme = colorScheme;

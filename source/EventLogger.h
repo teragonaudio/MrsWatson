@@ -26,6 +26,7 @@
 //
 
 #include <sys/types.h>
+#include <stdio.h>
 #include "Types.h"
 #include "CharString.h"
 
@@ -55,6 +56,7 @@ typedef struct {
   long startTimeInMs;
   LogColorScheme colorScheme;
   long zebraStripeSize;
+  FILE *logFile;
 } EventLoggerMembers;
 
 typedef EventLoggerMembers* EventLogger;
@@ -65,6 +67,7 @@ void initEventLogger(void);
 void fillVersionString(CharString outString);
 
 void setLogLevel(LogLevel logLevel);
+void setLogFile(const CharString logFileName);
 void setLoggingColorScheme(const LogColorScheme colorScheme);
 void setLoggingColorSchemeWithString(const CharString colorSchemeName);
 void setLoggingZebraSize(const long zebraStripeSize);
