@@ -132,6 +132,9 @@ int main(int argc, char** argv) {
   if(programOptions[OPTION_COLOR_LOGGING]->enabled) {
     setLoggingColorSchemeWithString(programOptions[OPTION_COLOR_LOGGING]->argument);
   }
+  if(programOptions[OPTION_LOG_FILE]->enabled) {
+    setLogFile(programOptions[OPTION_LOG_FILE]->argument);
+  }
 
   // Parse other options and set up necessary objects
   for(i = 0; i < NUM_OPTIONS; i++) {
