@@ -99,6 +99,11 @@ boolByte readPcmDataFromFile(SampleSourcePcmData pcmData, SampleBuffer sampleBuf
   boolByte result = true;
   size_t pcmFramesRead = 0;
 
+  if(pcmData == NULL || pcmData->fileHandle == NULL) {
+    logCritical("Corrupt PCM data structure");
+    return false;
+  }
+
   if(pcmData->dataBufferNumItems == 0) {
     pcmData->dataBufferNumItems = (size_t)(sampleBuffer->numChannels * sampleBuffer->blocksize);
     pcmData->interlacedPcmDataBuffer = (short*)malloc(sizeof(short) * pcmData->dataBufferNumItems);
@@ -148,6 +153,12 @@ void convertSampleBufferToPcmData(const SampleBuffer sampleBuffer, short* outPcm
 
 boolByte writePcmDataToFile(SampleSourcePcmData pcmData, const SampleBuffer sampleBuffer, unsigned long* numFramesProcessed) {
   size_t pcmFramesWritten = 0;
+
+  if(pcmData == NULL || pcmData->fileHandle == NULL) {
+    logCritical("Corrupt PCM data structure");
+    return false;
+  }
+
   if(pcmData->dataBufferNumItems == 0) {
     pcmData->dataBufferNumItems = (size_t)(sampleBuffer->numChannels * sampleBuffer->blocksize);
     pcmData->interlacedPcmDataBuffer = (short*)malloc(sizeof(short) * pcmData->dataBufferNumItems);
