@@ -120,7 +120,27 @@ the future:
 I have also tried to identify incomplete areas of the code and log them to the
 console, which means that we are aware that this feature is missing and will
 be added soon. If you see some other missing functionality or experience a
-crash or other bug, please report an issue on our [project page][3].
+crash or other bug, please report an issue on the [project page][3].
+
+
+Building
+--------
+
+MrsWatson can be built either from the command line or with a few popular IDE's.
+For the command line builds, you will need the following:
+
+* A relatively recent automake
+* A relatively recent autoconf
+* Mingw (on Windows)
+
+On Windows, MrsWatson can also be built with Visual Studio, which is preferred
+as this offers better performance. After cloning the source code, run the
+`autogen.sh` script, then `./configure` and `make` as usual. Please report any
+build problems on the [project page][3].
+
+
+Alternately, MrsWatson can be built with a few popular IDE's. Build files are
+included in the `projects` directory under the project sources root.
 
 
 Please Help!
