@@ -44,12 +44,27 @@ void printSupportedSourceTypes(void) {
   // We can theoretically support more formats, pretty much anything audiofile supports
   // would work here. However, most of those file types are rather uncommon, and require
   // special setup when writing, so we only choose the most common ones.
-  printf("- AIFF\n");
+#if HAVE_LIBAUDIOFILE
+  printf("- AIFF (via libaudiofile)\n");
+#else
+  printf("- AIFF (internal)\n");
+#endif
+#if HAVE_LIBFLAC
   printf("- FLAC\n");
+#endif
+#if HAVE_LIBLAME
   printf("- MP3\n");
+#endif
+#if HAVE_LIBVORBIS
   printf("- OGG\n");
+#endif
+  // Always supported
   printf("- PCM\n");
-  printf("- WAV\n");
+#if HAVE_LIBAUDIOFILE
+  printf("- WAV (via libaudiofile)\n");
+#else
+  printf("- WAV (internal)\n");
+#endif
 }
 
 SampleSourceType guessSampleSourceType(const CharString sampleSourceTypeString) {
