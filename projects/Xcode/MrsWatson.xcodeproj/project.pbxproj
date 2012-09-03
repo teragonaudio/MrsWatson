@@ -423,6 +423,23 @@
 		};
 /* End PBXGroup section */
 
+/* Begin PBXLegacyTarget section */
+		24EDB04115F473F500B0B8DF /* MrsWatson-Dist */ = {
+			isa = PBXLegacyTarget;
+			buildArgumentsString = "$(ACTION)";
+			buildConfigurationList = 24EDB04415F473F500B0B8DF /* Build configuration list for PBXLegacyTarget "MrsWatson-Dist" */;
+			buildPhases = (
+			);
+			buildToolPath = /usr/bin/make;
+			buildWorkingDirectory = ../..;
+			dependencies = (
+			);
+			name = "MrsWatson-Dist";
+			passBuildSettingsInEnvironment = 1;
+			productName = "MrsWatson-Dist";
+		};
+/* End PBXLegacyTarget section */
+
 /* Begin PBXNativeTarget section */
 		24ED067915D3C833007CDA69 /* MrsWatsonTest */ = {
 			isa = PBXNativeTarget;
@@ -482,6 +499,7 @@
 			targets = (
 				24FDFBA9148CC6AF0074D3A1 /* MrsWatson */,
 				24ED067915D3C833007CDA69 /* MrsWatsonTest */,
+				24EDB04115F473F500B0B8DF /* MrsWatson-Dist */,
 			);
 		};
 /* End PBXProject section */
@@ -623,6 +641,41 @@
 			};
 			name = Release;
 		};
+		24EDB04215F473F500B0B8DF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				DEBUGGING_SYMBOLS = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		24EDB04315F473F500B0B8DF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		24FDFBB2148CC6AF0074D3A1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -721,6 +774,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		24EDB04415F473F500B0B8DF /* Build configuration list for PBXLegacyTarget "MrsWatson-Dist" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				24EDB04215F473F500B0B8DF /* Debug */,
+				24EDB04315F473F500B0B8DF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 		24FDFBA4148CC6AF0074D3A1 /* Build configuration list for PBXProject "MrsWatson" */ = {
 			isa = XCConfigurationList;
