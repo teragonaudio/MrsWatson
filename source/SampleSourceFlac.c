@@ -36,12 +36,12 @@ static boolByte _openSampleSourceFlac(void* sampleSourcePtr, const SampleSourceO
   return false;
 }
 
-static boolByte _readBlockFromFlac(void* sampleSourcePtr, SampleBuffer sampleBuffer) {
+static boolByte _readBlockFromFlacFile(void* sampleSourcePtr, SampleBuffer sampleBuffer) {
   logUnsupportedFeature("Flac file I/O");
   return false;
 }
 
-static boolByte _writeBlockFromFlac(void* sampleSourcePtr, const SampleBuffer sampleBuffer) {
+static boolByte _writeBlockToFlacFile(void* sampleSourcePtr, const SampleBuffer sampleBuffer) {
   logUnsupportedFeature("Flac file I/O");
   return false;
 }
@@ -56,8 +56,8 @@ SampleSource newSampleSourceFlac(const CharString sampleSourceName) {
   sampleSource->sampleSourceType = SAMPLE_SOURCE_TYPE_FLAC;
   
   sampleSource->openSampleSource = _openSampleSourceFlac;
-  sampleSource->readSampleBlock = _readBlockFromFlac;
-  sampleSource->writeSampleBlock = _writeBlockFromFlac;
+  sampleSource->readSampleBlock = _readBlockFromFlacFile;
+  sampleSource->writeSampleBlock = _writeBlockToFlacFile;
   sampleSource->freeSampleSourceData = _freeSampleSourceFlac;
   
   return sampleSource;

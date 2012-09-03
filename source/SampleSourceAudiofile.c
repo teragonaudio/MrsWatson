@@ -74,7 +74,7 @@ boolByte readBlockFromAudiofile(void* sampleSourcePtr, SampleBuffer sampleBuffer
   }
 }
 
-boolByte writeBlockFromAudiofile(void* sampleSourcePtr, const SampleBuffer sampleBuffer) {
+boolByte writeBlockToAudiofile(void* sampleSourcePtr, const SampleBuffer sampleBuffer) {
   SampleSource sampleSource = (SampleSource)sampleSourcePtr;
   SampleSourceAudiofileData extraData = (SampleSourceAudiofileData)(sampleSource->extraData);
   int result = 0;

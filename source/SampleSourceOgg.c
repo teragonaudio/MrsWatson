@@ -36,12 +36,12 @@ static boolByte _openSampleSourceOgg(void* sampleSourcePtr, const SampleSourceOp
   return false;
 }
 
-static boolByte _readBlockFromOgg(void* sampleSourcePtr, SampleBuffer sampleBuffer) {
+static boolByte _readBlockFromOggFile(void* sampleSourcePtr, SampleBuffer sampleBuffer) {
   logUnsupportedFeature("Ogg file I/O");
   return false;
 }
 
-static boolByte _writeBlockFromOgg(void* sampleSourcePtr, const SampleBuffer sampleBuffer) {
+static boolByte _writeBlockToOggFile(void* sampleSourcePtr, const SampleBuffer sampleBuffer) {
   logUnsupportedFeature("Ogg file I/O");
   return false;
 }
@@ -56,8 +56,8 @@ SampleSource newSampleSourceOgg(const CharString sampleSourceName) {
   sampleSource->sampleSourceType = SAMPLE_SOURCE_TYPE_OGG;
   
   sampleSource->openSampleSource = _openSampleSourceOgg;
-  sampleSource->readSampleBlock = _readBlockFromOgg;
-  sampleSource->writeSampleBlock = _writeBlockFromOgg;
+  sampleSource->readSampleBlock = _readBlockFromOggFile;
+  sampleSource->writeSampleBlock = _writeBlockToOggFile;
   sampleSource->freeSampleSourceData = _freeSampleSourceOgg;
   
   return sampleSource;

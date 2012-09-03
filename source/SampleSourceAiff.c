@@ -93,7 +93,7 @@ static boolByte _readBlockFromAiffFile(void* sampleSourcePtr, SampleBuffer sampl
   return false;
 }
 
-static boolByte _writeBlockFromAiffFile(void* sampleSourcePtr, const SampleBuffer sampleBuffer) {
+static boolByte _writeBlockToAiffFile(void* sampleSourcePtr, const SampleBuffer sampleBuffer) {
   return false;
 }
 
@@ -124,11 +124,11 @@ SampleSource newSampleSourceAiff(const CharString sampleSourceName) {
   sampleSource->openSampleSource = _openSampleSourceAiff;
 #if HAVE_LIBAUDIOFILE
   sampleSource->readSampleBlock = readBlockFromAudiofile;
-  sampleSource->writeSampleBlock = writeBlockFromAudiofile;
+  sampleSource->writeSampleBlock = writeBlockToAudiofile;
   sampleSource->freeSampleSourceData = freeSampleSourceDataAudiofile;
 #else
   sampleSource->readSampleBlock = _readBlockFromAiffFile;
-  sampleSource->writeSampleBlock = _writeBlockFromAiffFile;
+  sampleSource->writeSampleBlock = _writeBlockToAiffFile;
   sampleSource->freeSampleSourceData = _freeSampleSourceDataAiff;
 #endif
 

@@ -36,12 +36,12 @@ static boolByte _openSampleSourceMp3(void* sampleSourcePtr, const SampleSourceOp
   return false;
 }
 
-static boolByte _readBlockFromMp3(void* sampleSourcePtr, SampleBuffer sampleBuffer) {
+static boolByte _readBlockFromMp3File(void* sampleSourcePtr, SampleBuffer sampleBuffer) {
   logUnsupportedFeature("MP3 file I/O");
   return false;
 }
 
-static boolByte _writeBlockFromMp3(void* sampleSourcePtr, const SampleBuffer sampleBuffer) {
+static boolByte _writeBlockToMp3File(void* sampleSourcePtr, const SampleBuffer sampleBuffer) {
   logUnsupportedFeature("MP3 file I/O");
   return false;
 }
@@ -56,8 +56,8 @@ SampleSource newSampleSourceMp3(const CharString sampleSourceName) {
   sampleSource->sampleSourceType = SAMPLE_SOURCE_TYPE_MP3;
 
   sampleSource->openSampleSource = _openSampleSourceMp3;
-  sampleSource->readSampleBlock = _readBlockFromMp3;
-  sampleSource->writeSampleBlock = _writeBlockFromMp3;
+  sampleSource->readSampleBlock = _readBlockFromMp3File;
+  sampleSource->writeSampleBlock = _writeBlockToMp3File;
   sampleSource->freeSampleSourceData = _freeSampleSourceMp3;
 
   return sampleSource;

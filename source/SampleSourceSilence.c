@@ -41,7 +41,7 @@ static boolByte _readBlockFromSilence(void* sampleSourcePtr, SampleBuffer sample
   return true;
 }
 
-static boolByte _writeBlockFromSilence(void* sampleSourcePtr, const SampleBuffer sampleBuffer) {
+static boolByte _writeBlockToSilence(void* sampleSourcePtr, const SampleBuffer sampleBuffer) {
   return true;
 }
 
@@ -60,10 +60,8 @@ SampleSource newSampleSourceSilence(void) {
   sampleSource->numFramesProcessed = 0;
 
   sampleSource->openSampleSource = _openSampleSourceSilence;
-  // TODO: Remove all "froms" here
   sampleSource->readSampleBlock = _readBlockFromSilence;
-  sampleSource->writeSampleBlock = _writeBlockFromSilence;
-  // TODO: Remove last "input" traces in names
+  sampleSource->writeSampleBlock = _writeBlockToSilence;
   sampleSource->freeSampleSourceData = _freeInputSourceDataSilence;
 
   return sampleSource;

@@ -307,7 +307,7 @@ static boolByte _readBlockFromWaveFile(void* sampleSourcePtr, SampleBuffer sampl
   return readPcmDataFromFile(extraData->pcmData, sampleBuffer, &(sampleSource->numFramesProcessed));
 }
 
-static boolByte _writeBlockFromWaveFile(void* sampleSourcePtr, const SampleBuffer sampleBuffer) {
+static boolByte _writeBlockToWaveFile(void* sampleSourcePtr, const SampleBuffer sampleBuffer) {
   boolByte result;
   SampleSource sampleSource = (SampleSource)sampleSourcePtr;
   SampleSourceWaveData extraData = (SampleSourceWaveData)(sampleSource->extraData);
@@ -357,11 +357,11 @@ SampleSource newSampleSourceWave(const CharString sampleSourceName) {
   sampleSource->openSampleSource = _openSampleSourceWave;
 #if HAVE_LIBAUDIOFILE
   sampleSource->readSampleBlock = readBlockFromAudiofile;
-  sampleSource->writeSampleBlock = writeBlockFromAudiofile;
+  sampleSource->writeSampleBlock = writeBlockToAudiofile;
   sampleSource->freeSampleSourceData = freeSampleSourceDataAudiofile;
 #else
   sampleSource->readSampleBlock = _readBlockFromWaveFile;
-  sampleSource->writeSampleBlock = _writeBlockFromWaveFile;
+  sampleSource->writeSampleBlock = _writeBlockToWaveFile;
   sampleSource->freeSampleSourceData = _freeSampleSourceDataWave;
 #endif
 
