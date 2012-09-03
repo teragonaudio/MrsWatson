@@ -28,8 +28,26 @@ static int _testOpenWaveFile(void) {
   return 0;
 }
 
+static int _testReadBlockFromWaveFile(void) {
+  SampleSource s = newSampleSourceWave(_waveResourceName());
+  SampleBuffer b = newSampleBuffer(2, 512);
+  _assert(s->openSampleSource(s, SAMPLE_SOURCE_OPEN_READ));
+  _assert(s->readSampleBlock(s, b));
+  return 0;
+}
+
+static int _testReadBlockFromWaveFileWithoutOpening(void) {
+  SampleSource s = newSampleSourceWave(_waveResourceName());
+  SampleBuffer b = newSampleBuffer(2, 512);
+  _assertFalse(s->readSampleBlock(s, b));
+  return 0;
+}
+
 void runSampleSourceWaveFileTests(void);
 void runSampleSourceWaveFileTests(void) {
   _startTestSection();
   _runTest("Open file", _testOpenWaveFile, _sampleSourceWaveSetup, _sampleSourceWaveTeardown);
+  _runTest("Read block", _testReadBlockFromWaveFile, _sampleSourceWaveSetup, _sampleSourceWaveTeardown);
+  _runTest("Read block without opening", _testReadBlockFromWaveFileWithoutOpening, _sampleSourceWaveSetup, _sampleSourceWaveTeardown);
+//  _runTest("Write block", _testWriteBlockToWaveFile, _sampleSourceWaveSetup, _sampleSourceWaveTeardown);
 }
