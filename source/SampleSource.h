@@ -36,9 +36,6 @@
 // CPU, and I'm not sure it's even necessary, so it is disabled at present.
 #define USE_BRICKWALL_LIMITER 0
 
-// Library dependencies
-#define USE_LIBAUDIOFILE 0
-
 typedef enum {
   SAMPLE_SOURCE_TYPE_INVALID,
   SAMPLE_SOURCE_TYPE_SILENCE,

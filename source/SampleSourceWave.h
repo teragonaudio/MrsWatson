@@ -31,8 +31,6 @@
 #ifndef MrsWatson_SampleSourceWave_h
 #define MrsWatson_SampleSourceWave_h
 
-#if ! USE_LIBAUDIOFILE
-
 typedef struct {
   FILE* fileHandle;
   unsigned short audioFormat;
@@ -47,8 +45,6 @@ typedef struct {
 } SampleSourceWaveDataMembers;
 
 typedef SampleSourceWaveDataMembers* SampleSourceWaveData;
-
-#endif
 
 SampleSource newSampleSourceWave(const CharString sampleSourceName);
 
