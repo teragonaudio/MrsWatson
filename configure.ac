@@ -40,7 +40,7 @@ AC_PROG_CC
 
 # Checks for header files.
 # AC_PATH_X
-AC_CHECK_HEADERS([stddef.h stdint.h stdlib.h string.h sys/time.h unistd.h])
+AC_CHECK_HEADERS([stddef.h stdint.h stdlib.h string.h sys/time.h unistd.h audiofile.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_HEADER_STDBOOL
