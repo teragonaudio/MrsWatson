@@ -116,8 +116,11 @@ VstIntPtr VSTCALLBACK vst2xPluginHostCallback(AEffect *effect, VstInt32 opcode, 
         vstTimeInfo.flags |= 0;
       }
       if(value & kVstPpqPosValid) {
-        logUnsupportedFeature("Current position in PPQ");
-        vstTimeInfo.flags |= 0;
+        // TODO: This calculation might be wrong
+        double quarterNotesPerMinute = getTempo() * (getTimeSignatureBeatsPerMeasure() / getTimeSignatureNoteValue());
+        double millisecondsPerBeat = 1000.0 * 60.0 / quarterNotesPerMinute;
+        vstTimeInfo.ppqPos = millisecondsPerBeat / getTimeDivision();
+        vstTimeInfo.flags |= 1;
       }
       if(value & kVstTempoValid) {
         vstTimeInfo.tempo = getTempo();
