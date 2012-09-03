@@ -94,13 +94,13 @@ If stderr is a terminal device, color is used automatically unless 'none' is giv
     "List available plugins. Useful for determining if a plugin can be 'seen'.",
     false, ARGUMENT_TYPE_NONE, NO_DEFAULT_VALUE);
 
-  _addNewProgramOption(programOptions, OPTION_MIDI_SOURCE, "midi-file",
-    "MIDI file to read events from. Required if processing an instrument plugin.",
-    true, ARGUMENT_TYPE_REQUIRED, NO_DEFAULT_VALUE);
-
   _addNewProgramOption(programOptions, OPTION_LOG_FILE, "log-file",
     "Save logging output to the given file instead of the terminal's standard error.",
     false, ARGUMENT_TYPE_REQUIRED, NO_DEFAULT_VALUE);
+
+  _addNewProgramOption(programOptions, OPTION_MIDI_SOURCE, "midi-file",
+    "MIDI file to read events from. Required if processing an instrument plugin.",
+    true, ARGUMENT_TYPE_REQUIRED, NO_DEFAULT_VALUE);
 
   _addNewProgramOption(programOptions, OPTION_OPTIONS, "options",
     "Show program options and their default values.",
