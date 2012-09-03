@@ -1,3 +1,4 @@
+test/out/*
 .idea/workspace.xml
 .idea/dictionaries/*
 build/*
