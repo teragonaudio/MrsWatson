@@ -35,8 +35,7 @@ AC_PROG_CC
 # Checks for libraries.
 
 # Checks for header files.
-# AC_PATH_X
-AC_CHECK_HEADERS([stddef.h stdint.h stdlib.h string.h sys/time.h unistd.h audiofile.h])
+AC_CHECK_HEADERS([stddef.h stdint.h stdlib.h string.h sys/time.h unistd.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_HEADER_STDBOOL
@@ -48,8 +47,7 @@ AC_TYPE_SIZE_T
 
 # Checks for library functions.
 AC_FUNC_MALLOC
-AC_FUNC_REALLOC
-AC_CHECK_FUNCS([floor gethrtime gettimeofday memset pow strcasecmp strchr strdup strncasecmp strrchr strstr strtol])
+# AC_CHECK_FUNCS([floor gethrtime gettimeofday memset pow strcasecmp strchr strdup strncasecmp strrchr strstr strtol])
 AC_CHECK_LIB([dl], [dlopen])
 
 # Optional libraries
