@@ -108,6 +108,7 @@ static boolByte _readMidiFileHeader(FILE *midiFile, unsigned short *formatType, 
     return false;
   }
   *timeDivision = convertBigEndianShortToPlatform(wordBuffer);
+  setTimeDivision(*timeDivision);
 
   return true;
 }
