@@ -30,6 +30,9 @@
 #ifndef MrsWatson_SampleSourceFlac_h
 #define MrsWatson_SampleSourceFlac_h
 
+#if HAVE_LIBFLAC
+
 SampleSource newSampleSourceFlac(const CharString sampleSourceName);
 
+#endif
 #endif

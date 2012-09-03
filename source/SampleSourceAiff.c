@@ -32,7 +32,7 @@
 #include "EventLogger.h"
 #include "SampleSource.h"
 
-#if HAVE_AUDIOFILE_H
+#if HAVE_LIBAUDIOFILE
 #include "SampleSourceAudiofile.h"
 
 #if LINUX
@@ -44,14 +44,14 @@
 
 static boolByte _openSampleSourceAiff(void *sampleSourcePtr, const SampleSourceOpenAs openAs) {
   SampleSource sampleSource = (SampleSource)sampleSourcePtr;
-#if HAVE_AUDIOFILE_H
+#if HAVE_LIBAUDIOFILE
   SampleSourceAudiofileData extraData = (SampleSourceAudiofileData)(sampleSource->extraData);
 #else
   SampleSourceAiffData extraData = (SampleSourceAiffData)(sampleSource->extraData);
 #endif
 
   if(openAs == SAMPLE_SOURCE_OPEN_READ) {
-#if HAVE_AUDIOFILE_H
+#if HAVE_LIBAUDIOFILE
     extraData->fileHandle = afOpenFile(sampleSource->sourceName->data, "r", NULL);
     if(extraData->fileHandle != NULL) {
       setNumChannels(afGetVirtualChannels(extraData->fileHandle, AF_DEFAULT_TRACK));
@@ -62,7 +62,7 @@ static boolByte _openSampleSourceAiff(void *sampleSourcePtr, const SampleSourceO
 #endif
   }
   else if(openAs == SAMPLE_SOURCE_OPEN_WRITE) {
-#if HAVE_AUDIOFILE_H
+#if HAVE_LIBAUDIOFILE
     AFfilesetup outfileSetup = afNewFileSetup();
     afInitFileFormat(outfileSetup, AF_FILE_AIFF);
     afInitByteOrder(outfileSetup, AF_DEFAULT_TRACK, AF_BYTEORDER_BIGENDIAN);
@@ -107,7 +107,7 @@ static void _freeSampleSourceDataAiff(void* sampleSourceDataPtr) {
 
 SampleSource newSampleSourceAiff(const CharString sampleSourceName) {
   SampleSource sampleSource = (SampleSource)malloc(sizeof(SampleSourceMembers));
-#if HAVE_AUDIOFILE_H
+#if HAVE_LIBAUDIOFILE
   SampleSourceAudiofileData extraData = (SampleSourceAudiofileData)malloc(sizeof(SampleSourceAudiofileDataMembers));
 #else
   SampleSourceAiffData extraData = (SampleSourceAiffData)malloc(sizeof(SampleSourceAiffDataMembers));
@@ -122,7 +122,7 @@ SampleSource newSampleSourceAiff(const CharString sampleSourceName) {
   sampleSource->numFramesProcessed = 0;
 
   sampleSource->openSampleSource = _openSampleSourceAiff;
-#if HAVE_AUDIOFILE_H
+#if HAVE_LIBAUDIOFILE
   sampleSource->readSampleBlock = readBlockFromAudiofile;
   sampleSource->writeSampleBlock = writeBlockFromAudiofile;
   sampleSource->freeSampleSourceData = freeSampleSourceDataAudiofile;
@@ -132,7 +132,7 @@ SampleSource newSampleSourceAiff(const CharString sampleSourceName) {
   sampleSource->freeSampleSourceData = _freeSampleSourceDataAiff;
 #endif
 
-#if HAVE_AUDIOFILE_H
+#if HAVE_LIBAUDIOFILE
   extraData->fileHandle = NULL;
   extraData->interlacedBuffer = NULL;
   extraData->pcmBuffer = NULL;

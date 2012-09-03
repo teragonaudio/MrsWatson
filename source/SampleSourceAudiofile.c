@@ -25,7 +25,7 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#if HAVE_AUDIOFILE_H
+#if HAVE_LIBAUDIOFILE
 
 #include <stdio.h>
 #include <stdint.h>

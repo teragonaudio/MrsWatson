@@ -29,6 +29,8 @@
 #include "SampleSourceFlac.h"
 #include "EventLogger.h"
 
+#if HAVE_LIBFLAC
+
 static boolByte _openSampleSourceFlac(void* sampleSourcePtr, const SampleSourceOpenAs openAs) {
   logUnsupportedFeature("Flac file I/O");
   return false;
@@ -60,3 +62,5 @@ SampleSource newSampleSourceFlac(const CharString sampleSourceName) {
   
   return sampleSource;
 }
+
+#endif

@@ -29,6 +29,8 @@
 #include "SampleSourceOgg.h"
 #include "EventLogger.h"
 
+#if HAVE_LIBVORBIS
+
 static boolByte _openSampleSourceOgg(void* sampleSourcePtr, const SampleSourceOpenAs openAs) {
   logUnsupportedFeature("Ogg file I/O");
   return false;
@@ -60,3 +62,5 @@ SampleSource newSampleSourceOgg(const CharString sampleSourceName) {
   
   return sampleSource;
 }
+
+#endif

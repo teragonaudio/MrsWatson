@@ -30,7 +30,7 @@
 #ifndef MrsWatson_SampleSourceAudiofile_h
 #define MrsWatson_SampleSourceAudiofile_h
 
-#if HAVE_AUDIOFILE_H
+#if HAVE_LIBAUDIOFILE
 #include "audiofile.h"
 
 // This isn't a real SampleSource class, but rather a base class to facilitate

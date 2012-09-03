@@ -36,7 +36,7 @@
 #include "SampleSourcePcm.h"
 #include "PlatformUtilities.h"
 
-#if HAVE_AUDIOFILE_H
+#if HAVE_LIBAUDIOFILE
 #include "SampleSourceAudiofile.h"
 #endif
 
@@ -230,14 +230,14 @@ static boolByte _writeWaveFileInfo(SampleSourceWaveData extraData) {
 
 static boolByte _openSampleSourceWave(void *sampleSourcePtr, const SampleSourceOpenAs openAs) {
   SampleSource sampleSource = (SampleSource)sampleSourcePtr;
-#if HAVE_AUDIOFILE_H
+#if HAVE_LIBAUDIOFILE
   SampleSourceAudiofileData extraData = sampleSource->extraData;
 #else
   SampleSourceWaveData extraData = (SampleSourceWaveData)sampleSource->extraData;
 #endif
 
   if(openAs == SAMPLE_SOURCE_OPEN_READ) {
-#if HAVE_AUDIOFILE_H
+#if HAVE_LIBAUDIOFILE
     extraData->fileHandle = afOpenFile(sampleSource->sourceName->data, "r", NULL);
     if(extraData->fileHandle != NULL) {
       setNumChannels(afGetVirtualChannels(extraData->fileHandle, AF_DEFAULT_TRACK));
@@ -259,7 +259,7 @@ static boolByte _openSampleSourceWave(void *sampleSourcePtr, const SampleSourceO
 #endif
   }
   else if(openAs == SAMPLE_SOURCE_OPEN_WRITE) {
-#if HAVE_AUDIOFILE_H
+#if HAVE_LIBAUDIOFILE
     AFfilesetup outfileSetup = afNewFileSetup();
     afInitFileFormat(outfileSetup, AF_FILE_WAVE);
     afInitByteOrder(outfileSetup, AF_DEFAULT_TRACK, AF_BYTEORDER_LITTLEENDIAN);
@@ -340,7 +340,7 @@ static void _freeSampleSourceDataWave(void* sampleSourceDataPtr) {
 
 SampleSource newSampleSourceWave(const CharString sampleSourceName) {
   SampleSource sampleSource = (SampleSource)malloc(sizeof(SampleSourceMembers));
-#if HAVE_AUDIOFILE_H
+#if HAVE_LIBAUDIOFILE
   SampleSourceAudiofileData extraData = (SampleSourceAudiofileData)malloc(sizeof(SampleSourceAudiofileDataMembers));
 #else
   SampleSourceWaveData extraData = (SampleSourceWaveData)malloc(sizeof(SampleSourceWaveDataMembers));
@@ -355,7 +355,7 @@ SampleSource newSampleSourceWave(const CharString sampleSourceName) {
   sampleSource->numFramesProcessed = 0;
 
   sampleSource->openSampleSource = _openSampleSourceWave;
-#if HAVE_AUDIOFILE_H
+#if HAVE_LIBAUDIOFILE
   sampleSource->readSampleBlock = readBlockFromAudiofile;
   sampleSource->writeSampleBlock = writeBlockFromAudiofile;
   sampleSource->freeSampleSourceData = freeSampleSourceDataAudiofile;
@@ -365,7 +365,7 @@ SampleSource newSampleSourceWave(const CharString sampleSourceName) {
   sampleSource->freeSampleSourceData = _freeSampleSourceDataWave;
 #endif
 
-#if HAVE_AUDIOFILE_H
+#if HAVE_LIBAUDIOFILE
   extraData->fileHandle = NULL;
   extraData->interlacedBuffer = NULL;
   extraData->pcmBuffer = NULL;

@@ -30,6 +30,9 @@
 #ifndef MrsWatson_SampleSourceOgg_h
 #define MrsWatson_SampleSourceOgg_h
 
+#if HAVE_LIBVORBIS
+
 SampleSource newSampleSourceOgg(const CharString sampleSourceName);
 
+#endif
 #endif

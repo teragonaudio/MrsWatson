@@ -30,6 +30,9 @@
 #ifndef MrsWatson_SampleSourceMp3_h
 #define MrsWatson_SampleSourceMp3_h
 
+#if HAVE_LIBLAME
+
 SampleSource newSampleSourceMp3(const CharString sampleSourceName);
 
+#endif
 #endif

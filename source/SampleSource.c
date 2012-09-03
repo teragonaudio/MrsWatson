@@ -86,15 +86,21 @@ SampleSourceType guessSampleSourceType(const CharString sampleSourceTypeString) 
       else if(!strcasecmp(fileExtension, "aif") || !strcasecmp(fileExtension, "aiff")) {
         return SAMPLE_SOURCE_TYPE_AIFF;
       }
+#if HAVE_LIBFLAC
       else if(!strcasecmp(fileExtension, "flac")) {
         return SAMPLE_SOURCE_TYPE_FLAC;
       }
+#endif
+#if HAVE_LIBLAME
       else if(!strcasecmp(fileExtension, "mp3")) {
         return SAMPLE_SOURCE_TYPE_MP3;
       }
+#endif
+#if HAVE_LIBVORBIS
       else if(!strcasecmp(fileExtension, "ogg")) {
         return SAMPLE_SOURCE_TYPE_OGG;
       }
+#endif
       else if(!strcasecmp(fileExtension, "wav") || !strcasecmp(fileExtension, "wave")) {
         return SAMPLE_SOURCE_TYPE_WAVE;
       }
@@ -118,12 +124,18 @@ SampleSource newSampleSource(SampleSourceType sampleSourceType, const CharString
       return newSampleSourcePcm(sampleSourceName);
     case SAMPLE_SOURCE_TYPE_AIFF:
       return newSampleSourceAiff(sampleSourceName);
+#if HAVE_LIBFLAC
     case SAMPLE_SOURCE_TYPE_FLAC:
       return newSampleSourceFlac(sampleSourceName);
+#endif
+#if HAVE_LIBLAME
     case SAMPLE_SOURCE_TYPE_MP3:
       return newSampleSourceMp3(sampleSourceName);
+#endif
+#if HAVE_LIBVORBIS
     case SAMPLE_SOURCE_TYPE_OGG:
       return newSampleSourceOgg(sampleSourceName);
+#endif
     case SAMPLE_SOURCE_TYPE_WAVE:
       return newSampleSourceWave(sampleSourceName);
     default:

@@ -29,6 +29,8 @@
 #include "SampleSourceMp3.h"
 #include "EventLogger.h"
 
+#if HAVE_LIBLAME
+
 static boolByte _openSampleSourceMp3(void* sampleSourcePtr, const SampleSourceOpenAs openAs) {
   logUnsupportedFeature("MP3 file I/O");
   return false;
@@ -60,3 +62,5 @@ SampleSource newSampleSourceMp3(const CharString sampleSourceName) {
 
   return sampleSource;
 }
+
+#endif
