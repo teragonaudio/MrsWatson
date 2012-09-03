@@ -1,19 +1,20 @@
 build/*
 **/build/*
+*.swp
+*~
+*.o
+*.so
 
 test/out/*
 
 *.perspectivev3
 *.pbxuser
-*/.idea/workspace.xml
-*/.idea/dictionaries/*
-xcuserdata
+projects/Xcode/.idea/workspace.xml
+projects/Xcode/.idea/dictionaries/*
+projects/Xcode/MrsWatson.xcodeproj/xcuserdata
 
-*.swp
-*~
-*.o
-*.so
 vendor/vstsdk2.4/*
+
 aclocal.m4
 autom4te.cache/*
 vendor/*/autom4te.cache/*
