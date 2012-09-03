@@ -98,7 +98,7 @@ VstIntPtr VSTCALLBACK vst2xPluginHostCallback(AEffect *effect, VstInt32 opcode, 
       break;
     case audioMasterGetTime:
       // These values are always valid
-      vstTimeInfo.samplePos = getAudioClockCurrentSample();
+      vstTimeInfo.samplePos = getAudioClockCurrentFrame();
       vstTimeInfo.sampleRate = getSampleRate();
 
       // Set flags for transport state

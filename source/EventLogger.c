@@ -239,7 +239,7 @@ static void _logMessage(const LogLevel logLevel, const char* message, va_list ar
     elapsedTimeInMs = ((currentTime.tv_sec - (eventLogger->startTimeInSec + 1)) * 1000) +
       (currentTime.tv_usec / 1000) + (1000 - eventLogger->startTimeInMs);
 #endif
-    _printMessage(logLevel, elapsedTimeInMs, getAudioClockCurrentSample(), formattedMessage->data, eventLogger);
+    _printMessage(logLevel, elapsedTimeInMs, getAudioClockCurrentFrame(), formattedMessage->data, eventLogger);
     freeCharString(formattedMessage);
   }
 }

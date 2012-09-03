@@ -59,8 +59,8 @@ ProgramOption* newProgramOptions(void) {
   ProgramOptions programOptions = malloc(sizeof(ProgramOptions) * NUM_OPTIONS);
 
   _addNewProgramOption(programOptions, OPTION_BLOCKSIZE, "blocksize",
-    "Blocksize in samples to use for processing. If input source is not an even multiple of the blocksize, then \
-empty samples will be added to the last block.",
+    "Blocksize in frames to use for processing. If input source is not an even multiple of the blocksize, then \
+empty frames will be added to the last block.",
     true, ARGUMENT_TYPE_REQUIRED, getBlocksize());
 
   _addNewProgramOption(programOptions, OPTION_CHANNELS, "channels",
@@ -170,7 +170,7 @@ value will be used and added to <argument>.",
     false, ARGUMENT_TYPE_NONE, NO_DEFAULT_VALUE);
 
   _addNewProgramOption(programOptions, OPTION_ZEBRA_SIZE, "zebra-size",
-    "Alternate logging output colors every <argument> samples.",
+    "Alternate logging output colors every <argument> frames.",
     false, ARGUMENT_TYPE_REQUIRED, (int)getSampleRate());
 
   return programOptions;

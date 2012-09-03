@@ -309,7 +309,7 @@ int main(int argc, char** argv) {
     if(midiSequence != NULL) {
       LinkedList midiEventsForBlock = newLinkedList();
       // MIDI source overrides the value set to finishedReading by the input source
-      finishedReading = !fillMidiEventsFromRange(midiSequence, getAudioClockCurrentSample(), blocksize, midiEventsForBlock);
+      finishedReading = !fillMidiEventsFromRange(midiSequence, getAudioClockCurrentFrame(), blocksize, midiEventsForBlock);
       processPluginChainMidiEvents(pluginChain, midiEventsForBlock, taskTimer);
       startTimingTask(taskTimer, hostTaskId);
       freeLinkedList(midiEventsForBlock);
@@ -324,10 +324,10 @@ int main(int argc, char** argv) {
   logInfo("Finished processing input source");
 
   if(tailTimeInMs > 0) {
-    stopSample = (unsigned long)(getAudioClockCurrentSample() + (tailTimeInMs * getSampleRate()) / 1000);
-    logInfo("Adding %d extra sample frames", stopSample - getAudioClockCurrentSample());
+    stopSample = (unsigned long)(getAudioClockCurrentFrame() + (tailTimeInMs * getSampleRate()) / 1000);
+    logInfo("Adding %d extra frames", stopSample - getAudioClockCurrentFrame());
     silentSampleInput = newSampleSource(SAMPLE_SOURCE_TYPE_SILENCE, NULL);
-    while(getAudioClockCurrentSample() < stopSample) {
+    while(getAudioClockCurrentFrame() < stopSample) {
       startTimingTask(taskTimer, hostTaskId);
       silentSampleInput->readSampleBlock(silentSampleInput, inputSampleBuffer);
 

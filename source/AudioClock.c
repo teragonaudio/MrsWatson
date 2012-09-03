@@ -33,7 +33,7 @@ AudioClock audioClockInstance = NULL;
 
 void initAudioClock(void) {
   audioClockInstance = (AudioClock)malloc(sizeof(AudioClockMembers));
-  audioClockInstance->currentSample = 0;
+  audioClockInstance->currentFrame = 0;
   audioClockInstance->transportChanged = false;
   audioClockInstance->isPlaying = false;
 }
@@ -44,14 +44,14 @@ static AudioClock _getAudioClockInstance(void) {
 
 void advanceAudioClock(const int blocksize) {
   AudioClock audioClock = _getAudioClockInstance();
-  if(audioClock->currentSample == 0 || !audioClock->isPlaying) {
+  if(audioClock->currentFrame == 0 || !audioClock->isPlaying) {
     audioClock->transportChanged = true;
     audioClock->isPlaying = true;
   }
   else {
     audioClock->transportChanged = false;
   }
-  audioClock->currentSample += blocksize;
+  audioClock->currentFrame += blocksize;
 }
 
 void stopAudioClock(void) {
@@ -59,8 +59,8 @@ void stopAudioClock(void) {
   _getAudioClockInstance()->transportChanged = true;
 }
 
-unsigned long getAudioClockCurrentSample(void) {
-  return _getAudioClockInstance()->currentSample;
+unsigned long getAudioClockCurrentFrame(void) {
+  return _getAudioClockInstance()->currentFrame;
 }
 
 boolByte getAudioClockTransportChanged(void) {

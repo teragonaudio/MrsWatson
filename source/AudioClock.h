@@ -33,7 +33,7 @@
 typedef struct {
   boolByte transportChanged;
   boolByte isPlaying;
-  unsigned long currentSample;
+  unsigned long currentFrame;
 } AudioClockMembers;
 
 typedef AudioClockMembers* AudioClock;
@@ -43,7 +43,7 @@ void initAudioClock(void);
 
 void advanceAudioClock(const int blocksize);
 void stopAudioClock(void);
-unsigned long getAudioClockCurrentSample(void);
+unsigned long getAudioClockCurrentFrame(void);
 boolByte getAudioClockTransportChanged(void);
 boolByte getAudioClockIsPlaying(void);
 

@@ -12,7 +12,7 @@ static void _audioClockTestTeardown(void) {
 }
 
 static int _testInitAudioClock(void) {
-  _assertIntEquals(getAudioClockCurrentSample(), 0);
+  _assertIntEquals(getAudioClockCurrentFrame(), 0);
   _assertFalse(getAudioClockIsPlaying());
   _assertFalse(getAudioClockTransportChanged());
   return 0;
@@ -20,7 +20,7 @@ static int _testInitAudioClock(void) {
 
 static int _testAdvanceAudioClock(void) {
   advanceAudioClock(TEST_BLOCKSIZE);
-  _assertIntEquals(getAudioClockCurrentSample(), TEST_BLOCKSIZE);
+  _assertIntEquals(getAudioClockCurrentFrame(), TEST_BLOCKSIZE);
   _assert(getAudioClockIsPlaying());
   _assert(getAudioClockTransportChanged());
   return 0;
@@ -40,7 +40,7 @@ static int _testRestartAudioClock(void) {
   advanceAudioClock(TEST_BLOCKSIZE);
   _assert(getAudioClockIsPlaying());
   _assert(getAudioClockTransportChanged());
-  _assertIntEquals(getAudioClockCurrentSample(), TEST_BLOCKSIZE * 2);
+  _assertIntEquals(getAudioClockCurrentFrame(), TEST_BLOCKSIZE * 2);
   return 0;
 }
 
@@ -51,7 +51,7 @@ static int _testAdvanceClockMulitpleTimes(void) {
   }
   _assert(getAudioClockIsPlaying());
   _assertFalse(getAudioClockTransportChanged());
-  _assertIntEquals(getAudioClockCurrentSample(), TEST_BLOCKSIZE * 100);
+  _assertIntEquals(getAudioClockCurrentFrame(), TEST_BLOCKSIZE * 100);
   return 0;
 }
 
