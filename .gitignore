@@ -5,8 +5,9 @@ build/*
 *.o
 *.so
 
-source/mrswatson
-source/mrswatson.exe
+main/mrswatson
+main/mrswatson.exe
+source/libmrswatson.a
 test/mrswatsontest
 test/out/*
 
