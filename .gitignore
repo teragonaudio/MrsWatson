@@ -5,6 +5,9 @@ build/*
 *.o
 *.so
 
+source/mrswatson
+source/mrswatson.exe
+test/mrswatsontest
 test/out/*
 
 *.perspectivev3
@@ -27,8 +30,6 @@ config.*
 Makefile
 **/.deps/*
 stamp-h1
-source/mrswatson
-source/mrswatson.exe
 ipch/*
 *.user
 *.sdf
