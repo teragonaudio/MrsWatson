@@ -202,6 +202,48 @@
     <content url="file://$MODULE_DIR$/../../source/main.c">
       <sourceFolder url="file://$MODULE_DIR$/../../source/main.c" isTestSource="false" />
     </content>
+    <content url="file://$MODULE_DIR$/../../test/Analysis.c">
+      <sourceFolder url="file://$MODULE_DIR$/../../test/Analysis.c" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../test/Analysis.h">
+      <sourceFolder url="file://$MODULE_DIR$/../../test/Analysis.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../test/AnalysisClipping.c">
+      <sourceFolder url="file://$MODULE_DIR$/../../test/AnalysisClipping.c" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../test/AnalysisClipping.h">
+      <sourceFolder url="file://$MODULE_DIR$/../../test/AnalysisClipping.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../test/AnalysisDistortion.c">
+      <sourceFolder url="file://$MODULE_DIR$/../../test/AnalysisDistortion.c" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../test/AnalysisDistortion.h">
+      <sourceFolder url="file://$MODULE_DIR$/../../test/AnalysisDistortion.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../test/AnalysisNotSilence.c">
+      <sourceFolder url="file://$MODULE_DIR$/../../test/AnalysisNotSilence.c" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../test/AnalysisNotSilence.h">
+      <sourceFolder url="file://$MODULE_DIR$/../../test/AnalysisNotSilence.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../test/AnalysisSanity.c">
+      <sourceFolder url="file://$MODULE_DIR$/../../test/AnalysisSanity.c" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../test/AnalysisSanity.h">
+      <sourceFolder url="file://$MODULE_DIR$/../../test/AnalysisSanity.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../test/AnalysisSilence.c">
+      <sourceFolder url="file://$MODULE_DIR$/../../test/AnalysisSilence.c" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../test/AnalysisSilence.h">
+      <sourceFolder url="file://$MODULE_DIR$/../../test/AnalysisSilence.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../test/AnalyzeFile.c">
+      <sourceFolder url="file://$MODULE_DIR$/../../test/AnalyzeFile.c" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../test/AnalyzeFile.h">
+      <sourceFolder url="file://$MODULE_DIR$/../../test/AnalyzeFile.h" isTestSource="false" />
+    </content>
     <content url="file://$MODULE_DIR$/../../test/ApplicationRunner.c">
       <sourceFolder url="file://$MODULE_DIR$/../../test/ApplicationRunner.c" isTestSource="false" />
     </content>

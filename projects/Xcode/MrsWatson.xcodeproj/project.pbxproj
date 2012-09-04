@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		24DB478A15F640F50009F6F2 /* AnalysisClipping.c in Sources */ = {isa = PBXBuildFile; fileRef = 24DB478215F640F50009F6F2 /* AnalysisClipping.c */; };
+		24DB478B15F640F50009F6F2 /* AnalysisDistortion.c in Sources */ = {isa = PBXBuildFile; fileRef = 24DB478415F640F50009F6F2 /* AnalysisDistortion.c */; };
+		24DB478D15F640F50009F6F2 /* AnalysisSilence.c in Sources */ = {isa = PBXBuildFile; fileRef = 24DB478815F640F50009F6F2 /* AnalysisSilence.c */; };
+		24DB479115F641730009F6F2 /* AnalyzeFile.c in Sources */ = {isa = PBXBuildFile; fileRef = 24DB478F15F641730009F6F2 /* AnalyzeFile.c */; };
 		24EDB0C115F617DD00B0B8DF /* AudioClock.c in Sources */ = {isa = PBXBuildFile; fileRef = 24EDAF8215F46EB400B0B8DF /* AudioClock.c */; };
 		24EDB0C215F617DD00B0B8DF /* AudioSettings.c in Sources */ = {isa = PBXBuildFile; fileRef = 24EDAF8415F46EB400B0B8DF /* AudioSettings.c */; };
 		24EDB0C315F617DD00B0B8DF /* BuildInfo.c in Sources */ = {isa = PBXBuildFile; fileRef = 24EDAF8615F46EB400B0B8DF /* BuildInfo.c */; };
@@ -116,6 +120,14 @@
 		2465A2CF14B3152100F94E84 /* aeffectx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = aeffectx.h; sourceTree = "<group>"; };
 		2465A2D014B3152100F94E84 /* vstfxstore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vstfxstore.h; sourceTree = "<group>"; };
 		24CFD07A14B3736A005AF479 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
+		24DB478215F640F50009F6F2 /* AnalysisClipping.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = AnalysisClipping.c; sourceTree = "<group>"; };
+		24DB478315F640F50009F6F2 /* AnalysisClipping.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnalysisClipping.h; sourceTree = "<group>"; };
+		24DB478415F640F50009F6F2 /* AnalysisDistortion.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = AnalysisDistortion.c; sourceTree = "<group>"; };
+		24DB478515F640F50009F6F2 /* AnalysisDistortion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnalysisDistortion.h; sourceTree = "<group>"; };
+		24DB478815F640F50009F6F2 /* AnalysisSilence.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = AnalysisSilence.c; sourceTree = "<group>"; };
+		24DB478915F640F50009F6F2 /* AnalysisSilence.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnalysisSilence.h; sourceTree = "<group>"; };
+		24DB478F15F641730009F6F2 /* AnalyzeFile.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = AnalyzeFile.c; sourceTree = "<group>"; };
+		24DB479015F641730009F6F2 /* AnalyzeFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnalyzeFile.h; sourceTree = "<group>"; };
 		24E3207914CC14B900DA6589 /* libaudiofile.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libaudiofile.a; path = libs/mac/libaudiofile.a; sourceTree = "<group>"; };
 		24E3207B14CC18CB00DA6589 /* audiofile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = audiofile.h; sourceTree = "<group>"; };
 		24EDAF8215F46EB400B0B8DF /* AudioClock.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = AudioClock.c; sourceTree = "<group>"; };
@@ -290,6 +302,14 @@
 		24ED067C15D3C834007CDA69 /* Test */ = {
 			isa = PBXGroup;
 			children = (
+				24DB478215F640F50009F6F2 /* AnalysisClipping.c */,
+				24DB478315F640F50009F6F2 /* AnalysisClipping.h */,
+				24DB478415F640F50009F6F2 /* AnalysisDistortion.c */,
+				24DB478515F640F50009F6F2 /* AnalysisDistortion.h */,
+				24DB478815F640F50009F6F2 /* AnalysisSilence.c */,
+				24DB478915F640F50009F6F2 /* AnalysisSilence.h */,
+				24DB478F15F641730009F6F2 /* AnalyzeFile.c */,
+				24DB479015F641730009F6F2 /* AnalyzeFile.h */,
 				1AA10ED6C7E7B8CFF8A48159 /* ApplicationRunner.c */,
 				1AA104785CFF2916EDE09588 /* ApplicationRunner.h */,
 				24EDB00715F46F0F00B0B8DF /* AudioClockTest.c */,
@@ -596,6 +616,10 @@
 				24EDB11015F6185900B0B8DF /* SampleBufferTest.c in Sources */,
 				24EDB11115F6185900B0B8DF /* SampleSourceAiffTest.c in Sources */,
 				24EDB11215F6185900B0B8DF /* TestSuite.c in Sources */,
+				24DB478A15F640F50009F6F2 /* AnalysisClipping.c in Sources */,
+				24DB478B15F640F50009F6F2 /* AnalysisDistortion.c in Sources */,
+				24DB478D15F640F50009F6F2 /* AnalysisSilence.c in Sources */,
+				24DB479115F641730009F6F2 /* AnalyzeFile.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -748,6 +772,7 @@
 				24EDB0C015F6177D00B0B8DF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		24EDB0EC15F617EC00B0B8DF /* Build configuration list for PBXNativeTarget "MrsWatson" */ = {
 			isa = XCConfigurationList;
@@ -756,6 +781,7 @@
 				24EDB0EE15F617EC00B0B8DF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		24EDB0FC15F6182C00B0B8DF /* Build configuration list for PBXNativeTarget "MrsWatsonTest" */ = {
 			isa = XCConfigurationList;
@@ -764,6 +790,7 @@
 				24EDB0FE15F6182C00B0B8DF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		24FDFBA4148CC6AF0074D3A1 /* Build configuration list for PBXProject "MrsWatson" */ = {
 			isa = XCConfigurationList;
