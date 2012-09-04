@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "Types.h"
 #include "SampleBuffer.h"
+#include "CharString.h"
 
 #ifndef MrsWatson_AnalyzeFile_h
 #define MrsWatson_AnalyzeFile_h
@@ -13,11 +14,12 @@ typedef struct {
   void* functionPtr;
   int consecutiveFailCounter;
   Sample lastSample;
+  int failedSample;
 } AnalysisFunctionDataMembers;
 
 typedef AnalysisFunctionDataMembers* AnalysisFunctionData;
 typedef boolByte (*AnalysisFuncPtr)(const SampleBuffer sampleBuffer, AnalysisFunctionData data);
 
-boolByte analyzeFile(const char* filename);
+boolByte analyzeFile(const char* filename, CharString failedAnalysisFunctionName, unsigned long *failedAnalysisSample);
 
 #endif

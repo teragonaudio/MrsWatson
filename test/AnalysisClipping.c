@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include "AnalysisClipping.h"
+#include "AnalyzeFile.h"
 
 boolByte analysisClipping(const SampleBuffer sampleBuffer, AnalysisFunctionData data) {
   int i, j;
@@ -7,6 +8,7 @@ boolByte analysisClipping(const SampleBuffer sampleBuffer, AnalysisFunctionData 
     for(j = 0; j < sampleBuffer->blocksize; j++) {
       if(abs((int)sampleBuffer->samples[i][j]) >= 32767) {
         if(data->consecutiveFailCounter > kAnalysisDefaultFailTolerance) {
+          data->failedSample = j;
           return false;
         }
       }

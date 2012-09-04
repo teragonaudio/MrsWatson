@@ -64,6 +64,8 @@ void runApplicationTest(char *applicationPath, const char *testName, LinkedList 
   int resultCode = -1;
   LinkedList defaultArguments = getDefaultArguments(testName);
   LinkedList arguments = _appendLinkedLists(defaultArguments, testArguments);
+  CharString failedAnalysisFunctionName = newCharString();
+  unsigned long failedAnalysisSample;
 
   // Remove any output files which may have been left from previous tests
   foreachItemInList(defaultArguments, _removeOutputFile, NULL);
@@ -103,14 +105,27 @@ void runApplicationTest(char *applicationPath, const char *testName, LinkedList 
 
   if(resultCode == expectedResultCode) {
     if(anazyleOutput) {
-      analyzeFile(_getTestOutputFilename(testName, "pcm"));
+      if(analyzeFile(_getTestOutputFilename(testName, "pcm"), failedAnalysisFunctionName, &failedAnalysisSample)) {
+        testsPassed++;
+        foreachItemInList(defaultArguments, _removeOutputFile, NULL);
+        printTestSuccess();
+      }
+      else {
+        printTestFail();
+        printf("    in test '%s', while analyzing output for %s at sample %lu.\n",
+          testName, failedAnalysisFunctionName->data, failedAnalysisSample);
+        testsFailed++;
+      }
     }
-    testsPassed++;
-    foreachItemInList(defaultArguments, _removeOutputFile, NULL);
-    printf("OK\n");
+    else {
+      testsPassed++;
+      foreachItemInList(defaultArguments, _removeOutputFile, NULL);
+      printTestSuccess();
+    }
   }
   else {
-    printf("FAIL in test %s. Expected result code %d, got %d.\n", testName, expectedResultCode, resultCode);
+    printTestFail();
+    printf("    in %s. Expected result code %d, got %d.\n", testName, expectedResultCode, resultCode);
     testsFailed++;
   }
 

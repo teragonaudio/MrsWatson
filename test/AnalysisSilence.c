@@ -1,4 +1,5 @@
 #include "AnalysisSilence.h"
+#include "AnalyzeFile.h"
 
 boolByte analysisSilence(const SampleBuffer sampleBuffer, AnalysisFunctionData data) {
   int i, j;
@@ -7,6 +8,7 @@ boolByte analysisSilence(const SampleBuffer sampleBuffer, AnalysisFunctionData d
       if(sampleBuffer->samples[i][j] == 0.0f) {
         data->consecutiveFailCounter++;
         if(data->consecutiveFailCounter > kAnalysisDefaultFailTolerance) {
+          data->failedSample = j;
           return false;
         }
       }
