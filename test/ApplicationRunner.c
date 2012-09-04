@@ -1,6 +1,7 @@
 #include <sys/stat.h>
 #include "ApplicationRunner.h"
 #include "CharString.h"
+#include "AnalyzeFile.h"
 
 static char* _getTestOutputFilename(const char* testName, const char* fileExtension) {
   CharString filename = newCharString();
@@ -57,12 +58,15 @@ static void _removeOutputFile(void* item, void* userData) {
   }
 }
 
-void runApplicationTest(char *applicationPath, const char *testName, LinkedList testArguments, ReturnCodes expectedResultCode, AnalysisFuncPtr analysisFunction) {
+void runApplicationTest(char *applicationPath, const char *testName, LinkedList testArguments, ReturnCodes expectedResultCode, boolByte anazyleOutput) {
   char** applicationArguments;
   ArgumentsCopyData argumentsCopyData;
   int resultCode = -1;
   LinkedList defaultArguments = getDefaultArguments(testName);
   LinkedList arguments = _appendLinkedLists(defaultArguments, testArguments);
+
+  // Remove any output files which may have been left from previous tests
+  foreachItemInList(defaultArguments, _removeOutputFile, NULL);
 
 #if WINDOWS
 #else
@@ -98,6 +102,9 @@ void runApplicationTest(char *applicationPath, const char *testName, LinkedList 
 #endif
 
   if(resultCode == expectedResultCode) {
+    if(anazyleOutput) {
+      analyzeFile(_getTestOutputFilename(testName, "pcm"));
+    }
     testsPassed++;
     foreachItemInList(defaultArguments, _removeOutputFile, NULL);
     printf("OK\n");
