@@ -1,24 +1,39 @@
+# Build directories
 build/*
 **/build/*
+
+# Temporary files
 *.swp
 *~
 *.o
 *.so
 
+# Build products
 main/mrswatson
 main/mrswatson.exe
 source/libmrswatson.a
 test/mrswatsontest
+
+# Test output
 test/out/*
 
+# Stuff from various IDE's
 *.perspectivev3
 *.pbxuser
+ipch/*
+*.user
+*.sdf
+*.opensdf
+*.suo
 projects/Xcode/.idea/workspace.xml
 projects/Xcode/.idea/dictionaries/*
 projects/Xcode/MrsWatson.xcodeproj/xcuserdata
+projects/NetBeans/MrsWatson/nbproject/private/
 
+# Third-party SDK's which cannot be redistributed
 vendor/vstsdk2.4/*
 
+# automake/autoconf
 aclocal.m4
 autom4te.cache/*
 vendor/*/autom4te.cache/*
@@ -31,8 +46,3 @@ config.*
 Makefile
 **/.deps/*
 stamp-h1
-ipch/*
-*.user
-*.sdf
-*.opensdf
-*.suo
