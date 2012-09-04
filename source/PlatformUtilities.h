@@ -45,6 +45,7 @@
 #include "Windows.h"
 #define strcasecmp _stricmp
 #define snprintf _snprintf
+#define isatty(int) 0
 #endif
 
 typedef enum {

@@ -78,13 +78,12 @@ void initEventLogger(void) {
   eventLoggerInstance->startTimeInMs = currentTime.tv_usec / 1000;
 #endif
 
-#if ! WINDOWS
   // On unix, we can detect if stderr is pointing to a terminal and set output
-  // coloring automatically. Not sure how to do this on Windows (or if we care).
+  // coloring automatically. On Windows, we define a macro for this function
+  // which just returns 0.
   if(isatty(2)) {
     eventLoggerInstance->colorScheme = COLOR_SCHEME_DEFAULT;
   }
-#endif
 }
 
 static EventLogger _getEventLoggerInstance(void) {

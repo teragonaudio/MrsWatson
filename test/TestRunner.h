@@ -3,6 +3,7 @@
 #if ! WINDOWS
 #include <unistd.h>
 #endif
+#include "PlatformUtilities.h"
 #include "CharString.h"
 
 #ifndef __func__
@@ -98,27 +99,19 @@ static void printTestStarted(const char* testName) {
 }
 
 static void printTestSuccess(void) {
-#if WINDOWS
-  printf("OK\n");
-#else
   if(isatty(2)) {
     printf("\x1b%sOK\x1b%s\n", ANSI_COLOR_GREEN, ANSI_COLOR_RESET);
   }
   else {
     printf("OK\n");
   }
-#endif
 }
 
 static void printTestFail(void) {
-#if WINDOWS
-  printf("FAIL\n");
-#else
   if(isatty(2)) {
     printf("\x1b%sFAIL\x1b%s\n", ANSI_COLOR_RED, ANSI_COLOR_RESET);
   }
   else {
     printf("FAIL\n");
   }
-#endif
 }
