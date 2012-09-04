@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module type="CIDR_MODULE" version="4">
   <component name="NewModuleRootManager">
+    <content url="file://$MODULE_DIR$/../../main/main.c">
+      <sourceFolder url="file://$MODULE_DIR$/../../main/main.c" isTestSource="false" />
+    </content>
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$" isTestSource="false" />
     </content>
@@ -195,6 +198,9 @@
     </content>
     <content url="file://$MODULE_DIR$/../../source/Vst2xHostCallback.cpp">
       <sourceFolder url="file://$MODULE_DIR$/../../source/Vst2xHostCallback.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../source/main.c">
+      <sourceFolder url="file://$MODULE_DIR$/../../source/main.c" isTestSource="false" />
     </content>
     <content url="file://$MODULE_DIR$/../../test/ApplicationRunner.c">
       <sourceFolder url="file://$MODULE_DIR$/../../test/ApplicationRunner.c" isTestSource="false" />
