@@ -1,15 +1,29 @@
 #include <stdio.h>
 #include <string.h>
+#if ! WINDOWS
+#include <unistd.h>
+#endif
 #include "CharString.h"
 
 #ifndef __func__
 #define __func__ __FUNCTION__
 #endif
 
+#define ANSI_COLOR_BLACK   "[30m"
+#define ANSI_COLOR_RED     "[31m"
+#define ANSI_COLOR_GREEN   "[32m"
+#define ANSI_COLOR_YELLOW  "[33m"
+#define ANSI_COLOR_BLUE    "[34m"
+#define ANSI_COLOR_MAGENTA "[35m"
+#define ANSI_COLOR_CYAN    "[36m"
+#define ANSI_COLOR_WHITE   "[37m"
+#define ANSI_COLOR_RESET   "[0m"
+
 #define _assert(condition) \
   { \
     if(!(condition)) { \
-      printf("FAIL at %s(), line %d\n", __func__, __LINE__); \
+      printTestFail(); \
+      printf("    at %s(), line %d\n", __func__, __LINE__); \
       return 1; \
     } \
   }
@@ -22,7 +36,8 @@
   { \
     int result = condition; \
     if(result != expected) { \
-      printf("FAIL at %s(), line %d. Expected %d, got %d.\n", __func__, __LINE__, expected, result); \
+      printTestFail(); \
+      printf("    at %s(), line %d. Expected %d, got %d.\n", __func__, __LINE__, expected, result); \
       return 1; \
     } \
   }
@@ -31,7 +46,8 @@
   { \
     double result = condition; \
     if(result != expected) { \
-      printf("FAIL at %s(), line %d. Expected %g, got %g.\n", __func__, __LINE__, expected, result); \
+      printTestFail(); \
+      printf("    at %s(), line %d. Expected %g, got %g.\n", __func__, __LINE__, expected, result); \
       return 1; \
     } \
   }
@@ -39,7 +55,8 @@
 #define _assertCharStringEquals(result, expected) \
   { \
     if(!isCharStringEqualToCString(result, expected, false)) { \
-      printf("FAIL at %s(), line %d. Expected %s, got %s.\n", __func__, __LINE__, expected, result->data); \
+      printTestFail(); \
+      printf("    at %s(), line %d. Expected %s, got %s.\n", __func__, __LINE__, expected, result->data); \
       return 1; \
     } \
   }
@@ -81,5 +98,27 @@ static void printTestStarted(const char* testName) {
 }
 
 static void printTestSuccess(void) {
+#if WINDOWS
   printf("OK\n");
+#else
+  if(isatty(2)) {
+    printf("\x1b%sOK\x1b%s\n", ANSI_COLOR_GREEN, ANSI_COLOR_RESET);
+  }
+  else {
+    printf("OK\n");
+  }
+#endif
+}
+
+static void printTestFail(void) {
+#if WINDOWS
+  printf("FAIL\n");
+#else
+  if(isatty(2)) {
+    printf("\x1b%sFAIL\x1b%s\n", ANSI_COLOR_RED, ANSI_COLOR_RESET);
+  }
+  else {
+    printf("FAIL\n");
+  }
+#endif
 }
