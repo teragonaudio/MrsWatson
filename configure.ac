@@ -55,104 +55,10 @@ AC_FUNC_MALLOC
 # AC_CHECK_FUNCS([floor gethrtime gettimeofday memset pow strcasecmp strchr strdup strncasecmp strrchr strstr strtol])
 AC_CHECK_LIB([dl], [dlopen])
 
-# Optional libraries
-AC_ARG_WITH([audiofile],
-            [AS_HELP_STRING([--with-audiofile],
-                            [use audiofile for AIFF & WAVE files])],
-            [],
-            [with_audiofile=check])
-LIBAUDIOFILE=
-AS_IF([test "x$with_audiofile" != xno],
-      [AC_CHECK_LIB([audiofile], [afNewFileSetup],
-                    [AC_SUBST([LIBAUDIOFILE], ["-laudiofile"])
-                    AC_DEFINE([HAVE_LIBAUDIOFILE], [1],
-                              [Define if you have libaudiofile])
-                    ],
-                    [])])
-
-AC_ARG_WITH([flac],
-            [AS_HELP_STRING([--with-flac],
-                            [add support for FLAC files])],
-            [],
-            [with_flac=check])
-LIBFLAC=
-AS_IF([test "x$with_flac" != xno],
-      [AC_CHECK_LIB([flac], [FLAC__stream_decoder_init_file],
-                    [AC_SUBST([LIBFLAC], ["-lFLAC"])
-                    AC_DEFINE([HAVE_LIBFLAC], [1],
-                              [Define if you have libflac])
-                    ],
-                    [])])
-
-AC_ARG_WITH([lame],
-            [AS_HELP_STRING([--with-lame],
-                            [add support for MP3 files])],
-            [],
-            [with_lame=check])
-LIBMP3LAME=
-AS_IF([test "x$with_mp3lame" != xno],
-      [AC_CHECK_LIB([mp3lame], [lame_init],
-                    [AC_SUBST([LIBMP3LAME], ["-lmp3lame"])
-                    AC_DEFINE([HAVE_MP3LIBLAME], [1],
-                              [Define if you have libmp3lame])
-                    ],
-                    [])])
-
-AC_ARG_WITH([vorbis],
-            [AS_HELP_STRING([--with-vorbis],
-                            [add support for Ogg files])],
-            [],
-            [with_vorbis=check])
-LIBVORBIS=
-AS_IF([test "x$with_vorbis" != xno],
-      [AC_CHECK_LIB([vorbis], [vorbis_info_init],
-                    [AC_SUBST([LIBVORBIS], ["-lvorbis"])
-                    AC_DEFINE([HAVE_LIBVORBIS], [1],
-                              [Define if you have libvorbis])
-                    ],
-                    [])])
-AS_IF([test "x$with_vorbis" != xno],
-      [AC_CHECK_LIB([ogg], [ogg_stream_init],
-                    [AC_SUBST([LIBOGG], ["-logg"])
-                    AC_DEFINE([HAVE_LIBOGG], [1],
-                              [Define if you have libogg])
-                    ],
-                    [])])
-
-
 AC_CONFIG_HEADERS(config.h)
 AC_OUTPUT(Makefile main/Makefile source/Makefile test/Makefile)
 
 printf "\n"
 printf "Configuration finished!"
-printf "\n"
-
-printf "\nAIFF/WAVE support from audiofile: "
-[if test "x$with_audiofile" != "xno" ; then
-  printf "yes"
-else
-  printf "no"
-fi]
-
-printf "\nOther output sources:"
-printf "\n  FLAC: "
-[if test "x$with_flac" != "xno" ; then
-  printf "yes"
-else
-  printf "no"
-fi]
-printf "\n  MP3: "
-[if test "x$with_lame" != "xno" ; then
-  printf "yes"
-else
-  printf "no"
-fi]
-printf "\n  Ogg Vorbis: "
-[if test "x$with_vorbis" != "xno" ; then
-  printf "yes"
-else
-  printf "no"
-fi]
-
 printf "\n"
 
