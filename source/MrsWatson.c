@@ -41,7 +41,7 @@
 #include "MidiSource.h"
 #include "PlatformUtilities.h"
 
-int main(int argc, char** argv) {
+int mrsWatsonMain(int argc, char** argv) {
   // Input/Output sources, plugin chain, and other required objects
   SampleSource inputSource = NULL;
   SampleSource outputSource = NULL;

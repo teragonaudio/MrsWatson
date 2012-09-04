@@ -71,4 +71,6 @@ typedef enum {
   NUM_RETURN_CODES
 } ReturnCodes;
 
+int mrsWatsonMain(int argc, char* argv[]);
+
 #endif
