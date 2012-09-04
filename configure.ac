@@ -2,6 +2,7 @@
 AC_PREREQ([2.61])
 AC_INIT([MrsWatson], [0.9.1], [support@teragonaudio.com])
 AM_INIT_AUTOMAKE([MrsWatson], [0.9.1])
+AC_CONFIG_MACRO_DIR([m4])
 
 AC_CANONICAL_HOST
 case "${host}" in
@@ -33,8 +34,10 @@ AC_CONFIG_SRCDIR([test])
 # Checks for programs.
 AC_PROG_CXX
 AC_PROG_CC
+AC_PROG_RANLIB
 
 # Checks for libraries.
+AC_SUBST(LIBTOOL_DEPS)
 
 # Checks for header files.
 AC_CHECK_HEADERS([stddef.h stdint.h stdlib.h string.h sys/time.h unistd.h])
