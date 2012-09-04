@@ -9,7 +9,6 @@
 #include <stdio.h>
 #include "TestRunner.h"
 
-
 int testsPassed, testsFailed;
 extern void runAudioClockTests(void);
 extern void runAudioSettingsTests(void);
