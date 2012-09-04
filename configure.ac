@@ -25,6 +25,7 @@ AC_SUBST([HOST_LDFLAGS])
 AC_SUBST([HOST_LIBS])
 
 AC_CONFIG_SRCDIR([source])
+AC_CONFIG_SRCDIR([test])
 # AC_CONFIG_HEADERS([config.h])
 # AC_CONFIG_FILES([Makefile])
 
@@ -116,7 +117,7 @@ AS_IF([test "x$with_vorbis" != xno],
 
 
 AC_CONFIG_HEADERS(config.h)
-AC_OUTPUT(Makefile source/Makefile)
+AC_OUTPUT(Makefile source/Makefile test/Makefile)
 
 printf "\n"
 printf "Configuration finished!"

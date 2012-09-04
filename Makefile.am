@@ -1,1 +1,1 @@
-SUBDIRS = source
+SUBDIRS = source test
