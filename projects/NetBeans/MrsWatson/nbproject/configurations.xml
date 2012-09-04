@@ -1,0 +1,1456 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="84">
+  <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
+    <df name="MrsWatson" root="../../..">
+      <df name="autom4te.cache">
+      </df>
+      <df name="bin">
+        <df name="linux">
+        </df>
+        <df name="mac">
+        </df>
+        <df name="windows">
+        </df>
+      </df>
+      <df name="libs">
+        <df name="mac">
+        </df>
+        <df name="windows">
+        </df>
+      </df>
+      <df name="projects">
+        <df name="NetBeans">
+          <df name="MrsWatson">
+          </df>
+        </df>
+        <df name="Xcode">
+          <df name="MrsWatson.xcodeproj">
+            <df name="project.xcworkspace">
+              <df name="xcuserdata">
+                <df name="nik.xcuserdatad">
+                </df>
+              </df>
+            </df>
+            <df name="xcuserdata">
+              <df name="nik.xcuserdatad">
+                <df name="xcschemes">
+                </df>
+              </df>
+            </df>
+          </df>
+        </df>
+      </df>
+      <df name="source">
+        <in>AudioClock.c</in>
+        <in>AudioClock.h</in>
+        <in>AudioSettings.c</in>
+        <in>AudioSettings.h</in>
+        <in>BuildInfo.c</in>
+        <in>BuildInfo.h</in>
+        <in>CharString.c</in>
+        <in>CharString.h</in>
+        <in>EventLogger.c</in>
+        <in>EventLogger.h</in>
+        <in>LinkedList.c</in>
+        <in>LinkedList.h</in>
+        <in>MidiEvent.c</in>
+        <in>MidiEvent.h</in>
+        <in>MidiSequence.c</in>
+        <in>MidiSequence.h</in>
+        <in>MidiSource.c</in>
+        <in>MidiSource.h</in>
+        <in>MidiSourceFile.c</in>
+        <in>MidiSourceFile.h</in>
+        <in>MrsWatson.c</in>
+        <in>MrsWatson.h</in>
+        <in>PlatformUtilities.c</in>
+        <in>PlatformUtilities.h</in>
+        <in>Plugin.c</in>
+        <in>Plugin.h</in>
+        <in>PluginChain.c</in>
+        <in>PluginChain.h</in>
+        <in>PluginPreset.c</in>
+        <in>PluginPreset.h</in>
+        <in>PluginPresetFxp.c</in>
+        <in>PluginPresetFxp.h</in>
+        <in>PluginVst2x.cpp</in>
+        <in>PluginVst2x.h</in>
+        <in>ProgramOption.c</in>
+        <in>ProgramOption.h</in>
+        <in>RiffFile.c</in>
+        <in>RiffFile.h</in>
+        <in>SampleBuffer.c</in>
+        <in>SampleBuffer.h</in>
+        <in>SampleSource.c</in>
+        <in>SampleSource.h</in>
+        <in>SampleSourceAiff.c</in>
+        <in>SampleSourceAiff.h</in>
+        <in>SampleSourceAudiofile.c</in>
+        <in>SampleSourceAudiofile.h</in>
+        <in>SampleSourceFlac.c</in>
+        <in>SampleSourceFlac.h</in>
+        <in>SampleSourceMp3.c</in>
+        <in>SampleSourceMp3.h</in>
+        <in>SampleSourceOgg.c</in>
+        <in>SampleSourceOgg.h</in>
+        <in>SampleSourcePcm.c</in>
+        <in>SampleSourcePcm.h</in>
+        <in>SampleSourceSilence.c</in>
+        <in>SampleSourceSilence.h</in>
+        <in>SampleSourceWave.c</in>
+        <in>SampleSourceWave.h</in>
+        <in>StringUtilities.c</in>
+        <in>StringUtilities.h</in>
+        <in>TaskTimer.c</in>
+        <in>TaskTimer.h</in>
+        <in>Types.h</in>
+        <in>Vst2xHostCallback.cpp</in>
+      </df>
+      <df name="test">
+        <df name="out">
+        </df>
+        <df name="resources">
+          <df name="audio">
+          </df>
+          <df name="midi">
+          </df>
+          <df name="plugins">
+            <df name="linux">
+            </df>
+            <df name="mac">
+              <df name="again.vst">
+                <df name="Contents">
+                  <df name="MacOS">
+                  </df>
+                </df>
+              </df>
+            </df>
+            <df name="windows">
+            </df>
+          </df>
+          <df name="presets">
+          </df>
+        </df>
+        <in>ApplicationRunner.c</in>
+        <in>ApplicationRunner.h</in>
+        <in>AudioClockTest.c</in>
+        <in>AudioSettingsTest.c</in>
+        <in>CharStringTest.c</in>
+        <in>LinkedListTest.c</in>
+        <in>MidiSequenceTest.c</in>
+        <in>MidiSourceFileTest.c</in>
+        <in>MidiSourceTest.c</in>
+        <in>MrsWatsonTest.c</in>
+        <in>PlatformUtilitiesTest.c</in>
+        <in>PluginChainTest.c</in>
+        <in>PluginPresetFxpTest.c</in>
+        <in>PluginPresetTest.c</in>
+        <in>PluginTest.c</in>
+        <in>ProgramOptionTest.c</in>
+        <in>SampleBufferTest.c</in>
+        <in>SampleSourceAiffTest.c</in>
+        <in>SampleSourceAudiofileTest.c</in>
+        <in>SampleSourcePcmTest.c</in>
+        <in>SampleSourceSilenceTest.c</in>
+        <in>SampleSourceTest.c</in>
+        <in>SampleSourceWaveTest.c</in>
+        <in>StringUtilitiesTest.c</in>
+        <in>TaskTimerTest.c</in>
+        <in>TestRunner.h</in>
+        <in>TestSuite.c</in>
+      </df>
+      <df name="vendor">
+        <df name="audiofile-0.3.3">
+          <df name="docs">
+          </df>
+          <df name="examples">
+            <in>adddcoffset.c</in>
+            <in>alsaplay.cpp</in>
+            <in>irixread.c</in>
+            <in>irixtestloop.c</in>
+            <in>linuxtest.c</in>
+            <in>osxplay.c</in>
+            <in>power.c</in>
+            <in>sgi.c</in>
+            <in>sgi.h</in>
+          </df>
+          <df name="libaudiofile">
+            <df name="modules">
+              <in>FileModule.cpp</in>
+              <in>FileModule.h</in>
+              <in>G711.cpp</in>
+              <in>G711.h</in>
+              <in>IMA.cpp</in>
+              <in>IMA.h</in>
+              <in>MSADPCM.cpp</in>
+              <in>MSADPCM.h</in>
+              <in>Module.cpp</in>
+              <in>Module.h</in>
+              <in>ModuleState.cpp</in>
+              <in>ModuleState.h</in>
+              <in>PCM.cpp</in>
+              <in>PCM.h</in>
+              <in>RebufferModule.cpp</in>
+              <in>RebufferModule.h</in>
+              <in>SimpleModule.cpp</in>
+              <in>SimpleModule.h</in>
+              <in>adpcm.c</in>
+              <in>adpcm.h</in>
+            </df>
+            <in>AIFF.cpp</in>
+            <in>AIFF.h</in>
+            <in>AVR.cpp</in>
+            <in>AVR.h</in>
+            <in>AudioFormat.cpp</in>
+            <in>AudioFormat.h</in>
+            <in>CAF.cpp</in>
+            <in>CAF.h</in>
+            <in>File.cpp</in>
+            <in>File.h</in>
+            <in>FileHandle.cpp</in>
+            <in>FileHandle.h</in>
+            <in>IFF.cpp</in>
+            <in>IFF.h</in>
+            <in>IRCAM.cpp</in>
+            <in>IRCAM.h</in>
+            <in>Instrument.cpp</in>
+            <in>Instrument.h</in>
+            <in>Loop.cpp</in>
+            <in>Marker.cpp</in>
+            <in>Marker.h</in>
+            <in>Miscellaneous.cpp</in>
+            <in>NIST.cpp</in>
+            <in>NIST.h</in>
+            <in>NeXT.cpp</in>
+            <in>NeXT.h</in>
+            <in>Raw.cpp</in>
+            <in>Raw.h</in>
+            <in>ScopedArray.h</in>
+            <in>Setup.cpp</in>
+            <in>Setup.h</in>
+            <in>Shared.h</in>
+            <in>Tag.h</in>
+            <in>Track.cpp</in>
+            <in>Track.h</in>
+            <in>UUID.cpp</in>
+            <in>UUID.h</in>
+            <in>VOC.cpp</in>
+            <in>VOC.h</in>
+            <in>WAVE.cpp</in>
+            <in>WAVE.h</in>
+            <in>aes.cpp</in>
+            <in>af_vfs.cpp</in>
+            <in>af_vfs.h</in>
+            <in>afinternal.h</in>
+            <in>audiofile.h</in>
+            <in>aupv.c</in>
+            <in>aupvinternal.h</in>
+            <in>aupvlist.h</in>
+            <in>byteorder.h</in>
+            <in>compression.cpp</in>
+            <in>compression.h</in>
+            <in>data.cpp</in>
+            <in>debug.cpp</in>
+            <in>debug.h</in>
+            <in>error.c</in>
+            <in>error.h</in>
+            <in>extended.c</in>
+            <in>extended.h</in>
+            <in>format.cpp</in>
+            <in>g711.c</in>
+            <in>g711.h</in>
+            <in>openclose.cpp</in>
+            <in>pcm.cpp</in>
+            <in>pcm.h</in>
+            <in>query.cpp</in>
+            <in>units.cpp</in>
+            <in>units.h</in>
+            <in>util.cpp</in>
+            <in>util.h</in>
+          </df>
+          <df name="sfcommands">
+            <in>printinfo.c</in>
+            <in>printinfo.h</in>
+            <in>sfconvert.c</in>
+            <in>sfinfo.c</in>
+          </df>
+          <df name="test">
+            <df name="gtest">
+              <in>gtest-all.cpp</in>
+              <in>gtest.h</in>
+            </df>
+            <in>aes.cpp</in>
+            <in>channelmatrix.cpp</in>
+            <in>error.cpp</in>
+            <in>floatto24.c</in>
+            <in>floattoint.cpp</in>
+            <in>instparamtest.c</in>
+            <in>instparamwrite.c</in>
+            <in>inttofloat.cpp</in>
+            <in>large.cpp</in>
+            <in>loop.cpp</in>
+            <in>miscellaneous.cpp</in>
+            <in>next.cpp</in>
+            <in>pcmdata.cpp</in>
+            <in>pcmmapping.cpp</in>
+            <in>pipe.c</in>
+            <in>printmarkers.c</in>
+            <in>query2.c</in>
+            <in>seek.cpp</in>
+            <in>sign.cpp</in>
+            <in>sixteen-to-eight.c</in>
+            <in>testaupv.c</in>
+            <in>testchannelmatrix.c</in>
+            <in>testdouble.c</in>
+            <in>testfloat.c</in>
+            <in>testmarkers.c</in>
+            <in>transparency.c</in>
+            <in>twentyfour.c</in>
+            <in>twentyfour2.c</in>
+            <in>virtualfile.cpp</in>
+            <in>writealaw.c</in>
+            <in>writeraw.c</in>
+            <in>writeulaw.c</in>
+          </df>
+          <in>config.h</in>
+        </df>
+        <df name="flac-1.2.1">
+          <df name="build">
+          </df>
+          <df name="doc">
+            <df name="html">
+              <df name="images">
+                <df name="hw">
+                </df>
+              </df>
+              <df name="ru">
+              </df>
+            </df>
+          </df>
+          <df name="examples">
+            <df name="c">
+              <df name="decode">
+                <df name="file">
+                </df>
+              </df>
+              <df name="encode">
+                <df name="file">
+                </df>
+              </df>
+            </df>
+            <df name="cpp">
+              <df name="decode">
+                <df name="file">
+                </df>
+              </df>
+              <df name="encode">
+                <df name="file">
+                </df>
+              </df>
+            </df>
+          </df>
+          <df name="include">
+            <df name="FLAC">
+            </df>
+            <df name="FLAC++">
+            </df>
+            <df name="share">
+              <df name="grabbag">
+              </df>
+            </df>
+            <df name="test_libs_common">
+            </df>
+          </df>
+          <df name="m4">
+          </df>
+          <df name="man">
+          </df>
+          <df name="obj">
+            <df name="debug">
+              <df name="bin">
+              </df>
+              <df name="lib">
+              </df>
+            </df>
+            <df name="release">
+              <df name="bin">
+              </df>
+              <df name="lib">
+              </df>
+            </df>
+          </df>
+          <df name="src">
+            <df name="flac">
+            </df>
+            <df name="libFLAC">
+              <df name="ia32">
+              </df>
+              <df name="include">
+                <df name="private">
+                </df>
+                <df name="protected">
+                </df>
+              </df>
+              <df name="ppc">
+                <df name="as">
+                </df>
+                <df name="gas">
+                </df>
+              </df>
+            </df>
+            <df name="libFLAC++">
+            </df>
+            <df name="metaflac">
+            </df>
+            <df name="monkeys_audio_utilities">
+              <df name="flac_mac">
+              </df>
+              <df name="flac_ren">
+              </df>
+            </df>
+            <df name="plugin_common">
+            </df>
+            <df name="plugin_winamp2">
+              <df name="include">
+                <df name="winamp2">
+                </df>
+              </df>
+            </df>
+            <df name="plugin_xmms">
+            </df>
+            <df name="share">
+              <df name="getopt">
+              </df>
+              <df name="grabbag">
+              </df>
+              <df name="replaygain_analysis">
+              </df>
+              <df name="replaygain_synthesis">
+                <df name="include">
+                  <df name="private">
+                  </df>
+                </df>
+              </df>
+              <df name="utf8">
+              </df>
+            </df>
+            <df name="test_grabbag">
+              <df name="cuesheet">
+              </df>
+              <df name="picture">
+              </df>
+            </df>
+            <df name="test_libFLAC">
+            </df>
+            <df name="test_libFLAC++">
+            </df>
+            <df name="test_libs_common">
+            </df>
+            <df name="test_seeking">
+            </df>
+            <df name="test_streams">
+            </df>
+          </df>
+          <df name="test">
+            <df name="cuesheets">
+            </df>
+            <df name="flac-to-flac-metadata-test-files">
+            </df>
+            <df name="metaflac-test-files">
+            </df>
+            <df name="pictures">
+            </df>
+          </df>
+        </df>
+        <df name="vstsdk2.4">
+          <df name="pluginterfaces">
+            <df name="vst2.x">
+              <in>aeffect.h</in>
+              <in>aeffectx.h</in>
+              <in>vstfxstore.h</in>
+            </df>
+          </df>
+          <df name="public.sdk">
+            <df name="source">
+              <df name="vst2.x">
+                <in>aeffeditor.h</in>
+                <in>audioeffect.cpp</in>
+                <in>audioeffect.h</in>
+                <in>audioeffectx.cpp</in>
+                <in>audioeffectx.h</in>
+                <in>vstplugmain.cpp</in>
+              </df>
+            </df>
+          </df>
+        </df>
+      </df>
+      <in>config.h</in>
+    </df>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false"
+                   kind="IMPORTANT_FILES_FOLDER">
+      <itemPath>../../../Makefile</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <sourceFolderFilter>^(nbproject)$</sourceFolderFilter>
+  <sourceRootList>
+    <Elem>../../..</Elem>
+  </sourceRootList>
+  <projectmakefile>../../../Makefile</projectmakefile>
+  <confs>
+    <conf name="Default" type="0">
+      <toolsSet>
+        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
+        <compilerSet>default</compilerSet>
+      </toolsSet>
+      <codeAssistance>
+      </codeAssistance>
+      <makefileType>
+        <makeTool>
+          <buildCommandWorkingDir>../../..</buildCommandWorkingDir>
+          <buildCommand>${MAKE} -f Makefile</buildCommand>
+          <cleanCommand>${MAKE} -f Makefile clean</cleanCommand>
+          <executablePath>../../../source/mrswatson</executablePath>
+          <cTool>
+            <incDir>
+              <pElem>../../../vendor/vstsdk2.4/pluginterfaces/vst2.x</pElem>
+              <pElem>..</pElem>
+              <pElem>../../../source</pElem>
+              <pElem>../../../vendor/audiofile-0.3.3/libaudiofile</pElem>
+            </incDir>
+            <preprocessorList>
+              <Elem>HAVE_CONFIG_H</Elem>
+              <Elem>MACOSX=1</Elem>
+            </preprocessorList>
+          </cTool>
+          <ccTool>
+            <incDir>
+              <pElem>../../../vendor/vstsdk2.4/pluginterfaces/vst2.x</pElem>
+              <pElem>..</pElem>
+              <pElem>../../../source</pElem>
+              <pElem>../../../vendor/audiofile-0.3.3/libaudiofile</pElem>
+            </incDir>
+            <preprocessorList>
+              <Elem>HAVE_CONFIG_H</Elem>
+              <Elem>MACOSX=1</Elem>
+            </preprocessorList>
+          </ccTool>
+        </makeTool>
+      </makefileType>
+      <item path="../../../source/AudioClock.c" ex="false" tool="0" flavor2="2">
+        <cTool>
+        </cTool>
+      </item>
+      <item path="../../../source/AudioSettings.c" ex="false" tool="0" flavor2="2">
+        <cTool>
+        </cTool>
+      </item>
+      <item path="../../../source/BuildInfo.c" ex="false" tool="0" flavor2="2">
+        <cTool>
+        </cTool>
+      </item>
+      <item path="../../../source/CharString.c" ex="false" tool="0" flavor2="2">
+        <cTool>
+        </cTool>
+      </item>
+      <item path="../../../source/EventLogger.c" ex="false" tool="0" flavor2="2">
+        <cTool>
+        </cTool>
+      </item>
+      <item path="../../../source/LinkedList.c" ex="false" tool="0" flavor2="2">
+        <cTool>
+        </cTool>
+      </item>
+      <item path="../../../source/MidiEvent.c" ex="false" tool="0" flavor2="2">
+        <cTool>
+        </cTool>
+      </item>
+      <item path="../../../source/MidiSequence.c" ex="false" tool="0" flavor2="2">
+        <cTool>
+        </cTool>
+      </item>
+      <item path="../../../source/MidiSource.c" ex="false" tool="0" flavor2="2">
+        <cTool>
+        </cTool>
+      </item>
+      <item path="../../../source/MidiSourceFile.c" ex="false" tool="0" flavor2="2">
+        <cTool>
+        </cTool>
+      </item>
+      <item path="../../../source/MrsWatson.c" ex="false" tool="0" flavor2="2">
+        <cTool>
+        </cTool>
+      </item>
+      <item path="../../../source/PlatformUtilities.c"
+            ex="false"
+            tool="0"
+            flavor2="2">
+        <cTool>
+        </cTool>
+      </item>
+      <item path="../../../source/Plugin.c" ex="false" tool="0" flavor2="2">
+        <cTool>
+        </cTool>
+      </item>
+      <item path="../../../source/PluginChain.c" ex="false" tool="0" flavor2="2">
+        <cTool>
+        </cTool>
+      </item>
+      <item path="../../../source/PluginPreset.c" ex="false" tool="0" flavor2="2">
+        <cTool>
+        </cTool>
+      </item>
+      <item path="../../../source/PluginPresetFxp.c" ex="false" tool="0" flavor2="2">
+        <cTool>
+        </cTool>
+      </item>
+      <item path="../../../source/ProgramOption.c" ex="false" tool="0" flavor2="2">
+        <cTool>
+        </cTool>
+      </item>
+      <item path="../../../source/RiffFile.c" ex="false" tool="0" flavor2="2">
+        <cTool>
+        </cTool>
+      </item>
+      <item path="../../../source/SampleBuffer.c" ex="false" tool="0" flavor2="2">
+        <cTool>
+        </cTool>
+      </item>
+      <item path="../../../source/SampleSource.c" ex="false" tool="0" flavor2="2">
+        <cTool>
+        </cTool>
+      </item>
+      <item path="../../../source/SampleSourceAiff.c" ex="false" tool="0" flavor2="2">
+        <cTool>
+        </cTool>
+      </item>
+      <item path="../../../source/SampleSourceAudiofile.c"
+            ex="false"
+            tool="0"
+            flavor2="2">
+        <cTool>
+        </cTool>
+      </item>
+      <item path="../../../source/SampleSourceFlac.c" ex="false" tool="0" flavor2="2">
+        <cTool>
+        </cTool>
+      </item>
+      <item path="../../../source/SampleSourceMp3.c" ex="false" tool="0" flavor2="2">
+        <cTool>
+        </cTool>
+      </item>
+      <item path="../../../source/SampleSourceOgg.c" ex="false" tool="0" flavor2="2">
+        <cTool>
+        </cTool>
+      </item>
+      <item path="../../../source/SampleSourcePcm.c" ex="false" tool="0" flavor2="2">
+        <cTool>
+        </cTool>
+      </item>
+      <item path="../../../source/SampleSourceSilence.c"
+            ex="false"
+            tool="0"
+            flavor2="2">
+        <cTool>
+        </cTool>
+      </item>
+      <item path="../../../source/SampleSourceWave.c" ex="false" tool="0" flavor2="2">
+        <cTool>
+        </cTool>
+      </item>
+      <item path="../../../source/StringUtilities.c" ex="false" tool="0" flavor2="2">
+        <cTool>
+        </cTool>
+      </item>
+      <item path="../../../source/TaskTimer.c" ex="false" tool="0" flavor2="2">
+        <cTool>
+        </cTool>
+      </item>
+      <item path="../../../test/ApplicationRunner.c" ex="true" tool="0" flavor2="0">
+      </item>
+      <item path="../../../test/ApplicationRunner.h" ex="true" tool="3" flavor2="0">
+      </item>
+      <item path="../../../test/AudioClockTest.c" ex="true" tool="0" flavor2="0">
+      </item>
+      <item path="../../../test/AudioSettingsTest.c" ex="true" tool="0" flavor2="0">
+      </item>
+      <item path="../../../test/CharStringTest.c" ex="true" tool="0" flavor2="0">
+      </item>
+      <item path="../../../test/LinkedListTest.c" ex="true" tool="0" flavor2="0">
+      </item>
+      <item path="../../../test/MidiSequenceTest.c" ex="true" tool="0" flavor2="0">
+      </item>
+      <item path="../../../test/MidiSourceFileTest.c" ex="true" tool="0" flavor2="0">
+      </item>
+      <item path="../../../test/MidiSourceTest.c" ex="true" tool="0" flavor2="0">
+      </item>
+      <item path="../../../test/MrsWatsonTest.c" ex="true" tool="0" flavor2="0">
+      </item>
+      <item path="../../../test/PlatformUtilitiesTest.c"
+            ex="true"
+            tool="0"
+            flavor2="0">
+      </item>
+      <item path="../../../test/PluginChainTest.c" ex="true" tool="0" flavor2="0">
+      </item>
+      <item path="../../../test/PluginPresetFxpTest.c" ex="true" tool="0" flavor2="0">
+      </item>
+      <item path="../../../test/PluginPresetTest.c" ex="true" tool="0" flavor2="0">
+      </item>
+      <item path="../../../test/PluginTest.c" ex="true" tool="0" flavor2="0">
+      </item>
+      <item path="../../../test/ProgramOptionTest.c" ex="true" tool="0" flavor2="0">
+      </item>
+      <item path="../../../test/SampleBufferTest.c" ex="true" tool="0" flavor2="0">
+      </item>
+      <item path="../../../test/SampleSourceAiffTest.c"
+            ex="true"
+            tool="0"
+            flavor2="0">
+      </item>
+      <item path="../../../test/SampleSourceAudiofileTest.c"
+            ex="true"
+            tool="0"
+            flavor2="0">
+      </item>
+      <item path="../../../test/SampleSourcePcmTest.c" ex="true" tool="0" flavor2="0">
+      </item>
+      <item path="../../../test/SampleSourceSilenceTest.c"
+            ex="true"
+            tool="0"
+            flavor2="0">
+      </item>
+      <item path="../../../test/SampleSourceTest.c" ex="true" tool="0" flavor2="0">
+      </item>
+      <item path="../../../test/SampleSourceWaveTest.c"
+            ex="true"
+            tool="0"
+            flavor2="0">
+      </item>
+      <item path="../../../test/StringUtilitiesTest.c" ex="true" tool="0" flavor2="0">
+      </item>
+      <item path="../../../test/TaskTimerTest.c" ex="true" tool="0" flavor2="0">
+      </item>
+      <item path="../../../test/TestRunner.h" ex="true" tool="3" flavor2="0">
+      </item>
+      <item path="../../../test/TestSuite.c" ex="true" tool="0" flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/config.h"
+            ex="true"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/examples/adddcoffset.c"
+            ex="true"
+            tool="0"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/examples/alsaplay.cpp"
+            ex="true"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/examples/irixread.c"
+            ex="true"
+            tool="0"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/examples/irixtestloop.c"
+            ex="true"
+            tool="0"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/examples/linuxtest.c"
+            ex="true"
+            tool="0"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/examples/osxplay.c"
+            ex="true"
+            tool="0"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/examples/power.c"
+            ex="true"
+            tool="0"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/examples/sgi.c"
+            ex="true"
+            tool="0"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/examples/sgi.h"
+            ex="true"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/AIFF.cpp"
+            ex="true"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/AIFF.h"
+            ex="true"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/AVR.cpp"
+            ex="true"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/AVR.h"
+            ex="true"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/AudioFormat.cpp"
+            ex="true"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/AudioFormat.h"
+            ex="true"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/CAF.cpp"
+            ex="true"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/CAF.h"
+            ex="true"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/File.cpp"
+            ex="true"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/File.h"
+            ex="true"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/FileHandle.cpp"
+            ex="true"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/FileHandle.h"
+            ex="true"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/IFF.cpp"
+            ex="true"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/IFF.h"
+            ex="true"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/IRCAM.cpp"
+            ex="true"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/IRCAM.h"
+            ex="true"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/Instrument.cpp"
+            ex="true"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/Instrument.h"
+            ex="true"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/Loop.cpp"
+            ex="true"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/Marker.cpp"
+            ex="true"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/Marker.h"
+            ex="true"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/Miscellaneous.cpp"
+            ex="true"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/NIST.cpp"
+            ex="true"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/NIST.h"
+            ex="true"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/NeXT.cpp"
+            ex="true"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/NeXT.h"
+            ex="true"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/Raw.cpp"
+            ex="true"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/Raw.h"
+            ex="true"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/ScopedArray.h"
+            ex="true"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/Setup.cpp"
+            ex="true"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/Setup.h"
+            ex="true"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/Shared.h"
+            ex="true"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/Tag.h"
+            ex="true"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/Track.cpp"
+            ex="true"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/Track.h"
+            ex="true"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/UUID.cpp"
+            ex="true"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/UUID.h"
+            ex="true"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/VOC.cpp"
+            ex="true"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/VOC.h"
+            ex="true"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/WAVE.cpp"
+            ex="true"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/WAVE.h"
+            ex="true"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/aes.cpp"
+            ex="true"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/af_vfs.cpp"
+            ex="true"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/af_vfs.h"
+            ex="true"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/afinternal.h"
+            ex="true"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/aupv.c"
+            ex="true"
+            tool="0"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/aupvinternal.h"
+            ex="true"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/byteorder.h"
+            ex="true"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/compression.cpp"
+            ex="true"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/compression.h"
+            ex="true"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/data.cpp"
+            ex="true"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/debug.cpp"
+            ex="true"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/debug.h"
+            ex="true"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/error.c"
+            ex="true"
+            tool="0"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/error.h"
+            ex="true"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/extended.c"
+            ex="true"
+            tool="0"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/extended.h"
+            ex="true"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/format.cpp"
+            ex="true"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/g711.c"
+            ex="true"
+            tool="0"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/g711.h"
+            ex="true"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/modules/FileModule.cpp"
+            ex="true"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/modules/FileModule.h"
+            ex="true"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/modules/G711.cpp"
+            ex="true"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/modules/G711.h"
+            ex="true"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/modules/IMA.cpp"
+            ex="true"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/modules/IMA.h"
+            ex="true"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/modules/MSADPCM.cpp"
+            ex="true"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/modules/MSADPCM.h"
+            ex="true"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/modules/Module.cpp"
+            ex="true"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/modules/Module.h"
+            ex="true"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/modules/ModuleState.cpp"
+            ex="true"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/modules/ModuleState.h"
+            ex="true"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/modules/PCM.cpp"
+            ex="true"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/modules/PCM.h"
+            ex="true"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/modules/RebufferModule.cpp"
+            ex="true"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/modules/RebufferModule.h"
+            ex="true"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/modules/SimpleModule.cpp"
+            ex="true"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/modules/SimpleModule.h"
+            ex="true"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/modules/adpcm.c"
+            ex="true"
+            tool="0"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/modules/adpcm.h"
+            ex="true"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/openclose.cpp"
+            ex="true"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/pcm.cpp"
+            ex="true"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/pcm.h"
+            ex="true"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/query.cpp"
+            ex="true"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/units.cpp"
+            ex="true"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/units.h"
+            ex="true"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/util.cpp"
+            ex="true"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/libaudiofile/util.h"
+            ex="true"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/sfcommands/printinfo.c"
+            ex="true"
+            tool="0"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/sfcommands/printinfo.h"
+            ex="true"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/sfcommands/sfconvert.c"
+            ex="true"
+            tool="0"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/sfcommands/sfinfo.c"
+            ex="true"
+            tool="0"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/test/aes.cpp"
+            ex="true"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/test/channelmatrix.cpp"
+            ex="true"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/test/error.cpp"
+            ex="true"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/test/floatto24.c"
+            ex="true"
+            tool="0"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/test/floattoint.cpp"
+            ex="true"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/test/gtest/gtest-all.cpp"
+            ex="true"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/test/gtest/gtest.h"
+            ex="true"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/test/instparamtest.c"
+            ex="true"
+            tool="0"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/test/instparamwrite.c"
+            ex="true"
+            tool="0"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/test/inttofloat.cpp"
+            ex="true"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/test/large.cpp"
+            ex="true"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/test/loop.cpp"
+            ex="true"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/test/miscellaneous.cpp"
+            ex="true"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/test/next.cpp"
+            ex="true"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/test/pcmdata.cpp"
+            ex="true"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/test/pcmmapping.cpp"
+            ex="true"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/test/pipe.c"
+            ex="true"
+            tool="0"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/test/printmarkers.c"
+            ex="true"
+            tool="0"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/test/query2.c"
+            ex="true"
+            tool="0"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/test/seek.cpp"
+            ex="true"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/test/sign.cpp"
+            ex="true"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/test/sixteen-to-eight.c"
+            ex="true"
+            tool="0"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/test/testaupv.c"
+            ex="true"
+            tool="0"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/test/testchannelmatrix.c"
+            ex="true"
+            tool="0"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/test/testdouble.c"
+            ex="true"
+            tool="0"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/test/testfloat.c"
+            ex="true"
+            tool="0"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/test/testmarkers.c"
+            ex="true"
+            tool="0"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/test/transparency.c"
+            ex="true"
+            tool="0"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/test/twentyfour.c"
+            ex="true"
+            tool="0"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/test/twentyfour2.c"
+            ex="true"
+            tool="0"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/test/virtualfile.cpp"
+            ex="true"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/test/writealaw.c"
+            ex="true"
+            tool="0"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/test/writeraw.c"
+            ex="true"
+            tool="0"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/audiofile-0.3.3/test/writeulaw.c"
+            ex="true"
+            tool="0"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/vstsdk2.4/pluginterfaces/vst2.x/vstfxstore.h"
+            ex="true"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/vstsdk2.4/public.sdk/source/vst2.x/aeffeditor.h"
+            ex="true"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/vstsdk2.4/public.sdk/source/vst2.x/audioeffect.cpp"
+            ex="true"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/vstsdk2.4/public.sdk/source/vst2.x/audioeffect.h"
+            ex="true"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/vstsdk2.4/public.sdk/source/vst2.x/audioeffectx.cpp"
+            ex="true"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/vstsdk2.4/public.sdk/source/vst2.x/audioeffectx.h"
+            ex="true"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../../vendor/vstsdk2.4/public.sdk/source/vst2.x/vstplugmain.cpp"
+            ex="true"
+            tool="1"
+            flavor2="0">
+      </item>
+    </conf>
+  </confs>
+</configurationDescriptor>
