@@ -138,9 +138,19 @@ as this offers better performance. After cloning the source code, run the
 `autogen.sh` script, then `./configure` and `make` as usual. Please report any
 build problems on the [project page][3].
 
+As MrsWatson is a 32-bit executable, which is needed to support 32-bit plugins
+(of which are the vast majority in the plugin world), you may also need some
+32-bit compatibility libraries installed on your system. On linux, you may
+need to install the following packages to build MrsWatson from source:
+
+* gcc-multilib
+* ia32-libs
+* libc6-dev:i386
 
 Alternately, MrsWatson can be built with a few popular IDE's. Build files are
 included in the `projects` directory under the project sources root.
+Distribution builds of MrsWatson are always made with `make`, except for on
+Windows.
 
 
 Please Help!
