@@ -1,4 +1,8 @@
+#if ! WINDOWS
 #include <sys/stat.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#endif
 #include "ApplicationRunner.h"
 #include "CharString.h"
 #include "AnalyzeFile.h"
