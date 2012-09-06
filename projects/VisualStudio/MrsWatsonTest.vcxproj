@@ -54,13 +54,14 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32=1;WINDOWS=1;_CRT_SECURE_NO_WARNINGS;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)\source;$(SolutionDir)\vendor\vstsdk2.4;$(SolutionDir)\vendor\vstsdk2.4\pluginterfaces\vst2.x;$(SolutionDir)\vendor\audiofile-0.3.3\libaudiofile;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\..\..\source;$(SolutionDir)\..\..\vendor\vstsdk2.4;$(SolutionDir)\..\..\vendor\vstsdk2.4\pluginterfaces\vst2.x;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>
       </MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>$(SolutionDir)\build\$(Configuration)\libMrsWatson.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -72,7 +73,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32=1;WINDOWS=1;_CRT_SECURE_NO_WARNINGS;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)\source;$(SolutionDir)\vendor\vstsdk2.4;$(SolutionDir)\vendor\vstsdk2.4\pluginterfaces\vst2.x;$(SolutionDir)\vendor\audiofile-0.3.3\libaudiofile;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\..\..\source;$(SolutionDir)\..\..\vendor\vstsdk2.4;$(SolutionDir)\..\..\vendor\vstsdk2.4\pluginterfaces\vst2.x;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>
       </MultiProcessorCompilation>
     </ClCompile>
@@ -81,66 +82,47 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>$(SolutionDir)\build\$(Configuration)\libMrsWatson.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="source\AudioClock.c" />
-    <ClCompile Include="source\AudioSettings.c" />
-    <ClCompile Include="source\BuildInfo.c" />
-    <ClCompile Include="source\CharString.c" />
-    <ClCompile Include="source\EventLogger.c" />
-    <ClCompile Include="source\LinkedList.c" />
-    <ClCompile Include="source\MidiEvent.c" />
-    <ClCompile Include="source\MidiSequence.c" />
-    <ClCompile Include="source\MidiSource.c" />
-    <ClCompile Include="source\MidiSourceFile.c" />
-    <ClCompile Include="source\PlatformUtilities.c" />
-    <ClCompile Include="source\Plugin.c" />
-    <ClCompile Include="source\PluginChain.c" />
-    <ClCompile Include="source\PluginPreset.c" />
-    <ClCompile Include="source\PluginPresetFxp.c" />
-    <ClCompile Include="source\PluginVst2x.cpp" />
-    <ClCompile Include="source\ProgramOption.c" />
-    <ClCompile Include="source\RiffFile.c" />
-    <ClCompile Include="source\SampleBuffer.c" />
-    <ClCompile Include="source\SampleSource.c" />
-    <ClCompile Include="source\SampleSourceAiff.c" />
-    <ClCompile Include="source\SampleSourceAudiofile.c" />
-    <ClCompile Include="source\SampleSourceFlac.c" />
-    <ClCompile Include="source\SampleSourceMp3.c" />
-    <ClCompile Include="source\SampleSourceOgg.c" />
-    <ClCompile Include="source\SampleSourcePcm.c" />
-    <ClCompile Include="source\SampleSourceSilence.c" />
-    <ClCompile Include="source\SampleSourceWave.c" />
-    <ClCompile Include="source\StringUtilities.c" />
-    <ClCompile Include="source\TaskTimer.c" />
-    <ClCompile Include="source\Vst2xHostCallback.cpp" />
-    <ClCompile Include="test\AudioClockTest.c" />
-    <ClCompile Include="test\AudioSettingsTest.c" />
-    <ClCompile Include="test\CharStringTest.c" />
-    <ClCompile Include="test\LinkedListTest.c" />
-    <ClCompile Include="test\MidiSequenceTest.c" />
-    <ClCompile Include="test\MidiSourceFileTest.c" />
-    <ClCompile Include="test\MidiSourceTest.c" />
-    <ClCompile Include="test\PlatformUtilitiesTest.c" />
-    <ClCompile Include="test\PluginChainTest.c" />
-    <ClCompile Include="test\PluginPresetFxpTest.c" />
-    <ClCompile Include="test\PluginPresetTest.c" />
-    <ClCompile Include="test\PluginTest.c" />
-    <ClCompile Include="test\ProgramOptionTest.c" />
-    <ClCompile Include="test\SampleBufferTest.c" />
-    <ClCompile Include="test\SampleSourceAiffTest.c" />
-    <ClCompile Include="test\SampleSourceAudiofileTest.c" />
-    <ClCompile Include="test\SampleSourcePcmTest.c" />
-    <ClCompile Include="test\SampleSourceSilenceTest.c" />
-    <ClCompile Include="test\SampleSourceTest.c" />
-    <ClCompile Include="test\SampleSourceWaveTest.c" />
-    <ClCompile Include="test\StringUtilitiesTest.c" />
-    <ClCompile Include="test\TaskTimerTest.c" />
-    <ClCompile Include="test\TestSuite.c" />
+    <ClInclude Include="..\..\test\AnalysisClipping.h" />
+    <ClInclude Include="..\..\test\AnalysisDistortion.h" />
+    <ClInclude Include="..\..\test\AnalysisSilence.h" />
+    <ClInclude Include="..\..\test\AnalyzeFile.h" />
+    <ClInclude Include="..\..\test\ApplicationRunner.h" />
+    <ClInclude Include="..\..\test\TestRunner.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="test\TestRunner.h" />
+    <ClCompile Include="..\..\test\AnalysisClipping.c" />
+    <ClCompile Include="..\..\test\AnalysisDistortion.c" />
+    <ClCompile Include="..\..\test\AnalysisSilence.c" />
+    <ClCompile Include="..\..\test\AnalyzeFile.c" />
+    <ClCompile Include="..\..\test\ApplicationRunner.c" />
+    <ClCompile Include="..\..\test\AudioClockTest.c" />
+    <ClCompile Include="..\..\test\AudioSettingsTest.c" />
+    <ClCompile Include="..\..\test\CharStringTest.c" />
+    <ClCompile Include="..\..\test\LinkedListTest.c" />
+    <ClCompile Include="..\..\test\MidiSequenceTest.c" />
+    <ClCompile Include="..\..\test\MidiSourceFileTest.c" />
+    <ClCompile Include="..\..\test\MidiSourceTest.c" />
+    <ClCompile Include="..\..\test\MrsWatsonTest.c" />
+    <ClCompile Include="..\..\test\PlatformUtilitiesTest.c" />
+    <ClCompile Include="..\..\test\PluginChainTest.c" />
+    <ClCompile Include="..\..\test\PluginPresetFxpTest.c" />
+    <ClCompile Include="..\..\test\PluginPresetTest.c" />
+    <ClCompile Include="..\..\test\PluginTest.c" />
+    <ClCompile Include="..\..\test\ProgramOptionTest.c" />
+    <ClCompile Include="..\..\test\SampleBufferTest.c" />
+    <ClCompile Include="..\..\test\SampleSourceAiffTest.c" />
+    <ClCompile Include="..\..\test\SampleSourceAudiofileTest.c" />
+    <ClCompile Include="..\..\test\SampleSourcePcmTest.c" />
+    <ClCompile Include="..\..\test\SampleSourceSilenceTest.c" />
+    <ClCompile Include="..\..\test\SampleSourceTest.c" />
+    <ClCompile Include="..\..\test\SampleSourceWaveTest.c" />
+    <ClCompile Include="..\..\test\StringUtilitiesTest.c" />
+    <ClCompile Include="..\..\test\TaskTimerTest.c" />
+    <ClCompile Include="..\..\test\TestSuite.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

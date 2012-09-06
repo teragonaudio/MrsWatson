@@ -2,8 +2,16 @@
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual C++ Express 2010
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MrsWatson", "MrsWatson.vcxproj", "{2AABEEE4-5AFE-4953-BDF8-F0AE6D543A72}"
+	ProjectSection(ProjectDependencies) = postProject
+		{48686D58-3D56-45FC-9779-8A1BD0BB0E05} = {48686D58-3D56-45FC-9779-8A1BD0BB0E05}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MrsWatsonTest", "MrsWatsonTest.vcxproj", "{05956450-720C-4D29-814C-14DE88FA00A3}"
+	ProjectSection(ProjectDependencies) = postProject
+		{48686D58-3D56-45FC-9779-8A1BD0BB0E05} = {48686D58-3D56-45FC-9779-8A1BD0BB0E05}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libMrsWatson", "libMrsWatson.vcxproj", "{48686D58-3D56-45FC-9779-8A1BD0BB0E05}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,6 +27,10 @@ Global
 		{05956450-720C-4D29-814C-14DE88FA00A3}.Debug|Win32.Build.0 = Debug|Win32
 		{05956450-720C-4D29-814C-14DE88FA00A3}.Release|Win32.ActiveCfg = Release|Win32
 		{05956450-720C-4D29-814C-14DE88FA00A3}.Release|Win32.Build.0 = Release|Win32
+		{48686D58-3D56-45FC-9779-8A1BD0BB0E05}.Debug|Win32.ActiveCfg = Debug|Win32
+		{48686D58-3D56-45FC-9779-8A1BD0BB0E05}.Debug|Win32.Build.0 = Debug|Win32
+		{48686D58-3D56-45FC-9779-8A1BD0BB0E05}.Release|Win32.ActiveCfg = Release|Win32
+		{48686D58-3D56-45FC-9779-8A1BD0BB0E05}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

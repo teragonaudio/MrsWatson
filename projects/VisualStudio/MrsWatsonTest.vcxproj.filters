@@ -1,170 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="source\AudioClock.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\AudioSettings.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\CharString.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\LinkedList.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="test\AudioClockTest.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="test\AudioSettingsTest.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="test\CharStringTest.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="test\LinkedListTest.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="test\MidiSequenceTest.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="test\MidiSourceFileTest.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="test\MidiSourceTest.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="test\PlatformUtilitiesTest.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="test\PluginChainTest.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="test\PluginPresetFxpTest.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="test\PluginPresetTest.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="test\PluginTest.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="test\ProgramOptionTest.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="test\SampleBufferTest.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="test\SampleSourceAiffTest.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="test\SampleSourceAudiofileTest.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="test\SampleSourcePcmTest.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="test\SampleSourceSilenceTest.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="test\SampleSourceTest.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="test\SampleSourceWaveTest.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="test\StringUtilitiesTest.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="test\TaskTimerTest.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="test\TestSuite.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\EventLogger.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\BuildInfo.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\MidiEvent.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\MidiSequence.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\MidiSource.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\MidiSourceFile.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\PlatformUtilities.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\Plugin.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\PluginChain.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\PluginPreset.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\PluginPresetFxp.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\ProgramOption.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\SampleBuffer.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\SampleSource.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\SampleSourceAiff.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\SampleSourceAudiofile.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\SampleSourcePcm.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\SampleSourceSilence.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\SampleSourceWave.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\StringUtilities.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\TaskTimer.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\PluginVst2x.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\Vst2xHostCallback.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\RiffFile.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\SampleSourceFlac.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\SampleSourceMp3.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\SampleSourceOgg.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
     <Filter Include="Source Files">
       <UniqueIdentifier>{bf2b3fb1-b7c0-4f67-94a6-b9f49294057b}</UniqueIdentifier>
     </Filter>
@@ -173,8 +9,112 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="test\TestRunner.h">
+    <ClInclude Include="..\..\test\ApplicationRunner.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\test\AnalysisClipping.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\test\AnalysisDistortion.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\test\AnalyzeFile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\test\AnalysisSilence.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\test\TestRunner.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\test\AnalysisClipping.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\test\AnalysisDistortion.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\test\AnalysisSilence.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\test\AnalyzeFile.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\test\ApplicationRunner.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\test\AudioClockTest.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\test\AudioSettingsTest.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\test\CharStringTest.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\test\LinkedListTest.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\test\MidiSequenceTest.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\test\MidiSourceFileTest.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\test\MidiSourceTest.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\test\MrsWatsonTest.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\test\PlatformUtilitiesTest.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\test\PluginChainTest.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\test\PluginPresetFxpTest.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\test\PluginPresetTest.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\test\PluginTest.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\test\ProgramOptionTest.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\test\SampleBufferTest.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\test\SampleSourceAiffTest.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\test\SampleSourceAudiofileTest.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\test\SampleSourcePcmTest.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\test\SampleSourceSilenceTest.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\test\SampleSourceTest.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\test\SampleSourceWaveTest.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\test\StringUtilitiesTest.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\test\TaskTimerTest.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\test\TestSuite.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
