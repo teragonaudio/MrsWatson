@@ -10,12 +10,12 @@
 static char* _getTestOutputFilename(const char* testName, const char* fileExtension) {
   CharString filename = newCharString();
   char* space;
-  char * spacePtr;
+  char *spacePtr;
   snprintf(filename->data, filename->capacity, "out%c%s.%s", PATH_DELIMITER, testName, fileExtension);
   spacePtr = filename->data;
   do {
     space = strchr(spacePtr + 1, ' ');
-    if(space == NULL || space - filename->data > strlen(filename->data)) {
+    if(space == NULL || (unsigned int)(space - filename->data) > strlen(filename->data)) {
       break;
     }
     else {
@@ -58,7 +58,7 @@ static void _copyArgumentToArray(void* item, void* userData) {
 static void _removeOutputFile(void* item, void* userData) {
   char* argument = (char*)item;
   if(argument[0] != '-') {
-    unlink(item);
+    unlink(argument);
   }
 }
 
