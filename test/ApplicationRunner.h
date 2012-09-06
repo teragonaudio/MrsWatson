@@ -1,4 +1,6 @@
+#if HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 #include <stdlib.h>
 #include "TestRunner.h"
 #include "LinkedList.h"
