@@ -44,6 +44,7 @@
 #define WIN32_LEAN_AND_MEAN
 #include "Windows.h"
 #define strcasecmp _stricmp
+#define unlink _unlink
 #define snprintf _snprintf
 #define isatty(int) 0
 #endif
