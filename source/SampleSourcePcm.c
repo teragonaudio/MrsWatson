@@ -127,7 +127,7 @@ boolByte readPcmDataFromFile(SampleSourcePcmData pcmData, SampleBuffer sampleBuf
 static boolByte readBlockFromPcmFile(void* sampleSourcePtr, SampleBuffer sampleBuffer) {
   SampleSource sampleSource = (SampleSource)sampleSourcePtr;
   SampleSourcePcmData extraData = (SampleSourcePcmData)(sampleSource->extraData);
-  return readPcmDataFromFile(extraData, sampleBuffer, &(sampleSource->numFramesProcessed));
+  return readPcmDataFromFile(extraData, sampleBuffer, &(sampleSource->numSamplesProcessed));
 }
 
 void convertSampleBufferToPcmData(const SampleBuffer sampleBuffer, short* outPcmSamples, boolByte flipEndian) {
@@ -189,7 +189,7 @@ boolByte writePcmDataToFile(SampleSourcePcmData pcmData, const SampleBuffer samp
 static boolByte writeBlockToPcmFile(void* sampleSourcePtr, const SampleBuffer sampleBuffer) {
   SampleSource sampleSource = (SampleSource)sampleSourcePtr;
   SampleSourcePcmData extraData = (SampleSourcePcmData)(sampleSource->extraData);
-  return writePcmDataToFile(extraData, sampleBuffer, &(sampleSource->numFramesProcessed));
+  return writePcmDataToFile(extraData, sampleBuffer, &(sampleSource->numSamplesProcessed));
 }
 
 void closeSampleSourcePcm(void* sampleSourceDataPtr) {
@@ -229,12 +229,12 @@ SampleSource newSampleSourcePcm(const CharString sampleSourceName) {
   copyCharStrings(sampleSource->sourceName, sampleSourceName);
   sampleSource->numChannels = getNumChannels();
   sampleSource->sampleRate = getSampleRate();
-  sampleSource->numFramesProcessed = 0;
+  sampleSource->numSamplesProcessed = 0;
 
   sampleSource->openSampleSource = openSampleSourcePcm;
   sampleSource->readSampleBlock = readBlockFromPcmFile;
   sampleSource->writeSampleBlock = writeBlockToPcmFile;
-  sampleSource->closeSampleSource = closeSampleSourcePcm;
+  sampleSource->closeSampleSource = _closeSampleSourcePcm;
   sampleSource->freeSampleSourceData = freeSampleSourceDataPcm;
 
   extraData->isStream = false;

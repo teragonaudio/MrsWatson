@@ -57,7 +57,7 @@ SampleSource newSampleSourceSilence(void) {
   copyToCharString(sampleSource->sourceName, "(silence)");
   sampleSource->numChannels = getNumChannels();
   sampleSource->sampleRate = getSampleRate();
-  sampleSource->numFramesProcessed = 0;
+  sampleSource->numSamplesProcessed = 0;
 
   sampleSource->openSampleSource = _openSampleSourceSilence;
   sampleSource->readSampleBlock = _readBlockFromSilence;

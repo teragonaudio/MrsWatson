@@ -60,7 +60,7 @@ boolByte readBlockFromAudiofile(void* sampleSourcePtr, SampleBuffer sampleBuffer
     currentDeinterlacedSample++;
   }
 
-  sampleSource->numFramesProcessed += numFramesRead;
+  sampleSource->numSamplesProcessed += numFramesRead;
   if(numFramesRead == 0) {
     logDebug("End of audio file reached");
     return false;
@@ -86,7 +86,7 @@ boolByte writeBlockToAudiofile(void* sampleSourcePtr, const SampleBuffer sampleB
   convertSampleBufferToPcmData(sampleBuffer, extraData->pcmBuffer);
 
   result = afWriteFrames(extraData->fileHandle, AF_DEFAULT_TRACK, extraData->pcmBuffer, getBlocksize());
-  sampleSource->numFramesProcessed += getBlocksize() * getNumChannels();
+  sampleSource->numSamplesProcessed += getBlocksize() * getNumChannels();
   return (result == 1);
 }
 

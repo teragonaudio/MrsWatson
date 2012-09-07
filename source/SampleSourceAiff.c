@@ -94,7 +94,7 @@ static boolByte _openSampleSourceAiff(void *sampleSourcePtr, const SampleSourceO
 static boolByte _readBlockFromAiffFile(void* sampleSourcePtr, SampleBuffer sampleBuffer) {
   SampleSource sampleSource = (SampleSource)sampleSourcePtr;
   SampleSourcePcmData extraData = (SampleSourcePcmData)(sampleSource->extraData);
-  return readPcmDataFromFile(extraData, sampleBuffer, &(sampleSource->numFramesProcessed));
+  return readPcmDataFromFile(extraData, sampleBuffer, &(sampleSource->numSamplesProcessed));
 }
 
 static boolByte _writeBlockToAiffFile(void* sampleSourcePtr, const SampleBuffer sampleBuffer) {
@@ -102,7 +102,7 @@ static boolByte _writeBlockToAiffFile(void* sampleSourcePtr, const SampleBuffer 
   SampleSource sampleSource = (SampleSource)sampleSourcePtr;
   SampleSourcePcmData extraData = (SampleSourcePcmData)(sampleSource->extraData);
   result = writePcmDataToFile(extraData, sampleBuffer, &(extraData->numSamplesWritten));
-  sampleSource->numFramesProcessed = extraData->numSamplesWritten;
+  sampleSource->numSamplesProcessed = extraData->numSamplesWritten;
   return result;
 }
 
@@ -120,7 +120,7 @@ SampleSource newSampleSourceAiff(const CharString sampleSourceName) {
   copyCharStrings(sampleSource->sourceName, sampleSourceName);
   sampleSource->numChannels = getNumChannels();
   sampleSource->sampleRate = getSampleRate();
-  sampleSource->numFramesProcessed = 0;
+  sampleSource->numSamplesProcessed = 0;
 
   sampleSource->openSampleSource = _openSampleSourceAiff;
 #if HAVE_LIBAUDIOFILE
