@@ -174,9 +174,9 @@ boolByte writePcmDataToFile(SampleSourcePcmData pcmData, const SampleBuffer samp
   // Clear the PCM data buffer just to be safe
   memset(pcmData->interlacedPcmDataBuffer, 0, sizeof(short) * pcmData->dataBufferNumItems);
 
-  convertSampleBufferToPcmData(sampleBuffer, pcmData->interlacedPcmDataBuffer, pcmData->isLittleEndian);
-  pcmFramesWritten = fwrite(pcmData->interlacedPcmDataBuffer, sizeof(short), pcmData->dataBufferNumItems, pcmData->fileHandle);
-  if(pcmFramesWritten < pcmData->dataBufferNumItems) {
+  convertSampleBufferToPcmData(sampleBuffer, pcmData->interlacedPcmDataBuffer, pcmData->isLittleEndian != isHostLittleEndian());
+  pcmSamplesWritten = fwrite(pcmData->interlacedPcmDataBuffer, sizeof(short), pcmData->dataBufferNumItems, pcmData->fileHandle);
+  if(pcmSamplesWritten < pcmData->dataBufferNumItems) {
     logWarn("Short write to PCM file");
     return false;
   }
