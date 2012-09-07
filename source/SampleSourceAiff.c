@@ -132,7 +132,8 @@ SampleSource newSampleSourceAiff(const CharString sampleSourceName) {
 #else
   sampleSource->readSampleBlock = _readBlockFromAiffFile;
   sampleSource->writeSampleBlock = _writeBlockToAiffFile;
-  sampleSource->closeSampleSource = closeSampleSourcePcm;
+  // The same function can be shared for both AIFF & WAVE here
+  sampleSource->closeSampleSource = closeSampleSourceWave;
   sampleSource->freeSampleSourceData = freeSampleSourceDataPcm;
 #endif
 
