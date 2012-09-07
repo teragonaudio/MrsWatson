@@ -133,14 +133,14 @@ boolByte isAbsolutePath(const CharString path) {
   return false;
 }
 
-static boolByte _isHostLittleEndian(void) {
+boolByte isHostLittleEndian(void) {
   int num = 1;
   boolByte result = (*(char*)&num == 1);
   return result;
 }
 
 unsigned short convertBigEndianShortToPlatform(const unsigned short value) {
-  if(_isHostLittleEndian()) {
+  if(isHostLittleEndian()) {
     return (value << 8) | (value >> 8);
   }
   else {
@@ -149,7 +149,7 @@ unsigned short convertBigEndianShortToPlatform(const unsigned short value) {
 }
 
 unsigned int convertBigEndianIntToPlatform(const unsigned int value) {
-  if(_isHostLittleEndian()) {
+  if(isHostLittleEndian()) {
     return (value << 24) | ((value << 8) & 0x00ff0000) | ((value >> 8) & 0x0000ff00) | (value >> 24);
   }
   else {
@@ -158,7 +158,7 @@ unsigned int convertBigEndianIntToPlatform(const unsigned int value) {
 }
 
 unsigned int convertLittleEndianIntToPlatform(const unsigned int value) {
-  if(!_isHostLittleEndian()) {
+  if(!isHostLittleEndian()) {
     return (value << 24) | ((value << 8) & 0x00ff0000) | ((value >> 8) & 0x0000ff00) | (value >> 24);
   }
   else {
@@ -167,7 +167,7 @@ unsigned int convertLittleEndianIntToPlatform(const unsigned int value) {
 }
 
 unsigned short convertByteArrayToUnsignedShort(const byte* value) {
-  if(_isHostLittleEndian()) {
+  if(isHostLittleEndian()) {
     return ((value[1] << 8) & 0x0000ff00) | value[0];
   }
   else {
@@ -176,7 +176,7 @@ unsigned short convertByteArrayToUnsignedShort(const byte* value) {
 }
 
 unsigned int convertByteArrayToUnsignedInt(const byte* value) {
-  if(_isHostLittleEndian()) {
+  if(isHostLittleEndian()) {
     return ((value[3] << 24) | ((value[2] << 16) & 0x00ff0000) |
       ((value[1] << 8) & 0x0000ff00) | value[0]);
   }

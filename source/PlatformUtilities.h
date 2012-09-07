@@ -66,6 +66,7 @@ int listDirectory(const char* directory, LinkedList outItems);
 void buildAbsolutePath(const CharString directory, const CharString file, const char* fileExtension, CharString outString);
 boolByte isAbsolutePath(const CharString path);
 
+boolByte isHostLittleEndian(void);
 unsigned short convertBigEndianShortToPlatform(const unsigned short value);
 unsigned int convertBigEndianIntToPlatform(const unsigned int value);
 unsigned int convertLittleEndianIntToPlatform(const unsigned int value);
