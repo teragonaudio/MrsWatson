@@ -33,6 +33,7 @@
 #include "SampleSource.h"
 #include "SampleSourcePcm.h"
 #include "PlatformUtilities.h"
+#include "SampleSourceWave.h"
 
 #if HAVE_LIBAUDIOFILE
 #include "SampleSourceAudiofile.h"

@@ -33,7 +33,6 @@
 #include "EventLogger.h"
 #include "RiffFile.h"
 #include "PlatformUtilities.h"
-#include "SampleSource.h"
 
 #if HAVE_LIBAUDIOFILE
 #include "SampleSourceAudiofile.h"
