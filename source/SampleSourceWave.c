@@ -33,6 +33,9 @@
 #include "EventLogger.h"
 #include "RiffFile.h"
 #include "PlatformUtilities.h"
+#include "SampleSource.h"
+#include "SampleSourcePcm.h"
+#include "CharString.h"
 
 #if HAVE_LIBAUDIOFILE
 #include "SampleSourceAudiofile.h"
@@ -321,24 +324,33 @@ void closeSampleSourceWave(void* sampleSourceDataPtr) {
   SampleSourcePcmData extraData = (SampleSourcePcmData)sampleSource->extraData;
 
 #if ! HAVE_LIBAUDIOFILE
-  unsigned int numBytesWritten;
-  RiffChunk chunk = newRiffChunk();
+  if(sampleSource->openedAs == SAMPLE_SOURCE_OPEN_WRITE) {
+    unsigned int numBytesWritten;
+    RiffChunk chunk = newRiffChunk();
+    int boobs;
 
-  // First go to the second chunk in the file and re-write the chunk length
-  rewind(extraData->fileHandle);
-  readNextChunk(extraData->fileHandle, chunk, false);
-  readNextChunk(extraData->fileHandle, chunk, false);
+    // Re-open the file for editing
+    fflush(extraData->fileHandle);
+    fclose(extraData->fileHandle);
+    extraData->fileHandle = fopen(sampleSource->sourceName->data, "rb+");
 
-  // Manually advance 4 bytes to re-write the length
-  fseek(extraData->fileHandle, ftell(extraData->fileHandle) + 4, SEEK_CUR);
-  numBytesWritten = extraData->numSamplesWritten * extraData->bitsPerSample / 8;
-  fwrite(&numBytesWritten, sizeof(unsigned int), 1, extraData->fileHandle);
+    // First go to the second chunk in the file and re-read the chunk length
+    fseek(extraData->fileHandle, 12, SEEK_SET);
+    readNextChunk(extraData->fileHandle, chunk, false);
 
-  // Add 40 bytes for fmt chunk size and write the RIFF chunk size
-  numBytesWritten += ftell(extraData->fileHandle) - 8;
-  fseek(extraData->fileHandle, 4, SEEK_SET);
-  fwrite(&numBytesWritten, sizeof(unsigned int), 1, extraData->fileHandle);
-  fflush(extraData->fileHandle);
+    // Go to the next chunk, and then skip the type and write the new length
+    fseek(extraData->fileHandle, chunk->size + 4, SEEK_CUR);
+    numBytesWritten = sampleSource->numSamplesProcessed * extraData->bitsPerSample / 8;
+    fwrite(&numBytesWritten, sizeof(unsigned int), 1, extraData->fileHandle);
+    boobs = ftell(extraData->fileHandle);
+
+    // Add 40 bytes for fmt chunk size and write the RIFF chunk size
+    numBytesWritten += ftell(extraData->fileHandle) - 8;
+    fseek(extraData->fileHandle, 4, SEEK_SET);
+    fwrite(&numBytesWritten, sizeof(unsigned int), 1, extraData->fileHandle);
+    fflush(extraData->fileHandle);
+    fclose(extraData->fileHandle);
+  }
 #endif
 }
 
