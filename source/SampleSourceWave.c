@@ -316,6 +316,32 @@ static boolByte _writeBlockToWaveFile(void* sampleSourcePtr, const SampleBuffer 
   return result;
 }
 
+void closeSampleSourceWave(void* sampleSourceDataPtr) {
+  SampleSource sampleSource = (SampleSource)sampleSourceDataPtr;
+  SampleSourcePcmData extraData = (SampleSourcePcmData)sampleSource->extraData;
+
+#if ! HAVE_LIBAUDIOFILE
+  unsigned int numBytesWritten;
+  RiffChunk chunk = newRiffChunk();
+
+  // First go to the second chunk in the file and re-write the chunk length
+  rewind(extraData->fileHandle);
+  readNextChunk(extraData->fileHandle, chunk, false);
+  readNextChunk(extraData->fileHandle, chunk, false);
+
+  // Manually advance 4 bytes to re-write the length
+  fseek(extraData->fileHandle, ftell(extraData->fileHandle) + 4, SEEK_CUR);
+  numBytesWritten = extraData->numSamplesWritten * extraData->bitsPerSample / 8;
+  fwrite(&numBytesWritten, sizeof(unsigned int), 1, extraData->fileHandle);
+
+  // Add 40 bytes for fmt chunk size and write the RIFF chunk size
+  numBytesWritten += ftell(extraData->fileHandle) - 8;
+  fseek(extraData->fileHandle, 4, SEEK_SET);
+  fwrite(&numBytesWritten, sizeof(unsigned int), 1, extraData->fileHandle);
+  fflush(extraData->fileHandle);
+#endif
+}
+
 SampleSource newSampleSourceWave(const CharString sampleSourceName) {
   SampleSource sampleSource = (SampleSource)malloc(sizeof(SampleSourceMembers));
 #if HAVE_LIBAUDIOFILE

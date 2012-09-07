@@ -91,7 +91,8 @@ boolByte writeBlockToAudiofile(void* sampleSourcePtr, const SampleBuffer sampleB
 }
 
 void closeSampleSourceAudiofile(void* sampleSourceDataPtr) {
-  SampleSourceAudiofileData extraData = (SampleSourceAudiofileData)sampleSourceDataPtr;
+  SampleSource sampleSource = (SampleSource)sampleSourceDataPtr;
+  SampleSourceAudiofileData extraData = (SampleSourceAudiofileData)sampleSource->sampleSourceDataPtr;
   if(extraData->fileHandle != NULL) {
     afCloseFile(extraData->fileHandle);
   }

@@ -32,5 +32,6 @@
 #define MrsWatson_SampleSourceWave_h
 
 SampleSource newSampleSourceWave(const CharString sampleSourceName);
+void closeSampleSourceWave(void* pcmData);
 
 #endif
