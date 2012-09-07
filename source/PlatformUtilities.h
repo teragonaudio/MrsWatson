@@ -67,6 +67,8 @@ void buildAbsolutePath(const CharString directory, const CharString file, const 
 boolByte isAbsolutePath(const CharString path);
 
 boolByte isHostLittleEndian(void);
+
+short flipShortEndian(const short value);
 unsigned short convertBigEndianShortToPlatform(const unsigned short value);
 unsigned int convertBigEndianIntToPlatform(const unsigned int value);
 unsigned int convertLittleEndianIntToPlatform(const unsigned int value);

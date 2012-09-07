@@ -139,6 +139,10 @@ boolByte isHostLittleEndian(void) {
   return result;
 }
 
+short flipShortEndian(const short value) {
+  return (value << 8) | (value >> 8);
+}
+
 unsigned short convertBigEndianShortToPlatform(const unsigned short value) {
   if(isHostLittleEndian()) {
     return (value << 8) | (value >> 8);
