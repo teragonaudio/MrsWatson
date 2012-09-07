@@ -31,6 +31,8 @@
 #include "SampleSourceAiff.h"
 #include "EventLogger.h"
 #include "SampleSource.h"
+#include "SampleSourcePcm.h"
+#include "PlatformUtilities.h"
 
 #if HAVE_LIBAUDIOFILE
 #include "SampleSourceAudiofile.h"
@@ -47,7 +49,7 @@ static boolByte _openSampleSourceAiff(void *sampleSourcePtr, const SampleSourceO
 #if HAVE_LIBAUDIOFILE
   SampleSourceAudiofileData extraData = (SampleSourceAudiofileData)(sampleSource->extraData);
 #else
-  SampleSourceAiffData extraData = (SampleSourceAiffData)(sampleSource->extraData);
+  SampleSourcePcmData extraData = (SampleSourcePcmData)(sampleSource->extraData);
 #endif
 
   if(openAs == SAMPLE_SOURCE_OPEN_READ) {
@@ -90,19 +92,22 @@ static boolByte _openSampleSourceAiff(void *sampleSourcePtr, const SampleSourceO
 }
 
 static boolByte _readBlockFromAiffFile(void* sampleSourcePtr, SampleBuffer sampleBuffer) {
-  return false;
+  SampleSource sampleSource = (SampleSource)sampleSourcePtr;
+  SampleSourcePcmData extraData = (SampleSourcePcmData)(sampleSource->extraData);
+  return readPcmDataFromFile(extraData, sampleBuffer, &(sampleSource->numFramesProcessed));
 }
 
 static boolByte _writeBlockToAiffFile(void* sampleSourcePtr, const SampleBuffer sampleBuffer) {
-  return false;
+  boolByte result;
+  SampleSource sampleSource = (SampleSource)sampleSourcePtr;
+  SampleSourcePcmData extraData = (SampleSourcePcmData)(sampleSource->extraData);
+  result = writePcmDataToFile(extraData, sampleBuffer, &(extraData->numSamplesWritten));
+  sampleSource->numFramesProcessed = extraData->numSamplesWritten;
+  return result;
 }
 
 static void _freeSampleSourceDataAiff(void* sampleSourceDataPtr) {
-  SampleSourceAiffData extraData = sampleSourceDataPtr;
-  if(extraData->fileHandle != NULL) {
-    fclose(extraData->fileHandle);
-  }
-  free(extraData);
+  freeSampleSourceDataPcm(sampleSourceDataPtr);
 }
 
 SampleSource newSampleSourceAiff(const CharString sampleSourceName) {
@@ -110,7 +115,7 @@ SampleSource newSampleSourceAiff(const CharString sampleSourceName) {
 #if HAVE_LIBAUDIOFILE
   SampleSourceAudiofileData extraData = (SampleSourceAudiofileData)malloc(sizeof(SampleSourceAudiofileDataMembers));
 #else
-  SampleSourceAiffData extraData = (SampleSourceAiffData)malloc(sizeof(SampleSourceAiffDataMembers));
+  SampleSourcePcmData extraData = (SampleSourcePcmData)malloc(sizeof(SampleSourcePcmDataMembers));
 #endif
 
   sampleSource->sampleSourceType = SAMPLE_SOURCE_TYPE_AIFF;
@@ -137,7 +142,16 @@ SampleSource newSampleSourceAiff(const CharString sampleSourceName) {
   extraData->interlacedBuffer = NULL;
   extraData->pcmBuffer = NULL;
 #else
+  extraData->isStream = false;
+  extraData->isLittleEndian = false;
   extraData->fileHandle = NULL;
+  extraData->dataBufferNumItems = 0;
+  extraData->interlacedPcmDataBuffer = NULL;
+
+  extraData->numChannels = (unsigned short)getNumChannels();
+  extraData->sampleRate = (unsigned int)getSampleRate();
+  extraData->bitsPerSample = 16;
+  extraData->numSamplesWritten = 0;
 #endif
 
   sampleSource->extraData = extraData;

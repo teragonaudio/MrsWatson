@@ -32,18 +32,19 @@
 #include "SampleSourceWave.h"
 #include "EventLogger.h"
 #include "RiffFile.h"
-#include "SampleSource.h"
-#include "SampleSourcePcm.h"
 #include "PlatformUtilities.h"
 
 #if HAVE_LIBAUDIOFILE
 #include "SampleSourceAudiofile.h"
 #endif
 
-static boolByte _readWaveFileInfo(const char* filename, SampleSourceWaveData extraData) {
+static boolByte _readWaveFileInfo(const char* filename, SampleSourcePcmData extraData) {
   int chunkOffset = 0;
   RiffChunk chunk = newRiffChunk();
   char format[4];
+  unsigned int audioFormat;
+  unsigned int byteRate;
+  unsigned int blockAlign;
 
   if(readNextChunk(extraData->fileHandle, chunk, false)) {
     if(!isChunkIdEqualTo(chunk, "RIFF")) {
@@ -80,9 +81,9 @@ static boolByte _readWaveFileInfo(const char* filename, SampleSourceWaveData ext
       return false;
     }
 
-    extraData->audioFormat = convertByteArrayToUnsignedShort(chunk->data + chunkOffset);
+    audioFormat = convertByteArrayToUnsignedShort(chunk->data + chunkOffset);
     chunkOffset += 2;
-    if(extraData->audioFormat != 1) {
+    if(audioFormat != 1) {
       logUnsupportedFeature("Compressed WAVE files");
       freeRiffChunk(chunk);
       return false;
@@ -94,10 +95,12 @@ static boolByte _readWaveFileInfo(const char* filename, SampleSourceWaveData ext
     extraData->sampleRate = convertByteArrayToUnsignedInt(chunk->data + chunkOffset);
     chunkOffset += 4;
 
-    extraData->byteRate = convertByteArrayToUnsignedInt(chunk->data + chunkOffset);
+    // TODO: Error checking
+    byteRate = convertByteArrayToUnsignedInt(chunk->data + chunkOffset);
     chunkOffset += 4;
 
-    extraData->blockAlign = convertByteArrayToUnsignedShort(chunk->data + chunkOffset);
+    // TODO: Error checking
+    blockAlign = convertByteArrayToUnsignedShort(chunk->data + chunkOffset);
     chunkOffset += 2;
 
     extraData->bitsPerSample = convertByteArrayToUnsignedShort(chunk->data + chunkOffset);
@@ -136,8 +139,12 @@ static boolByte _readWaveFileInfo(const char* filename, SampleSourceWaveData ext
   return true;
 }
 
-static boolByte _writeWaveFileInfo(SampleSourceWaveData extraData) {
+static boolByte _writeWaveFileInfo(SampleSourcePcmData extraData) {
   RiffChunk chunk = newRiffChunk();
+  unsigned short audioFormat = 1;
+  unsigned short byteRate = (unsigned short)(extraData->sampleRate * extraData->numChannels * extraData->bitsPerSample / 8);
+  unsigned short blockAlign = extraData->numChannels * extraData->bitsPerSample / 8;
+  unsigned int extraParams = 0;
 
   memcpy(chunk->id, "RIFF", 4);
   if(fwrite(chunk->id, sizeof(byte), 4, extraData->fileHandle) != 4) {
@@ -177,7 +184,7 @@ static boolByte _writeWaveFileInfo(SampleSourceWaveData extraData) {
 
   // TODO: These calls will not work on big-endian platforms
 
-  if(fwrite(&(extraData->audioFormat), sizeof(unsigned short), 1, extraData->fileHandle) != 1) {
+  if(fwrite(&audioFormat, sizeof(unsigned short), 1, extraData->fileHandle) != 1) {
     logError("Could not write audio format");
     freeRiffChunk(chunk);
     return false;
@@ -192,12 +199,12 @@ static boolByte _writeWaveFileInfo(SampleSourceWaveData extraData) {
     freeRiffChunk(chunk);
     return false;
   }
-  if(fwrite(&(extraData->byteRate), sizeof(unsigned int), 1, extraData->fileHandle) != 1) {
+  if(fwrite(&(byteRate), sizeof(unsigned int), 1, extraData->fileHandle) != 1) {
     logError("Could not write byte rate");
     freeRiffChunk(chunk);
     return false;
   }
-  if(fwrite(&(extraData->blockAlign), sizeof(unsigned short), 1, extraData->fileHandle) != 1) {
+  if(fwrite(&(blockAlign), sizeof(unsigned short), 1, extraData->fileHandle) != 1) {
     logError("Could not write block align");
     freeRiffChunk(chunk);
     return false;
@@ -207,7 +214,7 @@ static boolByte _writeWaveFileInfo(SampleSourceWaveData extraData) {
     freeRiffChunk(chunk);
     return false;
   }
-  if(fwrite(&(extraData->extraParams), sizeof(byte), 4, extraData->fileHandle) != 4) {
+  if(fwrite(&(extraParams), sizeof(byte), 4, extraData->fileHandle) != 4) {
     logError("Could not write extra PCM parameters");
     freeRiffChunk(chunk);
     return false;
@@ -233,7 +240,7 @@ static boolByte _openSampleSourceWave(void *sampleSourcePtr, const SampleSourceO
 #if HAVE_LIBAUDIOFILE
   SampleSourceAudiofileData extraData = sampleSource->extraData;
 #else
-  SampleSourceWaveData extraData = (SampleSourceWaveData)sampleSource->extraData;
+  SampleSourcePcmData extraData = (SampleSourcePcmData)sampleSource->extraData;
 #endif
 
   if(openAs == SAMPLE_SOURCE_OPEN_READ) {
@@ -247,7 +254,6 @@ static boolByte _openSampleSourceWave(void *sampleSourcePtr, const SampleSourceO
     extraData->fileHandle = fopen(sampleSource->sourceName->data, "rb");
     if(extraData->fileHandle != NULL) {
       if(_readWaveFileInfo(sampleSource->sourceName->data, extraData)) {
-        extraData->pcmData->fileHandle = extraData->fileHandle;
         setNumChannels(extraData->numChannels);
         setSampleRate(extraData->sampleRate);
       }
@@ -270,16 +276,10 @@ static boolByte _openSampleSourceWave(void *sampleSourcePtr, const SampleSourceO
 #else
     extraData->fileHandle = fopen(sampleSource->sourceName->data, "wb");
     if(extraData->fileHandle != NULL) {
-      extraData->audioFormat = 1;
       extraData->numChannels = (unsigned short)getNumChannels();
       extraData->sampleRate = (unsigned int)getSampleRate();
       extraData->bitsPerSample = 16;
-      extraData->byteRate = extraData->sampleRate * extraData->numChannels * extraData->bitsPerSample / 8;
-      extraData->blockAlign = extraData->numChannels * extraData->bitsPerSample / 8;
-      if(_writeWaveFileInfo(extraData)) {
-        extraData->pcmData->fileHandle = extraData->fileHandle;
-      }
-      else {
+      if(!_writeWaveFileInfo(extraData)) {
         fclose(extraData->fileHandle);
         extraData->fileHandle = NULL;
       }
@@ -303,39 +303,21 @@ static boolByte _openSampleSourceWave(void *sampleSourcePtr, const SampleSourceO
 
 static boolByte _readBlockFromWaveFile(void* sampleSourcePtr, SampleBuffer sampleBuffer) {
   SampleSource sampleSource = (SampleSource)sampleSourcePtr;
-  SampleSourceWaveData extraData = (SampleSourceWaveData)(sampleSource->extraData);
-  return readPcmDataFromFile(extraData->pcmData, sampleBuffer, &(sampleSource->numFramesProcessed));
+  SampleSourcePcmData extraData = sampleSource->extraData;
+  return readPcmDataFromFile(extraData, sampleBuffer, &(sampleSource->numFramesProcessed));
 }
 
 static boolByte _writeBlockToWaveFile(void* sampleSourcePtr, const SampleBuffer sampleBuffer) {
   boolByte result;
   SampleSource sampleSource = (SampleSource)sampleSourcePtr;
-  SampleSourceWaveData extraData = (SampleSourceWaveData)(sampleSource->extraData);
-  result = writePcmDataToFile(extraData->pcmData, sampleBuffer, &(extraData->numSamplesWritten));
+  SampleSourcePcmData extraData = sampleSource->extraData;
+  result = writePcmDataToFile(extraData, sampleBuffer, &(extraData->numSamplesWritten));
   sampleSource->numFramesProcessed = extraData->numSamplesWritten;
   return result;
 }
 
 static void _freeSampleSourceDataWave(void* sampleSourceDataPtr) {
-  SampleSourceWaveData extraData = (SampleSourceWaveData)sampleSourceDataPtr;
-  unsigned int numBytesWritten;
-
-  // Write correct chunk sizes to file's data chunk
-  fseek(extraData->fileHandle, 44, SEEK_SET);
-  numBytesWritten = extraData->numSamplesWritten * extraData->bitsPerSample / 8;
-  fwrite(&numBytesWritten, sizeof(unsigned int), 1, extraData->fileHandle);
-  // Add 40 bytes for fmt chunk size and write the RIFF chunk size
-  numBytesWritten += 40;
-  fseek(extraData->fileHandle, 4, SEEK_SET);
-  fwrite(&numBytesWritten, sizeof(unsigned int), 1, extraData->fileHandle);
-  fflush(extraData->fileHandle);
-
-  freeSampleSourceDataPcm(extraData->pcmData);
-  if(extraData->fileHandle != NULL) {
-    fclose(extraData->fileHandle);
-    extraData->fileHandle = NULL;
-  }
-  free(extraData);
+  freeSampleSourceDataPcm(sampleSourceDataPtr);
 }
 
 SampleSource newSampleSourceWave(const CharString sampleSourceName) {
@@ -343,7 +325,7 @@ SampleSource newSampleSourceWave(const CharString sampleSourceName) {
 #if HAVE_LIBAUDIOFILE
   SampleSourceAudiofileData extraData = (SampleSourceAudiofileData)malloc(sizeof(SampleSourceAudiofileDataMembers));
 #else
-  SampleSourceWaveData extraData = (SampleSourceWaveData)malloc(sizeof(SampleSourceWaveDataMembers));
+  SampleSourcePcmData extraData = (SampleSourcePcmData)malloc(sizeof(SampleSourcePcmDataMembers));
 #endif
 
   sampleSource->sampleSourceType = SAMPLE_SOURCE_TYPE_WAVE;
@@ -370,21 +352,16 @@ SampleSource newSampleSourceWave(const CharString sampleSourceName) {
   extraData->interlacedBuffer = NULL;
   extraData->pcmBuffer = NULL;
 #else
+  extraData->isStream = false;
+  extraData->isLittleEndian = true;
   extraData->fileHandle = NULL;
-  extraData->audioFormat = 0;
-  extraData->numChannels = 0;
-  extraData->sampleRate = 0;
-  extraData->byteRate = 0;
-  extraData->blockAlign = 0;
-  extraData->bitsPerSample = 0;
-  extraData->extraParams = 0;
-  extraData->numSamplesWritten = 0;
+  extraData->dataBufferNumItems = 0;
+  extraData->interlacedPcmDataBuffer = NULL;
 
-  extraData->pcmData = (SampleSourcePcmData)malloc(sizeof(SampleSourcePcmDataMembers));
-  extraData->pcmData->isStream = false;
-  extraData->pcmData->fileHandle = NULL;
-  extraData->pcmData->dataBufferNumItems = 0;
-  extraData->pcmData->interlacedPcmDataBuffer = NULL;
+  extraData->numChannels = (unsigned short)getNumChannels();
+  extraData->sampleRate = (unsigned int)getSampleRate();
+  extraData->bitsPerSample = 16;
+  extraData->numSamplesWritten = 0;
 #endif
 
   sampleSource->extraData = extraData;

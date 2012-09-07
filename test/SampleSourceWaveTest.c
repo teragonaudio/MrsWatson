@@ -19,7 +19,7 @@ static CharString _waveResourceName() {
 
 static int _testOpenWaveFile(void) {
   SampleSource s = newSampleSourceWave(_waveResourceName());
-  SampleSourceWaveData extraData = s->extraData;
+  SampleSourcePcmData extraData = s->extraData;
   _assertNotNull(extraData);
   _assert(s->openSampleSource(s, SAMPLE_SOURCE_OPEN_READ));
   _assertIntEquals(s->openedAs, SAMPLE_SOURCE_OPEN_READ);

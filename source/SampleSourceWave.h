@@ -31,21 +31,6 @@
 #ifndef MrsWatson_SampleSourceWave_h
 #define MrsWatson_SampleSourceWave_h
 
-typedef struct {
-  FILE* fileHandle;
-  unsigned short audioFormat;
-  unsigned short numChannels;
-  unsigned int sampleRate;
-  unsigned int byteRate;
-  unsigned short blockAlign;
-  unsigned short bitsPerSample;
-  unsigned int extraParams;
-  unsigned long numSamplesWritten;
-  SampleSourcePcmData pcmData;
-} SampleSourceWaveDataMembers;
-
-typedef SampleSourceWaveDataMembers* SampleSourceWaveData;
-
 SampleSource newSampleSourceWave(const CharString sampleSourceName);
 
 #endif

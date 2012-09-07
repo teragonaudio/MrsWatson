@@ -30,12 +30,6 @@
 #ifndef MrsWatson_SampleSourceAiff_h
 #define MrsWatson_SampleSourceAiff_h
 
-typedef struct {
-  FILE *fileHandle;
-} SampleSourceAiffDataMembers;
-
-typedef SampleSourceAiffDataMembers* SampleSourceAiffData;
-
 SampleSource newSampleSourceAiff(const CharString sampleSourceName);
 
 #endif
