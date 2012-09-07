@@ -41,7 +41,6 @@ typedef struct {
   unsigned short numChannels;
   unsigned int sampleRate;
   unsigned short bitsPerSample;
-  unsigned long numSamplesWritten;
 } SampleSourcePcmDataMembers;
 
 typedef SampleSourcePcmDataMembers *SampleSourcePcmData;

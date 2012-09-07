@@ -311,8 +311,8 @@ static boolByte _writeBlockToWaveFile(void* sampleSourcePtr, const SampleBuffer 
   boolByte result;
   SampleSource sampleSource = (SampleSource)sampleSourcePtr;
   SampleSourcePcmData extraData = sampleSource->extraData;
-  result = writePcmDataToFile(extraData, sampleBuffer, &(extraData->numSamplesWritten));
-  sampleSource->numSamplesProcessed = extraData->numSamplesWritten;
+  result = writePcmDataToFile(extraData, sampleBuffer, &(sampleSource->numSamplesProcessed));
+  sampleSource->numSamplesProcessed = sampleSource->numSamplesProcessed;
   return result;
 }
 
@@ -385,7 +385,6 @@ SampleSource newSampleSourceWave(const CharString sampleSourceName) {
   extraData->numChannels = (unsigned short)getNumChannels();
   extraData->sampleRate = (unsigned int)getSampleRate();
   extraData->bitsPerSample = 16;
-  extraData->numSamplesWritten = 0;
 #endif
 
   sampleSource->extraData = extraData;

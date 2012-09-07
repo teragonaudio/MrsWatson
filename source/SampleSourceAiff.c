@@ -102,8 +102,7 @@ static boolByte _writeBlockToAiffFile(void* sampleSourcePtr, const SampleBuffer 
   boolByte result;
   SampleSource sampleSource = (SampleSource)sampleSourcePtr;
   SampleSourcePcmData extraData = (SampleSourcePcmData)(sampleSource->extraData);
-  result = writePcmDataToFile(extraData, sampleBuffer, &(extraData->numSamplesWritten));
-  sampleSource->numSamplesProcessed = extraData->numSamplesWritten;
+  result = writePcmDataToFile(extraData, sampleBuffer, &(sampleSource->numSamplesProcessed));
   return result;
 }
 
@@ -151,7 +150,6 @@ SampleSource newSampleSourceAiff(const CharString sampleSourceName) {
   extraData->numChannels = (unsigned short)getNumChannels();
   extraData->sampleRate = (unsigned int)getSampleRate();
   extraData->bitsPerSample = 16;
-  extraData->numSamplesWritten = 0;
 #endif
 
   sampleSource->extraData = extraData;

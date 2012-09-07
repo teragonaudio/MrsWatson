@@ -159,7 +159,7 @@ void convertSampleBufferToPcmData(const SampleBuffer sampleBuffer, short* outPcm
 }
 
 boolByte writePcmDataToFile(SampleSourcePcmData pcmData, const SampleBuffer sampleBuffer, unsigned long* numFramesProcessed) {
-  size_t pcmFramesWritten = 0;
+  size_t pcmSamplesWritten = 0;
 
   if(pcmData == NULL || pcmData->fileHandle == NULL) {
     logCritical("Corrupt PCM data structure");
@@ -181,8 +181,8 @@ boolByte writePcmDataToFile(SampleSourcePcmData pcmData, const SampleBuffer samp
     return false;
   }
 
-  *numFramesProcessed += pcmFramesWritten;
-  logDebug("Wrote %d sample frames to PCM file", pcmFramesWritten);
+  *numFramesProcessed += pcmSamplesWritten;
+  logDebug("Wrote %d sample frames to PCM file", pcmSamplesWritten);
   return true;
 }
 
@@ -232,7 +232,6 @@ SampleSource newSampleSourcePcm(const CharString sampleSourceName) {
   extraData->numChannels = (unsigned short)getNumChannels();
   extraData->sampleRate = (unsigned int)getSampleRate();
   extraData->bitsPerSample = 16;
-  extraData->numSamplesWritten = 0;
 
   return sampleSource;
 }
