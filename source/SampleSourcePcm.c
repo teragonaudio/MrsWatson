@@ -33,7 +33,7 @@
 #include "AudioSettings.h"
 #include "SampleSource.h"
 
-static boolByte _openSampleSourcePcm(void* sampleSourcePtr, const SampleSourceOpenAs openAs) {
+static boolByte openSampleSourcePcm(void* sampleSourcePtr, const SampleSourceOpenAs openAs) {
   SampleSource sampleSource = (SampleSource)sampleSourcePtr;
   SampleSourcePcmData extraData = (SampleSourcePcmData)(sampleSource->extraData);
 
@@ -124,7 +124,7 @@ boolByte readPcmDataFromFile(SampleSourcePcmData pcmData, SampleBuffer sampleBuf
   return result;
 }
 
-static boolByte _readBlockFromPcmFile(void* sampleSourcePtr, SampleBuffer sampleBuffer) {
+static boolByte readBlockFromPcmFile(void* sampleSourcePtr, SampleBuffer sampleBuffer) {
   SampleSource sampleSource = (SampleSource)sampleSourcePtr;
   SampleSourcePcmData extraData = (SampleSourcePcmData)(sampleSource->extraData);
   return readPcmDataFromFile(extraData, sampleBuffer, &(sampleSource->numFramesProcessed));
@@ -179,7 +179,7 @@ boolByte writePcmDataToFile(SampleSourcePcmData pcmData, const SampleBuffer samp
   return true;
 }
 
-static boolByte _writeBlockToPcmFile(void* sampleSourcePtr, const SampleBuffer sampleBuffer) {
+static boolByte writeBlockToPcmFile(void* sampleSourcePtr, const SampleBuffer sampleBuffer) {
   SampleSource sampleSource = (SampleSource)sampleSourcePtr;
   SampleSourcePcmData extraData = (SampleSourcePcmData)(sampleSource->extraData);
   return writePcmDataToFile(extraData, sampleBuffer, &(sampleSource->numFramesProcessed));
@@ -206,9 +206,10 @@ SampleSource newSampleSourcePcm(const CharString sampleSourceName) {
   sampleSource->sampleRate = getSampleRate();
   sampleSource->numFramesProcessed = 0;
 
-  sampleSource->openSampleSource = _openSampleSourcePcm;
-  sampleSource->readSampleBlock = _readBlockFromPcmFile;
-  sampleSource->writeSampleBlock = _writeBlockToPcmFile;
+  sampleSource->openSampleSource = openSampleSourcePcm;
+  sampleSource->readSampleBlock = readBlockFromPcmFile;
+  sampleSource->writeSampleBlock = writeBlockToPcmFile;
+  sampleSource->closeSampleSource = closeSampleSourcePcm;
   sampleSource->freeSampleSourceData = freeSampleSourceDataPcm;
 
   extraData->isStream = false;
