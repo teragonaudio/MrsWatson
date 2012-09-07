@@ -33,6 +33,7 @@
 #include "EventLogger.h"
 #include "RiffFile.h"
 #include "PlatformUtilities.h"
+#include "SampleSource.h"
 
 #if HAVE_LIBAUDIOFILE
 #include "SampleSourceAudiofile.h"
@@ -316,10 +317,6 @@ static boolByte _writeBlockToWaveFile(void* sampleSourcePtr, const SampleBuffer 
   return result;
 }
 
-static void _freeSampleSourceDataWave(void* sampleSourceDataPtr) {
-  freeSampleSourceDataPcm(sampleSourceDataPtr);
-}
-
 SampleSource newSampleSourceWave(const CharString sampleSourceName) {
   SampleSource sampleSource = (SampleSource)malloc(sizeof(SampleSourceMembers));
 #if HAVE_LIBAUDIOFILE
@@ -341,10 +338,12 @@ SampleSource newSampleSourceWave(const CharString sampleSourceName) {
   sampleSource->readSampleBlock = readBlockFromAudiofile;
   sampleSource->writeSampleBlock = writeBlockToAudiofile;
   sampleSource->freeSampleSourceData = freeSampleSourceDataAudiofile;
+  sampleSource->closeSampleSource = closeSampleSourceAudiofile;
 #else
   sampleSource->readSampleBlock = _readBlockFromWaveFile;
   sampleSource->writeSampleBlock = _writeBlockToWaveFile;
-  sampleSource->freeSampleSourceData = _freeSampleSourceDataWave;
+  sampleSource->freeSampleSourceData = freeSampleSourceDataPcm;
+  sampleSource->closeSampleSource = closeSampleSourcePcm;
 #endif
 
 #if HAVE_LIBAUDIOFILE
