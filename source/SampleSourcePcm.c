@@ -192,6 +192,24 @@ static boolByte writeBlockToPcmFile(void* sampleSourcePtr, const SampleBuffer sa
   return writePcmDataToFile(extraData, sampleBuffer, &(sampleSource->numFramesProcessed));
 }
 
+void closeSampleSourcePcm(void* sampleSourceDataPtr) {
+  SampleSourcePcmData extraData = (SampleSourcePcmData)sampleSourceDataPtr;
+
+#if ! HAVE_LIBAUDIOFILE
+  unsigned int numBytesWritten;
+
+  // Write correct chunk sizes to file's data chunk
+  fseek(extraData->fileHandle, 44, SEEK_SET);
+  numBytesWritten = extraData->numSamplesWritten * extraData->bitsPerSample / 8;
+  fwrite(&numBytesWritten, sizeof(unsigned int), 1, extraData->fileHandle);
+  // Add 40 bytes for fmt chunk size and write the RIFF chunk size
+  numBytesWritten += 40;
+  fseek(extraData->fileHandle, 4, SEEK_SET);
+  fwrite(&numBytesWritten, sizeof(unsigned int), 1, extraData->fileHandle);
+  fflush(extraData->fileHandle);
+#endif
+}
+
 void freeSampleSourceDataPcm(void* sampleSourceDataPtr) {
   SampleSourcePcmData extraData = (SampleSourcePcmData)sampleSourceDataPtr;
   free(extraData->interlacedPcmDataBuffer);
