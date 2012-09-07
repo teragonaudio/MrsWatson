@@ -90,11 +90,15 @@ boolByte writeBlockToAudiofile(void* sampleSourcePtr, const SampleBuffer sampleB
   return (result == 1);
 }
 
-void freeSampleSourceDataAudiofile(void* sampleSourceDataPtr) {
+void closeSampleSourceAudiofile(void* sampleSourceDataPtr) {
   SampleSourceAudiofileData extraData = (SampleSourceAudiofileData)sampleSourceDataPtr;
   if(extraData->fileHandle != NULL) {
     afCloseFile(extraData->fileHandle);
   }
+}
+
+void freeSampleSourceDataAudiofile(void* sampleSourceDataPtr) {
+  SampleSourceAudiofileData extraData = (SampleSourceAudiofileData)sampleSourceDataPtr;
   if(extraData->interlacedBuffer != NULL) {
     free(extraData->interlacedBuffer);
   }
