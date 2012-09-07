@@ -58,6 +58,7 @@ typedef enum {
 typedef boolByte (*OpenSampleSourceFunc)(void*, const SampleSourceOpenAs);
 typedef boolByte (*ReadSampleBlockFunc)(void*, SampleBuffer);
 typedef boolByte (*WriteSampleBlockFunc)(void*, const SampleBuffer);
+typedef void (*CloseSampleSourceFunc)(void*);
 typedef void (*FreeSampleSourceDataFunc)(void*);
 
 typedef struct {
@@ -71,6 +72,7 @@ typedef struct {
   OpenSampleSourceFunc openSampleSource;
   ReadSampleBlockFunc readSampleBlock;
   WriteSampleBlockFunc writeSampleBlock;
+  CloseSampleSourceFunc closeSampleSource;
   FreeSampleSourceDataFunc freeSampleSourceData;
 
   void* extraData;

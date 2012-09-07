@@ -342,6 +342,10 @@ int mrsWatsonMain(int argc, char** argv) {
     }
   }
 
+  // Close file handles for input/output sources
+  inputSource->closeSampleSource(inputSource);
+  outputSource->closeSampleSource(outputSource);
+
   // Print out statistics about each plugin's time usage
   // TODO: On windows, the total processing time is stored in clocks and not milliseconds
   // These values must be converted using the QueryPerformanceFrequency() function
