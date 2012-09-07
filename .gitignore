@@ -25,6 +25,7 @@ ipch/*
 *.sdf
 *.opensdf
 *.suo
+cscope.out
 projects/Xcode/.idea/workspace.xml
 projects/Xcode/.idea/dictionaries/*
 projects/Xcode/MrsWatson.xcodeproj/xcuserdata
