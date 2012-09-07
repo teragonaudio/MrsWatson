@@ -24,12 +24,15 @@ test/out/*
 *.sdf
 *.opensdf
 *.suo
-cscope.out
 projects/Xcode/.idea/workspace.xml
 projects/Xcode/.idea/dictionaries/*
 projects/Xcode/MrsWatson.xcodeproj/xcuserdata
 projects/NetBeans/MrsWatson/nbproject/private/
 projects/VisualStudio/ipch/*
+
+# Vim helpers
+tags
+cscope.out
 
 # Third-party SDK's which cannot be redistributed
 vendor/vstsdk2.4/*
