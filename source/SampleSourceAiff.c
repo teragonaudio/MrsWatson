@@ -106,10 +106,6 @@ static boolByte _writeBlockToAiffFile(void* sampleSourcePtr, const SampleBuffer 
   return result;
 }
 
-static void _freeSampleSourceDataAiff(void* sampleSourceDataPtr) {
-  freeSampleSourceDataPcm(sampleSourceDataPtr);
-}
-
 SampleSource newSampleSourceAiff(const CharString sampleSourceName) {
   SampleSource sampleSource = (SampleSource)malloc(sizeof(SampleSourceMembers));
 #if HAVE_LIBAUDIOFILE
@@ -130,11 +126,13 @@ SampleSource newSampleSourceAiff(const CharString sampleSourceName) {
 #if HAVE_LIBAUDIOFILE
   sampleSource->readSampleBlock = readBlockFromAudiofile;
   sampleSource->writeSampleBlock = writeBlockToAudiofile;
+  sampleSource->closeSampleSource = closeSampleSourceAudiofile;
   sampleSource->freeSampleSourceData = freeSampleSourceDataAudiofile;
 #else
   sampleSource->readSampleBlock = _readBlockFromAiffFile;
   sampleSource->writeSampleBlock = _writeBlockToAiffFile;
-  sampleSource->freeSampleSourceData = _freeSampleSourceDataAiff;
+  sampleSource->closeSampleSource = closeSampleSourcePcm;
+  sampleSource->freeSampleSourceData = freeSampleSourceDataPcm;
 #endif
 
 #if HAVE_LIBAUDIOFILE
