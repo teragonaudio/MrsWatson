@@ -33,6 +33,7 @@
 
 typedef struct {
   boolByte isStream;
+  boolByte isLittleEndian;
   FILE* fileHandle;
   size_t dataBufferNumItems;
   short* interlacedPcmDataBuffer;

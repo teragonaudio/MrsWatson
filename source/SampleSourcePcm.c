@@ -31,7 +31,7 @@
 #include "SampleSourcePcm.h"
 #include "EventLogger.h"
 #include "AudioSettings.h"
-#include "SampleSource.h"
+#include "PlatformUtilities.h"
 
 static boolByte openSampleSourcePcm(void* sampleSourcePtr, const SampleSourceOpenAs openAs) {
   SampleSource sampleSource = (SampleSource)sampleSourcePtr;
@@ -130,10 +130,11 @@ static boolByte readBlockFromPcmFile(void* sampleSourcePtr, SampleBuffer sampleB
   return readPcmDataFromFile(extraData, sampleBuffer, &(sampleSource->numFramesProcessed));
 }
 
-void convertSampleBufferToPcmData(const SampleBuffer sampleBuffer, short* outPcmSamples) {
+void convertSampleBufferToPcmData(const SampleBuffer sampleBuffer, short* outPcmSamples, boolByte flipEndian) {
   int currentInterlacedSample = 0;
   int currentSample = 0;
   int currentChannel = 0;
+  short shortValue;
   Sample sample;
   for(currentSample = 0; currentSample < sampleBuffer->blocksize; currentSample++) {
     for(currentChannel = 0; currentChannel < sampleBuffer->numChannels; currentChannel++) {
@@ -146,7 +147,13 @@ void convertSampleBufferToPcmData(const SampleBuffer sampleBuffer, short* outPcm
         sample = -1.0f;
       }
 #endif
-      outPcmSamples[currentInterlacedSample++] = (short)(sample * 32767.0f);
+      shortValue = (short)(sample * 32767.0f);
+      if(flipEndian) {
+        outPcmSamples[currentInterlacedSample++] = flipShortEndian(shortValue);
+      }
+      else {
+        outPcmSamples[currentInterlacedSample++] = shortValue;
+      }
     }
   }
 }
@@ -167,7 +174,7 @@ boolByte writePcmDataToFile(SampleSourcePcmData pcmData, const SampleBuffer samp
   // Clear the PCM data buffer just to be safe
   memset(pcmData->interlacedPcmDataBuffer, 0, sizeof(short) * pcmData->dataBufferNumItems);
 
-  convertSampleBufferToPcmData(sampleBuffer, pcmData->interlacedPcmDataBuffer);
+  convertSampleBufferToPcmData(sampleBuffer, pcmData->interlacedPcmDataBuffer, pcmData->isLittleEndian);
   pcmFramesWritten = fwrite(pcmData->interlacedPcmDataBuffer, sizeof(short), pcmData->dataBufferNumItems, pcmData->fileHandle);
   if(pcmFramesWritten < pcmData->dataBufferNumItems) {
     logWarn("Short write to PCM file");
@@ -213,6 +220,7 @@ SampleSource newSampleSourcePcm(const CharString sampleSourceName) {
   sampleSource->freeSampleSourceData = freeSampleSourceDataPcm;
 
   extraData->isStream = false;
+  extraData->isLittleEndian = true;
   extraData->fileHandle = NULL;
   extraData->dataBufferNumItems = 0;
   extraData->interlacedPcmDataBuffer = NULL;
