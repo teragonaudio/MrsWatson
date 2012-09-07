@@ -33,6 +33,11 @@ projects/NetBeans/MrsWatson/nbproject/private/
 
 # Third-party SDK's which cannot be redistributed
 vendor/vstsdk2.4/*
+vendor/audiofile*
+vendor/flac*
+vendor/lame*
+vendor/libogg*
+vendor/libvorbis*
 
 # automake/autoconf
 aclocal.m4
