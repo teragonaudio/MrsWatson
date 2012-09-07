@@ -482,6 +482,7 @@
 				24EDB0E115F617EC00B0B8DF /* Sources */,
 				24EDB0E215F617EC00B0B8DF /* Frameworks */,
 				24EDB0E315F617EC00B0B8DF /* CopyFiles */,
+				2451794415FA451400E3925B /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -538,6 +539,23 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		2451794415FA451400E3925B /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cp -v $BUILT_PRODUCTS_DIR/mrswatson /usr/local/bin";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		24EDB0B915F6177C00B0B8DF /* Sources */ = {
