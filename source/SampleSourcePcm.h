@@ -37,6 +37,11 @@ typedef struct {
   FILE* fileHandle;
   size_t dataBufferNumItems;
   short* interlacedPcmDataBuffer;
+
+  unsigned short numChannels;
+  unsigned int sampleRate;
+  unsigned short bitsPerSample;
+  unsigned long numSamplesWritten;
 } SampleSourcePcmDataMembers;
 
 typedef SampleSourcePcmDataMembers *SampleSourcePcmData;

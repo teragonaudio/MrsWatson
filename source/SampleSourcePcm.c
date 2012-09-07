@@ -242,7 +242,11 @@ SampleSource newSampleSourcePcm(const CharString sampleSourceName) {
   extraData->fileHandle = NULL;
   extraData->dataBufferNumItems = 0;
   extraData->interlacedPcmDataBuffer = NULL;
-  sampleSource->extraData = extraData;
+
+  extraData->numChannels = (unsigned short)getNumChannels();
+  extraData->sampleRate = (unsigned int)getSampleRate();
+  extraData->bitsPerSample = 16;
+  extraData->numSamplesWritten = 0;
 
   return sampleSource;
 }
