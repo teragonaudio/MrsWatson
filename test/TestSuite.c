@@ -18,6 +18,8 @@ extern void runMrsWatsonTests(char *applicationPath);
 extern void runMidiSequenceTests(void);
 extern void runSampleSourceWaveFileTests(void);
 
+#define RUN_APPLICATION_TESTS 0
+
 static void runAllTests(void) {
   runAudioClockTests();
   runAudioSettingsTests();
@@ -36,6 +38,7 @@ int main(int argc, char* argv[]) {
   printf("\nRan %d function tests: %d passed, %d failed\n", testsPassed + testsFailed, testsPassed, testsFailed);
   totalTestsFailed = testsFailed;
 
+#if RUN_APPLICATION_TESTS
   printf("\n=== Application tests ===\n");
   if(argc <= 1) {
     printf("Skipping application tests, no path to MrsWatson executable\n");
@@ -46,6 +49,7 @@ int main(int argc, char* argv[]) {
     runMrsWatsonTests(argv[1]);
     printf("\nRan %d application tests: %d passed, %d failed\n", testsPassed + testsFailed, testsPassed, testsFailed);
   }
+#endif
 
   printf("\n=== Finished with %d total failed tests ===\n", totalTestsFailed);
   return totalTestsFailed;
