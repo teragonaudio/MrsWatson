@@ -50,6 +50,15 @@ PlatformType getPlatformType() {
 }
 
 boolByte fileExists(const char* absolutePath) {
+#if WINDOWS
+  // Visual Studio's compiler is not C99 compliant, so variable declarations
+  // need to be at the top.
+  unsigned long fileAttributes;
+#endif
+  if(absolutePath == NULL) {
+    return false;
+  }
+
 #if MACOSX || LINUX
   struct stat* buffer = malloc(sizeof(struct stat));
   boolByte result = (stat(absolutePath, buffer) == 0);
@@ -57,7 +66,7 @@ boolByte fileExists(const char* absolutePath) {
   return result;
 
 #elif WINDOWS
-  unsigned long fileAttributes = GetFileAttributesA((LPCSTR)absolutePath);
+  fileAttributes = GetFileAttributesA((LPCSTR)absolutePath);
   if(fileAttributes == INVALID_FILE_ATTRIBUTES) {
     return false;
   }
