@@ -320,10 +320,10 @@ static boolByte _writeBlockToWaveFile(void* sampleSourcePtr, const SampleBuffer 
 }
 
 void closeSampleSourceWave(void* sampleSourceDataPtr) {
+#if ! HAVE_LIBAUDIOFILE
   SampleSource sampleSource = (SampleSource)sampleSourceDataPtr;
   SampleSourcePcmData extraData = (SampleSourcePcmData)sampleSource->extraData;
 
-#if ! HAVE_LIBAUDIOFILE
   if(sampleSource->openedAs == SAMPLE_SOURCE_OPEN_WRITE) {
     unsigned int numBytesWritten;
     RiffChunk chunk = newRiffChunk();
