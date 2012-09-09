@@ -120,7 +120,7 @@
 /* Begin PBXFileReference section */
 		1AA104785CFF2916EDE09588 /* ApplicationRunner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ApplicationRunner.h; path = ../test/ApplicationRunner.h; sourceTree = "<group>"; };
 		1AA10ED6C7E7B8CFF8A48159 /* ApplicationRunner.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ApplicationRunner.c; path = ../test/ApplicationRunner.c; sourceTree = "<group>"; };
-		241D63F315FCBB780038164B /* libstdc++.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libstdc++.dylib"; path = "../../../../../../../usr/lib/libstdc++.dylib"; sourceTree = "<group>"; };
+		241D63F315FCBB780038164B /* libstdc++.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libstdc++.dylib"; path = "/usr/lib/libstdc++.dylib"; sourceTree = "<absolute>"; };
 		2465A2CE14B3152100F94E84 /* aeffect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = aeffect.h; sourceTree = "<group>"; };
 		2465A2CF14B3152100F94E84 /* aeffectx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = aeffectx.h; sourceTree = "<group>"; };
 		2465A2D014B3152100F94E84 /* vstfxstore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vstfxstore.h; sourceTree = "<group>"; };
@@ -296,6 +296,7 @@
 			isa = PBXGroup;
 			children = (
 				24CFD07A14B3736A005AF479 /* Carbon.framework */,
+				241D63F315FCBB780038164B /* libstdc++.dylib */,
 				24E3207914CC14B900DA6589 /* libaudiofile.a */,
 			);
 			name = Libraries;
@@ -355,7 +356,6 @@
 		24FDFB9F148CC6AF0074D3A1 = {
 			isa = PBXGroup;
 			children = (
-				241D63F315FCBB780038164B /* libstdc++.dylib */,
 				24667E1014CAD1FD0065FA1D /* Libraries */,
 				24EDB06B15F5E7B500B0B8DF /* Main */,
 				24FDFBAB148CC6AF0074D3A1 /* Products */,
