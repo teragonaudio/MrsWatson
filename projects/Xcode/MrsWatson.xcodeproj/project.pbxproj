@@ -73,6 +73,8 @@
 		24EDB11C15F618C800B0B8DF /* SampleSourceWaveTest.c in Sources */ = {isa = PBXBuildFile; fileRef = 24EDB01B15F46F0F00B0B8DF /* SampleSourceWaveTest.c */; };
 		24EDB11D15F618C800B0B8DF /* StringUtilitiesTest.c in Sources */ = {isa = PBXBuildFile; fileRef = 24EDB01C15F46F0F00B0B8DF /* StringUtilitiesTest.c */; };
 		24EDB11E15F618C800B0B8DF /* TaskTimerTest.c in Sources */ = {isa = PBXBuildFile; fileRef = 24EDB01D15F46F0F00B0B8DF /* TaskTimerTest.c */; };
+		24F846C315FCA302008F8234 /* libaudiofile.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 24E3207914CC14B900DA6589 /* libaudiofile.a */; };
+		24F846C415FCA320008F8234 /* libaudiofile.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 24E3207914CC14B900DA6589 /* libaudiofile.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -128,7 +130,7 @@
 		24DB478915F640F50009F6F2 /* AnalysisSilence.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnalysisSilence.h; sourceTree = "<group>"; };
 		24DB478F15F641730009F6F2 /* AnalyzeFile.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = AnalyzeFile.c; sourceTree = "<group>"; };
 		24DB479015F641730009F6F2 /* AnalyzeFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnalyzeFile.h; sourceTree = "<group>"; };
-		24E3207914CC14B900DA6589 /* libaudiofile.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libaudiofile.a; path = libs/mac/libaudiofile.a; sourceTree = "<group>"; };
+		24E3207914CC14B900DA6589 /* libaudiofile.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libaudiofile.a; path = ../../vendor/audiofile/libaudiofile/.libs/libaudiofile.a; sourceTree = "<group>"; };
 		24E3207B14CC18CB00DA6589 /* audiofile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = audiofile.h; sourceTree = "<group>"; };
 		24EDAF8215F46EB400B0B8DF /* AudioClock.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = AudioClock.c; sourceTree = "<group>"; };
 		24EDAF8315F46EB400B0B8DF /* AudioClock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioClock.h; sourceTree = "<group>"; };
@@ -239,6 +241,7 @@
 			files = (
 				24EDB11715F6189E00B0B8DF /* Carbon.framework in Frameworks */,
 				24EDB11415F6187F00B0B8DF /* libMrsWatson.a in Frameworks */,
+				24F846C315FCA302008F8234 /* libaudiofile.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -248,6 +251,7 @@
 			files = (
 				24EDB11615F6189200B0B8DF /* Carbon.framework in Frameworks */,
 				24EDB11515F6188500B0B8DF /* libMrsWatson.a in Frameworks */,
+				24F846C415FCA320008F8234 /* libaudiofile.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -286,17 +290,10 @@
 		24667E1014CAD1FD0065FA1D /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				24CFD07A14B3736A005AF479 /* Carbon.framework */,
 				24E3207914CC14B900DA6589 /* libaudiofile.a */,
 			);
 			name = Libraries;
-			sourceTree = "<group>";
-		};
-		24CFD07C14B37373005AF479 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				24CFD07A14B3736A005AF479 /* Carbon.framework */,
-			);
-			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		24ED067C15D3C834007CDA69 /* Test */ = {
@@ -353,7 +350,6 @@
 		24FDFB9F148CC6AF0074D3A1 = {
 			isa = PBXGroup;
 			children = (
-				24CFD07C14B37373005AF479 /* Frameworks */,
 				24667E1014CAD1FD0065FA1D /* Libraries */,
 				24EDB06B15F5E7B500B0B8DF /* Main */,
 				24FDFBAB148CC6AF0074D3A1 /* Products */,
@@ -663,10 +659,6 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				EXECUTABLE_PREFIX = "";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -686,9 +678,9 @@
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
+				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/../../vendor/audiofile/libaudiofile/.libs\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -699,6 +691,10 @@
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../vendor/audiofile/libaudiofile/.libs\"",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -708,9 +704,9 @@
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
+				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/../../vendor/audiofile/libaudiofile/.libs\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -721,6 +717,10 @@
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../vendor/audiofile/libaudiofile/.libs\"",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -738,6 +738,7 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"MACOSX=1",
+					"HAVE_LIBAUDIOFILE=1",
 					"DEBUG=1",
 					"$(inherited)",
 				);
@@ -747,8 +748,7 @@
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = "../../vendor/audiofile-0.3.3/libaudiofile";
-				LIBRARY_SEARCH_PATHS = ../../libs/mac;
+				HEADER_SEARCH_PATHS = ../../vendor/audiofile/libaudiofile;
 				MACOSX_DEPLOYMENT_TARGET = 10.4;
 				ONLY_ACTIVE_ARCH = NO;
 				SDKROOT = "";
@@ -766,14 +766,16 @@
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_INPUT_FILETYPE = automatic;
 				GCC_OPTIMIZATION_LEVEL = 3;
-				GCC_PREPROCESSOR_DEFINITIONS = "MACOSX=1";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"MACOSX=1",
+					"HAVE_LIBAUDIOFILE=1",
+				);
 				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = "../../vendor/audiofile-0.3.3/libaudiofile";
-				LIBRARY_SEARCH_PATHS = ../../libs/mac;
+				HEADER_SEARCH_PATHS = ../../vendor/audiofile/libaudiofile;
 				MACOSX_DEPLOYMENT_TARGET = 10.4;
 				ONLY_ACTIVE_ARCH = NO;
 				SDKROOT = "";
