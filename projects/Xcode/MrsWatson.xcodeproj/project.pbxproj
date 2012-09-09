@@ -681,7 +681,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(BUILD_PRODUCTS_DIR)",
-					"\"$(SRCROOT)/../../vendor/audiofile/libaudiofile/.libs\"",
+					"\"$(SRCROOT)/../../vendor/libs\"",
 				);
 				PRODUCT_NAME = mrswatson;
 			};
@@ -695,7 +695,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(BUILD_PRODUCTS_DIR)",
-					"\"$(SRCROOT)/../../vendor/audiofile/libaudiofile/.libs\"",
+					"\"$(SRCROOT)/../../vendor/libs\"",
 				);
 				PRODUCT_NAME = mrswatson;
 			};
@@ -708,7 +708,8 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/../../vendor/audiofile/libaudiofile/.libs\"",
+					"\"$(SRCROOT)/../../vendor/libs\"",
+					"$(BUILT_PRODUCTS_DIR)",
 				);
 				PRODUCT_NAME = mrswatsontest;
 			};
@@ -721,7 +722,8 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/../../vendor/audiofile/libaudiofile/.libs\"",
+					"\"$(SRCROOT)/../../vendor/libs\"",
+					"$(BUILT_PRODUCTS_DIR)",
 				);
 				PRODUCT_NAME = mrswatsontest;
 			};
