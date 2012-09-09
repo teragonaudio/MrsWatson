@@ -78,11 +78,6 @@ static boolByte _readWaveFileInfo(const char* filename, SampleSourcePcmData extr
       freeRiffChunk(chunk);
       return false;
     }
-    if(chunk->size < 20) {
-      logFileError(filename, "Invalid format chunk size");
-      freeRiffChunk(chunk);
-      return false;
-    }
 
     audioFormat = convertByteArrayToUnsignedShort(chunk->data + chunkOffset);
     chunkOffset += 2;
