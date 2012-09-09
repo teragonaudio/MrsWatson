@@ -233,6 +233,7 @@ SampleSource newSampleSourcePcm(const CharString sampleSourceName) {
   extraData->numChannels = (unsigned short)getNumChannels();
   extraData->sampleRate = (unsigned int)getSampleRate();
   extraData->bitsPerSample = 16;
+  sampleSource->extraData = extraData;
 
   return sampleSource;
 }
