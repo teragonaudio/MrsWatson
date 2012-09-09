@@ -192,8 +192,9 @@ static boolByte writeBlockToPcmFile(void* sampleSourcePtr, const SampleBuffer sa
   return writePcmDataToFile(extraData, sampleBuffer, &(sampleSource->numSamplesProcessed));
 }
 
-static void _closeSampleSourcePcm(void* sampleSourceDataPtr) {
-  SampleSourcePcmData extraData = (SampleSourcePcmData)sampleSourceDataPtr;
+static void _closeSampleSourcePcm(void* sampleSourcePtr) {
+  SampleSource sampleSource = (SampleSource)sampleSourcePtr;
+  SampleSourcePcmData extraData = (SampleSourcePcmData)sampleSource->extraData;
   if(extraData->fileHandle != NULL) {
     fclose(extraData->fileHandle);
   }
