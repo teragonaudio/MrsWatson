@@ -61,7 +61,7 @@
 		24EDB11015F6185900B0B8DF /* SampleBufferTest.c in Sources */ = {isa = PBXBuildFile; fileRef = 24EDB01515F46F0F00B0B8DF /* SampleBufferTest.c */; };
 		24EDB11115F6185900B0B8DF /* SampleSourceAiffTest.c in Sources */ = {isa = PBXBuildFile; fileRef = 24EDB01615F46F0F00B0B8DF /* SampleSourceAiffTest.c */; };
 		24EDB11215F6185900B0B8DF /* TestSuite.c in Sources */ = {isa = PBXBuildFile; fileRef = 24EDB01F15F46F0F00B0B8DF /* TestSuite.c */; };
-		24EDB11315F6186800B0B8DF /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 24EDB06C15F5E7C800B0B8DF /* main.cpp */; };
+		24EDB11315F6186800B0B8DF /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 24EDB06C15F5E7C800B0B8DF /* main.c */; };
 		24EDB11415F6187F00B0B8DF /* libMrsWatson.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 24EDB0BD15F6177C00B0B8DF /* libMrsWatson.a */; };
 		24EDB11515F6188500B0B8DF /* libMrsWatson.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 24EDB0BD15F6177C00B0B8DF /* libMrsWatson.a */; };
 		24EDB11615F6189200B0B8DF /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 24CFD07A14B3736A005AF479 /* Carbon.framework */; };
@@ -221,7 +221,7 @@
 		24EDB01D15F46F0F00B0B8DF /* TaskTimerTest.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = TaskTimerTest.c; sourceTree = "<group>"; };
 		24EDB01E15F46F0F00B0B8DF /* TestRunner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestRunner.h; sourceTree = "<group>"; };
 		24EDB01F15F46F0F00B0B8DF /* TestSuite.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = TestSuite.c; sourceTree = "<group>"; };
-		24EDB06C15F5E7C800B0B8DF /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = ../../main/main.cpp; sourceTree = "<group>"; };
+		24EDB06C15F5E7C800B0B8DF /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = main.c; path = ../../main/main.c; sourceTree = "<group>"; };
 		24EDB0BD15F6177C00B0B8DF /* libMrsWatson.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libMrsWatson.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		24EDB0E515F617EC00B0B8DF /* mrswatson */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = mrswatson; sourceTree = BUILT_PRODUCTS_DIR; };
 		24EDB0F515F6182C00B0B8DF /* mrswatsontest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = mrswatsontest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -342,7 +342,7 @@
 		24EDB06B15F5E7B500B0B8DF /* Main */ = {
 			isa = PBXGroup;
 			children = (
-				24EDB06C15F5E7C800B0B8DF /* main.cpp */,
+				24EDB06C15F5E7C800B0B8DF /* main.c */,
 			);
 			name = Main;
 			sourceTree = "<group>";
@@ -597,7 +597,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				24EDB11315F6186800B0B8DF /* main.cpp in Sources */,
+				24EDB11315F6186800B0B8DF /* main.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
