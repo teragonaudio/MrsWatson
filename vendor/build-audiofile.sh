@@ -4,5 +4,6 @@
   CXXFLAGS="-arch i386 -m32" LDFLAGS="-arch i386 -m32" \
   --enable-static
 make clean
-make
+make -j4
+cp ./libaudiofile/.libs/libaudiofile.a ../libs
 )
