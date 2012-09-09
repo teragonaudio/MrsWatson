@@ -65,6 +65,7 @@ void initEventLogger(void) {
 
   eventLoggerInstance = (EventLogger)malloc(sizeof(EventLoggerMembers));
   eventLoggerInstance->logLevel = LOG_INFO;
+  eventLoggerInstance->logFile = NULL;
   eventLoggerInstance->colorScheme = COLOR_SCHEME_NONE;
   eventLoggerInstance->zebraStripeSize = (long)DEFAULT_SAMPLE_RATE;
 
