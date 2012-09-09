@@ -1,6 +1,8 @@
 # Build directories
 build/*
 **/build/*
+vendor/libs/*.a
+vendor/libs/*.lib
 
 # Temporary files
 *.swp
