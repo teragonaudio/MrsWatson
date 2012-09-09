@@ -135,8 +135,8 @@ For the command line builds, you will need the following:
 
 On Windows, MrsWatson can also be built with Visual Studio, which is preferred
 as this offers better performance. After cloning the source code, run the
-`autogen.sh` script, then `./configure` and `make` as usual. Please report any
-build problems on the [project page][3].
+`setup-build.sh` script, then `./configure` and `make` as usual. Please report
+any build problems on the [project page][3].
 
 As MrsWatson is a 32-bit executable, which is needed to support 32-bit plugins
 (of which are the vast majority in the plugin world), you may also need some
