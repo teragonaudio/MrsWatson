@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		241D63F415FCBB780038164B /* libstdc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 241D63F315FCBB780038164B /* libstdc++.dylib */; };
+		241D63F615FCBB8A0038164B /* libstdc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 241D63F315FCBB780038164B /* libstdc++.dylib */; };
 		24DB478A15F640F50009F6F2 /* AnalysisClipping.c in Sources */ = {isa = PBXBuildFile; fileRef = 24DB478215F640F50009F6F2 /* AnalysisClipping.c */; };
 		24DB478B15F640F50009F6F2 /* AnalysisDistortion.c in Sources */ = {isa = PBXBuildFile; fileRef = 24DB478415F640F50009F6F2 /* AnalysisDistortion.c */; };
 		24DB478D15F640F50009F6F2 /* AnalysisSilence.c in Sources */ = {isa = PBXBuildFile; fileRef = 24DB478815F640F50009F6F2 /* AnalysisSilence.c */; };
@@ -118,6 +120,7 @@
 /* Begin PBXFileReference section */
 		1AA104785CFF2916EDE09588 /* ApplicationRunner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ApplicationRunner.h; path = ../test/ApplicationRunner.h; sourceTree = "<group>"; };
 		1AA10ED6C7E7B8CFF8A48159 /* ApplicationRunner.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ApplicationRunner.c; path = ../test/ApplicationRunner.c; sourceTree = "<group>"; };
+		241D63F315FCBB780038164B /* libstdc++.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libstdc++.dylib"; path = "../../../../../../../usr/lib/libstdc++.dylib"; sourceTree = "<group>"; };
 		2465A2CE14B3152100F94E84 /* aeffect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = aeffect.h; sourceTree = "<group>"; };
 		2465A2CF14B3152100F94E84 /* aeffectx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = aeffectx.h; sourceTree = "<group>"; };
 		2465A2D014B3152100F94E84 /* vstfxstore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vstfxstore.h; sourceTree = "<group>"; };
@@ -240,6 +243,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				24EDB11715F6189E00B0B8DF /* Carbon.framework in Frameworks */,
+				241D63F415FCBB780038164B /* libstdc++.dylib in Frameworks */,
 				24EDB11415F6187F00B0B8DF /* libMrsWatson.a in Frameworks */,
 				24F846C315FCA302008F8234 /* libaudiofile.a in Frameworks */,
 			);
@@ -250,6 +254,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				24EDB11615F6189200B0B8DF /* Carbon.framework in Frameworks */,
+				241D63F615FCBB8A0038164B /* libstdc++.dylib in Frameworks */,
 				24EDB11515F6188500B0B8DF /* libMrsWatson.a in Frameworks */,
 				24F846C415FCA320008F8234 /* libaudiofile.a in Frameworks */,
 			);
@@ -350,6 +355,7 @@
 		24FDFB9F148CC6AF0074D3A1 = {
 			isa = PBXGroup;
 			children = (
+				241D63F315FCBB780038164B /* libstdc++.dylib */,
 				24667E1014CAD1FD0065FA1D /* Libraries */,
 				24EDB06B15F5E7B500B0B8DF /* Main */,
 				24FDFBAB148CC6AF0074D3A1 /* Products */,
