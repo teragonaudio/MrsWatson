@@ -509,6 +509,7 @@ static void _displayVst2xPluginInfo(void* pluginPtr) {
   logInfo("Vendor: %s", nameBuffer->data);
   int vendorVersion = data->dispatcher(data->pluginHandle, effGetVendorVersion, 0, 0, NULL, 0.0f);
   logInfo("Version: %d", vendorVersion);
+  clearCharString(nameBuffer);
   fillVst2xUniqueIdToString(data->pluginHandle->uniqueID, nameBuffer);
   logInfo("Unique ID: %s", nameBuffer->data);
   logInfo("Version: %d", data->pluginHandle->version);
@@ -526,6 +527,7 @@ static void _displayVst2xPluginInfo(void* pluginPtr) {
     data->dispatcher(data->pluginHandle, effGetProgramNameIndexed, i, 0, nameBuffer->data, 0.0f);
     logInfo("  %d: %s", i, nameBuffer->data);
   }
+  clearCharString(nameBuffer);
   data->dispatcher(data->pluginHandle, effGetProgramName, 0, 0, nameBuffer->data, 0.0f);
   logInfo("Current program: %s", nameBuffer->data);
   freeCharString(nameBuffer);
