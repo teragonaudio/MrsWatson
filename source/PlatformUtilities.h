@@ -57,6 +57,7 @@ typedef enum {
 } PlatformType;
 
 PlatformType getPlatformType(void);
+const char* getPlatformName(void);
 boolByte fileExists(const char* absolutePath);
 int listDirectory(const char* directory, LinkedList outItems);
 

@@ -49,6 +49,21 @@ PlatformType getPlatformType() {
 #endif
 }
 
+const char* getPlatformName(void) {
+  switch(getPlatformType()) {
+    case PLATFORM_MACOSX:
+      return "Mac OSX";
+    case PLATFORM_LINUX:
+      return "Linux";
+    case PLATFORM_WINDOWS:
+      return "Windows";
+    default:
+      return "Unsupported platform";
+  }
+}
+
+// TODO: const char* getPlatformVersion();
+
 boolByte fileExists(const char* absolutePath) {
 #if WINDOWS
   // Visual Studio's compiler is not C99 compliant, so variable declarations
