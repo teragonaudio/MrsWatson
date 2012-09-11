@@ -1,7 +1,5 @@
-include_directories(${MRSWATSON_SOURCE_DIR}/source)
-link_directories(${MRSWATSON_BINARY_DIR}/source)
-
-add_library(MrsWatson STATIC
+# TODO: Add file globbing
+set(libMrsWatson_SOURCES
   AudioClock.c
   AudioSettings.c
   BuildInfo.c
@@ -35,3 +33,5 @@ add_library(MrsWatson STATIC
   PluginVst2x.cpp
   Vst2xHostCallback.cpp
 )
+
+add_library(MrsWatson ${libMrsWatson_SOURCES})
