@@ -220,6 +220,7 @@ int mrsWatsonMain(int argc, char** argv) {
   fillVersionString(versionString);
   logInfo("%s initialized", versionString->data);
   freeCharString(versionString);
+  logInfo("Host platform is %s", getPlatformName());
 
   // Construct plugin chain
   if(!addPluginsFromArgumentString(pluginChain, programOptions[OPTION_PLUGIN]->argument, pluginSearchRoot)) {
