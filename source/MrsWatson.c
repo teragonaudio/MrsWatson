@@ -28,6 +28,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#if UNIX
+#include <signal.h>
+#endif
+
 #include "EventLogger.h"
 #include "MrsWatson.h"
 #include "BuildInfo.h"
@@ -59,6 +63,13 @@ static void prettyPrintTime(CharString outString, unsigned long milliseconds) {
     snprintf(outString->data, outString->capacity, "%d:%2.3gsec", minutes, seconds);
   }
 }
+
+#if UNIX
+static void handleSignal(int signum) {
+  logError("Sent signal %d, exiting", signum);
+  exit(RETURN_CODE_SIGNAL + signum);
+}
+#endif
 
 int mrsWatsonMain(int argc, char** argv) {
   // Input/Output sources, plugin chain, and other required objects
@@ -221,6 +232,23 @@ int mrsWatsonMain(int argc, char** argv) {
   logInfo("%s initialized", versionString->data);
   freeCharString(versionString);
   logInfo("Host platform is %s", getPlatformName());
+
+#if UNIX
+  // Set up signal handling only after logging is initialized. If we crash before
+  // here, something is seriously wrong.
+  signal(SIGHUP, handleSignal);
+  signal(SIGINT, handleSignal);
+  signal(SIGQUIT, handleSignal);
+  signal(SIGILL, handleSignal);
+  signal(SIGABRT, handleSignal);
+  signal(SIGFPE, handleSignal);
+  signal(SIGKILL, handleSignal);
+  signal(SIGBUS, handleSignal);
+  signal(SIGSEGV, handleSignal);
+  signal(SIGSYS, handleSignal);
+  signal(SIGPIPE, handleSignal);
+  signal(SIGTERM, handleSignal);
+#endif
 
   // Construct plugin chain
   if(!addPluginsFromArgumentString(pluginChain, programOptions[OPTION_PLUGIN]->argument, pluginSearchRoot)) {

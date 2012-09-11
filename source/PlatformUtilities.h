@@ -46,6 +46,8 @@
 #define unlink _unlink
 #define snprintf _snprintf
 #define isatty(int) 0
+#else
+#define UNIX 1
 #endif
 
 typedef enum {
