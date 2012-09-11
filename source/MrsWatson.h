@@ -68,6 +68,10 @@ typedef enum {
   RETURN_CODE_PLUGIN_ERROR,
   RETURN_CODE_INVALID_PLUGIN_CHAIN,
   RETURN_CODE_UNSUPPORTED_FEATURE,
+  // This return code should always be right before the last one. It is not
+  // actually used, but instead we add the signal number to it and exit with
+  // that code instead.
+  RETURN_CODE_SIGNAL,
   NUM_RETURN_CODES
 } ReturnCodes;
 
