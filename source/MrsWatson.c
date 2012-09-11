@@ -41,6 +41,25 @@
 #include "MidiSource.h"
 #include "PlatformUtilities.h"
 
+static void prettyPrintTime(CharString outString, unsigned long milliseconds) {
+  clearCharString(outString);
+  int minutes;
+  double seconds;
+
+  if(milliseconds < 1000) {
+    snprintf(outString->data, outString->capacity, "%ldms", milliseconds);
+  }
+  else if(milliseconds < 60 * 1000) {
+    seconds = (double)milliseconds / 1000.0;
+    snprintf(outString->data, outString->capacity, "%2.3gsec", seconds);
+  }
+  else {
+    seconds = (double)milliseconds / 1000.0;
+    minutes = (int)seconds % 60;
+    snprintf(outString->data, outString->capacity, "%d:%2.3gsec", minutes, seconds);
+  }
+}
+
 int mrsWatsonMain(int argc, char** argv) {
   // Input/Output sources, plugin chain, and other required objects
   SampleSource inputSource = NULL;
@@ -58,6 +77,7 @@ int mrsWatsonMain(int argc, char** argv) {
   int blocksize;
   SampleBuffer inputSampleBuffer, outputSampleBuffer;
   TaskTimer taskTimer;
+  CharString totalTimeString;
   boolByte finishedReading = false;
   int hostTaskId;
   SampleSource silentSampleInput;
@@ -355,14 +375,18 @@ int mrsWatsonMain(int argc, char** argv) {
     totalProcessingTime += taskTimer->totalTaskTimes[i];
   }
 
+  totalTimeString = newCharString();
   if(totalProcessingTime > 0) {
-    logInfo("Total processing time %ldms, approximate breakdown by component:", totalProcessingTime);
+    prettyPrintTime(totalTimeString, totalProcessingTime);
+    logInfo("Total processing time %s, approximate breakdown by component:", totalTimeString->data);
     for(i = 0; i < pluginChain->numPlugins; i++) {
       timePercentage = 100.0f * ((double)taskTimer->totalTaskTimes[i]) / ((double)totalProcessingTime);
-      logInfo("  %s: %ldms, %2.1f%%", pluginChain->plugins[i]->pluginName->data, taskTimer->totalTaskTimes[i], timePercentage);
+      prettyPrintTime(totalTimeString, taskTimer->totalTaskTimes[i]); 
+      logInfo("  %s: %s, %2.1f%%", pluginChain->plugins[i]->pluginName->data, totalTimeString->data, timePercentage);
     }
     timePercentage = 100.0f * ((double)taskTimer->totalTaskTimes[hostTaskId]) / ((double)totalProcessingTime);
-    logInfo("  %s: %ldms, %2.1f%%", PROGRAM_NAME, taskTimer->totalTaskTimes[hostTaskId], timePercentage);
+    prettyPrintTime(totalTimeString, taskTimer->totalTaskTimes[hostTaskId]);
+    logInfo("  %s: %s, %2.1f%%", PROGRAM_NAME, totalTimeString->data, timePercentage);
   }
   else {
     logInfo("Total processing time <1ms. Either something went wrong, or your computer is smokin' fast!");
