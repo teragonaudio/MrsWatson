@@ -52,6 +52,9 @@ typedef struct {
 typedef ProgramOptionMembers* ProgramOption;
 typedef ProgramOption* ProgramOptions;
 
+void addNewProgramOption(const ProgramOptions programOptions, const int optionIndex,
+  const char* name, const char* help, boolByte hasShortForm, ProgramOptionArgumentType argumentType,
+  int defaultValue);
 ProgramOptions newProgramOptions(void);
 boolByte parseCommandLine(ProgramOptions programOptions, int argc, char** argv);
 ProgramOption findProgramOptionFromString(const ProgramOptions programOptions, const CharString string);

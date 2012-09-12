@@ -35,7 +35,7 @@
 
 #define NO_DEFAULT_VALUE -1
 
-static void _addNewProgramOption(const ProgramOptions programOptions, const int optionIndex,
+void addNewProgramOption(const ProgramOptions programOptions, const int optionIndex,
   const char* name, const char* help, boolByte hasShortForm, ProgramOptionArgumentType argumentType,
   int defaultValue) {
   ProgramOption programOption = (ProgramOption)malloc(sizeof(ProgramOptionMembers));
@@ -58,70 +58,70 @@ static void _addNewProgramOption(const ProgramOptions programOptions, const int 
 ProgramOption* newProgramOptions(void) {
   ProgramOptions programOptions = malloc(sizeof(ProgramOptions) * NUM_OPTIONS);
 
-  _addNewProgramOption(programOptions, OPTION_BLOCKSIZE, "blocksize",
+  addNewProgramOption(programOptions, OPTION_BLOCKSIZE, "blocksize",
     "Blocksize in frames to use for processing. If input source is not an even multiple of the blocksize, then \
 empty frames will be added to the last block.",
     true, ARGUMENT_TYPE_REQUIRED, getBlocksize());
 
-  _addNewProgramOption(programOptions, OPTION_CHANNELS, "channels",
+  addNewProgramOption(programOptions, OPTION_CHANNELS, "channels",
     "Number of channels for output source. If the input source's channel count does not match the output source, \
 then channels are either copied (mono -> dual mono) or ignored (stereo -> mono, left channel).",
     true, ARGUMENT_TYPE_REQUIRED, getNumChannels());
 
-  _addNewProgramOption(programOptions, OPTION_COLOR_LOGGING, "color",
+  addNewProgramOption(programOptions, OPTION_COLOR_LOGGING, "color",
     "Colored logging output. Argument can be 'light', 'dark', or 'none'. If no argument given, 'dark' is assumed. \
 If stderr is a terminal device, color is used automatically unless 'none' is given to this option.",
     false, ARGUMENT_TYPE_OPTIONAL, NO_DEFAULT_VALUE);
 
-  _addNewProgramOption(programOptions, OPTION_DISPLAY_INFO, "display-info",
+  addNewProgramOption(programOptions, OPTION_DISPLAY_INFO, "display-info",
     "Print information about each plugin in the chain.",
     false, ARGUMENT_TYPE_NONE, NO_DEFAULT_VALUE);
 
-  _addNewProgramOption(programOptions, OPTION_LIST_FILE_TYPES, "list-file-types",
+  addNewProgramOption(programOptions, OPTION_LIST_FILE_TYPES, "list-file-types",
     "Print a list of supported file types for input/output sources.",
     false, ARGUMENT_TYPE_NONE, NO_DEFAULT_VALUE);
 
-  _addNewProgramOption(programOptions, OPTION_HELP, "help",
+  addNewProgramOption(programOptions, OPTION_HELP, "help",
     "Print full program help (this screen), or just the help for a single argument.",
     true, ARGUMENT_TYPE_OPTIONAL, NO_DEFAULT_VALUE);
 
-  _addNewProgramOption(programOptions, OPTION_INPUT_SOURCE, "input",
+  addNewProgramOption(programOptions, OPTION_INPUT_SOURCE, "input",
     "Input source to use for processing, where the file type is determined from the extension. Run with \
 --list-file-types to see a list of supported types. Use '-' to read from stdin.",
     true, ARGUMENT_TYPE_REQUIRED, NO_DEFAULT_VALUE);
 
-  _addNewProgramOption(programOptions, OPTION_LIST_PLUGINS, "list-plugins",
+  addNewProgramOption(programOptions, OPTION_LIST_PLUGINS, "list-plugins",
     "List available plugins. Useful for determining if a plugin can be 'seen'.",
     false, ARGUMENT_TYPE_NONE, NO_DEFAULT_VALUE);
 
-  _addNewProgramOption(programOptions, OPTION_LOG_FILE, "log-file",
+  addNewProgramOption(programOptions, OPTION_LOG_FILE, "log-file",
     "Save logging output to the given file instead of the terminal's standard error.",
     false, ARGUMENT_TYPE_REQUIRED, NO_DEFAULT_VALUE);
 
-  _addNewProgramOption(programOptions, OPTION_MIDI_SOURCE, "midi-file",
+  addNewProgramOption(programOptions, OPTION_MIDI_SOURCE, "midi-file",
     "MIDI file to read events from. Required if processing an instrument plugin.",
     true, ARGUMENT_TYPE_REQUIRED, NO_DEFAULT_VALUE);
 
-  _addNewProgramOption(programOptions, OPTION_OPTIONS, "options",
+  addNewProgramOption(programOptions, OPTION_OPTIONS, "options",
     "Show program options and their default values.",
     false, ARGUMENT_TYPE_NONE, NO_DEFAULT_VALUE);
 
-  _addNewProgramOption(programOptions, OPTION_OUTPUT_SOURCE, "output",
+  addNewProgramOption(programOptions, OPTION_OUTPUT_SOURCE, "output",
     "Output source to write processed data to, where the file type is determined from the extension. Run with \
 --list-file-types to see a list of supported types. Use '-' to write to stdout.",
     true, ARGUMENT_TYPE_REQUIRED, NO_DEFAULT_VALUE);
 
-  _addNewProgramOption(programOptions, OPTION_PCM_NUM_CHANNELS, "pcm-num-channels",
+  addNewProgramOption(programOptions, OPTION_PCM_NUM_CHANNELS, "pcm-num-channels",
     "Number of channels to use when reading raw PCM data. If not given, defaults to the global channel count \
 from the --channels option.",
     false, ARGUMENT_TYPE_REQUIRED, getNumChannels());
 
-  _addNewProgramOption(programOptions, OPTION_PCM_SAMPLE_RATE, "pcm-sample-rate",
+  addNewProgramOption(programOptions, OPTION_PCM_SAMPLE_RATE, "pcm-sample-rate",
     "Sample rate to use when reading raw PCM data. If not given, defaults to the global sample rate from the \
 --sample-rate option.",
     false, ARGUMENT_TYPE_REQUIRED, (int)getSampleRate());
 
-  _addNewProgramOption(programOptions, OPTION_PLUGIN, "plugin",
+  addNewProgramOption(programOptions, OPTION_PLUGIN, "plugin",
     "Plugin(s) to process. Multiple plugins can given in a semicolon-separated list, in which case they will be \
 placed into a chain in the order specified. Instrument plugins must appear first in any chains. Plugins are searched \
 for in the --plugin-root directory, the current directory, and the standard locations for the OS. File extensions are \
@@ -130,50 +130,50 @@ be of the corresponding file format for the respective plugin.\
 \nExample: --plugin 'AutoTune,KayneWest.fxp;Compressor,SoftKnee.fxp;Limiter'",
     true, ARGUMENT_TYPE_REQUIRED, NO_DEFAULT_VALUE);
 
-  _addNewProgramOption(programOptions, OPTION_PLUGIN_ROOT, "plugin-root",
+  addNewProgramOption(programOptions, OPTION_PLUGIN_ROOT, "plugin-root",
     "Custom non-system directory to use when searching for plugins.",
     false, ARGUMENT_TYPE_REQUIRED, NO_DEFAULT_VALUE);
 
-  _addNewProgramOption(programOptions, OPTION_QUIET, "quiet",
+  addNewProgramOption(programOptions, OPTION_QUIET, "quiet",
     "Only log critical errors.",
     true, ARGUMENT_TYPE_NONE, NO_DEFAULT_VALUE);
 
-  _addNewProgramOption(programOptions, OPTION_SAMPLE_RATE, "sample-rate",
+  addNewProgramOption(programOptions, OPTION_SAMPLE_RATE, "sample-rate",
     "Sample rate to use when processing.",
     true, ARGUMENT_TYPE_REQUIRED, (int)getSampleRate());
 
-  _addNewProgramOption(programOptions, OPTION_TAIL_TIME, "tail-time",
+  addNewProgramOption(programOptions, OPTION_TAIL_TIME, "tail-time",
     "Continue processing for up to <argument> extra milliseconds after input source is finished, in addition \
 to any tail time requested by plugins in the chain. If any plugins in chain the require tail time, the largest \
 value will be used and added to <argument>.",
     false, ARGUMENT_TYPE_REQUIRED, NO_DEFAULT_VALUE);
 
-  _addNewProgramOption(programOptions, OPTION_TEMPO, "tempo",
+  addNewProgramOption(programOptions, OPTION_TEMPO, "tempo",
     "Tempo to use when processing.",
     false, ARGUMENT_TYPE_REQUIRED, (int)getTempo());
 
-  _addNewProgramOption(programOptions, OPTION_TIME_DIVISION, "time-division",
+  addNewProgramOption(programOptions, OPTION_TIME_DIVISION, "time-division",
     "Time division in PPQ. If using a MIDI file input, this value will be ignored.",
     false, ARGUMENT_TYPE_REQUIRED, DEFAULT_TIME_DIVISION);
 
-  _addNewProgramOption(programOptions, OPTION_TIME_SIGNATURE_TOP, "time-signature-top",
+  addNewProgramOption(programOptions, OPTION_TIME_SIGNATURE_TOP, "time-signature-top",
     "Set the numerator of the time signature, which determines the number of beats per measure.",
     false, ARGUMENT_TYPE_REQUIRED, getTimeSignatureBeatsPerMeasure());
 
-  _addNewProgramOption(programOptions, OPTION_TIME_SIGNATURE_BOTTOM, "time-signature-bottom",
+  addNewProgramOption(programOptions, OPTION_TIME_SIGNATURE_BOTTOM, "time-signature-bottom",
     "Set the denominator of the time signature, which determines the value of a quarter note.",
     false, ARGUMENT_TYPE_REQUIRED, getTimeSignatureNoteValue());
 
-  _addNewProgramOption(programOptions, OPTION_VERBOSE, "verbose",
+  addNewProgramOption(programOptions, OPTION_VERBOSE, "verbose",
     "Verbose logging. Logging output is printed in the following form:\n\
 (Level) (Frames processed) (Elapsed time in ms) (Logging message)",
     true, ARGUMENT_TYPE_NONE, NO_DEFAULT_VALUE);
 
-  _addNewProgramOption(programOptions, OPTION_VERSION, "version",
+  addNewProgramOption(programOptions, OPTION_VERSION, "version",
     "Print full program version and copyright information.",
     false, ARGUMENT_TYPE_NONE, NO_DEFAULT_VALUE);
 
-  _addNewProgramOption(programOptions, OPTION_ZEBRA_SIZE, "zebra-size",
+  addNewProgramOption(programOptions, OPTION_ZEBRA_SIZE, "zebra-size",
     "Alternate logging output colors every <argument> frames.",
     false, ARGUMENT_TYPE_REQUIRED, (int)getSampleRate());
 
