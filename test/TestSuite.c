@@ -1,13 +1,16 @@
 //
-//  MrsWatsonTest.c
+//  TestSuite.c
 //  MrsWatson
 //
 //  Created by Nik Reiman on 8/9/12.
 //  Copyright (c) 2012 Teragon Audio. All rights reserved.
 //
 
+// TODO: Rename this file
+
 #include <stdio.h>
 #include "TestRunner.h"
+#include "TestSuite.h"
 
 int testsPassed, testsFailed;
 extern void runAudioClockTests(void);
@@ -27,7 +30,14 @@ static void runAllTests(void) {
   runMidiSequenceTests();
 }
 
+static ProgramOptions newTestProgramOptions(void) {
+  ProgramOptions programOptions = malloc(sizeof(ProgramOptions) * NUM_TEST_OPTIONS);
+
+  return programOptions;
+}
+
 int main(int argc, char* argv[]) {
+  ProgramOptions programOptions = newTestProgramOptions();
   int totalTestsFailed = 0;
 
   printf("=== Function tests ===\n");
