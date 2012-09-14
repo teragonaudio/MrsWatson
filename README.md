@@ -129,18 +129,18 @@ Building
 MrsWatson can be built either from the command line or with a few popular IDE's.
 For the command line builds, you will need the following:
 
+* CMake version 2.6 or better
 * A relatively recent automake
 * A relatively recent autoconf
-* Mingw (on Windows)
+* On Windows, either mingw or Visual Studio 2010
 
-On Windows, MrsWatson can also be built with Visual Studio, which is preferred
-as this offers better performance. After cloning the source code, run the
-`setup-build.sh` script, then `./configure` and `make` as usual. Please report
-any build problems on the [project page][3].
+To build from a fresh clone, first run `cmake .`, then `make`. The build will
+create an executable named `mrswatson` in the `main` directory, and another
+one named `mrswatsontest` in the `test` directory.
 
 As MrsWatson is a 32-bit executable, which is needed to support 32-bit plugins
 (of which are the vast majority in the plugin world), you may also need some
-32-bit compatibility libraries installed on your system. On linux, you may
+32-bit compatibility libraries installed on your system. On Linux, you may
 need to install the following packages to build MrsWatson from source:
 
 * gcc-multilib, and also possibly gcc-4.6-multilib
@@ -150,8 +150,8 @@ need to install the following packages to build MrsWatson from source:
 
 Alternately, MrsWatson can be built with a few popular IDE's. Build files are
 included in the `projects` directory under the project sources root.
-Distribution builds of MrsWatson are always made with `make`, except for on
-Windows.
+Distribution builds of MrsWatson are always generated with `make`, except for
+on Windows.
 
 
 Please Help!
