@@ -499,10 +499,45 @@ static boolByte _openVst2xPlugin(void* pluginPtr) {
   return result;
 }
 
+static LinkedList _getCommonCanDos(void) {
+  LinkedList result = newLinkedList();
+  appendItemToList(result, (char*)"sendVstEvents");
+  appendItemToList(result, (char*)"sendVstMidiEvent");
+  appendItemToList(result, (char*)"receiveVstEvents");
+  appendItemToList(result, (char*)"receiveVstMidiEvent");
+  appendItemToList(result, (char*)"receiveVstTimeInfo");
+  appendItemToList(result, (char*)"offline");
+  appendItemToList(result, (char*)"midiProgramNames");
+  appendItemToList(result, (char*)"bypass");
+  return result;
+}
+
+static const char* _prettyTextForCanDoResult(int result) {
+  if(result == -1) {
+    return "No";
+  }
+  else if(result == 0) {
+    return "Don't know";
+  }
+  else if(result == 1) {
+    return "Yes";
+  }
+  else {
+    return "Undefined response";
+  }
+}
+
+static void _displayVst2xPluginCanDo(void* item, void* userData) {
+  char* canDoString = (char*)item;
+  short result = _canPluginDo((Plugin)userData, canDoString);
+  logInfo("  %s: %s", canDoString, _prettyTextForCanDoResult(result));
+}
+
 static void _displayVst2xPluginInfo(void* pluginPtr) {
   Plugin plugin = (Plugin)pluginPtr;
   PluginVst2xData data = (PluginVst2xData)plugin->extraData;
   CharString nameBuffer = newCharString();
+  LinkedList commonCanDos;
 
   logInfo("Information for VST2.x plugin '%s'", plugin->pluginName->data);
   data->dispatcher(data->pluginHandle, effGetVendorString, 0, 0, nameBuffer->data, 0.0f);
@@ -514,6 +549,7 @@ static void _displayVst2xPluginInfo(void* pluginPtr) {
   logInfo("Unique ID: %s", nameBuffer->data);
   logInfo("Version: %d", data->pluginHandle->version);
   logInfo("I/O: %d/%d", data->pluginHandle->numInputs, data->pluginHandle->numOutputs);
+
   logInfo("Parameters (%d total)", data->pluginHandle->numParams);
   for(int i = 0; i < data->pluginHandle->numParams; i++) {
     float value = data->pluginHandle->getParameter(data->pluginHandle, i);
@@ -521,6 +557,7 @@ static void _displayVst2xPluginInfo(void* pluginPtr) {
     data->dispatcher(data->pluginHandle, effGetParamName, i, 0, nameBuffer->data, 0.0f);
     logInfo("  %d: %s (%f)", i, nameBuffer->data, value);
   }
+
   logInfo("Programs (%d total)", data->pluginHandle->numPrograms);
   for(int i = 0; i < data->pluginHandle->numPrograms; i++) {
     clearCharString(nameBuffer);
@@ -531,6 +568,11 @@ static void _displayVst2xPluginInfo(void* pluginPtr) {
   data->dispatcher(data->pluginHandle, effGetProgramName, 0, 0, nameBuffer->data, 0.0f);
   logInfo("Current program: %s", nameBuffer->data);
   freeCharString(nameBuffer);
+
+  logInfo("Common canDo's");
+  commonCanDos = _getCommonCanDos();
+  foreachItemInList(commonCanDos, _displayVst2xPluginCanDo, plugin);
+  freeLinkedList(commonCanDos);
 }
 
 static int _getVst2xPluginSetting(void* pluginPtr, PluginSetting pluginSetting) {
