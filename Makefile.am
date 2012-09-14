@@ -1,1 +1,0 @@
-SUBDIRS = main source test
