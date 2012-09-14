@@ -38,6 +38,8 @@
 
 #if WINDOWS
 #define strncasecmp _strnicmp
+#elif LINUX
+#include <strings.h>
 #endif
 
 typedef struct {
