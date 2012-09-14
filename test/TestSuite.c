@@ -16,7 +16,6 @@ extern void runCharStringTests(void);
 extern void runLinkedListTests(void);
 extern void runMrsWatsonTests(char *applicationPath);
 extern void runMidiSequenceTests(void);
-extern void runSampleSourceWaveFileTests(void);
 
 #define RUN_APPLICATION_TESTS 0
 
@@ -26,7 +25,6 @@ static void runAllTests(void) {
   runCharStringTests();
   runLinkedListTests();
   runMidiSequenceTests();
-  runSampleSourceWaveFileTests();
 }
 
 int main(int argc, char* argv[]) {
