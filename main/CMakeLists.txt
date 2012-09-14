@@ -2,5 +2,10 @@ include_directories(${MRSWATSON_SOURCE_DIR}/source)
 link_directories(${MRSWATSON_BINARY_DIR}/source)
 
 add_executable(mrswatson main.c)
-# TODO Needs to be platform specific flags
-target_link_libraries(mrswatson MrsWatson)
+
+if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+  target_link_libraries(mrswatson MrsWatson dl)
+else()
+  target_link_libraries(mrswatson MrsWatson)
+endif()
+
