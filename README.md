@@ -143,7 +143,8 @@ As MrsWatson is a 32-bit executable, which is needed to support 32-bit plugins
 32-bit compatibility libraries installed on your system. On linux, you may
 need to install the following packages to build MrsWatson from source:
 
-* gcc-multilib
+* gcc-multilib, and also possibly gcc-4.6-multilib
+* g++-multilib, and also possibly g++-4.6-multilib
 * ia32-libs
 * libc6-dev:i386
 
