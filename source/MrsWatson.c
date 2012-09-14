@@ -437,6 +437,7 @@ int mrsWatsonMain(int argc, char** argv) {
   freeSampleSource(outputSource);
   freeSampleBuffer(inputSampleBuffer);
   freeSampleBuffer(outputSampleBuffer);
+  closePluginChain(pluginChain);
   freePluginChain(pluginChain);
 
   if(midiSource != NULL) {

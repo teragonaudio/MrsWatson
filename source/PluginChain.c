@@ -237,12 +237,21 @@ void processPluginChainMidiEvents(PluginChain pluginChain, LinkedList midiEvents
   }
 }
 
-void freePluginChain(PluginChain pluginChain) {
+void closePluginChain(PluginChain pluginChain) {
   Plugin plugin;
   int i;
   for(i = 0; i < pluginChain->numPlugins; i++) {
     plugin = pluginChain->plugins[i];
     logInfo("Closing plugin '%s'", plugin->pluginName->data);
+    plugin->closePlugin(plugin);
+  }
+}
+
+void freePluginChain(PluginChain pluginChain) {
+  Plugin plugin;
+  int i;
+  for(i = 0; i < pluginChain->numPlugins; i++) {
+    plugin = pluginChain->plugins[i];
     freePlugin(plugin);
   }
   free(pluginChain);

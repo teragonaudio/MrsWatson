@@ -56,6 +56,7 @@ int getMaximumTailTimeInMs(PluginChain pluginChain);
 void processPluginChainAudio(PluginChain pluginChain, SampleBuffer inBuffer, SampleBuffer outBuffer, TaskTimer taskTimer);
 void processPluginChainMidiEvents(PluginChain pluginChain, LinkedList midiEvents, TaskTimer taskTimer);
 
+void closePluginChain(PluginChain pluginChain);
 void freePluginChain(PluginChain pluginChain);
 
 #endif
