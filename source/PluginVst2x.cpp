@@ -400,10 +400,10 @@ boolByte vst2xPluginExists(const CharString pluginName, const CharString pluginR
   return _fillVst2xPluginAbsolutePath(pluginName, pluginRoot, outLocation);
 }
 
-static boolByte _canPluginDo(Plugin plugin, const char* canDoString) {
+static short _canPluginDo(Plugin plugin, const char* canDoString) {
   PluginVst2xData data = (PluginVst2xData)plugin->extraData;
   VstIntPtr result = data->dispatcher(data->pluginHandle, effCanDo, 0, 0, (void *)canDoString, 0.0f);
-  return result == 1;
+  return result;
 }
 
 static void _resumePlugin(Plugin plugin) {
