@@ -45,6 +45,7 @@ static boolByte _readWaveFileInfo(const char* filename, SampleSourcePcmData extr
   int chunkOffset = 0;
   RiffChunk chunk = newRiffChunk();
   char format[4];
+  unsigned int itemsRead;
   unsigned int audioFormat;
   unsigned int byteRate;
   unsigned int blockAlign;
@@ -59,8 +60,8 @@ static boolByte _readWaveFileInfo(const char* filename, SampleSourcePcmData extr
     // The WAVE file format has two sub-chunks, with the size of both calculated in the size field. Before
     // either of the subchunks, there are an extra 4 bytes which indicate the format type. We need to read
     // that before either of the subchunks can be parsed.
-    fread(format, sizeof(byte), 4, extraData->fileHandle);
-    if(strncmp(format, "WAVE", 4)) {
+    itemsRead = fread(format, sizeof(byte), 4, extraData->fileHandle);
+    if(itemsRead != 4 || strncmp(format, "WAVE", 4)) {
       logFileError(filename, "Invalid format description");
       freeRiffChunk(chunk);
       return false;
