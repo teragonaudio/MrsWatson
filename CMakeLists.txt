@@ -17,3 +17,5 @@ endif()
 
 add_subdirectory(source)
 add_subdirectory(main)
+add_subdirectory(test)
+
