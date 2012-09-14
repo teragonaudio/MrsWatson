@@ -322,7 +322,6 @@ void closeSampleSourceWave(void* sampleSourceDataPtr) {
   if(sampleSource->openedAs == SAMPLE_SOURCE_OPEN_WRITE) {
     unsigned int numBytesWritten;
     RiffChunk chunk = newRiffChunk();
-    int boobs;
 
     // Re-open the file for editing
     fflush(extraData->fileHandle);
@@ -337,7 +336,6 @@ void closeSampleSourceWave(void* sampleSourceDataPtr) {
     fseek(extraData->fileHandle, chunk->size + 4, SEEK_CUR);
     numBytesWritten = sampleSource->numSamplesProcessed * extraData->bitsPerSample / 8;
     fwrite(&numBytesWritten, sizeof(unsigned int), 1, extraData->fileHandle);
-    boobs = ftell(extraData->fileHandle);
 
     // Add 40 bytes for fmt chunk size and write the RIFF chunk size
     numBytesWritten += ftell(extraData->fileHandle) - 8;
