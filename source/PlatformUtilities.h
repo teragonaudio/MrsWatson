@@ -25,7 +25,6 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include "../config.h"
 #include "Types.h"
 #include "CharString.h"
 #include "LinkedList.h"
