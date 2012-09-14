@@ -46,7 +46,11 @@
 #define unlink _unlink
 #define snprintf _snprintf
 #define isatty(int) 0
-#else
+#elif LINUX
+#include <strings.h>
+#endif
+
+#if ! WINDOWS
 #define UNIX 1
 #endif
 
