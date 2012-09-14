@@ -65,7 +65,7 @@ static void _removeOutputFile(void* item, void* userData) {
 void runApplicationTest(char *applicationPath, const char *testName, LinkedList testArguments, ReturnCodes expectedResultCode, boolByte anazyleOutput) {
   char** applicationArguments;
   ArgumentsCopyData argumentsCopyData;
-  int resultCode = -1;
+  ReturnCodes resultCode = -1;
   LinkedList defaultArguments = getDefaultArguments(testName);
   LinkedList arguments = _appendLinkedLists(defaultArguments, testArguments);
   CharString failedAnalysisFunctionName = newCharString();
