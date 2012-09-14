@@ -28,6 +28,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "PlatformUtilities.h"
+
 #if UNIX
 #include <signal.h>
 #endif
@@ -43,7 +45,6 @@
 #include "AudioClock.h"
 #include "MidiSequence.h"
 #include "MidiSource.h"
-#include "PlatformUtilities.h"
 
 static void prettyPrintTime(CharString outString, unsigned long milliseconds) {
   clearCharString(outString);
