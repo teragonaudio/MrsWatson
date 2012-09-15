@@ -21,10 +21,12 @@ extern void runAudioClockTests(void);
 extern void runAudioSettingsTests(void);
 extern void runCharStringTests(void);
 extern void runLinkedListTests(void);
-extern void runMrsWatsonTests(char *applicationPath);
+extern void runMrsWatsonTests(char *applicationPath, char *resourcesPath);
 extern void runMidiSequenceTests(void);
 
-#define RUN_APPLICATION_TESTS 0
+static const char* DEFAULT_TEST_SUITE_NAME = "all";
+static const char* DEFAULT_MRSWATSON_PATH = "../main/mrswatson";
+static const char* DEFAULT_RESOURCES_PATH = "./resources";
 
 static void runAllTests(void) {
   runAudioClockTests();
@@ -72,6 +74,12 @@ static ProgramOptions newTestProgramOptions(void) {
 int main(int argc, char* argv[]) {
   ProgramOptions programOptions;
   int totalTestsFailed = 0;
+  CharString testNameToRun;
+  CharString testSuiteToRun;
+  CharString mrsWatsonPath;
+  CharString resourcesPath;
+  boolByte runInternalTests = false;
+  boolByte runApplicationTests = false;
 
   programOptions = newTestProgramOptions();
   if(!parseCommandLine(programOptions, argc, argv)) {
@@ -98,24 +106,60 @@ int main(int argc, char* argv[]) {
     return -1;
   }
 
-  printf("=== Function tests ===\n");
-  testsPassed = testsFailed = 0;
-  runAllTests();
-  printf("\nRan %d function tests: %d passed, %d failed\n", testsPassed + testsFailed, testsPassed, testsFailed);
-  totalTestsFailed = testsFailed;
+  testSuiteToRun = newCharString();
+  if(programOptions->options[OPTION_TEST_SUITE]->enabled) {
+    copyCharStrings(testSuiteToRun, programOptions->options[OPTION_TEST_SUITE]->argument);
+  }
+  if(isCharStringEmpty(testSuiteToRun)) {
+    copyToCharString(testSuiteToRun, DEFAULT_TEST_SUITE_NAME);
+  }
 
-#if RUN_APPLICATION_TESTS
-  printf("\n=== Application tests ===\n");
-  if(argc <= 1) {
-    printf("Skipping application tests, no path to MrsWatson executable\n");
-    printf("Usage: MrsWatsonTest [path to MrsWatson]\n");
+  if(isCharStringEqualToCString(testSuiteToRun, "all", true)) {
+    runInternalTests = true;
+    runApplicationTests = true;
+  }
+  else if(isCharStringEqualToCString(testSuiteToRun, "internal", true)) {
+    runInternalTests = true;
+  }
+  else if(isCharStringEqualToCString(testSuiteToRun, "application", true)) {
+    runApplicationTests = true;
   }
   else {
+    printf("ERROR: Invalid test suite '%s'\n", testSuiteToRun->data);
+    printf("Run %s --help suite to see possible test suites\n", getFileBasename(argv[0]));
+    return -1;
+  }
+
+  if(runInternalTests) {
+    printf("=== Internal tests ===\n");
     testsPassed = testsFailed = 0;
-    runMrsWatsonTests(argv[1]);
+    runAllTests();
+    printf("\nRan %d function tests: %d passed, %d failed\n", testsPassed + testsFailed, testsPassed, testsFailed);
+    totalTestsFailed = testsFailed;
+  }
+
+  if(runApplicationTests) {
+    mrsWatsonPath = newCharString();
+    if(programOptions->options[OPTION_TEST_MRSWATSON_PATH]->enabled) {
+      copyCharStrings(mrsWatsonPath, programOptions->options[OPTION_TEST_MRSWATSON_PATH]->argument);
+    }
+    else {
+      copyToCharString(mrsWatsonPath, DEFAULT_MRSWATSON_PATH);
+    }
+
+    resourcesPath = newCharString();
+    if(programOptions->options[OPTION_TEST_RESOURCES_PATH]->enabled) {
+      copyCharStrings(resourcesPath, programOptions->options[OPTION_TEST_RESOURCES_PATH]->argument);
+    }
+    else {
+      copyToCharString(resourcesPath, DEFAULT_RESOURCES_PATH);
+    }
+
+    printf("\n=== Application tests ===\n");
+    testsPassed = testsFailed = 0;
+    runMrsWatsonTests(mrsWatsonPath->data, resourcesPath->data);
     printf("\nRan %d application tests: %d passed, %d failed\n", testsPassed + testsFailed, testsPassed, testsFailed);
   }
-#endif
 
   printf("\n=== Finished with %d total failed tests ===\n", totalTestsFailed);
   return totalTestsFailed;
