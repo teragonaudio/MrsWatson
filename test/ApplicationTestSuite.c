@@ -25,8 +25,8 @@ static LinkedList _argsForProcessWithAgainPlugin(void) {
   return args;
 }
 
-void runMrsWatsonTests(char *applicationPath, char *_resourcesPath);
-void runMrsWatsonTests(char *applicationPath, char *_resourcesPath) {
+void runApplicationTestSuite(char *applicationPath, char *_resourcesPath);
+void runApplicationTestSuite(char *applicationPath, char *_resourcesPath) {
   resourcesPath = _resourcesPath;
   runApplicationTest(applicationPath,
     "Run with no plugins", newLinkedList(),
