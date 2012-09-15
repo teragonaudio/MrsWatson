@@ -47,16 +47,18 @@ static ProgramOptions newTestProgramOptions(void) {
 \t- Internal\n\
 \t- All (default)",
     true, ARGUMENT_TYPE_REQUIRED, NO_DEFAULT_VALUE);
+  /* TODO: Finish this option
   addNewProgramOption(programOptions, OPTION_TEST_NAME, "test",
     "Run a single test by name",
     true, ARGUMENT_TYPE_REQUIRED, NO_DEFAULT_VALUE);
+  */
   addNewProgramOption(programOptions, OPTION_TEST_MRSWATSON_PATH, "mrswatson-path",
     "Path to mrswatson executable. Only required for running application test suite.",
     true, ARGUMENT_TYPE_REQUIRED, NO_DEFAULT_VALUE);
   addNewProgramOption(programOptions, OPTION_TEST_RESOURCES_PATH, "resources",
     "Path to resources directory. Only required for running application test suite.",
     true, ARGUMENT_TYPE_REQUIRED, NO_DEFAULT_VALUE);
- /* TODO: Finish this option
+  /* TODO: Finish this option
   addNewProgramOption(programOptions, OPTION_TEST_LOG_FILE, "log-file",
     "Save test output to log file",
     true, ARGUMENT_TYPE_REQUIRED, NO_DEFAULT_VALUE);

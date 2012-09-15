@@ -75,6 +75,7 @@ void runApplicationTest(char *applicationPath, const char *testName, LinkedList 
   foreachItemInList(defaultArguments, _removeOutputFile, NULL);
 
 #if WINDOWS
+  // TODO: mkdir();
 #else
   mkdir("out", 0755);
 #endif
