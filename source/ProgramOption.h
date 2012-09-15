@@ -31,6 +31,8 @@
 #ifndef MrsWatson_ProgramOption_h
 #define MrsWatson_ProgramOption_h
 
+#define NO_DEFAULT_VALUE -1
+
 typedef enum {
   ARGUMENT_TYPE_NONE,
   ARGUMENT_TYPE_OPTIONAL,
@@ -50,7 +52,12 @@ typedef struct {
 } ProgramOptionMembers;
 
 typedef ProgramOptionMembers* ProgramOption;
-typedef ProgramOption* ProgramOptions;
+
+typedef struct {
+  ProgramOption* options;
+  int numOptions;
+} ProgramOptionsMembers;
+typedef ProgramOptionsMembers* ProgramOptions;
 
 void addNewProgramOption(const ProgramOptions programOptions, const int optionIndex,
   const char* name, const char* help, boolByte hasShortForm, ProgramOptionArgumentType argumentType,

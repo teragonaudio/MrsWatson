@@ -32,8 +32,7 @@
 #include "EventLogger.h"
 #include "StringUtilities.h"
 #include "AudioSettings.h"
-
-#define NO_DEFAULT_VALUE -1
+#include "MrsWatson.h"
 
 void addNewProgramOption(const ProgramOptions programOptions, const int optionIndex,
   const char* name, const char* help, boolByte hasShortForm, ProgramOptionArgumentType argumentType,
@@ -52,11 +51,13 @@ void addNewProgramOption(const ProgramOptions programOptions, const int optionIn
   programOption->argument = newCharString();
   programOption->enabled = false;
 
-  programOptions[optionIndex] = programOption;
+  programOptions->options[optionIndex] = programOption;
 }
 
-ProgramOption* newProgramOptions(void) {
-  ProgramOptions programOptions = malloc(sizeof(ProgramOptions) * NUM_OPTIONS);
+ProgramOptions newProgramOptions(void) {
+  ProgramOptions programOptions = malloc(sizeof(ProgramOptions));
+  programOptions->options = malloc(sizeof(ProgramOption) * NUM_OPTIONS);
+  programOptions->numOptions = NUM_OPTIONS;
 
   addNewProgramOption(programOptions, OPTION_BLOCKSIZE, "blocksize",
     "Blocksize in frames to use for processing. If input source is not an even multiple of the blocksize, then \
@@ -194,8 +195,8 @@ static ProgramOption _findProgramOption(ProgramOptions programOptions, const cha
   int i;
 
   if(_isStringShortOption(optionString)) {
-    for(i = 0; i < NUM_OPTIONS; i++) {
-      potentialMatchOption = programOptions[i];
+    for(i = 0; i < programOptions->numOptions; i++) {
+      potentialMatchOption = programOptions->options[i];
       if(potentialMatchOption->hasShortForm && potentialMatchOption->name->data[0] == optionString[1]) {
         return potentialMatchOption;
       }
@@ -206,8 +207,8 @@ static ProgramOption _findProgramOption(ProgramOptions programOptions, const cha
     optionMatch = NULL;
     optionStringWithoutDashes = newCharStringWithCapacity(STRING_LENGTH_SHORT);
     strncpy(optionStringWithoutDashes->data, optionString + 2, strlen(optionString) - 2);
-    for(i = 0; i < NUM_OPTIONS; i++) {
-      potentialMatchOption = programOptions[i];
+    for(i = 0; i < programOptions->numOptions; i++) {
+      potentialMatchOption = programOptions->options[i];
       if(isCharStringEqualTo(potentialMatchOption->name, optionStringWithoutDashes, false)) {
         optionMatch = potentialMatchOption;
         break;
@@ -298,8 +299,8 @@ void printProgramQuickHelp(const char* argvName) {
 
 void printProgramOptions(const ProgramOptions programOptions, boolByte withFullHelp, int indentSize) {
   int i;
-  for(i = 0; i < NUM_OPTIONS; i++) {
-    printProgramOption(programOptions[i], withFullHelp, indentSize, indentSize);
+  for(i = 0; i < programOptions->numOptions; i++) {
+    printProgramOption(programOptions->options[i], withFullHelp, indentSize, indentSize);
   }
 }
 
@@ -354,9 +355,9 @@ void printProgramOption(const ProgramOption programOption, boolByte withFullHelp
 
 ProgramOption findProgramOptionFromString(const ProgramOptions programOptions, const CharString string) {
   int i;
-  for(i = 0; i < NUM_OPTIONS; i++) {
-    if(isCharStringEqualTo(string, programOptions[i]->name, true)) {
-      return programOptions[i];
+  for(i = 0; i < programOptions->numOptions; i++) {
+    if(isCharStringEqualTo(string, programOptions->options[i]->name, true)) {
+      return programOptions->options[i];
     }
   }
   return NULL;
@@ -373,8 +374,8 @@ void freeProgramOptions(ProgramOptions programOptions) {
   ProgramOption option;
   int i;
 
-  for(i = 0; i < NUM_OPTIONS; i++) {
-    option = programOptions[i];
+  for(i = 0; i < programOptions->numOptions; i++) {
+    option = programOptions->options[i];
     _freeProgramOption(option);
   }
   free(programOptions);

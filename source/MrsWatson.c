@@ -117,24 +117,24 @@ int mrsWatsonMain(int argc, char** argv) {
     printf("Run with --options to see all options, or with --help for full help\n");
     return RETURN_CODE_NOT_RUN;
   }
-  else if(programOptions[OPTION_HELP]->enabled) {
+  else if(programOptions->options[OPTION_HELP]->enabled) {
     printProgramQuickHelp(argv[0]);
-    if(isCharStringEmpty(programOptions[OPTION_HELP]->argument)) {
+    if(isCharStringEmpty(programOptions->options[OPTION_HELP]->argument)) {
       printf("All options, where <argument> is required and [argument] is optional:\n");
       printProgramOptions(programOptions, true, DEFAULT_INDENT_SIZE);
     }
     else {
-      printf("Help for option '%s':\n", programOptions[OPTION_HELP]->argument->data);
-      printProgramOption(findProgramOptionFromString(programOptions, programOptions[OPTION_HELP]->argument), true, DEFAULT_INDENT_SIZE, 0);
+      printf("Help for option '%s':\n", programOptions->options[OPTION_HELP]->argument->data);
+      printProgramOption(findProgramOptionFromString(programOptions, programOptions->options[OPTION_HELP]->argument), true, DEFAULT_INDENT_SIZE, 0);
     }
     return RETURN_CODE_NOT_RUN;
   }
-  else if(programOptions[OPTION_OPTIONS]->enabled) {
+  else if(programOptions->options[OPTION_OPTIONS]->enabled) {
     printf("Recognized options and their default values:\n");
     printProgramOptions(programOptions, false, DEFAULT_INDENT_SIZE);
     return RETURN_CODE_NOT_RUN;
   }
-  else if(programOptions[OPTION_VERSION]->enabled) {
+  else if(programOptions->options[OPTION_VERSION]->enabled) {
     versionString = newCharString();
     fillVersionString(versionString);
     printf("%s, build %ld\nCopyright (c) %d, %s. All rights reserved.\n\n",
@@ -148,29 +148,29 @@ int mrsWatsonMain(int argc, char** argv) {
 
     return RETURN_CODE_NOT_RUN;
   }
-  else if(programOptions[OPTION_LIST_FILE_TYPES]->enabled) {
+  else if(programOptions->options[OPTION_LIST_FILE_TYPES]->enabled) {
     printf("Supported source types: \n");
     printSupportedSourceTypes();
     return RETURN_CODE_NOT_RUN;
   }
 
   // Parse these options first so that log messages displayed in the below loop are properly displayed
-  if(programOptions[OPTION_VERBOSE]->enabled) {
+  if(programOptions->options[OPTION_VERBOSE]->enabled) {
     setLogLevel(LOG_DEBUG);
   }
-  else if(programOptions[OPTION_QUIET]->enabled) {
+  else if(programOptions->options[OPTION_QUIET]->enabled) {
     setLogLevel(LOG_ERROR);
   }
-  if(programOptions[OPTION_COLOR_LOGGING]->enabled) {
-    setLoggingColorSchemeWithString(programOptions[OPTION_COLOR_LOGGING]->argument);
+  if(programOptions->options[OPTION_COLOR_LOGGING]->enabled) {
+    setLoggingColorSchemeWithString(programOptions->options[OPTION_COLOR_LOGGING]->argument);
   }
-  if(programOptions[OPTION_LOG_FILE]->enabled) {
-    setLogFile(programOptions[OPTION_LOG_FILE]->argument);
+  if(programOptions->options[OPTION_LOG_FILE]->enabled) {
+    setLogFile(programOptions->options[OPTION_LOG_FILE]->argument);
   }
 
   // Parse other options and set up necessary objects
-  for(i = 0; i < NUM_OPTIONS; i++) {
-    option = programOptions[i];
+  for(i = 0; i < programOptions->numOptions; i++) {
+    option = programOptions->options[i];
     if(option->enabled) {
       switch(option->index) {
         case OPTION_BLOCKSIZE:
@@ -222,7 +222,7 @@ int mrsWatsonMain(int argc, char** argv) {
     }
   }
 
-  if(programOptions[OPTION_LIST_PLUGINS]->enabled) {
+  if(programOptions->options[OPTION_LIST_PLUGINS]->enabled) {
     listAvailablePlugins(pluginSearchRoot);
     return RETURN_CODE_NOT_RUN;
   }
@@ -252,7 +252,7 @@ int mrsWatsonMain(int argc, char** argv) {
 #endif
 
   // Construct plugin chain
-  if(!addPluginsFromArgumentString(pluginChain, programOptions[OPTION_PLUGIN]->argument, pluginSearchRoot)) {
+  if(!addPluginsFromArgumentString(pluginChain, programOptions->options[OPTION_PLUGIN]->argument, pluginSearchRoot)) {
     return RETURN_CODE_INVALID_PLUGIN_CHAIN;
   }
   // No longer needed
@@ -302,15 +302,15 @@ int mrsWatsonMain(int argc, char** argv) {
     return RETURN_CODE_IO_ERROR;
   }
   else if(inputSource->sampleSourceType == SAMPLE_SOURCE_TYPE_PCM) {
-    if(programOptions[OPTION_PCM_SAMPLE_RATE]->enabled) {
-      inputSource->sampleRate = strtod(programOptions[OPTION_PCM_SAMPLE_RATE]->argument->data, NULL);
+    if(programOptions->options[OPTION_PCM_SAMPLE_RATE]->enabled) {
+      inputSource->sampleRate = strtod(programOptions->options[OPTION_PCM_SAMPLE_RATE]->argument->data, NULL);
       if(getSampleRate() != inputSource->sampleRate) {
         logUnsupportedFeature("Resampling input source");
         return RETURN_CODE_UNSUPPORTED_FEATURE;
       }
     }
-    if(programOptions[OPTION_PCM_NUM_CHANNELS]->enabled) {
-      inputSource->numChannels = strtol(programOptions[OPTION_PCM_NUM_CHANNELS]->argument->data, NULL, 10);
+    if(programOptions->options[OPTION_PCM_NUM_CHANNELS]->enabled) {
+      inputSource->numChannels = strtol(programOptions->options[OPTION_PCM_NUM_CHANNELS]->argument->data, NULL, 10);
     }
   }
 
