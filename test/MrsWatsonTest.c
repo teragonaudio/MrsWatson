@@ -1,9 +1,12 @@
 #include "ApplicationRunner.h"
 
+// Lazy global variable
+static char* resourcesPath;
+
 static char* _getTestInputFilename(const char* fileExtension) {
   CharString filename = newCharString();
-  snprintf(filename->data, filename->capacity, "resources%caudio%ca440-stereo.%s",
-    PATH_DELIMITER, PATH_DELIMITER, fileExtension);
+  snprintf(filename->data, filename->capacity, "%s%caudio%ca440-stereo.%s",
+    resourcesPath, PATH_DELIMITER, PATH_DELIMITER, fileExtension);
   return filename->data;
 }
 
@@ -22,8 +25,9 @@ static LinkedList _argsForProcessWithAgainPlugin(void) {
   return args;
 }
 
-void runMrsWatsonTests(char *applicationPath);
-void runMrsWatsonTests(char *applicationPath) {
+void runMrsWatsonTests(char *applicationPath, char *_resourcesPath);
+void runMrsWatsonTests(char *applicationPath, char *_resourcesPath) {
+  resourcesPath = _resourcesPath;
   runApplicationTest(applicationPath,
     "Run with no plugins", newLinkedList(),
     RETURN_CODE_MISSING_REQUIRED_OPTION, false);
