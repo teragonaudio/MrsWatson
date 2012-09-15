@@ -4,17 +4,28 @@
     <configuration>
         <data xmlns="http://www.netbeans.org/ns/make-project/1">
             <name>MrsWatson</name>
-            <c-extensions>c</c-extensions>
-            <cpp-extensions>cpp</cpp-extensions>
-            <header-extensions>h</header-extensions>
+            <c-extensions/>
+            <cpp-extensions/>
+            <header-extensions/>
             <sourceEncoding>UTF-8</sourceEncoding>
             <make-dep-projects/>
             <sourceRootList>
-                <sourceRootElem>../../..</sourceRootElem>
+                <sourceRootElem>../../../source</sourceRootElem>
+                <sourceRootElem>../../../main</sourceRootElem>
+                <sourceRootElem>../../../test</sourceRootElem>
+                <sourceRootElem>../../../vendor</sourceRootElem>
             </sourceRootList>
             <confList>
                 <confElem>
                     <name>Default</name>
+                    <type>0</type>
+                </confElem>
+                <confElem>
+                    <name>MrsWatson</name>
+                    <type>0</type>
+                </confElem>
+                <confElem>
+                    <name>MrsWatsonTest</name>
                     <type>0</type>
                 </confElem>
             </confList>

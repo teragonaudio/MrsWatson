@@ -1,286 +1,205 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configurationDescriptor version="84">
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
-    <df name="MrsWatson" root="../../..">
-      <df name="bin">
-        <df name="linux">
-        </df>
-        <df name="mac">
-        </df>
-        <df name="windows">
-        </df>
-      </df>
+    <df name="main" root="../../../main">
       <df name="CMakeFiles">
-        <df name="CMakeTmp">
-          <df name="CMakeFiles">
-            <df name="cmTryCompileExec.dir">
-            </df>
-          </df>
+        <df name="mrswatson.dir">
+          <in>C.includecache</in>
+          <in>DependInfo.cmake</in>
+          <in>build.make</in>
+          <in>cmake_clean.cmake</in>
+          <in>depend.internal</in>
+          <in>depend.make</in>
+          <in>flags.make</in>
+          <in>link.txt</in>
+          <in>progress.make</in>
         </df>
-        <df name="CompilerIdC">
-          <in>CMakeCCompilerId.c</in>
-        </df>
-        <df name="CompilerIdCXX">
-          <in>CMakeCXXCompilerId.cpp</in>
-        </df>
+        <in>CMakeDirectoryInformation.cmake</in>
+        <in>progress.marks</in>
       </df>
-      <df name="doc">
+      <in>CMakeLists.txt</in>
+      <in>Makefile</in>
+      <in>Makefile.am</in>
+      <in>Makefile.in</in>
+      <in>cmake_install.cmake</in>
+    </df>
+    <df name="source" root="../../../source">
+      <df name="CMakeFiles">
+        <df name="MrsWatson.dir">
+          <in>C.includecache</in>
+          <in>CXX.includecache</in>
+          <in>DependInfo.cmake</in>
+          <in>build.make</in>
+          <in>cmake_clean.cmake</in>
+          <in>cmake_clean_target.cmake</in>
+          <in>depend.internal</in>
+          <in>depend.make</in>
+          <in>flags.make</in>
+          <in>link.txt</in>
+          <in>progress.make</in>
+        </df>
+        <in>CMakeDirectoryInformation.cmake</in>
+        <in>progress.marks</in>
       </df>
-      <df name="main">
-        <df name="CMakeFiles">
-          <df name="mrswatson.dir">
-          </df>
-        </df>
-        <in>main.c</in>
+      <in>CMakeLists.txt</in>
+      <in>Makefile</in>
+      <in>Makefile.am</in>
+      <in>Makefile.in</in>
+      <in>cmake_install.cmake</in>
+    </df>
+    <df name="test" root="../../../test">
+      <df name="out">
+        <in>List-plugins.txt</in>
+        <in>Process-with-again-plugin.txt</in>
+        <in>Run-with-no-plugins.txt</in>
+        <in>foo.wav</in>
+        <in>test.txt</in>
       </df>
-      <df name="projects">
-        <df name="NetBeans">
-          <df name="MrsWatson">
-          </df>
+      <df name="resources">
+        <df name="audio">
+          <in>a440-stereo-1hr.wav</in>
+          <in>a440-stereo.aif</in>
+          <in>a440-stereo.pcm</in>
+          <in>a440-stereo.wav</in>
         </df>
-        <df name="VisualStudio">
+        <df name="midi">
+          <in>c-scale.mid</in>
         </df>
-        <df name="Xcode">
-          <df name="MrsWatson.xcodeproj">
-            <df name="project.xcworkspace">
-            </df>
+        <df name="plugins">
+          <df name="linux">
           </df>
-        </df>
-      </df>
-      <df name="source">
-        <df name="CMakeFiles">
-          <df name="MrsWatson.dir">
-          </df>
-        </df>
-        <in>AudioClock.c</in>
-        <in>AudioClock.h</in>
-        <in>AudioSettings.c</in>
-        <in>AudioSettings.h</in>
-        <in>BuildInfo.c</in>
-        <in>BuildInfo.h</in>
-        <in>CharString.c</in>
-        <in>CharString.h</in>
-        <in>EventLogger.c</in>
-        <in>EventLogger.h</in>
-        <in>LinkedList.c</in>
-        <in>LinkedList.h</in>
-        <in>MidiEvent.c</in>
-        <in>MidiEvent.h</in>
-        <in>MidiSequence.c</in>
-        <in>MidiSequence.h</in>
-        <in>MidiSource.c</in>
-        <in>MidiSource.h</in>
-        <in>MidiSourceFile.c</in>
-        <in>MidiSourceFile.h</in>
-        <in>MrsWatson.c</in>
-        <in>MrsWatson.h</in>
-        <in>PlatformUtilities.c</in>
-        <in>PlatformUtilities.h</in>
-        <in>Plugin.c</in>
-        <in>Plugin.h</in>
-        <in>PluginChain.c</in>
-        <in>PluginChain.h</in>
-        <in>PluginPreset.c</in>
-        <in>PluginPreset.h</in>
-        <in>PluginPresetFxp.c</in>
-        <in>PluginPresetFxp.h</in>
-        <in>PluginVst2x.cpp</in>
-        <in>PluginVst2x.h</in>
-        <in>ProgramOption.c</in>
-        <in>ProgramOption.h</in>
-        <in>RiffFile.c</in>
-        <in>RiffFile.h</in>
-        <in>SampleBuffer.c</in>
-        <in>SampleBuffer.h</in>
-        <in>SampleSource.c</in>
-        <in>SampleSource.h</in>
-        <in>SampleSourceAiff.c</in>
-        <in>SampleSourceAiff.h</in>
-        <in>SampleSourceAudiofile.c</in>
-        <in>SampleSourceAudiofile.h</in>
-        <in>SampleSourceFlac.c</in>
-        <in>SampleSourceFlac.h</in>
-        <in>SampleSourceMp3.c</in>
-        <in>SampleSourceMp3.h</in>
-        <in>SampleSourceOgg.c</in>
-        <in>SampleSourceOgg.h</in>
-        <in>SampleSourcePcm.c</in>
-        <in>SampleSourcePcm.h</in>
-        <in>SampleSourceSilence.c</in>
-        <in>SampleSourceSilence.h</in>
-        <in>SampleSourceWave.c</in>
-        <in>SampleSourceWave.h</in>
-        <in>StringUtilities.c</in>
-        <in>StringUtilities.h</in>
-        <in>TaskTimer.c</in>
-        <in>TaskTimer.h</in>
-        <in>Types.h</in>
-        <in>Vst2xHostCallback.cpp</in>
-      </df>
-      <df name="test">
-        <df name="CMakeFiles">
-          <df name="mrswatsontest.dir">
-          </df>
-        </df>
-        <df name="resources">
-          <df name="audio">
-          </df>
-          <df name="midi">
-          </df>
-          <df name="plugins">
-            <df name="mac">
-              <df name="again.vst">
-                <df name="Contents">
-                  <df name="MacOS">
-                  </df>
+          <df name="mac">
+            <df name="again.vst">
+              <df name="Contents">
+                <df name="MacOS">
+                  <in>again</in>
                 </df>
+                <in>Info.plist</in>
+                <in>PkgInfo</in>
               </df>
             </df>
-            <df name="windows">
-            </df>
           </df>
-          <df name="presets">
+          <df name="windows">
           </df>
         </df>
-        <in>AnalysisClipping.c</in>
-        <in>AnalysisClipping.h</in>
-        <in>AnalysisDistortion.c</in>
-        <in>AnalysisDistortion.h</in>
-        <in>AnalysisSilence.c</in>
-        <in>AnalysisSilence.h</in>
-        <in>AnalyzeFile.c</in>
-        <in>AnalyzeFile.h</in>
-        <in>ApplicationRunner.c</in>
-        <in>ApplicationRunner.h</in>
-        <in>AudioClockTest.c</in>
-        <in>AudioSettingsTest.c</in>
-        <in>CharStringTest.c</in>
-        <in>LinkedListTest.c</in>
-        <in>MidiSequenceTest.c</in>
-        <in>MidiSourceFileTest.c</in>
-        <in>MidiSourceTest.c</in>
-        <in>MrsWatsonTest.c</in>
-        <in>PlatformUtilitiesTest.c</in>
-        <in>PluginChainTest.c</in>
-        <in>PluginPresetFxpTest.c</in>
-        <in>PluginPresetTest.c</in>
-        <in>PluginTest.c</in>
-        <in>ProgramOptionTest.c</in>
-        <in>SampleBufferTest.c</in>
-        <in>SampleSourceTest.c</in>
-        <in>StringUtilitiesTest.c</in>
-        <in>TaskTimerTest.c</in>
-        <in>TestRunner.h</in>
-        <in>TestSuite.c</in>
+        <df name="presets">
+          <in>again-test.fxp</in>
+        </df>
       </df>
-      <df name="vendor">
-        <df name="libs">
+      <in>Makefile</in>
+      <in>Makefile.am</in>
+      <in>Makefile.in</in>
+      <in>mrswatsontest</in>
+    </df>
+    <df name="vendor" root="../../../vendor">
+      <df name="audiofile">
+        <df name="docs">
+          <in>Makefile</in>
+          <in>Makefile.am</in>
+          <in>Makefile.in</in>
+          <in>afCloseFile.3.txt</in>
+          <in>afCloseFile.3.xml</in>
+          <in>afGetFrameCount.3.txt</in>
+          <in>afGetFrameSize.3.txt</in>
+          <in>afGetFrameSize.3.xml</in>
+          <in>afNewFileSetup.3.txt</in>
+          <in>afOpenFile.3.txt</in>
+          <in>afQuery.3.txt</in>
+          <in>afReadFrames.3.txt</in>
+          <in>afReadMisc.3.txt</in>
+          <in>afSeekFrame.3.txt</in>
+          <in>afSetErrorHandler.3.txt</in>
+          <in>afSetVirtualSampleFormat.3.txt</in>
+          <in>afWriteFrames.3.txt</in>
+          <in>asciidoc.conf</in>
+          <in>sfconvert.1.txt</in>
+          <in>sfconvert.1.xml</in>
+          <in>sfinfo.1.txt</in>
+          <in>sfinfo.1.xml</in>
         </df>
-        <df name="vstsdk2.4">
-          <df name="artwork">
+        <df name="examples">
+          <in>Makefile</in>
+          <in>Makefile.am</in>
+          <in>Makefile.in</in>
+          <in>adddcoffset</in>
+          <in>osxplay</in>
+          <in>power</in>
+        </df>
+        <df name="libaudiofile">
+          <df name="modules">
+            <in>Makefile</in>
+            <in>Makefile.am</in>
+            <in>Makefile.in</in>
           </df>
-          <df name="bin">
-            <df name="mac">
-              <df name="VSTMonitor.vst">
-                <df name="Contents">
-                  <df name="MacOS">
-                  </df>
-                  <df name="Resources">
-                  </df>
-                </df>
-              </df>
-              <df name="VSTParamTool.app">
-                <df name="Contents">
-                  <df name="MacOS">
-                  </df>
-                  <df name="Resources">
-                  </df>
-                </df>
-              </df>
-            </df>
-            <df name="win">
-            </df>
+          <in>Makefile</in>
+          <in>Makefile.am</in>
+          <in>Makefile.in</in>
+          <in>audiofile.exports</in>
+        </df>
+        <df name="sfcommands">
+          <in>Makefile</in>
+          <in>Makefile.am</in>
+          <in>Makefile.in</in>
+          <in>sfconvert</in>
+          <in>sfinfo</in>
+        </df>
+        <df name="test">
+          <df name="gtest">
+            <in>Makefile</in>
+            <in>Makefile.am</in>
+            <in>Makefile.in</in>
+            <in>README.audiofile</in>
           </df>
-          <df name="doc">
-            <df name="gfx">
-            </df>
-            <df name="html">
-            </df>
+          <in>Makefile</in>
+          <in>Makefile.am</in>
+          <in>Makefile.in</in>
+        </df>
+        <in>ACKNOWLEDGEMENTS</in>
+        <in>AUTHORS</in>
+        <in>COPYING</in>
+        <in>COPYING.GPL</in>
+        <in>ChangeLog</in>
+        <in>INSTALL</in>
+        <in>Makefile</in>
+        <in>Makefile.am</in>
+        <in>Makefile.in</in>
+        <in>NEWS</in>
+        <in>NOTES</in>
+        <in>README</in>
+        <in>TODO</in>
+        <in>aclocal.m4</in>
+        <in>audiofile-uninstalled.pc</in>
+        <in>audiofile-uninstalled.pc.in</in>
+        <in>audiofile.pc</in>
+        <in>audiofile.pc.in</in>
+        <in>audiofile.spec</in>
+        <in>audiofile.spec.in</in>
+        <in>config.guess</in>
+        <in>config.h.in</in>
+        <in>config.log</in>
+        <in>config.status</in>
+        <in>config.sub</in>
+        <in>configure</in>
+        <in>configure.ac</in>
+        <in>depcomp</in>
+        <in>install-sh</in>
+        <in>libtool</in>
+        <in>ltmain.sh</in>
+        <in>missing</in>
+        <in>stamp-h1</in>
+      </df>
+      <df name="libs">
+        <in>README.txt</in>
+      </df>
+      <df name="vstsdk2.4">
+        <df name="pluginterfaces">
+          <df name="vst2.x">
           </df>
-          <df name="pluginterfaces">
+        </df>
+        <df name="public.sdk">
+          <df name="source">
             <df name="vst2.x">
-              <in>aeffect.h</in>
-              <in>aeffectx.h</in>
-              <in>vstfxstore.h</in>
-            </df>
-          </df>
-          <df name="public.sdk">
-            <df name="samples">
-              <df name="vst2.x">
-                <df name="adelay">
-                  <df name="editor">
-                    <df name="resources">
-                    </df>
-                    <in>sdeditor.cpp</in>
-                    <in>sdeditor.h</in>
-                  </df>
-                  <df name="win">
-                  </df>
-                  <in>adelay.cpp</in>
-                  <in>adelay.h</in>
-                  <in>adelaymain.cpp</in>
-                  <in>surrounddelay.cpp</in>
-                  <in>surrounddelay.h</in>
-                </df>
-                <df name="again">
-                  <df name="source">
-                    <in>again.cpp</in>
-                    <in>again.h</in>
-                  </df>
-                  <df name="win">
-                  </df>
-                </df>
-                <df name="mac">
-                  <df name="vst 2.4 examples.xcodeproj">
-                  </df>
-                </df>
-                <df name="minihost">
-                  <df name="source">
-                    <in>minieditor.cpp</in>
-                    <in>minihost.cpp</in>
-                  </df>
-                  <df name="win">
-                  </df>
-                </df>
-                <df name="vstxsynth">
-                  <df name="resource">
-                  </df>
-                  <df name="source">
-                    <in>gmnames.h</in>
-                    <in>vstxsynth.cpp</in>
-                    <in>vstxsynth.h</in>
-                    <in>vstxsynthproc.cpp</in>
-                  </df>
-                  <df name="win">
-                  </df>
-                </df>
-                <df name="win">
-                </df>
-                <df name="win.vc2003">
-                </df>
-                <df name="win.vc6">
-                </df>
-              </df>
-            </df>
-            <df name="source">
-              <df name="vst2.x">
-                <in>aeffeditor.h</in>
-                <in>audioeffect.cpp</in>
-                <in>audioeffect.h</in>
-                <in>audioeffectx.cpp</in>
-                <in>audioeffectx.h</in>
-                <in>vstplugmain.cpp</in>
-              </df>
+>>>>>>> Update netbeans project sources, build settings
             </df>
           </df>
           <df name="vstgui.sf">
@@ -341,6 +260,8 @@
           </df>
         </df>
       </df>
+      <in>README-VSTSDK.txt</in>
+      <in>build-audiofile.sh</in>
     </df>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -351,7 +272,10 @@
   </logicalFolder>
   <sourceFolderFilter>^(nbproject)$</sourceFolderFilter>
   <sourceRootList>
-    <Elem>../../..</Elem>
+    <Elem>../../../source</Elem>
+    <Elem>../../../main</Elem>
+    <Elem>../../../test</Elem>
+    <Elem>../../../vendor</Elem>
   </sourceRootList>
   <projectmakefile>../../../Makefile</projectmakefile>
   <confs>
@@ -372,563 +296,52 @@
             <incDir>
               <pElem>../../../vendor/vstsdk2.4/pluginterfaces/vst2.x</pElem>
             </incDir>
+            <preprocessorList>
+              <Elem>MACOSX=1</Elem>
+            </preprocessorList>
           </cTool>
           <ccTool>
             <incDir>
               <pElem>../../../vendor/vstsdk2.4/pluginterfaces/vst2.x</pElem>
             </incDir>
+            <preprocessorList>
+              <Elem>MACOSX=1</Elem>
+            </preprocessorList>
           </ccTool>
         </makeTool>
       </makefileType>
-      <item path="../../../CMakeFiles/CompilerIdC/CMakeCCompilerId.c"
-            ex="false"
-            tool="0"
-            flavor2="2">
-        <cTool>
-        </cTool>
-      </item>
-      <item path="../../../CMakeFiles/CompilerIdCXX/CMakeCXXCompilerId.cpp"
-            ex="false"
-            tool="1"
-            flavor2="4">
-        <ccTool>
-        </ccTool>
-      </item>
-      <item path="../../../main/main.c" ex="false" tool="0" flavor2="2">
-        <cTool>
-        </cTool>
-      </item>
-      <item path="../../../source/AudioClock.c" ex="false" tool="0" flavor2="2">
-        <cTool>
-        </cTool>
-      </item>
-      <item path="../../../source/AudioSettings.c" ex="false" tool="0" flavor2="2">
-        <cTool>
-        </cTool>
-      </item>
-      <item path="../../../source/BuildInfo.c" ex="false" tool="0" flavor2="2">
-        <cTool>
-        </cTool>
-      </item>
-      <item path="../../../source/CharString.c" ex="false" tool="0" flavor2="2">
-        <cTool>
-        </cTool>
-      </item>
-      <item path="../../../source/EventLogger.c" ex="false" tool="0" flavor2="2">
-        <cTool>
-        </cTool>
-      </item>
-      <item path="../../../source/LinkedList.c" ex="false" tool="0" flavor2="2">
-        <cTool>
-        </cTool>
-      </item>
-      <item path="../../../source/MidiEvent.c" ex="false" tool="0" flavor2="2">
-        <cTool>
-        </cTool>
-      </item>
-      <item path="../../../source/MidiSequence.c" ex="false" tool="0" flavor2="2">
-        <cTool>
-        </cTool>
-      </item>
-      <item path="../../../source/MidiSource.c" ex="false" tool="0" flavor2="2">
-        <cTool>
-        </cTool>
-      </item>
-      <item path="../../../source/MidiSourceFile.c" ex="false" tool="0" flavor2="2">
-        <cTool>
-        </cTool>
-      </item>
-      <item path="../../../source/MrsWatson.c" ex="false" tool="0" flavor2="2">
-        <cTool>
-        </cTool>
-      </item>
-      <item path="../../../source/PlatformUtilities.c"
-            ex="false"
-            tool="0"
-            flavor2="2">
-        <cTool>
-        </cTool>
-      </item>
-      <item path="../../../source/Plugin.c" ex="false" tool="0" flavor2="2">
-        <cTool>
-        </cTool>
-      </item>
-      <item path="../../../source/PluginChain.c" ex="false" tool="0" flavor2="2">
-        <cTool>
-        </cTool>
-      </item>
-      <item path="../../../source/PluginPreset.c" ex="false" tool="0" flavor2="2">
-        <cTool>
-        </cTool>
-      </item>
-      <item path="../../../source/PluginPresetFxp.c" ex="false" tool="0" flavor2="2">
-        <cTool>
-        </cTool>
-      </item>
-      <item path="../../../source/PluginVst2x.cpp" ex="false" tool="1" flavor2="4">
-        <ccTool>
-        </ccTool>
-      </item>
-      <item path="../../../source/ProgramOption.c" ex="false" tool="0" flavor2="2">
-        <cTool>
-        </cTool>
-      </item>
-      <item path="../../../source/RiffFile.c" ex="false" tool="0" flavor2="2">
-        <cTool>
-        </cTool>
-      </item>
-      <item path="../../../source/SampleBuffer.c" ex="false" tool="0" flavor2="2">
-        <cTool>
-        </cTool>
-      </item>
-      <item path="../../../source/SampleSource.c" ex="false" tool="0" flavor2="2">
-        <cTool>
-        </cTool>
-      </item>
-      <item path="../../../source/SampleSourceAiff.c" ex="false" tool="0" flavor2="2">
-        <cTool>
-        </cTool>
-      </item>
-      <item path="../../../source/SampleSourceAudiofile.c"
-            ex="false"
-            tool="0"
-            flavor2="2">
-        <cTool>
-        </cTool>
-      </item>
-      <item path="../../../source/SampleSourceAudiofile.h"
-            ex="true"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="../../../source/SampleSourceFlac.c" ex="false" tool="0" flavor2="2">
-        <cTool>
-        </cTool>
-      </item>
-      <item path="../../../source/SampleSourceMp3.c" ex="false" tool="0" flavor2="2">
-        <cTool>
-        </cTool>
-      </item>
-      <item path="../../../source/SampleSourceOgg.c" ex="false" tool="0" flavor2="2">
-        <cTool>
-        </cTool>
-      </item>
-      <item path="../../../source/SampleSourcePcm.c" ex="false" tool="0" flavor2="2">
-        <cTool>
-        </cTool>
-      </item>
-      <item path="../../../source/SampleSourceSilence.c"
-            ex="false"
-            tool="0"
-            flavor2="2">
-        <cTool>
-        </cTool>
-      </item>
-      <item path="../../../source/SampleSourceWave.c" ex="false" tool="0" flavor2="2">
-        <cTool>
-        </cTool>
-      </item>
-      <item path="../../../source/StringUtilities.c" ex="false" tool="0" flavor2="2">
-        <cTool>
-        </cTool>
-      </item>
-      <item path="../../../source/TaskTimer.c" ex="false" tool="0" flavor2="2">
-        <cTool>
-        </cTool>
-      </item>
-      <item path="../../../source/Vst2xHostCallback.cpp"
-            ex="false"
-            tool="1"
-            flavor2="4">
-        <ccTool>
-        </ccTool>
-      </item>
-      <item path="../../../test/AnalysisClipping.c" ex="false" tool="0" flavor2="2">
-        <cTool>
-        </cTool>
-      </item>
-      <item path="../../../test/AnalysisDistortion.c" ex="false" tool="0" flavor2="2">
-        <cTool>
-        </cTool>
-      </item>
-      <item path="../../../test/AnalysisSilence.c" ex="false" tool="0" flavor2="2">
-        <cTool>
-        </cTool>
-      </item>
-      <item path="../../../test/AnalyzeFile.c" ex="false" tool="0" flavor2="2">
-        <cTool>
-        </cTool>
-      </item>
-      <item path="../../../test/ApplicationRunner.c" ex="false" tool="0" flavor2="2">
-        <cTool>
-        </cTool>
-      </item>
-      <item path="../../../test/ApplicationRunner.h" ex="true" tool="3" flavor2="0">
-      </item>
-      <item path="../../../test/AudioClockTest.c" ex="false" tool="0" flavor2="2">
-        <cTool>
-        </cTool>
-      </item>
-      <item path="../../../test/AudioSettingsTest.c" ex="false" tool="0" flavor2="2">
-        <cTool>
-        </cTool>
-      </item>
-      <item path="../../../test/CharStringTest.c" ex="false" tool="0" flavor2="2">
-        <cTool>
-        </cTool>
-      </item>
-      <item path="../../../test/LinkedListTest.c" ex="false" tool="0" flavor2="2">
-        <cTool>
-        </cTool>
-      </item>
-      <item path="../../../test/MidiSequenceTest.c" ex="false" tool="0" flavor2="2">
-        <cTool>
-        </cTool>
-      </item>
-      <item path="../../../test/MidiSourceFileTest.c" ex="false" tool="0" flavor2="2">
-        <cTool>
-        </cTool>
-      </item>
-      <item path="../../../test/MidiSourceTest.c" ex="false" tool="0" flavor2="2">
-        <cTool>
-        </cTool>
-      </item>
-      <item path="../../../test/MrsWatsonTest.c" ex="false" tool="0" flavor2="2">
-        <cTool>
-        </cTool>
-      </item>
-      <item path="../../../test/PlatformUtilitiesTest.c"
-            ex="false"
-            tool="0"
-            flavor2="2">
-        <cTool>
-        </cTool>
-      </item>
-      <item path="../../../test/PluginChainTest.c" ex="false" tool="0" flavor2="2">
-        <cTool>
-        </cTool>
-      </item>
-      <item path="../../../test/PluginPresetFxpTest.c"
-            ex="false"
-            tool="0"
-            flavor2="2">
-        <cTool>
-        </cTool>
-      </item>
-      <item path="../../../test/PluginPresetTest.c" ex="false" tool="0" flavor2="2">
-        <cTool>
-        </cTool>
-      </item>
-      <item path="../../../test/PluginTest.c" ex="false" tool="0" flavor2="2">
-        <cTool>
-        </cTool>
-      </item>
-      <item path="../../../test/ProgramOptionTest.c" ex="false" tool="0" flavor2="2">
-        <cTool>
-        </cTool>
-      </item>
-      <item path="../../../test/SampleBufferTest.c" ex="false" tool="0" flavor2="2">
-        <cTool>
-        </cTool>
-      </item>
-      <item path="../../../test/SampleSourceTest.c" ex="false" tool="0" flavor2="2">
-        <cTool>
-        </cTool>
-      </item>
-      <item path="../../../test/StringUtilitiesTest.c"
-            ex="false"
-            tool="0"
-            flavor2="2">
-        <cTool>
-        </cTool>
-      </item>
-      <item path="../../../test/TaskTimerTest.c" ex="false" tool="0" flavor2="2">
-        <cTool>
-        </cTool>
-      </item>
-      <item path="../../../test/TestRunner.h" ex="true" tool="3" flavor2="0">
-      </item>
-      <item path="../../../test/TestSuite.c" ex="false" tool="0" flavor2="2">
-        <cTool>
-        </cTool>
-      </item>
-      <item path="../../../vendor/vstsdk2.4/pluginterfaces/vst2.x/vstfxstore.h"
-            ex="true"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="../../../vendor/vstsdk2.4/public.sdk/samples/vst2.x/adelay/adelay.cpp"
-            ex="false"
-            tool="1"
-            flavor2="4">
-        <ccTool>
-        </ccTool>
-      </item>
-      <item path="../../../vendor/vstsdk2.4/public.sdk/samples/vst2.x/adelay/adelaymain.cpp"
-            ex="false"
-            tool="1"
-            flavor2="4">
-        <ccTool>
-        </ccTool>
-      </item>
-      <item path="../../../vendor/vstsdk2.4/public.sdk/samples/vst2.x/adelay/editor/sdeditor.cpp"
-            ex="false"
-            tool="1"
-            flavor2="4">
-        <ccTool>
-        </ccTool>
-      </item>
-      <item path="../../../vendor/vstsdk2.4/public.sdk/samples/vst2.x/adelay/surrounddelay.cpp"
-            ex="false"
-            tool="1"
-            flavor2="4">
-        <ccTool>
-        </ccTool>
-      </item>
-      <item path="../../../vendor/vstsdk2.4/public.sdk/samples/vst2.x/again/source/again.cpp"
-            ex="false"
-            tool="1"
-            flavor2="4">
-        <ccTool>
-        </ccTool>
-      </item>
-      <item path="../../../vendor/vstsdk2.4/public.sdk/samples/vst2.x/minihost/source/minieditor.cpp"
-            ex="false"
-            tool="1"
-            flavor2="4">
-        <ccTool>
-        </ccTool>
-      </item>
-      <item path="../../../vendor/vstsdk2.4/public.sdk/samples/vst2.x/minihost/source/minihost.cpp"
-            ex="false"
-            tool="1"
-            flavor2="4">
-        <ccTool>
-        </ccTool>
-      </item>
-      <item path="../../../vendor/vstsdk2.4/public.sdk/samples/vst2.x/vstxsynth/source/vstxsynth.cpp"
-            ex="false"
-            tool="1"
-            flavor2="4">
-        <ccTool>
-        </ccTool>
-      </item>
-      <item path="../../../vendor/vstsdk2.4/public.sdk/samples/vst2.x/vstxsynth/source/vstxsynthproc.cpp"
-            ex="false"
-            tool="1"
-            flavor2="4">
-        <ccTool>
-        </ccTool>
-      </item>
-      <item path="../../../vendor/vstsdk2.4/public.sdk/source/vst2.x/audioeffect.cpp"
-            ex="true"
-            tool="1"
-            flavor2="0">
-      </item>
-      <item path="../../../vendor/vstsdk2.4/public.sdk/source/vst2.x/audioeffectx.cpp"
-            ex="true"
-            tool="1"
-            flavor2="0">
-      </item>
-      <item path="../../../vendor/vstsdk2.4/public.sdk/source/vst2.x/vstplugmain.cpp"
-            ex="true"
-            tool="1"
-            flavor2="0">
-      </item>
-      <item path="../../../vendor/vstsdk2.4/vstgui.sf/drawtest/mac/xcode_au_prefix.h"
-            ex="true"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="../../../vendor/vstsdk2.4/vstgui.sf/drawtest/mac/xcode_vst_prefix.h"
-            ex="true"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="../../../vendor/vstsdk2.4/vstgui.sf/drawtest/source/controlsgui.cpp"
-            ex="false"
-            tool="1"
-            flavor2="4">
-        <ccTool>
-        </ccTool>
-      </item>
-      <item path="../../../vendor/vstsdk2.4/vstgui.sf/drawtest/source/pdrawtesteditor.cpp"
-            ex="false"
-            tool="1"
-            flavor2="4">
-        <ccTool>
-        </ccTool>
-      </item>
-      <item path="../../../vendor/vstsdk2.4/vstgui.sf/drawtest/source/pdrawtesteffect.cpp"
-            ex="false"
-            tool="1"
-            flavor2="4">
-        <ccTool>
-        </ccTool>
-      </item>
-      <item path="../../../vendor/vstsdk2.4/vstgui.sf/drawtest/source/pdrawtestmain.cpp"
-            ex="false"
-            tool="1"
-            flavor2="4">
-        <ccTool>
-        </ccTool>
-      </item>
-      <item path="../../../vendor/vstsdk2.4/vstgui.sf/drawtest/source/pdrawtestview.cpp"
-            ex="false"
-            tool="1"
-            flavor2="4">
-        <ccTool>
-        </ccTool>
-      </item>
-      <item path="../../../vendor/vstsdk2.4/vstgui.sf/drawtest/source/pprimitivesviews.cpp"
-            ex="false"
-            tool="1"
-            flavor2="4">
-        <ccTool>
-        </ccTool>
-      </item>
-      <item path="../../../vendor/vstsdk2.4/vstgui.sf/vstgui/aeffguieditor.cpp"
-            ex="false"
-            tool="1"
-            flavor2="4">
-        <ccTool>
-        </ccTool>
-      </item>
-      <item path="../../../vendor/vstsdk2.4/vstgui.sf/vstgui/cfileselector.cpp"
-            ex="false"
-            tool="1"
-            flavor2="4">
-        <ccTool>
-        </ccTool>
-      </item>
-      <item path="../../../vendor/vstsdk2.4/vstgui.sf/vstgui/cscrollview.cpp"
-            ex="false"
-            tool="1"
-            flavor2="4">
-        <ccTool>
-        </ccTool>
-      </item>
-      <item path="../../../vendor/vstsdk2.4/vstgui.sf/vstgui/ctabview.cpp"
-            ex="false"
-            tool="1"
-            flavor2="4">
-        <ccTool>
-        </ccTool>
-      </item>
-      <item path="../../../vendor/vstsdk2.4/vstgui.sf/vstgui/plugguieditor.cpp"
-            ex="false"
-            tool="1"
-            flavor2="4">
-        <ccTool>
-        </ccTool>
-      </item>
-      <item path="../../../vendor/vstsdk2.4/vstgui.sf/vstgui/vstcontrols.cpp"
-            ex="false"
-            tool="1"
-            flavor2="4">
-        <ccTool>
-        </ccTool>
-      </item>
-      <item path="../../../vendor/vstsdk2.4/vstgui.sf/vstgui/vstgui.cpp"
-            ex="false"
-            tool="1"
-            flavor2="4">
-        <ccTool>
-        </ccTool>
-      </item>
-      <item path="../../../vendor/vstsdk2.4/vstgui.sf/vstgui/vstplugscarbon.h"
-            ex="true"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="../../../vendor/vstsdk2.4/vstgui.sf/vstgui/vstplugsmac.h"
-            ex="true"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="../../../vendor/vstsdk2.4/vstgui.sf/vstgui/vstplugsmacho.h"
-            ex="true"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="../../../vendor/vstsdk2.4/vstgui.sf/vstgui/vstplugsquartz.h"
-            ex="true"
-            tool="3"
-            flavor2="0">
-      </item>
-      <folder path="MrsWatson/CMakeFiles">
-        <cTool>
-          <incDir>
-            <pElem>..</pElem>
-            <pElem>../../../source</pElem>
-            <pElem>../../../vendor/audiofile-0.3.3/libaudiofile</pElem>
-          </incDir>
-          <preprocessorList>
-            <Elem>HAVE_CONFIG_H</Elem>
-            <Elem>MACOSX=1</Elem>
-          </preprocessorList>
-        </cTool>
-        <ccTool>
-          <incDir>
-            <pElem>..</pElem>
-            <pElem>../../../source</pElem>
-            <pElem>../../../vendor/audiofile-0.3.3/libaudiofile</pElem>
-          </incDir>
-          <preprocessorList>
-            <Elem>HAVE_CONFIG_H</Elem>
-            <Elem>MACOSX=1</Elem>
-          </preprocessorList>
-        </ccTool>
-      </folder>
-      <folder path="MrsWatson/main">
-        <cTool>
-          <incDir>
-            <pElem>../../../source</pElem>
-          </incDir>
-          <preprocessorList>
-            <Elem>LINUX=1</Elem>
-            <Elem>__cdecl=</Elem>
-          </preprocessorList>
-        </cTool>
-      </folder>
-      <folder path="MrsWatson/source">
-        <cTool>
-          <preprocessorList>
-            <Elem>LINUX=1</Elem>
-            <Elem>__cdecl=</Elem>
-          </preprocessorList>
-        </cTool>
-        <ccTool>
-          <preprocessorList>
-            <Elem>LINUX=1</Elem>
-            <Elem>__cdecl=</Elem>
-          </preprocessorList>
-        </ccTool>
-      </folder>
-      <folder path="MrsWatson/test">
-        <cTool>
-          <incDir>
-            <pElem>../../../source</pElem>
-          </incDir>
-          <preprocessorList>
-            <Elem>LINUX=1</Elem>
-            <Elem>__cdecl=</Elem>
-          </preprocessorList>
-        </cTool>
-      </folder>
-      <folder path="MrsWatson/vendor">
-        <ccTool>
-          <incDir>
-            <pElem>..</pElem>
-            <pElem>../../../source</pElem>
-            <pElem>../../../vendor/audiofile-0.3.3/libaudiofile</pElem>
-          </incDir>
-          <preprocessorList>
-            <Elem>HAVE_CONFIG_H</Elem>
-            <Elem>MACOSX=1</Elem>
-          </preprocessorList>
-        </ccTool>
-      </folder>
+    </conf>
+    <conf name="MrsWatson" type="0">
+      <toolsSet>
+        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
+        <compilerSet>default</compilerSet>
+      </toolsSet>
+      <codeAssistance>
+      </codeAssistance>
+      <makefileType>
+        <makeTool>
+          <buildCommandWorkingDir>../../..</buildCommandWorkingDir>
+          <buildCommand>${MAKE}</buildCommand>
+          <cleanCommand>${MAKE} clean</cleanCommand>
+          <executablePath></executablePath>
+        </makeTool>
+      </makefileType>
+    </conf>
+    <conf name="MrsWatsonTest" type="0">
+      <toolsSet>
+        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
+        <compilerSet>default</compilerSet>
+      </toolsSet>
+      <codeAssistance>
+      </codeAssistance>
+      <makefileType>
+        <makeTool>
+          <buildCommandWorkingDir>../../..</buildCommandWorkingDir>
+          <buildCommand>${MAKE}</buildCommand>
+          <cleanCommand>${MAKE} clean</cleanCommand>
+          <executablePath></executablePath>
+        </makeTool>
+      </makefileType>
     </conf>
   </confs>
 </configurationDescriptor>
