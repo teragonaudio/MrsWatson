@@ -107,7 +107,12 @@ void runApplicationTest(char *applicationPath, const char *testName, LinkedList 
   }
 #endif
 
-  if(resultCode == expectedResultCode) {
+  if(resultCode == 255 || resultCode == -1) {
+    printTestFail();
+    printf("    could not launch mrswatson, please use the --mrswatson-path argument\n");
+    testsFailed++;
+  }
+  else if(resultCode == expectedResultCode) {
     if(anazyleOutput) {
       if(analyzeFile(_getTestOutputFilename(testName, "pcm"), failedAnalysisFunctionName, &failedAnalysisSample)) {
         testsPassed++;
