@@ -135,6 +135,7 @@ static boolByte _readWaveFileInfo(const char* filename, SampleSourcePcmData extr
     logDebug("WAVE file has %d bytes", chunk->size);
   }
 
+  freeRiffChunk(chunk);
   return true;
 }
 
@@ -231,6 +232,7 @@ static boolByte _writeWaveFileInfo(SampleSourcePcmData extraData) {
     return false;
   }
 
+  freeRiffChunk(chunk);
   return true;
 }
 
@@ -344,6 +346,7 @@ void closeSampleSourceWave(void* sampleSourceDataPtr) {
     fwrite(&numBytesWritten, sizeof(unsigned int), 1, extraData->fileHandle);
     fflush(extraData->fileHandle);
     fclose(extraData->fileHandle);
+    freeRiffChunk(chunk);
   }
 #endif
 }

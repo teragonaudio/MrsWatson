@@ -378,5 +378,6 @@ void freeProgramOptions(ProgramOptions programOptions) {
     option = programOptions->options[i];
     _freeProgramOption(option);
   }
+  free(programOptions->options);
   free(programOptions);
 }

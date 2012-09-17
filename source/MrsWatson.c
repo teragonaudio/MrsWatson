@@ -422,6 +422,7 @@ int mrsWatsonMain(int argc, char** argv) {
     logInfo("Total processing time <1ms. Either something went wrong, or your computer is smokin' fast!");
   }
   freeTaskTimer(taskTimer);
+  freeCharString(totalTimeString);
 
   if(midiSequence != NULL) {
     logInfo("Read %ld MIDI events from %s", midiSequence->numMidiEventsProcessed, midiSource->sourceName->data);
