@@ -30,6 +30,7 @@
 #include "Plugin.h"
 #include "EventLogger.h"
 #include "PluginVst2x.h"
+#include "PluginPassthru.h"
 
 PluginInterfaceType guessPluginInterfaceType(const CharString pluginName, const CharString pluginSearchRoot, CharString outLocation) {
   PluginInterfaceType pluginType = PLUGIN_TYPE_INVALID;
@@ -38,6 +39,12 @@ PluginInterfaceType guessPluginInterfaceType(const CharString pluginName, const 
   if(vst2xPluginExists(pluginName, pluginSearchRoot, outLocation)) {
     logInfo("Plugin '%s' is of type VST2.x", pluginName->data);
     pluginType = PLUGIN_TYPE_VST_2X;
+  }
+  // Check this case last; if there is a system plugin named "passthru" then we
+  // should use that first. This plugin is mostly for debugging purposes anyways.
+  else if(isCharStringEqualToCString(pluginName, "passthru", true)) {
+    logInfo("Using internal passthru plugin");
+    pluginType = PLUGIN_TYPE_PASSTHRU;
   }
   else {
     logError("Plugin '%s' could not be found", pluginName->data);
@@ -54,6 +61,8 @@ Plugin newPlugin(PluginInterfaceType interfaceType, const CharString pluginName,
   switch(interfaceType) {
     case PLUGIN_TYPE_VST_2X:
       return newPluginVst2x(pluginName, pluginLocation);
+    case PLUGIN_TYPE_PASSTHRU:
+      return newPluginPassthru();
     case PLUGIN_TYPE_INVALID:
     default:
       logError("Plugin type not supported");
