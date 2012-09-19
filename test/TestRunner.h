@@ -20,47 +20,43 @@
 #define ANSI_COLOR_WHITE   "[37m"
 #define ANSI_COLOR_RESET   "[0m"
 
-#define _assert(condition) \
-  { \
-    if(!(condition)) { \
-      printTestFail(); \
-      printf("    at %s(), line %d\n", __func__, __LINE__); \
-      return 1; \
-    } \
-  }
+#define _assert(condition) { \
+  if(!(condition)) { \
+    printTestFail(); \
+    printf("    at %s(), line %d\n", __func__, __LINE__); \
+    return 1; \
+  } \
+}
 
 #define _assertFalse(condition) _assert((condition) == false)
 #define _assertIsNull(condition) _assert((condition) == NULL)
 #define _assertNotNull(condition) _assert((condition) != NULL)
 
-#define _assertIntEquals(condition, expected) \
-  { \
-    int result = condition; \
-    if(result != expected) { \
-      printTestFail(); \
-      printf("    at %s(), line %d. Expected %d, got %d.\n", __func__, __LINE__, expected, result); \
-      return 1; \
-    } \
-  }
+#define _assertIntEquals(condition, expected) { \
+  int result = condition; \
+  if(result != expected) { \
+    printTestFail(); \
+    printf("    at %s(), line %d. Expected %d, got %d.\n", __func__, __LINE__, expected, result); \
+    return 1; \
+  } \
+}
 
-#define _assertDoubleEquals(condition, expected) \
-  { \
-    double result = condition; \
-    if(result != expected) { \
-      printTestFail(); \
-      printf("    at %s(), line %d. Expected %g, got %g.\n", __func__, __LINE__, expected, result); \
-      return 1; \
-    } \
-  }
+#define _assertDoubleEquals(condition, expected) { \
+  double result = condition; \
+  if(result != expected) { \
+    printTestFail(); \
+    printf("    at %s(), line %d. Expected %g, got %g.\n", __func__, __LINE__, expected, result); \
+    return 1; \
+  } \
+}
 
-#define _assertCharStringEquals(result, expected) \
-  { \
-    if(!isCharStringEqualToCString(result, expected, false)) { \
-      printTestFail(); \
-      printf("    at %s(), line %d. Expected %s, got %s.\n", __func__, __LINE__, expected, result->data); \
-      return 1; \
-    } \
-  }
+#define _assertCharStringEquals(result, expected) { \
+  if(!isCharStringEqualToCString(result, expected, false)) { \
+    printTestFail(); \
+    printf("    at %s(), line %d. Expected %s, got %s.\n", __func__, __LINE__, expected, result->data); \
+    return 1; \
+  } \
+}
 
 #define _runTest(testName, test, setup, teardown) \
   { \
