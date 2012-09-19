@@ -319,6 +319,9 @@
     <content url="file://$MODULE_DIR$/../../test/TaskTimerTest.c">
       <sourceFolder url="file://$MODULE_DIR$/../../test/TaskTimerTest.c" isTestSource="false" />
     </content>
+    <content url="file://$MODULE_DIR$/../../test/TestRunner.c">
+      <sourceFolder url="file://$MODULE_DIR$/../../test/TestRunner.c" isTestSource="false" />
+    </content>
     <content url="file://$MODULE_DIR$/../../test/TestRunner.h">
       <sourceFolder url="file://$MODULE_DIR$/../../test/TestRunner.h" isTestSource="false" />
     </content>
