@@ -3,11 +3,6 @@
 #include "MidiEvent.h"
 #include "LinkedList.h"
 
-// For the v1.0 release, the MidiSequence class doesn't need to work out
-// of sequence, but it should be able to handle data correctly in all
-// cases. To test this (currently failing) behavior, set this value to 1.
-#define TEST_FUTURE_BEHAVIOR 0
-
 static int _testNewMidiSequence(void) {
   MidiSequence m = newMidiSequence();
   _assertNotNull(m);
@@ -83,8 +78,6 @@ static int _testFillEventsSequentially(void) {
   return 0;
 }
 
-// TODO: These tests fail because MidiSequence is meant to be read sequentially from start to finish
-#if TEST_FUTURE_BEHAVIOR
 static int _testFillEventsOutOfOrder(void) {
   MidiSequence m = newMidiSequence();
   MidiEvent e = newMidiEvent();
@@ -130,7 +123,6 @@ static int _testFillEventsFromRangePastSequence(void) {
   _assertIntEquals(numItemsInList(l), 0);
   return 0;
 }
-#endif
 
 TestSuite addMidiSequenceTests(void);
 TestSuite addMidiSequenceTests(void) {
@@ -144,11 +136,10 @@ TestSuite addMidiSequenceTests(void) {
   addTest(testSuite, "Fill events from empty range", _testFillEventsFromEmptyRange);
   addTest(testSuite, "Fill events sequentially", _testFillEventsSequentially);
 
-#if TEST_FUTURE_BEHAVIOR
-  addTest(testSuite, "Fill events out of order", _testFillEventsOutOfOrder);
-  addTest(testSuite, "Fill events from middle of range", _testFillEventsFromMiddleOfRange);
-  addTest(testSuite, "Fill events from range past sequence end", _testFillEventsFromRangePastSequence);
-#endif
+  // TODO: These tests fail because MidiSequence is meant to be read sequentially from start to finish
+  addTest(testSuite, "Fill events out of order", NULL); // _testFillEventsOutOfOrder);
+  addTest(testSuite, "Fill events from middle of range", NULL); // _testFillEventsFromMiddleOfRange);
+  addTest(testSuite, "Fill events from range past sequence end", NULL); // _testFillEventsFromRangePastSequence);
 
   return testSuite;
 }
