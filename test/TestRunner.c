@@ -46,25 +46,40 @@ void printTestFail(void) {
   }
 }
 
+static void _printTestSkipped(void) {
+  if(isatty(2)) {
+    printf("\x1b%sSkipped\x1b%s\n", ANSI_COLOR_YELLOW, ANSI_COLOR_RESET);
+  }
+  else {
+    printf("Skipped\n");
+  }
+}
+
 static void _runTestCase(void* item, void* extraData) {
   TestCase testCase = (TestCase)item;
   TestSuite testSuite = (TestSuite)extraData;
   int result;
   printf("  %s: ", testCase->name);
-  if(testSuite->setup != NULL) {
-    testSuite->setup();
-  }
-  result = testCase->testCaseFunc();
-  if(result == 0) {
-    printTestSuccess();
-    testSuite->numSuccess++;
+
+  if(testCase->testCaseFunc != NULL) {
+    if(testSuite->setup != NULL) {
+      testSuite->setup();
+    }
+    result = testCase->testCaseFunc();
+    if(result == 0) {
+      printTestSuccess();
+      testSuite->numSuccess++;
+    }
+    else {
+      testSuite->numFail++;
+    }
+
+    if(testSuite->teardown != NULL) {
+      testSuite->teardown();
+    }
   }
   else {
-    testSuite->numFail++;
-  }
-
-  if(testSuite->teardown != NULL) {
-    testSuite->teardown();
+    _printTestSkipped();
   }
 }
 
