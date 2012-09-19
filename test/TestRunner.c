@@ -4,15 +4,19 @@
 // In both the TestSuite and TestCase objects we assume that we do not need ownership of
 // the strings passed in, since they should be allocated on the heap and live for the
 // lifetime of the program.
-TestSuite newTestSuite(char* name) {
-  TestSuite testSuite = malloc(sizeof(TestSuite));
+TestSuite newTestSuite(char* name, TestCaseSetupFunc setup, TestCaseTeardownFunc teardown) {
+  TestSuite testSuite = malloc(sizeof(TestSuiteMembers));
   testSuite->name = name;
+  testSuite->numSuccess = 0;
+  testSuite->numFail = 0;
   testSuite->testCases = newLinkedList();
+  testSuite->setup = setup;
+  testSuite->teardown = teardown;
   return testSuite;
 }
 
 TestCase newTestCase(char* name, char* filename, int lineNumber, TestCaseExecFunc testCaseFunc) {
-  TestCase testCase = malloc(sizeof(TestCase));
+  TestCase testCase = malloc(sizeof(TestCaseMembers));
   testCase->name = name;
   testCase->filename = filename;
   testCase->lineNumber = lineNumber;
@@ -22,17 +26,6 @@ TestCase newTestCase(char* name, char* filename, int lineNumber, TestCaseExecFun
 
 void addTestToTestSuite(TestSuite testSuite, TestCase testCase) {
   appendItemToList(testSuite->testCases, testCase);
-}
-
-static void _runTestCase(void* item, void* extraData) {
-  TestCase testCase = (TestCase)item;
-  printf("  %s: ", testCase->name);
-  testCase->result = testCase->testCaseFunc(testCase);
-}
-
-void executeTestSuite(TestSuite testSuite) {
-  printf("Running tests in %s\n", testSuite->name);
-  foreachItemInList(testSuite->testCases, _runTestCase, NULL);
 }
 
 void printTestSuccess(void) {
@@ -53,18 +46,30 @@ void printTestFail(void) {
   }
 }
 
-static void _printTestCase(void* item, void* extraData) {
+static void _runTestCase(void* item, void* extraData) {
   TestCase testCase = (TestCase)item;
+  TestSuite testSuite = (TestSuite)extraData;
+  int result;
   printf("  %s: ", testCase->name);
-  if(testCase->result) {
+  if(testSuite->setup != NULL) {
+    testSuite->setup();
+  }
+  result = testCase->testCaseFunc();
+  if(result == 0) {
     printTestSuccess();
+    testSuite->numSuccess++;
   }
   else {
-    // TODO: Print out source file, line number
-    printTestFail();
+    testSuite->numFail++;
+  }
+
+  if(testSuite->teardown != NULL) {
+    testSuite->teardown();
   }
 }
 
-void printTestSuiteResult(TestSuite testSuite) {
-  foreachItemInList(testSuite->testCases, _printTestCase, NULL);
+void runTestSuite(void* testSuitePtr, void* extraData) {
+  TestSuite testSuite = (TestSuite)testSuitePtr;
+  printf("Running tests in %s\n", testSuite->name);
+  foreachItemInList(testSuite->testCases, _runTestCase, testSuite);
 }

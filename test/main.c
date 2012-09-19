@@ -122,7 +122,6 @@ int main(int argc, char* argv[]) {
     printf("=== Internal tests ===\n");
     testsPassed = testsFailed = 0;
     runInternalTestSuite();
-    printf("\nRan %d function tests: %d passed, %d failed\n", testsPassed + testsFailed, testsPassed, testsFailed);
     totalTestsFailed = testsFailed;
   }
 
