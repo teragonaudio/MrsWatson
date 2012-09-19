@@ -91,6 +91,12 @@
     <content url="file://$MODULE_DIR$/../../source/PluginChain.h">
       <sourceFolder url="file://$MODULE_DIR$/../../source/PluginChain.h" isTestSource="false" />
     </content>
+    <content url="file://$MODULE_DIR$/../../source/PluginPassthru.c">
+      <sourceFolder url="file://$MODULE_DIR$/../../source/PluginPassthru.c" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../source/PluginPassthru.h">
+      <sourceFolder url="file://$MODULE_DIR$/../../source/PluginPassthru.h" isTestSource="false" />
+    </content>
     <content url="file://$MODULE_DIR$/../../source/PluginPreset.c">
       <sourceFolder url="file://$MODULE_DIR$/../../source/PluginPreset.c" isTestSource="false" />
     </content>
@@ -250,6 +256,9 @@
     <content url="file://$MODULE_DIR$/../../test/ApplicationRunner.h">
       <sourceFolder url="file://$MODULE_DIR$/../../test/ApplicationRunner.h" isTestSource="false" />
     </content>
+    <content url="file://$MODULE_DIR$/../../test/ApplicationTestSuite.c">
+      <sourceFolder url="file://$MODULE_DIR$/../../test/ApplicationTestSuite.c" isTestSource="false" />
+    </content>
     <content url="file://$MODULE_DIR$/../../test/AudioClockTest.c">
       <sourceFolder url="file://$MODULE_DIR$/../../test/AudioClockTest.c" isTestSource="false" />
     </content>
@@ -258,6 +267,9 @@
     </content>
     <content url="file://$MODULE_DIR$/../../test/CharStringTest.c">
       <sourceFolder url="file://$MODULE_DIR$/../../test/CharStringTest.c" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../test/InternalTestSuite.c">
+      <sourceFolder url="file://$MODULE_DIR$/../../test/InternalTestSuite.c" isTestSource="false" />
     </content>
     <content url="file://$MODULE_DIR$/../../test/LinkedListTest.c">
       <sourceFolder url="file://$MODULE_DIR$/../../test/LinkedListTest.c" isTestSource="false" />
@@ -327,6 +339,12 @@
     </content>
     <content url="file://$MODULE_DIR$/../../test/TestSuite.c">
       <sourceFolder url="file://$MODULE_DIR$/../../test/TestSuite.c" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../test/main.c">
+      <sourceFolder url="file://$MODULE_DIR$/../../test/main.c" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../test/main.h">
+      <sourceFolder url="file://$MODULE_DIR$/../../test/main.h" isTestSource="false" />
     </content>
     <content url="file://$MODULE_DIR$/../../vendor/audiofile-0.3.3/libaudiofile/audiofile.h">
       <sourceFolder url="file://$MODULE_DIR$/../../vendor/audiofile-0.3.3/libaudiofile/audiofile.h" isTestSource="false" />

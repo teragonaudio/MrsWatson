@@ -12,6 +12,7 @@
 		246DEFED160A51DB001E2BF8 /* ApplicationTestSuite.c in Sources */ = {isa = PBXBuildFile; fileRef = 246DEFE9160A51DB001E2BF8 /* ApplicationTestSuite.c */; };
 		246DEFEE160A51DB001E2BF8 /* InternalTestSuite.c in Sources */ = {isa = PBXBuildFile; fileRef = 246DEFEA160A51DB001E2BF8 /* InternalTestSuite.c */; };
 		246DEFEF160A51DB001E2BF8 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 246DEFEB160A51DB001E2BF8 /* main.c */; };
+		24D59405160A5DC200B4B685 /* TestRunner.c in Sources */ = {isa = PBXBuildFile; fileRef = 24D59404160A5DC200B4B685 /* TestRunner.c */; };
 		24DB478A15F640F50009F6F2 /* AnalysisClipping.c in Sources */ = {isa = PBXBuildFile; fileRef = 24DB478215F640F50009F6F2 /* AnalysisClipping.c */; };
 		24DB478B15F640F50009F6F2 /* AnalysisDistortion.c in Sources */ = {isa = PBXBuildFile; fileRef = 24DB478415F640F50009F6F2 /* AnalysisDistortion.c */; };
 		24DB478D15F640F50009F6F2 /* AnalysisSilence.c in Sources */ = {isa = PBXBuildFile; fileRef = 24DB478815F640F50009F6F2 /* AnalysisSilence.c */; };
@@ -124,6 +125,7 @@
 		246DEFEB160A51DB001E2BF8 /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		246DEFEC160A51DB001E2BF8 /* main.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = main.h; sourceTree = "<group>"; };
 		24CFD07A14B3736A005AF479 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
+		24D59404160A5DC200B4B685 /* TestRunner.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = TestRunner.c; sourceTree = "<group>"; };
 		24DB478215F640F50009F6F2 /* AnalysisClipping.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = AnalysisClipping.c; sourceTree = "<group>"; };
 		24DB478315F640F50009F6F2 /* AnalysisClipping.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnalysisClipping.h; sourceTree = "<group>"; };
 		24DB478415F640F50009F6F2 /* AnalysisDistortion.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = AnalysisDistortion.c; sourceTree = "<group>"; };
@@ -330,6 +332,7 @@
 				24EDB01A15F46F0F00B0B8DF /* SampleSourceTest.c */,
 				24EDB01C15F46F0F00B0B8DF /* StringUtilitiesTest.c */,
 				24EDB01D15F46F0F00B0B8DF /* TaskTimerTest.c */,
+				24D59404160A5DC200B4B685 /* TestRunner.c */,
 				24EDB01E15F46F0F00B0B8DF /* TestRunner.h */,
 			);
 			name = Test;
@@ -614,6 +617,7 @@
 				246DEFED160A51DB001E2BF8 /* ApplicationTestSuite.c in Sources */,
 				246DEFEE160A51DB001E2BF8 /* InternalTestSuite.c in Sources */,
 				246DEFEF160A51DB001E2BF8 /* main.c in Sources */,
+				24D59405160A5DC200B4B685 /* TestRunner.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
