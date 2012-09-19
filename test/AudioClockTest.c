@@ -64,3 +64,14 @@ void runAudioClockTests(void) {
   _runTest("Restart clock", _testRestartAudioClock, _audioClockTestSetup, _audioClockTestTeardown);
   _runTest("Multiple advance", _testAdvanceClockMulitpleTimes, _audioClockTestSetup, _audioClockTestTeardown);
 }
+
+TestSuite addAudioClockTests(void);
+TestSuite addAudioClockTests(void) {
+  TestSuite testSuite = newTestSuite("AudioClock", _audioClockTestSetup, _audioClockTestTeardown);
+  addTest(testSuite, "Initialization", _testInitAudioClock);
+  addTest(testSuite, "Advance clock", _testAdvanceAudioClock);
+  addTest(testSuite, "Stop clock", _testStopAudioClock);
+  addTest(testSuite, "Restart clock", _testRestartAudioClock);
+  addTest(testSuite, "Multiple advance", _testAdvanceClockMulitpleTimes);
+  return testSuite;
+}
