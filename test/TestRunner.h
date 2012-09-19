@@ -58,9 +58,37 @@
   } \
 }
 
+typedef boolByte (*TestCaseExecFunc)(void* testCase);
+typedef struct {
+  char* name;
+  char* filename;
+  int lineNumber;
+  TestCaseExecFunc testCaseFunc;
+  boolByte result;
+} TestCaseMembers;
+typedef TestCaseMembers* TestCase;
+
+typedef struct {
+  char* name;
+  LinkedList testCases;
+} TestSuiteMembers;
+typedef TestSuiteMembers* TestSuite;
+
+void addTestToTestSuite(TestSuite testSuite, TestCase testCase);
+void executeTestSuite(TestSuite testSuite);
+
 void printTestSuiteResult(TestSuite testSuite);
 void printTestSuccess(void);
 void printTestFail(void);
+
+TestSuite newTestSuite(char* name);
+TestCase newTestCase(char* name, char* filename, int lineNumber, TestCaseExecFunc testCaseFunc);
+
+
+#define addTest(testSuite, name, testCaseFunc) { \
+  addTestToTestSuite(testSuite, newTestCase(name, __FILE__, __LINE__, testCaseFunc}); \
+}
+
 #define _runTest(testName, test, setup, teardown) \
   { \
     int result; \
