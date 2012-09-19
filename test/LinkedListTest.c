@@ -78,14 +78,15 @@ static int _testNumItemsInNullList(void) {
   return 0;
 }
 
-void runLinkedListTests(void);
-void runLinkedListTests(void) {
-  _startTestSection();
-  _runTest("New object", _testNewLinkedList, emptySetup, emptyTeardown);
-  _runTest("Append item", _testAppendItemToList, emptySetup, emptyTeardown);
-  _runTest("Append multiple items", _testAppendMultipleItemsToList, emptySetup, emptyTeardown);
-  _runTest("Append null item", _testAppendNullItemToList, emptySetup, emptyTeardown);
-  _runTest("Append item to null list", _testAppendItemToNullList, emptySetup, emptyTeardown);
-  _runTest("Num items in list", _testNumItemsInList, emptySetup, emptyTeardown);
-  _runTest("Num items in null list", _testNumItemsInNullList, emptySetup, emptyTeardown);
+TestSuite addLinkedListTests(void);
+TestSuite addLinkedListTests(void) {
+  TestSuite testSuite = newTestSuite("LinkedList", NULL, NULL);
+  addTest(testSuite, "New object", _testNewLinkedList);
+  addTest(testSuite, "Append item", _testAppendItemToList);
+  addTest(testSuite, "Append multiple items", _testAppendMultipleItemsToList);
+  addTest(testSuite, "Append null item", _testAppendNullItemToList);
+  addTest(testSuite, "Append item to null list", _testAppendItemToNullList);
+  addTest(testSuite, "Num items in list", _testNumItemsInList);
+  addTest(testSuite, "Num items in null list", _testNumItemsInNullList);
+  return testSuite;
 }

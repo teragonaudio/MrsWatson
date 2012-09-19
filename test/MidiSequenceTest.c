@@ -132,19 +132,23 @@ static int _testFillEventsFromRangePastSequence(void) {
 }
 #endif
 
-void runMidiSequenceTests(void);
-void runMidiSequenceTests(void) {
-  _startTestSection();
-  _runTest("Initialization", _testNewMidiSequence, emptySetup, emptyTeardown);
-  _runTest("Append event", _testAppendMidiEventToSequence, emptySetup, emptyTeardown);
-  _runTest("Append null event", _testAppendNullMidiEventToSequence, emptySetup, emptyTeardown);
-  _runTest("Append event to null sequence", _testAppendEventToNullSequence, emptySetup, emptyTeardown);
-  _runTest("Fill events from range start", _testFillMidiEventsFromRangeStart, emptySetup, emptyTeardown);
-  _runTest("Fill events from empty range", _testFillEventsFromEmptyRange, emptySetup, emptyTeardown);
-  _runTest("Fill events sequentially", _testFillEventsSequentially, emptySetup, emptyTeardown);
+TestSuite addMidiSequenceTests(void);
+TestSuite addMidiSequenceTests(void) {
+  TestSuite testSuite = newTestSuite("MidiSequence", NULL, NULL);
+
+  addTest(testSuite, "Initialization", _testNewMidiSequence);
+  addTest(testSuite, "Append event", _testAppendMidiEventToSequence);
+  addTest(testSuite, "Append null event", _testAppendNullMidiEventToSequence);
+  addTest(testSuite, "Append event to null sequence", _testAppendEventToNullSequence);
+  addTest(testSuite, "Fill events from range start", _testFillMidiEventsFromRangeStart);
+  addTest(testSuite, "Fill events from empty range", _testFillEventsFromEmptyRange);
+  addTest(testSuite, "Fill events sequentially", _testFillEventsSequentially);
+
 #if TEST_FUTURE_BEHAVIOR
-  _runTest("Fill events out of order", _testFillEventsOutOfOrder, emptySetup, emptyTeardown);
-  _runTest("Fill events from middle of range", _testFillEventsFromMiddleOfRange, emptySetup, emptyTeardown);
-  _runTest("Fill events from range past sequence end", _testFillEventsFromRangePastSequence, emptySetup, emptyTeardown);
+  addTest(testSuite, "Fill events out of order", _testFillEventsOutOfOrder);
+  addTest(testSuite, "Fill events from middle of range", _testFillEventsFromMiddleOfRange);
+  addTest(testSuite, "Fill events from range past sequence end", _testFillEventsFromRangePastSequence);
 #endif
+
+  return testSuite;
 }

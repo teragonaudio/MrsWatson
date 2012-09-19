@@ -2,13 +2,11 @@
 #include "LinkedList.h"
 #include "TestRunner.h"
 
-extern void runAudioClockTests(void);
-extern void runAudioSettingsTests(void);
-extern void runCharStringTests(void);
-extern void runLinkedListTests(void);
-extern void runMidiSequenceTests(void);
-
 extern TestSuite addAudioClockTests(void);
+extern TestSuite addAudioSettingsTests(void);
+extern TestSuite addCharStringTests(void);
+extern TestSuite addLinkedListTests(void);
+extern TestSuite addMidiSequenceTests(void);
 
 typedef struct {
   int numSuccess;
@@ -25,9 +23,13 @@ static void _sumTestSuiteResults(void* item, void* extraData) {
 
 void runInternalTestSuite(void);
 void runInternalTestSuite(void) {
-#if 1
   LinkedList internalTestSuites = newLinkedList();
   appendItemToList(internalTestSuites, addAudioClockTests());
+  appendItemToList(internalTestSuites, addAudioSettingsTests());
+  appendItemToList(internalTestSuites, addCharStringTests());
+  appendItemToList(internalTestSuites, addLinkedListTests());
+  appendItemToList(internalTestSuites, addMidiSequenceTests());
+
   foreachItemInList(internalTestSuites, runTestSuite, NULL);
   _TestSuiteResult suiteResult = malloc(sizeof(_TestSuiteResultMembers));
   suiteResult->numSuccess = 0;
@@ -36,11 +38,4 @@ void runInternalTestSuite(void) {
 
   printf("\nRan %d function tests: %d passed, %d failed\n",
     suiteResult->numSuccess + suiteResult->numFail, suiteResult->numSuccess, suiteResult->numFail);
-  #else
-  runAudioClockTests();
-  runAudioSettingsTests();
-  runCharStringTests();
-  runLinkedListTests();
-  runMidiSequenceTests();
-  #endif
 }

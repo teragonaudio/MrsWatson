@@ -55,14 +55,15 @@ static int _testSetTimeSigNoteValue(void) {
   return 0;
 }
 
-void runAudioSettingsTests(void);
-void runAudioSettingsTests(void) {
-  _startTestSection();
-  _runTest("Initialization", _testInitAudioSettings, _audioSettingsSetup, _audioSettingsTeardown);
-  _runTest("Set sample rate", _testSetSampleRate, _audioSettingsSetup, _audioSettingsTeardown);
-  _runTest("Set num channels", _testSetNumChannels, _audioSettingsSetup, _audioSettingsTeardown);
-  _runTest("Set blocksize", _testSetBlocksize, _audioSettingsSetup, _audioSettingsTeardown);
-  _runTest("Set tempo", _testSetTempo, _audioSettingsSetup, _audioSettingsTeardown);
-  _runTest("Set time signature beats per measure", _testSetTimeSigBeatsPerMeasure, _audioSettingsSetup, _audioSettingsTeardown);
-  _runTest("Set time signature note value", _testSetTimeSigNoteValue, _audioSettingsSetup, _audioSettingsTeardown);
+TestSuite addAudioSettingsTests(void);
+TestSuite addAudioSettingsTests(void) {
+  TestSuite testSuite = newTestSuite("AudioSettings", _audioSettingsSetup, _audioSettingsTeardown);
+  addTest(testSuite, "Initialization", _testInitAudioSettings);
+  addTest(testSuite, "Set sample rate", _testSetSampleRate);
+  addTest(testSuite, "Set num channels", _testSetNumChannels);
+  addTest(testSuite, "Set blocksize", _testSetBlocksize);
+  addTest(testSuite, "Set tempo", _testSetTempo);
+  addTest(testSuite, "Set time signature beats per measure", _testSetTimeSigBeatsPerMeasure);
+  addTest(testSuite, "Set time signature note value", _testSetTimeSigNoteValue);
+  return testSuite;
 }
