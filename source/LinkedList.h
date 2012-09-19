@@ -39,8 +39,8 @@ typedef struct {
 typedef LinkedListMembers *LinkedList;
 typedef LinkedListMembers *LinkedListIterator;
 
-typedef void (*LinkedListForeachFunc)(void*, void*);
-typedef void (*LinkedListFreeItemFunc)(void*);
+typedef void (*LinkedListForeachFunc)(void* item, void* userData);
+typedef void (*LinkedListFreeItemFunc)(void* item);
 
 LinkedList newLinkedList(void);
 
