@@ -92,38 +92,11 @@ TestCase newTestCase(char* name, char* filename, int lineNumber, TestCaseExecFun
   } \
 }
 
-#define _runTest(testName, test, setup, teardown) \
-  { \
-    int result; \
-    printTestStarted(testName); \
-    setup(); \
-    result = test(); \
-    if(!result) { \
-      testsPassed++; \
-      printTestSuccess(); \
-    } else { \
-      testsFailed++; \
-    } \
-    teardown(); \
-  }
-
 #if WINDOWS
 #define FILE_BASENAME (strrchr(__FILE__, '\\') ? strrchr(__FILE__, '\\') + 1 : __FILE__)
 #else
 #define FILE_BASENAME (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
 #endif
 
-#define _startTestSection() \
-  { \
-    printf("Running tests in %s\n", FILE_BASENAME); \
-  }
-
 extern int testsPassed;
 extern int testsFailed;
-
-static void emptySetup(void) { }
-static void emptyTeardown(void) { }
-
-static void printTestStarted(const char* testName) {
-  printf("  %s: ", testName);
-}
