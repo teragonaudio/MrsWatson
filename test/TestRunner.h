@@ -58,6 +58,9 @@
   } \
 }
 
+void printTestSuiteResult(TestSuite testSuite);
+void printTestSuccess(void);
+void printTestFail(void);
 #define _runTest(testName, test, setup, teardown) \
   { \
     int result; \
@@ -92,22 +95,4 @@ static void emptyTeardown(void) { }
 
 static void printTestStarted(const char* testName) {
   printf("  %s: ", testName);
-}
-
-static void printTestSuccess(void) {
-  if(isatty(2)) {
-    printf("\x1b%sOK\x1b%s\n", ANSI_COLOR_GREEN, ANSI_COLOR_RESET);
-  }
-  else {
-    printf("OK\n");
-  }
-}
-
-static void printTestFail(void) {
-  if(isatty(2)) {
-    printf("\x1b%sFAIL\x1b%s\n", ANSI_COLOR_RED, ANSI_COLOR_RESET);
-  }
-  else {
-    printf("FAIL\n");
-  }
 }
