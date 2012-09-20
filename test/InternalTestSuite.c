@@ -21,14 +21,19 @@ static void _sumTestSuiteResults(void* item, void* extraData) {
   result->numFail += testSuite->numFail;
 }
 
-void runInternalTestSuite(void);
-void runInternalTestSuite(void) {
+static LinkedList _getTestSuites(void) {
   LinkedList internalTestSuites = newLinkedList();
   appendItemToList(internalTestSuites, addAudioClockTests());
   appendItemToList(internalTestSuites, addAudioSettingsTests());
   appendItemToList(internalTestSuites, addCharStringTests());
   appendItemToList(internalTestSuites, addLinkedListTests());
   appendItemToList(internalTestSuites, addMidiSequenceTests());
+  return internalTestSuites;
+}
+
+void runInternalTestSuite(void);
+void runInternalTestSuite(void) {
+  LinkedList internalTestSuites = _getTestSuites();
 
   foreachItemInList(internalTestSuites, runTestSuite, NULL);
   _TestSuiteResult suiteResult = malloc(sizeof(_TestSuiteResultMembers));
