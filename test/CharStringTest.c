@@ -148,7 +148,7 @@ TestSuite addCharStringTests(void);
 TestSuite addCharStringTests(void) {
   TestSuite testSuite = newTestSuite("CharString", NULL, NULL);
 
-  addTest(testSuite, "New object", _testNewCharString);
+  addTest(testSuite, "New CharString", _testNewCharString);
   addTest(testSuite, "New object with capacity", _testNewCharStringWithCapacity);
   addTest(testSuite, "Clear string", _testClearCharString);
   addTest(testSuite, "Copy to CharString", _testCopyToCharString);
