@@ -15,6 +15,7 @@
 #include "MrsWatson.h"
 
 int testsPassed, testsFailed;
+extern TestCase findTestCase(CharString testName);
 extern void runInternalTestSuite(void);
 extern void runApplicationTestSuite(char *applicationPath, char *resourcesPath);
 
@@ -33,11 +34,9 @@ static ProgramOptions newTestProgramOptions(void) {
 \t- Internal\n\
 \t- All (default)",
     true, ARGUMENT_TYPE_REQUIRED, NO_DEFAULT_VALUE);
-  /* TODO: Finish this option
   addNewProgramOption(programOptions, OPTION_TEST_NAME, "test",
     "Run a single test by name",
     true, ARGUMENT_TYPE_REQUIRED, NO_DEFAULT_VALUE);
-  */
   addNewProgramOption(programOptions, OPTION_TEST_MRSWATSON_PATH, "mrswatson-path",
     "Path to mrswatson executable. Only required for running application test suite.",
     true, ARGUMENT_TYPE_REQUIRED, NO_DEFAULT_VALUE);
@@ -62,12 +61,12 @@ static ProgramOptions newTestProgramOptions(void) {
 int main(int argc, char* argv[]) {
   ProgramOptions programOptions;
   int totalTestsFailed = 0;
-  CharString testNameToRun;
   CharString testSuiteToRun;
   CharString mrsWatsonPath;
   CharString resourcesPath;
   boolByte runInternalTests = false;
   boolByte runApplicationTests = false;
+  TestCase testCase;
 
   programOptions = newTestProgramOptions();
   if(!parseCommandLine(programOptions, argc, argv)) {
@@ -102,7 +101,15 @@ int main(int argc, char* argv[]) {
     copyToCharString(testSuiteToRun, DEFAULT_TEST_SUITE_NAME);
   }
 
-  if(isCharStringEqualToCString(testSuiteToRun, "all", true)) {
+  if(programOptions->options[OPTION_TEST_NAME]->enabled) {
+    runInternalTests = false;
+    runApplicationTests = false;
+    testCase = findTestCase(programOptions->options[OPTION_TEST_NAME]->argument);
+    if(testCase != NULL) {
+      runTestCase(testCase, NULL);
+    }
+  }
+  else if(isCharStringEqualToCString(testSuiteToRun, "all", true)) {
     runInternalTests = true;
     runApplicationTests = true;
   }
