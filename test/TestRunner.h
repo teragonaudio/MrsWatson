@@ -44,6 +44,7 @@ typedef TestSuiteMembers* TestSuite;
 
 void addTestToTestSuite(TestSuite testSuite, TestCase testCase);
 void runTestSuite(void* testSuitePtr, void* extraData);
+void runTestCase(void* item, void* extraData);
 void printTestSuccess(void);
 void printTestFail(void);
 
