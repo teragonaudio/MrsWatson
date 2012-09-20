@@ -44,3 +44,39 @@ void runInternalTestSuite(void) {
   printf("\nRan %d function tests: %d passed, %d failed\n",
     suiteResult->numSuccess + suiteResult->numFail, suiteResult->numSuccess, suiteResult->numFail);
 }
+
+static TestCase _findTestCaseInSuite(TestSuite testSuite, CharString testName) {
+  LinkedList iterator = testSuite->testCases;
+  TestCase currentTestCase = NULL;
+
+  while(iterator != NULL) {
+    if(iterator->item != NULL) {
+      currentTestCase = (TestCase)iterator->item;
+      if(isCharStringEqualToCString(testName, currentTestCase->name, true)) {
+        return currentTestCase;
+      }
+    }
+    iterator= iterator->nextItem;
+  }
+
+  return NULL;
+}
+
+TestCase findTestCase(CharString testName);
+TestCase findTestCase(CharString testName) {
+  LinkedList internalTestSuites = _getTestSuites();
+  LinkedList iterator = internalTestSuites;
+  TestCase testCase = NULL;
+
+  while(iterator != NULL) {
+    if(iterator->item != NULL) {
+      testCase = _findTestCaseInSuite(iterator->item, testName);
+      if(testCase != NULL) {
+        return testCase;
+      }
+    }
+    iterator= iterator->nextItem;
+  }
+
+  return testCase;
+}
