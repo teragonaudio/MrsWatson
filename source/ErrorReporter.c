@@ -57,7 +57,9 @@ ErrorReporter newErrorReporter(void) {
 
   // Trim the final newline character from this string
   length = strnlen(errorReporter->reportName->data, errorReporter->reportName->capacity);
-  errorReporter->reportName->data[length - 1] = '\0';
+  if(errorReporter->reportName->data[length - 1] == '\n') {
+    errorReporter->reportName->data[length - 1] = '\0';
+  }
 
   errorReporter->reportDirPath = newCharString();
 #if UNIX
