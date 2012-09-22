@@ -85,6 +85,6 @@ void runTestCase(void* item, void* extraData) {
 
 void runTestSuite(void* testSuitePtr, void* extraData) {
   TestSuite testSuite = (TestSuite)testSuitePtr;
-  printf("Running tests in %s\n", testSuite->name);
+  printf("Running tests in %s:\n", testSuite->name);
   foreachItemInList(testSuite->testCases, runTestCase, testSuite);
 }
