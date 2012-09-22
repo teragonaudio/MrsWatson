@@ -12,6 +12,7 @@
 #include "ProgramOption.h"
 #include "TestRunner.h"
 #include "StringUtilities.h"
+#include "FileUtilities.h"
 #include "MrsWatson.h"
 
 int testsPassed, testsFailed;
