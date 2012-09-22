@@ -37,6 +37,7 @@
 #include "EventLogger.h"
 #include "MrsWatson.h"
 #include "BuildInfo.h"
+#include "ErrorReporter.h"
 #include "ProgramOption.h"
 #include "SampleSource.h"
 #include "PluginChain.h"
@@ -46,6 +47,10 @@
 #include "AudioClock.h"
 #include "MidiSequence.h"
 #include "MidiSource.h"
+
+// This is global so that in case of a crash or signal, we can still generate
+// a complete error report with a reference
+static ErrorReporter gErrorReporter = NULL;
 
 static void prettyPrintTime(CharString outString, unsigned long milliseconds) {
   clearCharString(outString);
@@ -155,7 +160,33 @@ int mrsWatsonMain(int argc, char** argv) {
     return RETURN_CODE_NOT_RUN;
   }
 
-  // Parse these options first so that log messages displayed in the below loop are properly displayed
+  // See if we are to make an error report and make necessary changes to the
+  // options for good diagnostics. Note that error reports cannot be generated
+  // for any of the above options which return with RETURN_CODE_NOT_RUN.
+  if(programOptions->options[OPTION_ERROR_REPORT]->enabled) {
+    if(!strcasecmp(argv[i], "-")) {
+      printf("ERROR: Using stdin/stdout is incompatible with --error-report\n");
+      return RETURN_CODE_NOT_RUN;
+    }
+
+    programOptions->options[OPTION_VERBOSE]->enabled = true;
+    programOptions->options[OPTION_LOG_FILE]->enabled = true;
+    copyToCharString(programOptions->options[OPTION_LOG_FILE]->argument, "log.txt");
+
+    gErrorReporter = newErrorReporter();
+    createCommandLineLauncher(gErrorReporter, argc, argv);
+    copyFileToErrorReportDir(gErrorReporter, programOptions->options[OPTION_INPUT_SOURCE]->argument);
+    remapPathToErrorReportDir(gErrorReporter, programOptions->options[OPTION_INPUT_SOURCE]->argument);
+    copyFileToErrorReportDir(gErrorReporter, programOptions->options[OPTION_MIDI_SOURCE]->argument);
+    remapPathToErrorReportDir(gErrorReporter, programOptions->options[OPTION_MIDI_SOURCE]->argument);
+    remapPathToErrorReportDir(gErrorReporter, programOptions->options[OPTION_OUTPUT_SOURCE]->argument);
+    remapPathToErrorReportDir(gErrorReporter, programOptions->options[OPTION_LOG_FILE]->argument);
+
+    copyPluginToErrorReportDir(gErrorReporter);
+  }
+
+  // Parse these options first so that log messages displayed in the below
+  // loop are properly displayed
   if(programOptions->options[OPTION_VERBOSE]->enabled) {
     setLogLevel(LOG_DEBUG);
   }
@@ -452,6 +483,8 @@ int mrsWatsonMain(int argc, char** argv) {
   freeAudioSettings();
   logInfo("Goodbye!");
   freeEventLogger();
+
+  completeErrorReport(gErrorReporter);
 
   return RETURN_CODE_SUCCESS;
 }

@@ -79,6 +79,10 @@ If stderr is a terminal device, color is used automatically unless 'none' is giv
     "Print information about each plugin in the chain.",
     false, ARGUMENT_TYPE_NONE, NO_DEFAULT_VALUE);
 
+  addNewProgramOption(programOptions, OPTION_ERROR_REPORT, "error-report",
+    "Generate an error report zipfile on the desktop.",
+    false, ARGUMENT_TYPE_NONE, NO_DEFAULT_VALUE);
+
   addNewProgramOption(programOptions, OPTION_LIST_FILE_TYPES, "list-file-types",
     "Print a list of supported file types for input/output sources.",
     false, ARGUMENT_TYPE_NONE, NO_DEFAULT_VALUE);
