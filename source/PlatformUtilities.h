@@ -52,7 +52,7 @@
 #include <strings.h>
 #endif
 
-#if ! WINDOWS
+#if LINUX || MACOSX
 #define UNIX 1
 #endif
 
