@@ -45,38 +45,39 @@ void runInternalTestSuite(void) {
     suiteResult->numSuccess + suiteResult->numFail, suiteResult->numSuccess, suiteResult->numFail);
 }
 
-static TestCase _findTestCaseInSuite(TestSuite testSuite, CharString testName) {
+TestCase findTestCase(TestSuite testSuite, char* testName);
+TestCase findTestCase(TestSuite testSuite, char* testName) {
   LinkedList iterator = testSuite->testCases;
   TestCase currentTestCase = NULL;
 
   while(iterator != NULL) {
     if(iterator->item != NULL) {
       currentTestCase = (TestCase)iterator->item;
-      if(isCharStringEqualToCString(testName, currentTestCase->name, true)) {
+      if(!strncasecmp(testName, currentTestCase->name, true)) {
         return currentTestCase;
       }
     }
-    iterator= iterator->nextItem;
+    iterator = iterator->nextItem;
   }
 
   return NULL;
 }
 
-TestCase findTestCase(CharString testName);
-TestCase findTestCase(CharString testName) {
+TestSuite findTestSuite(char *testSuiteName);
+TestSuite findTestSuite(char *testSuiteName) {
   LinkedList internalTestSuites = _getTestSuites();
   LinkedList iterator = internalTestSuites;
-  TestCase testCase = NULL;
+  TestSuite testSuite = NULL;
 
   while(iterator != NULL) {
     if(iterator->item != NULL) {
-      testCase = _findTestCaseInSuite(iterator->item, testName);
-      if(testCase != NULL) {
-        return testCase;
+      testSuite = (TestSuite)iterator->item;
+      if(!strncasecmp(testSuite->name, testSuiteName, STRING_LENGTH_DEFAULT)) {
+        return testSuite;
       }
     }
-    iterator= iterator->nextItem;
+    iterator = iterator->nextItem;
   }
 
-  return testCase;
+  return NULL;
 }

@@ -15,7 +15,8 @@
 #include "MrsWatson.h"
 
 int testsPassed, testsFailed;
-extern TestCase findTestCase(CharString testName);
+extern TestSuite findTestSuite(char* testSuiteName);
+extern TestCase findTestCase(TestSuite testSuite, char* testName);
 extern void runInternalTestSuite(void);
 extern void runApplicationTestSuite(char *applicationPath, char *resourcesPath);
 
@@ -35,7 +36,8 @@ static ProgramOptions newTestProgramOptions(void) {
 \t- All (default)",
     true, ARGUMENT_TYPE_REQUIRED, NO_DEFAULT_VALUE);
   addNewProgramOption(programOptions, OPTION_TEST_NAME, "test",
-    "Run a single test by name",
+    "Run a single test. Tests are named 'Suite:Name', for example:\n\
+\t-t 'LinkedList:Append Item'",
     true, ARGUMENT_TYPE_REQUIRED, NO_DEFAULT_VALUE);
   addNewProgramOption(programOptions, OPTION_TEST_MRSWATSON_PATH, "mrswatson-path",
     "Path to mrswatson executable. Only required for running application test suite.",
@@ -104,9 +106,29 @@ int main(int argc, char* argv[]) {
   if(programOptions->options[OPTION_TEST_NAME]->enabled) {
     runInternalTests = false;
     runApplicationTests = false;
-    testCase = findTestCase(programOptions->options[OPTION_TEST_NAME]->argument);
-    if(testCase != NULL) {
-      runTestCase(testCase, NULL);
+    char* testArgument = programOptions->options[OPTION_TEST_NAME]->argument->data;
+    char* colon = strchr(testArgument, ':');
+    if(colon == NULL) {
+      printf("ERROR: Invalid test name");
+      printProgramOption(programOptions->options[OPTION_TEST_NAME], true, DEFAULT_INDENT_SIZE, 0);
+      return -1;
+    }
+    char* testCaseName = strdup(colon + 1);
+    *colon = '\0';
+    char* testSuiteName = strdup(programOptions->options[OPTION_TEST_NAME]->argument->data);
+    TestSuite testSuite = findTestSuite(testSuiteName);
+    if(testSuite == NULL) {
+      printf("ERROR: Could not find test suite '%s'\n", testSuiteName);
+      return -1;
+    }
+    testCase = findTestCase(testSuite, testCaseName);
+    if(testCase == NULL) {
+      printf("ERROR: Could not find test case '%s'\n", testCaseName);
+      return -1;
+    }
+    else {
+      printf("Running test in %s:\n", testSuite->name);
+      runTestCase(testCase, testSuite);
     }
   }
   else if(isCharStringEqualToCString(testSuiteToRun, "all", true)) {
