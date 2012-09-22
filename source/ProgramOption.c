@@ -31,6 +31,7 @@
 #include "ProgramOption.h"
 #include "EventLogger.h"
 #include "StringUtilities.h"
+#include "FileUtilities.h"
 #include "AudioSettings.h"
 #include "MrsWatson.h"
 

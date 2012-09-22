@@ -31,6 +31,7 @@
 #include "PlatformUtilities.h"
 #include "PluginPreset.h"
 #include "StringUtilities.h"
+#include "FileUtilities.h"
 #include "EventLogger.h"
 #include "PluginPresetFxp.h"
 

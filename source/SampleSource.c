@@ -31,6 +31,7 @@
 #include "SampleSource.h"
 #include "SampleSourcePcm.h"
 #include "StringUtilities.h"
+#include "FileUtilities.h"
 #include "EventLogger.h"
 #include "SampleSourceSilence.h"
 #include "SampleSourceAiff.h"

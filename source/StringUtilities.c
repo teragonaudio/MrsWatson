@@ -99,23 +99,3 @@ void wrapString(const char* srcString, char* destString, int indentSize, int lin
 
   free(lineBuffer);
 }
-
-const char* getFileBasename(const char* filename) {
-  const char *lastDelimiter = strrchr(filename, PATH_DELIMITER);
-  if(lastDelimiter == NULL) {
-    return (char*)filename;
-  }
-  else {
-    return lastDelimiter + 1;
-  }
-}
-
-const char* getFileExtension(const char* filename) {
-  const char *dot = strrchr(filename, '.');
-  if(dot == NULL) {
-    return NULL;
-  }
-  else {
-    return dot + 1;
-  }
-}

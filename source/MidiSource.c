@@ -31,6 +31,7 @@
 #include "MidiSource.h"
 #include "EventLogger.h"
 #include "StringUtilities.h"
+#include "FileUtilities.h"
 #include "MidiSourceFile.h"
 #include "PlatformUtilities.h"
 

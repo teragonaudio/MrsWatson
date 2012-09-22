@@ -40,6 +40,7 @@ extern "C" {
 #include "AudioSettings.h"
 #include "MrsWatson.h"
 #include "MidiEvent.h"
+#include "FileUtilities.h"
 #include "StringUtilities.h"
 }
 

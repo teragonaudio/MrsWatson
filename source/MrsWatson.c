@@ -41,6 +41,7 @@
 #include "SampleSource.h"
 #include "PluginChain.h"
 #include "StringUtilities.h"
+#include "FileUtilities.h"
 #include "AudioSettings.h"
 #include "AudioClock.h"
 #include "MidiSequence.h"
