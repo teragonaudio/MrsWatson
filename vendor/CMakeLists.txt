@@ -7,3 +7,14 @@ foreach(vendor_file ${vendor_FILES})
     execute_process(COMMAND tar xfz ${vendor_file} WORKING_DIRECTORY "vendor")
   endif()
 endforeach()
+
+# For windows, we can use a few common zip programs
+#FIND_PROGRAM(ZIP_EXECUTABLE wzzip PATHS "$ENV{ProgramFiles}/WinZip")
+#IF(ZIP_EXECUTABLE)
+#SET(ZIP_COMMAND "\"${ZIP_EXECUTABLE}\" -P \"<ARCHIVE>\" @<FILELIST>")
+#ENDIF(ZIP_EXECUTABLE)
+#
+#FIND_PROGRAM(ZIP_EXECUTABLE 7z PATHS "$ENV{ProgramFiles}/7-Zip") 
+#IF(ZIP_EXECUTABLE)
+#SET(ZIP_COMMAND "\"${ZIP_EXECUTABLE}\" a -tzip \"<ARCHIVE>\" @<FILELIST>")
+#ENDIF(ZIP_EXECUTABLE)
