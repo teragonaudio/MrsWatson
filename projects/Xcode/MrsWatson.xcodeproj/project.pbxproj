@@ -74,8 +74,8 @@
 		24EDB11E15F618C800B0B8DF /* TaskTimerTest.c in Sources */ = {isa = PBXBuildFile; fileRef = 24EDB01D15F46F0F00B0B8DF /* TaskTimerTest.c */; };
 		24F1985D160DA31F00CBFF9E /* FileUtilities.c in Sources */ = {isa = PBXBuildFile; fileRef = 24F1985B160DA31F00CBFF9E /* FileUtilities.c */; };
 		24F1985E160DA31F00CBFF9E /* FileUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 24F1985C160DA31F00CBFF9E /* FileUtilities.h */; };
-		24F198B1160DCEED00CBFF9E /* ErrorReport.c in Sources */ = {isa = PBXBuildFile; fileRef = 24F198AF160DCEED00CBFF9E /* ErrorReport.c */; };
-		24F198B2160DCEED00CBFF9E /* ErrorReport.h in Headers */ = {isa = PBXBuildFile; fileRef = 24F198B0160DCEED00CBFF9E /* ErrorReport.h */; };
+		24F198B1160DCEED00CBFF9E /* ErrorReporter.c in Sources */ = {isa = PBXBuildFile; fileRef = 24F198AF160DCEED00CBFF9E /* ErrorReporter.c */; };
+		24F198B2160DCEED00CBFF9E /* ErrorReporter.h in Headers */ = {isa = PBXBuildFile; fileRef = 24F198B0160DCEED00CBFF9E /* ErrorReporter.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -228,8 +228,8 @@
 		24EDB0F515F6182C00B0B8DF /* MrsWatsonTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = MrsWatsonTest; sourceTree = BUILT_PRODUCTS_DIR; };
 		24F1985B160DA31F00CBFF9E /* FileUtilities.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = FileUtilities.c; sourceTree = "<group>"; };
 		24F1985C160DA31F00CBFF9E /* FileUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileUtilities.h; sourceTree = "<group>"; };
-		24F198AF160DCEED00CBFF9E /* ErrorReport.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ErrorReport.c; sourceTree = "<group>"; };
-		24F198B0160DCEED00CBFF9E /* ErrorReport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ErrorReport.h; sourceTree = "<group>"; };
+		24F198AF160DCEED00CBFF9E /* ErrorReporter.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ErrorReporter.c; sourceTree = "<group>"; };
+		24F198B0160DCEED00CBFF9E /* ErrorReporter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ErrorReporter.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -389,8 +389,8 @@
 				24EDAF8715F46EB400B0B8DF /* BuildInfo.h */,
 				24EDAF8815F46EB400B0B8DF /* CharString.c */,
 				24EDAF8915F46EB400B0B8DF /* CharString.h */,
-				24F198AF160DCEED00CBFF9E /* ErrorReport.c */,
-				24F198B0160DCEED00CBFF9E /* ErrorReport.h */,
+				24F198AF160DCEED00CBFF9E /* ErrorReporter.c */,
+				24F198B0160DCEED00CBFF9E /* ErrorReporter.h */,
 				24EDAF8A15F46EB400B0B8DF /* EventLogger.c */,
 				24EDAF8B15F46EB400B0B8DF /* EventLogger.h */,
 				24F1985B160DA31F00CBFF9E /* FileUtilities.c */,
@@ -465,7 +465,7 @@
 			files = (
 				246DEFE7160A51B2001E2BF8 /* PluginPassthru.h in Headers */,
 				24F1985E160DA31F00CBFF9E /* FileUtilities.h in Headers */,
-				24F198B2160DCEED00CBFF9E /* ErrorReport.h in Headers */,
+				24F198B2160DCEED00CBFF9E /* ErrorReporter.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -592,7 +592,7 @@
 				24EDB0E015F617DD00B0B8DF /* Vst2xHostCallback.cpp in Sources */,
 				246DEFE6160A51B2001E2BF8 /* PluginPassthru.c in Sources */,
 				24F1985D160DA31F00CBFF9E /* FileUtilities.c in Sources */,
-				24F198B1160DCEED00CBFF9E /* ErrorReport.c in Sources */,
+				24F198B1160DCEED00CBFF9E /* ErrorReporter.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
