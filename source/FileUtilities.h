@@ -30,12 +30,6 @@
 
 #ifndef MrsWatson_FileUtilities_h
 #define MrsWatson_FileUtilities_h
-/*
-#if WINDOWS
-#define PATH_DELIMITER '\\'
-#else
-#define PATH_DELIMITER '/'
-#endif
 
 boolByte fileExists(const char* absolutePath);
 int listDirectory(const char* directory, LinkedList outItems);
@@ -44,7 +38,7 @@ int listDirectory(const char* directory, LinkedList outItems);
 // for given platforms, not kept in stack memory.
 void buildAbsolutePath(const CharString directory, const CharString file, const char* fileExtension, CharString outString);
 boolByte isAbsolutePath(const CharString path);
-*/
+
 const char* getFileBasename(const char* filename);
 const char* getFileExtension(const char* filename);
 

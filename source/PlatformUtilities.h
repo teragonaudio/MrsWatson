@@ -65,12 +65,6 @@ typedef enum {
 PlatformType getPlatformType(void);
 const char* getPlatformName(void);
 boolByte fileExists(const char* absolutePath);
-int listDirectory(const char* directory, LinkedList outItems);
-
-// const char* is used here as it is assumed that the extensions will be defined by the preprocessor
-// for given platforms, not kept in stack memory.
-void buildAbsolutePath(const CharString directory, const CharString file, const char* fileExtension, CharString outString);
-boolByte isAbsolutePath(const CharString path);
 
 boolByte isHostLittleEndian(void);
 

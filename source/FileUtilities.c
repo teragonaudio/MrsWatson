@@ -38,7 +38,7 @@
 #include <dirent.h>
 #include <string.h>
 #endif
-/*
+
 boolByte fileExists(const char* absolutePath) {
 #if WINDOWS
   // Visual Studio's compiler is not C99 compliant, so variable declarations
@@ -131,7 +131,7 @@ boolByte isAbsolutePath(const CharString path) {
 #endif
   return false;
 }
-*/
+
 const char* getFileBasename(const char* filename) {
   const char *lastDelimiter = strrchr(filename, PATH_DELIMITER);
   if(lastDelimiter == NULL) {
