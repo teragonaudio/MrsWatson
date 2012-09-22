@@ -81,3 +81,20 @@ TestSuite findTestSuite(char *testSuiteName) {
 
   return NULL;
 }
+
+static void _printTestCases(void* item, void* userData) {
+  TestCase testCase = (TestCase)item;
+  char* testSuiteName = (char*)userData;
+  printf("%s:%s\n", testSuiteName, testCase->name);
+}
+
+static void _printTestsInSuite(void* item, void* userData) {
+  TestSuite testSuite = (TestSuite)item;
+  foreachItemInList(testSuite->testCases, _printTestCases, testSuite->name);
+}
+
+void printInternalTests(void);
+void printInternalTests(void) {
+  LinkedList internalTestSuites = _getTestSuites();
+  foreachItemInList(internalTestSuites, _printTestsInSuite, NULL);
+}

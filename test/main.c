@@ -17,6 +17,7 @@
 int testsPassed, testsFailed;
 extern TestSuite findTestSuite(char* testSuiteName);
 extern TestCase findTestCase(TestSuite testSuite, char* testName);
+extern void printInternalTests(void);
 extern void runInternalTestSuite(void);
 extern void runApplicationTestSuite(char *applicationPath, char *resourcesPath);
 
@@ -39,6 +40,9 @@ static ProgramOptions newTestProgramOptions(void) {
     "Run a single test. Tests are named 'Suite:Name', for example:\n\
 \t-t 'LinkedList:Append Item'",
     true, ARGUMENT_TYPE_REQUIRED, NO_DEFAULT_VALUE);
+  addNewProgramOption(programOptions, OPTION_TEST_PRINT_TESTS, "list-tests",
+    "List all internal tests in the same format required by --test",
+    true, ARGUMENT_TYPE_NONE, NO_DEFAULT_VALUE);
   addNewProgramOption(programOptions, OPTION_TEST_MRSWATSON_PATH, "mrswatson-path",
     "Path to mrswatson executable. Only required for running application test suite.",
     true, ARGUMENT_TYPE_REQUIRED, NO_DEFAULT_VALUE);
@@ -92,6 +96,10 @@ int main(int argc, char* argv[]) {
   else if(programOptions->options[OPTION_TEST_OPTIONS]->enabled) {
     printf("Recognized options and their default values:\n");
     printProgramOptions(programOptions, false, DEFAULT_INDENT_SIZE);
+    return -1;
+  }
+  else if(programOptions->options[OPTION_TEST_PRINT_TESTS]->enabled) {
+    printInternalTests();
     return -1;
   }
 
