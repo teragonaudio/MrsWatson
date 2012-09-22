@@ -39,6 +39,7 @@ vendor/vstsdk2.4/*
 vendor/audiofile*
 vendor/flac*
 vendor/lame*
+vendor/libarchive*
 vendor/libogg*
 vendor/libvorbis*
 
