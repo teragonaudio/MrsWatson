@@ -72,6 +72,8 @@
 		24EDB11B15F618C800B0B8DF /* SampleSourceTest.c in Sources */ = {isa = PBXBuildFile; fileRef = 24EDB01A15F46F0F00B0B8DF /* SampleSourceTest.c */; };
 		24EDB11D15F618C800B0B8DF /* StringUtilitiesTest.c in Sources */ = {isa = PBXBuildFile; fileRef = 24EDB01C15F46F0F00B0B8DF /* StringUtilitiesTest.c */; };
 		24EDB11E15F618C800B0B8DF /* TaskTimerTest.c in Sources */ = {isa = PBXBuildFile; fileRef = 24EDB01D15F46F0F00B0B8DF /* TaskTimerTest.c */; };
+		24F1985D160DA31F00CBFF9E /* FileUtilities.c in Sources */ = {isa = PBXBuildFile; fileRef = 24F1985B160DA31F00CBFF9E /* FileUtilities.c */; };
+		24F1985E160DA31F00CBFF9E /* FileUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 24F1985C160DA31F00CBFF9E /* FileUtilities.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -222,6 +224,8 @@
 		24EDB0BD15F6177C00B0B8DF /* libMrsWatson.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libMrsWatson.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		24EDB0E515F617EC00B0B8DF /* MrsWatson */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = MrsWatson; sourceTree = BUILT_PRODUCTS_DIR; };
 		24EDB0F515F6182C00B0B8DF /* MrsWatsonTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = MrsWatsonTest; sourceTree = BUILT_PRODUCTS_DIR; };
+		24F1985B160DA31F00CBFF9E /* FileUtilities.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = FileUtilities.c; sourceTree = "<group>"; };
+		24F1985C160DA31F00CBFF9E /* FileUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileUtilities.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -383,6 +387,8 @@
 				24EDAF8915F46EB400B0B8DF /* CharString.h */,
 				24EDAF8A15F46EB400B0B8DF /* EventLogger.c */,
 				24EDAF8B15F46EB400B0B8DF /* EventLogger.h */,
+				24F1985B160DA31F00CBFF9E /* FileUtilities.c */,
+				24F1985C160DA31F00CBFF9E /* FileUtilities.h */,
 				24EDAF8C15F46EB400B0B8DF /* LinkedList.c */,
 				24EDAF8D15F46EB400B0B8DF /* LinkedList.h */,
 				24EDAF9115F46EB400B0B8DF /* MidiEvent.c */,
@@ -452,6 +458,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				246DEFE7160A51B2001E2BF8 /* PluginPassthru.h in Headers */,
+				24F1985E160DA31F00CBFF9E /* FileUtilities.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -517,7 +524,7 @@
 		24FDFBA1148CC6AF0074D3A1 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0440;
+				LastUpgradeCheck = 0450;
 				ORGANIZATIONNAME = "Teragon Audio";
 			};
 			buildConfigurationList = 24FDFBA4148CC6AF0074D3A1 /* Build configuration list for PBXProject "MrsWatson" */;
@@ -577,6 +584,7 @@
 				24EDB0DF15F617DD00B0B8DF /* TaskTimer.c in Sources */,
 				24EDB0E015F617DD00B0B8DF /* Vst2xHostCallback.cpp in Sources */,
 				246DEFE6160A51B2001E2BF8 /* PluginPassthru.c in Sources */,
+				24F1985D160DA31F00CBFF9E /* FileUtilities.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -642,11 +650,13 @@
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = "";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
 				);
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -656,7 +666,9 @@
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = "";
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -670,6 +682,7 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -679,6 +692,7 @@
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -692,6 +706,7 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -701,6 +716,7 @@
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
