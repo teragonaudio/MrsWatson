@@ -41,11 +41,13 @@
 // Substitutes for POSIX functions not found on Windows
 #if WINDOWS
 #define WIN32_LEAN_AND_MEAN
-#include "Windows.h"
+#include <Windows.h>
+
 #define strcasecmp _stricmp
+#define strdup _strdup
 #define unlink _unlink
 #define snprintf _snprintf
-#define isatty(int) 0
+#define isatty _isatty
 #elif LINUX
 #include <strings.h>
 #endif

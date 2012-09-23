@@ -1,4 +1,8 @@
 #include <stdlib.h>
+#if WINDOWS
+#include <io.h>
+#endif
+
 #include "TestRunner.h"
 
 // In both the TestSuite and TestCase objects we assume that we do not need ownership of
