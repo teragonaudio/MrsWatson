@@ -27,17 +27,12 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "PlatformUtilities.h"
-
-#if UNIX
-#include <signal.h>
-#endif
-
 #include "EventLogger.h"
 #include "MrsWatson.h"
 #include "BuildInfo.h"
-#include "ErrorReporter.h"
 #include "ProgramOption.h"
 #include "SampleSource.h"
 #include "PluginChain.h"
@@ -47,10 +42,6 @@
 #include "AudioClock.h"
 #include "MidiSequence.h"
 #include "MidiSource.h"
-
-// This is global so that in case of a crash or signal, we can still generate
-// a complete error report with a reference
-static ErrorReporter gErrorReporter = NULL;
 
 static void prettyPrintTime(CharString outString, unsigned long milliseconds) {
   int minutes;
@@ -71,14 +62,7 @@ static void prettyPrintTime(CharString outString, unsigned long milliseconds) {
   }
 }
 
-#if UNIX
-static void handleSignal(int signum) {
-  logError("Sent signal %d, exiting", signum);
-  exit(RETURN_CODE_SIGNAL + signum);
-}
-#endif
-
-int mrsWatsonMain(int argc, char** argv) {
+int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   // Input/Output sources, plugin chain, and other required objects
   SampleSource inputSource = NULL;
   SampleSource outputSource = NULL;
@@ -173,16 +157,15 @@ int mrsWatsonMain(int argc, char** argv) {
     programOptions->options[OPTION_LOG_FILE]->enabled = true;
     copyToCharString(programOptions->options[OPTION_LOG_FILE]->argument, "log.txt");
 
-    gErrorReporter = newErrorReporter();
-    createCommandLineLauncher(gErrorReporter, argc, argv);
-    copyFileToErrorReportDir(gErrorReporter, programOptions->options[OPTION_INPUT_SOURCE]->argument);
-    remapPathToErrorReportDir(gErrorReporter, programOptions->options[OPTION_INPUT_SOURCE]->argument);
-    copyFileToErrorReportDir(gErrorReporter, programOptions->options[OPTION_MIDI_SOURCE]->argument);
-    remapPathToErrorReportDir(gErrorReporter, programOptions->options[OPTION_MIDI_SOURCE]->argument);
-    remapPathToErrorReportDir(gErrorReporter, programOptions->options[OPTION_OUTPUT_SOURCE]->argument);
-    remapPathToErrorReportDir(gErrorReporter, programOptions->options[OPTION_LOG_FILE]->argument);
+    createCommandLineLauncher(errorReporter, argc, argv);
+    copyFileToErrorReportDir(errorReporter, programOptions->options[OPTION_INPUT_SOURCE]->argument);
+    remapPathToErrorReportDir(errorReporter, programOptions->options[OPTION_INPUT_SOURCE]->argument);
+    copyFileToErrorReportDir(errorReporter, programOptions->options[OPTION_MIDI_SOURCE]->argument);
+    remapPathToErrorReportDir(errorReporter, programOptions->options[OPTION_MIDI_SOURCE]->argument);
+    remapPathToErrorReportDir(errorReporter, programOptions->options[OPTION_OUTPUT_SOURCE]->argument);
+    remapPathToErrorReportDir(errorReporter, programOptions->options[OPTION_LOG_FILE]->argument);
 
-    copyPluginToErrorReportDir(gErrorReporter);
+    copyPluginToErrorReportDir(errorReporter);
   }
 
   // Parse these options first so that log messages displayed in the below
@@ -265,23 +248,6 @@ int mrsWatsonMain(int argc, char** argv) {
   logInfo("%s initialized", versionString->data);
   freeCharString(versionString);
   logInfo("Host platform is %s", getPlatformName());
-
-#if UNIX
-  // Set up signal handling only after logging is initialized. If we crash before
-  // here, something is seriously wrong.
-  signal(SIGHUP, handleSignal);
-  signal(SIGINT, handleSignal);
-  signal(SIGQUIT, handleSignal);
-  signal(SIGILL, handleSignal);
-  signal(SIGABRT, handleSignal);
-  signal(SIGFPE, handleSignal);
-  signal(SIGKILL, handleSignal);
-  signal(SIGBUS, handleSignal);
-  signal(SIGSEGV, handleSignal);
-  signal(SIGSYS, handleSignal);
-  signal(SIGPIPE, handleSignal);
-  signal(SIGTERM, handleSignal);
-#endif
 
   // Construct plugin chain
   if(!addPluginsFromArgumentString(pluginChain, programOptions->options[OPTION_PLUGIN]->argument, pluginSearchRoot)) {
@@ -484,7 +450,9 @@ int mrsWatsonMain(int argc, char** argv) {
   logInfo("Goodbye!");
   freeEventLogger();
 
-  completeErrorReport(gErrorReporter);
+  if(errorReporter != NULL) {
+    completeErrorReport(errorReporter);
+  }
 
   return RETURN_CODE_SUCCESS;
 }

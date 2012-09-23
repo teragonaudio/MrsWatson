@@ -30,6 +30,8 @@
 #ifndef MrsWatson_MrsWatson_h
 #define MrsWatson_MrsWatson_h
 
+#include "ErrorReporter.h"
+
 #define PROGRAM_NAME "MrsWatson"
 #define VENDOR_NAME "Teragon Audio"
 
@@ -108,6 +110,6 @@ typedef enum {
   NUM_RETURN_CODES
 } ReturnCodes;
 
-int mrsWatsonMain(int argc, char* argv[]);
+int mrsWatsonMain(ErrorReporter errorReporter, int argc, char* argv[]);
 
 #endif
