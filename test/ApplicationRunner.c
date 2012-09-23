@@ -1,9 +1,10 @@
-#if ! WINDOWS
+#if UNIX
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #endif
 #include "ApplicationRunner.h"
+#include "TestRunner.h"
 #include "CharString.h"
 #include "AnalyzeFile.h"
 
@@ -70,6 +71,9 @@ void runApplicationTest(char *applicationPath, const char *testName, LinkedList 
   LinkedList arguments = _appendLinkedLists(defaultArguments, testArguments);
   CharString failedAnalysisFunctionName = newCharString();
   unsigned long failedAnalysisSample;
+  // TODO: Need to pass these back to the caller
+  int testsPassed = 0;
+  int testsFailed = 0;
 
   // Remove any output files which may have been left from previous tests
   foreachItemInList(defaultArguments, _removeOutputFile, NULL);
