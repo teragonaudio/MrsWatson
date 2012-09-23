@@ -8,15 +8,9 @@ extern TestSuite addCharStringTests(void);
 extern TestSuite addLinkedListTests(void);
 extern TestSuite addMidiSequenceTests(void);
 
-typedef struct {
-  int numSuccess;
-  int numFail;
-} _TestSuiteResultMembers;
-typedef _TestSuiteResultMembers* _TestSuiteResult;
-
 static void _sumTestSuiteResults(void* item, void* extraData) {
   TestSuite testSuite = (TestSuite)item;
-  _TestSuiteResult result = (_TestSuiteResult)extraData;
+  TestSuite result = (TestSuite)extraData;
   result->numSuccess += testSuite->numSuccess;
   result->numFail += testSuite->numFail;
 }
@@ -33,16 +27,16 @@ static LinkedList _getTestSuites(void) {
 
 void runInternalTestSuite(void);
 void runInternalTestSuite(void) {
+  TestSuite suiteResults;
   LinkedList internalTestSuites = _getTestSuites();
 
   foreachItemInList(internalTestSuites, runTestSuite, NULL);
-  _TestSuiteResult suiteResult = malloc(sizeof(_TestSuiteResultMembers));
-  suiteResult->numSuccess = 0;
-  suiteResult->numFail = 0;
-  foreachItemInList(internalTestSuites, _sumTestSuiteResults, suiteResult);
+  // Create a new test suite to be used as the userData passed to the foreach loop
+  suiteResults = newTestSuite("Suite results", NULL, NULL);
+  foreachItemInList(internalTestSuites, _sumTestSuiteResults, suiteResults);
 
   printf("\nRan %d function tests: %d passed, %d failed\n",
-    suiteResult->numSuccess + suiteResult->numFail, suiteResult->numSuccess, suiteResult->numFail);
+    suiteResults->numSuccess + suiteResults->numFail, suiteResults->numSuccess, suiteResults->numFail);
 }
 
 TestCase findTestCase(TestSuite testSuite, char* testName);
