@@ -107,6 +107,9 @@
     <ClInclude Include="..\..\source\Types.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\source\PluginPassthru.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\AudioClock.c">
@@ -203,6 +206,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\Vst2xHostCallback.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\PluginPassthru.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

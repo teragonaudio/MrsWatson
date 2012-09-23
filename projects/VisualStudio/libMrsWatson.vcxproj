@@ -25,6 +25,7 @@
     <ClInclude Include="..\..\source\PlatformUtilities.h" />
     <ClInclude Include="..\..\source\Plugin.h" />
     <ClInclude Include="..\..\source\PluginChain.h" />
+    <ClInclude Include="..\..\source\PluginPassthru.h" />
     <ClInclude Include="..\..\source\PluginPreset.h" />
     <ClInclude Include="..\..\source\PluginPresetFxp.h" />
     <ClInclude Include="..\..\source\PluginVst2x.h" />
@@ -59,6 +60,7 @@
     <ClCompile Include="..\..\source\PlatformUtilities.c" />
     <ClCompile Include="..\..\source\Plugin.c" />
     <ClCompile Include="..\..\source\PluginChain.c" />
+    <ClCompile Include="..\..\source\PluginPassthru.c" />
     <ClCompile Include="..\..\source\PluginPreset.c" />
     <ClCompile Include="..\..\source\PluginPresetFxp.c" />
     <ClCompile Include="..\..\source\PluginVst2x.cpp" />
