@@ -53,10 +53,10 @@
 static ErrorReporter gErrorReporter = NULL;
 
 static void prettyPrintTime(CharString outString, unsigned long milliseconds) {
-  clearCharString(outString);
   int minutes;
   double seconds;
 
+  clearCharString(outString);
   if(milliseconds < 1000) {
     snprintf(outString->data, outString->capacity, "%ldms", milliseconds);
   }

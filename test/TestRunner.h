@@ -1,3 +1,6 @@
+#ifndef MrsWatsonTest_TestRunner_h
+#define MrsWatsonTest_TestRunner_h
+
 #include <stdio.h>
 #include <string.h>
 #if ! WINDOWS
@@ -99,5 +102,4 @@ TestCase newTestCase(char* name, char* filename, int lineNumber, TestCaseExecFun
 #define FILE_BASENAME (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
 #endif
 
-extern int testsPassed;
-extern int testsFailed;
+#endif

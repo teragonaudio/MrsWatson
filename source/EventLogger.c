@@ -39,6 +39,7 @@
 
 #if WINDOWS
 #include <Windows.h>
+#include <io.h>
 #else
 #include <sys/time.h>
 #include <unistd.h>
