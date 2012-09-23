@@ -12,9 +12,9 @@
 #include "ProgramOption.h"
 #include "TestRunner.h"
 #include "StringUtilities.h"
+#include "PlatformUtilities.h"
 #include "MrsWatson.h"
 
-int testsPassed, testsFailed;
 extern TestSuite findTestSuite(char* testSuiteName);
 extern TestCase findTestCase(TestSuite testSuite, char* testName);
 extern void printInternalTests(void);
@@ -66,6 +66,8 @@ static ProgramOptions newTestProgramOptions(void) {
 
 int main(int argc, char* argv[]) {
   ProgramOptions programOptions;
+  int testsPassed = 0;
+  int testsFailed = 0;
   int totalTestsFailed = 0;
   CharString testSuiteToRun;
   CharString mrsWatsonPath;
@@ -73,6 +75,11 @@ int main(int argc, char* argv[]) {
   boolByte runInternalTests = false;
   boolByte runApplicationTests = false;
   TestCase testCase;
+  TestSuite testSuite;
+  char* testArgument;
+  char* colon;
+  char* testCaseName;
+  char* testSuiteName;
 
   programOptions = newTestProgramOptions();
   if(!parseCommandLine(programOptions, argc, argv)) {
@@ -114,17 +121,18 @@ int main(int argc, char* argv[]) {
   if(programOptions->options[OPTION_TEST_NAME]->enabled) {
     runInternalTests = false;
     runApplicationTests = false;
-    char* testArgument = programOptions->options[OPTION_TEST_NAME]->argument->data;
-    char* colon = strchr(testArgument, ':');
+
+    testArgument = programOptions->options[OPTION_TEST_NAME]->argument->data;
+    colon = strchr(testArgument, ':');
     if(colon == NULL) {
       printf("ERROR: Invalid test name");
       printProgramOption(programOptions->options[OPTION_TEST_NAME], true, DEFAULT_INDENT_SIZE, 0);
       return -1;
     }
-    char* testCaseName = strdup(colon + 1);
+    testCaseName = strdup(colon + 1);
     *colon = '\0';
-    char* testSuiteName = strdup(programOptions->options[OPTION_TEST_NAME]->argument->data);
-    TestSuite testSuite = findTestSuite(testSuiteName);
+    testSuiteName = strdup(programOptions->options[OPTION_TEST_NAME]->argument->data);
+    testSuite = findTestSuite(testSuiteName);
     if(testSuite == NULL) {
       printf("ERROR: Could not find test suite '%s'\n", testSuiteName);
       return -1;
