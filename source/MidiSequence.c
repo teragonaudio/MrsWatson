@@ -53,7 +53,7 @@ boolByte fillMidiEventsFromRange(MidiSequence midiSequence, const unsigned long 
   const unsigned long stopTimestamp = startTimestamp + blocksize;
 
   while(true) {
-    if(iterator == NULL) {
+    if((iterator == NULL) || (iterator->item == NULL)) {
       return false;
     }
 

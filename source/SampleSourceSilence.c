@@ -36,6 +36,10 @@ static boolByte _openSampleSourceSilence(void* sampleSourcePtr, const SampleSour
   return true;
 }
 
+void _closeSampleSourceSilence(void* sampleSourcePtr) {
+  return true;
+}
+
 static boolByte _readBlockFromSilence(void* sampleSourcePtr, SampleBuffer sampleBuffer) {
   clearSampleBuffer(sampleBuffer);
   return true;
@@ -60,6 +64,7 @@ SampleSource newSampleSourceSilence(void) {
   sampleSource->numSamplesProcessed = 0;
 
   sampleSource->openSampleSource = _openSampleSourceSilence;
+  sampleSource->closeSampleSource = _closeSampleSourceSilence;
   sampleSource->readSampleBlock = _readBlockFromSilence;
   sampleSource->writeSampleBlock = _writeBlockToSilence;
   sampleSource->freeSampleSourceData = _freeInputSourceDataSilence;
