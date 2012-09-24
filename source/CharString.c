@@ -42,6 +42,22 @@ CharString newCharStringWithCapacity(int length) {
   return charString;
 }
 
+CharString newCharStringWithCString(char* string) {
+  int length = strlen(string);
+  CharString result = NULL;
+  if(length <= 0 || length > STRING_LENGTH_LONG) {
+    logError("Can't create string with length %d", length);
+  }
+  else {
+    // Add 1 to compensate for trailing null (should be 1, anyways).
+    // On OSX this code segfaults if "length + 1" is used instead.
+    // Not sure why that is, am I missing something obvious?
+    result = newCharStringWithCapacity(length + 2);
+    strncpy(result->data, string, length);
+  }
+  return result;
+}
+
 void clearCharString(CharString charString) {
   memset(charString->data, 0, (size_t)(charString->capacity));
 }

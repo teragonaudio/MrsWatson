@@ -51,6 +51,7 @@ typedef CharStringMembers* CharString;
 
 CharString newCharString(void);
 CharString newCharStringWithCapacity(int length);
+CharString newCharStringWithCString(char* string);
 
 void clearCharString(CharString charString);
 void copyToCharString(CharString destString, const char* srcString);
