@@ -16,7 +16,7 @@ static ErrorReporter gErrorReporter = NULL;
 #if UNIX
 static void handleSignal(int signum) {
   logError("Sent signal %d, exiting", signum);
-  completeErrorReport(gErrorReporter);
+  // completeErrorReport(gErrorReporter);
   exit(RETURN_CODE_SIGNAL + signum);
 }
 #endif
