@@ -105,6 +105,11 @@ void freeLinkedListAndItems(LinkedList list, LinkedListFreeItemFunc freeItem) {
   LinkedListIterator iterator = list;
   LinkedList current;
 
+  if(iterator->item == NULL){
+    free(iterator);
+    return;
+  }
+
   while(true) {
     if(iterator->nextItem == NULL) {
       freeItem(iterator->item);
