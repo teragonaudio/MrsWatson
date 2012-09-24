@@ -576,6 +576,11 @@ static void _displayVst2xPluginInfo(void* pluginPtr) {
   freeLinkedList(commonCanDos);
 }
 
+static void _getVst2xAbsolutePath(void* pluginPtr, CharString outPath) {
+  Plugin plugin = (Plugin)pluginPtr;
+  buildAbsolutePath(plugin->pluginLocation, plugin->pluginName, _getVst2xPlatformExtension(), outPath);
+}
+
 static int _getVst2xPluginSetting(void* pluginPtr, PluginSetting pluginSetting) {
   Plugin plugin = (Plugin)pluginPtr;
   PluginVst2xData data = (PluginVst2xData)plugin->extraData;
@@ -702,6 +707,7 @@ Plugin newPluginVst2x(const CharString pluginName, const CharString pluginLocati
 
   plugin->open = _openVst2xPlugin;
   plugin->displayInfo = _displayVst2xPluginInfo;
+  plugin->getAbsolutePath = _getVst2xAbsolutePath;
   plugin->getSetting = _getVst2xPluginSetting;
   plugin->processAudio = _processAudioVst2xPlugin;
   plugin->processMidiEvents = _processMidiEventsVst2xPlugin;

@@ -54,6 +54,7 @@ typedef enum {
 
 typedef boolByte (*OpenPluginFunc)(void* pluginPtr);
 typedef void (*PluginDisplayInfoFunc)(void* pluginPtr);
+typedef void (*PluginGetAbsolutePathFunc)(void* pluginPtr, CharString outPath);
 typedef int (*PluginGetSettingFunc)(void*, PluginSetting pluginSetting);
 typedef void (*PluginProcessAudioFunc)(void* pluginPtr, SampleBuffer inputs, SampleBuffer outputs);
 typedef void (*PluginProcessMidiEventsFunc)(void* pluginPtr, LinkedList midiEvents);
@@ -69,6 +70,7 @@ typedef struct {
 
   OpenPluginFunc open;
   PluginDisplayInfoFunc displayInfo;
+  PluginGetAbsolutePathFunc getAbsolutePath;
   PluginGetSettingFunc getSetting;
   PluginProcessAudioFunc processAudio;
   PluginProcessMidiEventsFunc processMidiEvents;

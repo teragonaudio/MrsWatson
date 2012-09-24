@@ -36,6 +36,13 @@ static boolByte _pluginPassthruOpen(void* pluginPtr) {
   return true;
 }
 
+static void _pluginPassthruGetAbsolutePath(void* pluginPtr, CharString outPath) {
+  // Internal plugins don't have a path, and thus can't be copied. So just copy
+  // an empty string here and let any callers needing the absolute path to check
+  // for this value before doing anything important.
+  clearCharString(outPath);
+}
+
 static int _pluginPassthruGetSetting(void* pluginPtr, PluginSetting pluginSetting) {
   return 0;
 }
@@ -64,6 +71,7 @@ Plugin newPluginPassthru(void) {
 
   plugin->open = _pluginPassthruOpen;
   plugin->displayInfo = _pluginPassthruEmpty;
+  plugin->getAbsolutePath = _pluginPassthruGetAbsolutePath;
   plugin->getSetting = _pluginPassthruGetSetting;
   plugin->processAudio = _pluginPassthruProcessAudio;
   plugin->processMidiEvents = _pluginPassthruProcessMidiEvents;
