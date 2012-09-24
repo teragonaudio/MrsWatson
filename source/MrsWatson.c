@@ -144,30 +144,6 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
     return RETURN_CODE_NOT_RUN;
   }
 
-  // See if we are to make an error report and make necessary changes to the
-  // options for good diagnostics. Note that error reports cannot be generated
-  // for any of the above options which return with RETURN_CODE_NOT_RUN.
-  if(programOptions->options[OPTION_ERROR_REPORT]->enabled) {
-    if(!strcasecmp(argv[i], "-")) {
-      printf("ERROR: Using stdin/stdout is incompatible with --error-report\n");
-      return RETURN_CODE_NOT_RUN;
-    }
-
-    programOptions->options[OPTION_VERBOSE]->enabled = true;
-    programOptions->options[OPTION_LOG_FILE]->enabled = true;
-    copyToCharString(programOptions->options[OPTION_LOG_FILE]->argument, "log.txt");
-
-    createCommandLineLauncher(errorReporter, argc, argv);
-    copyFileToErrorReportDir(errorReporter, programOptions->options[OPTION_INPUT_SOURCE]->argument);
-    remapPathToErrorReportDir(errorReporter, programOptions->options[OPTION_INPUT_SOURCE]->argument);
-    copyFileToErrorReportDir(errorReporter, programOptions->options[OPTION_MIDI_SOURCE]->argument);
-    remapPathToErrorReportDir(errorReporter, programOptions->options[OPTION_MIDI_SOURCE]->argument);
-    remapPathToErrorReportDir(errorReporter, programOptions->options[OPTION_OUTPUT_SOURCE]->argument);
-    remapPathToErrorReportDir(errorReporter, programOptions->options[OPTION_LOG_FILE]->argument);
-
-    copyPluginToErrorReportDir(errorReporter);
-  }
-
   // Parse these options first so that log messages displayed in the below
   // loop are properly displayed
   if(programOptions->options[OPTION_VERBOSE]->enabled) {
@@ -241,6 +217,14 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
     listAvailablePlugins(pluginSearchRoot);
     return RETURN_CODE_NOT_RUN;
   }
+  // See if we are to make an error report and make necessary changes to the
+  // options for good diagnostics. Note that error reports cannot be generated
+  // for any of the above options which return with RETURN_CODE_NOT_RUN.
+  if(programOptions->options[OPTION_ERROR_REPORT]->enabled) {
+    programOptions->options[OPTION_VERBOSE]->enabled = true;
+    programOptions->options[OPTION_LOG_FILE]->enabled = true;
+    copyToCharString(programOptions->options[OPTION_LOG_FILE]->argument, "log.txt");
+  }
 
   // Say hello!
   versionString = newCharString();
@@ -264,15 +248,39 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
     logError("Could not initialize plugin chain");
     return RETURN_CODE_PLUGIN_ERROR;
   }
+
   // Display info for plugins in the chain before checking for valid input/output sources
   if(shouldDisplayPluginInfo) {
     displayPluginInfo(pluginChain);
   }
 
+  // Now that all plugins have been initialized, we rewrite some paths in case
+  // we are to generate an error report. This must be done here before any input
+  // or output sources have been opened.
+  if(programOptions->options[OPTION_ERROR_REPORT]->enabled) {
+    createCommandLineLauncher(errorReporter, argc, argv);
+    copyFileToErrorReportDir(errorReporter, programOptions->options[OPTION_INPUT_SOURCE]->argument);
+    remapPathToErrorReportDir(errorReporter, programOptions->options[OPTION_INPUT_SOURCE]->argument);
+    copyFileToErrorReportDir(errorReporter, programOptions->options[OPTION_MIDI_SOURCE]->argument);
+    remapPathToErrorReportDir(errorReporter, programOptions->options[OPTION_MIDI_SOURCE]->argument);
+    remapPathToErrorReportDir(errorReporter, programOptions->options[OPTION_OUTPUT_SOURCE]->argument);
+    remapPathToErrorReportDir(errorReporter, programOptions->options[OPTION_LOG_FILE]->argument);
+    copyPluginsToErrorReportDir(errorReporter, pluginChain);
+  }
   // Get largest tail time requested by any plugin in the chain
   tailTimeInMs += getMaximumTailTimeInMs(pluginChain);
 
   // Verify input/output sources
+  if(programOptions->options[OPTION_ERROR_REPORT]->enabled) {
+    if(isSampleSourceStreaming(inputSource) || isSampleSourceStreaming(outputSource)) {
+      printf("ERROR: Using stdin/stdout is incompatible with --error-report\n");
+      return RETURN_CODE_NOT_RUN;
+    }
+    if(midiSource != NULL && isCharStringEqualToCString(midiSource->sourceName, "-", false)) {
+      printf("ERROR: MIDI source from stdin is incompatible with --error-report\n");
+      return RETURN_CODE_NOT_RUN;
+    }
+  }
   if(outputSource == NULL) {
     logError("No output source");
     return RETURN_CODE_MISSING_REQUIRED_OPTION;
