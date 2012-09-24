@@ -31,6 +31,14 @@
 #include "StringUtilities.h"
 #include "PlatformUtilities.h"
 
+boolByte isLetter(char ch) {
+  return ((ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z'));
+}
+
+boolByte isNumber(char ch) {
+  return (ch >= '0' && ch <= '9');
+}
+
 void wrapStringForTerminal(const char* srcString, char* destString, int indentSize) {
   wrapString(srcString, destString, indentSize, TERMINAL_LINE_LENGTH);
 }

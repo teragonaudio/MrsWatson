@@ -28,9 +28,13 @@
 #ifndef MrsWatson_StringUtilities_h
 #define MrsWatson_StringUtilities_h
 
+#include "Types.h"
+
 #define DEFAULT_INDENT_SIZE 2
 #define TERMINAL_LINE_LENGTH 80
 
+boolByte isLetter(char ch);
+boolByte isNumber(char ch);
 void wrapString(const char* srcString, char* destString, int indentSize, int lineLength);
 void wrapStringForTerminal(const char* srcString, char* destString, int indentSize);
 
