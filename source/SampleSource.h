@@ -82,6 +82,7 @@ typedef SampleSourceMembers* SampleSource;
 
 void printSupportedSourceTypes(void);
 SampleSourceType guessSampleSourceType(const CharString sampleSourceTypeString);
+boolByte isSampleSourceStreaming(SampleSource sampleSource);
 SampleSource newSampleSource(SampleSourceType sampleSourceType, const CharString sampleSourceName);
 void freeSampleSource(SampleSource sampleSource);
 
