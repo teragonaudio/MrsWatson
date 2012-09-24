@@ -29,11 +29,13 @@
 #define MrsWatson_ErrorReporter_h
 
 #include "CharString.h"
+#include "PluginChain.h"
 
 typedef struct {
   CharString reportName;
   CharString reportDirPath;
-  
+  CharString desktopPath;
+  boolByte completed;
 } ErrorReporterMembers;
 typedef ErrorReporterMembers* ErrorReporter;
 
@@ -42,7 +44,7 @@ ErrorReporter newErrorReporter(void);
 void createCommandLineLauncher(ErrorReporter errorReporter, int argc, char* argv[]);
 void remapPathToErrorReportDir(ErrorReporter errorReporter, CharString path);
 boolByte copyFileToErrorReportDir(ErrorReporter errorReporter, CharString path);
-boolByte copyPluginToErrorReportDir(ErrorReporter errorReporter);
+boolByte copyPluginsToErrorReportDir(ErrorReporter errorReporter, PluginChain pluginChain);
 void completeErrorReport(ErrorReporter errorReporter);
 
 void freeErrorReporter(ErrorReporter errorReporter);

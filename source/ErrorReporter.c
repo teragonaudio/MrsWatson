@@ -34,6 +34,9 @@
 #include "ErrorReporter.h"
 #include "FileUtilities.h"
 #include "PlatformUtilities.h"
+#include "StringUtilities.h"
+#include "MrsWatson.h"
+#include "EventLogger.h"
 
 #if UNIX
 #include <sys/socket.h>
@@ -41,31 +44,42 @@
 #include <unistd.h>
 #endif
 
+#include <archive.h>
+#include <archive_entry.h>
+
 ErrorReporter newErrorReporter(void) {
   ErrorReporter errorReporter = (ErrorReporter)malloc(sizeof(ErrorReporterMembers));
   time_t now;
   int length;
+  int i;
 
+  errorReporter->completed = false;
   time(&now);
   errorReporter->reportName = newCharString();
 
-  // TODO: Before we can use the date, we also need to replace bad chars like / and :
-  //snprintf(errorReporter->reportName->data, errorReporter->reportName->capacity,
-  //  "MrsWatson Report %s", ctime(&now));
   snprintf(errorReporter->reportName->data, errorReporter->reportName->capacity,
-    "MrsWatson Report");
-
-  // Trim the final newline character from this string
+    "MrsWatson Report %s", ctime(&now));
+  // Trim the final newline character from this string if it exists
   length = strnlen(errorReporter->reportName->data, errorReporter->reportName->capacity);
   if(errorReporter->reportName->data[length - 1] == '\n') {
     errorReporter->reportName->data[length - 1] = '\0';
+    length--;
+  }
+  for(i = 0; i < length; i++) {
+    if(!(isLetter(errorReporter->reportName->data[i]) ||
+         isNumber(errorReporter->reportName->data[i]))) {
+      errorReporter->reportName->data[i] = '-';
+    }
   }
 
+  errorReporter->desktopPath = newCharString();
   errorReporter->reportDirPath = newCharString();
 #if UNIX
-  snprintf(errorReporter->reportDirPath->data, errorReporter->reportDirPath->capacity,
-    "%s/Desktop/%s", getenv("HOME"), errorReporter->reportName->data);
+  snprintf(errorReporter->desktopPath->data, errorReporter->desktopPath->capacity,
+    "%s/Desktop", getenv("HOME"));
 #endif
+  snprintf(errorReporter->reportDirPath->data, errorReporter->reportDirPath->capacity,
+    "%s%c%s", errorReporter->desktopPath->data, PATH_DELIMITER, errorReporter->reportName->data);
   mkdir(errorReporter->reportDirPath->data, 0755);
 
   return errorReporter;
@@ -106,11 +120,14 @@ void remapPathToErrorReportDir(ErrorReporter errorReporter, CharString path) {
 boolByte copyFileToErrorReportDir(ErrorReporter errorReporter, CharString path) {
   boolByte result = false;
   CharString destination = newCharString();
+  FILE *input;
+  FILE *output;
+  int ch;
+
   copyCharStrings(destination, path);
   remapPathToErrorReportDir(errorReporter, destination);
-  FILE *input = fopen(path->data, "rb");
-  FILE *output = fopen(destination->data, "wb");
-  int ch;
+  input = fopen(path->data, "rb");
+  output = fopen(destination->data, "wb");
 
   if(input == NULL || output == NULL) {
     return false;
@@ -126,16 +143,119 @@ boolByte copyFileToErrorReportDir(ErrorReporter errorReporter, CharString path) 
   return result;
 }
 
-boolByte copyPluginToErrorReportDir(ErrorReporter errorReporter) {
-  
+static boolByte _copyDirectoryToErrorReportDir(ErrorReporter errorReporter, CharString path) {
+#if UNIX
+  CharString copyCommand = newCharString();
+  snprintf(copyCommand->data, copyCommand->capacity, "/bin/cp -r \"%s\" \"%s\"",
+    path->data, errorReporter->reportDirPath->data);
+  system(copyCommand->data);
+#else
+  logUnsupportedFeature("Copy directory recursively");
+#endif
+  return false;
+}
+
+boolByte copyPluginsToErrorReportDir(ErrorReporter errorReporter, PluginChain pluginChain) {
+  CharString promptText = newCharStringWithCString("Would you like to copy the \
+plugin to the report? All data sent to the official support address is kept \
+strictly confidential. If the plugin in question has copy protection (or is \
+cracked), or depends on external resources, this probably won't work. But if \
+the plugin can be copied, it greatly helps in fixing bugs.\n\
+Copy the plugin? (y/n) ");
+  CharString wrappedPromptText = newCharStringWithCapacity(promptText->capacity);
+  CharString pluginAbsolutePath = newCharString();
+  PluginInterfaceType pluginType;
+  Plugin currentPlugin;
+  boolByte result = true;
+  int i;
+  char response;
+
+  wrapStringForTerminal(promptText->data, wrappedPromptText->data, 0);
+  printf("%s", wrappedPromptText->data);
+  response = getchar();
+  if(response == 'y' || response == 'Y') {
+    for(i = 0; i < pluginChain->numPlugins; i++) {
+      currentPlugin = pluginChain->plugins[i];
+      currentPlugin->getAbsolutePath(currentPlugin, pluginAbsolutePath);
+      if(getPlatformType() == PLATFORM_MACOSX) {
+        result |= _copyDirectoryToErrorReportDir(errorReporter, pluginAbsolutePath);
+      }
+      else {
+        result |= copyFileToErrorReportDir(errorReporter, pluginAbsolutePath);      
+      }
+    }
+    return result;
+  }
+  return false;
+}
+
+static void _remapFileToErrorReportRelativePath(void* item, void* userData) {
+  char* itemName = (char*)item;
+  CharString tempPath = newCharStringWithCString(itemName);
+  ErrorReporter errorReporter = (ErrorReporter)userData;
+  snprintf(tempPath->data, STRING_LENGTH_DEFAULT, "%s/%s", errorReporter->reportName->data, itemName);
+  strncpy(itemName, tempPath->data, tempPath->capacity);
+}
+
+static void _addFileToArchive(void* item, void* userData) {
+  char* itemPath = (char*)item;
+  struct archive* outArchive = (struct archive*)userData;
+  struct archive_entry* entry = archive_entry_new();
+  struct stat fileStat;
+  FILE* filePointer;
+  size_t bytesRead;
+  byte* fileBuffer = (byte*)malloc(8192);
+
+  printf("Adding %s to archive\n", itemPath);
+  stat(itemPath, &fileStat);
+  archive_entry_set_pathname(entry, itemPath);
+  archive_entry_set_size(entry, fileStat.st_size);
+  archive_entry_set_filetype(entry, AE_IFREG);
+  archive_entry_set_perm(entry, 0644);
+  archive_write_header(outArchive, entry);
+  filePointer = fopen(itemPath, "rb");
+  do {
+    bytesRead = fread(fileBuffer, 1, 8192, filePointer);
+    if(bytesRead > 0) {
+      archive_write_data(outArchive, fileBuffer, bytesRead);
+    }
+  } while(bytesRead > 0);
+  fclose(filePointer);
+  archive_entry_free(entry);
 }
 
 void completeErrorReport(ErrorReporter errorReporter) {
-  
+  struct archive* outArchive;
+  CharString outputFilename = newCharString();
+  LinkedList reportContents = newLinkedList();
+
+  // In case any part of the error report causes a segfault, this function will
+  // be called recursively. A mutex would really be a better solution here, but
+  // this will also work just fine.
+  if(!errorReporter->completed) {
+    errorReporter->completed = true;
+    printf("Completing error report...\n");
+    buildAbsolutePath(errorReporter->desktopPath, errorReporter->reportName, "tar.gz", outputFilename);
+    listDirectory(errorReporter->reportDirPath->data, reportContents);
+    if(errorReporter != NULL) {
+      outArchive = archive_write_new();
+      archive_write_set_compression_gzip(outArchive);
+      archive_write_set_format_pax_restricted(outArchive);
+      archive_write_open_filename(outArchive, outputFilename->data);
+
+      foreachItemInList(reportContents, _remapFileToErrorReportRelativePath, errorReporter);
+      chdir(errorReporter->desktopPath->data);
+      foreachItemInList(reportContents, _addFileToArchive, outArchive);
+
+      archive_write_close(outArchive);
+      archive_write_free(outArchive);
+    }
+  }
 }
 
 void freeErrorReporter(ErrorReporter errorReporter) {
   freeCharString(errorReporter->reportName);
   freeCharString(errorReporter->reportDirPath);
+  freeCharString(errorReporter->desktopPath);
   free(errorReporter);
 }
