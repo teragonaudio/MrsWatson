@@ -66,8 +66,10 @@ boolByte fileExists(const char* absolutePath) {
 #endif
 }
 
+// Note that this method skips hidden files
 int listDirectory(const char* directory, LinkedList outItems) {
   int numItems = 0;
+  char* filename;
 
 #if MACOSX || LINUX
   DIR* directoryPtr = opendir(directory);
@@ -76,14 +78,17 @@ int listDirectory(const char* directory, LinkedList outItems) {
   }
   struct dirent* entry;
   while((entry = readdir(directoryPtr)) != NULL) {
-    appendItemToList(outItems, entry->d_name);
-    numItems++;
+    if(entry->d_name[0] != '.') {
+      filename = (char*)malloc(sizeof(char) * STRING_LENGTH_DEFAULT);
+      strncpy(filename, entry->d_name, STRING_LENGTH_DEFAULT);
+      appendItemToList(outItems, filename);
+      numItems++;
+    }
   }
 
 #elif WINDOWS
   WIN32_FIND_DATAA findData;
   HANDLE findHandle;
-  char* filename;
   CharString searchString = newCharString();
 
   snprintf(searchString->data, searchString->capacity, "%s\\*", directory);
@@ -93,10 +98,12 @@ int listDirectory(const char* directory, LinkedList outItems) {
     return 0;
   }
   do {
-    filename = (char*)malloc(sizeof(char) * STRING_LENGTH_DEFAULT);
-    strncpy(filename, findData.cFileName, STRING_LENGTH_DEFAULT);
-    appendItemToList(outItems, filename);
-    numItems++;
+    if(findData.cFileName[0] != '.') {
+      filename = (char*)malloc(sizeof(char) * STRING_LENGTH_DEFAULT);
+      strncpy(filename, findData.cFileName, STRING_LENGTH_DEFAULT);
+      appendItemToList(outItems, filename);
+      numItems++;
+    }
   } while(FindNextFileA(findHandle, &findData) != 0);
 
   FindClose(findHandle);
