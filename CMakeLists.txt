@@ -1,7 +1,9 @@
 cmake_minimum_required(VERSION 2.6)
 project(MRSWATSON)
 
-include_directories(${CMAKE_CURRENT_BINARY_DIR}/vendor/vstsdk2.4/pluginterfaces/vst2.x)
+set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
+include_directories(${CMAKE_SOURCE_DIR}/source ${CMAKE_SOURCE_DIR}/vendor/local/include ${CMAKE_SOURCE_DIR}/vendor/vstsdk2.4/pluginterfaces/vst2.x)
+
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
   set(CMAKE_C_FLAGS "-fmessage-length=0 -m32 -pipe -Wno-trigraphs -std=c99 -O3 -Wmissing-field-initializers -Wall -Wreturn-type -Wunused-variable -pedantic -Wshadow -Wsign-compare -D__cdecl=\"\"")
