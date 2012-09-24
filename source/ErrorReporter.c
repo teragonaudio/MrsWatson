@@ -191,9 +191,10 @@ Copy the plugin? (y/n) ");
 
 static void _remapFileToErrorReportRelativePath(void* item, void* userData) {
   char* itemName = (char*)item;
-  CharString tempPath = newCharStringWithCString(itemName);
+  CharString tempPath = newCharString();
+  copyToCharString(tempPath, itemName);
   ErrorReporter errorReporter = (ErrorReporter)userData;
-  snprintf(tempPath->data, STRING_LENGTH_DEFAULT, "%s/%s", errorReporter->reportName->data, itemName);
+  snprintf(tempPath->data, tempPath->data, "%s/%s", errorReporter->reportName->data, itemName);
   strncpy(itemName, tempPath->data, tempPath->capacity);
 }
 
