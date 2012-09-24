@@ -4,6 +4,18 @@ project(MRSWATSON)
 set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 include_directories(${CMAKE_SOURCE_DIR}/source ${CMAKE_SOURCE_DIR}/vendor/local/include ${CMAKE_SOURCE_DIR}/vendor/vstsdk2.4/pluginterfaces/vst2.x)
 
+#add_subdirectory(vendor)
+#if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+#set(libaudiofile_CONFIGURE_FLAGS "<SOURCE_DIR>/configure --prefix=<INSTALL_DIR> CFLAGS=\"-m32\" CXXFLAGS=\"-m32\" LDFLAGS=\"-m32\" --enable-static")
+#elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+#set(libaudiofile_CONFIGURE_FLAGS <SOURCE_DIR>/configure --prefix=<INSTALL_DIR> CFLAGS=\"-arch i386\" CXXFLAGS=\"-arch i386\" LDFLAGS=\"-arch i386\" --enable-static)
+#endif()
+#include(ExternalProject)
+#ExternalProject_Add(libaudiofile
+#SOURCE_DIR ${CMAKE_SOURCE_DIR}/vendor/audiofile
+#CONFIGURE_COMMAND ${libaudiofile_CONFIGURE_FLAGS}
+#BUILD_COMMAND ${MAKE}
+#)
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
   set(CMAKE_C_FLAGS "-fmessage-length=0 -m32 -pipe -Wno-trigraphs -std=c99 -O3 -Wmissing-field-initializers -Wall -Wreturn-type -Wunused-variable -pedantic -Wshadow -Wsign-compare -D__cdecl=\"\"")
