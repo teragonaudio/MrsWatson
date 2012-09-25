@@ -62,6 +62,15 @@ static void prettyPrintTime(CharString outString, unsigned long milliseconds) {
   }
 }
 
+static void _remapFileToErrorReport(ErrorReporter errorReporter, ProgramOption option, boolByte copyFile) {
+  if(option->enabled) {
+    if(copyFile) {
+      copyFileToErrorReportDir(errorReporter, option->argument);
+    }
+    remapPathToErrorReportDir(errorReporter, option->argument);
+  }
+}
+
 int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   // Input/Output sources, plugin chain, and other required objects
   SampleSource inputSource = NULL;
