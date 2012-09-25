@@ -122,7 +122,7 @@ boolByte copyFileToErrorReportDir(ErrorReporter errorReporter, CharString path) 
   CharString destination = newCharString();
   FILE *input;
   FILE *output;
-  int ch;
+  char ch;
 
   copyCharStrings(destination, path);
   remapPathToErrorReportDir(errorReporter, destination);
@@ -132,9 +132,8 @@ boolByte copyFileToErrorReportDir(ErrorReporter errorReporter, CharString path) 
   if(input == NULL || output == NULL) {
     return false;
   }
-  while(!feof(input)) {
-    ch = getc(input);
-    putc(ch, output);
+  while(fread(&ch, 1, 1, input) == 1) {
+    fwrite(&ch, 1, 1, output);
   }
 
   fclose(input);
