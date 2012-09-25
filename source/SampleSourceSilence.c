@@ -36,8 +36,7 @@ static boolByte _openSampleSourceSilence(void* sampleSourcePtr, const SampleSour
   return true;
 }
 
-void _closeSampleSourceSilence(void* sampleSourcePtr) {
-  return true;
+static void _closeSampleSourceSilence(void* sampleSourcePtr) {
 }
 
 static boolByte _readBlockFromSilence(void* sampleSourcePtr, SampleBuffer sampleBuffer) {
