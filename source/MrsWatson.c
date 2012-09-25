@@ -468,6 +468,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
 
   if(errorReporter != NULL) {
     completeErrorReport(errorReporter);
+    printErrorReportComplete();
   }
 
   return RETURN_CODE_SUCCESS;
