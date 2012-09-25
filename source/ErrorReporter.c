@@ -192,7 +192,7 @@ static void _remapFileToErrorReportRelativePath(void* item, void* userData) {
   CharString tempPath = newCharString();
   copyToCharString(tempPath, itemName);
   ErrorReporter errorReporter = (ErrorReporter)userData;
-  snprintf(tempPath->data, tempPath->data, "%s/%s", errorReporter->reportName->data, itemName);
+  snprintf(tempPath->data, tempPath->capacity, "%s/%s", errorReporter->reportName->data, itemName);
   strncpy(itemName, tempPath->data, tempPath->capacity);
 }
 
