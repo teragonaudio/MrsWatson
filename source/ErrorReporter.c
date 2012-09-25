@@ -163,7 +163,6 @@ the plugin can be copied, it greatly helps in fixing bugs.\n\
 Copy the plugin? (y/n) ");
   CharString wrappedPromptText = newCharStringWithCapacity(promptText->capacity);
   CharString pluginAbsolutePath = newCharString();
-  PluginInterfaceType pluginType;
   Plugin currentPlugin;
   boolByte result = true;
   int i;
