@@ -205,7 +205,6 @@ static void _addFileToArchive(void* item, void* userData) {
   size_t bytesRead;
   byte* fileBuffer = (byte*)malloc(8192);
 
-  printf("Adding %s to archive\n", itemPath);
   stat(itemPath, &fileStat);
   archive_entry_set_pathname(entry, itemPath);
   archive_entry_set_size(entry, fileStat.st_size);
@@ -223,6 +222,18 @@ static void _addFileToArchive(void* item, void* userData) {
   archive_entry_free(entry);
 }
 
+void printErrorReportInfo(void) {
+  CharString infoText = newCharStringWithCString("MrsWatson is now running \
+in error report mode, which will generate a zipfile on your desktop with \
+any input/output sources and error logs. This also enables some extra \
+arguments and will disable console logging.\n");
+  CharString wrappedInfoText = newCharStringWithCapacity(infoText->capacity);
+  printf("=== Starting error report ===\n");
+  wrapStringForTerminal(infoText->data, wrappedInfoText->data, 0);
+  // The second newline here is intentional
+  printf("%s\n", wrappedInfoText->data);
+}
+
 void completeErrorReport(ErrorReporter errorReporter) {
   struct archive* outArchive;
   CharString outputFilename = newCharString();
@@ -233,7 +244,6 @@ void completeErrorReport(ErrorReporter errorReporter) {
   // this will also work just fine.
   if(!errorReporter->completed) {
     errorReporter->completed = true;
-    printf("Completing error report...\n");
     buildAbsolutePath(errorReporter->desktopPath, errorReporter->reportName, "tar.gz", outputFilename);
     listDirectory(errorReporter->reportDirPath->data, reportContents);
     if(errorReporter != NULL) {
@@ -250,6 +260,12 @@ void completeErrorReport(ErrorReporter errorReporter) {
       archive_write_free(outArchive);
     }
   }
+}
+
+void printErrorReportComplete(void) {
+  printf("\n=== Error report complete ===\n");
+  printf("Please email the error report on your desktop to: %s\n", SUPPORT_EMAIL);
+  printf("Thanks!\n");
 }
 
 void freeErrorReporter(ErrorReporter errorReporter) {

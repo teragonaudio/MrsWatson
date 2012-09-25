@@ -45,7 +45,10 @@ void createCommandLineLauncher(ErrorReporter errorReporter, int argc, char* argv
 void remapPathToErrorReportDir(ErrorReporter errorReporter, CharString path);
 boolByte copyFileToErrorReportDir(ErrorReporter errorReporter, CharString path);
 boolByte copyPluginsToErrorReportDir(ErrorReporter errorReporter, PluginChain pluginChain);
+
+void printErrorReportInfo(void);
 void completeErrorReport(ErrorReporter errorReporter);
+void printErrorReportComplete(void);
 
 void freeErrorReporter(ErrorReporter errorReporter);
 
