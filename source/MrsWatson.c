@@ -152,6 +152,22 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
     printSupportedSourceTypes();
     return RETURN_CODE_NOT_RUN;
   }
+  // See if we are to make an error report and make necessary changes to the
+  // options for good diagnostics. Note that error reports cannot be generated
+  // for any of the above options which return with RETURN_CODE_NOT_RUN.
+  else if(programOptions->options[OPTION_ERROR_REPORT]->enabled) {
+    printErrorReportInfo();
+    programOptions->options[OPTION_VERBOSE]->enabled = true;
+    programOptions->options[OPTION_LOG_FILE]->enabled = true;
+    copyToCharString(programOptions->options[OPTION_LOG_FILE]->argument, "log.txt");
+    // Shell script with original command line arguments
+    createCommandLineLauncher(errorReporter, argc, argv);
+    // Rewrite some paths before any input or output sources have been opened.
+    _remapFileToErrorReport(errorReporter, programOptions->options[OPTION_INPUT_SOURCE], true);
+    _remapFileToErrorReport(errorReporter, programOptions->options[OPTION_OUTPUT_SOURCE], false);
+    _remapFileToErrorReport(errorReporter, programOptions->options[OPTION_MIDI_SOURCE], true);
+    _remapFileToErrorReport(errorReporter, programOptions->options[OPTION_LOG_FILE], false);
+  }
 
   // Parse these options first so that log messages displayed in the below
   // loop are properly displayed
@@ -226,14 +242,6 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
     listAvailablePlugins(pluginSearchRoot);
     return RETURN_CODE_NOT_RUN;
   }
-  // See if we are to make an error report and make necessary changes to the
-  // options for good diagnostics. Note that error reports cannot be generated
-  // for any of the above options which return with RETURN_CODE_NOT_RUN.
-  if(programOptions->options[OPTION_ERROR_REPORT]->enabled) {
-    programOptions->options[OPTION_VERBOSE]->enabled = true;
-    programOptions->options[OPTION_LOG_FILE]->enabled = true;
-    copyToCharString(programOptions->options[OPTION_LOG_FILE]->argument, "log.txt");
-  }
 
   // Say hello!
   versionString = newCharString();
@@ -263,17 +271,8 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
     displayPluginInfo(pluginChain);
   }
 
-  // Now that all plugins have been initialized, we rewrite some paths in case
-  // we are to generate an error report. This must be done here before any input
-  // or output sources have been opened.
+  // Copy plugins once they have been initialized.
   if(programOptions->options[OPTION_ERROR_REPORT]->enabled) {
-    createCommandLineLauncher(errorReporter, argc, argv);
-    copyFileToErrorReportDir(errorReporter, programOptions->options[OPTION_INPUT_SOURCE]->argument);
-    remapPathToErrorReportDir(errorReporter, programOptions->options[OPTION_INPUT_SOURCE]->argument);
-    copyFileToErrorReportDir(errorReporter, programOptions->options[OPTION_MIDI_SOURCE]->argument);
-    remapPathToErrorReportDir(errorReporter, programOptions->options[OPTION_MIDI_SOURCE]->argument);
-    remapPathToErrorReportDir(errorReporter, programOptions->options[OPTION_OUTPUT_SOURCE]->argument);
-    remapPathToErrorReportDir(errorReporter, programOptions->options[OPTION_LOG_FILE]->argument);
     copyPluginsToErrorReportDir(errorReporter, pluginChain);
   }
   // Get largest tail time requested by any plugin in the chain
