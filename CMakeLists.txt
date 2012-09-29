@@ -4,17 +4,47 @@ project(MRSWATSON)
 set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 include_directories(${CMAKE_SOURCE_DIR}/source ${CMAKE_SOURCE_DIR}/vendor/local/include ${CMAKE_SOURCE_DIR}/vendor/vstsdk2.4/pluginterfaces/vst2.x)
 
-#add_subdirectory(vendor)
-#if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-#set(libaudiofile_CONFIGURE_FLAGS "<SOURCE_DIR>/configure --prefix=<INSTALL_DIR> CFLAGS=\"-m32\" CXXFLAGS=\"-m32\" LDFLAGS=\"-m32\" --enable-static")
-#elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-#set(libaudiofile_CONFIGURE_FLAGS <SOURCE_DIR>/configure --prefix=<INSTALL_DIR> CFLAGS=\"-arch i386\" CXXFLAGS=\"-arch i386\" LDFLAGS=\"-arch i386\" --enable-static)
-#endif()
-#include(ExternalProject)
+# Third-party dependencies
+add_subdirectory(vendor)
+include(ExternalProject)
+
+if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+  set(ARCH_FLAGS "-m32")
+elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+  set(ARCH_FLAGS "-arch i386")
+endif()
+
+if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+  set(libz_CONFIGURE_COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/vendor/zlib/configure --prefix=${CMAKE_SOURCE_DIR}/vendor/local --archs=${ARCH_FLAGS})
+elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+  set(libz_CONFIGURE_COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/vendor/zlib/configure --prefix=${CMAKE_SOURCE_DIR}/vendor/local --archs=${ARCH_FLAGS})
+endif()
+
+ExternalProject_Add(libz
+  SOURCE_DIR ${CMAKE_SOURCE_DIR}/vendor/zlib
+  INSTALL_DIR ${CMAKE_SOURCE_DIR}/vendor/local
+  CONFIGURE_COMMAND ${libz_CONFIGURE_COMMAND}
+  PREFIX ${CMAKE_SOURCE_DIR}/build/zlib
+  TMP_DIR ${CMAKE_SOURCE_DIR}/build/zlib/tmp
+  BUILD_COMMAND ${MAKE}
+  BUILD_IN_SOURCE 1
+)
+
+if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+  set(libaudiofile_CONFIGURE_FLAGS "<SOURCE_DIR>/configure --prefix=<INSTALL_DIR> CFLAGS=\"-m32\" CXXFLAGS=\"-m32\" LDFLAGS=\"-m32\" --enable-static")
+elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+  set(libaudiofile_CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=<INSTALL_DIR> CFLAGS=${ARCH_FLAGS} CXXFLAGS=${ARCH_FLAGS} LDFLAGS=${ARCH_FLAGS} --enable-static)
+endif()
+
+# libaudiofile doesn't make cleanly, so this must be done by hand
 #ExternalProject_Add(libaudiofile
-#SOURCE_DIR ${CMAKE_SOURCE_DIR}/vendor/audiofile
-#CONFIGURE_COMMAND ${libaudiofile_CONFIGURE_FLAGS}
-#BUILD_COMMAND ${MAKE}
+#  SOURCE_DIR ${CMAKE_SOURCE_DIR}/vendor/audiofile
+#  INSTALL_DIR ${CMAKE_SOURCE_DIR}/vendor/local
+#  CONFIGURE_COMMAND ${libaudiofile_CONFIGURE_COMMAND}
+#  PREFIX ${CMAKE_SOURCE_DIR}/build/audiofile
+#  TMP_DIR ${CMAKE_SOURCE_DIR}/build/audiofile/tmp
+#  BUILD_COMMAND ${MAKE}
+#  BUILD_IN_SOURCE 1
 #)
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
@@ -32,5 +62,4 @@ endif()
 add_subdirectory(source)
 add_subdirectory(main)
 add_subdirectory(test)
-add_subdirectory(vendor)
 
