@@ -83,17 +83,13 @@ void initializeErrorReporter(ErrorReporter errorReporter) {
     }
   }
 
-  errorReporter->desktopPath = newCharString();
-  errorReporter->reportDirPath = newCharString();
-#if UNIX
+  #if UNIX
   snprintf(errorReporter->desktopPath->data, errorReporter->desktopPath->capacity,
     "%s/Desktop", getenv("HOME"));
 #endif
   snprintf(errorReporter->reportDirPath->data, errorReporter->reportDirPath->capacity,
     "%s%c%s", errorReporter->desktopPath->data, PATH_DELIMITER, errorReporter->reportName->data);
   mkdir(errorReporter->reportDirPath->data, 0755);
-
-  return errorReporter;
 }
 
 void createCommandLineLauncher(ErrorReporter errorReporter, int argc, char* argv[]) {
@@ -131,33 +127,23 @@ void remapPathToErrorReportDir(ErrorReporter errorReporter, CharString path) {
 boolByte copyFileToErrorReportDir(ErrorReporter errorReporter, CharString path) {
   boolByte result = false;
   CharString destination = newCharString();
-  FILE *input;
-  FILE *output;
-  char ch;
 
   copyCharStrings(destination, path);
   remapPathToErrorReportDir(errorReporter, destination);
-  input = fopen(path->data, "rb");
-  output = fopen(destination->data, "wb");
+  copyFileToDirectory(path, errorReporter->reportDirPath);
 
-  if(input == NULL || output == NULL) {
-    return false;
-  }
-  while(fread(&ch, 1, 1, input) == 1) {
-    fwrite(&ch, 1, 1, output);
-  }
-
-  fclose(input);
-  fclose(output);
   freeCharString(destination);
   return result;
 }
 
+// TODO: Refactor this into FileUtilities
 static boolByte _copyDirectoryToErrorReportDir(ErrorReporter errorReporter, CharString path) {
+  // TODO: This is the lazy way of doing this...
 #if UNIX
   CharString copyCommand = newCharString();
   snprintf(copyCommand->data, copyCommand->capacity, "/bin/cp -r \"%s\" \"%s\"",
     path->data, errorReporter->reportDirPath->data);
+  // TODO: Check error codes
   system(copyCommand->data);
 #else
   logUnsupportedFeature("Copy directory recursively");
