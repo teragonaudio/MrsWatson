@@ -47,6 +47,32 @@ endif()
 #  BUILD_IN_SOURCE 1
 #)
 
+set(local_INCLUDE ${CMAKE_SOURCE_DIR}/vendor/local/include)
+set(local_LIB ${CMAKE_SOURCE_DIR}/vendor/local/lib)
+
+if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+  set(libarchive_CFLAGS "${ARCH_FLAGS} -I${local_INCLUDE}")
+  set(libarchive_LDFLAGS "${ARCH_FLAGS} -I${local_LIB}")
+  set(libarchive_CONFIGURE_COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/vendor/libarchive/configure --prefix=${CMAKE_SOURCE_DIR}/vendor/local CFLAGS=${libarchive_CFLAGS} CXXFLAGS=${libarchive_CFLAGS} LDFLAGS=${libarchive_LDFLAGS} --enable-static --without-lzmadec --without-lzma)
+elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+  set(libarchive_CFLAGS "${ARCH_FLAGS} -I${local_INCLUDE}")
+  set(libarchive_LDFLAGS "${ARCH_FLAGS} -I${local_LIB}")
+  set(libarchive_CONFIGURE_COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/vendor/libarchive/configure --prefix=${CMAKE_SOURCE_DIR}/vendor/local CFLAGS=${libarchive_CFLAGS} CXXFLAGS=${libarchive_CFLAGS} LDFLAGS=${libarchive_LDFLAGS} --enable-static --without-lzmadec --without-lzma)
+endif()
+
+ExternalProject_Add(libarchive
+  DEPENDS libz
+  SOURCE_DIR ${CMAKE_SOURCE_DIR}/vendor/libarchive
+  INSTALL_DIR ${CMAKE_SOURCE_DIR}/vendor/local
+  CONFIGURE_COMMAND ${libarchive_CONFIGURE_COMMAND}
+  PREFIX ${CMAKE_SOURCE_DIR}/build/libarchive
+  TMP_DIR ${CMAKE_SOURCE_DIR}/build/libarchive/tmp
+  BUILD_COMMAND ${MAKE}
+  BUILD_IN_SOURCE 1
+)
+
+
+# Compiler flags for each supported platform
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
   set(CMAKE_C_FLAGS "-fmessage-length=0 -m32 -pipe -Wno-trigraphs -std=c99 -O3 -Wmissing-field-initializers -Wall -Wreturn-type -Wunused-variable -pedantic -Wshadow -Wsign-compare -D__cdecl=\"\"")
   set(CMAKE_CXX_FLAGS "-fmessage-length=0 -m32 -pipe -Wno-trigraphs -O3 -Wmissing-field-initializers -Wall -Wreturn-type -Wunused-variable -pedantic -Wshadow -Wsign-compare -D__cdecl=\"\"")

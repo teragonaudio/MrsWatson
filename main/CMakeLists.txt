@@ -2,6 +2,7 @@ link_directories(${MRSWATSON_BINARY_DIR}/source ${MRSWATSON_BINARY_DIR}/vendor/l
 
 file(GLOB MrsWatson_SOURCES *.c)
 add_executable(mrswatson ${MrsWatson_SOURCES})
+add_dependencies(mrswatson libarchive)
 
 set(base_libraries MrsWatson archive z iconv)
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
