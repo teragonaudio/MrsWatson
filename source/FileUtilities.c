@@ -30,6 +30,7 @@
 #include <sys/stat.h>
 #include "FileUtilities.h"
 #include "PlatformUtilities.h"
+#include "EventLogger.h"
 
 #if WINDOWS
 #define WIN32_LEAN_AND_MEAN
@@ -64,6 +65,30 @@ boolByte fileExists(const char* absolutePath) {
 #else
   return false;
 #endif
+}
+
+boolByte copyFileToDirectory(const CharString fileAbsolutePath, const CharString directoryAbsolutePath) {
+  CharString fileOutPath = newCharStringWithCapacity(STRING_LENGTH_LONG);
+  CharString fileBasename = newCharString();
+  FILE *input;
+  FILE *output;
+  char ch;
+
+  fileBasename = newCharStringWithCString(getFileBasename(fileAbsolutePath->data));
+  buildAbsolutePath(directoryAbsolutePath, fileBasename, NULL, fileOutPath);
+  input = fopen(fileAbsolutePath->data, "rb");
+  output = fopen(fileOutPath->data, "wb");
+
+  if(input == NULL || output == NULL) {
+    return false;
+  }
+  while(fread(&ch, 1, 1, input) == 1) {
+    fwrite(&ch, 1, 1, output);
+  }
+
+  fclose(input);
+  fclose(output);
+  return true;
 }
 
 // Note that this method skips hidden files
