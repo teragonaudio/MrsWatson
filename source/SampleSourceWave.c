@@ -293,7 +293,7 @@ static boolByte _openSampleSourceWave(void *sampleSourcePtr, const SampleSourceO
   }
 
   if(extraData->fileHandle == NULL) {
-    logError("WAVE file '%s' could not be opened for '%s'",
+    logError("WAVE file '%s' could not be opened for %s",
       sampleSource->sourceName->data, openAs == SAMPLE_SOURCE_OPEN_READ ? "reading" : "writing");
     return false;
   }
