@@ -156,6 +156,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   // options for good diagnostics. Note that error reports cannot be generated
   // for any of the above options which return with RETURN_CODE_NOT_RUN.
   else if(programOptions->options[OPTION_ERROR_REPORT]->enabled) {
+    initializeErrorReporter(errorReporter);
     printErrorReportInfo();
     programOptions->options[OPTION_VERBOSE]->enabled = true;
     programOptions->options[OPTION_LOG_FILE]->enabled = true;
