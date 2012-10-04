@@ -37,6 +37,7 @@ boolByte copyFileToDirectory(const CharString fileAbsolutePath, const CharString
 
 // Directory operations
 int listDirectory(const char* directory, LinkedList outItems);
+boolByte removeDirectory(const CharString absolutePath);
 
 // const char* is used here as it is assumed that the extensions will be defined by the preprocessor
 // for given platforms, not kept in stack memory.

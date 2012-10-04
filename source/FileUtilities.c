@@ -140,6 +140,22 @@ int listDirectory(const char* directory, LinkedList outItems) {
   return numItems;
 }
 
+boolByte removeDirectory(const CharString absolutePath) {
+  boolByte result = false;
+
+  // TODO: This is the lazy way of doing this...
+#if UNIX
+  CharString removeCommand = newCharString();
+  snprintf(removeCommand->data, removeCommand->capacity, "/bin/rm -rf \"%s\"",
+    absolutePath->data);
+  result = system(removeCommand->data) != 0;
+#else
+  logUnsupportedFeature("Copy directory recursively");
+#endif
+
+  return result;
+}
+
 void buildAbsolutePath(const CharString directory, const CharString file, const char* fileExtension, CharString outString) {
   if(fileExtension != NULL) {
     snprintf(outString->data, outString->capacity, "%s%c%s.%s", directory->data, PATH_DELIMITER, file->data, fileExtension);
