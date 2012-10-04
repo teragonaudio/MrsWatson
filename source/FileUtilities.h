@@ -31,7 +31,11 @@
 #ifndef MrsWatson_FileUtilities_h
 #define MrsWatson_FileUtilities_h
 
+// File operations
 boolByte fileExists(const char* absolutePath);
+boolByte copyFileToDirectory(const CharString fileAbsolutePath, const CharString directoryAbsolutePath);
+
+// Directory operations
 int listDirectory(const char* directory, LinkedList outItems);
 
 // const char* is used here as it is assumed that the extensions will be defined by the preprocessor
