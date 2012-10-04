@@ -49,13 +49,24 @@
 
 ErrorReporter newErrorReporter(void) {
   ErrorReporter errorReporter = (ErrorReporter)malloc(sizeof(ErrorReporterMembers));
+
+  errorReporter->started = false;
+  errorReporter->completed = false;
+  errorReporter->reportName = newCharString();
+
+  errorReporter->desktopPath = newCharString();
+  errorReporter->reportDirPath = newCharString();
+
+  return errorReporter;
+}
+
+void initializeErrorReporter(ErrorReporter errorReporter) {
   time_t now;
+  time(&now);
   int length;
   int i;
 
-  errorReporter->completed = false;
-  time(&now);
-  errorReporter->reportName = newCharString();
+  errorReporter->started = true;
 
   snprintf(errorReporter->reportName->data, errorReporter->reportName->capacity,
     "MrsWatson Report %s", ctime(&now));

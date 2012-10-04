@@ -35,11 +35,13 @@ typedef struct {
   CharString reportName;
   CharString reportDirPath;
   CharString desktopPath;
+  boolByte started;
   boolByte completed;
 } ErrorReporterMembers;
 typedef ErrorReporterMembers* ErrorReporter;
 
 ErrorReporter newErrorReporter(void);
+void initializeErrorReporter(ErrorReporter errorReporter);
 
 void createCommandLineLauncher(ErrorReporter errorReporter, int argc, char* argv[]);
 void remapPathToErrorReportDir(ErrorReporter errorReporter, CharString path);
