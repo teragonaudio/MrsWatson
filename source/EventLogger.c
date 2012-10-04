@@ -36,6 +36,7 @@
 #include "AudioClock.h"
 #include "AudioSettings.h"
 #include "PlatformUtilities.h"
+#include "StringUtilities.h"
 
 #if WINDOWS
 #include <Windows.h>
@@ -272,63 +273,71 @@ void logError(const char* message, ...) {
 void logCritical(const char* message, ...) {
   va_list arguments;
   CharString formattedMessage = newCharString();
+  CharString wrappedMessage = newCharString();
   va_start(arguments, message);
   // Instead of going through the common logging method, we always dump critical messages to stderr
   vsnprintf(formattedMessage->data, formattedMessage->capacity, message, arguments);
-  fprintf(stderr, "ERROR: %s\n", formattedMessage->data);
+  wrapStringForTerminal(formattedMessage->data, wrappedMessage->data, 0);
+  fprintf(stderr, "ERROR: %s\n", wrappedMessage->data);
+  if(eventLoggerInstance != NULL && eventLoggerInstance->logFile != NULL) {
+    fprintf(eventLoggerInstance->logFile, "ERROR: %s\n", wrappedMessage->data);
+  }
   freeCharString(formattedMessage);
 }
 
 void logInternalError(const char* message, ...) {
   va_list arguments;
-  CharString versionString;
   CharString formattedMessage = newCharString();
 
   va_start(arguments, message);
   // Instead of going through the common logging method, we always dump critical messages to stderr
   vsnprintf(formattedMessage->data, formattedMessage->capacity, message, arguments);
   fprintf(stderr, "INTERNAL ERROR: %s\n", formattedMessage->data);
+  if(eventLoggerInstance != NULL && eventLoggerInstance->logFile != NULL) {
+  fprintf(eventLoggerInstance->logFile, "INTERNAL ERROR: %s\n", formattedMessage->data);
+  }
   freeCharString(formattedMessage);
 
   fprintf(stderr, "  This should not have happened. Please take a minute to report a bug.\n");
   fprintf(stderr, "  Support website: %s\n", SUPPORT_WEBSITE);
   fprintf(stderr, "  Support email: %s\n", SUPPORT_EMAIL);
-
-  versionString = newCharString();
-  fillVersionString(versionString);
-  fprintf(stderr, "  Program version: %s, build %ld\n", versionString->data, buildDatestamp());
-  freeCharString(versionString);
 }
 
 void logUnsupportedFeature(const char* featureName) {
-  CharString versionString;
   fprintf(stderr, "UNSUPPORTED FEATURE: %s\n", featureName);
   fprintf(stderr, "  This feature is not yet supported. Please help us out and submit a patch! :)\n");
   fprintf(stderr, "  Project website: %s\n", PROJECT_WEBSITE);
   fprintf(stderr, "  Support email: %s\n", SUPPORT_EMAIL);
-
-  versionString = newCharString();
-  fillVersionString(versionString);
-  fprintf(stderr, "  Program version: %s, build %ld\n", versionString->data, buildDatestamp());
-  freeCharString(versionString);
 }
 
 void logFileError(const char* filename, const char* message) {
-  CharString versionString;
-  fprintf(stderr, "ERROR PARSING FILE: %s: %s\n", filename, message);
-  fprintf(stderr, "  This file is either corrupt or was parsed incorrectly.\n");
-  fprintf(stderr, "  If you believe this to be a bug, please take a minute and report a bug.\n");
-  fprintf(stderr, "  Project website: %s\n", PROJECT_WEBSITE);
-  fprintf(stderr, "  Support email: %s\n", SUPPORT_EMAIL);
-  fprintf(stderr, "  (Please attach the file and command line arguments used.)\n");
+  logCritical("Could not parse file '%s'", filename);
+  logCritical("Got error message message: %s", message);
+  printPossibleBugMessage("This file is either corrupt or was parsed incorrectly");
+}
 
-  versionString = newCharString();
-  fillVersionString(versionString);
-  fprintf(stderr, "  Program version: %s, build %ld\n", versionString->data, buildDatestamp());
-  freeCharString(versionString);
+void printPossibleBugMessage(const char* cause) {
+  CharString wrappedCause = newCharString();
+  CharString extraText = newCharStringWithCString("If you believe this to be a \
+bug, please re-run the program with the --error-report option to generate a \
+diagnostic zipfile to send to support.");
+  CharString wrappedExtraText = newCharString();
+  wrapStringForTerminal(cause, wrappedCause->data, 0);
+  wrapStringForTerminal(extraText->data, wrappedExtraText->data, 0);
+  fprintf(stderr, "%s\n", wrappedCause->data);
+  fprintf(stderr, "%s\n", wrappedExtraText->data);
+}
+
+void flushErrorLog(void) {
+  if(eventLoggerInstance != NULL && eventLoggerInstance->logFile != NULL) {
+    fflush(eventLoggerInstance->logFile);
+  }
 }
 
 void freeEventLogger(void) {
+  if(eventLoggerInstance->logFile != NULL) {
+    fclose(eventLoggerInstance->logFile);
+  }
   free(eventLoggerInstance);
   eventLoggerInstance = NULL;
 }
