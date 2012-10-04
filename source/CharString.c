@@ -29,6 +29,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "CharString.h"
+#include "EventLogger.h"
 
 CharString newCharString(void) {
   return newCharStringWithCapacity(STRING_LENGTH_DEFAULT);
@@ -42,7 +43,7 @@ CharString newCharStringWithCapacity(int length) {
   return charString;
 }
 
-CharString newCharStringWithCString(char* string) {
+CharString newCharStringWithCString(const char* string) {
   int length = strlen(string);
   CharString result = NULL;
   if(length <= 0 || length > STRING_LENGTH_LONG) {
