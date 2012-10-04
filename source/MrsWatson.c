@@ -467,7 +467,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   logInfo("Goodbye!");
   freeEventLogger();
 
-  if(errorReporter != NULL) {
+  if(errorReporter->started) {
     completeErrorReport(errorReporter);
     printErrorReportComplete();
   }
