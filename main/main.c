@@ -15,8 +15,13 @@ static ErrorReporter gErrorReporter = NULL;
 
 #if UNIX
 static void handleSignal(int signum) {
-  logError("Sent signal %d, exiting", signum);
-  // completeErrorReport(gErrorReporter);
+  logCritical("Sent signal %d, exiting", signum);
+  if(gErrorReporter != NULL && gErrorReporter->started) {
+    completeErrorReport(gErrorReporter);
+  }
+  else {
+    printPossibleBugMessage("MrsWatson has encountered a serious error and crashed.");
+  }
   exit(RETURN_CODE_SIGNAL + signum);
 }
 #endif
