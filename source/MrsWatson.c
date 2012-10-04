@@ -247,7 +247,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   // Say hello!
   versionString = newCharString();
   fillVersionString(versionString);
-  logInfo("%s initialized", versionString->data);
+  logInfo("%s initialized, build %ld", versionString->data, buildDatestamp());
   freeCharString(versionString);
   logInfo("Host platform is %s", getPlatformName());
 
