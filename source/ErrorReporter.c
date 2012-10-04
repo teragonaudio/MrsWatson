@@ -259,6 +259,8 @@ void completeErrorReport(ErrorReporter errorReporter) {
       archive_write_close(outArchive);
       archive_write_free(outArchive);
     }
+    // Remove original error report
+    removeDirectory(errorReporter->reportDirPath);
   }
 }
 
