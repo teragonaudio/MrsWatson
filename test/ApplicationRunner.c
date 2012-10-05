@@ -1,3 +1,5 @@
+#include "PlatformUtilities.h"
+
 #if UNIX
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -7,6 +9,13 @@
 #include "TestRunner.h"
 #include "CharString.h"
 #include "AnalyzeFile.h"
+
+static char* _getTestInputFilename(const char* resourcesPath, const char* fileExtension) {
+  CharString filename = newCharString();
+  snprintf(filename->data, filename->capacity, "%s%caudio%ca440-stereo.%s",
+    resourcesPath, PATH_DELIMITER, PATH_DELIMITER, fileExtension);
+  return filename->data;
+}
 
 static char* _getTestOutputFilename(const char* testName, const char* fileExtension) {
   CharString filename = newCharString();
@@ -26,58 +35,52 @@ static char* _getTestOutputFilename(const char* testName, const char* fileExtens
   return filename->data;
 }
 
-LinkedList getDefaultArguments(const char *testName) {
-  LinkedList arguments = newLinkedList();
-  appendItemToList(arguments, "--log-file");
-  appendItemToList(arguments, _getTestOutputFilename(testName, "txt"));
-  appendItemToList(arguments, "--output");
-  appendItemToList(arguments, _getTestOutputFilename(testName, "pcm"));
-  return arguments;
+static void _getDefaultArguments(TestEnvironment testEnvironment,
+  const char *testName, CharString outString) {
+  snprintf(outString->data, outString->capacity,
+    "--log-file \"%s\" --input \"%s\" --output \"%s\"",
+    _getTestOutputFilename(testName, "txt"),
+    _getTestInputFilename(testEnvironment->resourcesPath, "pcm"),
+    _getTestOutputFilename(testName, "pcm"));
 }
 
-static void _appendItemToLinkedList(void* item, void* userData) {
-  LinkedList linkedList = (LinkedList)userData;
-  appendItemToList(linkedList, item);
-}
-
-static LinkedList _appendLinkedLists(LinkedList list1, LinkedList list2) {
-  LinkedList result = newLinkedList();
-  foreachItemInList(list1, _appendItemToLinkedList, result);
-  foreachItemInList(list2, _appendItemToLinkedList, result);
-  return result;
-}
-
-static void _copyArgumentToArray(void* item, void* userData) {
-  ArgumentsCopyData* copyData = (ArgumentsCopyData*)userData;
-  char* argString = (char*)item;
-  size_t argStringLength = strlen(argString);
-  copyData->outArray[copyData->currentIndex] = (char*)malloc(sizeof(char) * argStringLength);
-  strncpy(copyData->outArray[copyData->currentIndex], argString, argStringLength);
-  copyData->currentIndex++;
-}
-
-static void _removeOutputFile(void* item, void* userData) {
-  char* argument = (char*)item;
-  if(argument[0] != '-') {
+static void _removeOutputFile(char* argument) {
+  if(fileExists(argument)) {
     unlink(argument);
   }
 }
 
-void runApplicationTest(char *applicationPath, const char *testName, LinkedList testArguments, ReturnCodes expectedResultCode, boolByte anazyleOutput) {
-  char** applicationArguments;
-  ArgumentsCopyData argumentsCopyData;
-  ReturnCodes resultCode = -1;
-  LinkedList defaultArguments = getDefaultArguments(testName);
-  LinkedList arguments = _appendLinkedLists(defaultArguments, testArguments);
+static void _removeOutputFiles(const char* testName) {
+  _removeOutputFile(_getTestOutputFilename(testName, "pcm"));
+  _removeOutputFile(_getTestOutputFilename(testName, "txt"));
+}
+
+void runApplicationTest(const TestEnvironment testEnvironment,
+  const char *testName, const char *testArguments,
+  ReturnCodes expectedResultCode, boolByte anazyleOutput) {
+  int resultCode = -1;
+  CharString arguments = newCharString();
+  CharString defaultArguments = newCharString();
   CharString failedAnalysisFunctionName = newCharString();
   unsigned long failedAnalysisSample;
   // TODO: Need to pass these back to the caller
   int testsPassed = 0;
   int testsFailed = 0;
 
-  // Remove any output files which may have been left from previous tests
-  foreachItemInList(defaultArguments, _removeOutputFile, NULL);
+  // Remove files from previous tests
+  _removeOutputFiles(testName);
 
+  // Create the command line argument
+  appendCStringToCharString(arguments, testEnvironment->applicationPath);
+  appendCStringToCharString(arguments, " ");
+  _getDefaultArguments(testEnvironment, testName, defaultArguments);
+  appendToCharString(arguments, defaultArguments);
+  appendCStringToCharString(arguments, " ");
+  appendCStringToCharString(arguments, testArguments);
+
+  printf("  %s: ", testName);
+
+  // TODO: Move to FileUtilities
 #if WINDOWS
   // TODO: mkdir();
 #else
@@ -86,42 +89,23 @@ void runApplicationTest(char *applicationPath, const char *testName, LinkedList 
 
 #if WINDOWS
   logUnsupportedFeature("Application testing");
+  return;
 #else
-  int numArgs = numItemsInList(arguments);
-  // Add two extra items to the array, one for the application path and another for a NULL object.
-  // These are required for the calls to the execv* functions.
-  applicationArguments = (char**)malloc(sizeof(char*) * (numArgs + 2));
-  applicationArguments[0] = applicationPath;
-  applicationArguments[numArgs + 1] = NULL;
-  argumentsCopyData.currentIndex = 1;
-  argumentsCopyData.outArray = applicationArguments;
-  foreachItemInList(arguments, _copyArgumentToArray, &argumentsCopyData);
-  printf("  %s: ", testName);
-
-  pid_t forkedPid = fork();
-  if(forkedPid == 0) {
-    resultCode = execvp(applicationPath, applicationArguments);
-    exit(resultCode);
-  }
-  else {
-    int statusLoc;
-    waitpid(forkedPid, &statusLoc, 0);
-    if(WIFEXITED(statusLoc)) {
-      resultCode = WEXITSTATUS(statusLoc);
-    }
-  }
+  resultCode = system(arguments->data);
 #endif
 
-  if(resultCode == 255 || resultCode == -1) {
+  if(resultCode == 255 || resultCode == -1 || resultCode == 127) {
     printTestFail();
-    printf("    could not launch mrswatson, please use the --mrswatson-path argument\n");
+    logCritical("Could not launch shell, got return code %d\n\
+Please check the executable path specified in the --mrswatson-path argument.",
+      resultCode);
     testsFailed++;
   }
-  else if(resultCode == expectedResultCode) {
+  else if(WEXITSTATUS(resultCode) == expectedResultCode) {
     if(anazyleOutput) {
       if(analyzeFile(_getTestOutputFilename(testName, "pcm"), failedAnalysisFunctionName, &failedAnalysisSample)) {
         testsPassed++;
-        foreachItemInList(defaultArguments, _removeOutputFile, NULL);
+        _removeOutputFiles(testName);
         printTestSuccess();
       }
       else {
@@ -133,17 +117,18 @@ void runApplicationTest(char *applicationPath, const char *testName, LinkedList 
     }
     else {
       testsPassed++;
-      foreachItemInList(defaultArguments, _removeOutputFile, NULL);
+      _removeOutputFiles(testName);
       printTestSuccess();
     }
   }
   else {
     printTestFail();
-    printf("    in %s. Expected result code %d, got %d.\n", testName, expectedResultCode, resultCode);
+    printf("    in %s. Expected result code %d, got %d.\n", testName,
+      expectedResultCode, WEXITSTATUS(resultCode));
     testsFailed++;
   }
 
-  freeLinkedList(defaultArguments);
-  freeLinkedList(testArguments);
-  freeLinkedList(arguments);
+  freeCharString(arguments);
+  freeCharString(defaultArguments);
+  freeCharString(failedAnalysisFunctionName);
 }
