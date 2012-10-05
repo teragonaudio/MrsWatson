@@ -53,6 +53,8 @@ CharString newCharString(void);
 CharString newCharStringWithCapacity(int length);
 CharString newCharStringWithCString(const char* string);
 
+void appendToCharString(CharString destString, const CharString srcString);
+void appendCStringToCharString(CharString destString, const char* srcString);
 void clearCharString(CharString charString);
 void copyToCharString(CharString destString, const char* srcString);
 void copyCharStrings(CharString destString, const CharString srcString);

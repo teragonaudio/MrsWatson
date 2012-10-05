@@ -59,6 +59,14 @@ CharString newCharStringWithCString(const char* string) {
   return result;
 }
 
+void appendToCharString(CharString destString, const CharString srcString) {
+  strncat(destString->data, srcString->data, destString->capacity);
+}
+
+void appendCStringToCharString(CharString destString, const char* srcString) {
+  strncat(destString->data, srcString, destString->capacity);
+}
+
 void clearCharString(CharString charString) {
   memset(charString->data, 0, (size_t)(charString->capacity));
 }
