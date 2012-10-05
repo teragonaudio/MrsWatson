@@ -27,6 +27,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdarg.h>
 #include "LinkedList.h"
 #include "Types.h"
 
@@ -36,6 +37,19 @@ LinkedList newLinkedList(void) {
   list->item = NULL;
   list->nextItem = NULL;
   list->_numItems = 0;
+
+  return list;
+}
+
+LinkedList newLinkedListWithItems(void* firstItem, ...) {
+  va_list arguments;
+  void* item;
+  LinkedList list = newLinkedList();
+
+  va_start(arguments, firstItem);
+  while((item = va_arg(arguments, void*)) != NULL) {
+    appendItemToList(list, item);
+  }
 
   return list;
 }

@@ -43,6 +43,7 @@ typedef void (*LinkedListForeachFunc)(void* item, void* userData);
 typedef void (*LinkedListFreeItemFunc)(void* item);
 
 LinkedList newLinkedList(void);
+LinkedList newLinkedListWithItems(void* firstItem, ...);
 
 void appendItemToList(LinkedList list, void* item);
 int numItemsInList(LinkedList list);
