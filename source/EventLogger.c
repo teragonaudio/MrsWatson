@@ -56,6 +56,42 @@
 #define ANSI_COLOR_WHITE   "[37m"
 #define ANSI_COLOR_RESET   "[0m"
 
+#define ANSI_COLOR_RESET   "\x1b[0m"
+
+#define ANSI_COLOR_FG_BLACK   "\x1b[30m"
+#define ANSI_COLOR_FG_MAROON  "\x1b[31m"
+#define ANSI_COLOR_FG_GREEN   "\x1b[92m"
+#define ANSI_COLOR_FG_OLIVE   "\x1b[32m"
+#define ANSI_COLOR_FG_NAVY    "\x1b[34m"
+#define ANSI_COLOR_FG_PURPLE  "\x1b[35m"
+#define ANSI_COLOR_FG_TEAL    "\x1b[36m"
+#define ANSI_COLOR_FG_GRAY    "\x1b[37m"
+#define ANSI_COLOR_FG_DKGRAY  "\x1b[90m"
+#define ANSI_COLOR_FG_RED     "\x1b[31m"
+#define ANSI_COLOR_FG_LIME    "\x1b[32m"
+#define ANSI_COLOR_FG_YELLOW  "\x1b[33m"
+#define ANSI_COLOR_FG_BLUE    "\x1b[94m"
+#define ANSI_COLOR_FG_FUCHSIA "\x1b[95m"
+#define ANSI_COLOR_FG_CYAN    "\x1b[96m"
+#define ANSI_COLOR_FG_WHITE   "\x1b[37m"
+
+#define ANSI_COLOR_BG_BLACK   "\x1b[40m"
+#define ANSI_COLOR_BG_MAROON  "\x1b[41m"
+#define ANSI_COLOR_BG_GREEN   "\x1b[102m"
+#define ANSI_COLOR_BG_OLIVE   "\x1b[42m"
+#define ANSI_COLOR_BG_NAVY    "\x1b[44m"
+#define ANSI_COLOR_BG_PURPLE  "\x1b[45m"
+#define ANSI_COLOR_BG_TEAL    "\x1b[46m"
+#define ANSI_COLOR_BG_GRAY    "\x1b[47m"
+#define ANSI_COLOR_BG_DKGRAY  "\x1b[100m"
+#define ANSI_COLOR_BG_RED     "\x1b[101m"
+#define ANSI_COLOR_BG_LIME    "\x1b[42m"
+#define ANSI_COLOR_BG_YELLOW  "\x1b[43m"
+#define ANSI_COLOR_BG_BLUE    "\x1b[104m"
+#define ANSI_COLOR_BG_FUCHSIA "\x1b[105m"
+#define ANSI_COLOR_BG_CYAN    "\x1b[46m"
+#define ANSI_COLOR_BG_WHITE   "\x1b[47m"
+
 EventLogger eventLoggerInstance = NULL;
 
 void initEventLogger(void) {
