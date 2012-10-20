@@ -262,17 +262,8 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
     logError("No plugins loaded");
     return RETURN_CODE_MISSING_REQUIRED_OPTION;
   }
-  if(!initializePluginChain(pluginChain)) {
-    logError("Could not initialize plugin chain");
-    return RETURN_CODE_PLUGIN_ERROR;
-  }
 
-  // Display info for plugins in the chain before checking for valid input/output sources
-  if(shouldDisplayPluginInfo) {
-    displayPluginInfo(pluginChain);
-  }
-
-  // Copy plugins once they have been initialized.
+  // Copy plugins before they have been opened
   if(programOptions->options[OPTION_ERROR_REPORT]->enabled) {
     copyPluginsToErrorReportDir(errorReporter, pluginChain);
   }
@@ -350,6 +341,17 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   if(inputSource->numChannels != outputSource->numChannels) {
     logUnsupportedFeature("Different I/O channel counts");
     return RETURN_CODE_UNSUPPORTED_FEATURE;
+  }
+
+  // Initialize the plugin chain after the global sample rate has been set
+  if(!initializePluginChain(pluginChain)) {
+    logError("Could not initialize plugin chain");
+    return RETURN_CODE_PLUGIN_ERROR;
+  }
+
+  // Display info for plugins in the chain before checking for valid input/output sources
+  if(shouldDisplayPluginInfo) {
+    displayPluginInfo(pluginChain);
   }
 
   blocksize = getBlocksize();
