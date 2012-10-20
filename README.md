@@ -157,6 +157,19 @@ Distribution builds of MrsWatson are always generated with `make`, except for
 on Windows where the Visual Studio project is used.
 
 
+Bug Reporting
+-------------
+
+The easiest way to report a bug is to send an email to Teragon Audio's support
+address: support (at) teragonaudio (dot) com. MrsWatson has a special
+command-line switch to aid in diagnosing runtime problems, `--error-report`.
+When enabled it will create a zipfile on the desktop containing the input,
+output, logs, and optionally the plugins themselves. Please include these
+reports for bugs resulting in incorrect behavior or crashes.
+
+MrsWatson uses [ticgit][4] for bug reporting, so the list of current issues
+can be viewed within the repository itself.
+
 Please Help!
 ------------
 
@@ -210,3 +223,4 @@ agreements:
 [1]: http://www.teragonaudio.com
 [2]: http://en.wikipedia.org/wiki/Dr._Watson_(debugger)
 [3]: http://github.com/teragonaudio/MrsWatson
+[4]: https://github.com/schacon/ticgit/wiki
