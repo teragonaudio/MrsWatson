@@ -2,6 +2,7 @@
 #include "FileUtilities.h"
 
 static const char* TEST_FILE_NAME = "fileExistsTest.txt";
+static const char* ABSOLUTE_TEST_FILE_NAME = "/tmp/fileExistsTest.txt";
 
 static int _testFileExists(void) {
   FILE *fp = fopen(TEST_FILE_NAME, "w");
@@ -18,7 +19,7 @@ static int _testNullFileExists(void) {
 }
 
 static int _testInvalidFileExists(void) {
-  assertFalse(fileExists("INVALID"));
+  assertFalse(fileExists("invalid"));
   return 0;
 }
 
@@ -63,34 +64,42 @@ static int _testBuildAbsolutePathWithFileExtension(void) {
 }
 
 static int _testIsAbsolutePath(void) {
+  assert(isAbsolutePath(newCharStringWithCString(ABSOLUTE_TEST_FILE_NAME)));
   return 0;
 }
 
 static int _testIsInvalidFileAbsolutePath(void) {
+  assertFalse(isAbsolutePath(newCharStringWithCString("invalid")));
   return 0;
 }
 
 static int _testGetFileBasename(void) {
+  assertCharStringEquals(newCharStringWithCString(getFileBasename(ABSOLUTE_TEST_FILE_NAME)), TEST_FILE_NAME);
   return 0;
 }
 
 static int _testGetNullFileBasename(void) {
+  assertIsNull(getFileBasename(NULL));
   return 0;
 }
 
 static int _testGetFileExtension(void) {
+  assertCharStringEquals(newCharStringWithCString(getFileExtension(TEST_FILE_NAME)), "txt");
   return 0;
 }
 
 static int _testGetNullFileExtension(void) {
+  assertIsNull(getFileExtension(NULL));
   return 0;
 }
 
 static int _testGetInvalidFileExtension(void) {
+  assertIsNull(getFileExtension("invalid"));
   return 0;
 }
 
 TestSuite addFileUtilitiesTests(void);
+
 TestSuite addFileUtilitiesTests(void) {
   TestSuite testSuite = newTestSuite("FileUtilities", NULL, NULL);
   addTest(testSuite, "FileExists", _testFileExists);
@@ -108,13 +117,13 @@ TestSuite addFileUtilitiesTests(void) {
 
   addTest(testSuite, "BuildAbsolutePath", NULL); // _testBuildAbsolutePath);
   addTest(testSuite, "BuildAbsolutePathWithFileExtension", NULL); // _testBuildAbsolutePathWithFileExtension);
-  addTest(testSuite, "IsAbsolutePath", NULL); // _testIsAbsolutePath);
-  addTest(testSuite, "IsInvalidFileAbsolutePath", NULL); // _testIsInvalidFileAbsolutePath);
+  addTest(testSuite, "IsAbsolutePath", _testIsAbsolutePath);
+  addTest(testSuite, "IsInvalidFileAbsolutePath", _testIsInvalidFileAbsolutePath);
 
-  addTest(testSuite, "GetFileBasename", NULL); // _testGetFileBasename);
-  addTest(testSuite, "GetNullFileBasename", NULL); // _testGetNullFileBasename);
-  addTest(testSuite, "GetFileExtension", NULL); // _testGetFileExtension);
-  addTest(testSuite, "GetNullFileExtension", NULL); // _testGetNullFileExtension);
-  addTest(testSuite, "GetInvalidFileExtension", NULL); // _testGetInvalidFileExtension);
+  addTest(testSuite, "GetFileBasename", _testGetFileBasename);
+  addTest(testSuite, "GetNullFileBasename", _testGetNullFileBasename);
+  addTest(testSuite, "GetFileExtension", _testGetFileExtension);
+  addTest(testSuite, "GetNullFileExtension", _testGetNullFileExtension);
+  addTest(testSuite, "GetInvalidFileExtension", _testGetInvalidFileExtension);
   return testSuite;
 }
