@@ -2,22 +2,28 @@
 #include "PlatformUtilities.h"
 
 static int _testGetPlatformType(void) {
+#if LINUX
+  assertIntEquals(getPlatformType(), PLATFORM_LINUX);
+#elif MACOSX
+  assertIntEquals(getPlatformType(), PLATFORM_MACOSX);
+#elif WINDOWS
+  assertIntEquals(getPlatformType(), PLATFORM_WINDOWS);
+#else
+  assertIntEquals(getPlatformType(), PLATFORM_UNSUPPORTED);
+#endif
   return 0;
 }
 
 static int _testGetPlatformName(void) {
-  return 0;
-}
-
-static int _testFileExists(void) {
-  return 0;
-}
-
-static int _testFileExistsNull(void) {
-  return 0;
-}
-
-static int _testFileExistsInvalid(void) {
+  #if LINUX
+  assertCharStringEquals(newCharStringWithCString(getPlatformName()), "Linux");
+#elif MACOSX
+  assertCharStringEquals(newCharStringWithCString(getPlatformName()), "Mac OS X");
+#elif WINDOWS
+  assertCharStringEquals(newCharStringWithCString(getPlatformName()), "Windows");
+#else
+  assertCharStringEquals(newCharStringWithCString(getPlatformName()), "Unsupported platform");
+#endif
   return 0;
 }
 
@@ -56,11 +62,8 @@ static int _testConvertByteArrayToUnsignedInt(void) {
 TestSuite addPlatformUtilitiesTests(void);
 TestSuite addPlatformUtilitiesTests(void) {
   TestSuite testSuite = newTestSuite("PlatformUtilities", NULL, NULL);
-  addTest(testSuite, "GetPlatformType", NULL); // _testGetPlatformType);
-  addTest(testSuite, "GetPlatformName", NULL); // _testGetPlatformName);
-  addTest(testSuite, "FileExists", NULL); // _testFileExists);
-  addTest(testSuite, "FileExistsNull", NULL); // _testFileExistsNull);
-  addTest(testSuite, "FileExistsInvalid", NULL); // _testFileExistsInvalid);
+  addTest(testSuite, "GetPlatformType", _testGetPlatformType);
+  addTest(testSuite, "GetPlatformName", _testGetPlatformName);
 
   addTest(testSuite, "IsHostLittleEndian", NULL); // _testIsHostLittleEndian);
 
