@@ -142,7 +142,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
     freeCharString(versionString);
 
     wrappedLicenseInfo = newCharStringWithCapacity(STRING_LENGTH_LONG);
-    wrapStringForTerminal(LICENSE_STRING, wrappedLicenseInfo->data, 0);
+    wrapString(LICENSE_STRING, wrappedLicenseInfo->data, 0);
     printf("%s\n\n", wrappedLicenseInfo->data);
     freeCharString(wrappedLicenseInfo);
 

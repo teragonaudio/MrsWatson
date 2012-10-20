@@ -340,7 +340,7 @@ void printProgramOption(const ProgramOption programOption, boolByte withFullHelp
   if(withFullHelp) {
     // Newline and indentation before help
     wrappedHelpString = newCharStringWithCapacity(STRING_LENGTH_LONG);
-    wrapStringForTerminal(programOption->help->data, wrappedHelpString->data, initialIndent + indentSize);
+    wrapString(programOption->help->data, wrappedHelpString->data, initialIndent + indentSize);
     printf("\n%s\n\n", wrappedHelpString->data);
     freeCharString(wrappedHelpString);
   }

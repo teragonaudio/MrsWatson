@@ -35,7 +35,6 @@
 
 boolByte isLetter(char ch);
 boolByte isNumber(char ch);
-void wrapString(const char* srcString, char* destString, int indentSize, int lineLength);
-void wrapStringForTerminal(const char* srcString, char* destString, int indentSize);
+void wrapString(const char* srcString, char* destString, int indentSize);
 
 #endif

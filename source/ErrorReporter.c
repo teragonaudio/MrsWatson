@@ -165,7 +165,7 @@ Copy the plugin? (y/n) ");
   int i;
   char response;
 
-  wrapStringForTerminal(promptText->data, wrappedPromptText->data, 0);
+  wrapString(promptText->data, wrappedPromptText->data, 0);
   printf("%s", wrappedPromptText->data);
   response = getchar();
   if(response == 'y' || response == 'Y') {
@@ -226,7 +226,7 @@ any input/output sources and error logs. This also enables some extra \
 arguments and will disable console logging.\n");
   CharString wrappedInfoText = newCharStringWithCapacity(infoText->capacity);
   printf("=== Starting error report ===\n");
-  wrapStringForTerminal(infoText->data, wrappedInfoText->data, 0);
+  wrapString(infoText->data, wrappedInfoText->data, 0);
   // The second newline here is intentional
   printf("%s\n", wrappedInfoText->data);
 }
