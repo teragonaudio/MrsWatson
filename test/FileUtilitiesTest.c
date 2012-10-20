@@ -1,15 +1,24 @@
 #include "TestRunner.h"
 #include "FileUtilities.h"
 
+static const char* TEST_FILE_NAME = "fileExistsTest.txt";
+
 static int _testFileExists(void) {
+  FILE *fp = fopen(TEST_FILE_NAME, "w");
+  assert(fp != NULL);
+  fclose(fp);
+  assert(fileExists(TEST_FILE_NAME));
+  unlink(TEST_FILE_NAME);
   return 0;
 }
 
 static int _testNullFileExists(void) {
+  assertFalse(fileExists(NULL));
   return 0;
 }
 
 static int _testInvalidFileExists(void) {
+  assertFalse(fileExists("INVALID"));
   return 0;
 }
 
@@ -84,9 +93,9 @@ static int _testGetInvalidFileExtension(void) {
 TestSuite addFileUtilitiesTests(void);
 TestSuite addFileUtilitiesTests(void) {
   TestSuite testSuite = newTestSuite("FileUtilities", NULL, NULL);
-  addTest(testSuite, "FileExists", NULL); // _testFileExists);
-  addTest(testSuite, "NullFileExists", NULL); // _testNullFileExists);
-  addTest(testSuite, "InvalidFileExists", NULL); // _testInvalidFileExists);
+  addTest(testSuite, "FileExists", _testFileExists);
+  addTest(testSuite, "NullFileExists", _testNullFileExists);
+  addTest(testSuite, "InvalidFileExists", _testInvalidFileExists);
   addTest(testSuite, "CopyFileToDirectory", NULL); // _testCopyFileToDirectory);
   addTest(testSuite, "CopyInvalidFileToDirectory", NULL); // _testCopyInvalidFileToDirectory);
   addTest(testSuite, "CopyFileToInvalidDirectory", NULL); // _testCopyFileToInvalidDirectory);
