@@ -13,6 +13,7 @@ TestSuite newTestSuite(char* name, TestCaseSetupFunc setup, TestCaseTeardownFunc
   testSuite->name = name;
   testSuite->numSuccess = 0;
   testSuite->numFail = 0;
+  testSuite->numSkips = 0;
   testSuite->testCases = newLinkedList();
   testSuite->setup = setup;
   testSuite->teardown = teardown;
@@ -84,6 +85,7 @@ void runTestCase(void* item, void* extraData) {
   }
   else {
     _printTestSkipped();
+    testSuite->numSkips++;
   }
 }
 

@@ -17,6 +17,7 @@ static void _sumTestSuiteResults(void* item, void* extraData) {
   TestSuite result = (TestSuite)extraData;
   result->numSuccess += testSuite->numSuccess;
   result->numFail += testSuite->numFail;
+  result->numSkips += testSuite->numSkips;
 }
 
 static LinkedList _getTestSuites(void) {
@@ -42,8 +43,9 @@ void runInternalTestSuite(void) {
   suiteResults = newTestSuite("Suite results", NULL, NULL);
   foreachItemInList(internalTestSuites, _sumTestSuiteResults, suiteResults);
 
-  printf("\nRan %d function tests: %d passed, %d failed\n",
-    suiteResults->numSuccess + suiteResults->numFail, suiteResults->numSuccess, suiteResults->numFail);
+  printf("\nRan %d function tests: %d passed, %d failed, %d skipped\n",
+    suiteResults->numSuccess + suiteResults->numFail + suiteResults->numSkips,
+    suiteResults->numSuccess, suiteResults->numFail, suiteResults->numSkips);
 }
 
 TestCase findTestCase(TestSuite testSuite, char* testName);

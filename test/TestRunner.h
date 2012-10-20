@@ -39,6 +39,7 @@ typedef struct {
   char* name;
   int numSuccess;
   int numFail;
+  int numSkips;
   LinkedList testCases;
   TestCaseSetupFunc setup;
   TestCaseTeardownFunc teardown;
