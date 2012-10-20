@@ -165,11 +165,11 @@ void setLoggingZebraSize(const long zebraStripeSize) {
 
 static char _logLevelStatusChar(const LogLevel logLevel) {
   switch(logLevel) {
-    case LOG_DEBUG: return '.';
+    case LOG_DEBUG: return 'D';
     case LOG_INFO:  return '-';
-    case LOG_WARN:  return '*';
-    case LOG_ERROR: return '!';
-    default:        return ' ';
+    case LOG_WARN:  return 'W';
+    case LOG_ERROR: return 'E';
+    default:        return '!';
   }
 }
 
