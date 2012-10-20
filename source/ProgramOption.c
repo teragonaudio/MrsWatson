@@ -66,8 +66,8 @@ empty frames will be added to the last block.",
     true, ARGUMENT_TYPE_REQUIRED, getBlocksize());
 
   addNewProgramOption(programOptions, OPTION_CHANNELS, "channels",
-    "Number of channels for output source. If the input source's channel count does not match the output source, \
-then channels are either copied (mono -> dual mono) or ignored (stereo -> mono, left channel).",
+    "Number of channels for output source. If the input source specifies a channel count, then that value \
+will be override the one set by this option.",
     true, ARGUMENT_TYPE_REQUIRED, getNumChannels());
 
   addNewProgramOption(programOptions, OPTION_COLOR_LOGGING, "color",
@@ -117,16 +117,6 @@ If stderr is a terminal device, color is used automatically unless 'none' is giv
 --list-file-types to see a list of supported types. Use '-' to write to stdout.",
     true, ARGUMENT_TYPE_REQUIRED, NO_DEFAULT_VALUE);
 
-  addNewProgramOption(programOptions, OPTION_PCM_NUM_CHANNELS, "pcm-num-channels",
-    "Number of channels to use when reading raw PCM data. If not given, defaults to the global channel count \
-from the --channels option.",
-    false, ARGUMENT_TYPE_REQUIRED, getNumChannels());
-
-  addNewProgramOption(programOptions, OPTION_PCM_SAMPLE_RATE, "pcm-sample-rate",
-    "Sample rate to use when reading raw PCM data. If not given, defaults to the global sample rate from the \
---sample-rate option.",
-    false, ARGUMENT_TYPE_REQUIRED, (int)getSampleRate());
-
   addNewProgramOption(programOptions, OPTION_PLUGIN, "plugin",
     "Plugin(s) to process. Multiple plugins can given in a semicolon-separated list, in which case they will be \
 placed into a chain in the order specified. Instrument plugins must appear first in any chains. Plugins are searched \
@@ -145,7 +135,8 @@ be of the corresponding file format for the respective plugin.\
     true, ARGUMENT_TYPE_NONE, NO_DEFAULT_VALUE);
 
   addNewProgramOption(programOptions, OPTION_SAMPLE_RATE, "sample-rate",
-    "Sample rate to use when processing.",
+    "Sample rate to use when processing. If the input source specifies its own sample rate, that value will override \
+the one set by this option.",
     true, ARGUMENT_TYPE_REQUIRED, (int)getSampleRate());
 
   addNewProgramOption(programOptions, OPTION_TAIL_TIME, "tail-time",

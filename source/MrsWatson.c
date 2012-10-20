@@ -42,6 +42,7 @@
 #include "AudioClock.h"
 #include "MidiSequence.h"
 #include "MidiSource.h"
+#include "SampleSourcePcm.h"
 
 static void prettyPrintTime(CharString outString, unsigned long milliseconds) {
   int minutes;
@@ -301,21 +302,13 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   }
 
   // Prepare input source
+  if(inputSource->sampleSourceType == SAMPLE_SOURCE_TYPE_PCM) {
+    setPcmDataSampleRate(inputSource, getSampleRate());
+    setPcmDataNumChannels(inputSource, getNumChannels());
+  }
   if(!inputSource->openSampleSource(inputSource, SAMPLE_SOURCE_OPEN_READ)) {
     logError("Input source '%s' could not be opened", inputSource->sourceName->data);
     return RETURN_CODE_IO_ERROR;
-  }
-  else if(inputSource->sampleSourceType == SAMPLE_SOURCE_TYPE_PCM) {
-    if(programOptions->options[OPTION_PCM_SAMPLE_RATE]->enabled) {
-      inputSource->sampleRate = strtod(programOptions->options[OPTION_PCM_SAMPLE_RATE]->argument->data, NULL);
-      if(getSampleRate() != inputSource->sampleRate) {
-        logUnsupportedFeature("Resampling input source");
-        return RETURN_CODE_UNSUPPORTED_FEATURE;
-      }
-    }
-    if(programOptions->options[OPTION_PCM_NUM_CHANNELS]->enabled) {
-      inputSource->numChannels = strtol(programOptions->options[OPTION_PCM_NUM_CHANNELS]->argument->data, NULL, 10);
-    }
   }
 
   // Prepare output source
@@ -336,11 +329,6 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
       logWarn("Failed reading MIDI events from source '%s'", midiSource->sourceName->data);
       return RETURN_CODE_IO_ERROR;
     }
-  }
-
-  if(inputSource->numChannels != outputSource->numChannels) {
-    logUnsupportedFeature("Different I/O channel counts");
-    return RETURN_CODE_UNSUPPORTED_FEATURE;
   }
 
   // Initialize the plugin chain after the global sample rate has been set
