@@ -97,7 +97,7 @@ static void _convertPcmDataToSampleBuffer(const short* inPcmSamples, SampleBuffe
 
 boolByte readPcmDataFromFile(SampleSourcePcmData pcmData, SampleBuffer sampleBuffer, unsigned long* numFramesProcessed) {
   boolByte result = true;
-  size_t pcmFramesRead = 0;
+  size_t pcmSamplesRead = 0;
 
   if(pcmData == NULL || pcmData->fileHandle == NULL) {
     logCritical("Corrupt PCM data structure");
@@ -112,13 +112,13 @@ boolByte readPcmDataFromFile(SampleSourcePcmData pcmData, SampleBuffer sampleBuf
   // Clear the PCM data buffer, or else the last block will have dirty samples in the end
   memset(pcmData->interlacedPcmDataBuffer, 0, sizeof(short) * pcmData->dataBufferNumItems);
 
-  pcmFramesRead = fread(pcmData->interlacedPcmDataBuffer, sizeof(short), pcmData->dataBufferNumItems, pcmData->fileHandle);
-  if(pcmFramesRead < pcmData->dataBufferNumItems) {
+  pcmSamplesRead = fread(pcmData->interlacedPcmDataBuffer, sizeof(short), pcmData->dataBufferNumItems, pcmData->fileHandle);
+  if(pcmSamplesRead < pcmData->dataBufferNumItems) {
     logDebug("End of PCM file reached");
     result = false;
   }
-  *numFramesProcessed += pcmFramesRead;
-  logDebug("Read %d sample frames from PCM file", pcmFramesRead);
+  *numFramesProcessed += pcmSamplesRead / sampleBuffer->numChannels;
+  logDebug("Read %d samples from PCM file", pcmSamplesRead);
 
   _convertPcmDataToSampleBuffer(pcmData->interlacedPcmDataBuffer, sampleBuffer);
   return result;
