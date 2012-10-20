@@ -1,15 +1,15 @@
 #include "TestRunner.h"
 #include "FileUtilities.h"
 
-static const char* TEST_FILE_NAME = "fileExistsTest.txt";
-static const char* ABSOLUTE_TEST_FILE_NAME = "/tmp/fileExistsTest.txt";
+static const char* TEST_FILENAME = "fileExistsTest.txt";
+static const char* ABSOLUTE_TEST_FILENAME = "/tmp/fileExistsTest.txt";
 
 static int _testFileExists(void) {
-  FILE *fp = fopen(TEST_FILE_NAME, "w");
+  FILE *fp = fopen(TEST_FILENAME, "w");
   assert(fp != NULL);
   fclose(fp);
-  assert(fileExists(TEST_FILE_NAME));
-  unlink(TEST_FILE_NAME);
+  assert(fileExists(TEST_FILENAME));
+  unlink(TEST_FILENAME);
   return 0;
 }
 
@@ -64,7 +64,7 @@ static int _testBuildAbsolutePathWithFileExtension(void) {
 }
 
 static int _testIsAbsolutePath(void) {
-  assert(isAbsolutePath(newCharStringWithCString(ABSOLUTE_TEST_FILE_NAME)));
+  assert(isAbsolutePath(newCharStringWithCString(ABSOLUTE_TEST_FILENAME)));
   return 0;
 }
 
@@ -74,7 +74,7 @@ static int _testIsInvalidFileAbsolutePath(void) {
 }
 
 static int _testGetFileBasename(void) {
-  assertCharStringEquals(newCharStringWithCString(getFileBasename(ABSOLUTE_TEST_FILE_NAME)), TEST_FILE_NAME);
+  assertCharStringEquals(newCharStringWithCString(getFileBasename(ABSOLUTE_TEST_FILENAME)), TEST_FILENAME);
   return 0;
 }
 
@@ -84,7 +84,7 @@ static int _testGetNullFileBasename(void) {
 }
 
 static int _testGetFileExtension(void) {
-  assertCharStringEquals(newCharStringWithCString(getFileExtension(TEST_FILE_NAME)), "txt");
+  assertCharStringEquals(newCharStringWithCString(getFileExtension(TEST_FILENAME)), "txt");
   return 0;
 }
 
