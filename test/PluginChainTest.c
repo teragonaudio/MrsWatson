@@ -2,6 +2,10 @@
 #include "PluginChain.h"
 
 static int _testNewPluginChain(void) {
+  PluginChain p = newPluginChain();
+  assertIntEquals(p->numPlugins, 0);
+  assertNotNull(p->plugins);
+  assertNotNull(p->presets);
   return 0;
 }
 
@@ -36,7 +40,7 @@ static int _testClosePluginChain(void) {
 TestSuite addPluginChainTests(void);
 TestSuite addPluginChainTests(void) {
   TestSuite testSuite = newTestSuite("PluginChain", NULL, NULL);
-  addTest(testSuite, "NewObject", NULL); // _testNewPluginChain);
+  addTest(testSuite, "NewObject", _testNewPluginChain);
   addTest(testSuite, "AddPluginsFromArgumentString", NULL); // _testAddPluginsFromArgumentString);
   addTest(testSuite, "AddPluginsFromArgumentStringWithSpaces", NULL); // _testAddPluginsFromArgumentStringWithSpaces);
   addTest(testSuite, "AddPluginsFromArgumentStringWithPresets", NULL); // _testAddPluginsFromArgumentStringWithPresets);
