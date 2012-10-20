@@ -90,9 +90,11 @@ static boolByte _readWaveFileInfo(const char* filename, SampleSourcePcmData extr
 
     extraData->numChannels = convertByteArrayToUnsignedShort(chunk->data + chunkOffset);
     chunkOffset += 2;
+    setNumChannels(extraData->numChannels);
 
     extraData->sampleRate = convertByteArrayToUnsignedInt(chunk->data + chunkOffset);
     chunkOffset += 4;
+    setSampleRate(extraData->sampleRate);
 
     // TODO: Error checking
     byteRate = convertByteArrayToUnsignedInt(chunk->data + chunkOffset);
