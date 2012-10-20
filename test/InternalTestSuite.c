@@ -8,6 +8,7 @@ extern TestSuite addCharStringTests(void);
 extern TestSuite addLinkedListTests(void);
 extern TestSuite addMidiSequenceTests(void);
 extern TestSuite addPluginTests(void);
+extern TestSuite addPluginChainTests(void);
 extern TestSuite addProgramOptionTests(void);
 extern TestSuite addSampleBufferTests(void);
 extern TestSuite addSampleSourceTests(void);
@@ -31,6 +32,7 @@ static LinkedList _getTestSuites(void) {
   appendItemToList(internalTestSuites, addLinkedListTests());
   appendItemToList(internalTestSuites, addMidiSequenceTests());
   appendItemToList(internalTestSuites, addPluginTests());
+  appendItemToList(internalTestSuites, addPluginChainTests());
   appendItemToList(internalTestSuites, addProgramOptionTests());
   appendItemToList(internalTestSuites, addSampleBufferTests());
   appendItemToList(internalTestSuites, addSampleSourceTests());
