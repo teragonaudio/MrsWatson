@@ -139,8 +139,7 @@ static int _testForeachOverUserData(void) {
 
 TestSuite addLinkedListTests(void);
 TestSuite addLinkedListTests(void) {
-  TestSuite testSuite = newTestSuite("LinkedList", NULL, NULL);
-  testSuite->setup = _linkedListTestSetup;
+  TestSuite testSuite = newTestSuite("LinkedList", _linkedListTestSetup, NULL);
   addTest(testSuite, "NewObject", _testNewLinkedList);
   addTest(testSuite, "AppendItem", _testAppendItemToList);
   addTest(testSuite, "AppendMultipleItems", _testAppendMultipleItemsToList);
