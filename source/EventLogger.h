@@ -41,20 +41,11 @@ typedef enum {
   NUM_LOG_LEVELS
 } LogLevel;
 
-typedef enum {
-  COLOR_SCHEME_NONE,
-  COLOR_SCHEME_DARK,
-  COLOR_SCHEME_LIGHT,
-  NUM_COLOR_SCHEMES
-} LogColorScheme;
-
-#define COLOR_SCHEME_DEFAULT COLOR_SCHEME_DARK
-
 typedef struct {
   LogLevel logLevel;
   long startTimeInSec;
   long startTimeInMs;
-  LogColorScheme colorScheme;
+  boolByte useColor;
   long zebraStripeSize;
   FILE *logFile;
 } EventLoggerMembers;
@@ -68,8 +59,8 @@ void fillVersionString(CharString outString);
 
 void setLogLevel(LogLevel logLevel);
 void setLogFile(const CharString logFileName);
-void setLoggingColorScheme(const LogColorScheme colorScheme);
-void setLoggingColorSchemeWithString(const CharString colorSchemeName);
+void setLoggingColorEnabled(boolByte useColor);
+void setLoggingColorEnabledWithString(const CharString colorSchemeName);
 void setLoggingZebraSize(const long zebraStripeSize);
 
 void logDebug(const char* message, ...);

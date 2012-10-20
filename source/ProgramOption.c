@@ -71,8 +71,8 @@ will be override the one set by this option.",
     true, ARGUMENT_TYPE_REQUIRED, getNumChannels());
 
   addNewProgramOption(programOptions, OPTION_COLOR_LOGGING, "color",
-    "Colored logging output. Argument can be 'light', 'dark', or 'none'. If no argument given, 'dark' is assumed. \
-If stderr is a terminal device, color is used automatically unless 'none' is given to this option.",
+    "Colored logging output. Argument can be 'auto', 'force', or 'none'. If no argument given, 'force' is assumed. \
+If attached to a terminal device, color is used automatically unless 'none' is given to this option.",
     false, ARGUMENT_TYPE_OPTIONAL, NO_DEFAULT_VALUE);
 
   addNewProgramOption(programOptions, OPTION_DISPLAY_INFO, "display-info",

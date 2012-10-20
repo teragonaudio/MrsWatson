@@ -180,7 +180,12 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
     setLogLevel(LOG_ERROR);
   }
   if(programOptions->options[OPTION_COLOR_LOGGING]->enabled) {
-    setLoggingColorSchemeWithString(programOptions->options[OPTION_COLOR_LOGGING]->argument);
+    // If --color was given but with no string argument, then force color. Otherwise
+    // colors will be provided automatically anyways.
+    if(isCharStringEmpty(programOptions->options[OPTION_COLOR_LOGGING]->argument)) {
+      copyToCharString(programOptions->options[OPTION_COLOR_LOGGING]->argument, "force");
+    }
+    setLoggingColorEnabledWithString(programOptions->options[OPTION_COLOR_LOGGING]->argument);
   }
   if(programOptions->options[OPTION_LOG_FILE]->enabled) {
     setLogFile(programOptions->options[OPTION_LOG_FILE]->argument);

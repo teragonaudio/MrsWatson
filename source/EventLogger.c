@@ -92,7 +92,7 @@ void initEventLogger(void) {
   eventLoggerInstance = (EventLogger)malloc(sizeof(EventLoggerMembers));
   eventLoggerInstance->logLevel = LOG_INFO;
   eventLoggerInstance->logFile = NULL;
-  eventLoggerInstance->colorScheme = COLOR_SCHEME_NONE;
+  eventLoggerInstance->useColor = false;
   eventLoggerInstance->zebraStripeSize = (long)DEFAULT_SAMPLE_RATE;
 
 #if WINDOWS
@@ -134,27 +134,27 @@ void setLogFile(const CharString logFileName) {
   }
 }
 
-void setLoggingColorScheme(const LogColorScheme colorScheme) {
+void setLoggingColorEnabled(boolByte useColor) {
   EventLogger eventLogger = _getEventLoggerInstance();
-  eventLogger->colorScheme = colorScheme;
+  eventLogger->useColor = useColor;
 }
 
-void setLoggingColorSchemeWithString(const CharString colorSchemeName) {
+void setLoggingColorEnabledWithString(const CharString colorSchemeName) {
   if(isCharStringEmpty(colorSchemeName)) {
-    setLoggingColorScheme(COLOR_SCHEME_DEFAULT);
+    setLoggingColorEnabled(false);
   }
   else if(isCharStringEqualToCString(colorSchemeName, "none", false)) {
-    setLoggingColorScheme(COLOR_SCHEME_NONE);
+    setLoggingColorEnabled(false);
   }
-  else if(isCharStringEqualToCString(colorSchemeName, "dark", false)) {
-    setLoggingColorScheme(COLOR_SCHEME_DARK);
+  else if(isCharStringEqualToCString(colorSchemeName, "auto", false)) {
+    setLoggingColorEnabled(isatty(1));
   }
-  else if(isCharStringEqualToCString(colorSchemeName, "light", false)) {
-    setLoggingColorScheme(COLOR_SCHEME_LIGHT);
+  else if(isCharStringEqualToCString(colorSchemeName, "force", false)) {
+    setLoggingColorEnabled(true);
   }
   else {
+    // Use critical log level to avoid colors
     logCritical("Unknown color scheme '%s'", colorSchemeName->data);
-    setLoggingColorScheme(COLOR_SCHEME_NONE);
   }
 }
 
@@ -173,55 +173,37 @@ static char _logLevelStatusChar(const LogLevel logLevel) {
   }
 }
 
-static const char* _logLevelStatusColor(const LogLevel logLevel, const LogColorScheme colorScheme) {
-  if(colorScheme == COLOR_SCHEME_DARK) {
+static const char* _logLevelStatusColor(const LogLevel logLevel, const boolByte useColor) {
+  if(useColor) {
     switch(logLevel) {
       case LOG_DEBUG: return ANSI_COLOR_FG_DKGRAY;
-      case LOG_INFO:  return ANSI_COLOR_FG_WHITE;
+      case LOG_INFO:  return ANSI_COLOR_RESET;
       case LOG_WARN:  return ANSI_COLOR_FG_YELLOW;
       case LOG_ERROR: return ANSI_COLOR_FG_RED;
       default:        return ANSI_COLOR_RESET;
     }
   }
-  else if(colorScheme == COLOR_SCHEME_LIGHT) {
-    switch(logLevel) {
-      case LOG_DEBUG: return ANSI_COLOR_FG_GREEN;
-      case LOG_INFO:  return ANSI_COLOR_RESET;
-      case LOG_WARN:  return ANSI_COLOR_FG_FUCHSIA;
-      case LOG_ERROR: return ANSI_COLOR_FG_RED;
-      default:        return ANSI_COLOR_RESET;
-    }
-  }
   else {
-    logInternalError("Invalid color scheme for status char");
-    return ANSI_COLOR_RESET;
+    return "";
   }
 }
 
-static const char* _logTimeColor(const LogColorScheme colorScheme) {
-  if(colorScheme == COLOR_SCHEME_DARK) {
+static const char* _logTimeColor(const boolByte useColor) {
+  if(useColor) {
     return ANSI_COLOR_FG_BLUE;
   }
-  else if(colorScheme == COLOR_SCHEME_LIGHT) {
-    return ANSI_COLOR_FG_GREEN;
-  }
   else {
-    logInternalError("Invalid color scheme for status char");
-    return ANSI_COLOR_RESET;
+    return "";
   }
 }
 
-static const char* _logTimeZebraStripeColor(const long elapsedTime, const LogColorScheme colorScheme, const int zebraSizeInMs) {
+static const char* _logTimeZebraStripeColor(const long elapsedTime, const boolByte useColor, const int zebraSizeInMs) {
   boolByte zebraState = (boolByte)((elapsedTime / zebraSizeInMs) % 2);
-  if(colorScheme == COLOR_SCHEME_DARK) {
+  if(useColor) {
     return zebraState ? ANSI_COLOR_FG_OLIVE : ANSI_COLOR_FG_GREEN;
   }
-  else if(colorScheme == COLOR_SCHEME_LIGHT) {
-    return zebraState ? ANSI_COLOR_FG_BLACK : ANSI_COLOR_FG_BLUE;
-  }
   else {
-    logInternalError("Invalid color scheme for stripe color");
-    return ANSI_COLOR_RESET;
+    return "";
   }
 }
 
@@ -229,14 +211,14 @@ static void _printMessage(const LogLevel logLevel, const long elapsedTimeInMs, c
   if(eventLogger->logFile != NULL) {
     fprintf(eventLogger->logFile, "%c %08ld %06ld %s\n", _logLevelStatusChar(logLevel), numFramesProcessed, elapsedTimeInMs, message);
   }
-  else if(eventLogger->colorScheme == COLOR_SCHEME_NONE) {
+  else if(!eventLogger->useColor) {
     fprintf(stderr, "%c %08ld %06ld %s\n", _logLevelStatusChar(logLevel), numFramesProcessed, elapsedTimeInMs, message);
   }
   else {
-    fprintf(stderr, "%s%c%s ", _logLevelStatusColor(logLevel, eventLogger->colorScheme), _logLevelStatusChar(logLevel), ANSI_COLOR_RESET);
-    fprintf(stderr, "%s%08ld%s ", _logTimeZebraStripeColor(numFramesProcessed, eventLogger->colorScheme, eventLogger->zebraStripeSize), numFramesProcessed, ANSI_COLOR_RESET);
-    fprintf(stderr, "%s%06ld%s ", _logTimeColor(eventLogger->colorScheme), elapsedTimeInMs, ANSI_COLOR_RESET);
-    fprintf(stderr, "%s%s%s\n", _logLevelStatusColor(logLevel, eventLogger->colorScheme), message, ANSI_COLOR_RESET);
+    fprintf(stderr, "%s%c%s ", _logLevelStatusColor(logLevel, eventLogger->useColor), _logLevelStatusChar(logLevel), ANSI_COLOR_RESET);
+    fprintf(stderr, "%s%08ld%s ", _logTimeZebraStripeColor(numFramesProcessed, eventLogger->useColor, eventLogger->zebraStripeSize), numFramesProcessed, ANSI_COLOR_RESET);
+    fprintf(stderr, "%s%06ld%s ", _logTimeColor(eventLogger->useColor), elapsedTimeInMs, ANSI_COLOR_RESET);
+    fprintf(stderr, "%s%s%s\n", _logLevelStatusColor(logLevel, eventLogger->useColor), message, ANSI_COLOR_RESET);
   }
 }
 
