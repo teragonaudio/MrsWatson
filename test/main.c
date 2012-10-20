@@ -171,23 +171,31 @@ int main(int argc, char* argv[]) {
     totalTestsFailed = testsFailed;
   }
 
+  mrsWatsonPath = newCharString();
+  if(programOptions->options[OPTION_TEST_MRSWATSON_PATH]->enabled) {
+    copyCharStrings(mrsWatsonPath, programOptions->options[OPTION_TEST_MRSWATSON_PATH]->argument);
+  }
+  else {
+    copyToCharString(mrsWatsonPath, DEFAULT_MRSWATSON_PATH);
+  }
+  if(runApplicationTests && !fileExists(mrsWatsonPath->data)) {
+    printf("Could not find mrswatson at '%s', skipping application tests\n", mrsWatsonPath->data);
+    runApplicationTests = false;
+  }
+
+  resourcesPath = newCharString();
+  if(programOptions->options[OPTION_TEST_RESOURCES_PATH]->enabled) {
+    copyCharStrings(resourcesPath, programOptions->options[OPTION_TEST_RESOURCES_PATH]->argument);
+  }
+  else {
+    copyToCharString(resourcesPath, DEFAULT_RESOURCES_PATH);
+  }
+  if(runApplicationTests && !fileExists(resourcesPath->data)) {
+    printf("Could not find test resources at '%s', skipping application tests\n", resourcesPath->data);
+    runApplicationTests = false;
+  }
+
   if(runApplicationTests) {
-    mrsWatsonPath = newCharString();
-    if(programOptions->options[OPTION_TEST_MRSWATSON_PATH]->enabled) {
-      copyCharStrings(mrsWatsonPath, programOptions->options[OPTION_TEST_MRSWATSON_PATH]->argument);
-    }
-    else {
-      copyToCharString(mrsWatsonPath, DEFAULT_MRSWATSON_PATH);
-    }
-
-    resourcesPath = newCharString();
-    if(programOptions->options[OPTION_TEST_RESOURCES_PATH]->enabled) {
-      copyCharStrings(resourcesPath, programOptions->options[OPTION_TEST_RESOURCES_PATH]->argument);
-    }
-    else {
-      copyToCharString(resourcesPath, DEFAULT_RESOURCES_PATH);
-    }
-
     printf("\n=== Application tests ===\n");
     testsPassed = testsFailed = 0;
     runApplicationTestSuite(mrsWatsonPath->data, resourcesPath->data);
