@@ -176,52 +176,52 @@ static char _logLevelStatusChar(const LogLevel logLevel) {
 static const char* _logLevelStatusColor(const LogLevel logLevel, const LogColorScheme colorScheme) {
   if(colorScheme == COLOR_SCHEME_DARK) {
     switch(logLevel) {
-      case LOG_DEBUG: return ANSI_COLOR_WHITE;
-      case LOG_INFO:  return ANSI_COLOR_GREEN;
-      case LOG_WARN:  return ANSI_COLOR_MAGENTA;
-      case LOG_ERROR: return ANSI_COLOR_RED;
-      default:        return ANSI_COLOR_WHITE;
+      case LOG_DEBUG: return ANSI_COLOR_FG_DKGRAY;
+      case LOG_INFO:  return ANSI_COLOR_FG_WHITE;
+      case LOG_WARN:  return ANSI_COLOR_FG_YELLOW;
+      case LOG_ERROR: return ANSI_COLOR_FG_RED;
+      default:        return ANSI_COLOR_RESET;
     }
   }
   else if(colorScheme == COLOR_SCHEME_LIGHT) {
     switch(logLevel) {
-      case LOG_DEBUG: return ANSI_COLOR_BLACK;
-      case LOG_INFO:  return ANSI_COLOR_GREEN;
-      case LOG_WARN:  return ANSI_COLOR_MAGENTA;
-      case LOG_ERROR: return ANSI_COLOR_RED;
-      default:        return ANSI_COLOR_WHITE;
+      case LOG_DEBUG: return ANSI_COLOR_FG_GREEN;
+      case LOG_INFO:  return ANSI_COLOR_RESET;
+      case LOG_WARN:  return ANSI_COLOR_FG_FUCHSIA;
+      case LOG_ERROR: return ANSI_COLOR_FG_RED;
+      default:        return ANSI_COLOR_RESET;
     }
   }
   else {
     logInternalError("Invalid color scheme for status char");
-    return ANSI_COLOR_WHITE;
+    return ANSI_COLOR_RESET;
   }
 }
 
 static const char* _logTimeColor(const LogColorScheme colorScheme) {
   if(colorScheme == COLOR_SCHEME_DARK) {
-    return ANSI_COLOR_CYAN;
+    return ANSI_COLOR_FG_BLUE;
   }
   else if(colorScheme == COLOR_SCHEME_LIGHT) {
-    return ANSI_COLOR_GREEN;
+    return ANSI_COLOR_FG_GREEN;
   }
   else {
     logInternalError("Invalid color scheme for status char");
-    return ANSI_COLOR_WHITE;
+    return ANSI_COLOR_RESET;
   }
 }
 
 static const char* _logTimeZebraStripeColor(const long elapsedTime, const LogColorScheme colorScheme, const int zebraSizeInMs) {
   boolByte zebraState = (boolByte)((elapsedTime / zebraSizeInMs) % 2);
   if(colorScheme == COLOR_SCHEME_DARK) {
-    return zebraState ? ANSI_COLOR_WHITE : ANSI_COLOR_YELLOW;
+    return zebraState ? ANSI_COLOR_FG_OLIVE : ANSI_COLOR_FG_GREEN;
   }
   else if(colorScheme == COLOR_SCHEME_LIGHT) {
-    return zebraState ? ANSI_COLOR_BLACK : ANSI_COLOR_BLUE;
+    return zebraState ? ANSI_COLOR_FG_BLACK : ANSI_COLOR_FG_BLUE;
   }
   else {
     logInternalError("Invalid color scheme for stripe color");
-    return ANSI_COLOR_WHITE;
+    return ANSI_COLOR_RESET;
   }
 }
 
