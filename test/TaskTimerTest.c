@@ -10,6 +10,9 @@ static void _taskTimerTeardown(void) {
 }
 
 static int _testNewTaskTimer(void) {
+  TaskTimer t = newTaskTimer(1);
+  assertIntEquals(t->numTasks, 1);
+  assertIntEquals(t->currentTask, -1);
   return 0;
 }
 
@@ -32,7 +35,7 @@ static int _testCallStopBeforeStart(void) {
 TestSuite addTaskTimerTests(void);
 TestSuite addTaskTimerTests(void) {
   TestSuite testSuite = newTestSuite("TaskTimer", _taskTimerSetup, _taskTimerTeardown);
-  addTest(testSuite, "NewObject", NULL); // _testNewTaskTimer);
+  addTest(testSuite, "NewObject", _testNewTaskTimer);
   addTest(testSuite, "TaskDuration", NULL); // _testTaskTimerDuration);
   addTest(testSuite, "CallStartTwice", NULL); // _testTaskTimerCallStartTwice);
   addTest(testSuite, "CallStopTwice", NULL); // _testTaskTimerCallStopTwice);
