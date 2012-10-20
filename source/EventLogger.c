@@ -56,7 +56,7 @@
 #define ANSI_COLOR_WHITE   "[37m"
 #define ANSI_COLOR_RESET   "[0m"
 
-#define ANSI_COLOR_RESET   "\x1b[0m"
+//#define ANSI_COLOR_RESET   "\x1b[0m"
 
 #define ANSI_COLOR_FG_BLACK   "\x1b[30m"
 #define ANSI_COLOR_FG_MAROON  "\x1b[31m"
