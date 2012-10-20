@@ -54,6 +54,12 @@ void clearSampleBuffer(SampleBuffer sampleBuffer) {
 
 void copySampleBuffers(SampleBuffer destBuffer, const SampleBuffer srcBuffer) {
   int i;
+  if(destBuffer->blocksize != srcBuffer->blocksize) {
+    return;
+  }
+  else if(destBuffer->numChannels != srcBuffer->numChannels) {
+    return;
+  }
   for(i = 0; i < destBuffer->numChannels; i++) {
     memcpy(destBuffer->samples[i], srcBuffer->samples[i], sizeof(Sample) * destBuffer->blocksize);
   }
