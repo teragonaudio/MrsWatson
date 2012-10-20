@@ -276,8 +276,6 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   if(programOptions->options[OPTION_ERROR_REPORT]->enabled) {
     copyPluginsToErrorReportDir(errorReporter, pluginChain);
   }
-  // Get largest tail time requested by any plugin in the chain
-  tailTimeInMs += getMaximumTailTimeInMs(pluginChain);
 
   // Verify input/output sources
   if(programOptions->options[OPTION_ERROR_REPORT]->enabled) {
@@ -391,6 +389,10 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   }
   logInfo("Finished processing input source");
 
+  // Get largest tail time requested by any plugin in the chain
+  tailTimeInMs += getMaximumTailTimeInMs(pluginChain);
+
+  // Process tail time
   if(tailTimeInMs > 0) {
     stopSample = (unsigned long)(getAudioClockCurrentFrame() + (tailTimeInMs * getSampleRate()) / 1000);
     logInfo("Adding %d extra frames", stopSample - getAudioClockCurrentFrame());
