@@ -233,15 +233,10 @@ static void _printMessage(const LogLevel logLevel, const long elapsedTimeInMs, c
     fprintf(stderr, "%c %08ld %06ld %s\n", _logLevelStatusChar(logLevel), numFramesProcessed, elapsedTimeInMs, message);
   }
   else {
-    fprintf(stderr, "\x1b%s%c\x1b%s ", _logLevelStatusColor(logLevel, eventLogger->colorScheme), _logLevelStatusChar(logLevel), ANSI_COLOR_RESET);
-    fprintf(stderr, "\x1b%s%08ld\x1b%s ", _logTimeZebraStripeColor(numFramesProcessed, eventLogger->colorScheme, eventLogger->zebraStripeSize), numFramesProcessed, ANSI_COLOR_RESET);
-    fprintf(stderr, "\x1b%s%06ld\x1b%s ", _logTimeColor(eventLogger->colorScheme), elapsedTimeInMs, ANSI_COLOR_RESET);
-    if(logLevel == LOG_ERROR) {
-      fprintf(stderr, "\x1b%s%s\x1b%s\n", ANSI_COLOR_RED, message, ANSI_COLOR_RESET);
-    }
-    else {
-      fprintf(stderr, "%s\n", message);
-    }
+    fprintf(stderr, "%s%c%s ", _logLevelStatusColor(logLevel, eventLogger->colorScheme), _logLevelStatusChar(logLevel), ANSI_COLOR_RESET);
+    fprintf(stderr, "%s%08ld%s ", _logTimeZebraStripeColor(numFramesProcessed, eventLogger->colorScheme, eventLogger->zebraStripeSize), numFramesProcessed, ANSI_COLOR_RESET);
+    fprintf(stderr, "%s%06ld%s ", _logTimeColor(eventLogger->colorScheme), elapsedTimeInMs, ANSI_COLOR_RESET);
+    fprintf(stderr, "%s%s%s\n", _logLevelStatusColor(logLevel, eventLogger->colorScheme), message, ANSI_COLOR_RESET);
   }
 }
 
