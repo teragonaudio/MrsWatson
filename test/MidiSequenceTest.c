@@ -129,17 +129,17 @@ TestSuite addMidiSequenceTests(void) {
   TestSuite testSuite = newTestSuite("MidiSequence", NULL, NULL);
 
   addTest(testSuite, "Initialization", _testNewMidiSequence);
-  addTest(testSuite, "Append event", _testAppendMidiEventToSequence);
-  addTest(testSuite, "Append null event", _testAppendNullMidiEventToSequence);
-  addTest(testSuite, "Append event to null sequence", _testAppendEventToNullSequence);
-  addTest(testSuite, "Fill events from range start", _testFillMidiEventsFromRangeStart);
-  addTest(testSuite, "Fill events from empty range", _testFillEventsFromEmptyRange);
-  addTest(testSuite, "Fill events sequentially", _testFillEventsSequentially);
+  addTest(testSuite, "AppendEvent", _testAppendMidiEventToSequence);
+  addTest(testSuite, "AppendNullEvent", _testAppendNullMidiEventToSequence);
+  addTest(testSuite, "AppendEventToNullSequence", _testAppendEventToNullSequence);
+  addTest(testSuite, "FillEventsFromRangeStart", _testFillMidiEventsFromRangeStart);
+  addTest(testSuite, "FillEventsFromEmptyRange", _testFillEventsFromEmptyRange);
+  addTest(testSuite, "FillEventsSequentially", _testFillEventsSequentially);
 
   // TODO: These tests fail because MidiSequence is meant to be read sequentially from start to finish
-  addTest(testSuite, "Fill events out of order", NULL); // _testFillEventsOutOfOrder);
-  addTest(testSuite, "Fill events from middle of range", NULL); // _testFillEventsFromMiddleOfRange);
-  addTest(testSuite, "Fill events from range past sequence end", NULL); // _testFillEventsFromRangePastSequence);
+  addTest(testSuite, "FillEventsOutOfOrder", NULL); // _testFillEventsOutOfOrder);
+  addTest(testSuite, "FillEventsFromMiddleOfRange", NULL); // _testFillEventsFromMiddleOfRange);
+  addTest(testSuite, "FillEventsFromRangePastSequenceEnd", NULL); // _testFillEventsFromRangePastSequence);
 
   return testSuite;
 }

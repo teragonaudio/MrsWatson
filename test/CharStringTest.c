@@ -148,26 +148,26 @@ TestSuite addCharStringTests(void);
 TestSuite addCharStringTests(void) {
   TestSuite testSuite = newTestSuite("CharString", NULL, NULL);
 
-  addTest(testSuite, "New CharString", _testNewCharString);
-  addTest(testSuite, "New object with capacity", _testNewCharStringWithCapacity);
-  addTest(testSuite, "Clear string", _testClearCharString);
-  addTest(testSuite, "Copy to CharString", _testCopyToCharString);
-  addTest(testSuite, "Copy CharStrings", _testCopyCharStrings);
-  addTest(testSuite, "Empty string is empty", _testIsEmptyStringEmpty);
-  addTest(testSuite, "Null is empty", _testIsNullEmptyString);
-  addTest(testSuite, "Regular string is not empty", _testIsRegularStringNotEmpty);
+  addTest(testSuite, "NewObject", _testNewCharString);
+  addTest(testSuite, "NewObjectWithCapacity", _testNewCharStringWithCapacity);
+  addTest(testSuite, "ClearString", _testClearCharString);
+  addTest(testSuite, "CopyToCharString", _testCopyToCharString);
+  addTest(testSuite, "CopyCharStrings", _testCopyCharStrings);
+  addTest(testSuite, "EmptyStringIsEmpty", _testIsEmptyStringEmpty);
+  addTest(testSuite, "NullIsEmpty", _testIsNullEmptyString);
+  addTest(testSuite, "RegularStringIsNotEmpty", _testIsRegularStringNotEmpty);
 
-  addTest(testSuite, "Equals same string", _testCharStringEqualsSameString);
-  addTest(testSuite, "Does not equal different string", _testCharStringDoesEqualDifferentString);
-  addTest(testSuite, "Equals same string with case insensitive", _testCharStringEqualsSameStringInsensitive);
-  addTest(testSuite, "Does not equal same string with different case", _testCharStringDoesNotEqualSameStringInsensitive);
-  addTest(testSuite, "Equals null", _testCharStringEqualsNull);
+  addTest(testSuite, "EqualsSameString", _testCharStringEqualsSameString);
+  addTest(testSuite, "DoesNotEqualDifferentString", _testCharStringDoesEqualDifferentString);
+  addTest(testSuite, "EqualsSameStringWithCaseInsensitive", _testCharStringEqualsSameStringInsensitive);
+  addTest(testSuite, "DoesNotEqualSameStringWithDifferentCase", _testCharStringDoesNotEqualSameStringInsensitive);
+  addTest(testSuite, "EqualsNull", _testCharStringEqualsNull);
 
-  addTest(testSuite, "Equals same C-string", _testCharStringEqualsSameCString);
-  addTest(testSuite, "Does not equal different C-string", _testCharStringNotEqualToDifferentCString);
-  addTest(testSuite, "Equals same C-string with case insensitive", _testCharStringEqualsSameCStringInsensitive);
-  addTest(testSuite, "Does not equal same C-string with different case", _testCharStringNotEqualsCStringInsensitive);
-  addTest(testSuite, "Equals C-string null", _testCharStringEqualsCStringNull);
+  addTest(testSuite, "EqualsSameCString", _testCharStringEqualsSameCString);
+  addTest(testSuite, "DoesNotEqualDifferentCString", _testCharStringNotEqualToDifferentCString);
+  addTest(testSuite, "EqualsSameCStringWithCaseInsensitive", _testCharStringEqualsSameCStringInsensitive);
+  addTest(testSuite, "DoesNotEqualSameCStringWithDifferentCase", _testCharStringNotEqualsCStringInsensitive);
+  addTest(testSuite, "EqualsCStringNull", _testCharStringEqualsCStringNull);
 
   return testSuite;
 }

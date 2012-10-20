@@ -141,16 +141,16 @@ TestSuite addLinkedListTests(void);
 TestSuite addLinkedListTests(void) {
   TestSuite testSuite = newTestSuite("LinkedList", NULL, NULL);
   testSuite->setup = _linkedListTestSetup;
-  addTest(testSuite, "New object", _testNewLinkedList);
-  addTest(testSuite, "Append item", _testAppendItemToList);
-  addTest(testSuite, "Append multiple items", _testAppendMultipleItemsToList);
-  addTest(testSuite, "Append null item", _testAppendNullItemToList);
-  addTest(testSuite, "Append item to null list", _testAppendItemToNullList);
-  addTest(testSuite, "Num items in list", _testNumItemsInList);
-  addTest(testSuite, "Num items in null list", _testNumItemsInNullList);
-  addTest(testSuite, "Foreach over null list", _testForeachOverNullList);
-  addTest(testSuite, "Foreach over empty list", _testForeachOverEmptyList);
-  addTest(testSuite, "Foreach over list", _testForeachOverList);
-  addTest(testSuite, "Foreach with userData", _testForeachOverUserData)
+  addTest(testSuite, "NewObject", _testNewLinkedList);
+  addTest(testSuite, "AppendItem", _testAppendItemToList);
+  addTest(testSuite, "AppendMultipleItems", _testAppendMultipleItemsToList);
+  addTest(testSuite, "AppendNullItem", _testAppendNullItemToList);
+  addTest(testSuite, "AppendItemToNullList", _testAppendItemToNullList);
+  addTest(testSuite, "NumItemsInList", _testNumItemsInList);
+  addTest(testSuite, "NumItemsInNullList", _testNumItemsInNullList);
+  addTest(testSuite, "ForeachOverNullList", _testForeachOverNullList);
+  addTest(testSuite, "ForeachOverEmptyList", _testForeachOverEmptyList);
+  addTest(testSuite, "ForeachOverList", _testForeachOverList);
+  addTest(testSuite, "ForeachWithUserData", _testForeachOverUserData)
   return testSuite;
 }

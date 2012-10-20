@@ -59,11 +59,11 @@ TestSuite addAudioSettingsTests(void);
 TestSuite addAudioSettingsTests(void) {
   TestSuite testSuite = newTestSuite("AudioSettings", _audioSettingsSetup, _audioSettingsTeardown);
   addTest(testSuite, "Initialization", _testInitAudioSettings);
-  addTest(testSuite, "Set sample rate", _testSetSampleRate);
-  addTest(testSuite, "Set num channels", _testSetNumChannels);
-  addTest(testSuite, "Set blocksize", _testSetBlocksize);
-  addTest(testSuite, "Set tempo", _testSetTempo);
-  addTest(testSuite, "Set time signature beats per measure", _testSetTimeSigBeatsPerMeasure);
-  addTest(testSuite, "Set time signature note value", _testSetTimeSigNoteValue);
+  addTest(testSuite, "SetSampleRate", _testSetSampleRate);
+  addTest(testSuite, "SetNumChannels", _testSetNumChannels);
+  addTest(testSuite, "SetBlocksize", _testSetBlocksize);
+  addTest(testSuite, "SetTempo", _testSetTempo);
+  addTest(testSuite, "SetTimeSignatureBeatsPerMeasure", _testSetTimeSigBeatsPerMeasure);
+  addTest(testSuite, "SetTimeSignatureNoteValue", _testSetTimeSigNoteValue);
   return testSuite;
 }

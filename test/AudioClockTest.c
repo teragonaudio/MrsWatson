@@ -59,9 +59,9 @@ TestSuite addAudioClockTests(void);
 TestSuite addAudioClockTests(void) {
   TestSuite testSuite = newTestSuite("AudioClock", _audioClockTestSetup, _audioClockTestTeardown);
   addTest(testSuite, "Initialization", _testInitAudioClock);
-  addTest(testSuite, "Advance clock", _testAdvanceAudioClock);
-  addTest(testSuite, "Stop clock", _testStopAudioClock);
-  addTest(testSuite, "Restart clock", _testRestartAudioClock);
-  addTest(testSuite, "Multiple advance", _testAdvanceClockMulitpleTimes);
+  addTest(testSuite, "AdvanceClock", _testAdvanceAudioClock);
+  addTest(testSuite, "StopClock", _testStopAudioClock);
+  addTest(testSuite, "RestartClock", _testRestartAudioClock);
+  addTest(testSuite, "MultipleAdvance", _testAdvanceClockMulitpleTimes);
   return testSuite;
 }
