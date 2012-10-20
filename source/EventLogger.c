@@ -46,17 +46,7 @@
 #include <unistd.h>
 #endif
 
-#define ANSI_COLOR_BLACK   "[30m"
-#define ANSI_COLOR_RED     "[31m"
-#define ANSI_COLOR_GREEN   "[32m"
-#define ANSI_COLOR_YELLOW  "[33m"
-#define ANSI_COLOR_BLUE    "[34m"
-#define ANSI_COLOR_MAGENTA "[35m"
-#define ANSI_COLOR_CYAN    "[36m"
-#define ANSI_COLOR_WHITE   "[37m"
-#define ANSI_COLOR_RESET   "[0m"
-
-//#define ANSI_COLOR_RESET   "\x1b[0m"
+#define ANSI_COLOR_RESET   "\x1b[0m"
 
 #define ANSI_COLOR_FG_BLACK   "\x1b[30m"
 #define ANSI_COLOR_FG_MAROON  "\x1b[31m"
@@ -68,7 +58,6 @@
 #define ANSI_COLOR_FG_GRAY    "\x1b[37m"
 #define ANSI_COLOR_FG_DKGRAY  "\x1b[90m"
 #define ANSI_COLOR_FG_RED     "\x1b[31m"
-#define ANSI_COLOR_FG_LIME    "\x1b[32m"
 #define ANSI_COLOR_FG_YELLOW  "\x1b[33m"
 #define ANSI_COLOR_FG_BLUE    "\x1b[94m"
 #define ANSI_COLOR_FG_FUCHSIA "\x1b[95m"
@@ -85,7 +74,6 @@
 #define ANSI_COLOR_BG_GRAY    "\x1b[47m"
 #define ANSI_COLOR_BG_DKGRAY  "\x1b[100m"
 #define ANSI_COLOR_BG_RED     "\x1b[101m"
-#define ANSI_COLOR_BG_LIME    "\x1b[42m"
 #define ANSI_COLOR_BG_YELLOW  "\x1b[43m"
 #define ANSI_COLOR_BG_BLUE    "\x1b[104m"
 #define ANSI_COLOR_BG_FUCHSIA "\x1b[105m"
