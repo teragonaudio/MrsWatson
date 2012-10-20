@@ -50,6 +50,9 @@ boolByte readPcmDataFromFile(SampleSourcePcmData pcmData, SampleBuffer sampleBuf
 boolByte writePcmDataToFile(SampleSourcePcmData pcmData, const SampleBuffer sampleBuffer, unsigned long* numFramesProcessed);
 void convertSampleBufferToPcmData(const SampleBuffer sampleBuffer, short* outPcmSamples, boolByte isDataLittleEndian);
 
+void setPcmDataSampleRate(void* sampleSourcePtr, double sampleRate);
+void setPcmDataNumChannels(void* sampleSourcePtr, int numChannels);
+
 void freeSampleSourceDataPcm(void* sampleSourceDataPtr);
 
 #endif

@@ -200,6 +200,18 @@ static void _closeSampleSourcePcm(void* sampleSourcePtr) {
   }
 }
 
+void setPcmDataSampleRate(void* sampleSourcePtr, double sampleRate) {
+  SampleSource sampleSource = (SampleSource)sampleSourcePtr;
+  SampleSourcePcmData extraData = (SampleSourcePcmData)sampleSource->extraData;
+  extraData->sampleRate = (long)sampleRate;
+}
+
+void setPcmDataNumChannels(void* sampleSourcePtr, int numChannels) {
+  SampleSource sampleSource = (SampleSource)sampleSourcePtr;
+  SampleSourcePcmData extraData = (SampleSourcePcmData)sampleSource->extraData;
+  extraData->numChannels = numChannels;
+}
+
 void freeSampleSourceDataPcm(void* sampleSourceDataPtr) {
   SampleSourcePcmData extraData = (SampleSourcePcmData)sampleSourceDataPtr;
   free(extraData->interlacedPcmDataBuffer);
