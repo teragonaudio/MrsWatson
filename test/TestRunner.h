@@ -58,7 +58,7 @@ TestCase newTestCase(char* name, char* filename, int lineNumber, TestCaseExecFun
   addTestToTestSuite(testSuite, newTestCase(name, __FILE__, __LINE__, testCaseFunc)); \
 }
 
-#define _assert(condition) { \
+#define assert(condition) { \
   if(!(condition)) { \
     printTestFail(); \
     printf("    at %s:%d\n", __FILE__, __LINE__); \
@@ -66,11 +66,11 @@ TestCase newTestCase(char* name, char* filename, int lineNumber, TestCaseExecFun
   } \
 }
 
-#define _assertFalse(condition) _assert((condition) == false)
-#define _assertIsNull(condition) _assert((condition) == NULL)
-#define _assertNotNull(condition) _assert((condition) != NULL)
+#define assertFalse(condition) assert((condition) == false)
+#define assertIsNull(condition) assert((condition) == NULL)
+#define assertNotNull(condition) assert((condition) != NULL)
 
-#define _assertIntEquals(condition, expected) { \
+#define assertIntEquals(condition, expected) { \
   int result = condition; \
   if(result != expected) { \
     printTestFail(); \
@@ -79,7 +79,7 @@ TestCase newTestCase(char* name, char* filename, int lineNumber, TestCaseExecFun
   } \
 }
 
-#define _assertDoubleEquals(condition, expected) { \
+#define assertDoubleEquals(condition, expected) { \
   double result = condition; \
   if(result != expected) { \
     printTestFail(); \
@@ -88,7 +88,7 @@ TestCase newTestCase(char* name, char* filename, int lineNumber, TestCaseExecFun
   } \
 }
 
-#define _assertCharStringEquals(result, expected) { \
+#define assertCharStringEquals(result, expected) { \
   if(!isCharStringEqualToCString(result, expected, false)) { \
     printTestFail(); \
     printf("    at %s:%d. Expected %s, got %s.\n", __FILE__, __LINE__, expected, result->data); \

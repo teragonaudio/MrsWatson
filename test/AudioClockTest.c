@@ -12,25 +12,25 @@ static void _audioClockTestTeardown(void) {
 }
 
 static int _testInitAudioClock(void) {
-  _assertIntEquals(getAudioClockCurrentFrame(), 0);
-  _assertFalse(getAudioClockIsPlaying());
-  _assertFalse(getAudioClockTransportChanged());
+  assertIntEquals(getAudioClockCurrentFrame(), 0);
+  assertFalse(getAudioClockIsPlaying());
+  assertFalse(getAudioClockTransportChanged());
   return 0;
 }
 
 static int _testAdvanceAudioClock(void) {
   advanceAudioClock(TEST_BLOCKSIZE);
-  _assertIntEquals(getAudioClockCurrentFrame(), TEST_BLOCKSIZE);
-  _assert(getAudioClockIsPlaying());
-  _assert(getAudioClockTransportChanged());
+  assertIntEquals(getAudioClockCurrentFrame(), TEST_BLOCKSIZE);
+  assert(getAudioClockIsPlaying());
+  assert(getAudioClockTransportChanged());
   return 0;
 }
 
 static int _testStopAudioClock(void) {
   advanceAudioClock(TEST_BLOCKSIZE);
   stopAudioClock();
-  _assertFalse(getAudioClockIsPlaying());
-  _assert(getAudioClockTransportChanged())
+  assertFalse(getAudioClockIsPlaying());
+  assert(getAudioClockTransportChanged())
   return 0;
 }
 
@@ -38,9 +38,9 @@ static int _testRestartAudioClock(void) {
   advanceAudioClock(TEST_BLOCKSIZE);
   stopAudioClock();
   advanceAudioClock(TEST_BLOCKSIZE);
-  _assert(getAudioClockIsPlaying());
-  _assert(getAudioClockTransportChanged());
-  _assertIntEquals(getAudioClockCurrentFrame(), TEST_BLOCKSIZE * 2);
+  assert(getAudioClockIsPlaying());
+  assert(getAudioClockTransportChanged());
+  assertIntEquals(getAudioClockCurrentFrame(), TEST_BLOCKSIZE * 2);
   return 0;
 }
 
@@ -49,9 +49,9 @@ static int _testAdvanceClockMulitpleTimes(void) {
   for(i = 0; i < 100; i++) {
     advanceAudioClock(TEST_BLOCKSIZE);
   }
-  _assert(getAudioClockIsPlaying());
-  _assertFalse(getAudioClockTransportChanged());
-  _assertIntEquals(getAudioClockCurrentFrame(), TEST_BLOCKSIZE * 100);
+  assert(getAudioClockIsPlaying());
+  assertFalse(getAudioClockTransportChanged());
+  assertIntEquals(getAudioClockCurrentFrame(), TEST_BLOCKSIZE * 100);
   return 0;
 }
 
