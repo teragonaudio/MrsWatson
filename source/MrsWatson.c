@@ -343,7 +343,8 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   }
 
   blocksize = getBlocksize();
-  logInfo("Processing with sample rate %.0f, blocksize %d, %d channels", getSampleRate(), blocksize, getNumChannels());
+  logInfo("Processing with sample rate %.0f, blocksize %d, %s",
+    getSampleRate(), blocksize, getNumChannels() == 1 ? "mono" : "stereo");
   logInfo("Starting tempo is %.1f, Time signature %d/%d", getTempo(), getTimeSignatureBeatsPerMeasure(), getTimeSignatureNoteValue());
   inputSampleBuffer = newSampleBuffer(getNumChannels(), blocksize);
   outputSampleBuffer = newSampleBuffer(getNumChannels(), blocksize);
