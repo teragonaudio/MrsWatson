@@ -138,6 +138,9 @@ To build from a fresh clone, first run `cmake .`, then `make`. The build will
 create an executable named `mrswatson` in the `main` directory, and another
 one named `mrswatsontest` in the `test` directory.
 
+To make a debug build, instead run `cmake -DCMAKE_BUILD_TYPE=Debug` or use the
+`ccmake` GUI to switch the build type.
+
 As MrsWatson is a 32-bit executable, which is needed to support 32-bit plugins
 (of which are the vast majority in the plugin world), you may also need some
 32-bit compatibility libraries installed on your system. On Linux, you may
@@ -151,7 +154,7 @@ need to install the following packages to build MrsWatson from source:
 Alternately, MrsWatson can be built with a few popular IDE's. Build files are
 included in the `projects` directory under the project sources root.
 Distribution builds of MrsWatson are always generated with `make`, except for
-on Windows.
+on Windows where the Visual Studio project is used.
 
 
 Please Help!
