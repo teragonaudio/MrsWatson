@@ -105,11 +105,11 @@ void initEventLogger(void) {
   eventLoggerInstance->startTimeInMs = currentTime.tv_usec / 1000;
 #endif
 
-  // On unix, we can detect if stderr is pointing to a terminal and set output
+  // On unix, we can detect if stdout is pointing to a terminal and set output
   // coloring automatically. On Windows, we define a macro for this function
   // which just returns 0.
-  if(isatty(2)) {
-    eventLoggerInstance->colorScheme = COLOR_SCHEME_DEFAULT;
+  if(isatty(1)) {
+    eventLoggerInstance->useColor = true;
   }
 }
 
