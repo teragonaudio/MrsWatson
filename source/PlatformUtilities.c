@@ -52,7 +52,7 @@ PlatformType getPlatformType() {
 const char* getPlatformName(void) {
   switch(getPlatformType()) {
     case PLATFORM_MACOSX:
-      return "Mac OSX";
+      return "Mac OS X";
     case PLATFORM_LINUX:
       return "Linux";
     case PLATFORM_WINDOWS:
