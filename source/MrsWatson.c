@@ -342,6 +342,8 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
     displayPluginInfo(pluginChain);
   }
 
+  // Update sample rate on the event logger
+  setLoggingZebraSize((long)getSampleRate());
   blocksize = getBlocksize();
   logInfo("Processing with sample rate %.0f, blocksize %d, %s",
     getSampleRate(), blocksize, getNumChannels() == 1 ? "mono" : "stereo");
