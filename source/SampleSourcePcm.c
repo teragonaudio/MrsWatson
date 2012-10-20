@@ -214,8 +214,6 @@ SampleSource newSampleSourcePcm(const CharString sampleSourceName) {
   sampleSource->openedAs = SAMPLE_SOURCE_OPEN_NOT_OPENED;
   sampleSource->sourceName = newCharString();
   copyCharStrings(sampleSource->sourceName, sampleSourceName);
-  sampleSource->numChannels = getNumChannels();
-  sampleSource->sampleRate = getSampleRate();
   sampleSource->numSamplesProcessed = 0;
 
   sampleSource->openSampleSource = openSampleSourcePcm;
