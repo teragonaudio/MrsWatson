@@ -32,7 +32,7 @@
 #define MrsWatson_FileUtilities_h
 
 // File operations
-boolByte fileExists(const char* absolutePath);
+boolByte fileExists(const char* path);
 boolByte copyFileToDirectory(const CharString fileAbsolutePath, const CharString directoryAbsolutePath);
 
 // Directory operations

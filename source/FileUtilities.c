@@ -40,24 +40,24 @@
 #include <string.h>
 #endif
 
-boolByte fileExists(const char* absolutePath) {
+boolByte fileExists(const char* path) {
 #if WINDOWS
   // Visual Studio's compiler is not C99 compliant, so variable declarations
   // need to be at the top.
   unsigned long fileAttributes;
 #endif
-  if(absolutePath == NULL) {
+  if(path == NULL) {
     return false;
   }
 
 #if MACOSX || LINUX
   struct stat* buffer = malloc(sizeof(struct stat));
-  boolByte result = (stat(absolutePath, buffer) == 0);
+  boolByte result = (stat(path, buffer) == 0);
   free(buffer);
   return result;
 
 #elif WINDOWS
-  fileAttributes = GetFileAttributesA((LPCSTR)absolutePath);
+  fileAttributes = GetFileAttributesA((LPCSTR)path);
   if(fileAttributes == INVALID_FILE_ATTRIBUTES) {
     return false;
   }
