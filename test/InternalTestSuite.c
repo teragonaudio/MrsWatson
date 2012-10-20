@@ -5,6 +5,7 @@
 extern TestSuite addAudioClockTests(void);
 extern TestSuite addAudioSettingsTests(void);
 extern TestSuite addCharStringTests(void);
+extern TestSuite addFileUtilitiesTests(void);
 extern TestSuite addLinkedListTests(void);
 extern TestSuite addMidiSequenceTests(void);
 extern TestSuite addMidiSourceTests(void);
@@ -32,6 +33,7 @@ static LinkedList _getTestSuites(void) {
   appendItemToList(internalTestSuites, addAudioClockTests());
   appendItemToList(internalTestSuites, addAudioSettingsTests());
   appendItemToList(internalTestSuites, addCharStringTests());
+  appendItemToList(internalTestSuites, addFileUtilitiesTests());
   appendItemToList(internalTestSuites, addLinkedListTests());
   appendItemToList(internalTestSuites, addMidiSequenceTests());
   appendItemToList(internalTestSuites, addMidiSourceTests());
