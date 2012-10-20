@@ -4,6 +4,14 @@
 static char *const TEST_ITEM_STRING = "test string";
 static char *const OTHER_TEST_ITEM_STRING = "other test string";
 
+static boolByte _gNumForeachCallbacksMade;
+static boolByte _gForeachCallbackOk;
+
+static void _linkedListTestSetup(void) {
+  _gNumForeachCallbacksMade = 0;
+  _gForeachCallbackOk = false;
+}
+
 static int _testNewLinkedList(void) {
   LinkedList l = newLinkedList();
   _assertNotNull(l);
@@ -78,9 +86,61 @@ static int _testNumItemsInNullList(void) {
   return 0;
 }
 
+static void _linkedListEmptyCallback(void* item, void* userData) {
+  _gNumForeachCallbacksMade++;
+}
+
+static int _testForeachOverNullList(void) {
+  foreachItemInList(NULL, _linkedListEmptyCallback, NULL);
+  _assertIntEquals(_gNumForeachCallbacksMade, 0);
+  return 0;
+}
+
+static int _testForeachOverEmptyList(void) {
+  LinkedList list = newLinkedList();
+  foreachItemInList(list, _linkedListEmptyCallback, NULL);
+  _assertIntEquals(_gNumForeachCallbacksMade, 0);
+  return 0;
+}
+
+static void _linkedListTestStringCallback(void* item, void* userData) {
+  CharString charString = (CharString)item;
+  _gForeachCallbackOk = isCharStringEqualToCString(charString, TEST_ITEM_STRING, false);
+  _gNumForeachCallbacksMade++;
+}
+
+static int _testForeachOverList(void) {
+  LinkedList list = newLinkedList();
+  CharString charString = newCharString();
+  copyToCharString(charString, TEST_ITEM_STRING);
+  appendItemToList(list, charString);
+  foreachItemInList(list, _linkedListTestStringCallback, NULL);
+  _assertIntEquals(_gNumForeachCallbacksMade, 1);
+  _assert(_gForeachCallbackOk);
+  return 0;
+}
+
+static void _linkedListUserDataCallback(void* item, void* userData) {
+  CharString charString = (CharString)userData;
+  _gForeachCallbackOk = isCharStringEqualToCString(charString, TEST_ITEM_STRING, false);
+  _gNumForeachCallbacksMade++;
+}
+
+static int _testForeachOverUserData(void) {
+  LinkedList list = newLinkedList();
+  CharString charString = newCharString();
+  copyToCharString(charString, TEST_ITEM_STRING);
+  appendItemToList(list, charString);
+  foreachItemInList(list, _linkedListUserDataCallback, charString);
+  _assertIntEquals(_gNumForeachCallbacksMade, 1);
+  _assert(_gForeachCallbackOk);
+  return 0;
+}
+
 TestSuite addLinkedListTests(void);
 TestSuite addLinkedListTests(void) {
   TestSuite testSuite = newTestSuite("LinkedList", NULL, NULL);
+  testSuite->setup = _linkedListTestSetup;
   addTest(testSuite, "New object", _testNewLinkedList);
   addTest(testSuite, "Append item", _testAppendItemToList);
   addTest(testSuite, "Append multiple items", _testAppendMultipleItemsToList);
@@ -88,5 +148,9 @@ TestSuite addLinkedListTests(void) {
   addTest(testSuite, "Append item to null list", _testAppendItemToNullList);
   addTest(testSuite, "Num items in list", _testNumItemsInList);
   addTest(testSuite, "Num items in null list", _testNumItemsInNullList);
+  addTest(testSuite, "Foreach over null list", _testForeachOverNullList);
+  addTest(testSuite, "Foreach over empty list", _testForeachOverEmptyList);
+  addTest(testSuite, "Foreach over list", _testForeachOverList);
+  addTest(testSuite, "Foreach with userData", _testForeachOverUserData)
   return testSuite;
 }
