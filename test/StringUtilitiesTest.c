@@ -25,15 +25,15 @@ static int _testWrapNullDestString(void) {
   return 0;
 }
 
-static int _testWrappString(void) {
+static int _testWrapString(void) {
   return 0;
 }
 
-static int _testWrappStringWithIndent(void) {
+static int _testWrapStringWithIndent(void) {
   return 0;
 }
 
-static int _testWrappStringLongerThanLine(void) {
+static int _testWrapStringLongerThanLine(void) {
   return 0;
 }
 
@@ -46,8 +46,8 @@ TestSuite addStringUtilitiesTests(void) {
   addTest(testSuite, "IsNotNumber", NULL); // _testIsNotNumber);
   addTest(testSuite, "WrapNullSourceString", NULL); // _testWrapNullSourceString);
   addTest(testSuite, "WrapNullDestString", NULL); // _testWrapNullDestString);
-  addTest(testSuite, "WrappString", NULL); // _testWrappString);
-  addTest(testSuite, "WrappStringWithIndent", NULL); // _testWrappStringWithIndent);
-  addTest(testSuite, "WrappStringLongerThanLine", NULL); // _testWrappStringLongerThanLine);
+  addTest(testSuite, "WrapString", NULL); // _testWrapString);
+  addTest(testSuite, "WrapStringWithIndent", NULL); // _testWrapStringWithIndent);
+  addTest(testSuite, "WrapStringLongerThanLine", NULL); // _testWrapStringLongerThanLine);
   return testSuite;
 }
