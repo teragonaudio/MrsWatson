@@ -9,6 +9,7 @@
 #include "TestRunner.h"
 #include "CharString.h"
 #include "AnalyzeFile.h"
+#include "FileUtilities.h"
 
 static char* _getTestInputFilename(const char* resourcesPath, const char* fileExtension) {
   CharString filename = newCharString();

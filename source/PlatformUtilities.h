@@ -66,7 +66,6 @@ typedef enum {
 
 PlatformType getPlatformType(void);
 const char* getPlatformName(void);
-boolByte fileExists(const char* absolutePath);
 
 boolByte isHostLittleEndian(void);
 
