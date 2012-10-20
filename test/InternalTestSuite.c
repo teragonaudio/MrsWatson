@@ -7,6 +7,8 @@ extern TestSuite addAudioSettingsTests(void);
 extern TestSuite addCharStringTests(void);
 extern TestSuite addLinkedListTests(void);
 extern TestSuite addMidiSequenceTests(void);
+extern TestSuite addTaskTimerTests(void);
+
 
 static void _sumTestSuiteResults(void* item, void* extraData) {
   TestSuite testSuite = (TestSuite)item;
@@ -22,6 +24,7 @@ static LinkedList _getTestSuites(void) {
   appendItemToList(internalTestSuites, addCharStringTests());
   appendItemToList(internalTestSuites, addLinkedListTests());
   appendItemToList(internalTestSuites, addMidiSequenceTests());
+  appendItemToList(internalTestSuites, addTaskTimerTests());
   return internalTestSuites;
 }
 
