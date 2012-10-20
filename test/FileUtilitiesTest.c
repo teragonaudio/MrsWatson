@@ -99,7 +99,6 @@ static int _testGetInvalidFileExtension(void) {
 }
 
 TestSuite addFileUtilitiesTests(void);
-
 TestSuite addFileUtilitiesTests(void) {
   TestSuite testSuite = newTestSuite("FileUtilities", NULL, NULL);
   addTest(testSuite, "FileExists", _testFileExists);

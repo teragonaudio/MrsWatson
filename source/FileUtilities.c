@@ -181,7 +181,11 @@ boolByte isAbsolutePath(const CharString path) {
 }
 
 const char* getFileBasename(const char* filename) {
-  const char *lastDelimiter = strrchr(filename, PATH_DELIMITER);
+  const char *lastDelimiter;
+  if(filename == NULL) {
+    return NULL;
+  }
+  lastDelimiter = strrchr(filename, PATH_DELIMITER);
   if(lastDelimiter == NULL) {
     return (char*)filename;
   }
@@ -191,7 +195,11 @@ const char* getFileBasename(const char* filename) {
 }
 
 const char* getFileExtension(const char* filename) {
-  const char *dot = strrchr(filename, '.');
+  const char *dot;
+  if(filename == NULL) {
+    return NULL;
+  }
+  dot = strrchr(filename, '.');
   if(dot == NULL) {
     return NULL;
   }
