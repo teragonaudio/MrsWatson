@@ -162,6 +162,7 @@ void convertSampleBufferToPcmData(const SampleBuffer sampleBuffer, short* outPcm
 
 size_t writePcmDataToFile(SampleSourcePcmData pcmData, const SampleBuffer sampleBuffer) {
   size_t pcmSamplesWritten = 0;
+  size_t numSamplesToWrite = (size_t)(sampleBuffer->numChannels * sampleBuffer->blocksize);
 
   if(pcmData == NULL || pcmData->fileHandle == NULL) {
     logCritical("Corrupt PCM data structure");
@@ -177,8 +178,8 @@ size_t writePcmDataToFile(SampleSourcePcmData pcmData, const SampleBuffer sample
   memset(pcmData->interlacedPcmDataBuffer, 0, sizeof(short) * pcmData->dataBufferNumItems);
 
   convertSampleBufferToPcmData(sampleBuffer, pcmData->interlacedPcmDataBuffer, pcmData->isLittleEndian != isHostLittleEndian());
-  pcmSamplesWritten = fwrite(pcmData->interlacedPcmDataBuffer, sizeof(short), pcmData->dataBufferNumItems, pcmData->fileHandle);
-  if(pcmSamplesWritten < pcmData->dataBufferNumItems) {
+  pcmSamplesWritten = fwrite(pcmData->interlacedPcmDataBuffer, sizeof(short), numSamplesToWrite, pcmData->fileHandle);
+  if(pcmSamplesWritten < numSamplesToWrite) {
     logWarn("Short write to PCM file");
     return pcmSamplesWritten;
   }

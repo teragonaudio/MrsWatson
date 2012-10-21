@@ -83,6 +83,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   MidiSequence midiSequence = NULL;
   MidiSource midiSource = NULL;
   long tailTimeInMs = 0;
+  unsigned long tailTimeInFrames = 0;
   ProgramOptions programOptions;
   ProgramOption option;
   CharString versionString, wrappedLicenseInfo;
@@ -95,7 +96,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   int hostTaskId;
   SampleSource silentSampleInput;
   unsigned long totalProcessingTime = 0;
-  unsigned long stopSample;
+  unsigned long stopFrame;
   double timePercentage;
   int i;
 
@@ -369,6 +370,10 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   // Initialization is finished, we should be able to free this memory now
   freeProgramOptions(programOptions);
 
+  // Get largest tail time requested by any plugin in the chain
+  tailTimeInMs += getMaximumTailTimeInMs(pluginChain);
+  tailTimeInFrames = (unsigned long)(tailTimeInMs * getSampleRate()) / 1000l;
+
   // Main processing loop
   while(!finishedReading) {
     startTimingTask(taskTimer, hostTaskId);
@@ -386,21 +391,35 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
 
     processPluginChainAudio(pluginChain, inputSampleBuffer, outputSampleBuffer, taskTimer);
     startTimingTask(taskTimer, hostTaskId);
+
+    if(finishedReading) {
+      logInfo("Finished processing input source");
+      // Tail time is given to process, but it will fill up this entire block.
+      // In this case, we re-extend the input buffer to the end of the block,
+      // and subtract that length from the total amount of tail time to process.
+      if(inputSampleBuffer->blocksize + (long)tailTimeInFrames > outputSampleBuffer->blocksize) {
+        tailTimeInFrames -= inputSampleBuffer->blocksize;
+        inputSampleBuffer->blocksize = outputSampleBuffer->blocksize;
+      }
+      // Otherwise re-adjust the blocksize of the output sample buffer to match
+      // the input's size and the tail time (if given).
+      else {
+        outputSampleBuffer->blocksize = inputSampleBuffer->blocksize + tailTimeInFrames;
+        inputSampleBuffer->blocksize += tailTimeInFrames;
+      }
+      logWarn("Output size %d", outputSampleBuffer->blocksize);
+    }
     outputSource->writeSampleBlock(outputSource, outputSampleBuffer);
 
     advanceAudioClock(blocksize);
   }
-  logInfo("Finished processing input source");
-
-  // Get largest tail time requested by any plugin in the chain
-  tailTimeInMs += getMaximumTailTimeInMs(pluginChain);
 
   // Process tail time
   if(tailTimeInMs > 0) {
-    stopSample = (unsigned long)(getAudioClockCurrentFrame() + (tailTimeInMs * getSampleRate()) / 1000);
-    logInfo("Adding %d extra frames", stopSample - getAudioClockCurrentFrame());
+    stopFrame = getAudioClockCurrentFrame() + tailTimeInFrames;
+    logInfo("Adding %d extra frames", stopFrame - getAudioClockCurrentFrame());
     silentSampleInput = newSampleSource(SAMPLE_SOURCE_TYPE_SILENCE, NULL);
-    while(getAudioClockCurrentFrame() < stopSample) {
+    while(getAudioClockCurrentFrame() < stopFrame) {
       startTimingTask(taskTimer, hostTaskId);
       silentSampleInput->readSampleBlock(silentSampleInput, inputSampleBuffer);
 
