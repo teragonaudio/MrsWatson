@@ -17,6 +17,7 @@ typedef struct {
 typedef struct {
   char* applicationPath;
   char* resourcesPath;
+  TestSuite results;
 } TestEnvironmentMembers;
 typedef TestEnvironmentMembers* TestEnvironment;
 

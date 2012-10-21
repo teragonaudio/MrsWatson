@@ -64,9 +64,6 @@ void runApplicationTest(const TestEnvironment testEnvironment,
   CharString defaultArguments = newCharString();
   CharString failedAnalysisFunctionName = newCharString();
   unsigned long failedAnalysisSample;
-  // TODO: Need to pass these back to the caller
-  int testsPassed = 0;
-  int testsFailed = 0;
 
   // Remove files from previous tests
   _removeOutputFiles(testName);
@@ -101,12 +98,12 @@ void runApplicationTest(const TestEnvironment testEnvironment,
     logCritical("Could not launch shell, got return code %d\n\
 Please check the executable path specified in the --mrswatson-path argument.",
       resultCode);
-    testsFailed++;
+    testEnvironment->results->numFail++;
   }
   else if(WEXITSTATUS(resultCode) == expectedResultCode) {
     if(anazyleOutput) {
       if(analyzeFile(_getTestOutputFilename(testName, "pcm"), failedAnalysisFunctionName, &failedAnalysisSample)) {
-        testsPassed++;
+        testEnvironment->results->numSuccess++;
         _removeOutputFiles(testName);
         printTestSuccess();
       }
@@ -114,11 +111,11 @@ Please check the executable path specified in the --mrswatson-path argument.",
         printTestFail();
         printf("    in test '%s', while analyzing output for %s at sample %lu.\n",
           testName, failedAnalysisFunctionName->data, failedAnalysisSample);
-        testsFailed++;
+        testEnvironment->results->numFail++;
       }
     }
     else {
-      testsPassed++;
+      testEnvironment->results->numSuccess++;
       _removeOutputFiles(testName);
       printTestSuccess();
     }
@@ -127,7 +124,7 @@ Please check the executable path specified in the --mrswatson-path argument.",
     printTestFail();
     printf("    in %s. Expected result code %d, got %d.\n", testName,
       expectedResultCode, WEXITSTATUS(resultCode));
-    testsFailed++;
+    testEnvironment->results->numFail++;
   }
 
   freeCharString(arguments);

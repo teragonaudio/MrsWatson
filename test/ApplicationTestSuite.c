@@ -5,6 +5,7 @@ void runApplicationTestSuite(char *applicationPath, char *resourcesPath) {
   TestEnvironment testEnvironment = (TestEnvironment)malloc(sizeof(TestEnvironmentMembers));
   testEnvironment->applicationPath = applicationPath;
   testEnvironment->resourcesPath = resourcesPath;
+  testEnvironment->results = newTestSuite("Application", NULL, NULL);
 
   runApplicationTest(testEnvironment, "Run with no plugins",
     newLinkedList(),
@@ -16,5 +17,6 @@ void runApplicationTestSuite(char *applicationPath, char *resourcesPath) {
     "--plugin again",
     RETURN_CODE_SUCCESS, true);
 
+  free(testEnvironment->results);
   free(testEnvironment);
 }
