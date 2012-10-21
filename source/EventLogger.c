@@ -37,6 +37,7 @@
 #include "AudioSettings.h"
 #include "PlatformUtilities.h"
 #include "StringUtilities.h"
+#include "LogPrinter.h"
 
 #if WINDOWS
 #include <Windows.h>
@@ -45,40 +46,6 @@
 #include <sys/time.h>
 #include <unistd.h>
 #endif
-
-#define ANSI_COLOR_RESET   "\x1b[0m"
-
-#define ANSI_COLOR_FG_BLACK   "\x1b[30m"
-#define ANSI_COLOR_FG_MAROON  "\x1b[31m"
-#define ANSI_COLOR_FG_GREEN   "\x1b[92m"
-#define ANSI_COLOR_FG_OLIVE   "\x1b[32m"
-#define ANSI_COLOR_FG_NAVY    "\x1b[34m"
-#define ANSI_COLOR_FG_PURPLE  "\x1b[35m"
-#define ANSI_COLOR_FG_TEAL    "\x1b[36m"
-#define ANSI_COLOR_FG_GRAY    "\x1b[37m"
-#define ANSI_COLOR_FG_DKGRAY  "\x1b[90m"
-#define ANSI_COLOR_FG_RED     "\x1b[31m"
-#define ANSI_COLOR_FG_YELLOW  "\x1b[33m"
-#define ANSI_COLOR_FG_BLUE    "\x1b[94m"
-#define ANSI_COLOR_FG_FUCHSIA "\x1b[95m"
-#define ANSI_COLOR_FG_CYAN    "\x1b[96m"
-#define ANSI_COLOR_FG_WHITE   "\x1b[37m"
-
-#define ANSI_COLOR_BG_BLACK   "\x1b[40m"
-#define ANSI_COLOR_BG_MAROON  "\x1b[41m"
-#define ANSI_COLOR_BG_GREEN   "\x1b[102m"
-#define ANSI_COLOR_BG_OLIVE   "\x1b[42m"
-#define ANSI_COLOR_BG_NAVY    "\x1b[44m"
-#define ANSI_COLOR_BG_PURPLE  "\x1b[45m"
-#define ANSI_COLOR_BG_TEAL    "\x1b[46m"
-#define ANSI_COLOR_BG_GRAY    "\x1b[47m"
-#define ANSI_COLOR_BG_DKGRAY  "\x1b[100m"
-#define ANSI_COLOR_BG_RED     "\x1b[101m"
-#define ANSI_COLOR_BG_YELLOW  "\x1b[43m"
-#define ANSI_COLOR_BG_BLUE    "\x1b[104m"
-#define ANSI_COLOR_BG_FUCHSIA "\x1b[105m"
-#define ANSI_COLOR_BG_CYAN    "\x1b[46m"
-#define ANSI_COLOR_BG_WHITE   "\x1b[47m"
 
 EventLogger eventLoggerInstance = NULL;
 
@@ -173,53 +140,43 @@ static char _logLevelStatusChar(const LogLevel logLevel) {
   }
 }
 
-static const char* _logLevelStatusColor(const LogLevel logLevel, const boolByte useColor) {
-  if(useColor) {
-    switch(logLevel) {
-      case LOG_DEBUG: return ANSI_COLOR_FG_DKGRAY;
-      case LOG_INFO:  return ANSI_COLOR_RESET;
-      case LOG_WARN:  return ANSI_COLOR_FG_YELLOW;
-      case LOG_ERROR: return ANSI_COLOR_FG_RED;
-      default:        return ANSI_COLOR_RESET;
-    }
-  }
-  else {
-    return "";
+static const char* _logLevelStatusColor(const LogLevel logLevel) {
+  switch(logLevel) {
+    case LOG_DEBUG: return ANSI_COLOR_FG_DKGRAY;
+    case LOG_INFO:  return ANSI_COLOR_RESET;
+    case LOG_WARN:  return ANSI_COLOR_FG_YELLOW;
+    case LOG_ERROR: return ANSI_COLOR_FG_RED;
+    default:        return ANSI_COLOR_RESET;
   }
 }
 
-static const char* _logTimeColor(const boolByte useColor) {
-  if(useColor) {
-    return ANSI_COLOR_FG_BLUE;
-  }
-  else {
-    return "";
-  }
+static const char* _logTimeColor(void) {
+  return ANSI_COLOR_FG_BLUE;
 }
 
-static const char* _logTimeZebraStripeColor(const long elapsedTime, const boolByte useColor, const int zebraSizeInMs) {
+static const char* _logTimeZebraStripeColor(const long elapsedTime, const int zebraSizeInMs) {
   boolByte zebraState = (boolByte)((elapsedTime / zebraSizeInMs) % 2);
-  if(useColor) {
-    return zebraState ? ANSI_COLOR_FG_OLIVE : ANSI_COLOR_FG_GREEN;
-  }
-  else {
-    return "";
-  }
+  return zebraState ? ANSI_COLOR_FG_OLIVE : ANSI_COLOR_FG_GREEN;
 }
 
 static void _printMessage(const LogLevel logLevel, const long elapsedTimeInMs, const long numFramesProcessed, const char* message, const EventLogger eventLogger) {
-  if(eventLogger->logFile != NULL) {
-    fprintf(eventLogger->logFile, "%c %08ld %06ld %s\n", _logLevelStatusChar(logLevel), numFramesProcessed, elapsedTimeInMs, message);
-  }
-  else if(!eventLogger->useColor) {
-    fprintf(stderr, "%c %08ld %06ld %s\n", _logLevelStatusChar(logLevel), numFramesProcessed, elapsedTimeInMs, message);
+  char* logString = malloc(sizeof(char) * STRING_LENGTH_LONG);
+  if(eventLogger->useColor) {
+    snprintf(logString, STRING_LENGTH_LONG, "%c ", _logLevelStatusChar(logLevel));
+    printToLog(_logLevelStatusColor(logLevel), eventLogger->logFile, logString);
+    snprintf(logString, STRING_LENGTH_LONG, "%08ld ", numFramesProcessed);
+    printToLog(_logTimeZebraStripeColor(numFramesProcessed, eventLogger->zebraStripeSize),
+      eventLogger->logFile, logString);
+    snprintf(logString, STRING_LENGTH_LONG, "%06ld ", elapsedTimeInMs);
+    printToLog(_logTimeColor(), eventLogger->logFile, logString);
+    printToLog(_logLevelStatusColor(logLevel), eventLogger->logFile, message);
   }
   else {
-    fprintf(stderr, "%s%c%s ", _logLevelStatusColor(logLevel, eventLogger->useColor), _logLevelStatusChar(logLevel), ANSI_COLOR_RESET);
-    fprintf(stderr, "%s%08ld%s ", _logTimeZebraStripeColor(numFramesProcessed, eventLogger->useColor, eventLogger->zebraStripeSize), numFramesProcessed, ANSI_COLOR_RESET);
-    fprintf(stderr, "%s%06ld%s ", _logTimeColor(eventLogger->useColor), elapsedTimeInMs, ANSI_COLOR_RESET);
-    fprintf(stderr, "%s%s%s\n", _logLevelStatusColor(logLevel, eventLogger->useColor), message, ANSI_COLOR_RESET);
+    snprintf(logString, STRING_LENGTH_LONG, "%c %08ld %06ld %s", _logLevelStatusChar(logLevel), numFramesProcessed, elapsedTimeInMs, message);
+    printToLog(NULL, eventLogger->logFile, logString);
   }
+  flushLog(eventLogger->logFile);
+  free(logString);
 }
 
 static void _logMessage(const LogLevel logLevel, const char* message, va_list arguments) {
