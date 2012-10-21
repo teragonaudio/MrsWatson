@@ -90,7 +90,7 @@ boolByte addPluginsFromArgumentString(PluginChain pluginChain, const CharString 
     }
     strncpy(pluginNameBuffer->data, substringStart, substringLength);
 
-    // Use colon as a separator for presets to load into these plugins
+    // Look for the separator for presets to load into these plugins
     presetNameBuffer = newCharString();
     presetSeparator = strchr(pluginNameBuffer->data, CHAIN_STRING_PROGRAM_SEPARATOR);
     if(presetSeparator != NULL) {
