@@ -88,7 +88,8 @@ Plugin newPlugin(PluginInterfaceType interfaceType, const CharString pluginName,
       return newPluginVst2x(pluginName, pluginLocation);
     case PLUGIN_TYPE_INTERNAL:
       if((internalDelimiter = strchr(pluginName->data, INTERNAL_PATH_DELIMITER)) != NULL) {
-        if(!strncmp(internalDelimiter + 1, "passthru", pluginName->capacity)) {
+        copyToCharString(pluginName, internalDelimiter + 1);
+        if(!strncasecmp(pluginName->data, "passthru", pluginName->capacity)) {
           return newPluginPassthru(pluginName);
         }
         else {
