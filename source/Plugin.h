@@ -85,6 +85,7 @@ typedef PluginMembers* Plugin;
 
 PluginInterfaceType guessPluginInterfaceType(const CharString pluginName, const CharString pluginRoot, CharString outLocation);
 void listAvailablePlugins(const CharString pluginRoot);
+void _logPluginLocation(const CharString location, PluginInterfaceType interfaceType);
 Plugin newPlugin(PluginInterfaceType pluginInterfaceType, const CharString pluginName, const CharString pluginLocation);
 void freePlugin(Plugin plugin);
 

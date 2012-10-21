@@ -286,11 +286,11 @@ static void _listPluginsVst2xInLocation(const CharString location) {
   int numItems, numPlugins = 0;
   const char* platformVstExtension = _getVst2xPlatformExtension();
 
-  logInfo("Location '%s':", location->data);
+  _logPluginLocation(location, PLUGIN_TYPE_VST_2X);
   locationItems = newLinkedList();
   numItems = listDirectory(location->data, locationItems);
   if(numItems == 0) {
-    logInfo("  Directory does not exist");
+    logDebug("Directory '%s' does not exist", location->data);
     freeLinkedList(locationItems);
     return;
   }
@@ -302,7 +302,7 @@ static void _listPluginsVst2xInLocation(const CharString location) {
     if(dot != NULL) {
       if(!strncmp(dot + 1, platformVstExtension, 3)) {
         *dot = '\0';
-        logInfo("  %s", itemName);
+        logInfo(itemName);
         numPlugins++;
       }
     }
@@ -310,7 +310,7 @@ static void _listPluginsVst2xInLocation(const CharString location) {
   }
 
   if(numPlugins == 0) {
-    logInfo("  No plugins found");
+    logInfo("No plugins found");
   }
   // TODO: Memory leak here! The list is freed, but not the char* pointers in it
   freeLinkedList(locationItems);
