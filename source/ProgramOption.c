@@ -75,6 +75,10 @@ will be override the one set by this option.",
 If attached to a terminal device, color is used automatically unless 'none' is given to this option.",
     false, ARGUMENT_TYPE_OPTIONAL, NO_DEFAULT_VALUE);
 
+  addNewProgramOption(programOptions, OPTION_COLOR_TEST, "color-test",
+    "Run an ANSI color test.",
+    false, ARGUMENT_TYPE_NONE, NO_DEFAULT_VALUE);
+
   addNewProgramOption(programOptions, OPTION_DISPLAY_INFO, "display-info",
     "Print information about each plugin in the chain.",
     false, ARGUMENT_TYPE_NONE, NO_DEFAULT_VALUE);

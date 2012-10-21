@@ -41,6 +41,7 @@
 #include "AudioSettings.h"
 #include "AudioClock.h"
 #include "MidiSequence.h"
+#include "LogPrinter.h"
 #include "MidiSource.h"
 #include "SampleSourcePcm.h"
 
@@ -247,6 +248,10 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
 
   if(programOptions->options[OPTION_LIST_PLUGINS]->enabled) {
     listAvailablePlugins(pluginSearchRoot);
+    return RETURN_CODE_NOT_RUN;
+  }
+  else if(programOptions->options[OPTION_COLOR_TEST]->enabled) {
+    printTestPattern();
     return RETURN_CODE_NOT_RUN;
   }
 
