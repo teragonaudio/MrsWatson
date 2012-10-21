@@ -30,6 +30,6 @@
 #ifndef MrsWatson_PluginPassthru_h
 #define MrsWatson_PluginPassthru_h
 
-Plugin newPluginPassthru(void);
+Plugin newPluginPassthru(const CharString pluginName);
 
 #endif

@@ -59,13 +59,13 @@ static void _pluginPassthruSetParameter(void* pluginPtr, int i, float value) {
   // Nothing to do here
 }
 
-Plugin newPluginPassthru(void) {
+Plugin newPluginPassthru(const CharString pluginName) {
   Plugin plugin = (Plugin)malloc(sizeof(PluginMembers));
 
-  plugin->interfaceType = PLUGIN_TYPE_PASSTHRU;
+  plugin->interfaceType = PLUGIN_TYPE_INTERNAL;
   plugin->pluginType = PLUGIN_TYPE_EFFECT;
   plugin->pluginName = newCharString();
-  copyToCharString(plugin->pluginName, "Passthru");
+  copyCharStrings(plugin->pluginName, pluginName);
   plugin->pluginLocation = newCharString();
   copyToCharString(plugin->pluginLocation, "(Internal)");
 

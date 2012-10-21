@@ -27,10 +27,13 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+
 #include "Plugin.h"
 #include "EventLogger.h"
 #include "PluginVst2x.h"
 #include "PluginPassthru.h"
+#include "FileUtilities.h"
 
 PluginInterfaceType guessPluginInterfaceType(const CharString pluginName, const CharString pluginSearchRoot, CharString outLocation) {
   PluginInterfaceType pluginType = PLUGIN_TYPE_INVALID;
@@ -40,11 +43,9 @@ PluginInterfaceType guessPluginInterfaceType(const CharString pluginName, const 
     logInfo("Plugin '%s' is of type VST2.x", pluginName->data);
     pluginType = PLUGIN_TYPE_VST_2X;
   }
-  // Check this case last; if there is a system plugin named "passthru" then we
-  // should use that first. This plugin is mostly for debugging purposes anyways.
-  else if(isCharStringEqualToCString(pluginName, "passthru", true)) {
-    logInfo("Using internal passthru plugin");
-    pluginType = PLUGIN_TYPE_PASSTHRU;
+  else if(!strncmp(INTERNAL_PATH_PREFIX, pluginName->data, strlen(INTERNAL_PATH_PREFIX))) {
+    logInfo("Plugin '%s' is an internal plugin", pluginName->data);
+    pluginType = PLUGIN_TYPE_INTERNAL;
   }
   else {
     logError("Plugin '%s' could not be found", pluginName->data);
@@ -57,12 +58,27 @@ void listAvailablePlugins(const CharString pluginRoot) {
   listAvailablePluginsVst2x(pluginRoot);
 }
 
+static const char* _getNameForInterfaceType(PluginInterfaceType interfaceType) {
+  switch(interfaceType) {
+    case PLUGIN_TYPE_VST_2X:
+      return "VST 2.x";
+    case PLUGIN_TYPE_INTERNAL:
+      return "Internal";
+    default:
+      return "Unknown";
+  }
+}
+
+void _logPluginLocation(const CharString location, PluginInterfaceType interfaceType) {
+  logInfo("Location '%s', type %s:", location->data, _getNameForInterfaceType(interfaceType));
+}
+
 Plugin newPlugin(PluginInterfaceType interfaceType, const CharString pluginName, const CharString pluginLocation) {
   switch(interfaceType) {
     case PLUGIN_TYPE_VST_2X:
       return newPluginVst2x(pluginName, pluginLocation);
-    case PLUGIN_TYPE_PASSTHRU:
-      return newPluginPassthru();
+    case PLUGIN_TYPE_INTERNAL:
+      return newPluginPassthru(pluginName);
     case PLUGIN_TYPE_INVALID:
     default:
       logError("Plugin type not supported");

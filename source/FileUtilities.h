@@ -31,6 +31,8 @@
 #ifndef MrsWatson_FileUtilities_h
 #define MrsWatson_FileUtilities_h
 
+#define INTERNAL_PATH_PREFIX "mrswatson:"
+
 // File operations
 boolByte fileExists(const char* path);
 boolByte copyFileToDirectory(const CharString fileAbsolutePath, const CharString directoryAbsolutePath);
