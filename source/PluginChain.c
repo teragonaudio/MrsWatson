@@ -74,7 +74,7 @@ boolByte addPluginsFromArgumentString(PluginChain pluginChain, const CharString 
   PluginInterfaceType pluginType;
 
   if(isCharStringEmpty(argumentString)) {
-    logWarn("Argument string was NULL");
+    logWarn("Plugin chain string is empty");
     return false;
   }
   substringStart = argumentString->data;
