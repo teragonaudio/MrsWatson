@@ -4,6 +4,7 @@
 #endif
 
 #include "TestRunner.h"
+#include "LogPrinter.h"
 
 // In both the TestSuite and TestCase objects we assume that we do not need ownership of
 // the strings passed in, since they should be allocated on the heap and live for the
@@ -34,30 +35,33 @@ void addTestToTestSuite(TestSuite testSuite, TestCase testCase) {
 }
 
 void printTestSuccess(void) {
-  if(isatty(2)) {
-    printf("\x1b%sOK\x1b%s\n", ANSI_COLOR_GREEN, ANSI_COLOR_RESET);
+  if(isatty(1)) {
+    printToLog(ANSI_COLOR_FG_GREEN, NULL, "OK");
   }
   else {
-    printf("OK\n");
+    printToLog(NULL, NULL, "OK");
   }
+  flushLog(NULL);
 }
 
 void printTestFail(void) {
-  if(isatty(2)) {
-    printf("\x1b%sFAIL\x1b%s\n", ANSI_COLOR_RED, ANSI_COLOR_RESET);
+  if(isatty(1)) {
+    printToLog(ANSI_COLOR_BG_MAROON, NULL, "FAIL");
   }
   else {
-    printf("FAIL\n");
+    printToLog(NULL, NULL, "FAIL");
   }
+  flushLog(NULL);
 }
 
 static void _printTestSkipped(void) {
-  if(isatty(2)) {
-    printf("\x1b%sSkipped\x1b%s\n", ANSI_COLOR_YELLOW, ANSI_COLOR_RESET);
+  if(isatty(1)) {
+    printToLog(ANSI_COLOR_FG_YELLOW, NULL, "Skipped");
   }
   else {
-    printf("Skipped\n");
+    printToLog(NULL, NULL, "Skipped");
   }
+  flushLog(NULL);
 }
 
 void runTestCase(void* item, void* extraData) {
@@ -94,6 +98,15 @@ void runTestCase(void* item, void* extraData) {
 
 void runTestSuite(void* testSuitePtr, void* extraData) {
   TestSuite testSuite = (TestSuite)testSuitePtr;
-  printf("Running tests in %s:\n", testSuite->name);
+
+  printToLog(NULL, NULL, "Running tests in ");
+  if(isatty(1)) {
+    printToLog(ANSI_COLOR_FG_BLUE, NULL, testSuite->name);
+  }
+  else {
+    printToLog(NULL, NULL, testSuite->name);
+  }
+  flushLog(NULL);
+
   foreachItemInList(testSuite->testCases, runTestCase, testSuite);
 }
