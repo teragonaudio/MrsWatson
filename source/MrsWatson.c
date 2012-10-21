@@ -432,11 +432,11 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
     for(i = 0; i < pluginChain->numPlugins; i++) {
       timePercentage = 100.0f * ((double)taskTimer->totalTaskTimes[i]) / ((double)totalProcessingTime);
       prettyPrintTime(totalTimeString, taskTimer->totalTaskTimes[i]); 
-      logInfo("  %s: %s, %2.1f%%", pluginChain->plugins[i]->pluginName->data, totalTimeString->data, timePercentage);
+      logInfo("%s: %s, %2.1f%%", pluginChain->plugins[i]->pluginName->data, totalTimeString->data, timePercentage);
     }
     timePercentage = 100.0f * ((double)taskTimer->totalTaskTimes[hostTaskId]) / ((double)totalProcessingTime);
     prettyPrintTime(totalTimeString, taskTimer->totalTaskTimes[hostTaskId]);
-    logInfo("  %s: %s, %2.1f%%", PROGRAM_NAME, totalTimeString->data, timePercentage);
+    logInfo("%s: %s, %2.1f%%", PROGRAM_NAME, totalTimeString->data, timePercentage);
   }
   else {
     logInfo("Total processing time <1ms. Either something went wrong, or your computer is smokin' fast!");
