@@ -72,7 +72,7 @@ TestCase findTestCase(TestSuite testSuite, char* testName) {
   while(iterator != NULL) {
     if(iterator->item != NULL) {
       currentTestCase = (TestCase)iterator->item;
-      if(!strncasecmp(testName, currentTestCase->name, true)) {
+      if(!strncasecmp(currentTestCase->name, testName, strlen(currentTestCase->name))) {
         return currentTestCase;
       }
     }
