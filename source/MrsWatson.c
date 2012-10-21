@@ -445,12 +445,18 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   freeCharString(totalTimeString);
 
   if(midiSequence != NULL) {
-    logInfo("Read %ld MIDI events from %s", midiSequence->numMidiEventsProcessed, midiSource->sourceName->data);
+    logInfo("Read %ld MIDI events from %s",
+      midiSequence->numMidiEventsProcessed,
+      midiSource->sourceName->data);
   }
   else {
-    logInfo("Read %ld frames from %s", inputSource->numSamplesProcessed, inputSource->sourceName->data);
+    logInfo("Read %ld frames from %s",
+      inputSource->numSamplesProcessed / getNumChannels(),
+      inputSource->sourceName->data);
   }
-  logInfo("Wrote %ld frames to %s", outputSource->numSamplesProcessed, outputSource->sourceName->data);
+  logInfo("Wrote %ld frames to %s",
+    outputSource->numSamplesProcessed / getNumChannels(),
+    outputSource->sourceName->data);
 
   // Shut down and free data (will also close open files, plugins, etc)
   logInfo("Shutting down");
