@@ -95,13 +95,12 @@ static void _convertPcmDataToSampleBuffer(const short* inPcmSamples, SampleBuffe
   }
 }
 
-boolByte readPcmDataFromFile(SampleSourcePcmData pcmData, SampleBuffer sampleBuffer, unsigned long* numFramesProcessed) {
-  boolByte result = true;
+size_t readPcmDataFromFile(SampleSourcePcmData pcmData, SampleBuffer sampleBuffer) {
   size_t pcmSamplesRead = 0;
 
   if(pcmData == NULL || pcmData->fileHandle == NULL) {
     logCritical("Corrupt PCM data structure");
-    return false;
+    return 0;
   }
 
   if(pcmData->dataBufferNumItems == 0) {
@@ -115,19 +114,22 @@ boolByte readPcmDataFromFile(SampleSourcePcmData pcmData, SampleBuffer sampleBuf
   pcmSamplesRead = fread(pcmData->interlacedPcmDataBuffer, sizeof(short), pcmData->dataBufferNumItems, pcmData->fileHandle);
   if(pcmSamplesRead < pcmData->dataBufferNumItems) {
     logDebug("End of PCM file reached");
-    result = false;
+    // Set the blocksize of the sample buffer to be the number of frames read
+    sampleBuffer->blocksize = pcmSamplesRead / sampleBuffer->numChannels;
   }
-  *numFramesProcessed += pcmSamplesRead / sampleBuffer->numChannels;
   logDebug("Read %d samples from PCM file", pcmSamplesRead);
 
   _convertPcmDataToSampleBuffer(pcmData->interlacedPcmDataBuffer, sampleBuffer);
-  return result;
+  return pcmSamplesRead;
 }
 
 static boolByte readBlockFromPcmFile(void* sampleSourcePtr, SampleBuffer sampleBuffer) {
   SampleSource sampleSource = (SampleSource)sampleSourcePtr;
   SampleSourcePcmData extraData = (SampleSourcePcmData)(sampleSource->extraData);
-  return readPcmDataFromFile(extraData, sampleBuffer, &(sampleSource->numSamplesProcessed));
+  int originalBlocksize = sampleBuffer->blocksize;
+  size_t samplesRead = readPcmDataFromFile(extraData, sampleBuffer);
+  sampleSource->numSamplesProcessed += samplesRead;
+  return (originalBlocksize == sampleBuffer->blocksize);
 }
 
 void convertSampleBufferToPcmData(const SampleBuffer sampleBuffer, short* outPcmSamples, boolByte flipEndian) {
@@ -158,7 +160,7 @@ void convertSampleBufferToPcmData(const SampleBuffer sampleBuffer, short* outPcm
   }
 }
 
-boolByte writePcmDataToFile(SampleSourcePcmData pcmData, const SampleBuffer sampleBuffer, unsigned long* numFramesProcessed) {
+size_t writePcmDataToFile(SampleSourcePcmData pcmData, const SampleBuffer sampleBuffer) {
   size_t pcmSamplesWritten = 0;
 
   if(pcmData == NULL || pcmData->fileHandle == NULL) {
@@ -178,18 +180,19 @@ boolByte writePcmDataToFile(SampleSourcePcmData pcmData, const SampleBuffer samp
   pcmSamplesWritten = fwrite(pcmData->interlacedPcmDataBuffer, sizeof(short), pcmData->dataBufferNumItems, pcmData->fileHandle);
   if(pcmSamplesWritten < pcmData->dataBufferNumItems) {
     logWarn("Short write to PCM file");
-    return false;
+    return pcmSamplesWritten;
   }
 
-  *numFramesProcessed += pcmSamplesWritten;
-  logDebug("Wrote %d sample frames to PCM file", pcmSamplesWritten);
-  return true;
+  logDebug("Wrote %d samples to PCM file", pcmSamplesWritten);
+  return pcmSamplesWritten;
 }
 
 static boolByte writeBlockToPcmFile(void* sampleSourcePtr, const SampleBuffer sampleBuffer) {
   SampleSource sampleSource = (SampleSource)sampleSourcePtr;
   SampleSourcePcmData extraData = (SampleSourcePcmData)(sampleSource->extraData);
-  return writePcmDataToFile(extraData, sampleBuffer, &(sampleSource->numSamplesProcessed));
+  int samplesWritten = (int)writePcmDataToFile(extraData, sampleBuffer);
+  sampleSource->numSamplesProcessed += samplesWritten;
+  return (samplesWritten == sampleBuffer->blocksize);
 }
 
 static void _closeSampleSourcePcm(void* sampleSourcePtr) {

@@ -46,8 +46,8 @@ typedef struct {
 typedef SampleSourcePcmDataMembers *SampleSourcePcmData;
 
 SampleSource newSampleSourcePcm(const CharString sampleSourceName);
-boolByte readPcmDataFromFile(SampleSourcePcmData pcmData, SampleBuffer sampleBuffer, unsigned long* numFramesProcessed);
-boolByte writePcmDataToFile(SampleSourcePcmData pcmData, const SampleBuffer sampleBuffer, unsigned long* numFramesProcessed);
+size_t readPcmDataFromFile(SampleSourcePcmData pcmData, SampleBuffer sampleBuffer);
+size_t writePcmDataToFile(SampleSourcePcmData pcmData, const SampleBuffer sampleBuffer);
 void convertSampleBufferToPcmData(const SampleBuffer sampleBuffer, short* outPcmSamples, boolByte isDataLittleEndian);
 
 void setPcmDataSampleRate(void* sampleSourcePtr, double sampleRate);
