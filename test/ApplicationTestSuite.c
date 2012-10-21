@@ -8,8 +8,8 @@ void runApplicationTestSuite(char *applicationPath, char *resourcesPath) {
   testEnvironment->results = newTestSuite("Application", NULL, NULL);
 
   runApplicationTest(testEnvironment, "Run with no plugins",
-    newLinkedList(),
-    RETURN_CODE_MISSING_REQUIRED_OPTION, false);
+    "",
+    RETURN_CODE_INVALID_PLUGIN_CHAIN, false);
   runApplicationTest(testEnvironment, "List plugins",
     "--list-plugins",
     RETURN_CODE_NOT_RUN, false);
