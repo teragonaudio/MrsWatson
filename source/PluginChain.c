@@ -58,7 +58,7 @@ boolByte addPluginsFromArgumentString(PluginChain pluginChain, const CharString 
   // Expect a semicolon-separated string of plugins with comma separators for preset names
   // Example: plugin1,preset1name;plugin2,preset2name
   char* substringStart = argumentString->data;
-  char*pluginSeparator = strchr(argumentString->data, CHAIN_STRING_PLUGIN_SEPARATOR);
+  char* pluginSeparator = strchr(argumentString->data, CHAIN_STRING_PLUGIN_SEPARATOR);
   char* endChar = argumentString->data + strlen(argumentString->data);
   CharString pluginNameBuffer = newCharString();
   CharString presetNameBuffer;
