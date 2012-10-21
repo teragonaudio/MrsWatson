@@ -66,5 +66,6 @@
 
 void printToLog(const char* color, FILE* logFile, const char* message);
 void flushLog(FILE* logFile);
+void printTestPattern(void);
 
 #endif
