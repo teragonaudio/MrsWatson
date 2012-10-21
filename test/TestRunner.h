@@ -8,20 +8,11 @@
 #endif
 #include "PlatformUtilities.h"
 #include "CharString.h"
+#include "FileUtilities.h"
 
 #ifndef __func__
 #define __func__ __FUNCTION__
 #endif
-
-#define ANSI_COLOR_BLACK   "[30m"
-#define ANSI_COLOR_RED     "[31m"
-#define ANSI_COLOR_GREEN   "[32m"
-#define ANSI_COLOR_YELLOW  "[33m"
-#define ANSI_COLOR_BLUE    "[34m"
-#define ANSI_COLOR_MAGENTA "[35m"
-#define ANSI_COLOR_CYAN    "[36m"
-#define ANSI_COLOR_WHITE   "[37m"
-#define ANSI_COLOR_RESET   "[0m"
 
 typedef int (*TestCaseExecFunc)(void);
 typedef void (*TestCaseSetupFunc)(void);
@@ -62,7 +53,7 @@ TestCase newTestCase(char* name, char* filename, int lineNumber, TestCaseExecFun
 #define assert(condition) { \
   if(!(condition)) { \
     printTestFail(); \
-    printf("    at %s:%d\n", __FILE__, __LINE__); \
+    printf("    at %s:%d\n", getFileBasename(__FILE__), __LINE__); \
     return 1; \
   } \
 }
@@ -75,7 +66,7 @@ TestCase newTestCase(char* name, char* filename, int lineNumber, TestCaseExecFun
   int result = condition; \
   if(result != expected) { \
     printTestFail(); \
-    printf("    at %s:%d. Expected %d, got %d.\n", __FILE__, __LINE__, expected, result); \
+    printf("    at %s:%d. Expected %d, got %d.\n", getFileBasename(__FILE__), __LINE__, expected, result); \
     return 1; \
   } \
 }
@@ -84,7 +75,7 @@ TestCase newTestCase(char* name, char* filename, int lineNumber, TestCaseExecFun
   double result = condition; \
   if(result != expected) { \
     printTestFail(); \
-    printf("    at %s:%d. Expected %g, got %g.\n", __FILE__, __LINE__, expected, result); \
+    printf("    at %s:%d. Expected %g, got %g.\n", getFileBasename(__FILE__), __LINE__, expected, result); \
     return 1; \
   } \
 }
@@ -92,15 +83,9 @@ TestCase newTestCase(char* name, char* filename, int lineNumber, TestCaseExecFun
 #define assertCharStringEquals(result, expected) { \
   if(!isCharStringEqualToCString(result, expected, false)) { \
     printTestFail(); \
-    printf("    at %s:%d. Expected %s, got %s.\n", __FILE__, __LINE__, expected, result->data); \
+    printf("    at %s:%d. Expected %s, got %s.\n", getFileBasename(__FILE__), __LINE__, expected, result->data); \
     return 1; \
   } \
 }
-
-#if WINDOWS
-#define FILE_BASENAME (strrchr(__FILE__, '\\') ? strrchr(__FILE__, '\\') + 1 : __FILE__)
-#else
-#define FILE_BASENAME (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
-#endif
 
 #endif
