@@ -75,17 +75,26 @@ void stopTiming(TaskTimer taskTimer) {
     taskTimer->totalTaskTimes[taskTimer->currentTask] += (unsigned long)elapsedTimeInClocks;
   }
 #else
-  unsigned long elapsedTimeInMs;
+  double elapsedTimeInMs;
+  double elapsedFullSeconds;
+  double elapsedMicroseconds;
   struct timeval currentTime;
 
   if(taskTimer->currentTask >= 0) {
     if(gettimeofday(&currentTime, NULL) == 0) {
-      elapsedTimeInMs = ((currentTime.tv_sec - (taskTimer->startTime->tv_sec + 1)) * 1000) +
-        (currentTime.tv_usec / 1000) + (1000 - (taskTimer->startTime->tv_usec / 1000));
+      if(currentTime.tv_sec == taskTimer->startTime->tv_sec) {
+        elapsedTimeInMs = (double)(currentTime.tv_usec - taskTimer->startTime->tv_usec) / 1000.0;
+      }
+      else {
+        elapsedFullSeconds = (double)(currentTime.tv_sec - taskTimer->startTime->tv_sec - 1);
+        elapsedMicroseconds = (double)(currentTime.tv_usec + (1000000l - taskTimer->startTime->tv_usec));
+        elapsedTimeInMs = (elapsedFullSeconds * 1000.0) + (elapsedMicroseconds / 1000.0);
+      }
       taskTimer->totalTaskTimes[taskTimer->currentTask] += elapsedTimeInMs;
     }
   }
 #endif
+  taskTimer->currentTask = -1;
 }
 
 void freeTaskTimer(TaskTimer taskTimer) {
