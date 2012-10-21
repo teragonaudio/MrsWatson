@@ -54,7 +54,7 @@ static boolByte _addPluginToChain(PluginChain pluginChain, Plugin plugin, Plugin
   }
 }
 
-boolByte addPluginsFromArgumentString(PluginChain pluginChain, const CharString argumentString, const CharString pluginRoot) {
+boolByte addPluginsFromArgumentString(PluginChain pluginChain, const CharString argumentString, const CharString userSearchPath) {
   // Expect a semicolon-separated string of plugins with comma separators for preset names
   // Example: plugin1,preset1name;plugin2,preset2name
   char* substringStart = argumentString->data;
@@ -100,7 +100,7 @@ boolByte addPluginsFromArgumentString(PluginChain pluginChain, const CharString 
 
     // Guess the plugin type from the file extension, search root, etc.
     pluginLocationBuffer = newCharString();
-    pluginType = guessPluginInterfaceType(pluginNameBuffer, pluginRoot, pluginLocationBuffer);
+    pluginType = guessPluginInterfaceType(pluginNameBuffer, userSearchPath, pluginLocationBuffer);
     if(pluginType != PLUGIN_TYPE_INVALID) {
       plugin = newPlugin(pluginType, pluginNameBuffer, pluginLocationBuffer);
       if(!_addPluginToChain(pluginChain, plugin, preset)) {

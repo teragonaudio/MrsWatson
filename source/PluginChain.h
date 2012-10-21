@@ -47,7 +47,7 @@ typedef PluginChainMembers* PluginChain;
 
 PluginChain newPluginChain(void);
 
-boolByte addPluginsFromArgumentString(PluginChain pluginChain, const CharString argumentString, const CharString pluginRoot);
+boolByte addPluginsFromArgumentString(PluginChain pluginChain, const CharString argumentString, const CharString userSearchPath);
 boolByte initializePluginChain(PluginChain pluginChain);
 
 void displayPluginInfo(PluginChain pluginChain);
