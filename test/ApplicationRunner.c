@@ -11,6 +11,19 @@
 #include "AnalyzeFile.h"
 #include "FileUtilities.h"
 
+TestEnvironment newTestEnvironment(char *applicationPath, char *resourcesPath) {
+  TestEnvironment testEnvironment = (TestEnvironment)malloc(sizeof(TestEnvironmentMembers));
+  testEnvironment->applicationPath = applicationPath;
+  testEnvironment->resourcesPath = resourcesPath;
+  testEnvironment->results = newTestSuite("Results", NULL, NULL);
+  return testEnvironment;
+}
+
+void freeTestEnvironment(TestEnvironment testEnvironment) {
+  free(testEnvironment->results);
+  free(testEnvironment);
+}
+
 static char* _getTestInputFilename(const char* resourcesPath, const char* fileExtension) {
   CharString filename = newCharString();
   snprintf(filename->data, filename->capacity, "%s%caudio%ca440-stereo.%s",

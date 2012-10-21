@@ -59,7 +59,7 @@ void runInternalTestSuite(void) {
   suiteResults = newTestSuite("Suite results", NULL, NULL);
   foreachItemInList(internalTestSuites, _sumTestSuiteResults, suiteResults);
 
-  printf("\nRan %d function tests: %d passed, %d failed, %d skipped\n",
+  fprintf(stderr, "\nRan %d function tests: %d passed, %d failed, %d skipped\n",
     suiteResults->numSuccess + suiteResults->numFail + suiteResults->numSkips,
     suiteResults->numSuccess, suiteResults->numFail, suiteResults->numSkips);
 }

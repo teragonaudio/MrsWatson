@@ -21,6 +21,10 @@ typedef struct {
 } TestEnvironmentMembers;
 typedef TestEnvironmentMembers* TestEnvironment;
 
+TestEnvironment newTestEnvironment(char *applicationPath, char *resourcesPath);
+
 void runApplicationTest(const TestEnvironment testEnvironment,
   const char *testName, const char *testArguments,
   ReturnCodes expectedResultCode, boolByte analyzeOutput);
+
+void freeTestEnvironment(TestEnvironment testEnvironment);

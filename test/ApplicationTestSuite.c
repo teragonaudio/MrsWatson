@@ -1,12 +1,7 @@
 #include "ApplicationRunner.h"
 
-void runApplicationTestSuite(char *applicationPath, char *resourcesPath);
-void runApplicationTestSuite(char *applicationPath, char *resourcesPath) {
-  TestEnvironment testEnvironment = (TestEnvironment)malloc(sizeof(TestEnvironmentMembers));
-  testEnvironment->applicationPath = applicationPath;
-  testEnvironment->resourcesPath = resourcesPath;
-  testEnvironment->results = newTestSuite("Application", NULL, NULL);
-
+int runApplicationTestSuite(TestEnvironment testEnvironment);
+int runApplicationTestSuite(TestEnvironment testEnvironment) {
   runApplicationTest(testEnvironment, "Run with no plugins",
     "",
     RETURN_CODE_INVALID_PLUGIN_CHAIN, false);
@@ -17,6 +12,13 @@ void runApplicationTestSuite(char *applicationPath, char *resourcesPath) {
     "--plugin again",
     RETURN_CODE_SUCCESS, true);
 
-  free(testEnvironment->results);
-  free(testEnvironment);
+  fprintf(stderr, "\nRan %d application tests: %d passed, %d failed, %d skipped\n",
+    testEnvironment->results->numSuccess +
+    testEnvironment->results->numFail +
+    testEnvironment->results->numSkips,
+    testEnvironment->results->numSuccess,
+    testEnvironment->results->numFail,
+    testEnvironment->results->numSkips);
+
+  return testEnvironment->results->numFail;
 }

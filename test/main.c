@@ -15,12 +15,13 @@
 #include "FileUtilities.h"
 #include "PlatformUtilities.h"
 #include "MrsWatson.h"
+#include "ApplicationRunner.h"
 
 extern TestSuite findTestSuite(char* testSuiteName);
 extern TestCase findTestCase(TestSuite testSuite, char* testName);
 extern void printInternalTests(void);
 extern void runInternalTestSuite(void);
-extern void runApplicationTestSuite(char *applicationPath, char *resourcesPath);
+extern int runApplicationTestSuite(TestEnvironment testEnvironment);
 
 static const char* DEFAULT_TEST_SUITE_NAME = "all";
 static const char* DEFAULT_MRSWATSON_PATH = "../main/mrswatson";
@@ -198,8 +199,8 @@ int main(int argc, char* argv[]) {
   if(runApplicationTests) {
     printf("\n=== Application tests ===\n");
     testsPassed = testsFailed = 0;
-    runApplicationTestSuite(mrsWatsonPath->data, resourcesPath->data);
-    printf("\nRan %d application tests: %d passed, %d failed\n", testsPassed + testsFailed, testsPassed, testsFailed);
+    TestEnvironment testEnvironment = newTestEnvironment(mrsWatsonPath->data, resourcesPath->data);
+    totalTestsFailed += runApplicationTestSuite(testEnvironment);
   }
 
   printf("\n=== Finished with %d total failed tests ===\n", totalTestsFailed);
