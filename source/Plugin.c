@@ -54,10 +54,6 @@ PluginInterfaceType guessPluginInterfaceType(const CharString pluginName, const 
   return pluginType;
 }
 
-void listAvailablePlugins(const CharString pluginRoot) {
-  listAvailablePluginsVst2x(pluginRoot);
-}
-
 static const char* _getNameForInterfaceType(PluginInterfaceType interfaceType) {
   switch(interfaceType) {
     case PLUGIN_TYPE_VST_2X:
@@ -73,12 +69,32 @@ void _logPluginLocation(const CharString location, PluginInterfaceType interface
   logInfo("Location '%s', type %s:", location->data, _getNameForInterfaceType(interfaceType));
 }
 
+static void _listAvailablePluginsInternal(void) {
+  CharString internalLocation = newCharStringWithCString("Internal");
+  _logPluginLocation(internalLocation, PLUGIN_TYPE_INTERNAL);
+  logInfo("passthru");
+  freeCharString(internalLocation);
+}
+
+void listAvailablePlugins(const CharString pluginRoot) {
+  listAvailablePluginsVst2x(pluginRoot);
+  _listAvailablePluginsInternal();
+}
+
 Plugin newPlugin(PluginInterfaceType interfaceType, const CharString pluginName, const CharString pluginLocation) {
+  const char* internalDelimiter = NULL;
   switch(interfaceType) {
     case PLUGIN_TYPE_VST_2X:
       return newPluginVst2x(pluginName, pluginLocation);
     case PLUGIN_TYPE_INTERNAL:
-      return newPluginPassthru(pluginName);
+      if((internalDelimiter = strchr(pluginName->data, INTERNAL_PATH_DELIMITER)) != NULL) {
+        if(!strncmp(internalDelimiter + 1, "passthru", pluginName->capacity)) {
+          return newPluginPassthru(pluginName);
+        }
+        else {
+          return NULL;
+        }
+      }
     case PLUGIN_TYPE_INVALID:
     default:
       logError("Plugin type not supported");

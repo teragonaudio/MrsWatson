@@ -32,6 +32,7 @@
 #define MrsWatson_FileUtilities_h
 
 #define INTERNAL_PATH_PREFIX "mrswatson:"
+#define INTERNAL_PATH_DELIMITER ':'
 
 // File operations
 boolByte fileExists(const char* path);
