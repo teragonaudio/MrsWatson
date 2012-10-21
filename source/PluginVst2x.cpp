@@ -611,7 +611,7 @@ void setVst2xPluginChunk(Plugin plugin, char* chunk) {
 static void _processAudioVst2xPlugin(void* pluginPtr, SampleBuffer inputs, SampleBuffer outputs) {
   Plugin plugin = (Plugin)pluginPtr;
   PluginVst2xData data = (PluginVst2xData)plugin->extraData;
-  data->pluginHandle->processReplacing(data->pluginHandle, inputs->samples, outputs->samples, inputs->blocksize);
+  data->pluginHandle->processReplacing(data->pluginHandle, inputs->samples, outputs->samples, outputs->blocksize);
 }
 
 static void _fillVstMidiEvent(const MidiEvent midiEvent, VstMidiEvent* vstMidiEvent) {
