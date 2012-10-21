@@ -39,9 +39,9 @@ TaskTimer newTaskTimer(const int numTasks) {
 
   taskTimer->numTasks = numTasks;
   taskTimer->currentTask = -1;
-  taskTimer->totalTaskTimes = (unsigned long*)malloc(sizeof(unsigned long) * numTasks);
+  taskTimer->totalTaskTimes = (double*)malloc(sizeof(double) * numTasks);
   for(i = 0; i < numTasks; i++) {
-    taskTimer->totalTaskTimes[i] = 0;
+    taskTimer->totalTaskTimes[i] = 0.0;
   }
 #if WINDOWS
   QueryPerformanceFrequency(&(taskTimer->counterFrequency));

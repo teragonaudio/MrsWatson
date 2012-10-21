@@ -95,7 +95,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   boolByte finishedReading = false;
   int hostTaskId;
   SampleSource silentSampleInput;
-  unsigned long totalProcessingTime = 0;
+  double totalProcessingTime = 0.0;
   unsigned long stopFrame;
   double timePercentage;
   int i;
