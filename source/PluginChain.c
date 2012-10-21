@@ -42,7 +42,10 @@ PluginChain newPluginChain(void) {
 }
 
 static boolByte _addPluginToChain(PluginChain pluginChain, Plugin plugin, PluginPreset preset) {
-  if(pluginChain->numPlugins + 1 >= MAX_PLUGINS) {
+  if(plugin == NULL) {
+    return false;
+  }
+  else if(pluginChain->numPlugins + 1 >= MAX_PLUGINS) {
     logError("Could not add plugin '%s', maximum number reached", plugin->pluginName->data);
     return false;
   }
@@ -57,9 +60,9 @@ static boolByte _addPluginToChain(PluginChain pluginChain, Plugin plugin, Plugin
 boolByte addPluginsFromArgumentString(PluginChain pluginChain, const CharString argumentString, const CharString userSearchPath) {
   // Expect a semicolon-separated string of plugins with comma separators for preset names
   // Example: plugin1,preset1name;plugin2,preset2name
-  char* substringStart = argumentString->data;
-  char* pluginSeparator = strchr(argumentString->data, CHAIN_STRING_PLUGIN_SEPARATOR);
-  char* endChar = argumentString->data + strlen(argumentString->data);
+  char* substringStart;
+  char* pluginSeparator;
+  char* endChar;
   CharString pluginNameBuffer = newCharString();
   CharString presetNameBuffer;
   char* presetSeparator;
@@ -69,6 +72,14 @@ boolByte addPluginsFromArgumentString(PluginChain pluginChain, const CharString 
   size_t substringLength;
   CharString pluginLocationBuffer;
   PluginInterfaceType pluginType;
+
+  if(isCharStringEmpty(argumentString)) {
+    logWarn("Argument string was NULL");
+    return false;
+  }
+  substringStart = argumentString->data;
+  pluginSeparator = strchr(argumentString->data, CHAIN_STRING_PLUGIN_SEPARATOR);
+  endChar = argumentString->data + strlen(argumentString->data);
 
   do {
     if(pluginSeparator == NULL) {
