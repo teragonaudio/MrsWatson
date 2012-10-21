@@ -1,6 +1,9 @@
 #include "TestRunner.h"
 #include "PluginChain.h"
 
+static const char* TEST_PLUGIN_NAME = "mrswatson:passthru";
+static const char* TEST_PRESET_NAME = "testPreset.fxp";
+
 static int _testNewPluginChain(void) {
   PluginChain p = newPluginChain();
   assertIntEquals(p->numPlugins, 0);
@@ -9,15 +12,57 @@ static int _testNewPluginChain(void) {
   return 0;
 }
 
+static int _testAddPluginFromArgumentStringNull(void) {
+  PluginChain p = newPluginChain();
+  assertFalse(addPluginsFromArgumentString(p, NULL, newCharStringWithCString("/")));
+  assertIntEquals(p->numPlugins, 0);
+  return 0;
+}
+
+static int _testAddPluginFromArgumentStringEmpty(void) {
+  PluginChain p = newPluginChain();
+  assertFalse(addPluginsFromArgumentString(p, newCharString(), newCharStringWithCString("/")));
+  assertIntEquals(p->numPlugins, 0);
+  return 0;
+}
+
+static int _testAddPluginFromArgumentStringEmptyLocation(void) {
+  PluginChain p = newPluginChain();
+  assert(addPluginsFromArgumentString(p, newCharStringWithCString(TEST_PLUGIN_NAME), newCharString()));
+  assertIntEquals(p->numPlugins, 1);
+  return 0;
+}
+
+static int _testAddPluginFromArgumentStringNullLocation(void) {
+  PluginChain p = newPluginChain();
+  assert(addPluginsFromArgumentString(p, newCharStringWithCString(TEST_PLUGIN_NAME), NULL));
+  assertIntEquals(p->numPlugins, 1);
+  return 0;
+}
+
+static int _testAddPluginFromArgumentString(void) {
+  PluginChain p = newPluginChain();
+  CharString testArgs = newCharStringWithCString(TEST_PLUGIN_NAME);
+  assert(addPluginsFromArgumentString(p, testArgs, NULL));
+  assertIntEquals(p->numPlugins, 1);
+  assertIntEquals(p->plugins[0]->pluginType, PLUGIN_TYPE_INTERNAL);
+  assertCharStringEquals(p->plugins[0]->pluginName, "passthru");
+  return 0;
+}
+
 static int _testAddPluginsFromArgumentString(void) {
   return 0;
 }
 
-static int _testAddPluginsFromArgumentStringWithSpaces(void) {
+static int _testAddPluginWithPresetFromArgumentString(void) {
   return 0;
 }
 
-static int _testAddPluginsFromArgumentStringWithPresets(void) {
+static int _testAddPluginFromArgumentStringWithSpaces(void) {
+  return 0;
+}
+
+static int _testAddPluginFromArgumentStringWithPresetSpaces(void) {
   return 0;
 }
 
@@ -41,9 +86,15 @@ TestSuite addPluginChainTests(void);
 TestSuite addPluginChainTests(void) {
   TestSuite testSuite = newTestSuite("PluginChain", NULL, NULL);
   addTest(testSuite, "NewObject", _testNewPluginChain);
-  addTest(testSuite, "AddPluginsFromArgumentString", NULL); // _testAddPluginsFromArgumentString);
-  addTest(testSuite, "AddPluginsFromArgumentStringWithSpaces", NULL); // _testAddPluginsFromArgumentStringWithSpaces);
-  addTest(testSuite, "AddPluginsFromArgumentStringWithPresets", NULL); // _testAddPluginsFromArgumentStringWithPresets);
+  addTest(testSuite, "AddPluginFromArgumentStringNull", _testAddPluginFromArgumentStringNull);
+  addTest(testSuite, "AddPluginFromArgumentStringEmpty", _testAddPluginFromArgumentStringEmpty);
+  addTest(testSuite, "AddPluginFromArgumentStringEmptyLocation", _testAddPluginFromArgumentStringEmptyLocation);
+  addTest(testSuite, "AddPluginFromArgumentStringNullLocation", _testAddPluginFromArgumentStringNullLocation);
+  addTest(testSuite, "AddPluginFromArgumentString", _testAddPluginFromArgumentString);
+  addTest(testSuite, "AddPluginsFromArgumentString", _testAddPluginsFromArgumentString);
+  addTest(testSuite, "AddPluginWithPresetFromArgumentString", _testAddPluginWithPresetFromArgumentString);
+  addTest(testSuite, "AddPluginFromArgumentStringWithSpaces", _testAddPluginFromArgumentStringWithSpaces);
+  addTest(testSuite, "AddPluginFromArgumentStringWithPresetSpaces", _testAddPluginFromArgumentStringWithPresetSpaces);
   addTest(testSuite, "GetMaximumTailTime", NULL); // _testGetMaximumTailTime);
   addTest(testSuite, "ProcessPluginChainAudio", NULL); // _testProcessPluginChainAudio);
   addTest(testSuite, "ProcessPluginChainMidiEvents", NULL); // _testProcessPluginChainMidiEvents);
