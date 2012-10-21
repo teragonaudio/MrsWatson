@@ -272,7 +272,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
 
   if(pluginChain->numPlugins == 0) {
     logError("No plugins loaded");
-    return RETURN_CODE_MISSING_REQUIRED_OPTION;
+    return RETURN_CODE_INVALID_PLUGIN_CHAIN;
   }
 
   // Copy plugins before they have been opened
