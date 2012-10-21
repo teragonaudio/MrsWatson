@@ -448,9 +448,9 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
     logInfo("Read %ld MIDI events from %s", midiSequence->numMidiEventsProcessed, midiSource->sourceName->data);
   }
   else {
-    logInfo("Read %ld samples from %s", inputSource->numSamplesProcessed, inputSource->sourceName->data);
+    logInfo("Read %ld frames from %s", inputSource->numSamplesProcessed, inputSource->sourceName->data);
   }
-  logInfo("Wrote %ld samples to %s", outputSource->numSamplesProcessed, outputSource->sourceName->data);
+  logInfo("Wrote %ld frames to %s", outputSource->numSamplesProcessed, outputSource->sourceName->data);
 
   // Shut down and free data (will also close open files, plugins, etc)
   logInfo("Shutting down");
