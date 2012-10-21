@@ -79,7 +79,8 @@ void runApplicationTest(const TestEnvironment testEnvironment,
   appendCStringToCharString(arguments, " ");
   appendCStringToCharString(arguments, testArguments);
 
-  printf("  %s: ", testName);
+  fprintf(stderr, "  %s: ", testName);
+  fflush(stderr);
 
   // TODO: Move to FileUtilities
 #if WINDOWS

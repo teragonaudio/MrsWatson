@@ -68,7 +68,7 @@ void runTestCase(void* item, void* extraData) {
   TestCase testCase = (TestCase)item;
   TestSuite testSuite = (TestSuite)extraData;
   int result;
-  printf("  %s: ", testCase->name);
+  fprintf(stderr, "  %s: ", testCase->name);
   // Flush standard output in case the test crashes. That way at least the
   // crashing test name is seen.
   fflush(stdout);
