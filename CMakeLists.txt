@@ -6,7 +6,6 @@ include_directories(${CMAKE_SOURCE_DIR}/source ${CMAKE_SOURCE_DIR}/vendor/local/
 
 # Third-party dependencies ###################################################
 include(ExternalProject)
-add_subdirectory(vendor)
 set(local_INCLUDE ${CMAKE_SOURCE_DIR}/vendor/local/include)
 set(local_LIB ${CMAKE_SOURCE_DIR}/vendor/local/lib)
 
