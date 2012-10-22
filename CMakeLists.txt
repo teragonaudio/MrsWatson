@@ -4,9 +4,11 @@ project(MRSWATSON)
 set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 include_directories(${CMAKE_SOURCE_DIR}/source ${CMAKE_SOURCE_DIR}/vendor/local/include ${CMAKE_SOURCE_DIR}/vendor/vstsdk2.4/pluginterfaces/vst2.x)
 
-# Third-party dependencies
-add_subdirectory(vendor)
+# Third-party dependencies ###################################################
 include(ExternalProject)
+add_subdirectory(vendor)
+set(local_INCLUDE ${CMAKE_SOURCE_DIR}/vendor/local/include)
+set(local_LIB ${CMAKE_SOURCE_DIR}/vendor/local/lib)
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
   set(ARCH_FLAGS "-m32")
@@ -14,29 +16,39 @@ elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
   set(ARCH_FLAGS "-arch i386")
 endif()
 
-if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-  set(libz_CONFIGURE_COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/vendor/zlib/configure --prefix=${CMAKE_SOURCE_DIR}/vendor/local --archs=${ARCH_FLAGS})
-elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-  set(libz_CONFIGURE_COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/vendor/zlib/configure --prefix=${CMAKE_SOURCE_DIR}/vendor/local --archs=${ARCH_FLAGS})
-endif()
+set(generic_CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=<INSTALL_DIR>
+  CFLAGS=${ARCH_FLAGS} CXXFLAGS=${ARCH_FLAGS} LDFLAGS=${ARCH_FLAGS} --enable-static --enable-shared=no)
+
+# zlib #######################################################################
+
+set(libz_CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=${CMAKE_SOURCE_DIR}/vendor/local --archs=${ARCH_FLAGS} --static)
 
 ExternalProject_Add(libz
-  SOURCE_DIR ${CMAKE_SOURCE_DIR}/vendor/zlib
-  INSTALL_DIR ${CMAKE_SOURCE_DIR}/vendor/local
-  CONFIGURE_COMMAND ${libz_CONFIGURE_COMMAND}
+  URL http://zlib.net/zlib-1.2.7.tar.gz
+  URL_MD5 60df6a37c56e7c1366cca812414f7b85
   PREFIX ${CMAKE_SOURCE_DIR}/build/zlib
-  TMP_DIR ${CMAKE_SOURCE_DIR}/build/zlib/tmp
+  CONFIGURE_COMMAND ${libz_CONFIGURE_COMMAND}
+  INSTALL_DIR ${CMAKE_SOURCE_DIR}/vendor/local
   BUILD_COMMAND ${MAKE}
   BUILD_IN_SOURCE 1
 )
 
-if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-  set(libaudiofile_CONFIGURE_FLAGS "<SOURCE_DIR>/configure --prefix=<INSTALL_DIR> CFLAGS=\"-m32\" CXXFLAGS=\"-m32\" LDFLAGS=\"-m32\" --enable-static")
-elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-  set(libaudiofile_CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=<INSTALL_DIR> CFLAGS=${ARCH_FLAGS} CXXFLAGS=${ARCH_FLAGS} LDFLAGS=${ARCH_FLAGS} --enable-static)
-endif()
+# libiconv ####################################################################
 
+ExternalProject_Add(libiconv
+  URL http://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.14.tar.gz
+  URL_MD5 e34509b1623cec449dfeb73d7ce9c6c6
+  PREFIX ${CMAKE_SOURCE_DIR}/build/libiconv
+  CONFIGURE_COMMAND ${generic_CONFIGURE_COMMAND}
+  INSTALL_DIR ${CMAKE_SOURCE_DIR}/vendor/local
+  BUILD_COMMAND ${MAKE}
+  BUILD_IN_SOURCE 1
+)
+
+
+# libaudiofile ################################################################
 # libaudiofile doesn't make cleanly, so this must be done by hand
+
 #ExternalProject_Add(libaudiofile
 #  SOURCE_DIR ${CMAKE_SOURCE_DIR}/vendor/audiofile
 #  INSTALL_DIR ${CMAKE_SOURCE_DIR}/vendor/local
@@ -47,31 +59,25 @@ endif()
 #  BUILD_IN_SOURCE 1
 #)
 
-set(local_INCLUDE ${CMAKE_SOURCE_DIR}/vendor/local/include)
-set(local_LIB ${CMAKE_SOURCE_DIR}/vendor/local/lib)
+# libarchive ##################################################################
 
-if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-  set(libarchive_CFLAGS "${ARCH_FLAGS} -I${local_INCLUDE}")
-  set(libarchive_LDFLAGS "${ARCH_FLAGS} -I${local_LIB}")
-  set(libarchive_CONFIGURE_COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/vendor/libarchive/configure --prefix=${CMAKE_SOURCE_DIR}/vendor/local CFLAGS=${libarchive_CFLAGS} CXXFLAGS=${libarchive_CFLAGS} LDFLAGS=${libarchive_LDFLAGS} --enable-static --without-lzmadec --without-lzma)
-elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-  set(libarchive_CFLAGS "${ARCH_FLAGS} -I${local_INCLUDE}")
-  set(libarchive_LDFLAGS "${ARCH_FLAGS} -I${local_LIB}")
-  set(libarchive_CONFIGURE_COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/vendor/libarchive/configure --prefix=${CMAKE_SOURCE_DIR}/vendor/local CFLAGS=${libarchive_CFLAGS} CXXFLAGS=${libarchive_CFLAGS} LDFLAGS=${libarchive_LDFLAGS} --enable-static --without-lzmadec --without-lzma)
-endif()
+set(libarchive_CFLAGS "${ARCH_FLAGS} -I${local_INCLUDE}")
+set(libarchive_LDFLAGS "${ARCH_FLAGS} -L${local_LIB}")
+set(libarchive_CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=<INSTALL_DIR> CFLAGS=${libarchive_CFLAGS} CXXFLAGS=${libarchive_CFLAGS} LDFLAGS=${libarchive_LDFLAGS} --enable-static --enable-shared=no --without-lzmadec --without-lzma)
 
 ExternalProject_Add(libarchive
-  DEPENDS libz
-  SOURCE_DIR ${CMAKE_SOURCE_DIR}/vendor/libarchive
-  INSTALL_DIR ${CMAKE_SOURCE_DIR}/vendor/local
-  CONFIGURE_COMMAND ${libarchive_CONFIGURE_COMMAND}
+  DEPENDS libz libiconv
+  URL https://github.com/downloads/libarchive/libarchive/libarchive-3.0.4.tar.gz
+  URL_MD5 af443ca9a10ddbcbf00f7ae34ca7fc16
   PREFIX ${CMAKE_SOURCE_DIR}/build/libarchive
-  TMP_DIR ${CMAKE_SOURCE_DIR}/build/libarchive/tmp
+  CONFIGURE_COMMAND ${libarchive_CONFIGURE_COMMAND}
+  INSTALL_DIR ${CMAKE_SOURCE_DIR}/vendor/local
   BUILD_COMMAND ${MAKE}
   BUILD_IN_SOURCE 1
 )
 
-# Compiler flags for each supported platform
+# MrsWatson ###################################################################
+
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
   add_definitions(-DLINUX=1)
   set(CMAKE_C_FLAGS "-fmessage-length=0 -m32 -pipe -Wno-trigraphs -std=c99 -O3 -Wmissing-field-initializers -Wall -Wreturn-type -Wunused-variable -pedantic -Wshadow -Wsign-compare -D__cdecl=\"\"")
