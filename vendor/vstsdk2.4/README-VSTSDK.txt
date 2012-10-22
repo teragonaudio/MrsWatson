@@ -3,5 +3,5 @@ source code of this project.  You must download it separately here:
 
 http://www.steinberg.net/en/company/developer.html
 
-Uncompress the VST SDK zipfile, and then copy the "vstsdk2.4" directory
-here.
+Uncompress the VST SDK zipfile, and then copy the contents of the
+"vstsdk2.4" directory here.
