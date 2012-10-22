@@ -71,7 +71,7 @@ void initializeErrorReporter(ErrorReporter errorReporter) {
   snprintf(errorReporter->reportName->data, errorReporter->reportName->capacity,
     "MrsWatson Report %s", ctime(&now));
   // Trim the final newline character from this string if it exists
-  length = strnlen(errorReporter->reportName->data, errorReporter->reportName->capacity);
+  length = strlen(errorReporter->reportName->data);
   if(errorReporter->reportName->data[length - 1] == '\n') {
     errorReporter->reportName->data[length - 1] = '\0';
     length--;
