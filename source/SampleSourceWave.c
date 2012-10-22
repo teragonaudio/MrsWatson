@@ -48,7 +48,9 @@ static boolByte _readWaveFileInfo(const char* filename, SampleSourcePcmData extr
   unsigned int itemsRead;
   unsigned int audioFormat;
   unsigned int byteRate;
+  unsigned int expectedByteRate;
   unsigned int blockAlign;
+  unsigned int expectedBlockAlign;
 
   if(readNextChunk(extraData->fileHandle, chunk, false)) {
     if(!isChunkIdEqualTo(chunk, "RIFF")) {
@@ -96,11 +98,9 @@ static boolByte _readWaveFileInfo(const char* filename, SampleSourcePcmData extr
     chunkOffset += 4;
     setSampleRate(extraData->sampleRate);
 
-    // TODO: Error checking
     byteRate = convertByteArrayToUnsignedInt(chunk->data + chunkOffset);
     chunkOffset += 4;
 
-    // TODO: Error checking
     blockAlign = convertByteArrayToUnsignedShort(chunk->data + chunkOffset);
     chunkOffset += 2;
 
@@ -114,6 +114,16 @@ static boolByte _readWaveFileInfo(const char* filename, SampleSourcePcmData extr
       logUnsupportedFeature("Bitrates lower than 16");
       freeRiffChunk(chunk);
       return false;
+    }
+
+    expectedByteRate = extraData->sampleRate * extraData->numChannels * extraData->bitsPerSample / 8;
+    if(expectedByteRate != byteRate) {
+      logWarn("Possibly invalid bitrate %d, expected %d", byteRate, expectedByteRate);
+    }
+
+    expectedBlockAlign = extraData->numChannels * extraData->bitsPerSample / 8;
+    if(expectedBlockAlign != blockAlign) {
+      logWarn("Possibly invalid block align %d, expected %d", blockAlign, expectedBlockAlign);
     }
   }
   else {
