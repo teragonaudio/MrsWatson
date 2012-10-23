@@ -1,6 +1,6 @@
 //
-// ProgramOption.h - MrsWatson
-// Created by Nik Reiman on 1/2/12.
+// MrsWatsonOptions.h - MrsWatson
+// Created by Nik Reiman on 10/23/12.
 // Copyright (c) 2012 Teragon Audio. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -25,49 +25,43 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include "CharString.h"
-#include "Types.h"
+#ifndef MrsWatson_MrsWatsonOptions_h
+#define MrsWatson_MrsWatsonOptions_h
 
-#ifndef MrsWatson_ProgramOption_h
-#define MrsWatson_ProgramOption_h
+#include "ProgramOption.h"
 
-#define NO_DEFAULT_VALUE -1
-
+// Runtime options
 typedef enum {
-  ARGUMENT_TYPE_NONE,
-  ARGUMENT_TYPE_OPTIONAL,
-  ARGUMENT_TYPE_REQUIRED
-} ProgramOptionArgumentType;
+  OPTION_BLOCKSIZE,
+  OPTION_CHANNELS,
+  OPTION_COLOR_LOGGING,
+  OPTION_COLOR_TEST,
+  OPTION_DISPLAY_INFO,
+  OPTION_ERROR_REPORT,
+  OPTION_HELP,
+  OPTION_INPUT_SOURCE,
+  OPTION_LIST_FILE_TYPES,
+  OPTION_LIST_PLUGINS,
+  OPTION_LOG_FILE,
+  OPTION_MIDI_SOURCE,
+  OPTION_OPTIONS,
+  OPTION_OUTPUT_SOURCE,
+  OPTION_PLUGIN,
+  OPTION_PLUGIN_ROOT,
+  OPTION_QUIET,
+  OPTION_SAMPLE_RATE,
+  OPTION_TAIL_TIME,
+  OPTION_TEMPO,
+  OPTION_TIME_DIVISION,
+  OPTION_TIME_SIGNATURE_TOP,
+  OPTION_TIME_SIGNATURE_BOTTOM,
+  OPTION_VERBOSE,
+  OPTION_VERSION,
+  OPTION_ZEBRA_SIZE,
+  NUM_OPTIONS
+} ProgramOptionIndex;
 
-typedef struct {
-  int index;
-  CharString name;
-  CharString help;
-  int helpDefaultValue;
-  boolByte hasShortForm;
-
-  ProgramOptionArgumentType argumentType;
-  CharString argument;
-  boolByte enabled;
-} ProgramOptionMembers;
-
-typedef ProgramOptionMembers* ProgramOption;
-
-typedef struct {
-  ProgramOption* options;
-  int numOptions;
-} ProgramOptionsMembers;
-typedef ProgramOptionsMembers* ProgramOptions;
-
-void addNewProgramOption(const ProgramOptions programOptions, const int optionIndex,
-  const char* name, const char* help, boolByte hasShortForm, ProgramOptionArgumentType argumentType,
-  int defaultValue);
-boolByte parseCommandLine(ProgramOptions programOptions, int argc, char** argv);
-ProgramOption findProgramOptionFromString(const ProgramOptions programOptions, const CharString string);
-
-void printProgramOptions(const ProgramOptions programOptions, boolByte withFullHelp, int indentSize);
-void printProgramOption(const ProgramOption programOption, boolByte withFullHelp, int indentSize, int initialIndent);
-
-void freeProgramOptions(ProgramOptions programOptions);
+ProgramOptions newMrsWatsonOptions(void);
+void printProgramQuickHelp(const char* argvName);
 
 #endif

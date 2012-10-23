@@ -29,11 +29,11 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "MrsWatsonOptions.h"
 #include "PlatformUtilities.h"
 #include "EventLogger.h"
 #include "MrsWatson.h"
 #include "BuildInfo.h"
-#include "ProgramOption.h"
 #include "SampleSource.h"
 #include "PluginChain.h"
 #include "StringUtilities.h"
@@ -103,7 +103,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   initEventLogger();
   initAudioSettings();
   initAudioClock();
-  programOptions = newProgramOptions();
+  programOptions = newMrsWatsonOptions();
 
   if(!parseCommandLine(programOptions, argc, argv)) {
     printf("Run %s --options to see possible options\n", getFileBasename(argv[0]));
