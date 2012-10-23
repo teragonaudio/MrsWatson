@@ -165,6 +165,16 @@ void buildAbsolutePath(const CharString directory, const CharString file, const 
   }
 }
 
+void convertRelativePathToAbsolute(const CharString file, CharString outString) {
+  const char* currentDirectory;
+#if UNIX
+  currentDirectory = getenv("PWD");
+#elif WINDOWS
+  // TODO: Get current directory
+#endif
+  snprintf(outString->data, outString->capacity, "%s%c%s", currentDirectory, PATH_DELIMITER, file->data);
+}
+
 boolByte isAbsolutePath(const CharString path) {
 #if WINDOWS
   if(path->capacity > 3) {
