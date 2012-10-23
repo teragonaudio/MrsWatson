@@ -1,8 +1,15 @@
 #include "TestRunner.h"
 #include "FileUtilities.h"
 
-static const char* TEST_FILENAME = "fileExistsTest.txt";
-static const char* ABSOLUTE_TEST_FILENAME = "/tmp/fileExistsTest.txt";
+#include <stdio.h>
+#include <stdlib.h>
+#if UNIX
+#include <sys/stat.h>
+#include <sys/types.h>
+#endif
+
+static const char* TEST_FILENAME = "fileUtilitiestTest.txt";
+static const char* ABSOLUTE_TEST_FILENAME = "/tmp/fileUtilitiestTest.txt";
 
 static int _testFileExists(void) {
   FILE *fp = fopen(TEST_FILENAME, "w");
@@ -23,15 +30,46 @@ static int _testInvalidFileExists(void) {
   return 0;
 }
 
+static CharString _fileUtilitiesMakeTempDir(void) {
+  CharString tempDirName = newCharString();
+#if UNIX
+  snprintf(tempDirName->data, tempDirName->capacity, "/tmp/mrswatsontest-XXXXXX");
+  mktemp(tempDirName->data);
+  mkdir(tempDirName->data, 0755);
+#else
+#endif
+  return tempDirName;
+}
+
 static int _testCopyFileToDirectory(void) {
+  CharString tempDir = _fileUtilitiesMakeTempDir();
+  CharString tempFile = newCharString();
+  FILE *fp = fopen(TEST_FILENAME, "w");
+  assertNotNull(fp);
+  fclose(fp);
+  convertRelativePathToAbsolute(newCharStringWithCString(TEST_FILENAME), tempFile);
+  assert(copyFileToDirectory(tempFile, tempDir));
+  removeDirectory(tempDir);
+  unlink(TEST_FILENAME);
   return 0;
 }
 
 static int _testCopyInvalidFileToDirectory(void) {
+  CharString tempDir = _fileUtilitiesMakeTempDir();
+  convertRelativePathToAbsolute(newCharStringWithCString(TEST_FILENAME), newCharStringWithCString("invalid"));
+  assertFalse(copyFileToDirectory(newCharStringWithCString("invalid"), tempDir));
+  removeDirectory(tempDir);
   return 0;
 }
 
 static int _testCopyFileToInvalidDirectory(void) {
+  CharString tempFile = newCharString();
+  FILE *fp = fopen(TEST_FILENAME, "w");
+  assertNotNull(fp);
+  fclose(fp);
+  convertRelativePathToAbsolute(newCharStringWithCString(TEST_FILENAME), tempFile);
+  assertFalse(copyFileToDirectory(tempFile, newCharStringWithCString("invalid")));
+  unlink(TEST_FILENAME);
   return 0;
 }
 
@@ -104,9 +142,9 @@ TestSuite addFileUtilitiesTests(void) {
   addTest(testSuite, "FileExists", _testFileExists);
   addTest(testSuite, "NullFileExists", _testNullFileExists);
   addTest(testSuite, "InvalidFileExists", _testInvalidFileExists);
-  addTest(testSuite, "CopyFileToDirectory", NULL); // _testCopyFileToDirectory);
-  addTest(testSuite, "CopyInvalidFileToDirectory", NULL); // _testCopyInvalidFileToDirectory);
-  addTest(testSuite, "CopyFileToInvalidDirectory", NULL); // _testCopyFileToInvalidDirectory);
+  addTest(testSuite, "CopyFileToDirectory", _testCopyFileToDirectory);
+  addTest(testSuite, "CopyInvalidFileToDirectory", _testCopyInvalidFileToDirectory);
+  addTest(testSuite, "CopyFileToInvalidDirectory", _testCopyFileToInvalidDirectory);
 
   addTest(testSuite, "ListDirectory", NULL); // _testListDirectory);
   addTest(testSuite, "ListEmptyDirectory", NULL); // _testListEmptyDirectory);
