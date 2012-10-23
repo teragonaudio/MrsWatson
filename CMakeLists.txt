@@ -15,8 +15,7 @@ elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
   set(ARCH_FLAGS "-arch i386")
 endif()
 
-set(generic_CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=<INSTALL_DIR>
-  CFLAGS=${ARCH_FLAGS} CXXFLAGS=${ARCH_FLAGS} LDFLAGS=${ARCH_FLAGS} --enable-static --enable-shared=no)
+set(generic_CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=<INSTALL_DIR> CFLAGS=${ARCH_FLAGS} CXXFLAGS=${ARCH_FLAGS} LDFLAGS=${ARCH_FLAGS} --enable-static --enable-shared=no)
 
 # zlib #######################################################################
 
