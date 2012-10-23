@@ -33,8 +33,11 @@
 #if WINDOWS
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
-#elif MACOSX || LINUX
+#elif UNIX
 #include <dirent.h>
+#if MACOSX
+#include <CoreServices/CoreServices.h>
+#endif
 #endif
 
 PlatformType getPlatformType() {
@@ -49,17 +52,22 @@ PlatformType getPlatformType() {
 #endif
 }
 
-const char* getPlatformName(void) {
-  switch(getPlatformType()) {
-    case PLATFORM_MACOSX:
-      return "Mac OS X";
-    case PLATFORM_LINUX:
-      return "Linux";
-    case PLATFORM_WINDOWS:
-      return "Windows";
-    default:
-      return "Unsupported platform";
-  }
+CharString getPlatformName(void) {
+  CharString result = newCharStringWithCapacity(STRING_LENGTH_SHORT);
+#if MACOSX
+  SInt32 major, minor, bugfix;
+  Gestalt(gestaltSystemVersionMajor, &major);
+  Gestalt(gestaltSystemVersionMinor, &minor);
+  Gestalt(gestaltSystemVersionBugFix, &bugfix);
+  snprintf(result->data, result->capacity, "Mac OSX %ld.%ld.%ld", major, minor, bugfix);
+#elif LINUX
+  snprintf(result->data, result->capacity, "Linux");
+#elif WINDOWS
+  snprintf(result->data, result->capacity, "Windows");
+#else
+  copyToCharString(result, "Unsupported platform");
+#endif
+  return result;
 }
 
 // TODO: const char* getPlatformVersion();

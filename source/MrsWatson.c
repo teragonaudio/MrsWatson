@@ -261,7 +261,9 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   fillVersionString(versionString);
   logInfo("%s initialized, build %ld", versionString->data, buildDatestamp());
   freeCharString(versionString);
-  logInfo("Host platform is %s", getPlatformName());
+  versionString = getPlatformName();
+  logInfo("Host platform is %s", versionString->data);
+  freeCharString(versionString);
 
   // Construct plugin chain
   if(!addPluginsFromArgumentString(pluginChain, programOptions->options[OPTION_PLUGIN]->argument, pluginSearchRoot)) {
