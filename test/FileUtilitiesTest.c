@@ -101,6 +101,26 @@ static int _testBuildAbsolutePathWithFileExtension(void) {
   return 0;
 }
 
+static int _testBuildAbsolutePathEmptyPath(void) {
+  return 0;
+}
+
+static int _testBuildAbsolutePathEmptyFile(void) {
+  return 0;
+}
+
+static int _testConvertRelativePathToAbsolute(void) {
+  return 0;
+}
+
+static int _testConvertRelativePathToAbsoluteAlreadyAbsolute(void) {
+  return 0;
+}
+
+static int _testConvertRelativePathToAbsoluteEmpty(void) {
+  return 0;
+}
+
 static int _testIsAbsolutePath(void) {
   assert(isAbsolutePath(newCharStringWithCString(ABSOLUTE_TEST_FILENAME)));
   return 0;
@@ -154,6 +174,11 @@ TestSuite addFileUtilitiesTests(void) {
 
   addTest(testSuite, "BuildAbsolutePath", NULL); // _testBuildAbsolutePath);
   addTest(testSuite, "BuildAbsolutePathWithFileExtension", NULL); // _testBuildAbsolutePathWithFileExtension);
+  addTest(testSuite, "BuildAbsolutePathEmptyPath", NULL); // _testBuildAbsolutePathEmptyPath);
+  addTest(testSuite, "BuildAbsolutePathEmptyFile", NULL); // _testBuildAbsolutePathEmptyFile);
+  addTest(testSuite, "ConvertRelativePathToAbsolute", NULL); // _testConvertRelativePathToAbsolute);
+  addTest(testSuite, "ConvertRelativePathToAbsoluteAlreadyAbsolute", NULL); // _testConvertRelativePathToAbsoluteAlreadyAbsolute);
+  addTest(testSuite, "ConvertRelativePathToAbsoluteEmpty", NULL); // _testConvertRelativePathToAbsoluteEmpty);
   addTest(testSuite, "IsAbsolutePath", _testIsAbsolutePath);
   addTest(testSuite, "IsInvalidFileAbsolutePath", _testIsInvalidFileAbsolutePath);
 
