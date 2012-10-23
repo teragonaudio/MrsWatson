@@ -45,22 +45,22 @@
 #include "MidiSource.h"
 #include "SampleSourcePcm.h"
 
-static void prettyPrintTime(CharString outString, unsigned long milliseconds) {
+static void prettyPrintTime(CharString outString, double milliseconds) {
   int minutes;
   double seconds;
 
   clearCharString(outString);
   if(milliseconds < 1000) {
-    snprintf(outString->data, outString->capacity, "%ldms", milliseconds);
+    snprintf(outString->data, outString->capacity, "%.2fms", milliseconds);
   }
   else if(milliseconds < 60 * 1000) {
-    seconds = (double)milliseconds / 1000.0;
-    snprintf(outString->data, outString->capacity, "%2.3gsec", seconds);
+    seconds = milliseconds / 1000.0;
+    snprintf(outString->data, outString->capacity, "%.2fsec", seconds);
   }
   else {
-    seconds = (double)milliseconds / 1000.0;
+    seconds = milliseconds / 1000.0;
     minutes = (int)seconds % 60;
-    snprintf(outString->data, outString->capacity, "%d:%2.3gsec", minutes, seconds);
+    snprintf(outString->data, outString->capacity, "%d:%.2gsec", minutes, seconds);
   }
 }
 
@@ -260,7 +260,9 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   versionString = newCharString();
   fillVersionString(versionString);
   logInfo("%s initialized, build %ld", versionString->data, buildDatestamp());
+  // Recycle versionString to use for the platform name
   freeCharString(versionString);
+
   versionString = getPlatformName();
   logInfo("Host platform is %s", versionString->data);
   freeCharString(versionString);
@@ -451,11 +453,11 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
     prettyPrintTime(totalTimeString, totalProcessingTime);
     logInfo("Total processing time %s, approximate breakdown by component:", totalTimeString->data);
     for(i = 0; i < pluginChain->numPlugins; i++) {
-      timePercentage = 100.0f * ((double)taskTimer->totalTaskTimes[i]) / ((double)totalProcessingTime);
+      timePercentage = 100.0f * taskTimer->totalTaskTimes[i] / totalProcessingTime;
       prettyPrintTime(totalTimeString, taskTimer->totalTaskTimes[i]); 
       logInfo("%s: %s, %2.1f%%", pluginChain->plugins[i]->pluginName->data, totalTimeString->data, timePercentage);
     }
-    timePercentage = 100.0f * ((double)taskTimer->totalTaskTimes[hostTaskId]) / ((double)totalProcessingTime);
+    timePercentage = 100.0f * taskTimer->totalTaskTimes[hostTaskId] / totalProcessingTime;
     prettyPrintTime(totalTimeString, taskTimer->totalTaskTimes[hostTaskId]);
     logInfo("%s: %s, %2.1f%%", PROGRAM_NAME, totalTimeString->data, timePercentage);
   }
