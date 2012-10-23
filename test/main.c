@@ -16,6 +16,7 @@
 #include "PlatformUtilities.h"
 #include "MrsWatson.h"
 #include "ApplicationRunner.h"
+#include "MrsWatsonOptions.h"
 
 extern TestSuite findTestSuite(char* testSuiteName);
 extern TestCase findTestCase(TestSuite testSuite, char* testName);
@@ -59,9 +60,6 @@ static ProgramOptions newTestProgramOptions(void) {
   addNewProgramOption(programOptions, OPTION_TEST_HELP, "help",
     "Print full program help (this screen), or just the help for a single argument.",
     true, ARGUMENT_TYPE_OPTIONAL, NO_DEFAULT_VALUE);
-  addNewProgramOption(programOptions, OPTION_TEST_OPTIONS, "options",
-    "Show program options and their default values.",
-    false, ARGUMENT_TYPE_NONE, NO_DEFAULT_VALUE);
 
   return programOptions;
 }
@@ -85,26 +83,20 @@ int main(int argc, char* argv[]) {
 
   programOptions = newTestProgramOptions();
   if(!parseCommandLine(programOptions, argc, argv)) {
-    printf("Run %s --options to see possible options\n", getFileBasename(argv[0]));
     printf("Or run %s --help (option) to see help for a single option\n", getFileBasename(argv[0]));
     return -1;
   }
 
   if(programOptions->options[OPTION_TEST_HELP]->enabled) {
-    printProgramQuickHelp(argv[0]);
+    printf("Run with '--help full' to see extended help for all options.\n");
     if(isCharStringEmpty(programOptions->options[OPTION_TEST_HELP]->argument)) {
       printf("All options, where <argument> is required and [argument] is optional");
-      printProgramOptions(programOptions, true, DEFAULT_INDENT_SIZE);
+      printProgramOptions(programOptions, false, DEFAULT_INDENT_SIZE);
     }
     else {
-      printf("Help for option '%s':\n", programOptions->options[OPTION_TEST_HELP]->argument->data);
-      printProgramOption(findProgramOptionFromString(programOptions, programOptions->options[OPTION_HELP]->argument), true, DEFAULT_INDENT_SIZE, 0);
+      printMrsWatsonQuickstart(argv[0]);
+      printProgramOptions(programOptions, true, DEFAULT_INDENT_SIZE);
     }
-    return -1;
-  }
-  else if(programOptions->options[OPTION_TEST_OPTIONS]->enabled) {
-    printf("Recognized options and their default values:\n");
-    printProgramOptions(programOptions, false, DEFAULT_INDENT_SIZE);
     return -1;
   }
   else if(programOptions->options[OPTION_TEST_PRINT_TESTS]->enabled) {

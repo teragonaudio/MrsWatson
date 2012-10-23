@@ -44,7 +44,6 @@ typedef enum {
   OPTION_LIST_PLUGINS,
   OPTION_LOG_FILE,
   OPTION_MIDI_SOURCE,
-  OPTION_OPTIONS,
   OPTION_OUTPUT_SOURCE,
   OPTION_PLUGIN,
   OPTION_PLUGIN_ROOT,
@@ -62,6 +61,6 @@ typedef enum {
 } ProgramOptionIndex;
 
 ProgramOptions newMrsWatsonOptions(void);
-void printProgramQuickHelp(const char* argvName);
+void printMrsWatsonQuickstart(const char* argvName);
 
 #endif

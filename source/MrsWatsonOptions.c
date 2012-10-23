@@ -68,7 +68,8 @@ If attached to a terminal device, color is used automatically unless 'none' is g
     false, ARGUMENT_TYPE_NONE, NO_DEFAULT_VALUE);
 
   addNewProgramOption(programOptions, OPTION_HELP, "help",
-    "Print full program help (this screen), or just the help for a single argument.",
+    "Prints a summary of options and their default settings. Can be used with \
+'full' as an argument to print extended help for all options.",
     true, ARGUMENT_TYPE_OPTIONAL, NO_DEFAULT_VALUE);
 
   addNewProgramOption(programOptions, OPTION_INPUT_SOURCE, "input",
@@ -87,10 +88,6 @@ If attached to a terminal device, color is used automatically unless 'none' is g
   addNewProgramOption(programOptions, OPTION_MIDI_SOURCE, "midi-file",
     "MIDI file to read events from. Required if processing an instrument plugin.",
     true, ARGUMENT_TYPE_REQUIRED, NO_DEFAULT_VALUE);
-
-  addNewProgramOption(programOptions, OPTION_OPTIONS, "options",
-    "Show program options and their default values.",
-    false, ARGUMENT_TYPE_NONE, NO_DEFAULT_VALUE);
 
   addNewProgramOption(programOptions, OPTION_OUTPUT_SOURCE, "output",
     "Output source to write processed data to, where the file type is determined from the extension. Run with \
@@ -157,8 +154,9 @@ value will be used and added to <argument>.",
   return programOptions;
 }
 
-void printProgramQuickHelp(const char* argvName) {
+void printMrsWatsonQuickstart(const char* argvName) {
   const char *programBasename = getFileBasename(argvName);
+  printf("Run with '--help full' to see extended help for all options.\n");
   printf("Quickstart for effects: %s -p <plugin> -i <input file> -o <output>\n", programBasename);
   printf("Quickstart for instruments: %s -p <name> -m <midi file> -o <output>\n", programBasename);
   printf("\n");

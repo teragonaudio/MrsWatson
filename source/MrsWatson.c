@@ -106,8 +106,8 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   programOptions = newMrsWatsonOptions();
 
   if(!parseCommandLine(programOptions, argc, argv)) {
-    printf("Run %s --options to see possible options\n", getFileBasename(argv[0]));
-    printf("Or run %s --help (option) to see help for a single option\n", getFileBasename(argv[0]));
+    printf("Run '%s --help' to see possible options\n", getFileBasename(argv[0]));
+    printf("Or run '%s --help full' to see extended help for all options\n", getFileBasename(argv[0]));
     return RETURN_CODE_INVALID_ARGUMENT;
   }
 
@@ -115,25 +115,18 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   // of these and then exit right away.
   if(argc == 1) {
     printf("%s needs at least a plugin, input source, and output source to run.\n\n", PROGRAM_NAME);
-    printProgramQuickHelp(argv[0]);
-    printf("Run with --options to see all options, or with --help for full help\n");
+    printMrsWatsonQuickstart(argv[0]);
     return RETURN_CODE_NOT_RUN;
   }
   else if(programOptions->options[OPTION_HELP]->enabled) {
-    printProgramQuickHelp(argv[0]);
+    printMrsWatsonQuickstart(argv[0]);
     if(isCharStringEmpty(programOptions->options[OPTION_HELP]->argument)) {
       printf("All options, where <argument> is required and [argument] is optional:\n");
-      printProgramOptions(programOptions, true, DEFAULT_INDENT_SIZE);
+      printProgramOptions(programOptions, false, DEFAULT_INDENT_SIZE);
     }
     else {
-      printf("Help for option '%s':\n", programOptions->options[OPTION_HELP]->argument->data);
-      printProgramOption(findProgramOptionFromString(programOptions, programOptions->options[OPTION_HELP]->argument), true, DEFAULT_INDENT_SIZE, 0);
+      printProgramOptions(programOptions, true, DEFAULT_INDENT_SIZE);
     }
-    return RETURN_CODE_NOT_RUN;
-  }
-  else if(programOptions->options[OPTION_OPTIONS]->enabled) {
-    printf("Recognized options and their default values:\n");
-    printProgramOptions(programOptions, false, DEFAULT_INDENT_SIZE);
     return RETURN_CODE_NOT_RUN;
   }
   else if(programOptions->options[OPTION_VERSION]->enabled) {
