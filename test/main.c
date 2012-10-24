@@ -8,6 +8,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+
 #include "main.h"
 #include "ProgramOption.h"
 #include "TestRunner.h"
@@ -66,8 +68,6 @@ static ProgramOptions newTestProgramOptions(void) {
 
 int main(int argc, char* argv[]) {
   ProgramOptions programOptions;
-  int testsPassed = 0;
-  int testsFailed = 0;
   int totalTestsFailed = 0;
   CharString testSuiteToRun;
   CharString mrsWatsonPath;
@@ -159,9 +159,8 @@ int main(int argc, char* argv[]) {
 
   if(runInternalTests) {
     printf("=== Internal tests ===\n");
-    testsPassed = testsFailed = 0;
     runInternalTestSuite();
-    totalTestsFailed = testsFailed;
+    totalTestsFailed = 0;
   }
 
   mrsWatsonPath = newCharString();
@@ -190,7 +189,6 @@ int main(int argc, char* argv[]) {
 
   if(runApplicationTests) {
     printf("\n=== Application tests ===\n");
-    testsPassed = testsFailed = 0;
     TestEnvironment testEnvironment = newTestEnvironment(mrsWatsonPath->data, resourcesPath->data);
     totalTestsFailed += runApplicationTestSuite(testEnvironment);
   }
