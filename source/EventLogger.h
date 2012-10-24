@@ -58,6 +58,7 @@ void initEventLogger(void);
 void fillVersionString(CharString outString);
 
 void setLogLevel(LogLevel logLevel);
+void setLogLevelFromString(const CharString logLevelString);
 void setLogFile(const CharString logFileName);
 void setLoggingColorEnabled(boolByte useColor);
 void setLoggingColorEnabledWithString(const CharString colorSchemeName);

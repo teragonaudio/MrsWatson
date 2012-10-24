@@ -93,6 +93,24 @@ void setLogLevel(LogLevel logLevel) {
   eventLogger->logLevel = logLevel;
 }
 
+void setLogLevelFromString(const CharString logLevelString) {
+  if(isCharStringEqualToCString(logLevelString, "debug", true)) {
+    setLogLevel(LOG_DEBUG);
+  }
+  else if(isCharStringEqualToCString(logLevelString, "info", true)) {
+    setLogLevel(LOG_INFO);
+  }
+  else if(isCharStringEqualToCString(logLevelString, "warn", true)) {
+    setLogLevel(LOG_WARN);
+  }
+  else if(isCharStringEqualToCString(logLevelString, "error", true)) {
+    setLogLevel(LOG_ERROR);
+  }
+  else {
+    logCritical("Invalid log level '%s', see '--help full' for valid arguments", logLevelString->data);
+  }
+}
+
 void setLogFile(const CharString logFileName) {
   EventLogger eventLogger = _getEventLoggerInstance();
   eventLogger->logFile = fopen(logFileName->data, "a");

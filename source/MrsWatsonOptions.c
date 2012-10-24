@@ -85,6 +85,11 @@ If attached to a terminal device, color is used automatically unless 'none' is g
     "Save logging output to the given file instead of the terminal's standard error.",
     false, ARGUMENT_TYPE_REQUIRED, NO_DEFAULT_VALUE);
 
+  addNewProgramOption(programOptions, OPTION_LOG_LEVEL, "log-level",
+    "Logging level to use. Options include: debug, info (default), warn, error. \
+Critical errors are always logged.",
+    false, ARGUMENT_TYPE_REQUIRED, NO_DEFAULT_VALUE);
+
   addNewProgramOption(programOptions, OPTION_MIDI_SOURCE, "midi-file",
     "MIDI file to read events from. Required if processing an instrument plugin.",
     true, ARGUMENT_TYPE_REQUIRED, NO_DEFAULT_VALUE);

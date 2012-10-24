@@ -174,6 +174,9 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   else if(programOptions->options[OPTION_QUIET]->enabled) {
     setLogLevel(LOG_ERROR);
   }
+  else if(programOptions->options[OPTION_LOG_LEVEL]->enabled) {
+    setLogLevelFromString(programOptions->options[OPTION_LOG_LEVEL]->argument);
+  }
   if(programOptions->options[OPTION_COLOR_LOGGING]->enabled) {
     // If --color was given but with no string argument, then force color. Otherwise
     // colors will be provided automatically anyways.
