@@ -27,8 +27,12 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/stat.h>
+
 #include "PlatformUtilities.h"
+#include "FileUtilities.h"
+#include "EventLogger.h"
 
 #if WINDOWS
 #define WIN32_LEAN_AND_MEAN
@@ -37,6 +41,9 @@
 #include <dirent.h>
 #if MACOSX
 #include <CoreServices/CoreServices.h>
+#elif LINUX
+#define LSB_DISTRIBUTION "DISTRIB_DESCRIPTION"
+#include <sys/utsname.h>
 #endif
 #endif
 
@@ -61,7 +68,53 @@ CharString getPlatformName(void) {
   Gestalt(gestaltSystemVersionBugFix, &bugfix);
   snprintf(result->data, result->capacity, "Mac OSX %ld.%ld.%ld", major, minor, bugfix);
 #elif LINUX
-  snprintf(result->data, result->capacity, "Linux");
+  CharString line = newCharString();
+  char *lineDelimiter = NULL;
+  char *distributionStringStart = NULL;
+  char *distributionStringEnd = NULL;
+  CharString distributionName = newCharString();
+  struct utsname systemInfo;
+  FILE *lsbRelease = NULL;
+
+  if(uname(&systemInfo) != 0) {
+    logWarn("Could not get system information from uname");
+    copyToCharString(result, "Linux (Unknown platform)");
+    freeCharString(distributionName);
+    freeCharString(line);
+    return result;
+  }
+  copyToCharString(distributionName, "(Unknown distribution)");
+
+  if(fileExists("/etc/lsb-release")) {
+    lsbRelease = fopen("/etc/lsb-release", "r");
+    if(lsbRelease != NULL) {
+      while(fgets(line->data, line->capacity, lsbRelease) != NULL) {
+        lineDelimiter = strchr(line->data, '=');
+        if(lineDelimiter != NULL) {
+          if(!strncmp(line->data, LSB_DISTRIBUTION, strlen(LSB_DISTRIBUTION))) {
+            distributionStringStart = strchr(lineDelimiter + 1, '"');
+            if(distributionStringStart != NULL) {
+              distributionStringEnd = strchr(distributionStringStart + 1, '"');
+              if(distributionStringEnd != NULL) {
+                clearCharString(distributionName);
+                strncpy(distributionName->data, distributionStringStart + 1,
+                  distributionStringEnd - distributionStringStart - 1);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  if(isCharStringEmpty(result)) {
+    snprintf(result->data, result->capacity, "Linux %s, kernel %s %s",
+      distributionName->data, systemInfo.release, systemInfo.machine);
+  }
+
+  fclose(lsbRelease);
+  freeCharString(distributionName);
+  freeCharString(line);
 #elif WINDOWS
   snprintf(result->data, result->capacity, "Windows");
 #else
