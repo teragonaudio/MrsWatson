@@ -3,12 +3,15 @@
 
 #include <stdio.h>
 #include <string.h>
-#if ! WINDOWS
-#include <unistd.h>
-#endif
+#include <math.h>
+
 #include "PlatformUtilities.h"
 #include "CharString.h"
 #include "FileUtilities.h"
+
+#if UNIX
+#include <unistd.h>
+#endif
 
 #ifndef __func__
 #define __func__ __FUNCTION__
@@ -85,6 +88,14 @@ TestCase newTestCase(char* name, char* filename, int lineNumber, TestCaseExecFun
   if(!isCharStringEqualToCString(result, expected, false)) { \
     printTestFail(); \
     printf("    at %s:%d. Expected %s, got %s.\n", getFileBasename(__FILE__), __LINE__, expected, result->data); \
+    return 1; \
+  } \
+}
+
+#define assertCharStringContains(result, match) { \
+  if(strstr(result, match) == NULL) { \
+    printTestFail(); \
+    printf("    at %s:%d. Expected %s to contain %s.\n", getFileBasename(__FILE__), __LINE__, result, match); \
     return 1; \
   } \
 }
