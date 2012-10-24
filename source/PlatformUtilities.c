@@ -60,7 +60,7 @@ PlatformType getPlatformType() {
 }
 
 CharString getPlatformName(void) {
-  CharString result = newCharStringWithCapacity(STRING_LENGTH_SHORT);
+  CharString result = newCharString();
 #if MACOSX
   SInt32 major, minor, bugfix;
   Gestalt(gestaltSystemVersionMajor, &major);
