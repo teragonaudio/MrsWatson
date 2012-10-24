@@ -15,14 +15,15 @@ static int _testGetPlatformType(void) {
 }
 
 static int _testGetPlatformName(void) {
+  CharString p = getPlatformName();
   #if LINUX
-  assertCharStringEquals(newCharStringWithCString(getPlatformName()), "Linux");
+  assertCharStringContains(p->data, "Linux");
 #elif MACOSX
-  assertCharStringEquals(newCharStringWithCString(getPlatformName()), "Mac OS X");
+  assertCharStringContains(p->data, "Mac OS X");
 #elif WINDOWS
-  assertCharStringEquals(newCharStringWithCString(getPlatformName()), "Windows");
+  assertCharStringContains(p->data, "Windows");
 #else
-  assertCharStringEquals(newCharStringWithCString(getPlatformName()), "Unsupported platform");
+  assertCharStringEquals(p->data, "Unsupported platform");
 #endif
   return 0;
 }
