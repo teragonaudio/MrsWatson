@@ -353,14 +353,8 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
     displayPluginInfo(pluginChain);
   }
 
-  // Update sample rate on the event logger
-  setLoggingZebraSize((long)getSampleRate());
-  blocksize = getBlocksize();
-  logInfo("Processing with sample rate %.0f, blocksize %d, %s",
-    getSampleRate(), blocksize, getNumChannels() == 1 ? "mono" : "stereo");
-  logInfo("Starting tempo is %.1f, Time signature %d/%d", getTempo(), getTimeSignatureBeatsPerMeasure(), getTimeSignatureNoteValue());
-  inputSampleBuffer = newSampleBuffer(getNumChannels(), blocksize);
-  outputSampleBuffer = newSampleBuffer(getNumChannels(), blocksize);
+  inputSampleBuffer = newSampleBuffer(getNumChannels(), getBlocksize());
+  outputSampleBuffer = newSampleBuffer(getNumChannels(), getBlocksize());
 
   // Initialize task timer to record how much time was used by each plugin (and us). The
   // last index in the task timer will be reserved for the host.
@@ -373,6 +367,15 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   // Get largest tail time requested by any plugin in the chain
   tailTimeInMs += getMaximumTailTimeInMs(pluginChain);
   tailTimeInFrames = (unsigned long)(tailTimeInMs * getSampleRate()) / 1000l;
+
+  // Update sample rate on the event logger
+  setLoggingZebraSize((long)getSampleRate());
+  logInfo("Starting processing input source");
+  logDebug("Sample rate: %.0f", getSampleRate());
+  logDebug("Blocksize: %d", getBlocksize());
+  logDebug("Channel configuration: %s", getNumChannels() == 1 ? "mono" : "stereo");
+  logDebug("Tempo: %.2f", getTempo());
+  logDebug("Time signature: %d/%d", getTimeSignatureBeatsPerMeasure(), getTimeSignatureNoteValue());
 
   // Main processing loop
   while(!finishedReading) {
