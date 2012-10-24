@@ -29,10 +29,23 @@
 #include <stdlib.h>
 #include <string.h>
 #include "SampleBuffer.h"
+#include "EventLogger.h"
 
 SampleBuffer newSampleBuffer(int numChannels, int blocksize) {
   SampleBuffer sampleBuffer = (SampleBuffer)malloc(sizeof(SampleBufferMembers));
   int i;
+
+  if(numChannels <= 0) {
+    logError("Cannot create sample buffer with channel count %d", numChannels);
+    return NULL;
+  }
+  else if(numChannels > 2) {
+    logWarn("Using channel count >2, some features may not work as expected");
+  }
+  if(blocksize <= 0) {
+    logError("Cannot create sample buffer with blocksize %d", blocksize);
+    return NULL;
+  }
 
   sampleBuffer->numChannels = numChannels;
   sampleBuffer->blocksize = blocksize;

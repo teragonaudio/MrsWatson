@@ -13,6 +13,18 @@ static int _testNewSampleBuffer(void) {
   return 0;
 }
 
+static int _testNewSampleBufferInvalidNumChannels(void) {
+  SampleBuffer s = newSampleBuffer(0, 1);
+  assertIsNull(s);
+  return 0;
+}
+
+static int _testNewSampleBufferInvalidSampleRate(void) {
+  SampleBuffer s = newSampleBuffer(1, 0);
+  assertIsNull(s);
+  return 0;
+}
+
 static int _testClearSampleBuffer(void) {
   SampleBuffer s = _newMockSampleBuffer();
   s->samples[0][0] = 123;
@@ -54,6 +66,8 @@ TestSuite addSampleBufferTests(void);
 TestSuite addSampleBufferTests(void) {
   TestSuite testSuite = newTestSuite("SampleBuffer", NULL, NULL);
   addTest(testSuite, "NewObject", _testNewSampleBuffer);
+  addTest(testSuite, "NewSampleBufferInvalidNumChannels", _testNewSampleBufferInvalidNumChannels);
+  addTest(testSuite, "NewSampleBufferSampleRate", _testNewSampleBufferInvalidSampleRate);
   addTest(testSuite, "ClearSampleBuffer", _testClearSampleBuffer);
   addTest(testSuite, "CopySampleBuffers", _testCopySampleBuffers);
   addTest(testSuite, "CopySampleBuffersDifferentSizes",  _testCopySampleBuffersDifferentBlocksizes);
