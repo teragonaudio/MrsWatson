@@ -12,7 +12,7 @@ int runApplicationTestSuite(TestEnvironment testEnvironment) {
     "--plugin again",
     RETURN_CODE_SUCCESS, true);
 
-  fprintf(stderr, "\nRan %d application tests: %d passed, %d failed, %d skipped\n",
+  fprintf(stderr, "\n== Ran %d application tests: %d passed, %d failed, %d skipped ==\n",
     testEnvironment->results->numSuccess +
     testEnvironment->results->numFail +
     testEnvironment->results->numSkips,

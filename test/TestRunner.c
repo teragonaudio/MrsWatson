@@ -18,6 +18,7 @@ TestSuite newTestSuite(char* name, TestCaseSetupFunc setup, TestCaseTeardownFunc
   testSuite->testCases = newLinkedList();
   testSuite->setup = setup;
   testSuite->teardown = teardown;
+  testSuite->onlyPrintFailing = false;
   return testSuite;
 }
 
@@ -64,14 +65,20 @@ static void _printTestSkipped(void) {
   flushLog(NULL);
 }
 
+void printTestName(const char* testName) {
+  fprintf(stderr, "  %s: ", testName);
+  // Flush standard output in case the test crashes. That way at least the
+  // crashing test name is seen.
+  fflush(stderr);
+}
+
 void runTestCase(void* item, void* extraData) {
   TestCase testCase = (TestCase)item;
   TestSuite testSuite = (TestSuite)extraData;
   int result;
-  fprintf(stderr, "  %s: ", testCase->name);
-  // Flush standard output in case the test crashes. That way at least the
-  // crashing test name is seen.
-  fflush(stdout);
+  if(!testSuite->onlyPrintFailing) {
+    printTestName(testCase->name);
+  }
 
   if(testCase->testCaseFunc != NULL) {
     if(testSuite->setup != NULL) {
@@ -79,10 +86,13 @@ void runTestCase(void* item, void* extraData) {
     }
     result = testCase->testCaseFunc();
     if(result == 0) {
-      printTestSuccess();
+      if(!testSuite->onlyPrintFailing) {
+        printTestSuccess();
+      }
       testSuite->numSuccess++;
     }
     else {
+      printTestFail();
       testSuite->numFail++;
     }
 
@@ -91,7 +101,9 @@ void runTestCase(void* item, void* extraData) {
     }
   }
   else {
-    _printTestSkipped();
+    if(!testSuite->onlyPrintFailing) {
+      _printTestSkipped();
+    }
     testSuite->numSkips++;
   }
 }

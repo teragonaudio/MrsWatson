@@ -89,8 +89,9 @@ void runApplicationTest(const TestEnvironment testEnvironment,
   appendCStringToCharString(arguments, " ");
   appendCStringToCharString(arguments, testArguments);
 
-  fprintf(stderr, "  %s: ", testName);
-  fflush(stderr);
+  if(!testEnvironment->results->onlyPrintFailing) {
+    printTestName(testName);
+  }
 
   // TODO: Move to FileUtilities
 #if WINDOWS
@@ -107,6 +108,9 @@ void runApplicationTest(const TestEnvironment testEnvironment,
 #endif
 
   if(resultCode == 255 || resultCode == -1 || resultCode == 127) {
+    if(testEnvironment->results->onlyPrintFailing) {
+      printTestName(testName);
+    }
     printTestFail();
     logCritical("Could not launch shell, got return code %d\n\
 Please check the executable path specified in the --mrswatson-path argument.",
@@ -118,25 +122,34 @@ Please check the executable path specified in the --mrswatson-path argument.",
       if(analyzeFile(_getTestOutputFilename(testName, "pcm"), failedAnalysisFunctionName, &failedAnalysisSample)) {
         testEnvironment->results->numSuccess++;
         _removeOutputFiles(testName);
-        printTestSuccess();
+        if(!testEnvironment->results->onlyPrintFailing) {
+          printTestSuccess();
+        }
       }
       else {
+        if(testEnvironment->results->onlyPrintFailing) {
+          printTestName(testName);
+        }
+        fprintf(stderr, "Analysis function %s failed at sample %lu. ",
+          failedAnalysisFunctionName->data, failedAnalysisSample);
         printTestFail();
-        printf("    in test '%s', while analyzing output for %s at sample %lu.\n",
-          testName, failedAnalysisFunctionName->data, failedAnalysisSample);
         testEnvironment->results->numFail++;
       }
     }
     else {
       testEnvironment->results->numSuccess++;
       _removeOutputFiles(testName);
-      printTestSuccess();
+      if(!testEnvironment->results->onlyPrintFailing) {
+        printTestSuccess();
+      }
     }
   }
   else {
+    if(testEnvironment->results->onlyPrintFailing) {
+      printTestName(testName);
+    }
+    fprintf(stderr, "Expected result code %d, got %d. ", expectedResultCode, WEXITSTATUS(resultCode));
     printTestFail();
-    printf("    in %s. Expected result code %d, got %d.\n", testName,
-      expectedResultCode, WEXITSTATUS(resultCode));
     testEnvironment->results->numFail++;
   }
 

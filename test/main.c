@@ -23,7 +23,7 @@
 extern TestSuite findTestSuite(char* testSuiteName);
 extern TestCase findTestCase(TestSuite testSuite, char* testName);
 extern void printInternalTests(void);
-extern void runInternalTestSuite(void);
+extern void runInternalTestSuite(boolByte onlyPrintFailing);
 extern int runApplicationTestSuite(TestEnvironment testEnvironment);
 
 static const char* DEFAULT_TEST_SUITE_NAME = "all";
@@ -60,6 +60,11 @@ static ProgramOptions newTestProgramOptions(void) {
     "Save test output to log file",
     true, ARGUMENT_TYPE_REQUIRED, NO_DEFAULT_VALUE);
   */
+  addNewProgramOption(programOptions, OPTION_TEST_PRINT_ONLY_FAILING, "failing",
+    "Print only failing tests. Note that if a test causes the suite to crash, the \
+bad test's name will not be printed. In this case, re-run without this option, as \
+the test names will be printed before the tests are executed.",
+    true, ARGUMENT_TYPE_NONE, NO_DEFAULT_VALUE);
   addNewProgramOption(programOptions, OPTION_TEST_HELP, "help",
     "Print full program help (this screen), or just the help for a single argument.",
     true, ARGUMENT_TYPE_OPTIONAL, NO_DEFAULT_VALUE);
@@ -95,7 +100,6 @@ int main(int argc, char* argv[]) {
       printProgramOptions(programOptions, false, DEFAULT_INDENT_SIZE);
     }
     else {
-      printMrsWatsonQuickstart(argv[0]);
       printProgramOptions(programOptions, true, DEFAULT_INDENT_SIZE);
     }
     return -1;
@@ -160,13 +164,14 @@ int main(int argc, char* argv[]) {
       return -1;
     }
     else {
+      testSuite->onlyPrintFailing = programOptions->options[OPTION_TEST_PRINT_ONLY_FAILING]->enabled;
       runTestSuite(testSuite, NULL);
     }
   }
 
   if(runInternalTests) {
     printf("=== Internal tests ===\n");
-    runInternalTestSuite();
+    runInternalTestSuite(programOptions->options[OPTION_TEST_PRINT_ONLY_FAILING]->enabled);
     totalTestsFailed = 0;
   }
 
@@ -197,6 +202,7 @@ int main(int argc, char* argv[]) {
   if(runApplicationTests) {
     printf("\n=== Application tests ===\n");
     TestEnvironment testEnvironment = newTestEnvironment(mrsWatsonPath->data, resourcesPath->data);
+    testEnvironment->results->onlyPrintFailing = programOptions->options[OPTION_TEST_PRINT_ONLY_FAILING]->enabled;
     totalTestsFailed += runApplicationTestSuite(testEnvironment);
   }
 

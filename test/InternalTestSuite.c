@@ -49,17 +49,25 @@ static LinkedList _getTestSuites(void) {
   return internalTestSuites;
 }
 
-void runInternalTestSuite(void);
-void runInternalTestSuite(void) {
+static void _setTestSuiteOnlyPrintFailing(void* item, void* userData) {
+  TestSuite testSuite = (TestSuite*)item;
+  testSuite->onlyPrintFailing = true;
+}
+
+void runInternalTestSuite(boolByte onlyPrintFailing);
+void runInternalTestSuite(boolByte onlyPrintFailing) {
   TestSuite suiteResults;
   LinkedList internalTestSuites = _getTestSuites();
 
+  if(onlyPrintFailing) {
+    foreachItemInList(internalTestSuites, _setTestSuiteOnlyPrintFailing, NULL);
+  }
   foreachItemInList(internalTestSuites, runTestSuite, NULL);
   // Create a new test suite to be used as the userData passed to the foreach loop
   suiteResults = newTestSuite("Suite results", NULL, NULL);
   foreachItemInList(internalTestSuites, _sumTestSuiteResults, suiteResults);
 
-  fprintf(stderr, "\nRan %d function tests: %d passed, %d failed, %d skipped\n",
+  fprintf(stderr, "\n== Ran %d function tests: %d passed, %d failed, %d skipped ==\n",
     suiteResults->numSuccess + suiteResults->numFail + suiteResults->numSkips,
     suiteResults->numSuccess, suiteResults->numFail, suiteResults->numSkips);
 }

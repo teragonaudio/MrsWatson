@@ -37,12 +37,14 @@ typedef struct {
   LinkedList testCases;
   TestCaseSetupFunc setup;
   TestCaseTeardownFunc teardown;
+  boolByte onlyPrintFailing;
 } TestSuiteMembers;
 typedef TestSuiteMembers* TestSuite;
 
 void addTestToTestSuite(TestSuite testSuite, TestCase testCase);
 void runTestSuite(void* testSuitePtr, void* extraData);
 void runTestCase(void* item, void* extraData);
+void printTestName(const char* testName);
 void printTestSuccess(void);
 void printTestFail(void);
 
@@ -55,8 +57,7 @@ TestCase newTestCase(char* name, char* filename, int lineNumber, TestCaseExecFun
 
 #define assert(condition) { \
   if(!(condition)) { \
-    printTestFail(); \
-    printf("    at %s:%d\n", getFileBasename(__FILE__), __LINE__); \
+    fprintf(stderr, "\nAssertion failed at %s:%d. ", getFileBasename(__FILE__), __LINE__); \
     return 1; \
   } \
 }
@@ -68,8 +69,7 @@ TestCase newTestCase(char* name, char* filename, int lineNumber, TestCaseExecFun
 #define assertIntEquals(condition, expected) { \
   int result = condition; \
   if(result != expected) { \
-    printTestFail(); \
-    printf("    at %s:%d. Expected %d, got %d.\n", getFileBasename(__FILE__), __LINE__, expected, result); \
+    fprintf(stderr, "Assertion failed at %s:%d. Expected %d, got %d. ", getFileBasename(__FILE__), __LINE__, expected, result); \
     return 1; \
   } \
 }
@@ -78,24 +78,21 @@ TestCase newTestCase(char* name, char* filename, int lineNumber, TestCaseExecFun
 #define assertDoubleEquals(condition, expected) { \
   double result = fabs(condition - expected); \
   if(result > TEST_FLOAT_TOLERANCE) { \
-    printTestFail(); \
-    printf("    at %s:%d. Expected %g, got %g.\n", getFileBasename(__FILE__), __LINE__, expected, condition); \
+    fprintf(stderr, "Assertion failed at %s:%d. Expected %g, got %g. ", getFileBasename(__FILE__), __LINE__, expected, condition); \
     return 1; \
   } \
 }
 
 #define assertCharStringEquals(result, expected) { \
   if(!isCharStringEqualToCString(result, expected, false)) { \
-    printTestFail(); \
-    printf("    at %s:%d. Expected %s, got %s.\n", getFileBasename(__FILE__), __LINE__, expected, result->data); \
+    fprintf(stderr, "Assertion failed at %s:%d. Expected %s, got %s. ", getFileBasename(__FILE__), __LINE__, expected, result->data); \
     return 1; \
   } \
 }
 
 #define assertCharStringContains(result, match) { \
   if(strstr(result, match) == NULL) { \
-    printTestFail(); \
-    printf("    at %s:%d. Expected %s to contain %s.\n", getFileBasename(__FILE__), __LINE__, result, match); \
+    fprintf(stderr, "Assertion failed at %s:%d. Expected %s to contain %s. ", getFileBasename(__FILE__), __LINE__, result, match); \
     return 1; \
   } \
 }
