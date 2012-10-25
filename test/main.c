@@ -37,9 +37,10 @@ static ProgramOptions newTestProgramOptions(void) {
 
   addNewProgramOption(programOptions, OPTION_TEST_SUITE, "suite",
     "Choose a test suite to run. Current suites include:\n\
-\t- Application (run audio quality tests against actual executable\n\
-\t- Internal\n\
-\t- All (default)",
+\t- Application run audio quality tests against actual executable\n\
+\t- Internal: run all internal function tests\n\
+\t- All: run all tests (default)\n\
+\t- A suite name (use '--list' to see all suite names)",
     true, ARGUMENT_TYPE_REQUIRED, NO_DEFAULT_VALUE);
   addNewProgramOption(programOptions, OPTION_TEST_NAME, "test",
     "Run a single test. Tests are named 'Suite:Name', for example:\n\
@@ -90,7 +91,7 @@ int main(int argc, char* argv[]) {
   if(programOptions->options[OPTION_TEST_HELP]->enabled) {
     printf("Run with '--help full' to see extended help for all options.\n");
     if(isCharStringEmpty(programOptions->options[OPTION_TEST_HELP]->argument)) {
-      printf("All options, where <argument> is required and [argument] is optional");
+      printf("All options, where <argument> is required and [argument] is optional\n");
       printProgramOptions(programOptions, false, DEFAULT_INDENT_SIZE);
     }
     else {
@@ -152,9 +153,15 @@ int main(int argc, char* argv[]) {
     runApplicationTests = true;
   }
   else {
-    printf("ERROR: Invalid test suite '%s'\n", testSuiteToRun->data);
-    printf("Run %s --help suite to see possible test suites\n", getFileBasename(argv[0]));
-    return -1;
+    testSuite = findTestSuite(testSuiteToRun->data);
+    if(testSuite == NULL) {
+      printf("ERROR: Invalid test suite '%s'\n", testSuiteToRun->data);
+      printf("Run '%s --list' suite to show possible test suites\n", getFileBasename(argv[0]));
+      return -1;
+    }
+    else {
+      runTestSuite(testSuite, NULL);
+    }
   }
 
   if(runInternalTests) {
