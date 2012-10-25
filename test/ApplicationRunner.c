@@ -117,7 +117,7 @@ Please check the executable path specified in the --mrswatson-path argument.",
       resultCode);
     testEnvironment->results->numFail++;
   }
-  else if(WEXITSTATUS(resultCode) == expectedResultCode) {
+  else if((ReturnCodes)WEXITSTATUS(resultCode) == expectedResultCode) {
     if(anazyleOutput) {
       if(analyzeFile(_getTestOutputFilename(testName, "pcm"), failedAnalysisFunctionName, &failedAnalysisSample)) {
         testEnvironment->results->numSuccess++;
