@@ -19,6 +19,10 @@ extern TestSuite addSampleSourceTests(void);
 extern TestSuite addStringUtilitiesTests(void);
 extern TestSuite addTaskTimerTests(void);
 
+extern TestSuite addAnalysisClippingTests(void);
+extern TestSuite addAnalysisDistortionTests(void);
+extern TestSuite addAnalysisSilenceTests(void);
+
 
 static void _sumTestSuiteResults(void* item, void* extraData) {
   TestSuite testSuite = (TestSuite)item;
@@ -46,6 +50,11 @@ static LinkedList _getTestSuites(void) {
   appendItemToList(internalTestSuites, addSampleSourceTests());
   appendItemToList(internalTestSuites, addStringUtilitiesTests());
   appendItemToList(internalTestSuites, addTaskTimerTests());
+
+  appendItemToList(internalTestSuites, addAnalysisClippingTests());
+  appendItemToList(internalTestSuites, addAnalysisDistortionTests());
+  appendItemToList(internalTestSuites, addAnalysisSilenceTests());
+
   return internalTestSuites;
 }
 
