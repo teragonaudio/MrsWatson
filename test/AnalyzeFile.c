@@ -5,52 +5,76 @@
 #include "AnalysisClipping.h"
 #include "AnalysisDistortion.h"
 #include "AnalysisSilence.h"
+#include "LinkedList.h"
 
 static const int kNumAnalysisFunctions = 3;
 
-static AnalysisFunctionData* _setupAnalysisFunctions(void) {
-  AnalysisFunctionData* result = malloc(sizeof(AnalysisFunctionData*) * kNumAnalysisFunctions);
-
-  result[0] = malloc(sizeof(AnalysisFunctionData));
-  result[0]->analysisName = "clipping";
-  result[0]->functionPtr = analysisClipping;
-  result[0]->consecutiveFailCounter = 0;
-  result[0]->lastSample = 0.0f;
-  result[0]->failedSample = 0;
-
-  result[1] = malloc(sizeof(AnalysisFunctionData));
-  result[1]->analysisName = "distortion";
-  result[1]->functionPtr = analysisDistortion;
-  result[1]->consecutiveFailCounter = 0;
-  result[1]->lastSample = 0.0f;
-  result[1]->failedSample = 0;
-
-  result[2] = malloc(sizeof(AnalysisFunctionData));
-  result[2]->analysisName = "silence";
-  result[2]->functionPtr = analysisSilence;
-  result[2]->consecutiveFailCounter = 0;
-  result[2]->lastSample = 0.0f;
-  result[2]->failedSample = 0;
-
+AnalysisFunctionData newAnalysisFunctionData(void) {
+  AnalysisFunctionData result = (AnalysisFunctionData)malloc(sizeof(AnalysisFunctionDataMembers));
+  result->analysisName = NULL;
+  result->consecutiveFailCounter = 0;
+  result->failedSample = 0;
+  result->functionPtr = NULL;
+  result->lastSample = 0;
   return result;
+}
+
+static void _setupAnalysisFunctions(LinkedList functionsList) {
+  AnalysisFunctionData data;
+
+  data = newAnalysisFunctionData();
+  data->analysisName = "clipping";
+  data->functionPtr = analysisClipping;
+  data->consecutiveFailCounter = 0;
+  data->lastSample = 0.0f;
+  data->failedSample = 0;
+  appendItemToList(functionsList, data);
+
+  data = newAnalysisFunctionData();
+  data->analysisName = "distortion";
+  data->functionPtr = analysisDistortion;
+  data->consecutiveFailCounter = 0;
+  data->lastSample = 0.0f;
+  data->failedSample = 0;
+  appendItemToList(functionsList, data);
+
+  data = newAnalysisFunctionData();
+  data->analysisName = "silence";
+  data->functionPtr = analysisSilence;
+  data->consecutiveFailCounter = 0;
+  data->lastSample = 0.0f;
+  data->failedSample = 0;
+  appendItemToList(functionsList, data);
+}
+
+static void _runAnalysisFunction(void* item, void* userData) {
+  AnalysisFunctionData functionData = (AnalysisFunctionData)item;
+  AnalysisFuncPtr analysisFuncPtr = (AnalysisFuncPtr)(functionData->functionPtr);
+  AnalysisData analysisData = (AnalysisData)userData;
+
+  if(!analysisFuncPtr(analysisData->sampleBuffer, functionData)) {
+    copyToCharString(analysisData->failedAnalysisFunctionName, functionData->analysisName);
+    *(analysisData->failedAnalysisSample) = *(analysisData->currentBlockSample) + functionData->failedSample;
+    *(analysisData->result) = false;
+  }
 }
 
 boolByte analyzeFile(const char* filename, CharString failedAnalysisFunctionName, unsigned long *failedAnalysisSample) {
   boolByte result;
   CharString analysisFilename;
-  SampleBuffer sampleBuffer;
   SampleSource sampleSource;
-  AnalysisFuncPtr analysisFuncPtr;
-  AnalysisFunctionData* analysisFunctions;
+  LinkedList analysisFunctions = newLinkedList();
+  AnalysisData analysisData;
   unsigned long currentBlockSample = 0;
-  int i;
+
+  analysisData = (AnalysisData)malloc(sizeof(AnalysisDataMembers));
 
   // Needed to initialize new sample sources
   initAudioSettings();
-  analysisFunctions = _setupAnalysisFunctions();
-  analysisFilename = newCharString();
-  copyToCharString(analysisFilename, filename);
+  _setupAnalysisFunctions(analysisFunctions);
+  analysisFilename = newCharStringWithCString(filename);
   sampleSource = newSampleSource(SAMPLE_SOURCE_TYPE_PCM, analysisFilename);
+
   if(sampleSource == NULL) {
     return false;
   }
@@ -59,23 +83,21 @@ boolByte analyzeFile(const char* filename, CharString failedAnalysisFunctionName
     return result;
   }
 
-  sampleBuffer = newSampleBuffer(DEFAULT_NUM_CHANNELS, DEFAULT_BLOCKSIZE);
-  while(sampleSource->readSampleBlock(sampleSource, sampleBuffer) && result) {
-    for(i = 0; i < kNumAnalysisFunctions; i++) {
-      analysisFuncPtr = (AnalysisFuncPtr)(analysisFunctions[i]->functionPtr);
-      if(!analysisFuncPtr(sampleBuffer, analysisFunctions[i])) {
-        copyToCharString(failedAnalysisFunctionName, analysisFunctions[i]->analysisName);
-        *failedAnalysisSample = currentBlockSample + analysisFunctions[i]->failedSample;
-        result = false;
-        break;
-      }
-    }
+  analysisData->failedAnalysisFunctionName = failedAnalysisFunctionName;
+  analysisData->failedAnalysisSample = failedAnalysisSample;
+  analysisData->sampleBuffer = newSampleBuffer(DEFAULT_NUM_CHANNELS, DEFAULT_BLOCKSIZE);
+  analysisData->currentBlockSample = &currentBlockSample;
+  analysisData->result = &result;
+
+  while(sampleSource->readSampleBlock(sampleSource, analysisData->sampleBuffer) && result) {
+    foreachItemInList(analysisFunctions, _runAnalysisFunction, analysisData);
     currentBlockSample += DEFAULT_BLOCKSIZE;
   }
 
-  freeSampleBuffer(sampleBuffer);
   freeSampleSource(sampleSource);
   freeCharString(analysisFilename);
   freeAudioSettings();
+  freeSampleBuffer(analysisData->sampleBuffer);
+  free(analysisData);
   return result;
 }

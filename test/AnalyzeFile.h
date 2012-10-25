@@ -16,10 +16,20 @@ typedef struct {
   Sample lastSample;
   int failedSample;
 } AnalysisFunctionDataMembers;
-
 typedef AnalysisFunctionDataMembers* AnalysisFunctionData;
 typedef boolByte (*AnalysisFuncPtr)(const SampleBuffer sampleBuffer, AnalysisFunctionData data);
 
+typedef struct {
+  CharString failedAnalysisFunctionName;
+  unsigned long *failedAnalysisSample;
+  unsigned long *currentBlockSample;
+  boolByte *result;
+  SampleBuffer sampleBuffer;
+  AnalysisFunctionData functionData;
+} AnalysisDataMembers;
+typedef AnalysisDataMembers* AnalysisData;
+
+AnalysisFunctionData newAnalysisFunctionData(void);
 boolByte analyzeFile(const char* filename, CharString failedAnalysisFunctionName, unsigned long *failedAnalysisSample);
 
 #endif
