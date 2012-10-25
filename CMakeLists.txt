@@ -75,6 +75,17 @@ ExternalProject_Add(libarchive
   BUILD_IN_SOURCE 1
 )
 
+# AudioTestData ###############################################################
+
+ExternalProject_Add(AudioTestData
+  GIT_REPOSITORY git@github.com:teragonaudio/AudioTestData.git
+  GIT_TAG master
+  UPDATE_COMMAND git pull
+  PREFIX ${CMAKE_SOURCE_DIR}/build/AudioTestData
+  CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${localDir}
+  INSTALL_DIR ${localDir}
+)
+
 # MrsWatson ###################################################################
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
