@@ -1,13 +1,14 @@
 cmake_minimum_required(VERSION 2.6)
-project(MRSWATSON)
+project(MrsWatson)
 
 set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
-include_directories(${CMAKE_SOURCE_DIR}/source ${CMAKE_SOURCE_DIR}/vendor/local/include ${CMAKE_SOURCE_DIR}/vendor/vstsdk2.4/pluginterfaces/vst2.x)
+set(localDir ${CMAKE_SOURCE_DIR}/local)
+include_directories(${CMAKE_SOURCE_DIR}/source ${localDir}/include ${CMAKE_SOURCE_DIR}/vendor/vstsdk2.4/pluginterfaces/vst2.x)
 
 # Third-party dependencies ###################################################
 include(ExternalProject)
-set(local_INCLUDE ${CMAKE_SOURCE_DIR}/vendor/local/include)
-set(local_LIB ${CMAKE_SOURCE_DIR}/vendor/local/lib)
+set(local_INCLUDE ${localDir}/include)
+set(local_LIB ${localDir}/lib)
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
   set(ARCH_FLAGS "-m32")
@@ -19,14 +20,14 @@ set(generic_CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=<INSTALL_DIR> CFLA
 
 # zlib #######################################################################
 
-set(libz_CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=${CMAKE_SOURCE_DIR}/vendor/local --archs=${ARCH_FLAGS} --static)
+set(libz_CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=${localDir} --archs=${ARCH_FLAGS} --static)
 
 ExternalProject_Add(libz
   URL http://zlib.net/zlib-1.2.7.tar.gz
   URL_MD5 60df6a37c56e7c1366cca812414f7b85
   PREFIX ${CMAKE_SOURCE_DIR}/build/zlib
   CONFIGURE_COMMAND ${libz_CONFIGURE_COMMAND}
-  INSTALL_DIR ${CMAKE_SOURCE_DIR}/vendor/local
+  INSTALL_DIR ${localDir}
   BUILD_COMMAND ${MAKE}
   BUILD_IN_SOURCE 1
 )
@@ -38,7 +39,7 @@ ExternalProject_Add(libiconv
   URL_MD5 e34509b1623cec449dfeb73d7ce9c6c6
   PREFIX ${CMAKE_SOURCE_DIR}/build/libiconv
   CONFIGURE_COMMAND ${generic_CONFIGURE_COMMAND}
-  INSTALL_DIR ${CMAKE_SOURCE_DIR}/vendor/local
+  INSTALL_DIR ${localDir}
   BUILD_COMMAND ${MAKE}
   BUILD_IN_SOURCE 1
 )
@@ -49,7 +50,7 @@ ExternalProject_Add(libiconv
 
 #ExternalProject_Add(libaudiofile
 #  SOURCE_DIR ${CMAKE_SOURCE_DIR}/vendor/audiofile
-#  INSTALL_DIR ${CMAKE_SOURCE_DIR}/vendor/local
+#  INSTALL_DIR ${localDir}
 #  CONFIGURE_COMMAND ${libaudiofile_CONFIGURE_COMMAND}
 #  PREFIX ${CMAKE_SOURCE_DIR}/build/audiofile
 #  TMP_DIR ${CMAKE_SOURCE_DIR}/build/audiofile/tmp
@@ -69,7 +70,7 @@ ExternalProject_Add(libarchive
   URL_MD5 af443ca9a10ddbcbf00f7ae34ca7fc16
   PREFIX ${CMAKE_SOURCE_DIR}/build/libarchive
   CONFIGURE_COMMAND ${libarchive_CONFIGURE_COMMAND}
-  INSTALL_DIR ${CMAKE_SOURCE_DIR}/vendor/local
+  INSTALL_DIR ${localDir}
   BUILD_COMMAND ${MAKE}
   BUILD_IN_SOURCE 1
 )

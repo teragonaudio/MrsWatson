@@ -1,4 +1,4 @@
-link_directories(${MRSWATSON_BINARY_DIR}/source ${MRSWATSON_BINARY_DIR}/vendor/local/lib)
+link_directories(${MRSWATSON_BINARY_DIR}/source ${MRSWATSON_BINARY_DIR}/local/lib)
 
 file(GLOB MrsWatson_SOURCES *.c)
 add_executable(mrswatson ${MrsWatson_SOURCES})
@@ -11,4 +11,6 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 else()
   target_link_libraries(mrswatson ${base_libraries})
 endif()
+
+file(COPY mrswatson DESTINATION ${MRSWATSON_BINARY_DIR}/local/bin)
 
