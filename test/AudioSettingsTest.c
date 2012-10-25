@@ -12,7 +12,7 @@ static void _audioSettingsTeardown(void) {
 static int _testInitAudioSettings(void) {
   assertDoubleEquals(getSampleRate(), DEFAULT_SAMPLE_RATE);
   assertIntEquals(getNumChannels(), DEFAULT_NUM_CHANNELS);
-  assertIntEquals(getBlocksize(), DEFAULT_BLOCKSIZE + 1);
+  assertIntEquals(getBlocksize(), DEFAULT_BLOCKSIZE);
   assertDoubleEquals(getTempo(), DEFAULT_TEMPO);
   assertIntEquals(getTimeSignatureBeatsPerMeasure(), DEFAULT_TIMESIG_BEATS_PER_MEASURE);
   assertIntEquals(getTimeSignatureNoteValue(), DEFAULT_TIMESIG_NOTE_VALUE);

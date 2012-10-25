@@ -19,7 +19,7 @@ static int _testGetPlatformName(void) {
   #if LINUX
   assertCharStringContains(p->data, "Linux");
 #elif MACOSX
-  assertCharStringContains(p->data, "Mac OS X");
+  assertCharStringContains(p->data, "Mac OSX");
 #elif WINDOWS
   assertCharStringContains(p->data, "Windows");
 #else
