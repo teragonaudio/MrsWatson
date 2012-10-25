@@ -27,8 +27,10 @@ extern void runInternalTestSuite(boolByte onlyPrintFailing);
 extern int runApplicationTestSuite(TestEnvironment testEnvironment);
 
 static const char* DEFAULT_TEST_SUITE_NAME = "all";
-static const char* DEFAULT_MRSWATSON_PATH = "../main/mrswatson";
-static const char* DEFAULT_RESOURCES_PATH = "./resources";
+
+// Default installation location if you run 'make' from the top-level build dir
+static const char* DEFAULT_MRSWATSON_PATH = "./local/bin/mrswatson";
+static const char* DEFAULT_RESOURCES_PATH = "./local/share/audiotestdata";
 
 static ProgramOptions newTestProgramOptions(void) {
   ProgramOptions programOptions = malloc(sizeof(ProgramOptions));
