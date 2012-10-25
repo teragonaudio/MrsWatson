@@ -11,6 +11,9 @@ boolByte analysisClipping(const SampleBuffer sampleBuffer, AnalysisFunctionData 
           data->failedSample = j;
           return false;
         }
+        else {
+          data->consecutiveFailCounter++;
+        }
       }
       else {
         if(data->consecutiveFailCounter > 0) {
