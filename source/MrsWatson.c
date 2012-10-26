@@ -88,7 +88,6 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   ProgramOption option;
   CharString versionString, wrappedLicenseInfo;
   Plugin headPlugin;
-  int blocksize;
   SampleBuffer inputSampleBuffer, outputSampleBuffer;
   TaskTimer taskTimer;
   CharString totalTimeString;
@@ -386,7 +385,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
     if(midiSequence != NULL) {
       LinkedList midiEventsForBlock = newLinkedList();
       // MIDI source overrides the value set to finishedReading by the input source
-      finishedReading = !fillMidiEventsFromRange(midiSequence, getAudioClockCurrentFrame(), blocksize, midiEventsForBlock);
+      finishedReading = !fillMidiEventsFromRange(midiSequence, getAudioClockCurrentFrame(), getBlocksize(), midiEventsForBlock);
       processPluginChainMidiEvents(pluginChain, midiEventsForBlock, taskTimer);
       startTimingTask(taskTimer, hostTaskId);
       freeLinkedList(midiEventsForBlock);
@@ -414,7 +413,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
     }
     outputSource->writeSampleBlock(outputSource, outputSampleBuffer);
 
-    advanceAudioClock(blocksize);
+    advanceAudioClock(getBlocksize());
   }
 
   // Process tail time
@@ -430,7 +429,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
 
       startTimingTask(taskTimer, hostTaskId);
       outputSource->writeSampleBlock(outputSource, outputSampleBuffer);
-      advanceAudioClock(blocksize);
+      advanceAudioClock(getBlocksize());
     }
   }
 
