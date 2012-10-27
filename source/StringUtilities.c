@@ -39,7 +39,8 @@ boolByte isNumber(char ch) {
   return (ch >= '0' && ch <= '9');
 }
 
-static void _wrapString(const char* srcString, char* destString, int indentSize, int lineLength) {
+boolByte _wrapString(const char* srcString, char* destString, int indentSize, int lineLength);
+boolByte _wrapString(const char* srcString, char* destString, int indentSize, int lineLength) {
   char* lineBuffer = (char*)malloc(sizeof(char) * lineLength);
   unsigned long destStringIndex = 0;
   unsigned long srcStringIndex = 0;
