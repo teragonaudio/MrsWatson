@@ -51,6 +51,16 @@ boolByte _wrapString(const char* srcString, char* destString, int indentSize, in
   char* newlineIndex;
   char* lastSpaceIndex;
 
+  if(srcString == NULL || destString == NULL) {
+    return false;
+  }
+  else if(indentSize < 0 || indentSize > lineLength) {
+    return false;
+  }
+  else if(lineLength <= 0) {
+    return false;
+  }
+
   while(srcStringIndex < strlen(srcString)) {
     if(lineIndex == 0) {
       for(indentIndex = 0; indentIndex < indentSize; indentIndex++) {
