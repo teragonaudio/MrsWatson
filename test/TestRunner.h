@@ -85,14 +85,14 @@ TestCase newTestCase(char* name, char* filename, int lineNumber, TestCaseExecFun
 
 #define assertCharStringEquals(result, expected) { \
   if(!isCharStringEqualToCString(result, expected, false)) { \
-    fprintf(stderr, "Assertion failed at %s:%d. Expected %s, got %s. ", getFileBasename(__FILE__), __LINE__, expected, result->data); \
+    fprintf(stderr, "Assertion failed at %s:%d. Expected '%s', got '%s'. ", getFileBasename(__FILE__), __LINE__, expected, result->data); \
     return 1; \
   } \
 }
 
 #define assertCharStringContains(result, match) { \
   if(strstr(result, match) == NULL) { \
-    fprintf(stderr, "Assertion failed at %s:%d. Expected %s to contain %s. ", getFileBasename(__FILE__), __LINE__, result, match); \
+    fprintf(stderr, "Assertion failed at %s:%d. Expected '%s' to contain '%s'. ", getFileBasename(__FILE__), __LINE__, result, match); \
     return 1; \
   } \
 }
