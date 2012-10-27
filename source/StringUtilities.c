@@ -103,8 +103,9 @@ boolByte _wrapString(const char* srcString, char* destString, int indentSize, in
   }
 
   free(lineBuffer);
+  return true;
 }
 
-void wrapString(const char* srcString, char* destString, int indentSize) {
-  _wrapString(srcString, destString, indentSize, TERMINAL_LINE_LENGTH);
+boolByte wrapString(const char* srcString, char* destString, int indentSize) {
+  return _wrapString(srcString, destString, indentSize, TERMINAL_LINE_LENGTH);
 }

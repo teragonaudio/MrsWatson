@@ -35,6 +35,6 @@
 
 boolByte isLetter(char ch);
 boolByte isNumber(char ch);
-void wrapString(const char* srcString, char* destString, int indentSize);
+boolByte wrapString(const char* srcString, char* destString, int indentSize);
 
 #endif
