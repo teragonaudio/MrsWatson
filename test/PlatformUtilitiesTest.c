@@ -28,6 +28,20 @@ static int _testGetPlatformName(void) {
   return 0;
 }
 
+static int _testGetShortPlatformName(void) {
+  CharString p = newCharStringWithCString(getShortPlatformName());
+ #if LINUX
+  assertCharStringEquals(p, "linux");
+#elif MACOSX
+  assertCharStringEquals(p, "macosx");
+#elif WINDOWS
+  assertCharStringEquals(p, "vindows");
+#else
+  assertCharStringEquals(p, "unsupported");
+#endif
+  return 0;
+}
+
 static int _testIsHostLittleEndian(void) {
   return 0;
 }
@@ -65,6 +79,7 @@ TestSuite addPlatformUtilitiesTests(void) {
   TestSuite testSuite = newTestSuite("PlatformUtilities", NULL, NULL);
   addTest(testSuite, "GetPlatformType", _testGetPlatformType);
   addTest(testSuite, "GetPlatformName", _testGetPlatformName);
+  addTest(testSuite, "GetShortPlatformName", _testGetShortPlatformName);
 
   addTest(testSuite, "IsHostLittleEndian", NULL); // _testIsHostLittleEndian);
 
