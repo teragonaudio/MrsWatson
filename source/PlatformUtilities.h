@@ -66,6 +66,7 @@ typedef enum {
 
 PlatformType getPlatformType(void);
 CharString getPlatformName(void);
+const char* getShortPlatformName(void);
 
 boolByte isHostLittleEndian(void);
 

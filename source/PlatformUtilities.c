@@ -59,6 +59,18 @@ PlatformType getPlatformType() {
 #endif
 }
 
+const char* getShortPlatformName(void) {
+#if MACOSX
+  return "macosx";
+#elif WINDOWS
+  return "windows";
+#elif LINUX
+  return "linux";
+#else
+  return "unsupported";
+#endif
+}
+
 CharString getPlatformName(void) {
   CharString result = newCharString();
 #if MACOSX
