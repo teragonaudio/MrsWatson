@@ -91,8 +91,8 @@ TestCase newTestCase(char* name, char* filename, int lineNumber, TestCaseExecFun
 }
 
 #define assertCharStringContains(result, match) { \
-  if(strstr(result, match) == NULL) { \
-    fprintf(stderr, "Assertion failed at %s:%d. Expected '%s' to contain '%s'. ", getFileBasename(__FILE__), __LINE__, result, match); \
+  if(strstr(result->data, match) == NULL) { \
+    fprintf(stderr, "Assertion failed at %s:%d. Expected '%s' to contain '%s'. ", getFileBasename(__FILE__), __LINE__, result->data, match); \
     return 1; \
   } \
 }
