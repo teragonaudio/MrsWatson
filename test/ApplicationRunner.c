@@ -86,7 +86,7 @@ void runApplicationTest(const TestEnvironment testEnvironment,
   CharString failedAnalysisFunctionName = newCharString();
   unsigned long failedAnalysisSample;
 
-  // Remove files from previous tests
+  // Remove files from a previous test run
   _removeOutputFiles(testName);
 
   // Create the command line argument
