@@ -55,7 +55,7 @@ static int _testWrapStringWithIndent(void) {
   char *src = "1234 6789 bcde 01";
   CharString dest = newCharString();
   assert(_wrapString(src, dest->data, 1, 0xe));
-  assertCharStringEquals(dest, " 1234 6789\nbcde 01");
+  assertCharStringEquals(dest, " 1234 6789\n bcde 01");
   return 0;
 }
 
@@ -79,6 +79,6 @@ TestSuite addStringUtilitiesTests(void) {
   addTest(testSuite, "InvalidIndentSize", _testWrapInvalidIndentSize);
   addTest(testSuite, "WrapString", _testWrapString);
   addTest(testSuite, "WrapStringWithIndent", _testWrapStringWithIndent);
-  addTest(testSuite, "WrapStringLongerThanLine", NULL); //_testWrapStringLongerThanLine);
+  addTest(testSuite, "WrapStringLongerThanLine", _testWrapStringLongerThanLine);
   return testSuite;
 }

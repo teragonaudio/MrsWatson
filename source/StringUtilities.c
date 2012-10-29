@@ -48,8 +48,8 @@ boolByte _wrapString(const char* srcString, char* destString, int indentSize, in
   int indentIndex = 0;
 
   long bufferLength;
-  char* newlineIndex;
-  char* lastSpaceIndex;
+  char* newlinePosition;
+  char* lastSpacePosition;
 
   if(srcString == NULL || destString == NULL) {
     return false;
@@ -82,9 +82,9 @@ boolByte _wrapString(const char* srcString, char* destString, int indentSize, in
     }
 
     // Look for any newlines in the buffer, and stop there if we find any
-    newlineIndex = strchr(lineBuffer, '\n');
-    if(newlineIndex != NULL) {
-      bufferLength = newlineIndex - lineBuffer + 1;
+    newlinePosition = strchr(lineBuffer, '\n');
+    if(newlinePosition != NULL) {
+      bufferLength = newlinePosition - lineBuffer + 1;
       strncpy(destString + destStringIndex, lineBuffer, (size_t)bufferLength);
       destStringIndex += bufferLength;
       srcStringIndex += bufferLength;
@@ -93,15 +93,21 @@ boolByte _wrapString(const char* srcString, char* destString, int indentSize, in
     }
 
     // If no newlines were found, then find the last space in this line and copy to that point
-    lastSpaceIndex = strrchr(lineBuffer, ' ');
-    if(lastSpaceIndex == NULL) {
-      // If NULL is returned here, then there are no spaces in this line and we should simply
-      // copy the entire line. This means that really long lines will be truncated, but whatever.
-      bufferLength = strlen(lineBuffer);
+    lastSpacePosition = strrchr(lineBuffer, ' ');
+    if(lastSpacePosition == NULL) {
+      // If NULL is returned here, then there are no spaces in this line. In this case, insert
+      // a hyphen at the end of the line and start a new line. Also, we need to leave room
+      // for the newline, so subtract 2 from the total buffer length.
+      bufferLength = lineLength - lineIndex - 1;
       strncpy(destString + destStringIndex, lineBuffer, (size_t)bufferLength);
+      destString[lineLength - 1] = '-';
+      // Move the destination string index ahead 1 to account for the hyphen, and the source
+      // string index back one to copy the last character from the previous line.
+      destStringIndex++;
+      srcStringIndex--;
     }
     else {
-      bufferLength = lastSpaceIndex - lineBuffer;
+      bufferLength = lastSpacePosition - lineBuffer;
       strncpy(destString + destStringIndex, lineBuffer, (size_t)bufferLength);
     }
 
