@@ -49,13 +49,21 @@ static char* _getTestOutputFilename(const char* testName, const char* fileExtens
   return filename->data;
 }
 
+static char* _getTestPluginResourcesPath(const char* resourcesPath) {
+  CharString pluginRoot = newCharString();
+  snprintf(pluginRoot->data, pluginRoot->capacity, "%s%cvst%c%s",
+    resourcesPath, PATH_DELIMITER, PATH_DELIMITER, getShortPlatformName());
+  return pluginRoot->data;
+}
+
 static void _getDefaultArguments(TestEnvironment testEnvironment,
   const char *testName, CharString outString) {
   snprintf(outString->data, outString->capacity,
-    "--log-file \"%s\" --input \"%s\" --output \"%s\"",
+    "--log-file \"%s\" --verbose --input \"%s\" --output \"%s\" --plugin-root \"%s\"",
     _getTestOutputFilename(testName, "txt"),
     _getTestInputFilename(testEnvironment->resourcesPath, "pcm"),
-    _getTestOutputFilename(testName, "pcm"));
+    _getTestOutputFilename(testName, "pcm"),
+    _getTestPluginResourcesPath(testEnvironment->resourcesPath));
 }
 
 static void _removeOutputFile(char* argument) {
