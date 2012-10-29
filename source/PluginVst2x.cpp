@@ -339,6 +339,7 @@ static boolByte _doesVst2xPluginExistAtLocation(const CharString pluginName, con
   const char* pluginFileExtension = getFileExtension(pluginName->data);
   const char* platformFileExtension = _getVst2xPlatformExtension();
 
+  logDebug("Looking for plugin '%s' in '%s'", pluginName->data, location->data);
   if(pluginFileExtension == NULL || strncasecmp(platformFileExtension, pluginFileExtension, strlen(platformFileExtension))) {
     pluginFileExtension = platformFileExtension;
   }
