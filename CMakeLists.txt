@@ -3,6 +3,7 @@ project(MrsWatson)
 
 set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 set(localDir ${CMAKE_SOURCE_DIR}/local)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${localDir}/bin)
 include_directories(${CMAKE_SOURCE_DIR}/source ${localDir}/include ${CMAKE_SOURCE_DIR}/vendor/vstsdk2.4/pluginterfaces/vst2.x)
 
 # Third-party dependencies ###################################################

@@ -12,5 +12,3 @@ else()
   target_link_libraries(mrswatson ${base_libraries})
 endif()
 
-file(COPY mrswatson DESTINATION ${MRSWATSON_BINARY_DIR}/local/bin)
-
