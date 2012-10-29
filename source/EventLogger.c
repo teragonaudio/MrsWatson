@@ -117,6 +117,9 @@ void setLogFile(const CharString logFileName) {
   if(eventLogger->logFile == NULL) {
     logCritical("Could not open file '%s' for logging", logFileName->data);
   }
+  else {
+    eventLogger->useColor = false;
+  }
 }
 
 void setLoggingColorEnabled(boolByte useColor) {
