@@ -36,7 +36,6 @@ typedef struct {
   int blocksize;
   Samples* samples;
 } SampleBufferMembers;
-
 typedef SampleBufferMembers* SampleBuffer;
 
 SampleBuffer newSampleBuffer(int numChannels, int blocksize);

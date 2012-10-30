@@ -40,13 +40,18 @@ SampleBuffer newSampleBuffer(int numChannels, int blocksize) {
     return NULL;
   }
   else if(numChannels > 2) {
-    logWarn("Using channel count >2, some features may not work as expected");
+    logUnsupportedFeature("Channel count >2");
+    return NULL;
   }
   if(blocksize <= 0) {
     logError("Cannot create sample buffer with blocksize %d", blocksize);
     return NULL;
   }
 
+  // Bah, VST plugins are essentially hardcoded to be stereo, so we need to force
+  // two channels here even if we have a mono input source. This is not so flexible
+  // but should at least allow mono input sources to work correctly.
+  numChannels = 2;
   sampleBuffer->numChannels = numChannels;
   sampleBuffer->blocksize = blocksize;
   sampleBuffer->samples = (Samples*)malloc(sizeof(Samples) * numChannels);
