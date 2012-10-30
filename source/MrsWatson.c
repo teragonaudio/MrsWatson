@@ -409,7 +409,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
         outputSampleBuffer->blocksize = inputSampleBuffer->blocksize + tailTimeInFrames;
         inputSampleBuffer->blocksize += tailTimeInFrames;
       }
-      logWarn("Output size %d", outputSampleBuffer->blocksize);
+      logDebug("Using buffer size of %d for final block", outputSampleBuffer->blocksize);
     }
     outputSource->writeSampleBlock(outputSource, outputSampleBuffer);
 
