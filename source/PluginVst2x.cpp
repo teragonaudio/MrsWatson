@@ -437,6 +437,20 @@ static boolByte _initVst2xPlugin(Plugin plugin) {
   data->dispatcher(data->pluginHandle, effOpen, 0, 0, NULL, 0.0f);
   data->dispatcher(data->pluginHandle, effSetSampleRate, 0, 0, NULL, (float)getSampleRate());
   data->dispatcher(data->pluginHandle, effSetBlockSize, 0, getBlocksize(), NULL, 0.0f);
+  struct VstSpeakerArrangement speakerArrangement;
+  speakerArrangement.type = getNumChannels() == 1 ? kSpeakerM : kSpeakerC;
+  speakerArrangement.numChannels = getNumChannels();
+  struct VstSpeakerProperties defaultSpeaker;
+  defaultSpeaker.azimuth = 0.0f;
+  defaultSpeaker.elevation = 0.0f;
+  defaultSpeaker.radius = 1.0f;
+  defaultSpeaker.reserved = 0.0f;
+  strcpy(defaultSpeaker.name, "Default");
+  defaultSpeaker.type = kSpeakerUndefined;
+  for(int i = 0; i < 8; i++) {
+    speakerArrangement.speakers[i] = defaultSpeaker;
+  }
+  data->dispatcher(data->pluginHandle, effSetSpeakerArrangement, 0, 0, &speakerArrangement, 0.0f);
 
   _resumePlugin(plugin);
   return true;
