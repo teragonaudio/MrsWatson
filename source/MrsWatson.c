@@ -73,7 +73,93 @@ static void _remapFileToErrorReport(ErrorReporter errorReporter, ProgramOption o
   }
 }
 
+static void printWelcomeMessage(void) {
+  CharString versionString = newCharString();
+
+  fillVersionString(versionString);
+  logInfo("%s initialized, build %ld", versionString->data, buildDatestamp());
+  // Recycle versionString to use for the platform name
+  freeCharString(versionString);
+
+  versionString = getPlatformName();
+  logInfo("Host platform is %s", versionString->data);
+
+  freeCharString(versionString);
+}
+
+static void printVersion(void) {
+  CharString versionString = newCharString();
+  CharString wrappedLicenseInfo = newCharString();
+
+  fillVersionString(versionString);
+  printf("%s, build %ld\nCopyright (c) %d, %s. All rights reserved.\n\n",
+    versionString->data, buildDatestamp(), buildYear(), VENDOR_NAME);
+  freeCharString(versionString);
+
+  wrappedLicenseInfo = newCharStringWithCapacity(STRING_LENGTH_LONG);
+  wrapString(LICENSE_STRING, wrappedLicenseInfo->data, 0);
+  printf("%s\n\n", wrappedLicenseInfo->data);
+
+  freeCharString(wrappedLicenseInfo);
+  freeCharString(versionString);
+}
+
+static ReturnCodes buildPluginChain(PluginChain pluginChain, const CharString argument, const CharString pluginSearchRoot) {
+  // Construct plugin chain
+  if(!addPluginsFromArgumentString(pluginChain, argument, pluginSearchRoot)) {
+    return RETURN_CODE_INVALID_PLUGIN_CHAIN;
+  }
+  // No longer needed
+  freeCharString(pluginSearchRoot);
+
+  if(pluginChain->numPlugins == 0) {
+    logError("No plugins loaded");
+    return RETURN_CODE_INVALID_PLUGIN_CHAIN;
+  }
+
+  return RETURN_CODE_SUCCESS;
+}
+
+static ReturnCodes setupInputSource(SampleSource inputSource) {
+  // Prepare input source
+  if(inputSource->sampleSourceType == SAMPLE_SOURCE_TYPE_PCM) {
+    setPcmDataSampleRate(inputSource, getSampleRate());
+    setPcmDataNumChannels(inputSource, getNumChannels());
+  }
+  if(!inputSource->openSampleSource(inputSource, SAMPLE_SOURCE_OPEN_READ)) {
+    logError("Input source '%s' could not be opened", inputSource->sourceName->data);
+    return RETURN_CODE_IO_ERROR;
+  }
+
+  return RETURN_CODE_SUCCESS;
+}
+
+static ReturnCodes setupOutputSource(SampleSource outputSource, MidiSource midiSource, MidiSequence midiSequence) {
+  // Prepare output source
+  if(!outputSource->openSampleSource(outputSource, SAMPLE_SOURCE_OPEN_WRITE)) {
+    logError("Output source '%s' could not be opened", outputSource->sourceName->data);
+    return RETURN_CODE_IO_ERROR;
+  }
+  if(midiSource != NULL) {
+    if(!midiSource->openMidiSource(midiSource)) {
+      logError("MIDI source '%s' could not be opened", midiSource->sourceName->data);
+      return RETURN_CODE_IO_ERROR;
+    }
+
+    // Read in all events from the MIDI source
+    // TODO: This will not work if we want to support streaming MIDI events (ie, from a pipe)
+    midiSequence = newMidiSequence();
+    if(!midiSource->readMidiEvents(midiSource, midiSequence)) {
+      logWarn("Failed reading MIDI events from source '%s'", midiSource->sourceName->data);
+      return RETURN_CODE_IO_ERROR;
+    }
+  }
+
+  return RETURN_CODE_SUCCESS;
+}
+
 int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
+  ReturnCodes result;
   // Input/Output sources, plugin chain, and other required objects
   SampleSource inputSource = NULL;
   SampleSource outputSource = NULL;
@@ -86,7 +172,6 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   unsigned long tailTimeInFrames = 0;
   ProgramOptions programOptions;
   ProgramOption option;
-  CharString versionString, wrappedLicenseInfo;
   Plugin headPlugin;
   SampleBuffer inputSampleBuffer, outputSampleBuffer;
   TaskTimer taskTimer;
@@ -129,17 +214,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
     return RETURN_CODE_NOT_RUN;
   }
   else if(programOptions->options[OPTION_VERSION]->enabled) {
-    versionString = newCharString();
-    fillVersionString(versionString);
-    printf("%s, build %ld\nCopyright (c) %d, %s. All rights reserved.\n\n",
-      versionString->data, buildDatestamp(), buildYear(), VENDOR_NAME);
-    freeCharString(versionString);
-
-    wrappedLicenseInfo = newCharStringWithCapacity(STRING_LENGTH_LONG);
-    wrapString(LICENSE_STRING, wrappedLicenseInfo->data, 0);
-    printf("%s\n\n", wrappedLicenseInfo->data);
-    freeCharString(wrappedLicenseInfo);
-
+    printVersion();
     return RETURN_CODE_NOT_RUN;
   }
   else if(programOptions->options[OPTION_LIST_FILE_TYPES]->enabled) {
@@ -251,32 +326,16 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
     return RETURN_CODE_NOT_RUN;
   }
 
-  // Say hello!
-  versionString = newCharString();
-  fillVersionString(versionString);
-  logInfo("%s initialized, build %ld", versionString->data, buildDatestamp());
-  // Recycle versionString to use for the platform name
-  freeCharString(versionString);
-
-  versionString = getPlatformName();
-  logInfo("Host platform is %s", versionString->data);
-  freeCharString(versionString);
-
-  // Construct plugin chain
-  if(!addPluginsFromArgumentString(pluginChain, programOptions->options[OPTION_PLUGIN]->argument, pluginSearchRoot)) {
-    return RETURN_CODE_INVALID_PLUGIN_CHAIN;
+  printWelcomeMessage();
+  if((result = setupInputSource(inputSource)) != RETURN_CODE_SUCCESS) {
+    return result;
   }
-  // No longer needed
-  freeCharString(pluginSearchRoot);
-
-  if(pluginChain->numPlugins == 0) {
-    logError("No plugins loaded");
-    return RETURN_CODE_INVALID_PLUGIN_CHAIN;
+  if((result = buildPluginChain(pluginChain, programOptions->options[OPTION_PLUGIN]->argument,
+    pluginSearchRoot)) != RETURN_CODE_SUCCESS) {
+    return result;
   }
-
-  // Copy plugins before they have been opened
-  if(programOptions->options[OPTION_ERROR_REPORT]->enabled) {
-    copyPluginsToErrorReportDir(errorReporter, pluginChain);
+  if((result = setupOutputSource(outputSource, midiSource, midiSequence)) != RETURN_CODE_SUCCESS) {
+    return result;
   }
 
   // Verify input/output sources
@@ -299,46 +358,17 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
     // make sure that there is a corresponding MIDI file
     headPlugin = pluginChain->plugins[0];
     if(headPlugin->pluginType == PLUGIN_TYPE_INSTRUMENT) {
-      inputSource = newSampleSource(SAMPLE_SOURCE_TYPE_SILENCE, NULL);
       if(midiSource == NULL) {
         logError("Plugin chain contains an instrument, but no MIDI source was supplied");
         return RETURN_CODE_MISSING_REQUIRED_OPTION;
       }
     }
-    else {
-      logError("No input source");
-      return RETURN_CODE_MISSING_REQUIRED_OPTION;
-    }
   }
 
-  // Prepare input source
-  if(inputSource->sampleSourceType == SAMPLE_SOURCE_TYPE_PCM) {
-    setPcmDataSampleRate(inputSource, getSampleRate());
-    setPcmDataNumChannels(inputSource, getNumChannels());
-  }
-  if(!inputSource->openSampleSource(inputSource, SAMPLE_SOURCE_OPEN_READ)) {
-    logError("Input source '%s' could not be opened", inputSource->sourceName->data);
-    return RETURN_CODE_IO_ERROR;
-  }
 
-  // Prepare output source
-  if(!outputSource->openSampleSource(outputSource, SAMPLE_SOURCE_OPEN_WRITE)) {
-    logError("Output source '%s' could not be opened", outputSource->sourceName->data);
-    return RETURN_CODE_IO_ERROR;
-  }
-  if(midiSource != NULL) {
-    if(!midiSource->openMidiSource(midiSource)) {
-      logError("MIDI source '%s' could not be opened", midiSource->sourceName->data);
-      return RETURN_CODE_IO_ERROR;
-    }
-
-    // Read in all events from the MIDI source
-    // TODO: This will not work if we want to support streaming MIDI events (ie, from a pipe)
-    midiSequence = newMidiSequence();
-    if(!midiSource->readMidiEvents(midiSource, midiSequence)) {
-      logWarn("Failed reading MIDI events from source '%s'", midiSource->sourceName->data);
-      return RETURN_CODE_IO_ERROR;
-    }
+  // Copy plugins before they have been opened
+  if(programOptions->options[OPTION_ERROR_REPORT]->enabled) {
+    copyPluginsToErrorReportDir(errorReporter, pluginChain);
   }
 
   // Initialize the plugin chain after the global sample rate has been set
