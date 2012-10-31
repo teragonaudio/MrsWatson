@@ -95,9 +95,10 @@ Critical errors are always logged.",
     true, ARGUMENT_TYPE_REQUIRED, NO_DEFAULT_VALUE);
 
   addNewProgramOption(programOptions, OPTION_OUTPUT_SOURCE, "output",
-    "Output source to write processed data to, where the file type is determined from the extension. Run with \
---list-file-types to see a list of supported types. Use '-' to write to stdout.",
-    true, ARGUMENT_TYPE_REQUIRED, NO_DEFAULT_VALUE);
+    "Output source to write processed data to, where the file type is determined \
+from the extension. Run with --list-file-types to see a list of supported types. \
+Use '-' to write to stdout. If not given, then defaults to 'out.wav'.",
+    true, ARGUMENT_TYPE_OPTIONAL, NO_DEFAULT_VALUE);
 
   addNewProgramOption(programOptions, OPTION_PLUGIN, "plugin",
     "Plugin(s) to process. Multiple plugins can given in a semicolon-separated list, in which case they will be \

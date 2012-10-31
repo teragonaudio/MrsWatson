@@ -44,6 +44,7 @@
 #include "LogPrinter.h"
 #include "MidiSource.h"
 #include "SampleSourcePcm.h"
+#include "SampleSourceWave.h"
 
 static void prettyPrintTime(CharString outString, double milliseconds) {
   int minutes;
@@ -188,6 +189,8 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   initAudioSettings();
   initAudioClock();
   programOptions = newMrsWatsonOptions();
+  inputSource = newSampleSource(SAMPLE_SOURCE_TYPE_SILENCE, NULL);
+  outputSource = newSampleSource(DEFAULT_OUTPUT_SOURCE_TYPE, newCharStringWithCString(DEFAULT_OUTPUT_SOURCE));
 
   if(!parseCommandLine(programOptions, argc, argv)) {
     printf("Run '%s --help' to see possible options\n", getFileBasename(argv[0]));
@@ -278,12 +281,14 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
           shouldDisplayPluginInfo = true;
           break;
         case OPTION_INPUT_SOURCE:
+          freeSampleSource(inputSource);
           inputSource = newSampleSource(guessSampleSourceType(option->argument), option->argument);
           break;
         case OPTION_MIDI_SOURCE:
           midiSource = newMidiSource(guessMidiSourceType(option->argument), option->argument);
           break;
         case OPTION_OUTPUT_SOURCE:
+          freeSampleSource(outputSource);
           outputSource = newSampleSource(guessSampleSourceType(option->argument), option->argument);
           break;
         case OPTION_PLUGIN_ROOT:
@@ -350,8 +355,8 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
     }
   }
   if(outputSource == NULL) {
-    logError("No output source");
-    return RETURN_CODE_MISSING_REQUIRED_OPTION;
+    logInternalError("Default output sample source was null");
+    return RETURN_CODE_INTERNAL_ERROR;
   }
   if(inputSource == NULL) {
     // If the first plugin in the chain is an instrument, use the silent source as our input and

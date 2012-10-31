@@ -32,6 +32,9 @@
 #ifndef MrsWatson_SampleSource_h
 #define MrsWatson_SampleSource_h
 
+// Default output source name to use if none is given.
+#define DEFAULT_OUTPUT_SOURCE "out.wav"
+
 // Force all samples to be within {1.0, -1.0} range. This uses a bit of extra
 // CPU, and I'm not sure it's even necessary, so it is disabled at present.
 #define USE_BRICKWALL_LIMITER 0
@@ -47,6 +50,7 @@ typedef enum {
   SAMPLE_SOURCE_TYPE_WAVE,
   NUM_SAMPLE_SOURCES
 } SampleSourceType;
+#define DEFAULT_OUTPUT_SOURCE_TYPE SAMPLE_SOURCE_TYPE_WAVE
 
 typedef enum {
   SAMPLE_SOURCE_OPEN_NOT_OPENED,
