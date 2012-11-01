@@ -61,9 +61,8 @@ typedef struct {
       char* chunk;    ///< variable sized array with opaque program data
     } data;         ///< program chunk data
   } content;          ///< program content depending on fxMagic
-} fxpProgramMembers;
-
-typedef fxpProgramMembers* fxpProgram;
+} FxpProgramMembers;
+typedef FxpProgramMembers* FxpProgram;
 
 typedef struct {
   FILE* fileHandle;

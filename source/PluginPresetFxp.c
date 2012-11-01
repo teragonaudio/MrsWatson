@@ -47,7 +47,7 @@ static boolByte _openPluginPresetFxp(void* pluginPresetPtr) {
 static boolByte _loadPluginPresetFxp(void* pluginPresetPtr, Plugin plugin) {
   PluginPreset pluginPreset = (PluginPreset)pluginPresetPtr;
   PluginPresetFxpData extraData = (PluginPresetFxpData)(pluginPreset->extraData);
-  fxpProgram inProgram = (fxpProgram)malloc(sizeof(fxpProgramMembers));
+  FxpProgram inProgram = (FxpProgram)malloc(sizeof(FxpProgramMembers));
   PluginPresetFxpProgramType programType;
 
   char* chunk;
