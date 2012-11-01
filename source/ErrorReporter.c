@@ -87,13 +87,15 @@ void initializeErrorReporter(ErrorReporter errorReporter) {
     }
   }
 
-  #if UNIX
+ #if UNIX
   snprintf(errorReporter->desktopPath->data, errorReporter->desktopPath->capacity,
     "%s/Desktop", getenv("HOME"));
+#elif WINDOWS
+  SHGetFolderPathA(NULL, CSIDL_DESKTOPDIRECTORY, NULL, 0, errorReporter->desktopPath->data);
 #endif
   snprintf(errorReporter->reportDirPath->data, errorReporter->reportDirPath->capacity,
     "%s%c%s", errorReporter->desktopPath->data, PATH_DELIMITER, errorReporter->reportName->data);
-  mkdir(errorReporter->reportDirPath->data, 0755);
+  makeDirectory(errorReporter->reportDirPath);
 }
 
 void createCommandLineLauncher(ErrorReporter errorReporter, int argc, char* argv[]) {
