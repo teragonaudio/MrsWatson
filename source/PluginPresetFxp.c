@@ -196,6 +196,9 @@ static void _freePluginPresetDataFxp(void* extraDataPtr) {
   if(extraData->fileHandle != NULL) {
     fclose(extraData->fileHandle);
   }
+  if(extraData->chunk != NULL) {
+    free(extraData->chunk);
+  }
   free(extraData);
 }
 
