@@ -272,7 +272,7 @@ void freePluginChain(PluginChain pluginChain) {
   for(i = 0; i < pluginChain->numPlugins; i++) {
     preset = pluginChain->presets[i];
     if(preset != NULL) {
-      preset->freePresetData(preset);
+      freePluginPreset(preset);
     }
   }
   free(pluginChain->presets);
