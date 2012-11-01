@@ -107,6 +107,7 @@ static boolByte _loadPluginPresetFxp(void* pluginPresetPtr, Plugin plugin) {
     return false;
   }
   inProgram->fxID = convertBigEndianIntToPlatform(valueBuffer);
+  logDebug("Preset's fxID is %d", inProgram->fxID);
 
   // TODO: Need to check to make sure this matches the version of the plugin
   numObjectsRead = fread(&valueBuffer, sizeof(unsigned int), 1, extraData->fileHandle);
@@ -115,6 +116,7 @@ static boolByte _loadPluginPresetFxp(void* pluginPresetPtr, Plugin plugin) {
     return false;
   }
   inProgram->fxVersion = convertBigEndianIntToPlatform(valueBuffer);
+  logDebug("Preset's fxVersion is %d", inProgram->fxVersion);
 
   numObjectsRead = fread(&valueBuffer, sizeof(unsigned int), 1, extraData->fileHandle);
   if(numObjectsRead != 1) {
@@ -122,6 +124,7 @@ static boolByte _loadPluginPresetFxp(void* pluginPresetPtr, Plugin plugin) {
     return false;
   }
   inProgram->numParams = convertBigEndianIntToPlatform(valueBuffer);
+  logDebug("Preset has %d params", inProgram->numParams);
 
   memset(inProgram->prgName, 0, sizeof(char) * 28);
   numObjectsRead = fread(inProgram->prgName, sizeof(char), 28, extraData->fileHandle);
@@ -130,6 +133,7 @@ static boolByte _loadPluginPresetFxp(void* pluginPresetPtr, Plugin plugin) {
     return false;
   }
   copyToCharString(pluginPreset->presetName, inProgram->prgName);
+  logDebug("Preset's name is %s", pluginPreset->presetName->data);
 
   if(programType == FXP_TYPE_REGULAR) {
     for(i = 0; i < inProgram->numParams; i++) {
@@ -154,6 +158,9 @@ static boolByte _loadPluginPresetFxp(void* pluginPresetPtr, Plugin plugin) {
     if(chunkSize == 0) {
       logError("FXP preset has chunk of 0 bytes");
       return false;
+    }
+    else {
+      logDebug("Plugin has chunk size of %d bytes", chunkSize);
     }
 
     chunk = (char*)malloc(sizeof(char) * chunkSize);
