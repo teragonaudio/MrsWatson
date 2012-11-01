@@ -33,8 +33,8 @@ static const char* DEFAULT_MRSWATSON_PATH = "./local/bin/mrswatson";
 static const char* DEFAULT_RESOURCES_PATH = "./local/share";
 
 static ProgramOptions newTestProgramOptions(void) {
-  ProgramOptions programOptions = malloc(sizeof(ProgramOptions));
-  programOptions->options = malloc(sizeof(ProgramOption) * NUM_TEST_OPTIONS);
+  ProgramOptions programOptions = (ProgramOptions)malloc(sizeof(ProgramOptions));
+  programOptions->options = (ProgramOption*)malloc(sizeof(ProgramOption) * NUM_TEST_OPTIONS);
   programOptions->numOptions = NUM_TEST_OPTIONS;
 
   addNewProgramOption(programOptions, OPTION_TEST_SUITE, "suite",
