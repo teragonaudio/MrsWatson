@@ -128,14 +128,47 @@ CharString getPlatformName(void) {
   freeCharString(distributionName);
   freeCharString(line);
 #elif WINDOWS
-  snprintf(result->data, result->capacity, "Windows");
+  OSVERSIONINFO versionInformation;
+  versionInformation.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
+  GetVersionEx(&versionInformation);
+  // Generic string which will also work with newer versions of windows
+  snprintf(result->data, result->capacity, "Windows %d.%d",
+    versionInformation.dwMajorVersion, versionInformation.dwMinorVersion);
+
+  // TODO: This is a bit lame, is there a better way to get the OS version name?
+  switch(versionInformation.dwMajorVersion) {
+    case 6:
+      switch(versionInformation.dwMinorVersion) {
+      case 2:
+        copyToCharString(result, "Windows 8");
+        break;
+      case 1:
+        copyToCharString(result, "Windows 7");
+        break;
+      case 0:
+        copyToCharString(result, "Windows Vista");
+        break;
+      }
+      break;
+    case 5:
+      switch(versionInformation.dwMinorVersion) {
+      case 2:
+        copyToCharString(result, "Windows Server 2003");
+        break;
+      case 1:
+        copyToCharString(result, "Windows XP");
+        break;
+      case 0:
+        copyToCharString(result, "Windows 2000");
+        break;
+      }
+      break;
+  }
 #else
   copyToCharString(result, "Unsupported platform");
 #endif
   return result;
 }
-
-// TODO: const char* getPlatformVersion();
 
 boolByte isHostLittleEndian(void) {
   int num = 1;
