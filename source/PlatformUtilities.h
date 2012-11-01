@@ -48,6 +48,8 @@
 #define unlink _unlink
 #define snprintf _snprintf
 #define isatty _isatty
+#define chdir _chdir
+#define unlink _unlink
 #elif LINUX
 #include <strings.h>
 #endif

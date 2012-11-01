@@ -91,6 +91,14 @@ boolByte copyFileToDirectory(const CharString fileAbsolutePath, const CharString
   return true;
 }
 
+boolByte makeDirectory(const CharString absolutePath) {
+#if UNIX
+  return mkdir(absolutePath->data, 0755) == 0;
+#elif WINDOWS
+  return CreateDirectoryA(absolutePath->data, NULL);
+#endif
+}
+
 // Note that this method skips hidden files
 int listDirectory(const char* directory, LinkedList outItems) {
   int numItems = 0;
@@ -151,6 +159,7 @@ boolByte removeDirectory(const CharString absolutePath) {
   result = system(removeCommand->data) != 0;
 #else
   logUnsupportedFeature("Copy directory recursively");
+  return false;
 #endif
 
   return result;
@@ -166,11 +175,13 @@ void buildAbsolutePath(const CharString directory, const CharString file, const 
 }
 
 void convertRelativePathToAbsolute(const CharString file, CharString outString) {
-  const char* currentDirectory;
+  CharString currentDirectory;
 #if UNIX
-  currentDirectory = getenv("PWD");
+  currentDirectory->data = getenv("PWD");
+  currentDirectory->capacity = strlen(currentDirectory->data);
 #elif WINDOWS
-  // TODO: Get current directory
+  currentDirectory = newCharString();
+  GetCurrentDirectoryA(currentDirectory->capacity, currentDirectory->data);
 #endif
   snprintf(outString->data, outString->capacity, "%s%c%s", currentDirectory, PATH_DELIMITER, file->data);
 }

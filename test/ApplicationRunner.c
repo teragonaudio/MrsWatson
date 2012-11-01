@@ -85,6 +85,7 @@ void runApplicationTest(const TestEnvironment testEnvironment,
   CharString defaultArguments = newCharString();
   CharString failedAnalysisFunctionName = newCharString();
   unsigned long failedAnalysisSample;
+  int resultExitStatus = 0;
 
   // Remove files from a previous test run
   _removeOutputFiles(testName);
@@ -112,7 +113,7 @@ void runApplicationTest(const TestEnvironment testEnvironment,
   logUnsupportedFeature("Application testing");
   return;
 #else
-  resultCode = system(arguments->data);
+  resultCode = (ResultCodes)WEXITSTATUS(system(arguments->data));
 #endif
 
   if(resultCode == 255 || resultCode == -1 || resultCode == 127) {
@@ -125,7 +126,7 @@ Please check the executable path specified in the --mrswatson-path argument.",
       resultCode);
     testEnvironment->results->numFail++;
   }
-  else if((ReturnCodes)WEXITSTATUS(resultCode) == expectedResultCode) {
+  else if(resultCode == expectedResultCode) {
     if(anazyleOutput) {
       if(analyzeFile(_getTestOutputFilename(testName, "pcm"), failedAnalysisFunctionName, &failedAnalysisSample)) {
         testEnvironment->results->numSuccess++;
@@ -156,7 +157,7 @@ Please check the executable path specified in the --mrswatson-path argument.",
     if(testEnvironment->results->onlyPrintFailing) {
       printTestName(testName);
     }
-    fprintf(stderr, "Expected result code %d, got %d. ", expectedResultCode, WEXITSTATUS(resultCode));
+    fprintf(stderr, "Expected result code %d, got %d. ", expectedResultCode, resultCode);
     printTestFail();
     testEnvironment->results->numFail++;
   }

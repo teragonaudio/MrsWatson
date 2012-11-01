@@ -84,6 +84,7 @@ int main(int argc, char* argv[]) {
   boolByte runApplicationTests = false;
   TestCase testCase;
   TestSuite testSuite;
+  TestEnvironment testEnvironment;
   char* testArgument;
   char* colon;
   char* testCaseName;
@@ -203,7 +204,7 @@ int main(int argc, char* argv[]) {
 
   if(runApplicationTests) {
     printf("\n=== Application tests ===\n");
-    TestEnvironment testEnvironment = newTestEnvironment(mrsWatsonPath->data, resourcesPath->data);
+    testEnvironment = newTestEnvironment(mrsWatsonPath->data, resourcesPath->data);
     testEnvironment->results->onlyPrintFailing = programOptions->options[OPTION_TEST_PRINT_ONLY_FAILING]->enabled;
     totalTestsFailed += runApplicationTestSuite(testEnvironment);
   }

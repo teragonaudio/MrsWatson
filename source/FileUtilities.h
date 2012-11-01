@@ -39,6 +39,7 @@ boolByte fileExists(const char* path);
 boolByte copyFileToDirectory(const CharString fileAbsolutePath, const CharString directoryAbsolutePath);
 
 // Directory operations
+boolByte makeDirectory(const CharString absolutePath);
 int listDirectory(const char* directory, LinkedList outItems);
 boolByte removeDirectory(const CharString absolutePath);
 

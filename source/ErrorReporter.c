@@ -30,6 +30,7 @@
 #include <string.h>
 #include <time.h>
 #include <sys/stat.h>
+#include <direct.h>
 
 #include "ErrorReporter.h"
 #include "FileUtilities.h"
@@ -42,12 +43,15 @@
 #include <sys/socket.h>
 #include <fcntl.h>
 #include <unistd.h>
+#elif WINDOWS
+#include <Shlobj.h>
 #endif
 
 #include <archive.h>
 #include <archive_entry.h>
 
 ErrorReporter newErrorReporter(void) {
+
   ErrorReporter errorReporter = (ErrorReporter)malloc(sizeof(ErrorReporterMembers));
 
   errorReporter->started = false;
@@ -62,10 +66,10 @@ ErrorReporter newErrorReporter(void) {
 
 void initializeErrorReporter(ErrorReporter errorReporter) {
   time_t now;
-  time(&now);
   int length;
   int i;
 
+  time(&now);
   errorReporter->started = true;
 
   snprintf(errorReporter->reportName->data, errorReporter->reportName->capacity,
