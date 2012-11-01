@@ -173,7 +173,7 @@ static boolByte _loadPluginPresetFxp(void* pluginPresetPtr, Plugin plugin) {
 
     // The chunk has been read, set it to the actual plugin
     if(plugin->interfaceType == PLUGIN_TYPE_VST_2X) {
-      setVst2xPluginChunk(plugin, chunk);
+      setVst2xPluginChunk(plugin, chunk, chunkSize);
       free(chunk);
       return true;
     }

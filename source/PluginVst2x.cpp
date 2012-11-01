@@ -617,10 +617,9 @@ static int _getVst2xPluginSetting(void* pluginPtr, PluginSetting pluginSetting) 
   }
 }
 
-void setVst2xPluginChunk(Plugin plugin, char* chunk) {
+void setVst2xPluginChunk(Plugin plugin, char* chunk, int chunkSize) {
   PluginVst2xData data = (PluginVst2xData)plugin->extraData;
-  logWarn("Loading plugin chunks is known to be buggy, watch out!");
-  data->dispatcher(data->pluginHandle, effSetChunk, 1, 0, chunk, 0.0f);
+  data->dispatcher(data->pluginHandle, effSetChunk, 1, chunkSize, chunk, 0.0f);
 }
 
 static void _processAudioVst2xPlugin(void* pluginPtr, SampleBuffer inputs, SampleBuffer outputs) {
