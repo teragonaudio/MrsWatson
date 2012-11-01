@@ -54,7 +54,7 @@ typedef struct {
 
   union
   {
-    float params[1];    ///< variable sized array with parameter values
+    float* params;    ///< variable sized array with parameter values
     struct
     {
       unsigned int size;    ///< size of program data
