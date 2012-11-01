@@ -11,52 +11,21 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\source\AudioClock.h" />
-    <ClInclude Include="..\..\source\AudioSettings.h" />
-    <ClInclude Include="..\..\source\BuildInfo.h" />
-    <ClInclude Include="..\..\source\CharString.h" />
-    <ClInclude Include="..\..\source\EventLogger.h" />
-    <ClInclude Include="..\..\source\LinkedList.h" />
-    <ClInclude Include="..\..\source\MidiEvent.h" />
-    <ClInclude Include="..\..\source\MidiSequence.h" />
-    <ClInclude Include="..\..\source\MidiSource.h" />
-    <ClInclude Include="..\..\source\MidiSourceFile.h" />
-    <ClInclude Include="..\..\source\MrsWatson.h" />
-    <ClInclude Include="..\..\source\PlatformUtilities.h" />
-    <ClInclude Include="..\..\source\Plugin.h" />
-    <ClInclude Include="..\..\source\PluginChain.h" />
-    <ClInclude Include="..\..\source\PluginPassthru.h" />
-    <ClInclude Include="..\..\source\PluginPreset.h" />
-    <ClInclude Include="..\..\source\PluginPresetFxp.h" />
-    <ClInclude Include="..\..\source\PluginVst2x.h" />
-    <ClInclude Include="..\..\source\ProgramOption.h" />
-    <ClInclude Include="..\..\source\RiffFile.h" />
-    <ClInclude Include="..\..\source\SampleBuffer.h" />
-    <ClInclude Include="..\..\source\SampleSource.h" />
-    <ClInclude Include="..\..\source\SampleSourceAiff.h" />
-    <ClInclude Include="..\..\source\SampleSourceAudiofile.h" />
-    <ClInclude Include="..\..\source\SampleSourceFlac.h" />
-    <ClInclude Include="..\..\source\SampleSourceMp3.h" />
-    <ClInclude Include="..\..\source\SampleSourceOgg.h" />
-    <ClInclude Include="..\..\source\SampleSourcePcm.h" />
-    <ClInclude Include="..\..\source\SampleSourceSilence.h" />
-    <ClInclude Include="..\..\source\SampleSourceWave.h" />
-    <ClInclude Include="..\..\source\StringUtilities.h" />
-    <ClInclude Include="..\..\source\TaskTimer.h" />
-    <ClInclude Include="..\..\source\Types.h" />
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="..\..\source\AudioClock.c" />
     <ClCompile Include="..\..\source\AudioSettings.c" />
     <ClCompile Include="..\..\source\BuildInfo.c" />
     <ClCompile Include="..\..\source\CharString.c" />
+    <ClCompile Include="..\..\source\ErrorReporter.c" />
     <ClCompile Include="..\..\source\EventLogger.c" />
+    <ClCompile Include="..\..\source\FileUtilities.c" />
     <ClCompile Include="..\..\source\LinkedList.c" />
+    <ClCompile Include="..\..\source\LogPrinter.c" />
     <ClCompile Include="..\..\source\MidiEvent.c" />
     <ClCompile Include="..\..\source\MidiSequence.c" />
     <ClCompile Include="..\..\source\MidiSource.c" />
     <ClCompile Include="..\..\source\MidiSourceFile.c" />
     <ClCompile Include="..\..\source\MrsWatson.c" />
+    <ClCompile Include="..\..\source\MrsWatsonOptions.c" />
     <ClCompile Include="..\..\source\PlatformUtilities.c" />
     <ClCompile Include="..\..\source\Plugin.c" />
     <ClCompile Include="..\..\source\PluginChain.c" />
@@ -79,6 +48,45 @@
     <ClCompile Include="..\..\source\StringUtilities.c" />
     <ClCompile Include="..\..\source\TaskTimer.c" />
     <ClCompile Include="..\..\source\Vst2xHostCallback.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\source\AudioClock.h" />
+    <ClInclude Include="..\..\source\AudioSettings.h" />
+    <ClInclude Include="..\..\source\BuildInfo.h" />
+    <ClInclude Include="..\..\source\CharString.h" />
+    <ClInclude Include="..\..\source\ErrorReporter.h" />
+    <ClInclude Include="..\..\source\EventLogger.h" />
+    <ClInclude Include="..\..\source\FileUtilities.h" />
+    <ClInclude Include="..\..\source\LinkedList.h" />
+    <ClInclude Include="..\..\source\LogPrinter.h" />
+    <ClInclude Include="..\..\source\MidiEvent.h" />
+    <ClInclude Include="..\..\source\MidiSequence.h" />
+    <ClInclude Include="..\..\source\MidiSource.h" />
+    <ClInclude Include="..\..\source\MidiSourceFile.h" />
+    <ClInclude Include="..\..\source\MrsWatson.h" />
+    <ClInclude Include="..\..\source\MrsWatsonOptions.h" />
+    <ClInclude Include="..\..\source\PlatformUtilities.h" />
+    <ClInclude Include="..\..\source\Plugin.h" />
+    <ClInclude Include="..\..\source\PluginChain.h" />
+    <ClInclude Include="..\..\source\PluginPassthru.h" />
+    <ClInclude Include="..\..\source\PluginPreset.h" />
+    <ClInclude Include="..\..\source\PluginPresetFxp.h" />
+    <ClInclude Include="..\..\source\PluginVst2x.h" />
+    <ClInclude Include="..\..\source\ProgramOption.h" />
+    <ClInclude Include="..\..\source\RiffFile.h" />
+    <ClInclude Include="..\..\source\SampleBuffer.h" />
+    <ClInclude Include="..\..\source\SampleSource.h" />
+    <ClInclude Include="..\..\source\SampleSourceAiff.h" />
+    <ClInclude Include="..\..\source\SampleSourceAudiofile.h" />
+    <ClInclude Include="..\..\source\SampleSourceFlac.h" />
+    <ClInclude Include="..\..\source\SampleSourceMp3.h" />
+    <ClInclude Include="..\..\source\SampleSourceOgg.h" />
+    <ClInclude Include="..\..\source\SampleSourcePcm.h" />
+    <ClInclude Include="..\..\source\SampleSourceSilence.h" />
+    <ClInclude Include="..\..\source\SampleSourceWave.h" />
+    <ClInclude Include="..\..\source\StringUtilities.h" />
+    <ClInclude Include="..\..\source\TaskTimer.h" />
+    <ClInclude Include="..\..\source\Types.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{48686D58-3D56-45FC-9779-8A1BD0BB0E05}</ProjectGuid>
@@ -122,7 +130,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32=1;WINDOWS=1;_CRT_SECURE_NO_WARNINGS;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)\..\..\source;$(SolutionDir)\..\..\vendor\vstsdk2.4;$(SolutionDir)\..\..\vendor\vstsdk2.4\pluginterfaces\vst2.x;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\..\..\source;$(SolutionDir)\..\..\vendor\vstsdk2.4;$(SolutionDir)\..\..\vendor\vstsdk2.4\pluginterfaces\vst2.x;$(SolutionDir)\..\..\vendor\libarchive-3.0.4\libarchive;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -139,7 +147,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32=1;WINDOWS=1;_CRT_SECURE_NO_WARNINGS;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)\..\..\source;$(SolutionDir)\..\..\vendor\vstsdk2.4;$(SolutionDir)\..\..\vendor\vstsdk2.4\pluginterfaces\vst2.x;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\..\..\source;$(SolutionDir)\..\..\vendor\vstsdk2.4;$(SolutionDir)\..\..\vendor\vstsdk2.4\pluginterfaces\vst2.x;$(SolutionDir)\..\..\vendor\libarchive-3.0.4\libarchive;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>

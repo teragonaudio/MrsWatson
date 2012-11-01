@@ -10,6 +10,45 @@
       <Platform>Win32</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\test\AnalysisClipping.c" />
+    <ClCompile Include="..\..\test\AnalysisClippingTest.c" />
+    <ClCompile Include="..\..\test\AnalysisDistortion.c" />
+    <ClCompile Include="..\..\test\AnalysisDistortionTest.c" />
+    <ClCompile Include="..\..\test\AnalysisSilence.c" />
+    <ClCompile Include="..\..\test\AnalysisSilenceTest.c" />
+    <ClCompile Include="..\..\test\AnalyzeFile.c" />
+    <ClCompile Include="..\..\test\ApplicationRunner.c" />
+    <ClCompile Include="..\..\test\ApplicationTestSuite.c" />
+    <ClCompile Include="..\..\test\AudioClockTest.c" />
+    <ClCompile Include="..\..\test\AudioSettingsTest.c" />
+    <ClCompile Include="..\..\test\CharStringTest.c" />
+    <ClCompile Include="..\..\test\FileUtilitiesTest.c" />
+    <ClCompile Include="..\..\test\InternalTestSuite.c" />
+    <ClCompile Include="..\..\test\LinkedListTest.c" />
+    <ClCompile Include="..\..\test\main.c" />
+    <ClCompile Include="..\..\test\MidiSequenceTest.c" />
+    <ClCompile Include="..\..\test\MidiSourceTest.c" />
+    <ClCompile Include="..\..\test\PlatformUtilitiesTest.c" />
+    <ClCompile Include="..\..\test\PluginChainTest.c" />
+    <ClCompile Include="..\..\test\PluginPresetTest.c" />
+    <ClCompile Include="..\..\test\PluginTest.c" />
+    <ClCompile Include="..\..\test\ProgramOptionTest.c" />
+    <ClCompile Include="..\..\test\SampleBufferTest.c" />
+    <ClCompile Include="..\..\test\SampleSourceTest.c" />
+    <ClCompile Include="..\..\test\StringUtilitiesTest.c" />
+    <ClCompile Include="..\..\test\TaskTimerTest.c" />
+    <ClCompile Include="..\..\test\TestRunner.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\test\AnalysisClipping.h" />
+    <ClInclude Include="..\..\test\AnalysisDistortion.h" />
+    <ClInclude Include="..\..\test\AnalysisSilence.h" />
+    <ClInclude Include="..\..\test\AnalyzeFile.h" />
+    <ClInclude Include="..\..\test\ApplicationRunner.h" />
+    <ClInclude Include="..\..\test\main.h" />
+    <ClInclude Include="..\..\test\TestRunner.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{05956450-720C-4D29-814C-14DE88FA00A3}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
@@ -87,43 +126,6 @@
       <IgnoreSpecificDefaultLibraries>libcmt.lib</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClInclude Include="..\..\test\AnalysisClipping.h" />
-    <ClInclude Include="..\..\test\AnalysisDistortion.h" />
-    <ClInclude Include="..\..\test\AnalysisSilence.h" />
-    <ClInclude Include="..\..\test\AnalyzeFile.h" />
-    <ClInclude Include="..\..\test\ApplicationRunner.h" />
-    <ClInclude Include="..\..\test\main.h" />
-    <ClInclude Include="..\..\test\TestRunner.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\..\test\AnalysisClipping.c" />
-    <ClCompile Include="..\..\test\AnalysisDistortion.c" />
-    <ClCompile Include="..\..\test\AnalysisSilence.c" />
-    <ClCompile Include="..\..\test\AnalyzeFile.c" />
-    <ClCompile Include="..\..\test\ApplicationRunner.c" />
-    <ClCompile Include="..\..\test\ApplicationTestSuite.c" />
-    <ClCompile Include="..\..\test\AudioClockTest.c" />
-    <ClCompile Include="..\..\test\AudioSettingsTest.c" />
-    <ClCompile Include="..\..\test\CharStringTest.c" />
-    <ClCompile Include="..\..\test\InternalTestSuite.c" />
-    <ClCompile Include="..\..\test\LinkedListTest.c" />
-    <ClCompile Include="..\..\test\main.c" />
-    <ClCompile Include="..\..\test\MidiSequenceTest.c" />
-    <ClCompile Include="..\..\test\MidiSourceFileTest.c" />
-    <ClCompile Include="..\..\test\MidiSourceTest.c" />
-    <ClCompile Include="..\..\test\PlatformUtilitiesTest.c" />
-    <ClCompile Include="..\..\test\PluginChainTest.c" />
-    <ClCompile Include="..\..\test\PluginPresetFxpTest.c" />
-    <ClCompile Include="..\..\test\PluginPresetTest.c" />
-    <ClCompile Include="..\..\test\PluginTest.c" />
-    <ClCompile Include="..\..\test\ProgramOptionTest.c" />
-    <ClCompile Include="..\..\test\SampleBufferTest.c" />
-    <ClCompile Include="..\..\test\SampleSourceTest.c" />
-    <ClCompile Include="..\..\test\StringUtilitiesTest.c" />
-    <ClCompile Include="..\..\test\TaskTimerTest.c" />
-    <ClCompile Include="..\..\test\TestRunner.c" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

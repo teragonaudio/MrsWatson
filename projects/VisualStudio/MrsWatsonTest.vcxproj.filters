@@ -4,47 +4,33 @@
     <Filter Include="Source Files">
       <UniqueIdentifier>{bf2b3fb1-b7c0-4f67-94a6-b9f49294057b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{443f064a-8223-4aee-adff-f5127ec46f96}</UniqueIdentifier>
-    </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\..\test\AnalysisClipping.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\test\AnalysisDistortion.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\test\AnalyzeFile.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\test\AnalysisSilence.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\test\TestRunner.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\test\main.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\test\ApplicationRunner.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\test\AnalysisClipping.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\test\AnalysisClippingTest.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\test\AnalysisDistortion.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\test\AnalysisDistortionTest.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\test\AnalysisSilence.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\test\AnalysisSilenceTest.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\test\AnalyzeFile.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\test\ApplicationRunner.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\test\ApplicationTestSuite.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\test\AudioClockTest.c">
@@ -56,13 +42,19 @@
     <ClCompile Include="..\..\test\CharStringTest.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\test\FileUtilitiesTest.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\test\InternalTestSuite.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\test\LinkedListTest.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\test\MidiSequenceTest.c">
+    <ClCompile Include="..\..\test\main.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\test\MidiSourceFileTest.c">
+    <ClCompile Include="..\..\test\MidiSequenceTest.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\test\MidiSourceTest.c">
@@ -72,9 +64,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\test\PluginChainTest.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\test\PluginPresetFxpTest.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\test\PluginPresetTest.c">
@@ -98,17 +87,31 @@
     <ClCompile Include="..\..\test\TaskTimerTest.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\test\main.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\test\TestRunner.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\test\ApplicationTestSuite.c">
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\test\AnalysisClipping.h">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\test\InternalTestSuite.c">
+    </ClInclude>
+    <ClInclude Include="..\..\test\AnalysisDistortion.h">
       <Filter>Source Files</Filter>
-    </ClCompile>
+    </ClInclude>
+    <ClInclude Include="..\..\test\AnalysisSilence.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\test\AnalyzeFile.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\test\ApplicationRunner.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\test\main.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\test\TestRunner.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
