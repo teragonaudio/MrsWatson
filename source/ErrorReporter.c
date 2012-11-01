@@ -193,13 +193,14 @@ Copy the plugin? (y/n) ");
 static void _remapFileToErrorReportRelativePath(void* item, void* userData) {
   char* itemName = (char*)item;
   CharString tempPath = newCharString();
-  copyToCharString(tempPath, itemName);
   ErrorReporter errorReporter = (ErrorReporter)userData;
+  copyToCharString(tempPath, itemName);
   snprintf(tempPath->data, tempPath->capacity, "%s/%s", errorReporter->reportName->data, itemName);
   strncpy(itemName, tempPath->data, tempPath->capacity);
 }
 
 static void _addFileToArchive(void* item, void* userData) {
+#if UNIX
   char* itemPath = (char*)item;
   struct archive* outArchive = (struct archive*)userData;
   struct archive_entry* entry = archive_entry_new();
@@ -223,6 +224,7 @@ static void _addFileToArchive(void* item, void* userData) {
   } while(bytesRead > 0);
   fclose(filePointer);
   archive_entry_free(entry);
+#endif
 }
 
 void printErrorReportInfo(void) {
@@ -238,6 +240,7 @@ arguments and will disable console logging.\n");
 }
 
 void completeErrorReport(ErrorReporter errorReporter) {
+#if UNIX
   struct archive* outArchive;
   CharString outputFilename = newCharString();
   LinkedList reportContents = newLinkedList();
@@ -268,6 +271,7 @@ void completeErrorReport(ErrorReporter errorReporter) {
     // Remove original error report
     removeDirectory(errorReporter->reportDirPath);
   }
+#endif
 }
 
 void printErrorReportComplete(void) {
