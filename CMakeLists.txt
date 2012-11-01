@@ -81,7 +81,6 @@ ExternalProject_Add(libarchive
 ExternalProject_Add(AudioTestData
   GIT_REPOSITORY git@github.com:teragonaudio/AudioTestData.git
   GIT_TAG master
-  UPDATE_COMMAND git pull
   PREFIX ${CMAKE_SOURCE_DIR}/build/AudioTestData
   CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${localDir}
   INSTALL_DIR ${localDir}
