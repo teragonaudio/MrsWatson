@@ -88,6 +88,7 @@ void runApplicationTest(const TestEnvironment testEnvironment,
 
   // Remove files from a previous test run
   _removeOutputFiles(testName);
+  makeDirectory(newCharStringWithCString("out"));
 
   // Create the command line argument
   appendCStringToCharString(arguments, testEnvironment->applicationPath);
@@ -100,13 +101,6 @@ void runApplicationTest(const TestEnvironment testEnvironment,
   if(!testEnvironment->results->onlyPrintFailing) {
     printTestName(testName);
   }
-
-  // TODO: Move to FileUtilities
-#if WINDOWS
-  // TODO: mkdir();
-#else
-  mkdir("out", 0755);
-#endif
 
 #if WINDOWS
   logUnsupportedFeature("Application testing");
