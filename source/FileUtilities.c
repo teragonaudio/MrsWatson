@@ -175,15 +175,13 @@ void buildAbsolutePath(const CharString directory, const CharString file, const 
 }
 
 void convertRelativePathToAbsolute(const CharString file, CharString outString) {
-  CharString currentDirectory;
+  CharString currentDirectory = newCharString();
 #if UNIX
-  currentDirectory->data = getenv("PWD");
-  currentDirectory->capacity = strlen(currentDirectory->data);
+  copyToCharString(currentDirectory, getenv("PWD"));
 #elif WINDOWS
-  currentDirectory = newCharString();
   GetCurrentDirectoryA(currentDirectory->capacity, currentDirectory->data);
 #endif
-  snprintf(outString->data, outString->capacity, "%s%c%s", currentDirectory, PATH_DELIMITER, file->data);
+  snprintf(outString->data, outString->capacity, "%s%c%s", currentDirectory->data, PATH_DELIMITER, file->data);
 }
 
 boolByte isAbsolutePath(const CharString path) {
