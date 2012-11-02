@@ -80,12 +80,11 @@ static void _removeOutputFiles(const char* testName) {
 void runApplicationTest(const TestEnvironment testEnvironment,
   const char *testName, const char *testArguments,
   ReturnCodes expectedResultCode, boolByte anazyleOutput) {
-  int resultCode = -1;
+  ReturnCodes resultCode = -1;
   CharString arguments = newCharString();
   CharString defaultArguments = newCharString();
   CharString failedAnalysisFunctionName = newCharString();
   unsigned long failedAnalysisSample;
-  int resultExitStatus = 0;
 
   // Remove files from a previous test run
   _removeOutputFiles(testName);
@@ -113,10 +112,10 @@ void runApplicationTest(const TestEnvironment testEnvironment,
   logUnsupportedFeature("Application testing");
   return;
 #else
-  resultCode = (ResultCodes)WEXITSTATUS(system(arguments->data));
+  resultCode = (ReturnCodes)WEXITSTATUS(system(arguments->data));
 #endif
 
-  if(resultCode == 255 || resultCode == -1 || resultCode == 127) {
+  if(resultCode == 255 || (int)resultCode == -1 || resultCode == 127) {
     if(testEnvironment->results->onlyPrintFailing) {
       printTestName(testName);
     }

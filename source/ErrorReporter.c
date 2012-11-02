@@ -30,7 +30,7 @@
 #include <string.h>
 #include <time.h>
 #include <sys/stat.h>
-#include <direct.h>
+#include <dirent.h>
 
 #include "ErrorReporter.h"
 #include "FileUtilities.h"
