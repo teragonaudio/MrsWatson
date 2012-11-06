@@ -35,7 +35,7 @@ static int _testGetShortPlatformName(void) {
 #elif MACOSX
   assertCharStringEquals(p, "macosx");
 #elif WINDOWS
-  assertCharStringEquals(p, "vindows");
+  assertCharStringEquals(p, "windows");
 #else
   assertCharStringEquals(p, "unsupported");
 #endif

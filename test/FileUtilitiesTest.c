@@ -8,8 +8,14 @@
 #include <sys/types.h>
 #endif
 
-static const char* TEST_FILENAME = "fileUtilitiestTest.txt";
-static const char* ABSOLUTE_TEST_FILENAME = "/tmp/fileUtilitiestTest.txt";
+static const char* TEST_FILENAME = "fileUtilitiesTest.txt";
+#if UNIX
+static const char* ABSOLUTE_TEST_FILENAME = "/tmp/fileUtilitiesTest.txt";
+#elif WINDOWS
+static const char* ABSOLUTE_TEST_FILENAME = "C:\\Temp\\fileUtilitiesTest.txt";
+#else
+static const char* ABSOLUTE_TEST_FILENAME = "fileUtilitiesTest.txt";
+#endif
 
 static int _testFileExists(void) {
   FILE *fp = fopen(TEST_FILENAME, "w");
