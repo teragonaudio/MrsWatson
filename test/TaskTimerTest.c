@@ -22,11 +22,12 @@ static int _testTaskTimerDuration(void) {
 #if UNIX
   usleep(SLEEP_DURATION_MS * 1000);
 #elif WINDOWS
-  // TODO: Sleep for 10ms
+  Sleep(SLEEP_DURATION_MS);
 #endif
   stopTiming(t);
   assertIntEquals(t->currentTask, -1);
-  assert(fabsl(10.0 - t->totalTaskTimes[0]) <= MAX_TIMER_TOLERANCE_MS);
+  fprintf(stderr, "\n\nYO %f %f\n\n", SLEEP_DURATION_MS - t->totalTaskTimes[0], MAX_TIMER_TOLERANCE_MS);
+  assert(fabsl(SLEEP_DURATION_MS - t->totalTaskTimes[0]) <= MAX_TIMER_TOLERANCE_MS);
   return 0;
 }
 
@@ -39,12 +40,12 @@ static int _testTaskTimerDurationMultipleTimes(void) {
 #if UNIX
     usleep(SLEEP_DURATION_MS * 1000);
 #elif WINDOWS
-    // TODO: Sleep for 10ms
+    Sleep(SLEEP_DURATION_MS);
 #endif
     stopTiming(t);    
     assertIntEquals(t->currentTask, -1);
   }
-  assert(fabsl(5.0 * 10.0 - t->totalTaskTimes[0]) <= MAX_TIMER_TOLERANCE_MS * 5.0);
+  assert(fabsl(5.0 * SLEEP_DURATION_MS - t->totalTaskTimes[0]) <= MAX_TIMER_TOLERANCE_MS * 5.0);
   return 0;
 }
 
@@ -55,11 +56,11 @@ static int _testTaskTimerCallStartTwice(void) {
 #if UNIX
   usleep(SLEEP_DURATION_MS * 1000);
 #elif WINDOWS
-  // TODO: Sleep for 10ms
+  Sleep(SLEEP_DURATION_MS);
 #endif
   stopTiming(t);
   assertIntEquals(t->currentTask, -1);
-  assert(fabsl(10.0 - t->totalTaskTimes[0]) <= MAX_TIMER_TOLERANCE_MS);
+  assert(fabsl(SLEEP_DURATION_MS - t->totalTaskTimes[0]) <= MAX_TIMER_TOLERANCE_MS);
   return 0;
 }
 
@@ -69,13 +70,13 @@ static int _testTaskTimerCallStopTwice(void) {
 #if UNIX
   usleep(SLEEP_DURATION_MS * 1000);
 #elif WINDOWS
-  // TODO: Sleep for 10ms
+  Sleep(SLEEP_DURATION_MS);
 #endif
   stopTiming(t);
   stopTiming(t);
   assertIntEquals(t->currentTask, -1);
   // Recorded time should be at most 1ms off
-  assert(fabsl(10.0 - t->totalTaskTimes[0]) <= MAX_TIMER_TOLERANCE_MS);
+  assert(fabsl(SLEEP_DURATION_MS - t->totalTaskTimes[0]) <= MAX_TIMER_TOLERANCE_MS);
   return 0;
 }
 
@@ -88,12 +89,12 @@ static int _testCallStopBeforeStart(void) {
 #if UNIX
   usleep(SLEEP_DURATION_MS * 1000);
 #elif WINDOWS
-  // TODO: Sleep for 10ms
+  Sleep(SLEEP_DURATION_MS);
 #endif
   stopTiming(t);
   assertIntEquals(t->currentTask, -1);
   // Recorded time should be at most 1ms off
-  assert(fabsl(10.0 - t->totalTaskTimes[0]) <= MAX_TIMER_TOLERANCE_MS);
+  assert(fabsl(SLEEP_DURATION_MS - t->totalTaskTimes[0]) <= MAX_TIMER_TOLERANCE_MS);
   return 0;
 }
 
