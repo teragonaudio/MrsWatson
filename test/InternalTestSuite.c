@@ -59,7 +59,7 @@ static LinkedList _getTestSuites(void) {
 }
 
 static void _setTestSuiteOnlyPrintFailing(void* item, void* userData) {
-  TestSuite testSuite = (TestSuite*)item;
+  TestSuite testSuite = (TestSuite)item;
   testSuite->onlyPrintFailing = true;
 }
 
