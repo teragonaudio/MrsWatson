@@ -30,6 +30,13 @@
 
 #include <stdio.h>
 
+#if UNIX
+#define USE_COLORS 1
+#elif WINDOWS
+#define USE_COLORS 0
+#endif
+
+#if USE_COLORS
 #define ANSI_COLOR_RESET   "\x1b[0m"
 
 #define ANSI_COLOR_FG_BLACK   "\x1b[30m"
@@ -63,6 +70,41 @@
 #define ANSI_COLOR_BG_FUCHSIA "\x1b[105m\x1b[30m"
 #define ANSI_COLOR_BG_CYAN    "\x1b[46m\x1b[30m"
 #define ANSI_COLOR_BG_WHITE   "\x1b[47m\x1b[30m"
+#else
+#define ANSI_COLOR_RESET   ""
+
+#define ANSI_COLOR_FG_BLACK   ""
+#define ANSI_COLOR_FG_MAROON  ""
+#define ANSI_COLOR_FG_GREEN   ""
+#define ANSI_COLOR_FG_OLIVE   ""
+#define ANSI_COLOR_FG_NAVY    ""
+#define ANSI_COLOR_FG_PURPLE  ""
+#define ANSI_COLOR_FG_TEAL    ""
+#define ANSI_COLOR_FG_GRAY    ""
+#define ANSI_COLOR_FG_DKGRAY  ""
+#define ANSI_COLOR_FG_RED     ""
+#define ANSI_COLOR_FG_YELLOW  ""
+#define ANSI_COLOR_FG_BLUE    ""
+#define ANSI_COLOR_FG_FUCHSIA ""
+#define ANSI_COLOR_FG_CYAN    ""
+#define ANSI_COLOR_FG_WHITE   ""
+
+#define ANSI_COLOR_BG_BLACK   ""
+#define ANSI_COLOR_BG_MAROON  ""
+#define ANSI_COLOR_BG_GREEN   ""
+#define ANSI_COLOR_BG_OLIVE   ""
+#define ANSI_COLOR_BG_NAVY    ""
+#define ANSI_COLOR_BG_PURPLE  ""
+#define ANSI_COLOR_BG_TEAL    ""
+#define ANSI_COLOR_BG_GRAY    ""
+#define ANSI_COLOR_BG_DKGRAY  ""
+#define ANSI_COLOR_BG_RED     ""
+#define ANSI_COLOR_BG_YELLOW  ""
+#define ANSI_COLOR_BG_BLUE    ""
+#define ANSI_COLOR_BG_FUCHSIA ""
+#define ANSI_COLOR_BG_CYAN    ""
+#define ANSI_COLOR_BG_WHITE   ""
+#endif
 
 void printToLog(const char* color, FILE* logFile, const char* message);
 void flushLog(FILE* logFile);
