@@ -128,9 +128,10 @@ CharString getPlatformName(void) {
   freeCharString(distributionName);
   freeCharString(line);
 #elif WINDOWS
-  OSVERSIONINFO versionInformation;
+  OSVERSIONINFOEX versionInformation;
+  memset(&versionInformation, 0, sizeof(OSVERSIONINFOEX));
   versionInformation.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
-  GetVersionEx(&versionInformation);
+  GetVersionEx((OSVERSIONINFO*)&versionInformation);
   // Generic string which will also work with newer versions of windows
   snprintf(result->data, result->capacity, "Windows %d.%d",
     versionInformation.dwMajorVersion, versionInformation.dwMinorVersion);
