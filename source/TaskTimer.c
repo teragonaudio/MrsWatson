@@ -27,7 +27,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#if ! WINDOWS
+#if UNIX
 #include <sys/time.h>
 #endif
 
@@ -99,7 +99,7 @@ void stopTiming(TaskTimer taskTimer) {
 
 void freeTaskTimer(TaskTimer taskTimer) {
   free(taskTimer->totalTaskTimes);
-#if ! WINDOWS
+#if UNIX
   free(taskTimer->startTime);
 #endif
   free(taskTimer);
