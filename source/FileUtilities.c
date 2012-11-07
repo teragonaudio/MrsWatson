@@ -35,10 +35,14 @@
 #if WINDOWS
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
-#elif MACOSX || LINUX
+#elif UNIX
 #include <dirent.h>
 #include <string.h>
 #include <unistd.h>
+#endif
+
+#if MACOSX
+#include <mach-o/dyld.h>
 #endif
 
 boolByte fileExists(const char* path) {
@@ -246,8 +250,7 @@ void getExecutablePath(CharString outString) {
 #if LINUX
   readlink("/proc/self/exe", outString->data, outString->length);
 #elif MACOSX
-  // TODO: _NSGetExecutablePath()
-  logUnsupportedFeature("getExecutablePath");
+  _NSGetExecutablePath(outString->data, &outString->length);
 #elif WINDOWS
   // TODO GetModuleFileName()
   logUnsupportedFeature("getExecutablePath");
