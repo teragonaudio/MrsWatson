@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #if UNIX
+#include <unistd.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #endif

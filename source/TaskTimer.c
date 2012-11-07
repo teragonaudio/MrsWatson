@@ -25,6 +25,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
+#include "PlatformUtilities.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #if UNIX
@@ -45,7 +47,7 @@ TaskTimer newTaskTimer(const int numTasks) {
   }
 #if WINDOWS
   QueryPerformanceFrequency(&(taskTimer->counterFrequency));
-#else
+#elif UNIX
   taskTimer->startTime = malloc(sizeof(struct timeval));
 #endif
 
