@@ -8,7 +8,7 @@ static SampleBuffer _newMockSampleBuffer(void) {
 
 static int _testNewSampleBuffer(void) {
   SampleBuffer s = _newMockSampleBuffer();
-  assertIntEquals(s->numChannels, 2);
+  assertIntEquals(s->numChannels, 1);
   assertIntEquals(s->blocksize, 1);
   return 0;
 }

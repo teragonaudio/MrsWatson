@@ -48,14 +48,16 @@ SampleBuffer newSampleBuffer(int numChannels, int blocksize) {
     return NULL;
   }
 
+  sampleBuffer->numChannels = numChannels;
+  sampleBuffer->blocksize = blocksize;
+
   // Bah, VST plugins are essentially hardcoded to be stereo, so we need to force
   // two channels here even if we have a mono input source. This is not so flexible
   // but should at least allow mono input sources to work correctly.
-  numChannels = 2;
-  sampleBuffer->numChannels = numChannels;
-  sampleBuffer->blocksize = blocksize;
-  sampleBuffer->samples = (Samples*)malloc(sizeof(Samples) * numChannels);
-  for(i = 0; i < numChannels; i++) {
+  // Also note that internally, the numChannels member should still be correct,
+  // this is just a workaround to prevent segfaults.
+  sampleBuffer->samples = (Samples*)malloc(sizeof(Samples) * 2);
+  for(i = 0; i < 2; i++) {
     sampleBuffer->samples[i] = (Samples)malloc(sizeof(Sample) * blocksize);
   }
   clearSampleBuffer(sampleBuffer);
