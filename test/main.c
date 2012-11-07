@@ -29,8 +29,8 @@ extern int runApplicationTestSuite(TestEnvironment testEnvironment);
 static const char* DEFAULT_TEST_SUITE_NAME = "all";
 
 // Default installation location if you run 'make' from the top-level build dir
-static const char* DEFAULT_MRSWATSON_PATH = "./local/bin/mrswatson";
-static const char* DEFAULT_RESOURCES_PATH = "./local/share";
+static const char* DEFAULT_MRSWATSON_PATH = "mrswatson";
+static const char* DEFAULT_RESOURCES_PATH = "../share";
 
 static ProgramOptions newTestProgramOptions(void) {
   ProgramOptions programOptions = (ProgramOptions)malloc(sizeof(ProgramOptions));
@@ -78,6 +78,8 @@ int main(int argc, char* argv[]) {
   ProgramOptions programOptions;
   int totalTestsFailed = 0;
   CharString testSuiteToRun;
+  CharString executablePath;
+  CharString currentPath;
   CharString mrsWatsonPath;
   CharString resourcesPath;
   boolByte runInternalTests = false;
@@ -178,12 +180,18 @@ int main(int argc, char* argv[]) {
     totalTestsFailed = 0;
   }
 
+  // Find out where this program is being run from to find mrswatson and resources
+  executablePath = newCharString();
+  getExecutablePath(executablePath);
+  currentPath = newCharString();
+  getFileDirname(executablePath, currentPath);
+
   mrsWatsonPath = newCharString();
   if(programOptions->options[OPTION_TEST_MRSWATSON_PATH]->enabled) {
     copyCharStrings(mrsWatsonPath, programOptions->options[OPTION_TEST_MRSWATSON_PATH]->argument);
   }
   else {
-    copyToCharString(mrsWatsonPath, DEFAULT_MRSWATSON_PATH);
+    buildAbsolutePath(currentPath, newCharStringWithCString(DEFAULT_MRSWATSON_PATH), NULL, mrsWatsonPath);
   }
   if(runApplicationTests && !fileExists(mrsWatsonPath->data)) {
     printf("Could not find mrswatson at '%s', skipping application tests\n", mrsWatsonPath->data);
@@ -195,7 +203,7 @@ int main(int argc, char* argv[]) {
     copyCharStrings(resourcesPath, programOptions->options[OPTION_TEST_RESOURCES_PATH]->argument);
   }
   else {
-    copyToCharString(resourcesPath, DEFAULT_RESOURCES_PATH);
+    buildAbsolutePath(currentPath, newCharStringWithCString(DEFAULT_RESOURCES_PATH), NULL, resourcesPath);
   }
   if(runApplicationTests && !fileExists(resourcesPath->data)) {
     printf("Could not find test resources at '%s', skipping application tests\n", resourcesPath->data);
