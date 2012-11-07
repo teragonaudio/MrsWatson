@@ -38,12 +38,7 @@ void printToLog(const char* color, FILE* logFile, const char* message) {
     }
   }
   else {
-    if(color == NULL) {
-      fprintf(logFile, "%s", message);
-    }
-    else {
-      fprintf(logFile, "%s%s%s", color, message, ANSI_COLOR_RESET);
-    }
+    fprintf(logFile, "%s", message);
   }
 }
 
