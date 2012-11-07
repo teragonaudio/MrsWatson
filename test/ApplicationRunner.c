@@ -79,8 +79,10 @@ static void _removeOutputFiles(const char* testName) {
 
 void runApplicationTest(const TestEnvironment testEnvironment,
   const char *testName, const char *testArguments,
-  ReturnCodes expectedResultCode, boolByte anazyleOutput) {
-  ReturnCodes resultCode = -1;
+  ReturnCodes expectedResultCode, boolByte anazyleOutput)
+{
+  int result = -1;
+  ReturnCodes resultCode = (ReturnCodes)result;
   CharString arguments = newCharStringWithCapacity(STRING_LENGTH_LONG);
   CharString defaultArguments = newCharStringWithCapacity(STRING_LENGTH_LONG);
   CharString failedAnalysisFunctionName = newCharString();
@@ -106,7 +108,8 @@ void runApplicationTest(const TestEnvironment testEnvironment,
   logUnsupportedFeature("Application testing");
   return;
 #else
-  resultCode = (ReturnCodes)WEXITSTATUS(system(arguments->data));
+  result = system(arguments->data);
+  resultCode = (ReturnCodes)WEXITSTATUS(result);
 #endif
 
   if(resultCode == 255 || (int)resultCode == -1 || resultCode == 127) {
