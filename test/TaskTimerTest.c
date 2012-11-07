@@ -22,19 +22,25 @@ static int _testNewTaskTimer(void) {
   return 0;
 }
 
+static void _testSleep(void) {
+#if UNIX
+  struct timespec sleepTime;
+  sleepTime.tv_sec = 0;
+  sleepTime.tv_nsec = 1000000 * SLEEP_DURATION_MS;
+  nanosleep(&sleepTime, NULL);
+#elif WINDOWS
+  Sleep(SLEEP_DURATION_MS);
+#endif
+}
+
 static int _testTaskTimerDuration(void) {
   TaskTimer t = newTaskTimer(1);
   assertIntEquals(t->currentTask, -1);
   startTimingTask(t, 0);
-#if UNIX
-  usleep(SLEEP_DURATION_MS * 1000);
-#elif WINDOWS
-  Sleep(SLEEP_DURATION_MS);
-#endif
+  _testSleep();
   stopTiming(t);
   assertIntEquals(t->currentTask, -1);
-  fprintf(stderr, "\n\nYO %f %f\n\n", SLEEP_DURATION_MS - t->totalTaskTimes[0], MAX_TIMER_TOLERANCE_MS);
-  assert(fabsl(SLEEP_DURATION_MS - t->totalTaskTimes[0]) <= MAX_TIMER_TOLERANCE_MS);
+  assertDoubleEquals(t->totalTaskTimes[0], SLEEP_DURATION_MS, MAX_TIMER_TOLERANCE_MS);
   return 0;
 }
 
@@ -44,15 +50,11 @@ static int _testTaskTimerDurationMultipleTimes(void) {
   for(i = 0; i < 5; i++) {
     assertIntEquals(t->currentTask, -1);
     startTimingTask(t, 0);
-#if UNIX
-    usleep(SLEEP_DURATION_MS * 1000);
-#elif WINDOWS
-    Sleep(SLEEP_DURATION_MS);
-#endif
-    stopTiming(t);    
+    _testSleep();
+    stopTiming(t);
     assertIntEquals(t->currentTask, -1);
   }
-  assert(fabsl(5.0 * SLEEP_DURATION_MS - t->totalTaskTimes[0]) <= MAX_TIMER_TOLERANCE_MS * 5.0);
+  assertDoubleEquals(t->totalTaskTimes[0], 5.0 * SLEEP_DURATION_MS, MAX_TIMER_TOLERANCE_MS * 5.0);
   return 0;
 }
 
@@ -60,30 +62,22 @@ static int _testTaskTimerCallStartTwice(void) {
   TaskTimer t = newTaskTimer(1);
   startTimingTask(t, 0);
   startTimingTask(t, 0);
-#if UNIX
-  usleep(SLEEP_DURATION_MS * 1000);
-#elif WINDOWS
-  Sleep(SLEEP_DURATION_MS);
-#endif
+  _testSleep();
   stopTiming(t);
   assertIntEquals(t->currentTask, -1);
-  assert(fabsl(SLEEP_DURATION_MS - t->totalTaskTimes[0]) <= MAX_TIMER_TOLERANCE_MS);
+  assertDoubleEquals(t->totalTaskTimes[0], SLEEP_DURATION_MS, MAX_TIMER_TOLERANCE_MS);
   return 0;
 }
 
 static int _testTaskTimerCallStopTwice(void) {
   TaskTimer t = newTaskTimer(1);
   startTimingTask(t, 0);
-#if UNIX
-  usleep(SLEEP_DURATION_MS * 1000);
-#elif WINDOWS
-  Sleep(SLEEP_DURATION_MS);
-#endif
+  _testSleep();
   stopTiming(t);
   stopTiming(t);
   assertIntEquals(t->currentTask, -1);
   // Recorded time should be at most 1ms off
-  assert(fabsl(SLEEP_DURATION_MS - t->totalTaskTimes[0]) <= MAX_TIMER_TOLERANCE_MS);
+  assertDoubleEquals(t->totalTaskTimes[0], SLEEP_DURATION_MS, MAX_TIMER_TOLERANCE_MS);
   return 0;
 }
 
@@ -93,15 +87,11 @@ static int _testCallStopBeforeStart(void) {
   assertIntEquals(t->currentTask, -1);
   startTimingTask(t, 0);
   assertIntEquals(t->currentTask, 0);
-#if UNIX
-  usleep(SLEEP_DURATION_MS * 1000);
-#elif WINDOWS
-  Sleep(SLEEP_DURATION_MS);
-#endif
+  _testSleep();
   stopTiming(t);
   assertIntEquals(t->currentTask, -1);
   // Recorded time should be at most 1ms off
-  assert(fabsl(SLEEP_DURATION_MS - t->totalTaskTimes[0]) <= MAX_TIMER_TOLERANCE_MS);
+  assertDoubleEquals(t->totalTaskTimes[0], SLEEP_DURATION_MS, MAX_TIMER_TOLERANCE_MS);
   return 0;
 }
 
