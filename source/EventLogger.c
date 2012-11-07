@@ -85,7 +85,7 @@ static EventLogger _getEventLoggerInstance(void) {
 }
 
 void fillVersionString(CharString outString) {
-  snprintf(outString->data, outString->capacity, "%s version %d.%d.%d", PROGRAM_NAME, VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
+  snprintf(outString->data, outString->length, "%s version %d.%d.%d", PROGRAM_NAME, VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
 }
 
 void setLogLevel(LogLevel logLevel) {
@@ -211,7 +211,7 @@ static void _logMessage(const LogLevel logLevel, const char* message, va_list ar
 
   if(eventLogger != NULL && logLevel >= eventLogger->logLevel) {
     CharString formattedMessage = newCharString();
-    vsnprintf(formattedMessage->data, formattedMessage->capacity, message, arguments);
+    vsnprintf(formattedMessage->data, formattedMessage->length, message, arguments);
 #if WINDOWS
     currentTime = GetTickCount();
     elapsedTimeInMs = (unsigned long)(currentTime - eventLogger->startTimeInMs);
@@ -255,7 +255,7 @@ void logCritical(const char* message, ...) {
   CharString wrappedMessage = newCharString();
   va_start(arguments, message);
   // Instead of going through the common logging method, we always dump critical messages to stderr
-  vsnprintf(formattedMessage->data, formattedMessage->capacity, message, arguments);
+  vsnprintf(formattedMessage->data, formattedMessage->length, message, arguments);
   wrapString(formattedMessage->data, wrappedMessage->data, 0);
   fprintf(stderr, "ERROR: %s\n", wrappedMessage->data);
   if(eventLoggerInstance != NULL && eventLoggerInstance->logFile != NULL) {
@@ -270,7 +270,7 @@ void logInternalError(const char* message, ...) {
 
   va_start(arguments, message);
   // Instead of going through the common logging method, we always dump critical messages to stderr
-  vsnprintf(formattedMessage->data, formattedMessage->capacity, message, arguments);
+  vsnprintf(formattedMessage->data, formattedMessage->length, message, arguments);
   fprintf(stderr, "INTERNAL ERROR: %s\n", formattedMessage->data);
   if(eventLoggerInstance != NULL && eventLoggerInstance->logFile != NULL) {
   fprintf(eventLoggerInstance->logFile, "INTERNAL ERROR: %s\n", formattedMessage->data);

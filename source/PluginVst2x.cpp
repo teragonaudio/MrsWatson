@@ -214,9 +214,9 @@ static void _appendDefaultPluginLocations(PlatformType platformType, LinkedList 
   // Regardless of platform, the current directory should be searched first. This is most useful when debugging
   pwdLocationBuffer = newCharString();
 #if WINDOWS
-  GetCurrentDirectoryA(pwdLocationBuffer->capacity, pwdLocationBuffer->data);
+  GetCurrentDirectoryA(pwdLocationBuffer->length, pwdLocationBuffer->data);
 #else
-  snprintf(pwdLocationBuffer->data, (size_t)pwdLocationBuffer->capacity, "%s", getenv("PWD"));
+  snprintf(pwdLocationBuffer->data, (size_t)pwdLocationBuffer->length, "%s", getenv("PWD"));
 #endif
   appendItemToList(outLocations, pwdLocationBuffer);
 
@@ -224,35 +224,35 @@ static void _appendDefaultPluginLocations(PlatformType platformType, LinkedList 
     case PLATFORM_WINDOWS:
     {
       locationBuffer1 = newCharString();
-      snprintf(locationBuffer1->data, (size_t)(locationBuffer1->capacity), "C:\\VstPlugins");
+      snprintf(locationBuffer1->data, (size_t)(locationBuffer1->length), "C:\\VstPlugins");
       appendItemToList(outLocations, locationBuffer1);
 
       locationBuffer2 = newCharString();
-      snprintf(locationBuffer2->data, (size_t)(locationBuffer2->capacity), "C:\\Program Files\\Common Files\\VstPlugins");
+      snprintf(locationBuffer2->data, (size_t)(locationBuffer2->length), "C:\\Program Files\\Common Files\\VstPlugins");
       appendItemToList(outLocations, locationBuffer2);
     }
       break;
     case PLATFORM_MACOSX:
     {
       locationBuffer1 = newCharString();
-      snprintf(locationBuffer1->data, (size_t)(locationBuffer1->capacity), "/Library/Audio/Plug-Ins/VST");
+      snprintf(locationBuffer1->data, (size_t)(locationBuffer1->length), "/Library/Audio/Plug-Ins/VST");
       appendItemToList(outLocations, locationBuffer1);
 
       locationBuffer2 = newCharString();
-      snprintf(locationBuffer2->data, (size_t)(locationBuffer2->capacity), "%s/Library/Audio/Plug-Ins/VST", getenv("HOME"));
+      snprintf(locationBuffer2->data, (size_t)(locationBuffer2->length), "%s/Library/Audio/Plug-Ins/VST", getenv("HOME"));
       appendItemToList(outLocations, locationBuffer2);
     }
       break;
     case PLATFORM_LINUX:
     {
       locationBuffer1 = newCharString();
-      snprintf(locationBuffer1->data, (size_t)(locationBuffer1->capacity), "%s/.vst", getenv("HOME"));
+      snprintf(locationBuffer1->data, (size_t)(locationBuffer1->length), "%s/.vst", getenv("HOME"));
       appendItemToList(outLocations, locationBuffer1);
 
       locationBuffer2 = newCharString();
       vstPathEnv = getenv("VST_PATH");
       if(vstPathEnv != NULL) {
-        snprintf(locationBuffer2->data, (size_t)(locationBuffer2->capacity), "%s", vstPathEnv);
+        snprintf(locationBuffer2->data, (size_t)(locationBuffer2->length), "%s", vstPathEnv);
         appendItemToList(outLocations, locationBuffer2);
       }
     }

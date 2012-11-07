@@ -71,7 +71,7 @@ void initializeErrorReporter(ErrorReporter errorReporter) {
   time(&now);
   errorReporter->started = true;
 
-  snprintf(errorReporter->reportName->data, errorReporter->reportName->capacity,
+  snprintf(errorReporter->reportName->data, errorReporter->reportName->length,
     "MrsWatson Report %s", ctime(&now));
   // Trim the final newline character from this string if it exists
   length = strlen(errorReporter->reportName->data);
@@ -87,12 +87,12 @@ void initializeErrorReporter(ErrorReporter errorReporter) {
   }
 
  #if UNIX
-  snprintf(errorReporter->desktopPath->data, errorReporter->desktopPath->capacity,
+  snprintf(errorReporter->desktopPath->data, errorReporter->desktopPath->length,
     "%s/Desktop", getenv("HOME"));
 #elif WINDOWS
   SHGetFolderPathA(NULL, CSIDL_DESKTOPDIRECTORY, NULL, 0, errorReporter->desktopPath->data);
 #endif
-  snprintf(errorReporter->reportDirPath->data, errorReporter->reportDirPath->capacity,
+  snprintf(errorReporter->reportDirPath->data, errorReporter->reportDirPath->length,
     "%s%c%s", errorReporter->desktopPath->data, PATH_DELIMITER, errorReporter->reportName->data);
   makeDirectory(errorReporter->reportDirPath);
 }
@@ -119,7 +119,7 @@ void createCommandLineLauncher(ErrorReporter errorReporter, int argc, char* argv
 
 void remapPathToErrorReportDir(ErrorReporter errorReporter, CharString path) {
   CharString basename = newCharString();
-  CharString outString = newCharStringWithCapacity(path->capacity);
+  CharString outString = newCharStringWithCapacity(path->length);
 
   copyToCharString(basename, getFileBasename(path->data));
   buildAbsolutePath(errorReporter->reportDirPath, basename, NULL, outString);
@@ -146,7 +146,7 @@ static boolByte _copyDirectoryToErrorReportDir(ErrorReporter errorReporter, Char
   // TODO: This is the lazy way of doing this...
 #if UNIX
   CharString copyCommand = newCharString();
-  snprintf(copyCommand->data, copyCommand->capacity, "/bin/cp -r \"%s\" \"%s\"",
+  snprintf(copyCommand->data, copyCommand->length, "/bin/cp -r \"%s\" \"%s\"",
     path->data, errorReporter->reportDirPath->data);
   // TODO: Check error codes
   system(copyCommand->data);
@@ -163,7 +163,7 @@ strictly confidential. If the plugin in question has copy protection (or is \
 cracked), or depends on external resources, this probably won't work. But if \
 the plugin can be copied, it greatly helps in fixing bugs.\n\
 Copy the plugin? (y/n) ");
-  CharString wrappedPromptText = newCharStringWithCapacity(promptText->capacity);
+  CharString wrappedPromptText = newCharStringWithCapacity(promptText->length);
   CharString pluginAbsolutePath = newCharString();
   Plugin currentPlugin;
   boolByte result = true;
@@ -194,8 +194,8 @@ static void _remapFileToErrorReportRelativePath(void* item, void* userData) {
   CharString tempPath = newCharString();
   ErrorReporter errorReporter = (ErrorReporter)userData;
   copyToCharString(tempPath, itemName);
-  snprintf(tempPath->data, tempPath->capacity, "%s/%s", errorReporter->reportName->data, itemName);
-  strncpy(itemName, tempPath->data, tempPath->capacity);
+  snprintf(tempPath->data, tempPath->length, "%s/%s", errorReporter->reportName->data, itemName);
+  strncpy(itemName, tempPath->data, tempPath->length);
 }
 
 static void _addFileToArchive(void* item, void* userData) {
@@ -231,7 +231,7 @@ void printErrorReportInfo(void) {
 in error report mode, which will generate a zipfile on your desktop with \
 any input/output sources and error logs. This also enables some extra \
 arguments and will disable console logging.\n");
-  CharString wrappedInfoText = newCharStringWithCapacity(infoText->capacity);
+  CharString wrappedInfoText = newCharStringWithCapacity(infoText->length);
   printf("=== Starting error report ===\n");
   wrapString(infoText->data, wrappedInfoText->data, 0);
   // The second newline here is intentional

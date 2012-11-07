@@ -78,7 +78,7 @@ CharString getPlatformName(void) {
   Gestalt(gestaltSystemVersionMajor, &major);
   Gestalt(gestaltSystemVersionMinor, &minor);
   Gestalt(gestaltSystemVersionBugFix, &bugfix);
-  snprintf(result->data, result->capacity, "Mac OSX %ld.%ld.%ld", major, minor, bugfix);
+  snprintf(result->data, result->length, "Mac OSX %ld.%ld.%ld", major, minor, bugfix);
 #elif LINUX
   CharString line = newCharString();
   char *lineDelimiter = NULL;
@@ -100,7 +100,7 @@ CharString getPlatformName(void) {
   if(fileExists("/etc/lsb-release")) {
     lsbRelease = fopen("/etc/lsb-release", "r");
     if(lsbRelease != NULL) {
-      while(fgets(line->data, line->capacity, lsbRelease) != NULL) {
+      while(fgets(line->data, line->length, lsbRelease) != NULL) {
         lineDelimiter = strchr(line->data, '=');
         if(lineDelimiter != NULL) {
           if(!strncmp(line->data, LSB_DISTRIBUTION, strlen(LSB_DISTRIBUTION))) {
@@ -120,7 +120,7 @@ CharString getPlatformName(void) {
   }
 
   if(isCharStringEmpty(result)) {
-    snprintf(result->data, result->capacity, "Linux %s, kernel %s %s",
+    snprintf(result->data, result->length, "Linux %s, kernel %s %s",
       distributionName->data, systemInfo.release, systemInfo.machine);
   }
 
@@ -133,7 +133,7 @@ CharString getPlatformName(void) {
   versionInformation.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
   GetVersionEx((OSVERSIONINFO*)&versionInformation);
   // Generic string which will also work with newer versions of windows
-  snprintf(result->data, result->capacity, "Windows %d.%d",
+  snprintf(result->data, result->length, "Windows %d.%d",
     versionInformation.dwMajorVersion, versionInformation.dwMinorVersion);
 
   // TODO: This is a bit lame, is there a better way to get the OS version name?

@@ -125,7 +125,7 @@ int listDirectory(const char* directory, LinkedList outItems) {
   HANDLE findHandle;
   CharString searchString = newCharString();
 
-  snprintf(searchString->data, searchString->capacity, "%s\\*", directory);
+  snprintf(searchString->data, searchString->length, "%s\\*", directory);
   findHandle = FindFirstFileA((LPCSTR)(searchString->data), &findData);
   freeCharString(searchString);
   if(findHandle == INVALID_HANDLE_VALUE) {
@@ -155,7 +155,7 @@ boolByte removeDirectory(const CharString absolutePath) {
   // TODO: This is the lazy way of doing this...
 #if UNIX
   CharString removeCommand = newCharString();
-  snprintf(removeCommand->data, removeCommand->capacity, "/bin/rm -rf \"%s\"",
+  snprintf(removeCommand->data, removeCommand->length, "/bin/rm -rf \"%s\"",
     absolutePath->data);
   result = system(removeCommand->data) != 0;
 #else
@@ -168,10 +168,10 @@ boolByte removeDirectory(const CharString absolutePath) {
 
 void buildAbsolutePath(const CharString directory, const CharString file, const char* fileExtension, CharString outString) {
   if(fileExtension != NULL) {
-    snprintf(outString->data, outString->capacity, "%s%c%s.%s", directory->data, PATH_DELIMITER, file->data, fileExtension);
+    snprintf(outString->data, outString->length, "%s%c%s.%s", directory->data, PATH_DELIMITER, file->data, fileExtension);
   }
   else {
-    snprintf(outString->data, outString->capacity, "%s%c%s", directory->data, PATH_DELIMITER, file->data);
+    snprintf(outString->data, outString->length, "%s%c%s", directory->data, PATH_DELIMITER, file->data);
   }
 }
 
@@ -180,20 +180,20 @@ void convertRelativePathToAbsolute(const CharString file, CharString outString) 
 #if UNIX
   copyToCharString(currentDirectory, getenv("PWD"));
 #elif WINDOWS
-  GetCurrentDirectoryA(currentDirectory->capacity, currentDirectory->data);
+  GetCurrentDirectoryA(currentDirectory->length, currentDirectory->data);
 #endif
-  snprintf(outString->data, outString->capacity, "%s%c%s", currentDirectory->data, PATH_DELIMITER, file->data);
+  snprintf(outString->data, outString->length, "%s%c%s", currentDirectory->data, PATH_DELIMITER, file->data);
 }
 
 boolByte isAbsolutePath(const CharString path) {
 #if WINDOWS
-  if(path->capacity > 3) {
+  if(path->length > 3) {
     if(path->data[1] == ':' && path->data[2] == PATH_DELIMITER) {
       return true;
     }
   }
 #else
-  if(path->capacity > 1 && path->data[0] == PATH_DELIMITER) {
+  if(path->length > 1 && path->data[0] == PATH_DELIMITER) {
     return true;
   }
 #endif
@@ -244,7 +244,7 @@ void getFileDirname(const CharString filename, CharString outString) {
 
 void getExecutablePath(CharString outString) {
 #if LINUX
-  readlink("/proc/self/exe", outString->data, outString->capacity);
+  readlink("/proc/self/exe", outString->data, outString->length);
 #elif MACOSX
   // TODO: _NSGetExecutablePath()
   logUnsupportedFeature("getExecutablePath");

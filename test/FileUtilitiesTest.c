@@ -40,7 +40,7 @@ static int _testInvalidFileExists(void) {
 static CharString _fileUtilitiesMakeTempDir(void) {
   CharString tempDirName = newCharString();
 #if UNIX
-  snprintf(tempDirName->data, tempDirName->capacity, "/tmp/mrswatsontest-XXXXXX");
+  snprintf(tempDirName->data, tempDirName->length, "/tmp/mrswatsontest-XXXXXX");
   mktemp(tempDirName->data);
   mkdir(tempDirName->data, 0755);
 #else

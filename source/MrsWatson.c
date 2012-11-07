@@ -52,16 +52,16 @@ static void prettyPrintTime(CharString outString, double milliseconds) {
 
   clearCharString(outString);
   if(milliseconds < 1000) {
-    snprintf(outString->data, outString->capacity, "%.2fms", milliseconds);
+    snprintf(outString->data, outString->length, "%.2fms", milliseconds);
   }
   else if(milliseconds < 60 * 1000) {
     seconds = milliseconds / 1000.0;
-    snprintf(outString->data, outString->capacity, "%.2fsec", seconds);
+    snprintf(outString->data, outString->length, "%.2fsec", seconds);
   }
   else {
     seconds = milliseconds / 1000.0;
     minutes = (int)seconds % 60;
-    snprintf(outString->data, outString->capacity, "%d:%.2gsec", minutes, seconds);
+    snprintf(outString->data, outString->length, "%d:%.2gsec", minutes, seconds);
   }
 }
 

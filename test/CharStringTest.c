@@ -7,14 +7,14 @@ static char *const OTHER_TEST_STRING = "other test string";
 
 static int _testNewCharString(void) {
   CharString c = newCharString();
-  assertIntEquals(c->capacity, STRING_LENGTH_DEFAULT);
+  assertIntEquals(c->length, STRING_LENGTH_DEFAULT);
   assertCharStringEquals(c, "");
   return 0;
 }
 
 static int _testNewCharStringWithCapacity(void) {
   CharString c = newCharStringWithCapacity(123);
-  assertIntEquals(c->capacity, 123);
+  assertIntEquals(c->length, 123);
   assertCharStringEquals(c, "");
   return 0;
 }
@@ -23,7 +23,7 @@ static int _testClearCharString(void) {
   CharString c = newCharString();
   copyToCharString(c, TEST_STRING);
   clearCharString(c);
-  assertIntEquals(c->capacity, STRING_LENGTH_DEFAULT);
+  assertIntEquals(c->length, STRING_LENGTH_DEFAULT);
   assertCharStringEquals(c, "");
   return 0;
 }
@@ -31,7 +31,7 @@ static int _testClearCharString(void) {
 static int _testCopyToCharString(void) {
   CharString c = newCharString();
   copyToCharString(c, TEST_STRING);
-  assertIntEquals(c->capacity, STRING_LENGTH_DEFAULT);
+  assertIntEquals(c->length, STRING_LENGTH_DEFAULT);
   assertCharStringEquals(c, TEST_STRING);
   return 0;
 }

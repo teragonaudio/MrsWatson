@@ -43,7 +43,7 @@
 #endif
 
 typedef struct {
-  int capacity;
+  int length;
   char* data;
 } CharStringMembers;
 

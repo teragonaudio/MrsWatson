@@ -37,7 +37,7 @@ CharString newCharString(void) {
 
 CharString newCharStringWithCapacity(int length) {
   CharString charString = (CharString)malloc(sizeof(CharStringMembers));
-  charString->capacity = length;
+  charString->length = length;
   charString->data = (char*)malloc(sizeof(char) * length);
   clearCharString(charString);
   return charString;
@@ -60,23 +60,23 @@ CharString newCharStringWithCString(const char* string) {
 }
 
 void appendToCharString(CharString destString, const CharString srcString) {
-  strncat(destString->data, srcString->data, destString->capacity);
+  strncat(destString->data, srcString->data, destString->length);
 }
 
 void appendCStringToCharString(CharString destString, const char* srcString) {
-  strncat(destString->data, srcString, destString->capacity);
+  strncat(destString->data, srcString, destString->length);
 }
 
 void clearCharString(CharString charString) {
-  memset(charString->data, 0, (size_t)(charString->capacity));
+  memset(charString->data, 0, (size_t)(charString->length));
 }
 
 void copyToCharString(CharString destString, const char* srcString) {
-  strncpy(destString->data, srcString, (size_t)(destString->capacity));
+  strncpy(destString->data, srcString, (size_t)(destString->length));
 }
 
 void copyCharStrings(CharString destString, const CharString srcString) {
-  strncpy(destString->data, srcString->data, (size_t)(destString->capacity));
+  strncpy(destString->data, srcString->data, (size_t)(destString->length));
 }
 
 boolByte isCharStringEmpty(const CharString charString) {
@@ -90,7 +90,7 @@ boolByte isCharStringEqualTo(const CharString firstString, const CharString othe
   }
 
   // Only compare to the length of the smaller of the two strings
-  comparisonSize = (size_t)((firstString->capacity < otherString->capacity) ? firstString->capacity : otherString->capacity);
+  comparisonSize = (size_t)((firstString->length < otherString->length) ? firstString->length : otherString->length);
   if(caseInsensitive) {
     return strncasecmp(firstString->data, otherString->data, comparisonSize) == 0;
   }
@@ -104,10 +104,10 @@ boolByte isCharStringEqualToCString(const CharString charString, const char* oth
     return false;
   }
   else if(caseInsensitive) {
-    return strncasecmp(charString->data, otherString, (size_t)charString->capacity) == 0;
+    return strncasecmp(charString->data, otherString, (size_t)charString->length) == 0;
   }
   else {
-    return strncmp(charString->data, otherString, (size_t)charString->capacity) == 0;
+    return strncmp(charString->data, otherString, (size_t)charString->length) == 0;
   }
 }
 

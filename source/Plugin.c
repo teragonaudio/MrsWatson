@@ -89,7 +89,7 @@ Plugin newPlugin(PluginInterfaceType interfaceType, const CharString pluginName,
     case PLUGIN_TYPE_INTERNAL:
       if((internalDelimiter = strchr(pluginName->data, INTERNAL_PATH_DELIMITER)) != NULL) {
         copyToCharString(pluginName, internalDelimiter + 1);
-        if(!strncasecmp(pluginName->data, "passthru", pluginName->capacity)) {
+        if(!strncasecmp(pluginName->data, "passthru", pluginName->length)) {
           return newPluginPassthru(pluginName);
         }
         else {

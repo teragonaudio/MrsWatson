@@ -26,7 +26,7 @@ void freeTestEnvironment(TestEnvironment testEnvironment) {
 
 static char* _getTestInputFilename(const char* resourcesPath, const char* fileExtension) {
   CharString filename = newCharString();
-  snprintf(filename->data, filename->capacity, "%s%caudio%ca440-stereo.%s",
+  snprintf(filename->data, filename->length, "%s%caudio%ca440-stereo.%s",
     resourcesPath, PATH_DELIMITER, PATH_DELIMITER, fileExtension);
   return filename->data;
 }
@@ -35,7 +35,7 @@ static char* _getTestOutputFilename(const char* testName, const char* fileExtens
   CharString filename = newCharString();
   char* space;
   char *spacePtr;
-  snprintf(filename->data, filename->capacity, "out%c%s.%s", PATH_DELIMITER, testName, fileExtension);
+  snprintf(filename->data, filename->length, "out%c%s.%s", PATH_DELIMITER, testName, fileExtension);
   spacePtr = filename->data;
   do {
     space = strchr(spacePtr + 1, ' ');
@@ -51,14 +51,14 @@ static char* _getTestOutputFilename(const char* testName, const char* fileExtens
 
 static char* _getTestPluginResourcesPath(const char* resourcesPath) {
   CharString pluginRoot = newCharString();
-  snprintf(pluginRoot->data, pluginRoot->capacity, "%s%cvst%c%s",
+  snprintf(pluginRoot->data, pluginRoot->length, "%s%cvst%c%s",
     resourcesPath, PATH_DELIMITER, PATH_DELIMITER, getShortPlatformName());
   return pluginRoot->data;
 }
 
 static void _getDefaultArguments(TestEnvironment testEnvironment,
   const char *testName, CharString outString) {
-  snprintf(outString->data, outString->capacity,
+  snprintf(outString->data, outString->length,
     "--log-file \"%s\" --verbose --input \"%s\" --output \"%s\" --plugin-root \"%s\"",
     _getTestOutputFilename(testName, "txt"),
     _getTestInputFilename(testEnvironment->resourcesPath, "pcm"),
