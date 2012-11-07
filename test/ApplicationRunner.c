@@ -81,8 +81,8 @@ void runApplicationTest(const TestEnvironment testEnvironment,
   const char *testName, const char *testArguments,
   ReturnCodes expectedResultCode, boolByte anazyleOutput) {
   ReturnCodes resultCode = -1;
-  CharString arguments = newCharString();
-  CharString defaultArguments = newCharString();
+  CharString arguments = newCharStringWithCapacity(STRING_LENGTH_LONG);
+  CharString defaultArguments = newCharStringWithCapacity(STRING_LENGTH_LONG);
   CharString failedAnalysisFunctionName = newCharString();
   unsigned long failedAnalysisSample;
 
