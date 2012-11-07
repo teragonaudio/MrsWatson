@@ -10,10 +10,10 @@ static void _audioSettingsTeardown(void) {
 }
 
 static int _testInitAudioSettings(void) {
-  assertDoubleEquals(getSampleRate(), DEFAULT_SAMPLE_RATE);
+  assertDoubleEquals(getSampleRate(), DEFAULT_SAMPLE_RATE, TEST_FLOAT_TOLERANCE);
   assertIntEquals(getNumChannels(), DEFAULT_NUM_CHANNELS);
   assertIntEquals(getBlocksize(), DEFAULT_BLOCKSIZE);
-  assertDoubleEquals(getTempo(), DEFAULT_TEMPO);
+  assertDoubleEquals(getTempo(), DEFAULT_TEMPO, TEST_FLOAT_TOLERANCE);
   assertIntEquals(getTimeSignatureBeatsPerMeasure(), DEFAULT_TIMESIG_BEATS_PER_MEASURE);
   assertIntEquals(getTimeSignatureNoteValue(), DEFAULT_TIMESIG_NOTE_VALUE);
   return 0;
@@ -21,7 +21,7 @@ static int _testInitAudioSettings(void) {
 
 static int _testSetSampleRate(void) {
   setSampleRate(22050.0);
-  assertDoubleEquals(getSampleRate(), 22050.0);
+  assertDoubleEquals(getSampleRate(), 22050.0, TEST_FLOAT_TOLERANCE);
   return 0;
 }
 
@@ -39,7 +39,7 @@ static int _testSetBlocksize(void) {
 
 static int _testSetTempo(void) {
   setTempo(123.45);
-  assertDoubleEquals(getTempo(), 123.45);
+  assertDoubleEquals(getTempo(), 123.45, TEST_FLOAT_TOLERANCE);
   return 0;
 }
 

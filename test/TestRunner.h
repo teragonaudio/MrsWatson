@@ -75,9 +75,9 @@ TestCase newTestCase(char* name, char* filename, int lineNumber, TestCaseExecFun
 }
 
 #define TEST_FLOAT_TOLERANCE 0.01
-#define assertDoubleEquals(condition, expected) { \
+#define assertDoubleEquals(condition, expected, tolerance) { \
   double result = fabs(condition - expected); \
-  if(result > TEST_FLOAT_TOLERANCE) { \
+  if(result > tolerance) { \
     fprintf(stderr, "Assertion failed at %s:%d. Expected %g, got %g. ", getFileBasename(__FILE__), __LINE__, expected, condition); \
     return 1; \
   } \
