@@ -38,6 +38,7 @@
 #elif MACOSX || LINUX
 #include <dirent.h>
 #include <string.h>
+#include <unistd.h>
 #endif
 
 boolByte fileExists(const char* path) {
@@ -225,4 +226,16 @@ const char* getFileExtension(const char* filename) {
   else {
     return dot + 1;
   }
+}
+
+void getExecutablePath(CharString outString) {
+#if LINUX
+  readlink("/proc/self/exe", outString->data, outString->capacity);
+#elif MACOSX
+  // TODO: _NSGetExecutablePath()
+  logUnsupportedFeature("getExecutablePath");
+#elif WINDOWS
+  // TODO GetModuleFileName()
+  logUnsupportedFeature("getExecutablePath");
+#endif
 }

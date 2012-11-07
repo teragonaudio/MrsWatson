@@ -51,5 +51,6 @@ boolByte isAbsolutePath(const CharString path);
 
 const char* getFileBasename(const char* filename);
 const char* getFileExtension(const char* filename);
+void getExecutablePath(CharString outString);
 
 #endif
