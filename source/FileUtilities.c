@@ -228,6 +228,20 @@ const char* getFileExtension(const char* filename) {
   }
 }
 
+void getFileDirname(const CharString filename, CharString outString) {
+  const char *lastDelimiter;
+  if(filename == NULL) {
+    return;
+  }
+  lastDelimiter = strrchr(filename->data, PATH_DELIMITER);
+  if(lastDelimiter == NULL) {
+    copyCharStrings(outString, filename);
+  }
+  else {
+    strncpy(outString->data, filename->data, lastDelimiter - filename->data);
+  }
+}
+
 void getExecutablePath(CharString outString) {
 #if LINUX
   readlink("/proc/self/exe", outString->data, outString->capacity);

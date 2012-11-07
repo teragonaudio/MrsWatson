@@ -163,6 +163,26 @@ static int _testGetInvalidFileExtension(void) {
   return 0;
 }
 
+static int _testGetFileDirname(void) {
+  CharString filename = newCharStringWithCString(ABSOLUTE_TEST_FILENAME);
+  CharString expected = newCharString();
+  CharString result = newCharString();
+#if UNIX
+  copyToCharString(expected, "/tmp");
+#elif WINDOWS
+  copyToCharString(expected, "C:\\Temp");
+#endif
+  getFileDirname(filename, result);
+  assertCharStringEquals(result, expected->data);
+  return 0;
+}
+
+static int _testGetNullFileDirname(void) {
+  CharString result = newCharString();
+  getFileDirname(NULL, result);
+  return 0;
+}
+
 TestSuite addFileUtilitiesTests(void);
 TestSuite addFileUtilitiesTests(void) {
   TestSuite testSuite = newTestSuite("FileUtilities", NULL, NULL);
@@ -194,5 +214,7 @@ TestSuite addFileUtilitiesTests(void) {
   addTest(testSuite, "GetFileExtension", _testGetFileExtension);
   addTest(testSuite, "GetNullFileExtension", _testGetNullFileExtension);
   addTest(testSuite, "GetInvalidFileExtension", _testGetInvalidFileExtension);
+  addTest(testSuite, "GetFileDirname", _testGetFileDirname);
+  addTest(testSuite, "GetNullFileDirname", _testGetNullFileDirname);
   return testSuite;
 }
