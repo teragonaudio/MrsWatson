@@ -29,7 +29,7 @@ static void _testSleep(void) {
   sleepTime.tv_nsec = 1000000 * SLEEP_DURATION_MS;
   nanosleep(&sleepTime, NULL);
 #elif WINDOWS
-  Sleep(SLEEP_DURATION_MS);
+  Sleep((DWORD)SLEEP_DURATION_MS);
 #endif
 }
 
