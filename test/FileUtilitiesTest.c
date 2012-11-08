@@ -42,9 +42,12 @@ static CharString _fileUtilitiesMakeTempDir(void) {
 #if UNIX
   snprintf(tempDirName->data, tempDirName->length, "/tmp/mrswatsontest-XXXXXX");
   mktemp(tempDirName->data);
-  mkdir(tempDirName->data, 0755);
-#else
+#elif WINDOWS
+  CharString systemTempDir = newCharString();
+  GetTempPathA(systemTempDir->length, systemTempDir->data);
+  buildAbsolutePath(systemTempDir, newCharStringWithCString("mrswatsontest"), NULL, tempDirName);
 #endif
+  makeDirectory(tempDirName);
   return tempDirName;
 }
 

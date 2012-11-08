@@ -35,6 +35,7 @@
 #if WINDOWS
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
+#include <Shellapi.h>
 #elif UNIX
 #include <dirent.h>
 #include <string.h>
@@ -109,7 +110,7 @@ int listDirectory(const char* directory, LinkedList outItems) {
   int numItems = 0;
   char* filename;
 
-#if MACOSX || LINUX
+#if UNIX
   DIR* directoryPtr = opendir(directory);
   if(directoryPtr == NULL) {
     return 0;
@@ -147,7 +148,7 @@ int listDirectory(const char* directory, LinkedList outItems) {
   FindClose(findHandle);
 
 #else
-#error Unsupported platform
+  logUnsupportedFeature("List directory contents");
 #endif
 
   return numItems;
@@ -155,13 +156,22 @@ int listDirectory(const char* directory, LinkedList outItems) {
 
 boolByte removeDirectory(const CharString absolutePath) {
   boolByte result = false;
+#if WINDOWS
+  
+#endif
 
-  // TODO: This is the lazy way of doing this...
 #if UNIX
+  // TODO: This is the lazy way of doing this...
   CharString removeCommand = newCharString();
   snprintf(removeCommand->data, removeCommand->length, "/bin/rm -rf \"%s\"",
     absolutePath->data);
   result = system(removeCommand->data) != 0;
+#elif WINDOWS
+  SHFILEOPSTRUCTA fileOperation = {0};
+  fileOperation.wFunc = FO_DELETE;
+  fileOperation.pFrom = absolutePath->data;
+  fileOperation.fFlags = FOF_NO_UI;
+  return SHFileOperationA(&fileOperation);
 #else
   logUnsupportedFeature("Copy directory recursively");
   return false;
@@ -252,7 +262,6 @@ void getExecutablePath(CharString outString) {
 #elif MACOSX
   _NSGetExecutablePath(outString->data, &outString->length);
 #elif WINDOWS
-  // TODO GetModuleFileName()
-  logUnsupportedFeature("getExecutablePath");
+  GetModuleFileNameA(NULL, outString->data, outString->length);
 #endif
 }
