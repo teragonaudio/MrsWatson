@@ -40,7 +40,7 @@ typedef struct {
   double* totalTaskTimes;
 #if WINDOWS
   LARGE_INTEGER startTime;
-  LARGE_INTEGER counterFrequency;
+  double counterFrequency;
 #else
   struct timeval* startTime;
 #endif

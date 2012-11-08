@@ -38,6 +38,9 @@
 TaskTimer newTaskTimer(const int numTasks) {
   TaskTimer taskTimer = (TaskTimer)malloc(sizeof(TaskTimerMembers));
   int i;
+#if WINDOWS
+  LARGE_INTEGER queryFrequency;
+#endif
 
   taskTimer->numTasks = numTasks;
   taskTimer->currentTask = -1;
@@ -46,7 +49,8 @@ TaskTimer newTaskTimer(const int numTasks) {
     taskTimer->totalTaskTimes[i] = 0.0;
   }
 #if WINDOWS
-  QueryPerformanceFrequency(&(taskTimer->counterFrequency));
+  QueryPerformanceFrequency(&queryFrequency);
+  taskTimer->counterFrequency = (double)(queryFrequency.QuadPart) / 1000.0;
 #elif UNIX
   taskTimer->startTime = malloc(sizeof(struct timeval));
 #endif
@@ -73,8 +77,8 @@ void stopTiming(TaskTimer taskTimer) {
   if(taskTimer->currentTask >= 0) {
     LARGE_INTEGER stopTime;
     QueryPerformanceCounter(&stopTime);
-    elapsedTimeInClocks = ((stopTime.QuadPart - taskTimer->startTime.QuadPart));
-    taskTimer->totalTaskTimes[taskTimer->currentTask] += (unsigned long)elapsedTimeInClocks;
+    elapsedTimeInClocks = stopTime.QuadPart - taskTimer->startTime.QuadPart;
+    taskTimer->totalTaskTimes[taskTimer->currentTask] += (double)(elapsedTimeInClocks) / taskTimer->counterFrequency;
   }
 #else
   double elapsedTimeInMs;

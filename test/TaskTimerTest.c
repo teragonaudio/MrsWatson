@@ -10,7 +10,7 @@
 #include "TestRunner.h"
 #include "TaskTimer.h"
 
-#define SLEEP_DURATION_MS 10.0f
+#define SLEEP_DURATION_MS 10.0
 // Timer testing is a bit unreliable, so we just check to see that each sleep
 // call (see below) is recorded off no more than this amount of milliseconds.
 #define MAX_TIMER_TOLERANCE_MS 1.5f
