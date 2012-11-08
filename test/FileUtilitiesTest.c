@@ -119,6 +119,17 @@ static int _testBuildAbsolutePathEmptyFile(void) {
   return 0;
 }
 
+static int _testBuildAbsolutePathWithFileExtensionTwice(void) {
+  CharString d = newCharStringWithCString(ROOT_DIRECTORY);
+  CharString out = newCharString();
+  CharString f = newCharStringWithCString(TEST_FILENAME);
+  CharString expected = newCharString();
+  snprintf(expected->data, expected->length, "%s%c%s", ROOT_DIRECTORY, PATH_DELIMITER, TEST_FILENAME);
+  buildAbsolutePath(d, f, "txt", out);
+  assertCharStringEquals(out, expected->data);
+  return 0;
+}
+
 static int _testConvertRelativePathToAbsolute(void) {
   return 0;
 }
@@ -206,6 +217,7 @@ TestSuite addFileUtilitiesTests(void) {
   addTest(testSuite, "BuildAbsolutePathWithFileExtension", NULL); // _testBuildAbsolutePathWithFileExtension);
   addTest(testSuite, "BuildAbsolutePathEmptyPath", NULL); // _testBuildAbsolutePathEmptyPath);
   addTest(testSuite, "BuildAbsolutePathEmptyFile", NULL); // _testBuildAbsolutePathEmptyFile);
+  addTest(testSuite, "BuildAbsolutePathWithFileExtensionTwice", _testBuildAbsolutePathWithFileExtensionTwice);
   addTest(testSuite, "ConvertRelativePathToAbsolute", NULL); // _testConvertRelativePathToAbsolute);
   addTest(testSuite, "ConvertRelativePathToAbsoluteAlreadyAbsolute", NULL); // _testConvertRelativePathToAbsoluteAlreadyAbsolute);
   addTest(testSuite, "ConvertRelativePathToAbsoluteEmpty", NULL); // _testConvertRelativePathToAbsoluteEmpty);
