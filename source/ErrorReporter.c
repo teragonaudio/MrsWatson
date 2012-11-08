@@ -46,8 +46,15 @@
 #include <Shlobj.h>
 #endif
 
+// If support for libarchive is built, then the error report will be compressed
+// on completion. However, this library doesn't build so easily on Windows, so
+// this feature is disabled for the time being.
+#define HAVE_LIBARCHIVE 0
+
+#if HAVE_LIBARCHIVE
 #include <archive.h>
 #include <archive_entry.h>
+#endif
 
 ErrorReporter newErrorReporter(void) {
 
@@ -199,7 +206,7 @@ static void _remapFileToErrorReportRelativePath(void* item, void* userData) {
 }
 
 static void _addFileToArchive(void* item, void* userData) {
-#if UNIX
+#if HAVE_LIBARCHIVE
   char* itemPath = (char*)item;
   struct archive* outArchive = (struct archive*)userData;
   struct archive_entry* entry = archive_entry_new();
@@ -239,7 +246,7 @@ arguments and will disable console logging.\n");
 }
 
 void completeErrorReport(ErrorReporter errorReporter) {
-#if UNIX
+#if HAVE_LIBARCHIVE
   struct archive* outArchive;
   CharString outputFilename = newCharString();
   LinkedList reportContents = newLinkedList();
