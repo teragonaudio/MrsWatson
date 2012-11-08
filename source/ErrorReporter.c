@@ -282,7 +282,11 @@ void completeErrorReport(ErrorReporter errorReporter) {
 
 void printErrorReportComplete(void) {
   printf("\n=== Error report complete ===\n");
+#if HAVE_LIBARCHIVE
+  printf("Please compress and email the error report on your desktop to: %s\n", SUPPORT_EMAIL);
+#else
   printf("Please email the error report on your desktop to: %s\n", SUPPORT_EMAIL);
+#endif
   printf("Thanks!\n");
 }
 
