@@ -32,6 +32,10 @@
 #ifndef MrsWatson_PlatformInfo_h
 #define MrsWatson_PlatformInfo_h
 
+#if LINUX || MACOSX
+#define UNIX 1
+#endif
+
 #if UNIX
 #define PATH_DELIMITER '/'
 #define ROOT_DIRECTORY "/"
@@ -54,10 +58,6 @@
 #define unlink _unlink
 #elif LINUX
 #include <strings.h>
-#endif
-
-#if LINUX || MACOSX
-#define UNIX 1
 #endif
 
 typedef enum {
