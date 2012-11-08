@@ -1,5 +1,5 @@
 //
-//  main.c
+//  MrsWatsonTestMain.c
 //  MrsWatson
 //
 //  Created by Nik Reiman on 8/9/12.
@@ -10,7 +10,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "main.h"
+#include "MrsWatsonTestMain.h"
 #include "ProgramOption.h"
 #include "TestRunner.h"
 #include "StringUtilities.h"
