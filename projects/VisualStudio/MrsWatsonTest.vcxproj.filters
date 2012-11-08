@@ -51,9 +51,6 @@
     <ClCompile Include="..\..\test\LinkedListTest.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\test\main.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\test\MidiSequenceTest.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -90,6 +87,9 @@
     <ClCompile Include="..\..\test\TestRunner.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\test\MrsWatsonTestMain.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\test\AnalysisClipping.h">
@@ -107,10 +107,10 @@
     <ClInclude Include="..\..\test\ApplicationRunner.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\test\main.h">
+    <ClInclude Include="..\..\test\TestRunner.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\test\TestRunner.h">
+    <ClInclude Include="..\..\test\MrsWatsonTestMain.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

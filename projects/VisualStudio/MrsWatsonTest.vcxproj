@@ -26,7 +26,7 @@
     <ClCompile Include="..\..\test\FileUtilitiesTest.c" />
     <ClCompile Include="..\..\test\InternalTestSuite.c" />
     <ClCompile Include="..\..\test\LinkedListTest.c" />
-    <ClCompile Include="..\..\test\main.c" />
+    <ClCompile Include="..\..\test\MrsWatsonTestMain.c" />
     <ClCompile Include="..\..\test\MidiSequenceTest.c" />
     <ClCompile Include="..\..\test\MidiSourceTest.c" />
     <ClCompile Include="..\..\test\PlatformUtilitiesTest.c" />
@@ -46,7 +46,7 @@
     <ClInclude Include="..\..\test\AnalysisSilence.h" />
     <ClInclude Include="..\..\test\AnalyzeFile.h" />
     <ClInclude Include="..\..\test\ApplicationRunner.h" />
-    <ClInclude Include="..\..\test\main.h" />
+    <ClInclude Include="..\..\test\MrsWatsonTestMain.h" />
     <ClInclude Include="..\..\test\TestRunner.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
