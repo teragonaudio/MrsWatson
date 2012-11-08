@@ -32,10 +32,12 @@
 #ifndef MrsWatson_PlatformInfo_h
 #define MrsWatson_PlatformInfo_h
 
-#if WINDOWS
-#define PATH_DELIMITER '\\'
-#else
+#if UNIX
 #define PATH_DELIMITER '/'
+#define ROOT_DIRECTORY "/"
+#elif WINDOWS
+#define PATH_DELIMITER '\\'
+#define ROOT_DIRECTORY "C:\\"
 #endif
 
 // Substitutes for POSIX functions not found on Windows
