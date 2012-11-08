@@ -28,9 +28,16 @@ extern int runApplicationTestSuite(TestEnvironment testEnvironment);
 
 static const char* DEFAULT_TEST_SUITE_NAME = "all";
 
-// Default installation location if you run 'make' from the top-level build dir
+#if UNIX
 static const char* DEFAULT_MRSWATSON_PATH = "mrswatson";
 static const char* DEFAULT_RESOURCES_PATH = "../share";
+#elif WINDOWS
+static const char* DEFAULT_MRSWATSON_PATH = "mrswatson.exe";
+static const char* DEFAULT_RESOURCES_PATH = "..\\share";
+#else
+static const char* DEFAULT_MRSWATSON_PATH = "mrswatson";
+static const char* DEFAULT_RESOURCES_PATH = "share";
+#endif
 
 static ProgramOptions newTestProgramOptions(void) {
   ProgramOptions programOptions = (ProgramOptions)malloc(sizeof(ProgramOptions));
