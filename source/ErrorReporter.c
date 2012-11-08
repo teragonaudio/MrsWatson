@@ -196,6 +196,7 @@ Copy the plugin? (y/n) ");
   return false;
 }
 
+#if HAVE_LIBARCHIVE
 static void _remapFileToErrorReportRelativePath(void* item, void* userData) {
   char* itemName = (char*)item;
   CharString tempPath = newCharString();
@@ -204,9 +205,10 @@ static void _remapFileToErrorReportRelativePath(void* item, void* userData) {
   snprintf(tempPath->data, tempPath->length, "%s/%s", errorReporter->reportName->data, itemName);
   strncpy(itemName, tempPath->data, tempPath->length);
 }
+#endif
 
-static void _addFileToArchive(void* item, void* userData) {
 #if HAVE_LIBARCHIVE
+static void _addFileToArchive(void* item, void* userData) {
   char* itemPath = (char*)item;
   struct archive* outArchive = (struct archive*)userData;
   struct archive_entry* entry = archive_entry_new();
@@ -230,8 +232,8 @@ static void _addFileToArchive(void* item, void* userData) {
   } while(bytesRead > 0);
   fclose(filePointer);
   archive_entry_free(entry);
-#endif
 }
+#endif
 
 void printErrorReportInfo(void) {
   CharString infoText = newCharStringWithCString("MrsWatson is now running \
