@@ -484,7 +484,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   totalTimeString = newCharString();
   if(totalProcessingTime > 0) {
     prettyPrintTime(totalTimeString, totalProcessingTime);
-    logInfo("Total processing time %s, approximate breakdown by component:", totalTimeString->data);
+    logInfo("Total processing time %s, breakdown by component:", totalTimeString->data);
     for(i = 0; i < pluginChain->numPlugins; i++) {
       timePercentage = 100.0f * taskTimer->totalTaskTimes[i] / totalProcessingTime;
       prettyPrintTime(totalTimeString, taskTimer->totalTaskTimes[i]); 
