@@ -61,7 +61,7 @@ static boolByte _openSampleSourceAiff(void *sampleSourcePtr, const SampleSourceO
       setSampleRate((float)afGetRate(extraData->fileHandle, AF_DEFAULT_TRACK));
     }
 #else
-    logInternalError("Executable was not built with a library to read AIFF files");
+    logUnsupportedFeature("Reading AIFF files");
 #endif
   }
   else if(openAs == SAMPLE_SOURCE_OPEN_WRITE) {
@@ -74,7 +74,7 @@ static boolByte _openSampleSourceAiff(void *sampleSourcePtr, const SampleSourceO
     afInitSampleFormat(outfileSetup, AF_DEFAULT_TRACK, AF_SAMPFMT_TWOSCOMP, DEFAULT_BITRATE);
     extraData->fileHandle = afOpenFile(sampleSource->sourceName->data, "w", outfileSetup);
 #else
-    logInternalError("Executable was not built with a library to write AIFF files");
+    logUnsupportedFeature("Writing AIFF files");
 #endif
   }
   else {
