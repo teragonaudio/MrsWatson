@@ -2,7 +2,7 @@
 #include <unistd.h>
 #endif
 #include <stdlib.h>
-#include "TestRunner.h"
+#include "unit/TestRunner.h"
 #include "base/LinkedList.h"
 #include "base/PlatformUtilities.h"
 #include "logging/EventLogger.h"

@@ -1,5 +1,5 @@
-#include "TestRunner.h"
-#include "PluginPreset.h"
+#include "unit/TestRunner.h"
+#include "plugin/PluginPreset.h"
 
 const char* TEST_PRESET_FILENAME = "test.fxp";
 

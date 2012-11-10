@@ -6,8 +6,6 @@
 //  Copyright (c) 2012 Teragon Audio. All rights reserved.
 //
 
-// TODO: Rename this file
-
 typedef enum {
   OPTION_TEST_SUITE,
   OPTION_TEST_NAME,

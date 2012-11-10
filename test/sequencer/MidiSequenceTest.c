@@ -1,6 +1,5 @@
-#include "TestRunner.h"
-#include "MidiSequence.h"
-#include "MidiEvent.h"
+#include "unit/TestRunner.h"
+#include "sequencer/MidiSequence.h"
 #include "base/LinkedList.h"
 
 static int _testNewMidiSequence(void) {

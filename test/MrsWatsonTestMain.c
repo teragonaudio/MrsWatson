@@ -10,15 +10,15 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "MrsWatsonTestMain.h"
-#include "ProgramOption.h"
-#include "TestRunner.h"
-#include "base/StringUtilities.h"
+#include "app/ProgramOption.h"
 #include "base/FileUtilities.h"
 #include "base/PlatformUtilities.h"
+#include "base/StringUtilities.h"
+#include "unit/ApplicationRunner.h"
+#include "unit/TestRunner.h"
+
+#include "MrsWatsonTestMain.h"
 #include "MrsWatson.h"
-#include "ApplicationRunner.h"
-#include "MrsWatsonOptions.h"
 
 extern TestSuite findTestSuite(char* testSuiteName);
 extern TestCase findTestCase(TestSuite testSuite, char* testName);

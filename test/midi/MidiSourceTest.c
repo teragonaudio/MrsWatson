@@ -1,5 +1,5 @@
-#include "TestRunner.h"
-#include "MidiSource.h"
+#include "unit/TestRunner.h"
+#include "midi/MidiSource.h"
 
 const char* TEST_MIDI_FILENAME = "test.mid";
 

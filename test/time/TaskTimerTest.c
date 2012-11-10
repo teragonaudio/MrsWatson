@@ -7,8 +7,8 @@
 #include <time.h>
 #endif
 
-#include "TestRunner.h"
-#include "TaskTimer.h"
+#include "unit/TestRunner.h"
+#include "time/TaskTimer.h"
 
 #define SLEEP_DURATION_MS 10.0
 // Timer testing is a bit unreliable, so we just check to see that each sleep

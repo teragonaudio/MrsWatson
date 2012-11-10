@@ -1,11 +1,11 @@
 #include <stdlib.h>
-#include "AnalyzeFile.h"
-#include "SampleSource.h"
+#include "base/LinkedList.h"
+#include "io/SampleSource.h"
 #include "sequencer/AudioSettings.h"
 #include "AnalysisClipping.h"
 #include "AnalysisDistortion.h"
 #include "AnalysisSilence.h"
-#include "base/LinkedList.h"
+#include "AnalyzeFile.h"
 
 static const int kNumAnalysisFunctions = 3;
 

@@ -1,5 +1,5 @@
 #include "AnalysisSilence.h"
-#include "TestRunner.h"
+#include "unit/TestRunner.h"
 
 static int _testAnalysisSilence(void) {
   SampleBuffer s = newSampleBuffer(1, 8);

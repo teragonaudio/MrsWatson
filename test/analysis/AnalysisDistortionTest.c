@@ -1,5 +1,5 @@
 #include "AnalysisDistortion.h"
-#include "TestRunner.h"
+#include "unit/TestRunner.h"
 
 static int _testAnalysisDistortion(void) {
   SampleBuffer s = newSampleBuffer(1, 8);

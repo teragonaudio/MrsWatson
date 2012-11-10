@@ -1,5 +1,5 @@
-#include "TestRunner.h"
-#include "SampleSource.h"
+#include "unit/TestRunner.h"
+#include "io/SampleSource.h"
 
 const char* TEST_SAMPLESOURCE_FILENAME = "test.pcm";
 

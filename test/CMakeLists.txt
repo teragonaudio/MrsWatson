@@ -1,7 +1,7 @@
 include_directories(${MRSWATSON_SOURCE_DIR}/source)
 link_directories(${MRSWATSON_BINARY_DIR}/source)
 
-file(GLOB MrsWatsonTest_SOURCES *.c)
+file(GLOB MrsWatsonTest_SOURCES *.c */*.c)
 add_executable(mrswatsontest ${MrsWatsonTest_SOURCES})
 add_dependencies(mrswatsontest AudioTestData)
 

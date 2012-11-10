@@ -3,8 +3,8 @@
 #include <io.h>
 #endif
 
-#include "TestRunner.h"
-#include "LogPrinter.h"
+#include "unit/TestRunner.h"
+#include "logging/LogPrinter.h"
 
 // In both the TestSuite and TestCase objects we assume that we do not need ownership of
 // the strings passed in, since they should be allocated on the heap and live for the

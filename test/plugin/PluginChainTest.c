@@ -1,5 +1,5 @@
-#include "TestRunner.h"
-#include "PluginChain.h"
+#include "unit/TestRunner.h"
+#include "plugin/PluginChain.h"
 
 static const char* TEST_PLUGIN_NAME = "mrswatson:passthru";
 static const char* TEST_PRESET_NAME = "testPreset.fxp";

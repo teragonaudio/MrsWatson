@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include "base/LinkedList.h"
-#include "TestRunner.h"
+#include "unit/TestRunner.h"
 
 extern TestSuite addAudioClockTests(void);
 extern TestSuite addAudioSettingsTests(void);

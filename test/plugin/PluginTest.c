@@ -1,5 +1,5 @@
-#include "TestRunner.h"
-#include "Plugin.h"
+#include "unit/TestRunner.h"
+#include "plugin/Plugin.h"
 
 static int _testGuessPluginInterfaceType(void) {
   return 0;

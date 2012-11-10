@@ -1,5 +1,5 @@
-#include "TestRunner.h"
-#include "AudioClock.h"
+#include "unit/TestRunner.h"
+#include "sequencer/AudioClock.h"
 
 static int const TEST_BLOCKSIZE = 256;
 

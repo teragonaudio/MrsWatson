@@ -6,9 +6,9 @@
 #include <sys/wait.h>
 #endif
 #include "ApplicationRunner.h"
-#include "TestRunner.h"
+#include "unit/TestRunner.h"
 #include "base/CharString.h"
-#include "AnalyzeFile.h"
+#include "analysis/AnalyzeFile.h"
 #include "base/FileUtilities.h"
 
 TestEnvironment newTestEnvironment(char *applicationPath, char *resourcesPath) {
