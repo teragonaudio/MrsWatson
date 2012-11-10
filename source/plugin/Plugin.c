@@ -29,11 +29,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "Plugin.h"
-#include "EventLogger.h"
-#include "PluginVst2x.h"
-#include "PluginPassthru.h"
-#include "FileUtilities.h"
+#include "base/FileUtilities.h"
+#include "logging/EventLogger.h"
+#include "plugin/Plugin.h"
+#include "plugin/PluginPassthru.h"
+#include "plugin/PluginVst2x.h"
 
 PluginInterfaceType guessPluginInterfaceType(const CharString pluginName, const CharString pluginSearchRoot, CharString outLocation) {
   PluginInterfaceType pluginType = PLUGIN_TYPE_INVALID;

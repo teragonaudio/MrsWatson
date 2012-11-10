@@ -28,8 +28,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "PluginChain.h"
-#include "EventLogger.h"
+
+#include "logging/EventLogger.h"
+#include "plugin/PluginChain.h"
 
 PluginChain newPluginChain(void) {
   PluginChain pluginChain = malloc(sizeof(PluginChainMembers));

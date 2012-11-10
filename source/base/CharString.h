@@ -25,10 +25,10 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include "Types.h"
-
 #ifndef MrsWatson_CharString_h
 #define MrsWatson_CharString_h
+
+#include "base/Types.h"
 
 #define STRING_LENGTH_DEFAULT 256
 #define STRING_LENGTH_SHORT 32

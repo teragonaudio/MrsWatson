@@ -25,23 +25,23 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
+extern "C" {
 #include <stdio.h>
 #include <stdlib.h>
 
-extern "C" {
-#include "PlatformUtilities.h"
+#include "base/FileUtilities.h"
+#include "base/PlatformUtilities.h"
+#include "base/StringUtilities.h"
+#include "logging/EventLogger.h"
+#include "midi/MidiEvent.h"
+#include "plugin/PluginVst2x.h"
+#include "sequencer/AudioSettings.h"
+
 #if MACOSX
 #include <CoreFoundation/CFBundle.h>
 #elif LINUX
 #include <dlfcn.h>
 #endif
-#include "PluginVst2x.h"
-#include "EventLogger.h"
-#include "AudioSettings.h"
-#include "MrsWatson.h"
-#include "MidiEvent.h"
-#include "FileUtilities.h"
-#include "StringUtilities.h"
 }
 
 #define VST_FORCE_DEPRECATED 0

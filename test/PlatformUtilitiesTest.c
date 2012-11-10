@@ -1,5 +1,5 @@
 #include "TestRunner.h"
-#include "PlatformUtilities.h"
+#include "base/PlatformUtilities.h"
 
 static int _testGetPlatformType(void) {
 #if LINUX

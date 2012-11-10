@@ -27,8 +27,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "SampleSourceSilence.h"
-#include "AudioSettings.h"
+
+#include "io/SampleSourceSilence.h"
+#include "sequencer/AudioSettings.h"
 
 static boolByte _openSampleSourceSilence(void* sampleSourcePtr, const SampleSourceOpenAs openAs) {
   SampleSource sampleSource = sampleSourcePtr;

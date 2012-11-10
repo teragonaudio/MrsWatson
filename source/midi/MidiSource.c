@@ -28,12 +28,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "MidiSource.h"
-#include "EventLogger.h"
-#include "StringUtilities.h"
-#include "FileUtilities.h"
-#include "MidiSourceFile.h"
-#include "PlatformUtilities.h"
+
+#include "base/FileUtilities.h"
+#include "base/PlatformUtilities.h"
+#include "base/StringUtilities.h"
+#include "logging/EventLogger.h"
+#include "midi/MidiSourceFile.h"
+#include "midi/MidiSource.h"
 
 MidiSourceType guessMidiSourceType(const CharString midiSourceTypeString) {
   if(!isCharStringEmpty(midiSourceTypeString)) {

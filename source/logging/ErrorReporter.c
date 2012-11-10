@@ -31,12 +31,13 @@
 #include <time.h>
 #include <sys/stat.h>
 
-#include "ErrorReporter.h"
-#include "FileUtilities.h"
-#include "PlatformUtilities.h"
-#include "StringUtilities.h"
+#include "app/BuildInfo.h"
+#include "base/FileUtilities.h"
+#include "base/PlatformUtilities.h"
+#include "base/StringUtilities.h"
+#include "logging/ErrorReporter.h"
+#include "logging/EventLogger.h"
 #include "MrsWatson.h"
-#include "EventLogger.h"
 
 #if UNIX
 #include <sys/socket.h>

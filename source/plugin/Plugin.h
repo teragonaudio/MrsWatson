@@ -25,12 +25,12 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include "CharString.h"
-#include "SampleBuffer.h"
-#include "LinkedList.h"
-
 #ifndef MrsWatson_Plugin_h
 #define MrsWatson_Plugin_h
+
+#include "audio/SampleBuffer.h"
+#include "base/CharString.h"
+#include "base/LinkedList.h"
 
 typedef enum {
   PLUGIN_TYPE_INVALID,

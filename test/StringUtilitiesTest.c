@@ -1,5 +1,5 @@
 #include "TestRunner.h"
-#include "StringUtilities.h"
+#include "base/StringUtilities.h"
 
 // This function is not technically public, but we test against it instead of
 // the public version in order to set a shorter line length. This makes test

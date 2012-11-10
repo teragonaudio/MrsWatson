@@ -25,11 +25,11 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include "CharString.h"
-#include "Plugin.h"
-
 #ifndef MrsWatson_PluginVst2x_h
 #define MrsWatson_PluginVst2x_h
+
+#include "base/CharString.h"
+#include "plugin/Plugin.h"
 
 boolByte vst2xPluginExists(const CharString pluginName, const CharString pluginRoot, CharString outLocation);
 void listAvailablePluginsVst2x(const CharString pluginRoot);

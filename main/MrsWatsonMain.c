@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "PlatformUtilities.h"
+#include "base/PlatformUtilities.h"
 #include "MrsWatson.h"
-#include "ErrorReporter.h"
-#include "EventLogger.h"
+#include "logging/ErrorReporter.h"
+#include "logging/EventLogger.h"
 
 #if UNIX
 #include <signal.h>

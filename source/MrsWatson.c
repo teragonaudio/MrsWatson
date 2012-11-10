@@ -29,22 +29,23 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "app/BuildInfo.h"
+#include "base/FileUtilities.h"
+#include "base/PlatformUtilities.h"
+#include "base/StringUtilities.h"
+#include "io/SampleSource.h"
+#include "io/SampleSourcePcm.h"
+#include "io/SampleSourceWave.h"
+#include "logging/EventLogger.h"
+#include "logging/LogPrinter.h"
+#include "midi/MidiSource.h"
+#include "plugin/PluginChain.h"
+#include "sequencer/AudioClock.h"
+#include "sequencer/AudioSettings.h"
+#include "sequencer/MidiSequence.h"
+
 #include "MrsWatsonOptions.h"
-#include "PlatformUtilities.h"
-#include "EventLogger.h"
 #include "MrsWatson.h"
-#include "BuildInfo.h"
-#include "SampleSource.h"
-#include "PluginChain.h"
-#include "StringUtilities.h"
-#include "FileUtilities.h"
-#include "AudioSettings.h"
-#include "AudioClock.h"
-#include "MidiSequence.h"
-#include "LogPrinter.h"
-#include "MidiSource.h"
-#include "SampleSourcePcm.h"
-#include "SampleSourceWave.h"
 
 static void prettyPrintTime(CharString outString, double milliseconds) {
   int minutes;

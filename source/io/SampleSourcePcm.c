@@ -28,10 +28,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "SampleSourcePcm.h"
-#include "EventLogger.h"
-#include "AudioSettings.h"
-#include "PlatformUtilities.h"
+
+#include "base/PlatformUtilities.h"
+#include "io/SampleSourcePcm.h"
+#include "logging/EventLogger.h"
+#include "sequencer/AudioSettings.h"
 
 static boolByte openSampleSourcePcm(void* sampleSourcePtr, const SampleSourceOpenAs openAs) {
   SampleSource sampleSource = (SampleSource)sampleSourcePtr;

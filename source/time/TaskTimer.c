@@ -25,15 +25,15 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include "PlatformUtilities.h"
-
 #include <stdio.h>
 #include <stdlib.h>
+
+#include "base/PlatformUtilities.h"
+#include "time/TaskTimer.h"
+
 #if UNIX
 #include <sys/time.h>
 #endif
-
-#include "TaskTimer.h"
 
 TaskTimer newTaskTimer(const int numTasks) {
   TaskTimer taskTimer = (TaskTimer)malloc(sizeof(TaskTimerMembers));

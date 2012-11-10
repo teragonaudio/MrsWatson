@@ -28,9 +28,10 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "CharString.h"
-#include "EventLogger.h"
-#include "BuildInfo.h"
+
+#include "app/BuildInfo.h"
+#include "base/CharString.h"
+#include "logging/EventLogger.h"
 
 int buildYear(void) {
   int result = 0;

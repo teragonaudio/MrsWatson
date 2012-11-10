@@ -25,10 +25,10 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include "Types.h"
-
 #ifndef MrsWatson_AudioClock_h
 #define MrsWatson_AudioClock_h
+
+#include "base/Types.h"
 
 typedef struct {
   boolByte transportChanged;

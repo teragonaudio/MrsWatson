@@ -27,8 +27,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "MidiSequence.h"
-#include "EventLogger.h"
+
+#include "sequencer/MidiSequence.h"
+#include "logging/EventLogger.h"
 
 MidiSequence newMidiSequence(void) {
   MidiSequence midiSequence = malloc(sizeof(MidiSequenceMembers));

@@ -25,13 +25,14 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include <sys/types.h>
-#include <stdio.h>
-#include "Types.h"
-#include "CharString.h"
-
 #ifndef MrsWatson_EventLogger_h
 #define MrsWatson_EventLogger_h
+
+#include <sys/types.h>
+#include <stdio.h>
+
+#include "base/CharString.h"
+#include "base/Types.h"
 
 typedef enum {
   LOG_DEBUG,

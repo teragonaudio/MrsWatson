@@ -25,11 +25,12 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include <stdio.h>
-#include "PluginPreset.h"
-
 #ifndef MrsWatson_PluginPresetFxp_h
 #define MrsWatson_PluginPresetFxp_h
+
+#include <stdio.h>
+
+#include "plugin/PluginPreset.h"
 
 typedef enum {
   FXP_TYPE_INVALID,

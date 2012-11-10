@@ -25,14 +25,11 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include "CharString.h"
-
-#if WINDOWS
-#include <Windows.h>
-#endif
-
 #ifndef MrsWatson_TaskTimer_h
 #define MrsWatson_TaskTimer_h
+
+#include "base/CharString.h"
+#include "base/PlatformUtilities.h"
 
 typedef struct {
   int numTasks;

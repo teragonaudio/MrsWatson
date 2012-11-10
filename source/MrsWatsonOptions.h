@@ -28,7 +28,7 @@
 #ifndef MrsWatson_MrsWatsonOptions_h
 #define MrsWatson_MrsWatsonOptions_h
 
-#include "ProgramOption.h"
+#include "app/ProgramOption.h"
 
 // Runtime options
 typedef enum {

@@ -28,8 +28,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "SampleBuffer.h"
-#include "EventLogger.h"
+
+#include "audio/SampleBuffer.h"
+#include "logging/EventLogger.h"
 
 SampleBuffer newSampleBuffer(int numChannels, int blocksize) {
   SampleBuffer sampleBuffer = (SampleBuffer)malloc(sizeof(SampleBufferMembers));

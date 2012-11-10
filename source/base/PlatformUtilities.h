@@ -25,23 +25,15 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include "Types.h"
-#include "CharString.h"
-#include "LinkedList.h"
-
 #ifndef MrsWatson_PlatformInfo_h
 #define MrsWatson_PlatformInfo_h
 
+#include "base/CharString.h"
+#include "base/LinkedList.h"
+#include "base/Types.h"
+
 #if LINUX || MACOSX
 #define UNIX 1
-#endif
-
-#if UNIX
-#define PATH_DELIMITER '/'
-#define ROOT_DIRECTORY "/"
-#elif WINDOWS
-#define PATH_DELIMITER '\\'
-#define ROOT_DIRECTORY "C:\\"
 #endif
 
 // Substitutes for POSIX functions not found on Windows

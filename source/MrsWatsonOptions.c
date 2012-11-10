@@ -27,9 +27,11 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+
+#include "base/FileUtilities.h"
+#include "sequencer/AudioSettings.h"
+
 #include "MrsWatsonOptions.h"
-#include "AudioSettings.h"
-#include "FileUtilities.h"
 
 ProgramOptions newMrsWatsonOptions(void) {
   ProgramOptions programOptions = malloc(sizeof(ProgramOptions));

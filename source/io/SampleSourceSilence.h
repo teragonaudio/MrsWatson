@@ -25,10 +25,10 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include "SampleSource.h"
-
 #ifndef MrsWatson_SampleSourceSilence_h
 #define MrsWatson_SampleSourceSilence_h
+
+#include "SampleSource.h"
 
 SampleSource newSampleSourceSilence(void);
 

@@ -28,17 +28,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "AudioSettings.h"
-#include "SampleSourceWave.h"
-#include "EventLogger.h"
-#include "RiffFile.h"
-#include "PlatformUtilities.h"
-#include "SampleSource.h"
-#include "SampleSourcePcm.h"
-#include "CharString.h"
+
+#include "base/CharString.h"
+#include "base/PlatformUtilities.h"
+#include "io/RiffFile.h"
+#include "io/SampleSource.h"
+#include "io/SampleSourcePcm.h"
+#include "io/SampleSourceWave.h"
+#include "logging/EventLogger.h"
+#include "sequencer/AudioSettings.h"
 
 #if HAVE_LIBAUDIOFILE
-#include "SampleSourceAudiofile.h"
+#include "io/SampleSourceAudiofile.h"
 #endif
 
 static boolByte _readWaveFileInfo(const char* filename, SampleSourcePcmData extraData) {

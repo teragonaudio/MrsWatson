@@ -5,9 +5,9 @@
 #include <string.h>
 #include <math.h>
 
-#include "PlatformUtilities.h"
-#include "CharString.h"
-#include "FileUtilities.h"
+#include "base/PlatformUtilities.h"
+#include "base/CharString.h"
+#include "base/FileUtilities.h"
 
 #if UNIX
 #include <unistd.h>

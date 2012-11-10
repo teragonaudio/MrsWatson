@@ -30,9 +30,9 @@
 #include <string.h>
 #include <sys/stat.h>
 
-#include "PlatformUtilities.h"
-#include "FileUtilities.h"
-#include "EventLogger.h"
+#include "base/FileUtilities.h"
+#include "base/PlatformUtilities.h"
+#include "logging/EventLogger.h"
 
 #if WINDOWS
 #define WIN32_LEAN_AND_MEAN

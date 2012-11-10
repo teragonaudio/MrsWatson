@@ -1,5 +1,5 @@
 #include "TestRunner.h"
-#include "AudioSettings.h"
+#include "sequencer/AudioSettings.h"
 
 static void _audioSettingsSetup(void) {
   initAudioSettings();

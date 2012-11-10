@@ -28,12 +28,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "PlatformUtilities.h"
-#include "PluginPreset.h"
-#include "StringUtilities.h"
-#include "FileUtilities.h"
-#include "EventLogger.h"
-#include "PluginPresetFxp.h"
+
+#include "base/FileUtilities.h"
+#include "base/PlatformUtilities.h"
+#include "base/StringUtilities.h"
+#include "logging/EventLogger.h"
+#include "plugin/PluginPresetFxp.h"
+#include "plugin/PluginPreset.h"
 
 PluginPresetType guessPluginPresetType(const CharString presetName) {
   const char* fileExtension = getFileExtension(presetName->data);

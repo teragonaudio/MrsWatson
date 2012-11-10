@@ -27,16 +27,17 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "AudioSettings.h"
-#include "SampleSourceAiff.h"
-#include "EventLogger.h"
-#include "SampleSource.h"
-#include "SampleSourcePcm.h"
-#include "PlatformUtilities.h"
-#include "SampleSourceWave.h"
+
+#include "base/PlatformUtilities.h"
+#include "io/SampleSourceAiff.h"
+#include "io/SampleSource.h"
+#include "io/SampleSourcePcm.h"
+#include "io/SampleSourceWave.h"
+#include "logging/EventLogger.h"
+#include "sequencer/AudioSettings.h"
 
 #if HAVE_LIBAUDIOFILE
-#include "SampleSourceAudiofile.h"
+#include "io/SampleSourceAudiofile.h"
 
 #if LINUX
 #include <audiofile.h>

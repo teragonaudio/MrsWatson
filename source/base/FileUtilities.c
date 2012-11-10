@@ -28,12 +28,12 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <sys/stat.h>
-#include "FileUtilities.h"
-#include "PlatformUtilities.h"
-#include "EventLogger.h"
+
+#include "base/FileUtilities.h"
+#include "base/PlatformUtilities.h"
+#include "logging/EventLogger.h"
 
 #if WINDOWS
-#define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 #include <Shellapi.h>
 #elif UNIX

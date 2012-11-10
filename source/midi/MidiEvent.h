@@ -25,10 +25,10 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include "Types.h"
-
 #ifndef MrsWatson_MidiEvent_h
 #define MrsWatson_MidiEvent_h
+
+#include "base/Types.h"
 
 typedef enum {
   MIDI_TYPE_INVALID,

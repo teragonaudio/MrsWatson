@@ -25,12 +25,12 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include "Types.h"
-#include "MidiSequence.h"
-#include "CharString.h"
-
 #ifndef MrsWatson_MidiSource_h
 #define MrsWatson_MidiSource_h
+
+#include "base/CharString.h"
+#include "base/Types.h"
+#include "sequencer/MidiSequence.h"
 
 typedef enum {
   MIDI_SOURCE_TYPE_INVALID,

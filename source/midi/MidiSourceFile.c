@@ -28,11 +28,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "MidiSource.h"
-#include "MidiSourceFile.h"
-#include "EventLogger.h"
-#include "AudioSettings.h"
-#include "PlatformUtilities.h"
+
+#include "base/PlatformUtilities.h"
+#include "logging/EventLogger.h"
+#include "midi/MidiSourceFile.h"
+#include "midi/MidiSource.h"
+#include "sequencer/AudioSettings.h"
 
 static boolByte _openMidiSourceFile(void* midiSourcePtr) {
   MidiSource midiSource = midiSourcePtr;

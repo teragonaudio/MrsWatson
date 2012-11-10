@@ -26,7 +26,8 @@
 //
 
 #include <stdlib.h>
-#include "PluginPassthru.h"
+
+#include "plugin/PluginPassthru.h"
 
 static void _pluginPassthruEmpty(void* pluginPtr) {
   // Nothing to do here

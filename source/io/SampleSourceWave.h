@@ -25,11 +25,11 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include "SampleSource.h"
-#include "SampleSourcePcm.h"
-
 #ifndef MrsWatson_SampleSourceWave_h
 #define MrsWatson_SampleSourceWave_h
+
+#include "io/SampleSource.h"
+#include "io/SampleSourcePcm.h"
 
 SampleSource newSampleSourceWave(const CharString sampleSourceName);
 void closeSampleSourceWave(void* pcmData);

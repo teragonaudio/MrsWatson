@@ -1,7 +1,7 @@
 #include <stdio.h>
-#include "Types.h"
-#include "SampleBuffer.h"
-#include "CharString.h"
+#include "base/Types.h"
+#include "audio/SampleBuffer.h"
+#include "base/CharString.h"
 
 #ifndef MrsWatson_AnalyzeFile_h
 #define MrsWatson_AnalyzeFile_h

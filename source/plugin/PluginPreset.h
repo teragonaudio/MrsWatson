@@ -25,11 +25,11 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include "CharString.h"
-#include "Plugin.h"
-
 #ifndef MrsWatson_PluginPreset_h
 #define MrsWatson_PluginPreset_h
+
+#include "base/CharString.h"
+#include "plugin/Plugin.h"
 
 typedef enum {
   PRESET_TYPE_INVALID,

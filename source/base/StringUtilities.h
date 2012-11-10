@@ -28,7 +28,7 @@
 #ifndef MrsWatson_StringUtilities_h
 #define MrsWatson_StringUtilities_h
 
-#include "Types.h"
+#include "base/Types.h"
 
 #define DEFAULT_INDENT_SIZE 2
 #define TERMINAL_LINE_LENGTH 80

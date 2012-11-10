@@ -29,10 +29,11 @@
 #include <stdint.h>
 #include <string.h>
 #include <stdlib.h>
-#include "AudioSettings.h"
-#include "SampleSourceAudiofile.h"
-#include "EventLogger.h"
-#include "SampleSourcePcm.h"
+
+#include "io/SampleSourceAudiofile.h"
+#include "io/SampleSourcePcm.h"
+#include "logging/EventLogger.h"
+#include "sequencer/AudioSettings.h"
 
 #if HAVE_LIBAUDIOFILE
 

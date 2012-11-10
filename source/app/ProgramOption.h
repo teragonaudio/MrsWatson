@@ -25,11 +25,11 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include "CharString.h"
-#include "Types.h"
-
 #ifndef MrsWatson_ProgramOption_h
 #define MrsWatson_ProgramOption_h
+
+#include "base/CharString.h"
+#include "base/Types.h"
 
 #define NO_DEFAULT_VALUE -1
 

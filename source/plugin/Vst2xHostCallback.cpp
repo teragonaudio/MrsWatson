@@ -28,12 +28,13 @@
 extern "C" {
 #include <stdio.h>
 #include <string.h>
-#include "CharString.h"
-#include "EventLogger.h"
-#include "MrsWatson.h"
-#include "AudioClock.h"
-#include "AudioSettings.h"
-#include "PluginVst2x.h"
+
+#include "app/BuildInfo.h"
+#include "base/CharString.h"
+#include "logging/EventLogger.h"
+#include "plugin/PluginVst2x.h"
+#include "sequencer/AudioClock.h"
+#include "sequencer/AudioSettings.h"
 }
 
 #define VST_FORCE_DEPRECATED 0

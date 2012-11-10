@@ -25,11 +25,12 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include <stdio.h>
-#include "SampleSource.h"
-
 #ifndef MrsWatson_InputSourcePcm_h
 #define MrsWatson_InputSourcePcm_h
+
+#include <stdio.h>
+
+#include "io/SampleSource.h"
 
 typedef struct {
   boolByte isStream;

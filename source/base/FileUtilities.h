@@ -25,11 +25,20 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include "CharString.h"
-#include "LinkedList.h"
-
 #ifndef MrsWatson_FileUtilities_h
 #define MrsWatson_FileUtilities_h
+
+#include "base/CharString.h"
+#include "base/LinkedList.h"
+#include "base/PlatformUtilities.h"
+
+#if UNIX
+#define PATH_DELIMITER '/'
+#define ROOT_DIRECTORY "/"
+#elif WINDOWS
+#define PATH_DELIMITER '\\'
+#define ROOT_DIRECTORY "C:\\"
+#endif
 
 #define INTERNAL_PATH_PREFIX "mrswatson:"
 #define INTERNAL_PATH_DELIMITER ':'

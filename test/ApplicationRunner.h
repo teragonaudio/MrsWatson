@@ -3,10 +3,10 @@
 #endif
 #include <stdlib.h>
 #include "TestRunner.h"
-#include "LinkedList.h"
-#include "PlatformUtilities.h"
-#include "EventLogger.h"
-#include "CharString.h"
+#include "base/LinkedList.h"
+#include "base/PlatformUtilities.h"
+#include "logging/EventLogger.h"
+#include "base/CharString.h"
 #include "MrsWatson.h"
 
 typedef struct {

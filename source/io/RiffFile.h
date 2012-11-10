@@ -25,12 +25,13 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include <stdio.h>
-#include "Types.h"
-#include "CharString.h"
-
 #ifndef MrsWatson_RiffFile_h
 #define MrsWatson_RiffFile_h
+
+#include <stdio.h>
+
+#include "base/CharString.h"
+#include "base/Types.h"
 
 typedef struct {
   char id[5];

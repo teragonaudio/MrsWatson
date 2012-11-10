@@ -1,5 +1,5 @@
 #include "TestRunner.h"
-#include "LinkedList.h"
+#include "base/LinkedList.h"
 
 static char *const TEST_ITEM_STRING = "test string";
 static char *const OTHER_TEST_ITEM_STRING = "other test string";

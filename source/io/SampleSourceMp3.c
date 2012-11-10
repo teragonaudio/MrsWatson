@@ -26,8 +26,9 @@
 //
 
 #include <stdlib.h>
-#include "SampleSourceMp3.h"
-#include "EventLogger.h"
+
+#include "io/SampleSourceMp3.h"
+#include "logging/EventLogger.h"
 
 #if HAVE_LIBLAME
 

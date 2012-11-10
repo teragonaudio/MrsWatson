@@ -1,5 +1,5 @@
 #include "TestRunner.h"
-#include "CharString.h"
+#include "base/CharString.h"
 
 static char *const TEST_STRING = "test string";
 static char *const TEST_STRING_CAPS = "TEST STRING";

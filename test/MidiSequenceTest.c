@@ -1,7 +1,7 @@
 #include "TestRunner.h"
 #include "MidiSequence.h"
 #include "MidiEvent.h"
-#include "LinkedList.h"
+#include "base/LinkedList.h"
 
 static int _testNewMidiSequence(void) {
   MidiSequence m = newMidiSequence();

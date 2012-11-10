@@ -25,10 +25,10 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include "Plugin.h"
-
 #ifndef MrsWatson_PluginPassthru_h
 #define MrsWatson_PluginPassthru_h
+
+#include "plugin/Plugin.h"
 
 Plugin newPluginPassthru(const CharString pluginName);
 

@@ -25,12 +25,12 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include "Types.h"
-#include "SampleBuffer.h"
-#include "CharString.h"
-
 #ifndef MrsWatson_SampleSource_h
 #define MrsWatson_SampleSource_h
+
+#include "audio/SampleBuffer.h"
+#include "base/CharString.h"
+#include "base/Types.h"
 
 // Default output source name to use if none is given.
 #define DEFAULT_OUTPUT_SOURCE "out.wav"

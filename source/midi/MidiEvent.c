@@ -27,7 +27,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "MidiEvent.h"
+
+#include "midi/MidiEvent.h"
 
 MidiEvent newMidiEvent(void) {
   MidiEvent midiEvent = malloc(sizeof(MidiEventMembers));

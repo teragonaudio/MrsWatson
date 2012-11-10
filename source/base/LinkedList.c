@@ -28,8 +28,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
-#include "LinkedList.h"
-#include "Types.h"
+
+#include "base/LinkedList.h"
+#include "base/Types.h"
 
 LinkedList newLinkedList(void) {
   LinkedList list = malloc(sizeof(LinkedListMembers));

@@ -1,6 +1,6 @@
 #include "TestRunner.h"
-#include "SampleBuffer.h"
-#include "AudioSettings.h"
+#include "audio/SampleBuffer.h"
+#include "sequencer/AudioSettings.h"
 
 static SampleBuffer _newMockSampleBuffer(void) {
   return newSampleBuffer(1, 1);

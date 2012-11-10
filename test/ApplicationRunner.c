@@ -1,4 +1,4 @@
-#include "PlatformUtilities.h"
+#include "base/PlatformUtilities.h"
 
 #if UNIX
 #include <sys/stat.h>
@@ -7,9 +7,9 @@
 #endif
 #include "ApplicationRunner.h"
 #include "TestRunner.h"
-#include "CharString.h"
+#include "base/CharString.h"
 #include "AnalyzeFile.h"
-#include "FileUtilities.h"
+#include "base/FileUtilities.h"
 
 TestEnvironment newTestEnvironment(char *applicationPath, char *resourcesPath) {
   TestEnvironment testEnvironment = (TestEnvironment)malloc(sizeof(TestEnvironmentMembers));

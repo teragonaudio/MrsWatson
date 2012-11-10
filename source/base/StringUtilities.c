@@ -28,8 +28,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "StringUtilities.h"
-#include "PlatformUtilities.h"
+
+#include "base/PlatformUtilities.h"
+#include "base/StringUtilities.h"
 
 boolByte isLetter(char ch) {
   return ((ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z'));

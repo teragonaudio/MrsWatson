@@ -28,8 +28,8 @@
 #ifndef MrsWatson_ErrorReporter_h
 #define MrsWatson_ErrorReporter_h
 
-#include "CharString.h"
-#include "PluginChain.h"
+#include "base/CharString.h"
+#include "plugin/PluginChain.h"
 
 typedef struct {
   CharString reportName;

@@ -28,18 +28,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "SampleSource.h"
-#include "SampleSourcePcm.h"
-#include "StringUtilities.h"
-#include "FileUtilities.h"
-#include "EventLogger.h"
-#include "SampleSourceSilence.h"
-#include "SampleSourceAiff.h"
-#include "SampleSourceFlac.h"
-#include "SampleSourceMp3.h"
-#include "SampleSourceOgg.h"
-#include "SampleSourceWave.h"
-#include "PlatformUtilities.h"
+
+#include "base/FileUtilities.h"
+#include "base/PlatformUtilities.h"
+#include "base/StringUtilities.h"
+#include "io/SampleSourceAiff.h"
+#include "io/SampleSourceFlac.h"
+#include "io/SampleSource.h"
+#include "io/SampleSourceMp3.h"
+#include "io/SampleSourceOgg.h"
+#include "io/SampleSourcePcm.h"
+#include "io/SampleSourceSilence.h"
+#include "io/SampleSourceWave.h"
+#include "logging/EventLogger.h"
 
 void printSupportedSourceTypes(void) {
   // We can theoretically support more formats, pretty much anything audiofile supports

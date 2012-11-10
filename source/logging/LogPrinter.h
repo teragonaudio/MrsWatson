@@ -28,7 +28,6 @@
 #ifndef MrsWatson_LogPrinter_h
 #define MrsWatson_LogPrinter_h
 
-#include "PlatformUtilities.h"
 #include <stdio.h>
 
 #if UNIX

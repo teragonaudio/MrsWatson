@@ -25,13 +25,13 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include "Plugin.h"
-#include "LinkedList.h"
-#include "TaskTimer.h"
-#include "PluginPreset.h"
-
 #ifndef MrsWatson_PluginChain_h
 #define MrsWatson_PluginChain_h
+
+#include "base/LinkedList.h"
+#include "plugin/Plugin.h"
+#include "plugin/PluginPreset.h"
+#include "time/TaskTimer.h"
 
 #define MAX_PLUGINS 8
 #define CHAIN_STRING_PLUGIN_SEPARATOR ';'

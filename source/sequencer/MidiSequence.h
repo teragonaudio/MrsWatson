@@ -25,11 +25,11 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include "LinkedList.h"
-#include "MidiEvent.h"
-
 #ifndef MrsWatson_MidiSequence_h
 #define MrsWatson_MidiSequence_h
+
+#include "base/LinkedList.h"
+#include "midi/MidiEvent.h"
 
 typedef struct {
   LinkedList midiEvents;

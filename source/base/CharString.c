@@ -28,8 +28,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "CharString.h"
-#include "EventLogger.h"
+
+#include "logging/EventLogger.h"
+#include "base/CharString.h"
 
 CharString newCharString(void) {
   return newCharStringWithCapacity(STRING_LENGTH_DEFAULT);

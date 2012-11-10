@@ -28,12 +28,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "ProgramOption.h"
-#include "EventLogger.h"
-#include "StringUtilities.h"
-#include "FileUtilities.h"
-#include "AudioSettings.h"
-#include "MrsWatson.h"
+
+#include "app/ProgramOption.h"
+#include "base/FileUtilities.h"
+#include "base/StringUtilities.h"
+#include "logging/EventLogger.h"
+#include "sequencer/AudioSettings.h"
 
 void addNewProgramOption(const ProgramOptions programOptions, const int optionIndex,
   const char* name, const char* help, boolByte hasShortForm, ProgramOptionArgumentType argumentType,

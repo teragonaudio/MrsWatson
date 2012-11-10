@@ -26,8 +26,9 @@
 //
 
 #include <stdlib.h>
-#include "SampleSourceOgg.h"
-#include "EventLogger.h"
+
+#include "io/SampleSourceOgg.h"
+#include "logging/EventLogger.h"
 
 #if HAVE_LIBVORBIS
 

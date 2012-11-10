@@ -26,7 +26,8 @@
 //
 
 #include <stdlib.h>
-#include "LogPrinter.h"
+
+#include "logging/LogPrinter.h"
 
 void printToLog(const char* color, FILE* logFile, const char* message) {
   if(logFile == NULL) {

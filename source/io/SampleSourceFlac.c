@@ -26,8 +26,9 @@
 //
 
 #include <stdlib.h>
-#include "SampleSourceFlac.h"
-#include "EventLogger.h"
+
+#include "io/SampleSourceFlac.h"
+#include "logging/EventLogger.h"
 
 #if HAVE_LIBFLAC
 

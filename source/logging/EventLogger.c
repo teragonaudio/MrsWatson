@@ -29,15 +29,16 @@
 #include <stdlib.h>
 #include <stdarg.h>
 
-#include "CharString.h"
-#include "BuildInfo.h"
-#include "EventLogger.h"
+#include "app/BuildInfo.h"
+#include "base/CharString.h"
+#include "base/PlatformUtilities.h"
+#include "base/StringUtilities.h"
+#include "logging/EventLogger.h"
+#include "logging/LogPrinter.h"
+#include "sequencer/AudioClock.h"
+#include "sequencer/AudioSettings.h"
+
 #include "MrsWatson.h"
-#include "AudioClock.h"
-#include "AudioSettings.h"
-#include "PlatformUtilities.h"
-#include "StringUtilities.h"
-#include "LogPrinter.h"
 
 #if WINDOWS
 #include <Windows.h>
