@@ -84,22 +84,48 @@ static int _testCopyFileToInvalidDirectory(void) {
 }
 
 static int _testListDirectory(void) {
+  CharString tempDir = _fileUtilitiesMakeTempDir();
+  CharString tempFile = newCharString();
+  LinkedList l = newLinkedList();
+  FILE *f;
+
+  buildAbsolutePath(tempDir, newCharStringWithCString(TEST_FILENAME), NULL, tempFile);
+  f = fopen(tempFile->data, "w");
+  assertNotNull(f);
+  fclose(f);
+  assertIntEquals(listDirectory(tempDir->data, l), 1);
+  assertIntEquals(l->_numItems, 1);
+  assertCharStringEquals(newCharStringWithCString((char*)l->item), TEST_FILENAME);
+  removeDirectory(tempDir);
   return 0;
 }
 
 static int _testListEmptyDirectory(void) {
+  CharString tempDir = _fileUtilitiesMakeTempDir();
+  LinkedList l = newLinkedList();
+  assertIntEquals(listDirectory(tempDir->data, l), 0);
+  assertIntEquals(l->_numItems, 0);
+  removeDirectory(tempDir);
   return 0;
 }
 
 static int _testListInvalidDirectory(void) {
+  LinkedList l = newLinkedList();
+  assertIntEquals(listDirectory("invalid", l), 0);
+  assertIntEquals(l->_numItems, 0);
   return 0;
 }
 
 static int _testRemoveDirectory(void) {
+  CharString tempDir = _fileUtilitiesMakeTempDir();
+  assert(fileExists(tempDir->data));
+  assert(removeDirectory(tempDir));
+  assertFalse(fileExists(tempDir->data));
   return 0;
 }
 
 static int _testRemoveInvalidDirectory(void) {
+  assertFalse(removeDirectory(newCharStringWithCString("invalid")));
   return 0;
 }
 
@@ -207,11 +233,11 @@ TestSuite addFileUtilitiesTests(void) {
   addTest(testSuite, "CopyInvalidFileToDirectory", _testCopyInvalidFileToDirectory);
   addTest(testSuite, "CopyFileToInvalidDirectory", _testCopyFileToInvalidDirectory);
 
-  addTest(testSuite, "ListDirectory", NULL); // _testListDirectory);
-  addTest(testSuite, "ListEmptyDirectory", NULL); // _testListEmptyDirectory);
-  addTest(testSuite, "ListInvalidDirectory", NULL); // _testListInvalidDirectory);
-  addTest(testSuite, "RemoveDirectory", NULL); // _testRemoveDirectory);
-  addTest(testSuite, "RemoveInvalidDirectory", NULL); // _testRemoveInvalidDirectory);
+  addTest(testSuite, "ListDirectory", _testListDirectory);
+  addTest(testSuite, "ListEmptyDirectory", _testListEmptyDirectory);
+  addTest(testSuite, "ListInvalidDirectory", _testListInvalidDirectory);
+  addTest(testSuite, "RemoveDirectory", _testRemoveDirectory);
+  addTest(testSuite, "RemoveInvalidDirectory", _testRemoveInvalidDirectory);
 
   addTest(testSuite, "BuildAbsolutePath", NULL); // _testBuildAbsolutePath);
   addTest(testSuite, "BuildAbsolutePathWithFileExtension", NULL); // _testBuildAbsolutePathWithFileExtension);
