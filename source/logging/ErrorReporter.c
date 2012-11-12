@@ -253,10 +253,12 @@ void completeErrorReport(ErrorReporter errorReporter) {
   struct archive* outArchive;
   CharString outputFilename = newCharString();
   LinkedList reportContents = newLinkedList();
+#endif
 
   // Always do this, just in case
   flushErrorLog();
 
+#if HAVE_LIBARCHIVE
   // In case any part of the error report causes a segfault, this function will
   // be called recursively. A mutex would really be a better solution here, but
   // this will also work just fine.
