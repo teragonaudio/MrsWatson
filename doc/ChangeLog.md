@@ -1,3 +1,13 @@
+Version 0.9.3:
+- Introduce CMake as build system for unix platforms (Linux & Mac OSX)
+- Several crash fixes reported by users
+- Ability to generate diagnostic error reports
+- Improved logging
+- Improved test coverage
+- More accurate time recording on all platforms
+- Other small improvements
+- FXP presets with chunks now supported
+
 Version 0.9.2:
 - Using Visual Studio to build on Windows
 - Introduced test suite, though test coverage is current small
