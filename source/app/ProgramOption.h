@@ -36,7 +36,8 @@
 typedef enum {
   ARGUMENT_TYPE_NONE,
   ARGUMENT_TYPE_OPTIONAL,
-  ARGUMENT_TYPE_REQUIRED
+  ARGUMENT_TYPE_REQUIRED,
+  ARGUMENT_TYPE_INVALID
 } ProgramOptionArgumentType;
 
 typedef struct {
@@ -59,14 +60,21 @@ typedef struct {
 } ProgramOptionsMembers;
 typedef ProgramOptionsMembers* ProgramOptions;
 
-void addNewProgramOption(const ProgramOptions programOptions, const int optionIndex,
-  const char* name, const char* help, boolByte hasShortForm, ProgramOptionArgumentType argumentType,
-  int defaultValue);
-boolByte parseCommandLine(ProgramOptions programOptions, int argc, char** argv);
-ProgramOption findProgramOptionFromString(const ProgramOptions programOptions, const CharString string);
 
-void printProgramOptions(const ProgramOptions programOptions, boolByte withFullHelp, int indentSize);
-void printProgramOption(const ProgramOption programOption, boolByte withFullHelp, int indentSize, int initialIndent);
+ProgramOption newProgramOption(void);
+ProgramOption newProgramOptionWithValues(const int opnionIndex, const char* name,
+  const char* help, boolByte hasShortForm, ProgramOptionArgumentType argumentType,
+  int defaultValue);
+void programOptionPrintHelp(const ProgramOption self, boolByte withFullHelp, int indentSize, int initialIndent);
+void freeProgramOption(ProgramOption option);
+
+
+ProgramOptions newProgramOptions(int numOptions);
+
+void programOptionsAdd(const ProgramOptions self, const ProgramOption option);
+ProgramOption programOptionsFind(const ProgramOptions self, const CharString name);
+boolByte programOptionsParseArgs(ProgramOptions self, int argc, char** argv);
+void programOptionsPrintHelp(const ProgramOptions self, boolByte withFullHelp, int indentSize);
 
 void freeProgramOptions(ProgramOptions programOptions);
 

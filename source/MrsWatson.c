@@ -192,7 +192,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   inputSource = newSampleSource(SAMPLE_SOURCE_TYPE_SILENCE, NULL);
   outputSource = newSampleSource(DEFAULT_OUTPUT_SOURCE_TYPE, newCharStringWithCString(DEFAULT_OUTPUT_SOURCE));
 
-  if(!parseCommandLine(programOptions, argc, argv)) {
+  if(!programOptionsParseArgs(programOptions, argc, argv)) {
     printf("Run '%s --help' to see possible options\n", getFileBasename(argv[0]));
     printf("Or run '%s --help full' to see extended help for all options\n", getFileBasename(argv[0]));
     return RETURN_CODE_INVALID_ARGUMENT;
@@ -209,10 +209,10 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
     printMrsWatsonQuickstart(argv[0]);
     if(charStringIsEmpty(programOptions->options[OPTION_HELP]->argument)) {
       printf("All options, where <argument> is required and [argument] is optional:\n");
-      printProgramOptions(programOptions, false, DEFAULT_INDENT_SIZE);
+      programOptionsPrintHelp(programOptions, false, DEFAULT_INDENT_SIZE);
     }
     else {
-      printProgramOptions(programOptions, true, DEFAULT_INDENT_SIZE);
+      programOptionsPrintHelp(programOptions, true, DEFAULT_INDENT_SIZE);
     }
     return RETURN_CODE_NOT_RUN;
   }

@@ -40,43 +40,41 @@ static const char* DEFAULT_RESOURCES_PATH = "share";
 #endif
 
 static ProgramOptions newTestProgramOptions(void) {
-  ProgramOptions programOptions = (ProgramOptions)malloc(sizeof(ProgramOptions));
-  programOptions->options = (ProgramOption*)malloc(sizeof(ProgramOption) * NUM_TEST_OPTIONS);
-  programOptions->numOptions = NUM_TEST_OPTIONS;
-
-  addNewProgramOption(programOptions, OPTION_TEST_SUITE, "suite",
+  ProgramOptions programOptions = newProgramOptions(NUM_TEST_OPTIONS);
+  
+  programOptionsAdd(programOptions, newProgramOptionWithValues(OPTION_TEST_SUITE, "suite",
     "Choose a test suite to run. Current suites include:\n\
 \t- Application run audio quality tests against actual executable\n\
 \t- Internal: run all internal function tests\n\
 \t- All: run all tests (default)\n\
 \t- A suite name (use '--list' to see all suite names)",
-    true, ARGUMENT_TYPE_REQUIRED, NO_DEFAULT_VALUE);
-  addNewProgramOption(programOptions, OPTION_TEST_NAME, "test",
+    true, ARGUMENT_TYPE_REQUIRED, NO_DEFAULT_VALUE));
+  programOptionsAdd(programOptions, newProgramOptionWithValues(OPTION_TEST_NAME, "test",
     "Run a single test. Tests are named 'Suite:Name', for example:\n\
 \t-t 'LinkedList:Append Item'",
-    true, ARGUMENT_TYPE_REQUIRED, NO_DEFAULT_VALUE);
-  addNewProgramOption(programOptions, OPTION_TEST_PRINT_TESTS, "list-tests",
+    true, ARGUMENT_TYPE_REQUIRED, NO_DEFAULT_VALUE));
+  programOptionsAdd(programOptions, newProgramOptionWithValues(OPTION_TEST_PRINT_TESTS, "list-tests",
     "List all internal tests in the same format required by --test",
-    true, ARGUMENT_TYPE_NONE, NO_DEFAULT_VALUE);
-  addNewProgramOption(programOptions, OPTION_TEST_MRSWATSON_PATH, "mrswatson-path",
+    true, ARGUMENT_TYPE_NONE, NO_DEFAULT_VALUE));
+  programOptionsAdd(programOptions, newProgramOptionWithValues(OPTION_TEST_MRSWATSON_PATH, "mrswatson-path",
     "Path to mrswatson executable. Only required for running application test suite.",
-    true, ARGUMENT_TYPE_REQUIRED, NO_DEFAULT_VALUE);
-  addNewProgramOption(programOptions, OPTION_TEST_RESOURCES_PATH, "resources",
+    true, ARGUMENT_TYPE_REQUIRED, NO_DEFAULT_VALUE));
+  programOptionsAdd(programOptions, newProgramOptionWithValues(OPTION_TEST_RESOURCES_PATH, "resources",
     "Path to resources directory. Only required for running application test suite.",
-    true, ARGUMENT_TYPE_REQUIRED, NO_DEFAULT_VALUE);
+    true, ARGUMENT_TYPE_REQUIRED, NO_DEFAULT_VALUE));
   /* TODO: Finish this option
-  addNewProgramOption(programOptions, OPTION_TEST_LOG_FILE, "log-file",
+  addNewProgramOption(programOptions, newProgramOptionWithValues(OPTION_TEST_LOG_FILE, "log-file",
     "Save test output to log file",
     true, ARGUMENT_TYPE_REQUIRED, NO_DEFAULT_VALUE);
   */
-  addNewProgramOption(programOptions, OPTION_TEST_PRINT_ONLY_FAILING, "failing",
+  programOptionsAdd(programOptions, newProgramOptionWithValues(OPTION_TEST_PRINT_ONLY_FAILING, "failing",
     "Print only failing tests. Note that if a test causes the suite to crash, the \
 bad test's name will not be printed. In this case, re-run without this option, as \
 the test names will be printed before the tests are executed.",
-    true, ARGUMENT_TYPE_NONE, NO_DEFAULT_VALUE);
-  addNewProgramOption(programOptions, OPTION_TEST_HELP, "help",
+    true, ARGUMENT_TYPE_NONE, NO_DEFAULT_VALUE));
+  programOptionsAdd(programOptions, newProgramOptionWithValues(OPTION_TEST_HELP, "help",
     "Print full program help (this screen), or just the help for a single argument.",
-    true, ARGUMENT_TYPE_OPTIONAL, NO_DEFAULT_VALUE);
+    true, ARGUMENT_TYPE_OPTIONAL, NO_DEFAULT_VALUE));
 
   return programOptions;
 }
@@ -100,7 +98,7 @@ int main(int argc, char* argv[]) {
   char* testSuiteName;
 
   programOptions = newTestProgramOptions();
-  if(!parseCommandLine(programOptions, argc, argv)) {
+  if(!programOptionsParseArgs(programOptions, argc, argv)) {
     printf("Or run %s --help (option) to see help for a single option\n", getFileBasename(argv[0]));
     return -1;
   }
@@ -109,10 +107,10 @@ int main(int argc, char* argv[]) {
     printf("Run with '--help full' to see extended help for all options.\n");
     if(charStringIsEmpty(programOptions->options[OPTION_TEST_HELP]->argument)) {
       printf("All options, where <argument> is required and [argument] is optional\n");
-      printProgramOptions(programOptions, false, DEFAULT_INDENT_SIZE);
+      programOptionsPrintHelp(programOptions, false, DEFAULT_INDENT_SIZE);
     }
     else {
-      printProgramOptions(programOptions, true, DEFAULT_INDENT_SIZE);
+      programOptionsPrintHelp(programOptions, true, DEFAULT_INDENT_SIZE);
     }
     return -1;
   }
@@ -137,7 +135,7 @@ int main(int argc, char* argv[]) {
     colon = strchr(testArgument, ':');
     if(colon == NULL) {
       printf("ERROR: Invalid test name");
-      printProgramOption(programOptions->options[OPTION_TEST_NAME], true, DEFAULT_INDENT_SIZE, 0);
+      programOptionPrintHelp(programOptions->options[OPTION_TEST_NAME], true, DEFAULT_INDENT_SIZE, 0);
       return -1;
     }
     testCaseName = strdup(colon + 1);

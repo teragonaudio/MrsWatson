@@ -35,24 +35,94 @@
 #include "logging/EventLogger.h"
 #include "sequencer/AudioSettings.h"
 
-void addNewProgramOption(const ProgramOptions programOptions, const int optionIndex,
-  const char* name, const char* help, boolByte hasShortForm, ProgramOptionArgumentType argumentType,
+ProgramOption newProgramOption(void) {
+  return newProgramOptionWithValues(-1, "", "", false, ARGUMENT_TYPE_INVALID, -1);
+}
+
+ProgramOption newProgramOptionWithValues(const int optionIndex, const char* name,
+  const char* help, boolByte hasShortForm, ProgramOptionArgumentType argumentType,
   int defaultValue) {
-  ProgramOption programOption = (ProgramOption)malloc(sizeof(ProgramOptionMembers));
+  ProgramOption option = (ProgramOption)malloc(sizeof(ProgramOptionMembers));
 
-  programOption->index = optionIndex;
-  programOption->name = newCharStringWithCapacity(STRING_LENGTH_SHORT);
-  charStringCopyCString(programOption->name, name);
-  programOption->help = newCharStringWithCapacity(STRING_LENGTH_LONG);
-  charStringCopyCString(programOption->help, help);
-  programOption->helpDefaultValue = defaultValue;
-  programOption->hasShortForm = hasShortForm;
+  option->index = optionIndex;
+  option->name = newCharStringWithCString(name);
+  option->help = newCharStringWithCString(help);
+  option->helpDefaultValue = defaultValue;
+  option->hasShortForm = hasShortForm;
 
-  programOption->argumentType = argumentType;
-  programOption->argument = newCharString();
-  programOption->enabled = false;
+  option->argumentType = argumentType;
+  option->argument = newCharString();
+  option->enabled = false;
 
-  programOptions->options[optionIndex] = programOption;
+  return option;
+}
+
+void programOptionPrintHelp(const ProgramOption self, boolByte withFullHelp, int indentSize, int initialIndent) {
+  CharString wrappedHelpString;
+  int i;
+
+  if(self == NULL) {
+    logError("Can't find help for that option. Try running with --help to see all options\n");
+    return;
+  }
+
+  // Initial argument indent
+  for(i = 0; i < initialIndent; i ++) {
+    printf(" ");
+  }
+
+  // All arguments have a long form, so that will always be printed
+  printf("--%s", self->name->data);
+
+  if(self->hasShortForm) {
+    printf(" (or -%c)", self->name->data[0]);
+  }
+
+  switch(self->argumentType) {
+    case ARGUMENT_TYPE_REQUIRED:
+      printf(" <argument>");
+      break;
+    case ARGUMENT_TYPE_OPTIONAL:
+      printf(" [argument]");
+      break;
+    case ARGUMENT_TYPE_NONE:
+    default:
+      break;
+  }
+
+  if(self->helpDefaultValue != NO_DEFAULT_VALUE) {
+    printf(", default value: %d", self->helpDefaultValue);
+  }
+
+  if(withFullHelp) {
+    // Newline and indentation before help
+    wrappedHelpString = newCharStringWithCapacity(STRING_LENGTH_LONG);
+    wrapString(self->help->data, wrappedHelpString->data, initialIndent + indentSize);
+    printf("\n%s\n\n", wrappedHelpString->data);
+    freeCharString(wrappedHelpString);
+  }
+  else {
+    printf("\n");
+  }
+}
+
+void freeProgramOption(ProgramOption programOption) {
+  freeCharString(programOption->name);
+  freeCharString(programOption->help);
+  freeCharString(programOption->argument);
+  free(programOption);
+}
+
+
+ProgramOptions newProgramOptions(int numOptions) {
+  ProgramOptions options = (ProgramOptions)malloc(sizeof(ProgramOptionsMembers));
+  options->numOptions = numOptions;
+  options->options = (ProgramOption*)malloc(sizeof(ProgramOption) * numOptions);
+  return options;
+}
+
+void programOptionsAdd(const ProgramOptions self, const ProgramOption option) {
+  self->options[option->index] = option;
 }
 
 static boolByte _isStringShortOption(const char* testString) {
@@ -63,26 +133,26 @@ static boolByte _isStringLongOption(const char* testString) {
   return (boolByte)(testString != NULL && strlen(testString) > 2 && testString[0] == '-' && testString[1] == '-');
 }
 
-static ProgramOption _findProgramOption(ProgramOptions programOptions, const char* optionString) {
+static ProgramOption _findProgramOption(ProgramOptions self, const char* name) {
   ProgramOption potentialMatchOption, optionMatch;
   CharString optionStringWithoutDashes;
   int i;
 
-  if(_isStringShortOption(optionString)) {
-    for(i = 0; i < programOptions->numOptions; i++) {
-      potentialMatchOption = programOptions->options[i];
-      if(potentialMatchOption->hasShortForm && potentialMatchOption->name->data[0] == optionString[1]) {
+  if(_isStringShortOption(name)) {
+    for(i = 0; i < self->numOptions; i++) {
+      potentialMatchOption = self->options[i];
+      if(potentialMatchOption->hasShortForm && potentialMatchOption->name->data[0] == name[1]) {
         return potentialMatchOption;
       }
     }
   }
 
-  if(_isStringLongOption(optionString)) {
+  if(_isStringLongOption(name)) {
     optionMatch = NULL;
     optionStringWithoutDashes = newCharStringWithCapacity(STRING_LENGTH_SHORT);
-    strncpy(optionStringWithoutDashes->data, optionString + 2, strlen(optionString) - 2);
-    for(i = 0; i < programOptions->numOptions; i++) {
-      potentialMatchOption = programOptions->options[i];
+    strncpy(optionStringWithoutDashes->data, name + 2, strlen(name) - 2);
+    for(i = 0; i < self->numOptions; i++) {
+      potentialMatchOption = self->options[i];
       if(charStringIsEqualTo(potentialMatchOption->name, optionStringWithoutDashes, false)) {
         optionMatch = potentialMatchOption;
         break;
@@ -96,11 +166,11 @@ static ProgramOption _findProgramOption(ProgramOptions programOptions, const cha
   return NULL;
 }
 
-static boolByte _fillOptionArgument(ProgramOption programOption, int* currentArgc, int argc, char** argv) {
-  if(programOption->argumentType == ARGUMENT_TYPE_NONE) {
+static boolByte _fillOptionArgument(ProgramOption self, int* currentArgc, int argc, char** argv) {
+  if(self->argumentType == ARGUMENT_TYPE_NONE) {
     return true;
   }
-  else if(programOption->argumentType == ARGUMENT_TYPE_OPTIONAL) {
+  else if(self->argumentType == ARGUMENT_TYPE_OPTIONAL) {
     int potentialNextArgc = *currentArgc + 1;
     if(potentialNextArgc >= argc) {
       return true;
@@ -109,7 +179,7 @@ static boolByte _fillOptionArgument(ProgramOption programOption, int* currentArg
       char* potentialNextArg = argv[potentialNextArgc];
       // If the next string in the sequence is NOT an argument, we assume it is the optional argument
       if(!_isStringShortOption(potentialNextArg) && !_isStringLongOption(potentialNextArg)) {
-        charStringCopyCString(programOption->argument, potentialNextArg);
+        charStringCopyCString(self->argument, potentialNextArg);
         (*currentArgc)++;
         return true;
       }
@@ -119,35 +189,35 @@ static boolByte _fillOptionArgument(ProgramOption programOption, int* currentArg
       }
     }
   }
-  else if(programOption->argumentType == ARGUMENT_TYPE_REQUIRED) {
+  else if(self->argumentType == ARGUMENT_TYPE_REQUIRED) {
     int nextArgc = *currentArgc + 1;
     if(nextArgc >= argc) {
-      logCritical("Option '%s' requires an argument, but none was given", programOption->name->data);
+      logCritical("Option '%s' requires an argument, but none was given", self->name->data);
       return false;
     }
     else {
       char* nextArg = argv[nextArgc];
       if(_isStringShortOption(nextArg) || _isStringLongOption(nextArg)) {
-        logCritical("Option '%s' requires an argument, but '%s' is not valid", programOption->name->data, nextArg);
+        logCritical("Option '%s' requires an argument, but '%s' is not valid", self->name->data, nextArg);
         return false;
       }
       else {
-        charStringCopyCString(programOption->argument, nextArg);
+        charStringCopyCString(self->argument, nextArg);
         (*currentArgc)++;
         return true;
       }
     }
   }
   else {
-    logInternalError("Unknown argument type '%d'", programOption->argumentType);
+    logInternalError("Unknown argument type '%d'", self->argumentType);
     return false;
   }
 }
 
-boolByte parseCommandLine(ProgramOptions programOptions, int argc, char** argv) {
+boolByte programOptionsParseArgs(ProgramOptions self, int argc, char** argv) {
   int argumentIndex;
   for(argumentIndex = 1; argumentIndex < argc; argumentIndex++) {
-    const ProgramOption option = _findProgramOption(programOptions, argv[argumentIndex]);
+    const ProgramOption option = _findProgramOption(self, argv[argumentIndex]);
     if(option == NULL) {
       logCritical("Invalid option '%s'", argv[argumentIndex]);
       return false;
@@ -164,78 +234,23 @@ boolByte parseCommandLine(ProgramOptions programOptions, int argc, char** argv) 
   return true;
 }
 
-void printProgramOptions(const ProgramOptions programOptions, boolByte withFullHelp, int indentSize) {
+void programOptionsPrintHelp(const ProgramOptions self, boolByte withFullHelp, int indentSize) {
   int i;
-  for(i = 0; i < programOptions->numOptions; i++) {
-    printProgramOption(programOptions->options[i], withFullHelp, indentSize, indentSize);
+  for(i = 0; i < self->numOptions; i++) {
+    programOptionPrintHelp(self->options[i], withFullHelp, indentSize, indentSize);
   }
 }
 
-void printProgramOption(const ProgramOption programOption, boolByte withFullHelp, int indentSize, int initialIndent) {
-  CharString wrappedHelpString;
+ProgramOption programOptionsFind(const ProgramOptions self, const CharString string) {
   int i;
-
-  if(programOption == NULL) {
-    logError("Can't find help for that option. Try running with --help to see all options\n");
-    return;
-  }
-
-  // Initial argument indent
-  for(i = 0; i < initialIndent; i ++) {
-    printf(" ");
-  }
-
-  // All arguments have a long form, so that will always be printed
-  printf("--%s", programOption->name->data);
-
-  if(programOption->hasShortForm) {
-    printf(" (or -%c)", programOption->name->data[0]);
-  }
-
-  switch(programOption->argumentType) {
-    case ARGUMENT_TYPE_REQUIRED:
-      printf(" <argument>");
-      break;
-    case ARGUMENT_TYPE_OPTIONAL:
-      printf(" [argument]");
-      break;
-    case ARGUMENT_TYPE_NONE:
-    default:
-      break;
-  }
-
-  if(programOption->helpDefaultValue != NO_DEFAULT_VALUE) {
-    printf(", default value: %d", programOption->helpDefaultValue);
-  }
-
-  if(withFullHelp) {
-    // Newline and indentation before help
-    wrappedHelpString = newCharStringWithCapacity(STRING_LENGTH_LONG);
-    wrapString(programOption->help->data, wrappedHelpString->data, initialIndent + indentSize);
-    printf("\n%s\n\n", wrappedHelpString->data);
-    freeCharString(wrappedHelpString);
-  }
-  else {
-    printf("\n");
-  }
-}
-
-ProgramOption findProgramOptionFromString(const ProgramOptions programOptions, const CharString string) {
-  int i;
-  for(i = 0; i < programOptions->numOptions; i++) {
-    if(charStringIsEqualTo(string, programOptions->options[i]->name, true)) {
-      return programOptions->options[i];
+  for(i = 0; i < self->numOptions; i++) {
+    if(charStringIsEqualTo(string, self->options[i]->name, true)) {
+      return self->options[i];
     }
   }
   return NULL;
 }
 
-static void _freeProgramOption(ProgramOption programOption) {
-  freeCharString(programOption->name);
-  freeCharString(programOption->help);
-  freeCharString(programOption->argument);
-  free(programOption);
-}
 
 void freeProgramOptions(ProgramOptions programOptions) {
   ProgramOption option;
@@ -243,7 +258,7 @@ void freeProgramOptions(ProgramOptions programOptions) {
 
   for(i = 0; i < programOptions->numOptions; i++) {
     option = programOptions->options[i];
-    _freeProgramOption(option);
+    freeProgramOption(option);
   }
   free(programOptions->options);
   free(programOptions);
