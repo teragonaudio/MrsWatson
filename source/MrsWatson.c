@@ -79,7 +79,7 @@ static void printWelcomeMessage(void) {
   CharString versionString = newCharString();
 
   fillVersionString(versionString);
-  logInfo("%s initialized, build %ld", versionString->data, buildDatestamp());
+  logInfo("%s initialized, build %ld", versionString->data, buildInfoGetDatestamp());
   // Recycle versionString to use for the platform name
   freeCharString(versionString);
 
@@ -95,7 +95,7 @@ static void printVersion(void) {
 
   fillVersionString(versionString);
   printf("%s, build %ld\nCopyright (c) %d, %s. All rights reserved.\n\n",
-    versionString->data, buildDatestamp(), buildYear(), VENDOR_NAME);
+    versionString->data, buildInfoGetDatestamp(), buildInfoGetYear(), VENDOR_NAME);
 
   wrappedLicenseInfo = newCharStringWithCapacity(STRING_LENGTH_LONG);
   wrapString(LICENSE_STRING, wrappedLicenseInfo->data, 0);

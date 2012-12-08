@@ -33,7 +33,7 @@
 #include "base/CharString.h"
 #include "logging/EventLogger.h"
 
-int buildYear(void) {
+int buildInfoGetYear(void) {
   int result = 0;
   CharString buildDate = newCharStringWithCapacity(STRING_LENGTH_SHORT);
   int startingIndex = strlen(__DATE__) - 4;
@@ -63,8 +63,8 @@ static short _getMonthNumber(const char* abbreviatedMonthName) {
 }
 
 // Return a build stamp in the forrm YYYYMMDD
-long buildDatestamp(void) {
-  long result = buildYear() * 10000;
+long buildInfoGetDatestamp(void) {
+  long result = buildInfoGetYear() * 10000;
 
   CharString buffer = newCharStringWithCapacity(STRING_LENGTH_SHORT);
   strncpy(buffer->data, __DATE__, 3);
