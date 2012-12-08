@@ -52,16 +52,16 @@ CharString newCharString(void);
 CharString newCharStringWithCapacity(int length);
 CharString newCharStringWithCString(const char* string);
 
-void charStringAppend(CharString destString, const CharString srcString);
-void charStringAppendCString(CharString destString, const char* srcString);
-void charStringCopy(CharString destString, const CharString srcString);
-void charStringCopyCString(CharString destString, const char* srcString);
-void charStringClear(CharString charString);
+void charStringAppend(CharString self, const CharString string);
+void charStringAppendCString(CharString self, const char* string);
+void charStringCopy(CharString self, const CharString string);
+void charStringCopyCString(CharString self, const char* string);
+void charStringClear(CharString self);
 
-boolByte charStringIsEmpty(const CharString testString);
-boolByte charStringIsEqualTo(const CharString charString, const CharString otherString, boolByte caseInsensitive);
-boolByte charStringIsEqualToCString(const CharString charString, const char* otherString, boolByte caseInsensitive);
+boolByte charStringIsEmpty(const CharString self);
+boolByte charStringIsEqualTo(const CharString self, const CharString string, boolByte caseInsensitive);
+boolByte charStringIsEqualToCString(const CharString self, const char* string, boolByte caseInsensitive);
 
-void freeCharString(CharString charString);
+void freeCharString(CharString string);
 
 #endif

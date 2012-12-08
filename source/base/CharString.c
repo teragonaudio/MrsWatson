@@ -60,55 +60,56 @@ CharString newCharStringWithCString(const char* string) {
   return result;
 }
 
-void charStringAppend(CharString destString, const CharString srcString) {
-  strncat(destString->data, srcString->data, destString->length);
+
+void charStringAppend(CharString self, const CharString string) {
+  strncat(self->data, string->data, self->length);
 }
 
-void charStringAppendCString(CharString destString, const char* srcString) {
-  strncat(destString->data, srcString, destString->length);
+void charStringAppendCString(CharString self, const char* string) {
+  strncat(self->data, string, self->length);
 }
 
-void charStringClear(CharString charString) {
-  memset(charString->data, 0, (size_t)(charString->length));
+void charStringClear(CharString self) {
+  memset(self->data, 0, (size_t)(self->length));
 }
 
-void charStringCopyCString(CharString destString, const char* srcString) {
-  strncpy(destString->data, srcString, (size_t)(destString->length));
+void charStringCopyCString(CharString self, const char* string) {
+  strncpy(self->data, string, (size_t)(self->length));
 }
 
-void charStringCopy(CharString destString, const CharString srcString) {
-  strncpy(destString->data, srcString->data, (size_t)(destString->length));
+void charStringCopy(CharString self, const CharString string) {
+  strncpy(self->data, string->data, (size_t)(self->length));
 }
 
-boolByte charStringIsEmpty(const CharString charString) {
-  return (charString == NULL || charString->data == NULL || charString->data[0] == '\0');
+boolByte charStringIsEmpty(const CharString self) {
+  return (self == NULL || self->data == NULL || self->data[0] == '\0');
 }
 
-boolByte charStringIsEqualTo(const CharString firstString, const CharString otherString, boolByte caseInsensitive) {
+boolByte charStringIsEqualTo(const CharString self, const CharString string, boolByte caseInsensitive) {
   size_t comparisonSize;
-  if(firstString == NULL || otherString == NULL) {
+  if(self == NULL || string == NULL) {
     return false;
   }
 
   // Only compare to the length of the smaller of the two strings
-  comparisonSize = (size_t)((firstString->length < otherString->length) ? firstString->length : otherString->length);
+  comparisonSize = (size_t)((self->length < string->length) ? self->length : string->length);
   if(caseInsensitive) {
-    return strncasecmp(firstString->data, otherString->data, comparisonSize) == 0;
+    return strncasecmp(self->data, string->data, comparisonSize) == 0;
   }
   else {
-    return strncmp(firstString->data, otherString->data, comparisonSize) == 0;
+    return strncmp(self->data, string->data, comparisonSize) == 0;
   }
 }
 
-boolByte charStringIsEqualToCString(const CharString charString, const char* otherString, boolByte caseInsensitive) {
-  if(charString == NULL || otherString == NULL) {
+boolByte charStringIsEqualToCString(const CharString self, const char* string, boolByte caseInsensitive) {
+  if(self == NULL || string == NULL) {
     return false;
   }
   else if(caseInsensitive) {
-    return strncasecmp(charString->data, otherString, (size_t)charString->length) == 0;
+    return strncasecmp(self->data, string, (size_t)self->length) == 0;
   }
   else {
-    return strncmp(charString->data, otherString, (size_t)charString->length) == 0;
+    return strncmp(self->data, string, (size_t)self->length) == 0;
   }
 }
 
