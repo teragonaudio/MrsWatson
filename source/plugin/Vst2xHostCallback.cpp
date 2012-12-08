@@ -69,7 +69,7 @@ VstIntPtr VSTCALLBACK vst2xPluginHostCallback(AEffect *effect, VstInt32 opcode, 
   }
   else {
     // During plugin initialization, the dispatcher can be called without a valid plugin instance
-    copyToCharString(uniqueIdString, "????");
+    charStringCopyCString(uniqueIdString, "????");
   }
   const char* uniqueId = uniqueIdString->data;
   int result = 0;

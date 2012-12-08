@@ -40,7 +40,7 @@ static boolByte openSampleSourcePcm(void* sampleSourcePtr, const SampleSourceOpe
 
   extraData->dataBufferNumItems = 0;
   if(openAs == SAMPLE_SOURCE_OPEN_READ) {
-    if(isCharStringEqualToCString(sampleSource->sourceName, "-", false)) {
+    if(charStringIsEqualToCString(sampleSource->sourceName, "-", false)) {
       extraData->fileHandle = stdin;
       strncpy(sampleSource->sourceName->data, "stdin", (size_t)sampleSource->sourceName->length);
       extraData->isStream = true;
@@ -50,7 +50,7 @@ static boolByte openSampleSourcePcm(void* sampleSourcePtr, const SampleSourceOpe
     }
   }
   else if(openAs == SAMPLE_SOURCE_OPEN_WRITE) {
-    if(isCharStringEqualToCString(sampleSource->sourceName, "-", false)) {
+    if(charStringIsEqualToCString(sampleSource->sourceName, "-", false)) {
       extraData->fileHandle = stdout;
       strncpy(sampleSource->sourceName->data, "stdout", (size_t)sampleSource->sourceName->length);
       extraData->isStream = true;
@@ -230,7 +230,7 @@ SampleSource newSampleSourcePcm(const CharString sampleSourceName) {
   sampleSource->sampleSourceType = SAMPLE_SOURCE_TYPE_PCM;
   sampleSource->openedAs = SAMPLE_SOURCE_OPEN_NOT_OPENED;
   sampleSource->sourceName = newCharString();
-  copyCharStrings(sampleSource->sourceName, sampleSourceName);
+  charStringCopy(sampleSource->sourceName, sampleSourceName);
   sampleSource->numSamplesProcessed = 0;
 
   sampleSource->openSampleSource = openSampleSourcePcm;

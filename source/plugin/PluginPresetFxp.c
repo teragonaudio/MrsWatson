@@ -133,7 +133,7 @@ static boolByte _loadPluginPresetFxp(void* pluginPresetPtr, Plugin plugin) {
     logError("Short read of FXP preset file at prgName");
     return false;
   }
-  copyToCharString(pluginPreset->presetName, inProgram->prgName);
+  charStringCopyCString(pluginPreset->presetName, inProgram->prgName);
   logDebug("Preset's name is %s", pluginPreset->presetName->data);
 
   if(programType == FXP_TYPE_REGULAR) {
@@ -209,7 +209,7 @@ PluginPreset newPluginPresetFxp(const CharString presetName) {
 
   pluginPreset->presetType = PRESET_TYPE_FXP;
   pluginPreset->presetName = newCharString();
-  copyCharStrings(pluginPreset->presetName, presetName);
+  charStringCopy(pluginPreset->presetName, presetName);
   pluginPreset->compatiblePluginTypes = 0;
   _setPresetCompatibleWithPluginType(pluginPreset, PLUGIN_TYPE_VST_2X);
 

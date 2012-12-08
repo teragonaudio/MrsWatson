@@ -283,7 +283,7 @@ MidiSource newMidiSourceFile(const CharString midiSourceName) {
 
   midiSource->midiSourceType = MIDI_SOURCE_TYPE_FILE;
   midiSource->sourceName = newCharString();
-  copyCharStrings(midiSource->sourceName, midiSourceName);
+  charStringCopy(midiSource->sourceName, midiSourceName);
 
   midiSource->openMidiSource = _openMidiSourceFile;
   midiSource->readMidiEvents = _readMidiEventsFile;

@@ -203,7 +203,7 @@ void buildAbsolutePath(const CharString directory, const CharString file, const 
 void convertRelativePathToAbsolute(const CharString file, CharString outString) {
   CharString currentDirectory = newCharString();
 #if UNIX
-  copyToCharString(currentDirectory, getenv("PWD"));
+  charStringCopyCString(currentDirectory, getenv("PWD"));
 #elif WINDOWS
   GetCurrentDirectoryA(currentDirectory->length, currentDirectory->data);
 #endif
@@ -260,7 +260,7 @@ void getFileDirname(const CharString filename, CharString outString) {
   }
   lastDelimiter = strrchr(filename->data, PATH_DELIMITER);
   if(lastDelimiter == NULL) {
-    copyCharStrings(outString, filename);
+    charStringCopy(outString, filename);
   }
   else {
     strncpy(outString->data, filename->data, lastDelimiter - filename->data);

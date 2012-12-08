@@ -40,7 +40,7 @@ CharString newCharStringWithCapacity(int length) {
   CharString charString = (CharString)malloc(sizeof(CharStringMembers));
   charString->length = length;
   charString->data = (char*)malloc(sizeof(char) * length);
-  clearCharString(charString);
+  charStringClear(charString);
   return charString;
 }
 
@@ -60,31 +60,31 @@ CharString newCharStringWithCString(const char* string) {
   return result;
 }
 
-void appendToCharString(CharString destString, const CharString srcString) {
+void charStringAppend(CharString destString, const CharString srcString) {
   strncat(destString->data, srcString->data, destString->length);
 }
 
-void appendCStringToCharString(CharString destString, const char* srcString) {
+void charStringAppendCString(CharString destString, const char* srcString) {
   strncat(destString->data, srcString, destString->length);
 }
 
-void clearCharString(CharString charString) {
+void charStringClear(CharString charString) {
   memset(charString->data, 0, (size_t)(charString->length));
 }
 
-void copyToCharString(CharString destString, const char* srcString) {
+void charStringCopyCString(CharString destString, const char* srcString) {
   strncpy(destString->data, srcString, (size_t)(destString->length));
 }
 
-void copyCharStrings(CharString destString, const CharString srcString) {
+void charStringCopy(CharString destString, const CharString srcString) {
   strncpy(destString->data, srcString->data, (size_t)(destString->length));
 }
 
-boolByte isCharStringEmpty(const CharString charString) {
+boolByte charStringIsEmpty(const CharString charString) {
   return (charString == NULL || charString->data == NULL || charString->data[0] == '\0');
 }
 
-boolByte isCharStringEqualTo(const CharString firstString, const CharString otherString, boolByte caseInsensitive) {
+boolByte charStringIsEqualTo(const CharString firstString, const CharString otherString, boolByte caseInsensitive) {
   size_t comparisonSize;
   if(firstString == NULL || otherString == NULL) {
     return false;
@@ -100,7 +100,7 @@ boolByte isCharStringEqualTo(const CharString firstString, const CharString othe
   }
 }
 
-boolByte isCharStringEqualToCString(const CharString charString, const char* otherString, boolByte caseInsensitive) {
+boolByte charStringIsEqualToCString(const CharString charString, const char* otherString, boolByte caseInsensitive) {
   if(charString == NULL || otherString == NULL) {
     return false;
   }

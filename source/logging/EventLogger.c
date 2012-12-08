@@ -95,16 +95,16 @@ void setLogLevel(LogLevel logLevel) {
 }
 
 void setLogLevelFromString(const CharString logLevelString) {
-  if(isCharStringEqualToCString(logLevelString, "debug", true)) {
+  if(charStringIsEqualToCString(logLevelString, "debug", true)) {
     setLogLevel(LOG_DEBUG);
   }
-  else if(isCharStringEqualToCString(logLevelString, "info", true)) {
+  else if(charStringIsEqualToCString(logLevelString, "info", true)) {
     setLogLevel(LOG_INFO);
   }
-  else if(isCharStringEqualToCString(logLevelString, "warn", true)) {
+  else if(charStringIsEqualToCString(logLevelString, "warn", true)) {
     setLogLevel(LOG_WARN);
   }
-  else if(isCharStringEqualToCString(logLevelString, "error", true)) {
+  else if(charStringIsEqualToCString(logLevelString, "error", true)) {
     setLogLevel(LOG_ERROR);
   }
   else {
@@ -129,16 +129,16 @@ void setLoggingColorEnabled(boolByte useColor) {
 }
 
 void setLoggingColorEnabledWithString(const CharString colorSchemeName) {
-  if(isCharStringEmpty(colorSchemeName)) {
+  if(charStringIsEmpty(colorSchemeName)) {
     setLoggingColorEnabled(false);
   }
-  else if(isCharStringEqualToCString(colorSchemeName, "none", false)) {
+  else if(charStringIsEqualToCString(colorSchemeName, "none", false)) {
     setLoggingColorEnabled(false);
   }
-  else if(isCharStringEqualToCString(colorSchemeName, "auto", false)) {
+  else if(charStringIsEqualToCString(colorSchemeName, "auto", false)) {
     setLoggingColorEnabled(isatty(1));
   }
-  else if(isCharStringEqualToCString(colorSchemeName, "force", false)) {
+  else if(charStringIsEqualToCString(colorSchemeName, "force", false)) {
     setLoggingColorEnabled(true);
   }
   else {

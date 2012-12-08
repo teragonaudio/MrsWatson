@@ -317,7 +317,7 @@ static void _listPluginsVst2xInLocation(const CharString location) {
 }
 
 void listAvailablePluginsVst2x(const CharString pluginRoot) {
-  if(!isCharStringEmpty(pluginRoot)) {
+  if(!charStringIsEmpty(pluginRoot)) {
     _listPluginsVst2xInLocation(pluginRoot);
   }
 
@@ -349,7 +349,7 @@ static boolByte _doesVst2xPluginExistAtLocation(const CharString pluginName, con
   }
 
   buildAbsolutePath(location, pluginName, pluginFileExtension, pluginSearchPath);
-  if(!isCharStringEmpty(location) && fileExists(pluginSearchPath->data)) {
+  if(!charStringIsEmpty(location) && fileExists(pluginSearchPath->data)) {
     result = true;
   }
 
@@ -362,14 +362,14 @@ static boolByte _fillVst2xPluginAbsolutePath(const CharString pluginName, const 
 
   // First see if an absolute path was given as the plugin name
   if(isAbsolutePath(pluginName) && fileExists(pluginName->data)) {
-    copyCharStrings(outLocation, pluginName);
+    charStringCopy(outLocation, pluginName);
     return true;
   }
 
   // Then search the path given to --plugin-root, if given
-  if(!isCharStringEmpty(pluginRoot)) {
+  if(!charStringIsEmpty(pluginRoot)) {
     if(_doesVst2xPluginExistAtLocation(pluginName, pluginRoot)) {
-      copyCharStrings(outLocation, pluginRoot);
+      charStringCopy(outLocation, pluginRoot);
       return true;
     }
   }
@@ -387,7 +387,7 @@ static boolByte _fillVst2xPluginAbsolutePath(const CharString pluginName, const 
   while(iterator != NULL) {
     CharString searchLocation = (CharString)(iterator->item);
     if(_doesVst2xPluginExistAtLocation(pluginName, searchLocation)) {
-      copyCharStrings(outLocation, searchLocation);
+      charStringCopy(outLocation, searchLocation);
       result = true;
       break;
     }
@@ -464,7 +464,7 @@ static boolByte _openVst2xPlugin(void* pluginPtr) {
   logInfo("Opening VST2.x plugin '%s'", plugin->pluginName->data);
   CharString pluginAbsolutePath = newCharString();
   if(isAbsolutePath(plugin->pluginName)) {
-    copyCharStrings(pluginAbsolutePath, plugin->pluginName);
+    charStringCopy(pluginAbsolutePath, plugin->pluginName);
   }
   else {
     buildAbsolutePath(plugin->pluginLocation, plugin->pluginName, _getVst2xPlatformExtension(), pluginAbsolutePath);
@@ -560,7 +560,7 @@ static void _displayVst2xPluginInfo(void* pluginPtr) {
   logInfo("Vendor: %s", nameBuffer->data);
   int vendorVersion = data->dispatcher(data->pluginHandle, effGetVendorVersion, 0, 0, NULL, 0.0f);
   logInfo("Version: %d", vendorVersion);
-  clearCharString(nameBuffer);
+  charStringClear(nameBuffer);
   fillVst2xUniqueIdToString(data->pluginHandle->uniqueID, nameBuffer);
   logInfo("Unique ID: %s", nameBuffer->data);
   logInfo("Version: %d", data->pluginHandle->version);
@@ -569,18 +569,18 @@ static void _displayVst2xPluginInfo(void* pluginPtr) {
   logInfo("Parameters (%d total)", data->pluginHandle->numParams);
   for(int i = 0; i < data->pluginHandle->numParams; i++) {
     float value = data->pluginHandle->getParameter(data->pluginHandle, i);
-    clearCharString(nameBuffer);
+    charStringClear(nameBuffer);
     data->dispatcher(data->pluginHandle, effGetParamName, i, 0, nameBuffer->data, 0.0f);
     logInfo("  %d: %s (%f)", i, nameBuffer->data, value);
   }
 
   logInfo("Programs (%d total)", data->pluginHandle->numPrograms);
   for(int i = 0; i < data->pluginHandle->numPrograms; i++) {
-    clearCharString(nameBuffer);
+    charStringClear(nameBuffer);
     data->dispatcher(data->pluginHandle, effGetProgramNameIndexed, i, 0, nameBuffer->data, 0.0f);
     logInfo("  %d: %s", i, nameBuffer->data);
   }
-  clearCharString(nameBuffer);
+  charStringClear(nameBuffer);
   data->dispatcher(data->pluginHandle, effGetProgramName, 0, 0, nameBuffer->data, 0.0f);
   logInfo("Current program: %s", nameBuffer->data);
   freeCharString(nameBuffer);
@@ -715,9 +715,9 @@ Plugin newPluginVst2x(const CharString pluginName, const CharString pluginLocati
   plugin->interfaceType = PLUGIN_TYPE_VST_2X;
   plugin->pluginType = PLUGIN_TYPE_UNKNOWN;
   plugin->pluginName = newCharString();
-  copyCharStrings(plugin->pluginName, pluginName);
+  charStringCopy(plugin->pluginName, pluginName);
   plugin->pluginLocation = newCharString();
-  copyCharStrings(plugin->pluginLocation, pluginLocation);
+  charStringCopy(plugin->pluginLocation, pluginLocation);
 
   plugin->open = _openVst2xPlugin;
   plugin->displayInfo = _displayVst2xPluginInfo;

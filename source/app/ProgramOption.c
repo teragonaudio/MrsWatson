@@ -42,9 +42,9 @@ void addNewProgramOption(const ProgramOptions programOptions, const int optionIn
 
   programOption->index = optionIndex;
   programOption->name = newCharStringWithCapacity(STRING_LENGTH_SHORT);
-  copyToCharString(programOption->name, name);
+  charStringCopyCString(programOption->name, name);
   programOption->help = newCharStringWithCapacity(STRING_LENGTH_LONG);
-  copyToCharString(programOption->help, help);
+  charStringCopyCString(programOption->help, help);
   programOption->helpDefaultValue = defaultValue;
   programOption->hasShortForm = hasShortForm;
 
@@ -83,7 +83,7 @@ static ProgramOption _findProgramOption(ProgramOptions programOptions, const cha
     strncpy(optionStringWithoutDashes->data, optionString + 2, strlen(optionString) - 2);
     for(i = 0; i < programOptions->numOptions; i++) {
       potentialMatchOption = programOptions->options[i];
-      if(isCharStringEqualTo(potentialMatchOption->name, optionStringWithoutDashes, false)) {
+      if(charStringIsEqualTo(potentialMatchOption->name, optionStringWithoutDashes, false)) {
         optionMatch = potentialMatchOption;
         break;
       }
@@ -109,7 +109,7 @@ static boolByte _fillOptionArgument(ProgramOption programOption, int* currentArg
       char* potentialNextArg = argv[potentialNextArgc];
       // If the next string in the sequence is NOT an argument, we assume it is the optional argument
       if(!_isStringShortOption(potentialNextArg) && !_isStringLongOption(potentialNextArg)) {
-        copyToCharString(programOption->argument, potentialNextArg);
+        charStringCopyCString(programOption->argument, potentialNextArg);
         (*currentArgc)++;
         return true;
       }
@@ -132,7 +132,7 @@ static boolByte _fillOptionArgument(ProgramOption programOption, int* currentArg
         return false;
       }
       else {
-        copyToCharString(programOption->argument, nextArg);
+        charStringCopyCString(programOption->argument, nextArg);
         (*currentArgc)++;
         return true;
       }
@@ -223,7 +223,7 @@ void printProgramOption(const ProgramOption programOption, boolByte withFullHelp
 ProgramOption findProgramOptionFromString(const ProgramOptions programOptions, const CharString string) {
   int i;
   for(i = 0; i < programOptions->numOptions; i++) {
-    if(isCharStringEqualTo(string, programOptions->options[i]->name, true)) {
+    if(charStringIsEqualTo(string, programOptions->options[i]->name, true)) {
       return programOptions->options[i];
     }
   }

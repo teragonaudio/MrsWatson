@@ -53,7 +53,7 @@ static void _runAnalysisFunction(void* item, void* userData) {
   AnalysisData analysisData = (AnalysisData)userData;
 
   if(!analysisFuncPtr(analysisData->sampleBuffer, functionData)) {
-    copyToCharString(analysisData->failedAnalysisFunctionName, functionData->analysisName);
+    charStringCopyCString(analysisData->failedAnalysisFunctionName, functionData->analysisName);
     *(analysisData->failedAnalysisSample) = *(analysisData->currentBlockSample) + functionData->failedSample;
     *(analysisData->result) = false;
   }

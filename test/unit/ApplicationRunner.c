@@ -93,12 +93,12 @@ void runApplicationTest(const TestEnvironment testEnvironment,
   makeDirectory(newCharStringWithCString("out"));
 
   // Create the command line argument
-  appendCStringToCharString(arguments, testEnvironment->applicationPath);
-  appendCStringToCharString(arguments, " ");
+  charStringAppendCString(arguments, testEnvironment->applicationPath);
+  charStringAppendCString(arguments, " ");
   _getDefaultArguments(testEnvironment, testName, defaultArguments);
-  appendToCharString(arguments, defaultArguments);
-  appendCStringToCharString(arguments, " ");
-  appendCStringToCharString(arguments, testArguments);
+  charStringAppend(arguments, defaultArguments);
+  charStringAppendCString(arguments, " ");
+  charStringAppendCString(arguments, testArguments);
 
   if(!testEnvironment->results->onlyPrintFailing) {
     printTestName(testName);

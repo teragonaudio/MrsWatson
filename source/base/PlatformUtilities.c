@@ -90,12 +90,12 @@ CharString getPlatformName(void) {
 
   if(uname(&systemInfo) != 0) {
     logWarn("Could not get system information from uname");
-    copyToCharString(result, "Linux (Unknown platform)");
+    charStringCopyCString(result, "Linux (Unknown platform)");
     freeCharString(distributionName);
     freeCharString(line);
     return result;
   }
-  copyToCharString(distributionName, "(Unknown distribution)");
+  charStringCopyCString(distributionName, "(Unknown distribution)");
 
   if(fileExists("/etc/lsb-release")) {
     lsbRelease = fopen("/etc/lsb-release", "r");
@@ -108,7 +108,7 @@ CharString getPlatformName(void) {
             if(distributionStringStart != NULL) {
               distributionStringEnd = strchr(distributionStringStart + 1, '"');
               if(distributionStringEnd != NULL) {
-                clearCharString(distributionName);
+                charStringClear(distributionName);
                 strncpy(distributionName->data, distributionStringStart + 1,
                   distributionStringEnd - distributionStringStart - 1);
               }
@@ -119,7 +119,7 @@ CharString getPlatformName(void) {
     }
   }
 
-  if(isCharStringEmpty(result)) {
+  if(charStringIsEmpty(result)) {
     snprintf(result->data, result->length, "Linux %s, kernel %s %s",
       distributionName->data, systemInfo.release, systemInfo.machine);
   }
@@ -141,32 +141,32 @@ CharString getPlatformName(void) {
     case 6:
       switch(versionInformation.dwMinorVersion) {
       case 2:
-        copyToCharString(result, "Windows 8");
+        charStringCopyCString(result, "Windows 8");
         break;
       case 1:
-        copyToCharString(result, "Windows 7");
+        charStringCopyCString(result, "Windows 7");
         break;
       case 0:
-        copyToCharString(result, "Windows Vista");
+        charStringCopyCString(result, "Windows Vista");
         break;
       }
       break;
     case 5:
       switch(versionInformation.dwMinorVersion) {
       case 2:
-        copyToCharString(result, "Windows Server 2003");
+        charStringCopyCString(result, "Windows Server 2003");
         break;
       case 1:
-        copyToCharString(result, "Windows XP");
+        charStringCopyCString(result, "Windows XP");
         break;
       case 0:
-        copyToCharString(result, "Windows 2000");
+        charStringCopyCString(result, "Windows 2000");
         break;
       }
       break;
   }
 #else
-  copyToCharString(result, "Unsupported platform");
+  charStringCopyCString(result, "Unsupported platform");
 #endif
   return result;
 }

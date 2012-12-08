@@ -37,7 +37,7 @@
 #include "midi/MidiSource.h"
 
 MidiSourceType guessMidiSourceType(const CharString midiSourceTypeString) {
-  if(!isCharStringEmpty(midiSourceTypeString)) {
+  if(!charStringIsEmpty(midiSourceTypeString)) {
     const char* fileExtension = getFileExtension(midiSourceTypeString->data);
     if(fileExtension == NULL) {
       return MIDI_SOURCE_TYPE_INVALID;

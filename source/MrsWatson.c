@@ -51,7 +51,7 @@ static void prettyPrintTime(CharString outString, double milliseconds) {
   int minutes;
   double seconds;
 
-  clearCharString(outString);
+  charStringClear(outString);
   if(milliseconds < 1000) {
     snprintf(outString->data, outString->length, "%.2fms", milliseconds);
   }
@@ -207,7 +207,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   }
   else if(programOptions->options[OPTION_HELP]->enabled) {
     printMrsWatsonQuickstart(argv[0]);
-    if(isCharStringEmpty(programOptions->options[OPTION_HELP]->argument)) {
+    if(charStringIsEmpty(programOptions->options[OPTION_HELP]->argument)) {
       printf("All options, where <argument> is required and [argument] is optional:\n");
       printProgramOptions(programOptions, false, DEFAULT_INDENT_SIZE);
     }
@@ -233,7 +233,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
     printErrorReportInfo();
     programOptions->options[OPTION_VERBOSE]->enabled = true;
     programOptions->options[OPTION_LOG_FILE]->enabled = true;
-    copyToCharString(programOptions->options[OPTION_LOG_FILE]->argument, "log.txt");
+    charStringCopyCString(programOptions->options[OPTION_LOG_FILE]->argument, "log.txt");
     // Shell script with original command line arguments
     createCommandLineLauncher(errorReporter, argc, argv);
     // Rewrite some paths before any input or output sources have been opened.
@@ -257,8 +257,8 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   if(programOptions->options[OPTION_COLOR_LOGGING]->enabled) {
     // If --color was given but with no string argument, then force color. Otherwise
     // colors will be provided automatically anyways.
-    if(isCharStringEmpty(programOptions->options[OPTION_COLOR_LOGGING]->argument)) {
-      copyToCharString(programOptions->options[OPTION_COLOR_LOGGING]->argument, "force");
+    if(charStringIsEmpty(programOptions->options[OPTION_COLOR_LOGGING]->argument)) {
+      charStringCopyCString(programOptions->options[OPTION_COLOR_LOGGING]->argument, "force");
     }
     setLoggingColorEnabledWithString(programOptions->options[OPTION_COLOR_LOGGING]->argument);
   }
@@ -292,7 +292,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
           outputSource = newSampleSource(guessSampleSourceType(option->argument), option->argument);
           break;
         case OPTION_PLUGIN_ROOT:
-          copyCharStrings(pluginSearchRoot, option->argument);
+          charStringCopy(pluginSearchRoot, option->argument);
           break;
         case OPTION_SAMPLE_RATE:
           setSampleRate(strtod(option->argument->data, NULL));
@@ -349,7 +349,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
       printf("ERROR: Using stdin/stdout is incompatible with --error-report\n");
       return RETURN_CODE_NOT_RUN;
     }
-    if(midiSource != NULL && isCharStringEqualToCString(midiSource->sourceName, "-", false)) {
+    if(midiSource != NULL && charStringIsEqualToCString(midiSource->sourceName, "-", false)) {
       printf("ERROR: MIDI source from stdin is incompatible with --error-report\n");
       return RETURN_CODE_NOT_RUN;
     }

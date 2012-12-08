@@ -46,22 +46,21 @@ typedef struct {
   int length;
   char* data;
 } CharStringMembers;
-
 typedef CharStringMembers* CharString;
 
 CharString newCharString(void);
 CharString newCharStringWithCapacity(int length);
 CharString newCharStringWithCString(const char* string);
 
-void appendToCharString(CharString destString, const CharString srcString);
-void appendCStringToCharString(CharString destString, const char* srcString);
-void clearCharString(CharString charString);
-void copyToCharString(CharString destString, const char* srcString);
-void copyCharStrings(CharString destString, const CharString srcString);
+void charStringAppend(CharString destString, const CharString srcString);
+void charStringAppendCString(CharString destString, const char* srcString);
+void charStringCopy(CharString destString, const CharString srcString);
+void charStringCopyCString(CharString destString, const char* srcString);
+void charStringClear(CharString charString);
 
-boolByte isCharStringEmpty(const CharString testString);
-boolByte isCharStringEqualTo(const CharString charString, const CharString otherString, boolByte caseInsensitive);
-boolByte isCharStringEqualToCString(const CharString charString, const char* otherString, boolByte caseInsensitive);
+boolByte charStringIsEmpty(const CharString testString);
+boolByte charStringIsEqualTo(const CharString charString, const CharString otherString, boolByte caseInsensitive);
+boolByte charStringIsEqualToCString(const CharString charString, const char* otherString, boolByte caseInsensitive);
 
 void freeCharString(CharString charString);
 

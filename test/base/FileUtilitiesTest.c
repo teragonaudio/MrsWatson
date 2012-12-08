@@ -208,9 +208,9 @@ static int _testGetFileDirname(void) {
   CharString expected = newCharString();
   CharString result = newCharString();
 #if UNIX
-  copyToCharString(expected, "/tmp");
+  charStringCopyCString(expected, "/tmp");
 #elif WINDOWS
-  copyToCharString(expected, "C:\\Temp");
+  charStringCopyCString(expected, "C:\\Temp");
 #endif
   getFileDirname(filename, result);
   assertCharStringEquals(result, expected->data);

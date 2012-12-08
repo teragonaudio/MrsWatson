@@ -84,7 +84,7 @@ TestCase newTestCase(char* name, char* filename, int lineNumber, TestCaseExecFun
 }
 
 #define assertCharStringEquals(result, expected) { \
-  if(!isCharStringEqualToCString(result, expected, false)) { \
+  if(!charStringIsEqualToCString(result, expected, false)) { \
     fprintf(stderr, "Assertion failed at %s:%d. Expected '%s', got '%s'. ", getFileBasename(__FILE__), __LINE__, expected, result->data); \
     return 1; \
   } \

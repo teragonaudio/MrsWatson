@@ -24,7 +24,7 @@ static int _testNewLinkedList(void) {
 static int _testAppendItemToList(void) {
   LinkedList l = newLinkedList();
   CharString c = newCharString();
-  copyToCharString(c, TEST_ITEM_STRING);
+  charStringCopyCString(c, TEST_ITEM_STRING);
   appendItemToList(l, c);
   assertNotNull(l->item);
   assertCharStringEquals(((CharString)l->item), TEST_ITEM_STRING);
@@ -37,8 +37,8 @@ static int _testAppendMultipleItemsToList(void) {
   LinkedList l = newLinkedList();
   CharString c = newCharString();
   CharString c2 = newCharString();
-  copyToCharString(c, TEST_ITEM_STRING);
-  copyToCharString(c2, OTHER_TEST_ITEM_STRING);
+  charStringCopyCString(c, TEST_ITEM_STRING);
+  charStringCopyCString(c2, OTHER_TEST_ITEM_STRING);
   appendItemToList(l, c);
   appendItemToList(l, c2);
   assertNotNull(l->item);
@@ -74,7 +74,7 @@ static int _testNumItemsInList(void) {
   LinkedList l = newLinkedList();
   for(i = 0; i < 100; i++) {
     c = newCharString();
-    copyToCharString(c, TEST_ITEM_STRING);
+    charStringCopyCString(c, TEST_ITEM_STRING);
     appendItemToList(l, c);
   }
   assertIntEquals(numItemsInList(l), 100);
@@ -105,14 +105,14 @@ static int _testForeachOverEmptyList(void) {
 
 static void _linkedListTestStringCallback(void* item, void* userData) {
   CharString charString = (CharString)item;
-  _gForeachCallbackOk = isCharStringEqualToCString(charString, TEST_ITEM_STRING, false);
+  _gForeachCallbackOk = charStringIsEqualToCString(charString, TEST_ITEM_STRING, false);
   _gNumForeachCallbacksMade++;
 }
 
 static int _testForeachOverList(void) {
   LinkedList list = newLinkedList();
   CharString charString = newCharString();
-  copyToCharString(charString, TEST_ITEM_STRING);
+  charStringCopyCString(charString, TEST_ITEM_STRING);
   appendItemToList(list, charString);
   foreachItemInList(list, _linkedListTestStringCallback, NULL);
   assertIntEquals(_gNumForeachCallbacksMade, 1);
@@ -122,14 +122,14 @@ static int _testForeachOverList(void) {
 
 static void _linkedListUserDataCallback(void* item, void* userData) {
   CharString charString = (CharString)userData;
-  _gForeachCallbackOk = isCharStringEqualToCString(charString, TEST_ITEM_STRING, false);
+  _gForeachCallbackOk = charStringIsEqualToCString(charString, TEST_ITEM_STRING, false);
   _gNumForeachCallbacksMade++;
 }
 
 static int _testForeachOverUserData(void) {
   LinkedList list = newLinkedList();
   CharString charString = newCharString();
-  copyToCharString(charString, TEST_ITEM_STRING);
+  charStringCopyCString(charString, TEST_ITEM_STRING);
   appendItemToList(list, charString);
   foreachItemInList(list, _linkedListUserDataCallback, charString);
   assertIntEquals(_gNumForeachCallbacksMade, 1);

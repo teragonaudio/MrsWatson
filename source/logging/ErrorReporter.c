@@ -110,7 +110,7 @@ void createCommandLineLauncher(ErrorReporter errorReporter, int argc, char* argv
   FILE *scriptFilePointer;
   int i;
 
-  copyToCharString(outScriptName, "run.sh");
+  charStringCopyCString(outScriptName, "run.sh");
   remapPathToErrorReportDir(errorReporter, outScriptName);
   scriptFilePointer = fopen(outScriptName->data, "w");
   fprintf(scriptFilePointer, "#!/bin/sh\n");
@@ -129,9 +129,9 @@ void remapPathToErrorReportDir(ErrorReporter errorReporter, CharString path) {
   CharString basename = newCharString();
   CharString outString = newCharStringWithCapacity(path->length);
 
-  copyToCharString(basename, getFileBasename(path->data));
+  charStringCopyCString(basename, getFileBasename(path->data));
   buildAbsolutePath(errorReporter->reportDirPath, basename, NULL, outString);
-  copyCharStrings(path, outString);
+  charStringCopy(path, outString);
 
   freeCharString(basename);
   freeCharString(outString);
@@ -141,7 +141,7 @@ boolByte copyFileToErrorReportDir(ErrorReporter errorReporter, CharString path) 
   boolByte result = false;
   CharString destination = newCharString();
 
-  copyCharStrings(destination, path);
+  charStringCopy(destination, path);
   remapPathToErrorReportDir(errorReporter, destination);
   copyFileToDirectory(path, errorReporter->reportDirPath);
 
@@ -202,7 +202,7 @@ static void _remapFileToErrorReportRelativePath(void* item, void* userData) {
   char* itemName = (char*)item;
   CharString tempPath = newCharString();
   ErrorReporter errorReporter = (ErrorReporter)userData;
-  copyToCharString(tempPath, itemName);
+  charStringCopyCString(tempPath, itemName);
   snprintf(tempPath->data, tempPath->length, "%s/%s", errorReporter->reportName->data, itemName);
   strncpy(itemName, tempPath->data, tempPath->length);
 }

@@ -70,7 +70,7 @@ void printSupportedSourceTypes(void) {
 }
 
 SampleSourceType guessSampleSourceType(const CharString sampleSourceTypeString) {
-  if(!isCharStringEmpty(sampleSourceTypeString)) {
+  if(!charStringIsEmpty(sampleSourceTypeString)) {
     // Look for stdin/stdout
     if(strlen(sampleSourceTypeString->data) == 1 && sampleSourceTypeString->data[0] == '-') {
       return SAMPLE_SOURCE_TYPE_PCM;

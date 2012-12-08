@@ -70,7 +70,7 @@ long buildDatestamp(void) {
   strncpy(buffer->data, __DATE__, 3);
   result += _getMonthNumber(buffer->data) * 100;
 
-  clearCharString(buffer);
+  charStringClear(buffer);
   strncpy(buffer->data, __DATE__ + 4, 2);
   result += strtol(buffer->data, NULL, 10);
 

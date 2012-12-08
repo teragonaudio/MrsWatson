@@ -41,7 +41,7 @@ static void _pluginPassthruGetAbsolutePath(void* pluginPtr, CharString outPath) 
   // Internal plugins don't have a path, and thus can't be copied. So just copy
   // an empty string here and let any callers needing the absolute path to check
   // for this value before doing anything important.
-  clearCharString(outPath);
+  charStringClear(outPath);
 }
 
 static int _pluginPassthruGetSetting(void* pluginPtr, PluginSetting pluginSetting) {
@@ -66,9 +66,9 @@ Plugin newPluginPassthru(const CharString pluginName) {
   plugin->interfaceType = PLUGIN_TYPE_INTERNAL;
   plugin->pluginType = PLUGIN_TYPE_EFFECT;
   plugin->pluginName = newCharString();
-  copyCharStrings(plugin->pluginName, pluginName);
+  charStringCopy(plugin->pluginName, pluginName);
   plugin->pluginLocation = newCharString();
-  copyToCharString(plugin->pluginLocation, "Internal");
+  charStringCopyCString(plugin->pluginLocation, "Internal");
 
   plugin->open = _pluginPassthruOpen;
   plugin->displayInfo = _pluginPassthruEmpty;

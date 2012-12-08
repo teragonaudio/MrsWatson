@@ -107,7 +107,7 @@ int main(int argc, char* argv[]) {
 
   if(programOptions->options[OPTION_TEST_HELP]->enabled) {
     printf("Run with '--help full' to see extended help for all options.\n");
-    if(isCharStringEmpty(programOptions->options[OPTION_TEST_HELP]->argument)) {
+    if(charStringIsEmpty(programOptions->options[OPTION_TEST_HELP]->argument)) {
       printf("All options, where <argument> is required and [argument] is optional\n");
       printProgramOptions(programOptions, false, DEFAULT_INDENT_SIZE);
     }
@@ -123,10 +123,10 @@ int main(int argc, char* argv[]) {
 
   testSuiteToRun = newCharString();
   if(programOptions->options[OPTION_TEST_SUITE]->enabled) {
-    copyCharStrings(testSuiteToRun, programOptions->options[OPTION_TEST_SUITE]->argument);
+    charStringCopy(testSuiteToRun, programOptions->options[OPTION_TEST_SUITE]->argument);
   }
-  if(isCharStringEmpty(testSuiteToRun)) {
-    copyToCharString(testSuiteToRun, DEFAULT_TEST_SUITE_NAME);
+  if(charStringIsEmpty(testSuiteToRun)) {
+    charStringCopyCString(testSuiteToRun, DEFAULT_TEST_SUITE_NAME);
   }
 
   if(programOptions->options[OPTION_TEST_NAME]->enabled) {
@@ -158,14 +158,14 @@ int main(int argc, char* argv[]) {
       runTestCase(testCase, testSuite);
     }
   }
-  else if(isCharStringEqualToCString(testSuiteToRun, "all", true)) {
+  else if(charStringIsEqualToCString(testSuiteToRun, "all", true)) {
     runInternalTests = true;
     runApplicationTests = true;
   }
-  else if(isCharStringEqualToCString(testSuiteToRun, "internal", true)) {
+  else if(charStringIsEqualToCString(testSuiteToRun, "internal", true)) {
     runInternalTests = true;
   }
-  else if(isCharStringEqualToCString(testSuiteToRun, "application", true)) {
+  else if(charStringIsEqualToCString(testSuiteToRun, "application", true)) {
     runApplicationTests = true;
   }
   else {
@@ -195,7 +195,7 @@ int main(int argc, char* argv[]) {
 
   mrsWatsonPath = newCharString();
   if(programOptions->options[OPTION_TEST_MRSWATSON_PATH]->enabled) {
-    copyCharStrings(mrsWatsonPath, programOptions->options[OPTION_TEST_MRSWATSON_PATH]->argument);
+    charStringCopy(mrsWatsonPath, programOptions->options[OPTION_TEST_MRSWATSON_PATH]->argument);
   }
   else {
     buildAbsolutePath(currentPath, newCharStringWithCString(DEFAULT_MRSWATSON_PATH), NULL, mrsWatsonPath);
@@ -207,7 +207,7 @@ int main(int argc, char* argv[]) {
 
   resourcesPath = newCharString();
   if(programOptions->options[OPTION_TEST_RESOURCES_PATH]->enabled) {
-    copyCharStrings(resourcesPath, programOptions->options[OPTION_TEST_RESOURCES_PATH]->argument);
+    charStringCopy(resourcesPath, programOptions->options[OPTION_TEST_RESOURCES_PATH]->argument);
   }
   else {
     buildAbsolutePath(currentPath, newCharStringWithCString(DEFAULT_RESOURCES_PATH), NULL, resourcesPath);

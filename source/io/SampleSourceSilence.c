@@ -58,7 +58,7 @@ SampleSource newSampleSourceSilence(void) {
   sampleSource->sampleSourceType = SAMPLE_SOURCE_TYPE_SILENCE;
   sampleSource->openedAs = SAMPLE_SOURCE_OPEN_NOT_OPENED;
   sampleSource->sourceName = newCharString();
-  copyToCharString(sampleSource->sourceName, "(silence)");
+  charStringCopyCString(sampleSource->sourceName, "(silence)");
   sampleSource->numSamplesProcessed = 0;
 
   sampleSource->openSampleSource = _openSampleSourceSilence;

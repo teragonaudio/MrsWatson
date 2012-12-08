@@ -121,7 +121,7 @@ SampleSource newSampleSourceAiff(const CharString sampleSourceName) {
   sampleSource->sampleSourceType = SAMPLE_SOURCE_TYPE_AIFF;
   sampleSource->openedAs = SAMPLE_SOURCE_OPEN_NOT_OPENED;
   sampleSource->sourceName = newCharString();
-  copyCharStrings(sampleSource->sourceName, sampleSourceName);
+  charStringCopy(sampleSource->sourceName, sampleSourceName);
   sampleSource->numSamplesProcessed = 0;
 
   sampleSource->openSampleSource = _openSampleSourceAiff;
