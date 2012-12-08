@@ -35,7 +35,11 @@ void printToLog(const char* color, FILE* logFile, const char* message) {
       fprintf(stderr, "%s", message);
     }
     else {
+#if USE_COLORS
       fprintf(stderr, "%s%s%s", color, message, ANSI_COLOR_RESET);
+#else
+      fprintf(stderr, "%s", message);
+#endif
     }
   }
   else {
