@@ -61,28 +61,28 @@ SampleBuffer newSampleBuffer(int numChannels, int blocksize) {
   for(i = 0; i < 2; i++) {
     sampleBuffer->samples[i] = (Samples)malloc(sizeof(Sample) * blocksize);
   }
-  clearSampleBuffer(sampleBuffer);
+  sampleBufferClear(sampleBuffer);
 
   return sampleBuffer;
 }
 
-void clearSampleBuffer(SampleBuffer sampleBuffer) {
+void sampleBufferClear(SampleBuffer self) {
   int i;
-  for(i = 0; i < sampleBuffer->numChannels; i++) {
-    memset(sampleBuffer->samples[i], 0, sizeof(Sample) * sampleBuffer->blocksize);
+  for(i = 0; i < self->numChannels; i++) {
+    memset(self->samples[i], 0, sizeof(Sample) * self->blocksize);
   }
 }
 
-void copySampleBuffers(SampleBuffer destBuffer, const SampleBuffer srcBuffer) {
+void sampleBufferCopy(SampleBuffer self, const SampleBuffer buffer) {
   int i;
-  if(destBuffer->blocksize != srcBuffer->blocksize) {
+  if(self->blocksize != buffer->blocksize) {
     return;
   }
-  else if(destBuffer->numChannels != srcBuffer->numChannels) {
+  else if(self->numChannels != buffer->numChannels) {
     return;
   }
-  for(i = 0; i < destBuffer->numChannels; i++) {
-    memcpy(destBuffer->samples[i], srcBuffer->samples[i], sizeof(Sample) * destBuffer->blocksize);
+  for(i = 0; i < self->numChannels; i++) {
+    memcpy(self->samples[i], buffer->samples[i], sizeof(Sample) * self->blocksize);
   }
 }
 

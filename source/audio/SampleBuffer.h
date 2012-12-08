@@ -40,8 +40,8 @@ typedef SampleBufferMembers* SampleBuffer;
 
 SampleBuffer newSampleBuffer(int numChannels, int blocksize);
 
-void clearSampleBuffer(SampleBuffer sampleBuffer);
-void copySampleBuffers(SampleBuffer destBuffer, const SampleBuffer srcBuffer);
+void sampleBufferClear(SampleBuffer self);
+void sampleBufferCopy(SampleBuffer self, const SampleBuffer buffer);
 
 void freeSampleBuffer(SampleBuffer sampleBuffer);
 

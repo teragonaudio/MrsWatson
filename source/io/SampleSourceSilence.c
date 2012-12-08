@@ -41,7 +41,7 @@ static void _closeSampleSourceSilence(void* sampleSourcePtr) {
 }
 
 static boolByte _readBlockFromSilence(void* sampleSourcePtr, SampleBuffer sampleBuffer) {
-  clearSampleBuffer(sampleBuffer);
+  sampleBufferClear(sampleBuffer);
   return true;
 }
 

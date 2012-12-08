@@ -49,7 +49,7 @@ static int _pluginPassthruGetSetting(void* pluginPtr, PluginSetting pluginSettin
 }
 
 static void _pluginPassthruProcessAudio(void* pluginPtr, SampleBuffer inputs, SampleBuffer outputs) {
-  copySampleBuffers(outputs, inputs);
+  sampleBufferCopy(outputs, inputs);
 }
 
 static void _pluginPassthruProcessMidiEvents(void* pluginPtr, LinkedList midiEvents) {

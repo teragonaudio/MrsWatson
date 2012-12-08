@@ -28,7 +28,7 @@ static int _testNewSampleBufferInvalidSampleRate(void) {
 static int _testClearSampleBuffer(void) {
   SampleBuffer s = _newMockSampleBuffer();
   s->samples[0][0] = 123;
-  clearSampleBuffer(s);
+  sampleBufferClear(s);
   assertDoubleEquals(s->samples[0][0], 0.0, TEST_FLOAT_TOLERANCE);
   return 0;
 }
@@ -37,7 +37,7 @@ static int _testCopySampleBuffers(void) {
   SampleBuffer s1 = _newMockSampleBuffer();
   SampleBuffer s2 = _newMockSampleBuffer();
   s1->samples[0][0] = 123.0;
-  copySampleBuffers(s2, s1);
+  sampleBufferCopy(s2, s1);
   assertDoubleEquals(s2->samples[0][0], 123.0, TEST_FLOAT_TOLERANCE);
   return 0;
 }
@@ -46,7 +46,7 @@ static int _testCopySampleBuffersDifferentBlocksizes(void) {
   SampleBuffer s1 = newSampleBuffer(1, DEFAULT_BLOCKSIZE);
   SampleBuffer s2 = _newMockSampleBuffer();
   s1->samples[0][0] = 123.0;
-  copySampleBuffers(s2, s1);
+  sampleBufferCopy(s2, s1);
   // Contents should not change; copying with different sizes is invalid
   assertDoubleEquals(s1->samples[0][0], 123.0, TEST_FLOAT_TOLERANCE);
   return 0;
@@ -56,7 +56,7 @@ static int _testCopySampleBuffersDifferentChannels(void) {
   SampleBuffer s1 = newSampleBuffer(DEFAULT_NUM_CHANNELS, 1);
   SampleBuffer s2 = _newMockSampleBuffer();
   s1->samples[0][0] = 123.0;
-  copySampleBuffers(s2, s1);
+  sampleBufferCopy(s2, s1);
   // Contents should not change; copying with different sizes is invalid
   assertDoubleEquals(s1->samples[0][0], 123.0, TEST_FLOAT_TOLERANCE);
   return 0;

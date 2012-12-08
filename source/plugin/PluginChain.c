@@ -221,7 +221,7 @@ void processPluginChainAudio(PluginChain pluginChain, SampleBuffer inBuffer, Sam
   int i;
 
   for(i = 0; i < pluginChain->numPlugins; i++) {
-    clearSampleBuffer(outBuffer);
+    sampleBufferClear(outBuffer);
     plugin = pluginChain->plugins[i];
     logDebug("Processing audio with plugin '%s'", plugin->pluginName->data);
     startTimingTask(taskTimer, i);
@@ -232,7 +232,7 @@ void processPluginChainAudio(PluginChain pluginChain, SampleBuffer inBuffer, Sam
     // If this is not the last plugin in the chain, then copy the output of this plugin
     // back to the input for the next one in the chain.
     if(i + 1 < pluginChain->numPlugins) {
-      copySampleBuffers(inBuffer, outBuffer);
+      sampleBufferCopy(inBuffer, outBuffer);
     }
   }
 }
