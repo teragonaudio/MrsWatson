@@ -36,7 +36,8 @@
 #include "sequencer/AudioSettings.h"
 
 ProgramOption newProgramOption(void) {
-  return newProgramOptionWithValues(-1, "", "", false, ARGUMENT_TYPE_INVALID, -1);
+  return newProgramOptionWithValues(-1, EMPTY_STRING, EMPTY_STRING,
+    false, ARGUMENT_TYPE_INVALID, -1);
 }
 
 ProgramOption newProgramOptionWithValues(const int optionIndex, const char* name,
