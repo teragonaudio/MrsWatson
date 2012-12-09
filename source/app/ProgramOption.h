@@ -34,10 +34,10 @@
 #define NO_DEFAULT_VALUE -1
 
 typedef enum {
-  ARGUMENT_TYPE_NONE,
-  ARGUMENT_TYPE_OPTIONAL,
-  ARGUMENT_TYPE_REQUIRED,
-  ARGUMENT_TYPE_INVALID
+  kProgramOptionArgumentTypeNone,
+  kProgramOptionArgumentTypeOptional,
+  kProgramOptionArgumentTypeRequired,
+  kProgramOptionArgumentTypeInvalid
 } ProgramOptionArgumentType;
 
 typedef struct {

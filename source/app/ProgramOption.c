@@ -37,7 +37,7 @@
 
 ProgramOption newProgramOption(void) {
   return newProgramOptionWithValues(-1, EMPTY_STRING, EMPTY_STRING,
-    false, ARGUMENT_TYPE_INVALID, -1);
+    false, kProgramOptionArgumentTypeInvalid, -1);
 }
 
 ProgramOption newProgramOptionWithValues(const int optionIndex, const char* name,
@@ -80,13 +80,13 @@ void programOptionPrintHelp(const ProgramOption self, boolByte withFullHelp, int
   }
 
   switch(self->argumentType) {
-    case ARGUMENT_TYPE_REQUIRED:
+    case kProgramOptionArgumentTypeRequired:
       printf(" <argument>");
       break;
-    case ARGUMENT_TYPE_OPTIONAL:
+    case kProgramOptionArgumentTypeOptional:
       printf(" [argument]");
       break;
-    case ARGUMENT_TYPE_NONE:
+    case kProgramOptionArgumentTypeNone:
     default:
       break;
   }
@@ -168,10 +168,10 @@ static ProgramOption _findProgramOption(ProgramOptions self, const char* name) {
 }
 
 static boolByte _fillOptionArgument(ProgramOption self, int* currentArgc, int argc, char** argv) {
-  if(self->argumentType == ARGUMENT_TYPE_NONE) {
+  if(self->argumentType == kProgramOptionArgumentTypeNone) {
     return true;
   }
-  else if(self->argumentType == ARGUMENT_TYPE_OPTIONAL) {
+  else if(self->argumentType == kProgramOptionArgumentTypeOptional) {
     int potentialNextArgc = *currentArgc + 1;
     if(potentialNextArgc >= argc) {
       return true;
@@ -190,7 +190,7 @@ static boolByte _fillOptionArgument(ProgramOption self, int* currentArgc, int ar
       }
     }
   }
-  else if(self->argumentType == ARGUMENT_TYPE_REQUIRED) {
+  else if(self->argumentType == kProgramOptionArgumentTypeRequired) {
     int nextArgc = *currentArgc + 1;
     if(nextArgc >= argc) {
       logCritical("Option '%s' requires an argument, but none was given", self->name->data);

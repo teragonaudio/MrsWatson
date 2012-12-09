@@ -39,66 +39,66 @@ ProgramOptions newMrsWatsonOptions(void) {
   programOptionsAdd(options, newProgramOptionWithValues(OPTION_BLOCKSIZE, "blocksize",
     "Blocksize in frames to use for processing. If input source is not an even multiple of the blocksize, then \
 empty frames will be added to the last block.",
-    true, ARGUMENT_TYPE_REQUIRED, getBlocksize()));
+    true, kProgramOptionArgumentTypeRequired, getBlocksize()));
 
   programOptionsAdd(options, newProgramOptionWithValues(OPTION_CHANNELS, "channels",
     "Number of channels for output source. If the input source specifies a channel count, then that value \
 will be override the one set by this option.",
-    true, ARGUMENT_TYPE_REQUIRED, getNumChannels()));
+    true, kProgramOptionArgumentTypeRequired, getNumChannels()));
 
   programOptionsAdd(options, newProgramOptionWithValues(OPTION_COLOR_LOGGING, "color",
     "Colored logging output. Argument can be 'auto', 'force', or 'none'. If no argument given, 'force' is assumed. \
 If attached to a terminal device, color is used automatically unless 'none' is given to this option.",
-    false, ARGUMENT_TYPE_OPTIONAL, NO_DEFAULT_VALUE));
+    false, kProgramOptionArgumentTypeOptional, NO_DEFAULT_VALUE));
 
   programOptionsAdd(options, newProgramOptionWithValues(OPTION_COLOR_TEST, "color-test",
     "Run an ANSI color test.",
-    false, ARGUMENT_TYPE_NONE, NO_DEFAULT_VALUE));
+    false, kProgramOptionArgumentTypeNone, NO_DEFAULT_VALUE));
 
   programOptionsAdd(options, newProgramOptionWithValues(OPTION_DISPLAY_INFO, "display-info",
     "Print information about each plugin in the chain.",
-    false, ARGUMENT_TYPE_NONE, NO_DEFAULT_VALUE));
+    false, kProgramOptionArgumentTypeNone, NO_DEFAULT_VALUE));
 
   programOptionsAdd(options, newProgramOptionWithValues(OPTION_ERROR_REPORT, "error-report",
     "Generate an error report zipfile on the desktop.",
-    false, ARGUMENT_TYPE_NONE, NO_DEFAULT_VALUE));
+    false, kProgramOptionArgumentTypeNone, NO_DEFAULT_VALUE));
 
   programOptionsAdd(options, newProgramOptionWithValues(OPTION_LIST_FILE_TYPES, "list-file-types",
     "Print a list of supported file types for input/output sources.",
-    false, ARGUMENT_TYPE_NONE, NO_DEFAULT_VALUE));
+    false, kProgramOptionArgumentTypeNone, NO_DEFAULT_VALUE));
 
   programOptionsAdd(options, newProgramOptionWithValues(OPTION_HELP, "help",
     "Prints a summary of options and their default settings. Can be used with \
 'full' as an argument to print extended help for all options.",
-    true, ARGUMENT_TYPE_OPTIONAL, NO_DEFAULT_VALUE));
+    true, kProgramOptionArgumentTypeOptional, NO_DEFAULT_VALUE));
 
   programOptionsAdd(options, newProgramOptionWithValues(OPTION_INPUT_SOURCE, "input",
     "Input source to use for processing, where the file type is determined from the extension. Run with \
 --list-file-types to see a list of supported types. Use '-' to read from stdin.",
-    true, ARGUMENT_TYPE_REQUIRED, NO_DEFAULT_VALUE));
+    true, kProgramOptionArgumentTypeRequired, NO_DEFAULT_VALUE));
 
   programOptionsAdd(options, newProgramOptionWithValues(OPTION_LIST_PLUGINS, "list-plugins",
     "List available plugins. Useful for determining if a plugin can be 'seen'.",
-    false, ARGUMENT_TYPE_NONE, NO_DEFAULT_VALUE));
+    false, kProgramOptionArgumentTypeNone, NO_DEFAULT_VALUE));
 
   programOptionsAdd(options, newProgramOptionWithValues(OPTION_LOG_FILE, "log-file",
     "Save logging output to the given file instead of the terminal's standard error.",
-    false, ARGUMENT_TYPE_REQUIRED, NO_DEFAULT_VALUE));
+    false, kProgramOptionArgumentTypeRequired, NO_DEFAULT_VALUE));
 
   programOptionsAdd(options, newProgramOptionWithValues(OPTION_LOG_LEVEL, "log-level",
     "Logging level to use. Options include: debug, info (default), warn, error. \
 Critical errors are always logged.",
-    false, ARGUMENT_TYPE_REQUIRED, NO_DEFAULT_VALUE));
+    false, kProgramOptionArgumentTypeRequired, NO_DEFAULT_VALUE));
 
   programOptionsAdd(options, newProgramOptionWithValues(OPTION_MIDI_SOURCE, "midi-file",
     "MIDI file to read events from. Required if processing an instrument plugin.",
-    true, ARGUMENT_TYPE_REQUIRED, NO_DEFAULT_VALUE));
+    true, kProgramOptionArgumentTypeRequired, NO_DEFAULT_VALUE));
 
   programOptionsAdd(options, newProgramOptionWithValues(OPTION_OUTPUT_SOURCE, "output",
     "Output source to write processed data to, where the file type is determined \
 from the extension. Run with --list-file-types to see a list of supported types. \
 Use '-' to write to stdout. If not given, then defaults to 'out.wav'.",
-    true, ARGUMENT_TYPE_OPTIONAL, NO_DEFAULT_VALUE));
+    true, kProgramOptionArgumentTypeOptional, NO_DEFAULT_VALUE));
 
   programOptionsAdd(options, newProgramOptionWithValues(OPTION_PLUGIN, "plugin",
     "Plugin(s) to process. Multiple plugins can given in a semicolon-separated list, in which case they will be \
@@ -107,55 +107,55 @@ for in the --plugin-root directory, the current directory, and the standard loca
 added automatically to plugin names. Each plugin may be followed by a comma with a program to be loaded, which should \
 be of the corresponding file format for the respective plugin.\
 \nExample: --plugin 'AutoTune,KayneWest.fxp;Compressor,SoftKnee.fxp;Limiter'",
-    true, ARGUMENT_TYPE_REQUIRED, NO_DEFAULT_VALUE));
+    true, kProgramOptionArgumentTypeRequired, NO_DEFAULT_VALUE));
 
   programOptionsAdd(options, newProgramOptionWithValues(OPTION_PLUGIN_ROOT, "plugin-root",
     "Custom non-system directory to use when searching for plugins.",
-    false, ARGUMENT_TYPE_REQUIRED, NO_DEFAULT_VALUE));
+    false, kProgramOptionArgumentTypeRequired, NO_DEFAULT_VALUE));
 
   programOptionsAdd(options, newProgramOptionWithValues(OPTION_QUIET, "quiet",
     "Only log critical errors.",
-    true, ARGUMENT_TYPE_NONE, NO_DEFAULT_VALUE));
+    true, kProgramOptionArgumentTypeNone, NO_DEFAULT_VALUE));
 
   programOptionsAdd(options, newProgramOptionWithValues(OPTION_SAMPLE_RATE, "sample-rate",
     "Sample rate to use when processing. If the input source specifies its own sample rate, that value will override \
 the one set by this option.",
-    true, ARGUMENT_TYPE_REQUIRED, (int)getSampleRate()));
+    true, kProgramOptionArgumentTypeRequired, (int)getSampleRate()));
 
   programOptionsAdd(options, newProgramOptionWithValues(OPTION_TAIL_TIME, "tail-time",
     "Continue processing for up to <argument> extra milliseconds after input source is finished, in addition \
 to any tail time requested by plugins in the chain. If any plugins in chain the require tail time, the largest \
 value will be used and added to <argument>.",
-    false, ARGUMENT_TYPE_REQUIRED, NO_DEFAULT_VALUE));
+    false, kProgramOptionArgumentTypeRequired, NO_DEFAULT_VALUE));
 
   programOptionsAdd(options, newProgramOptionWithValues(OPTION_TEMPO, "tempo",
     "Tempo to use when processing.",
-    false, ARGUMENT_TYPE_REQUIRED, (int)getTempo()));
+    false, kProgramOptionArgumentTypeRequired, (int)getTempo()));
 
   programOptionsAdd(options, newProgramOptionWithValues(OPTION_TIME_DIVISION, "time-division",
     "Time division in PPQ. If using a MIDI file input, this value will be ignored.",
-    false, ARGUMENT_TYPE_REQUIRED, DEFAULT_TIME_DIVISION));
+    false, kProgramOptionArgumentTypeRequired, DEFAULT_TIME_DIVISION));
 
   programOptionsAdd(options, newProgramOptionWithValues(OPTION_TIME_SIGNATURE_TOP, "time-signature-top",
     "Set the numerator of the time signature, which determines the number of beats per measure.",
-    false, ARGUMENT_TYPE_REQUIRED, getTimeSignatureBeatsPerMeasure()));
+    false, kProgramOptionArgumentTypeRequired, getTimeSignatureBeatsPerMeasure()));
 
   programOptionsAdd(options, newProgramOptionWithValues(OPTION_TIME_SIGNATURE_BOTTOM, "time-signature-bottom",
     "Set the denominator of the time signature, which determines the value of a quarter note.",
-    false, ARGUMENT_TYPE_REQUIRED, getTimeSignatureNoteValue()));
+    false, kProgramOptionArgumentTypeRequired, getTimeSignatureNoteValue()));
 
   programOptionsAdd(options, newProgramOptionWithValues(OPTION_VERBOSE, "verbose",
     "Verbose logging. Logging output is printed in the following form:\n\
 (Level) (Frames processed) (Elapsed time in ms) (Logging message)",
-    true, ARGUMENT_TYPE_NONE, NO_DEFAULT_VALUE));
+    true, kProgramOptionArgumentTypeNone, NO_DEFAULT_VALUE));
 
   programOptionsAdd(options, newProgramOptionWithValues(OPTION_VERSION, "version",
     "Print full program version and copyright information.",
-    false, ARGUMENT_TYPE_NONE, NO_DEFAULT_VALUE));
+    false, kProgramOptionArgumentTypeNone, NO_DEFAULT_VALUE));
 
   programOptionsAdd(options, newProgramOptionWithValues(OPTION_ZEBRA_SIZE, "zebra-size",
     "Alternate logging output colors every <argument> frames.",
-    false, ARGUMENT_TYPE_REQUIRED, (int)getSampleRate()));
+    false, kProgramOptionArgumentTypeRequired, (int)getSampleRate()));
 
   return options;
 }
