@@ -61,21 +61,81 @@ typedef struct {
 typedef ProgramOptionsMembers* ProgramOptions;
 
 
+/**
+ * Create a new ProgramOption instance
+ * @return An initialized ProgramOption
+ */
 ProgramOption newProgramOption(void);
+/**
+ * Create a new ProgramOption instance with some default values
+ * @param opnionIndex Reference index for option (ie, from an enum)
+ * @param name Full option name, hyphenated in the case of multiple words
+ * @param help Full help string
+ * @param hasShortForm True if the option should also be matched with the first letter
+ * @param argumentType Expected argument type which can be passed to this option
+ * @param defaultValue 
+ * @return 
+ */
 ProgramOption newProgramOptionWithValues(const int opnionIndex, const char* name,
   const char* help, boolByte hasShortForm, ProgramOptionArgumentType argumentType,
   int defaultValue);
+
+/**
+ * Print out help for the option
+ * @param self
+ * @param withFullHelp Print the entire help or just the argument name and summary
+ * @param indentSize Number of spaces to indent output
+ * @param initialIndent Initial number of spaces to offset output
+ */
 void programOptionPrintHelp(const ProgramOption self, boolByte withFullHelp, int indentSize, int initialIndent);
+
+/**
+ * Free memory used by a ProgramOption instance
+ * @param option
+ */
 void freeProgramOption(ProgramOption option);
 
 
+/**
+ * Create a new ProgramOptions container
+ * @param numOptions Number of options to hold
+ * @return An initialized ProgramOptions
+ */
 ProgramOptions newProgramOptions(int numOptions);
 
+/**
+ * Add a ProgramOption instance to the collection
+ * @param self
+ * @param option
+ */
 void programOptionsAdd(const ProgramOptions self, const ProgramOption option);
+/**
+ * Find a ProgramOption by name
+ * @param self
+ * @param name Name to search for (case insensitive)
+ * @return Matching ProgramOption, NULL otherwise
+ */
 ProgramOption programOptionsFind(const ProgramOptions self, const CharString name);
+/**
+ * Parse a command line argument array.
+ * @param self
+ * @param argc
+ * @param argv
+ * @return False if an error occurred during parsing, such as a missing or invalid argument
+ */
 boolByte programOptionsParseArgs(ProgramOptions self, int argc, char** argv);
+/**
+ * Print out help for all options
+ * @param self
+ * @param withFullHelp Include full help text, or just option summaries
+ * @param indentSize Indent size to use for output
+ */
 void programOptionsPrintHelp(const ProgramOptions self, boolByte withFullHelp, int indentSize);
 
+/**
+ * Free memory used by a ProgramOptions array and all options in the collection
+ * @param programOptions
+ */
 void freeProgramOptions(ProgramOptions programOptions);
 
 #endif

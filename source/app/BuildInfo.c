@@ -62,7 +62,6 @@ static short _getMonthNumber(const char* abbreviatedMonthName) {
   }
 }
 
-// Return a build stamp in the forrm YYYYMMDD
 long buildInfoGetDatestamp(void) {
   long result = buildInfoGetYear() * 10000;
 

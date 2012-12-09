@@ -38,11 +38,30 @@ typedef struct {
 } SampleBufferMembers;
 typedef SampleBufferMembers* SampleBuffer;
 
+/**
+ * Create a new SampleBuffer instance
+ * @param numChannels Number of channels
+ * @param blocksize Processing blocksize to use
+ * @return An initialized SampleBuffer instance
+ */
 SampleBuffer newSampleBuffer(int numChannels, int blocksize);
 
+/**
+ * Set all samples to zero
+ * @param self
+ */
 void sampleBufferClear(SampleBuffer self);
+/**
+ * Copy all samples from another buffer to this one
+ * @param self
+ * @param buffer Other buffer to copy from
+ */
 void sampleBufferCopy(SampleBuffer self, const SampleBuffer buffer);
 
+/**
+ * Free all memory used by a SampleBuffer instance
+ * @param sampleBuffer
+ */
 void freeSampleBuffer(SampleBuffer sampleBuffer);
 
 #endif

@@ -48,20 +48,76 @@ typedef struct {
 } CharStringMembers;
 typedef CharStringMembers* CharString;
 
+/** @return Create a new CharString instance */
 CharString newCharString(void);
+/**
+ * @param length Number of characters
+ * @return Create a new CharString instance
+ */
 CharString newCharStringWithCapacity(int length);
+/**
+ * Create a new CharString from a C-String
+ * @param string C-String to use (copied to contents)
+ * @return New CharString instance
+ */
 CharString newCharStringWithCString(const char* string);
 
+/**
+ * Append another CharString to this instance, truncating if necessary
+ * @param self
+ * @param string String to append
+ */
 void charStringAppend(CharString self, const CharString string);
+/**
+ * Append a C-String to this CharString
+ * @param self
+ * @param string NULL-terminated string to append
+ */
 void charStringAppendCString(CharString self, const char* string);
+/**
+ * Copy the contents of another CharString to this one
+ * @param self
+ * @param string String to copy
+ */
 void charStringCopy(CharString self, const CharString string);
+/**
+ * Copy the contents of a C-String to this one
+ * @param self
+ * @param string NULL-terminated string to copy
+ */
 void charStringCopyCString(CharString self, const char* string);
+/**
+ * Clear a string's contents
+ * @param self
+ */
 void charStringClear(CharString self);
 
+/**
+ * @param self
+ * @return True if string is NULL or empty (ie, ""), false otherwise
+ */
 boolByte charStringIsEmpty(const CharString self);
+/**
+ * Test for string equality
+ * @param self
+ * @param string String to compare to
+ * @param caseInsensitive True for a case-insensitive comparison
+ * @return True if the strings are equal, false otherwise
+ */
 boolByte charStringIsEqualTo(const CharString self, const CharString string, boolByte caseInsensitive);
+/**
+ * Test for string equality
+ * @param self
+ * @param string NULL-terminated C-String to compare to
+ * @param caseInsensitive True for a case-insensitive comparison
+ * @return True if the strings are equal, false otherwise
+ */
 boolByte charStringIsEqualToCString(const CharString self, const char* string, boolByte caseInsensitive);
 
+/**
+ * Free a CharStar and its contents
+ * @param string
+ */
 void freeCharString(CharString string);
 
 #endif

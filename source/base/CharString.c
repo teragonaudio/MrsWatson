@@ -62,10 +62,12 @@ CharString newCharStringWithCString(const char* string) {
 
 
 void charStringAppend(CharString self, const CharString string) {
+  // TODO: Need to make sure self is big enough to hold all data
   strncat(self->data, string->data, self->length);
 }
 
 void charStringAppendCString(CharString self, const char* string) {
+  // TODO: Need to make sure self is big enough to hold all data
   strncat(self->data, string, self->length);
 }
 
