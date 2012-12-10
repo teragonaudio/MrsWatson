@@ -64,6 +64,9 @@ PlatformType getPlatformType(void);
 CharString getPlatformName(void);
 const char* getShortPlatformName(void);
 
+CharString getExecutablePath(void);
+CharString getCurrentDirectory(void);
+
 boolByte isHostLittleEndian(void);
 
 short flipShortEndian(const short value);

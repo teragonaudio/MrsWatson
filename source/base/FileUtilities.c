@@ -201,12 +201,7 @@ void buildAbsolutePath(const CharString directory, const CharString file, const 
 }
 
 void convertRelativePathToAbsolute(const CharString file, CharString outString) {
-  CharString currentDirectory = newCharString();
-#if UNIX
-  charStringCopyCString(currentDirectory, getenv("PWD"));
-#elif WINDOWS
-  GetCurrentDirectoryA(currentDirectory->length, currentDirectory->data);
-#endif
+  CharString currentDirectory = getCurrentDirectory();
   snprintf(outString->data, outString->length, "%s%c%s", currentDirectory->data, PATH_DELIMITER, file->data);
 }
 
@@ -265,14 +260,4 @@ void getFileDirname(const CharString filename, CharString outString) {
   else {
     strncpy(outString->data, filename->data, lastDelimiter - filename->data);
   }
-}
-
-void getExecutablePath(CharString outString) {
-#if LINUX
-  readlink("/proc/self/exe", outString->data, outString->length);
-#elif MACOSX
-  _NSGetExecutablePath(outString->data, &outString->length);
-#elif WINDOWS
-  GetModuleFileNameA(NULL, outString->data, outString->length);
-#endif
 }

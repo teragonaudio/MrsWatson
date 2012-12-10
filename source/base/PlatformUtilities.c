@@ -171,6 +171,28 @@ CharString getPlatformName(void) {
   return result;
 }
 
+CharString getExecutablePath(void) {
+  CharString executablePath = newCharString();
+  #if LINUX
+  readlink("/proc/self/exe", executablePath->data, executablePath->length);
+#elif MACOSX
+  _NSGetExecutablePath(executablePath->data, &executablePath->length);
+#elif WINDOWS
+  GetModuleFileNameA(NULL, executablePath->data, executablePath->length);
+#endif
+  return executablePath;
+}
+
+CharString getCurrentDirectory(void) {
+  CharString currentDirectory = newCharString();
+#if UNIX
+  charStringCopyCString(currentDirectory, getenv("PWD"));
+#elif WINDOWS
+  GetCurrentDirectoryA(currentDirectory->length, currentDirectory->data);
+#endif
+  return currentDirectory;
+}
+
 boolByte isHostLittleEndian(void) {
   int num = 1;
   boolByte result = (*(char*)&num == 1);
