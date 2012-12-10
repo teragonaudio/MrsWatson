@@ -71,10 +71,10 @@ static ProgramOptions newTestProgramOptions(void) {
     "Print only failing tests. Note that if a test causes the suite to crash, the \
 bad test's name will not be printed. In this case, re-run without this option, as \
 the test names will be printed before the tests are executed.",
-    true, ARGUMENT_TYPE_NONE, NO_DEFAULT_VALUE));
+    true, kProgramOptionArgumentTypeNone, NO_DEFAULT_VALUE));
   programOptionsAdd(programOptions, newProgramOptionWithValues(OPTION_TEST_HELP, "help",
     "Print full program help (this screen), or just the help for a single argument.",
-    true, ARGUMENT_TYPE_OPTIONAL, NO_DEFAULT_VALUE));
+    true, kProgramOptionArgumentTypeOptional, NO_DEFAULT_VALUE));
 
   return programOptions;
 }
