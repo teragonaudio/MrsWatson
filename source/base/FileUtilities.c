@@ -74,7 +74,7 @@ boolByte fileExists(const char* path) {
 }
 
 boolByte copyFileToDirectory(const CharString fileAbsolutePath, const CharString directoryAbsolutePath) {
-  CharString fileOutPath = newCharStringWithCapacity(STRING_LENGTH_LONG);
+  CharString fileOutPath = newCharStringWithCapacity(kCharStringLengthLong);
   CharString fileBasename = newCharString();
   FILE *input;
   FILE *output;
@@ -118,8 +118,8 @@ int listDirectory(const char* directory, LinkedList outItems) {
   struct dirent* entry;
   while((entry = readdir(directoryPtr)) != NULL) {
     if(entry->d_name[0] != '.') {
-      filename = (char*)malloc(sizeof(char) * STRING_LENGTH_DEFAULT);
-      strncpy(filename, entry->d_name, STRING_LENGTH_DEFAULT);
+      filename = (char*)malloc(sizeof(char) * kCharStringLengthDefault);
+      strncpy(filename, entry->d_name, kCharStringLengthDefault);
       appendItemToList(outItems, filename);
       numItems++;
     }
@@ -138,8 +138,8 @@ int listDirectory(const char* directory, LinkedList outItems) {
   }
   do {
     if(findData.cFileName[0] != '.') {
-      filename = (char*)malloc(sizeof(char) * STRING_LENGTH_DEFAULT);
-      strncpy(filename, findData.cFileName, STRING_LENGTH_DEFAULT);
+      filename = (char*)malloc(sizeof(char) * kCharStringLengthDefault);
+      strncpy(filename, findData.cFileName, kCharStringLengthDefault);
       appendItemToList(outItems, filename);
       numItems++;
     }

@@ -7,7 +7,7 @@ static char *const OTHER_TEST_STRING = "other test string";
 
 static int _testNewCharString(void) {
   CharString c = newCharString();
-  assertIntEquals(c->length, STRING_LENGTH_DEFAULT);
+  assertIntEquals(c->length, kCharStringLengthDefault);
   assertCharStringEquals(c, "");
   return 0;
 }
@@ -23,7 +23,7 @@ static int _testClearCharString(void) {
   CharString c = newCharString();
   charStringCopyCString(c, TEST_STRING);
   charStringClear(c);
-  assertIntEquals(c->length, STRING_LENGTH_DEFAULT);
+  assertIntEquals(c->length, kCharStringLengthDefault);
   assertCharStringEquals(c, "");
   return 0;
 }
@@ -31,7 +31,7 @@ static int _testClearCharString(void) {
 static int _testCopyToCharString(void) {
   CharString c = newCharString();
   charStringCopyCString(c, TEST_STRING);
-  assertIntEquals(c->length, STRING_LENGTH_DEFAULT);
+  assertIntEquals(c->length, kCharStringLengthDefault);
   assertCharStringEquals(c, TEST_STRING);
   return 0;
 }

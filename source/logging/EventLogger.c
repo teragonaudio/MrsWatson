@@ -182,19 +182,19 @@ static const char* _logTimeZebraStripeColor(const long elapsedTime, const int ze
 }
 
 static void _printMessage(const LogLevel logLevel, const long elapsedTimeInMs, const long numFramesProcessed, const char* message, const EventLogger eventLogger) {
-  char* logString = malloc(sizeof(char) * STRING_LENGTH_LONG);
+  char* logString = malloc(sizeof(char) * kCharStringLengthLong);
   if(eventLogger->useColor) {
-    snprintf(logString, STRING_LENGTH_LONG, "%c ", _logLevelStatusChar(logLevel));
+    snprintf(logString, kCharStringLengthLong, "%c ", _logLevelStatusChar(logLevel));
     printToLog(_logLevelStatusColor(logLevel), eventLogger->logFile, logString);
-    snprintf(logString, STRING_LENGTH_LONG, "%08ld ", numFramesProcessed);
+    snprintf(logString, kCharStringLengthLong, "%08ld ", numFramesProcessed);
     printToLog(_logTimeZebraStripeColor(numFramesProcessed, eventLogger->zebraStripeSize),
       eventLogger->logFile, logString);
-    snprintf(logString, STRING_LENGTH_LONG, "%06ld ", elapsedTimeInMs);
+    snprintf(logString, kCharStringLengthLong, "%06ld ", elapsedTimeInMs);
     printToLog(_logTimeColor(), eventLogger->logFile, logString);
     printToLog(_logLevelStatusColor(logLevel), eventLogger->logFile, message);
   }
   else {
-    snprintf(logString, STRING_LENGTH_LONG, "%c %08ld %06ld %s", _logLevelStatusChar(logLevel), numFramesProcessed, elapsedTimeInMs, message);
+    snprintf(logString, kCharStringLengthLong, "%c %08ld %06ld %s", _logLevelStatusChar(logLevel), numFramesProcessed, elapsedTimeInMs, message);
     printToLog(NULL, eventLogger->logFile, logString);
   }
   flushLog(eventLogger->logFile);

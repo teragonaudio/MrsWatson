@@ -97,7 +97,7 @@ void programOptionPrintHelp(const ProgramOption self, boolByte withFullHelp, int
 
   if(withFullHelp) {
     // Newline and indentation before help
-    wrappedHelpString = newCharStringWithCapacity(STRING_LENGTH_LONG);
+    wrappedHelpString = newCharStringWithCapacity(kCharStringLengthLong);
     wrapString(self->help->data, wrappedHelpString->data, initialIndent + indentSize);
     printf("\n%s\n\n", wrappedHelpString->data);
     freeCharString(wrappedHelpString);
@@ -150,7 +150,7 @@ static ProgramOption _findProgramOption(ProgramOptions self, const char* name) {
 
   if(_isStringLongOption(name)) {
     optionMatch = NULL;
-    optionStringWithoutDashes = newCharStringWithCapacity(STRING_LENGTH_SHORT);
+    optionStringWithoutDashes = newCharStringWithCapacity(kCharStringLengthShort);
     strncpy(optionStringWithoutDashes->data, name + 2, strlen(name) - 2);
     for(i = 0; i < self->numOptions; i++) {
       potentialMatchOption = self->options[i];

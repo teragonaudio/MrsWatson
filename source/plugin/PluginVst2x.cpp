@@ -422,7 +422,7 @@ static void _suspendPlugin(Plugin plugin) {
 
 static boolByte _initVst2xPlugin(Plugin plugin) {
   PluginVst2xData data = (PluginVst2xData)plugin->extraData;
-  CharString uniqueIdString = newCharStringWithCapacity(STRING_LENGTH_SHORT);
+  CharString uniqueIdString = newCharStringWithCapacity(kCharStringLengthShort);
   fillVst2xUniqueIdToString(data->pluginHandle->uniqueID, uniqueIdString);
   logDebug("Initializing VST2.x plugin '%s' (%s)", plugin->pluginName->data, uniqueIdString->data);
   freeCharString(uniqueIdString);

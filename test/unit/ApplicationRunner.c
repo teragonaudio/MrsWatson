@@ -83,8 +83,8 @@ void runApplicationTest(const TestEnvironment testEnvironment,
 {
   int result = -1;
   ReturnCodes resultCode = (ReturnCodes)result;
-  CharString arguments = newCharStringWithCapacity(STRING_LENGTH_LONG);
-  CharString defaultArguments = newCharStringWithCapacity(STRING_LENGTH_LONG);
+  CharString arguments = newCharStringWithCapacity(kCharStringLengthLong);
+  CharString defaultArguments = newCharStringWithCapacity(kCharStringLengthLong);
   CharString failedAnalysisFunctionName = newCharString();
   unsigned long failedAnalysisSample;
 

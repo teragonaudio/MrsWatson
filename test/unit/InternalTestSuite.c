@@ -108,7 +108,7 @@ TestSuite findTestSuite(char *testSuiteName) {
   while(iterator != NULL) {
     if(iterator->item != NULL) {
       testSuite = (TestSuite)iterator->item;
-      if(!strncasecmp(testSuite->name, testSuiteName, STRING_LENGTH_DEFAULT)) {
+      if(!strncasecmp(testSuite->name, testSuiteName, kCharStringLengthDefault)) {
         return testSuite;
       }
     }

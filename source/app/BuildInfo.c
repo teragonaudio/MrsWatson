@@ -35,7 +35,7 @@
 
 int buildInfoGetYear(void) {
   int result = 0;
-  CharString buildDate = newCharStringWithCapacity(STRING_LENGTH_SHORT);
+  CharString buildDate = newCharStringWithCapacity(kCharStringLengthShort);
   int startingIndex = strlen(__DATE__) - 4;
   strncpy(buildDate->data, __DATE__ + startingIndex, 4);
   result = strtol(buildDate->data, NULL, 10);
@@ -65,7 +65,7 @@ static short _getMonthNumber(const char* abbreviatedMonthName) {
 long buildInfoGetDatestamp(void) {
   long result = buildInfoGetYear() * 10000;
 
-  CharString buffer = newCharStringWithCapacity(STRING_LENGTH_SHORT);
+  CharString buffer = newCharStringWithCapacity(kCharStringLengthShort);
   strncpy(buffer->data, __DATE__, 3);
   result += _getMonthNumber(buffer->data) * 100;
 

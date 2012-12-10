@@ -63,7 +63,7 @@ VstTimeInfo vstTimeInfo;
 VstIntPtr VSTCALLBACK vst2xPluginHostCallback(AEffect *effect, VstInt32 opcode, VstInt32 index, VstIntPtr value, void *dataPtr, float opt);
 VstIntPtr VSTCALLBACK vst2xPluginHostCallback(AEffect *effect, VstInt32 opcode, VstInt32 index, VstIntPtr value, void *dataPtr, float opt) {
   // This string is used in a bunch of logging calls below
-  CharString uniqueIdString = newCharStringWithCapacity(STRING_LENGTH_SHORT);
+  CharString uniqueIdString = newCharStringWithCapacity(kCharStringLengthShort);
   if(effect != NULL) {
     fillVst2xUniqueIdToString(effect->uniqueID, uniqueIdString);
   }

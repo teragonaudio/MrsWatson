@@ -30,9 +30,9 @@
 
 #include "base/Types.h"
 
-#define STRING_LENGTH_DEFAULT 256
-#define STRING_LENGTH_SHORT 32
-#define STRING_LENGTH_LONG 8192
+static const int kCharStringLengthDefault = 256;
+static const int kCharStringLengthShort = 32;
+static const int kCharStringLengthLong = 8192;
 
 #define EMPTY_STRING ""
 

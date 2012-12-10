@@ -48,20 +48,20 @@ static ProgramOptions newTestProgramOptions(void) {
 \t- Internal: run all internal function tests\n\
 \t- All: run all tests (default)\n\
 \t- A suite name (use '--list' to see all suite names)",
-    true, ARGUMENT_TYPE_REQUIRED, NO_DEFAULT_VALUE));
+    true, kProgramOptionArgumentTypeRequired, NO_DEFAULT_VALUE));
   programOptionsAdd(programOptions, newProgramOptionWithValues(OPTION_TEST_NAME, "test",
     "Run a single test. Tests are named 'Suite:Name', for example:\n\
 \t-t 'LinkedList:Append Item'",
-    true, ARGUMENT_TYPE_REQUIRED, NO_DEFAULT_VALUE));
+    true, kProgramOptionArgumentTypeRequired, NO_DEFAULT_VALUE));
   programOptionsAdd(programOptions, newProgramOptionWithValues(OPTION_TEST_PRINT_TESTS, "list-tests",
     "List all internal tests in the same format required by --test",
-    true, ARGUMENT_TYPE_NONE, NO_DEFAULT_VALUE));
+    true, kProgramOptionArgumentTypeNone, NO_DEFAULT_VALUE));
   programOptionsAdd(programOptions, newProgramOptionWithValues(OPTION_TEST_MRSWATSON_PATH, "mrswatson-path",
     "Path to mrswatson executable. Only required for running application test suite.",
-    true, ARGUMENT_TYPE_REQUIRED, NO_DEFAULT_VALUE));
+    true, kProgramOptionArgumentTypeRequired, NO_DEFAULT_VALUE));
   programOptionsAdd(programOptions, newProgramOptionWithValues(OPTION_TEST_RESOURCES_PATH, "resources",
     "Path to resources directory. Only required for running application test suite.",
-    true, ARGUMENT_TYPE_REQUIRED, NO_DEFAULT_VALUE));
+    true, kProgramOptionArgumentTypeRequired, NO_DEFAULT_VALUE));
   /* TODO: Finish this option
   addNewProgramOption(programOptions, newProgramOptionWithValues(OPTION_TEST_LOG_FILE, "log-file",
     "Save test output to log file",

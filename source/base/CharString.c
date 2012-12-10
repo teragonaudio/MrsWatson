@@ -33,7 +33,7 @@
 #include "base/CharString.h"
 
 CharString newCharString(void) {
-  return newCharStringWithCapacity(STRING_LENGTH_DEFAULT);
+  return newCharStringWithCapacity(kCharStringLengthDefault);
 }
 
 CharString newCharStringWithCapacity(int length) {
@@ -47,7 +47,7 @@ CharString newCharStringWithCapacity(int length) {
 CharString newCharStringWithCString(const char* string) {
   int length = strlen(string);
   CharString result = NULL;
-  if(length <= 0 || length > STRING_LENGTH_LONG) {
+  if(length <= 0 || length > kCharStringLengthLong) {
     logError("Can't create string with length %d", length);
   }
   else {
