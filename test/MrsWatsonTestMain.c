@@ -186,8 +186,7 @@ int main(int argc, char* argv[]) {
   }
 
   // Find out where this program is being run from to find mrswatson and resources
-  executablePath = newCharString();
-  getExecutablePath(executablePath);
+  executablePath = getExecutablePath();
   currentPath = newCharString();
   getFileDirname(executablePath, currentPath);
 
