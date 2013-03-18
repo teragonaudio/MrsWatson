@@ -19,33 +19,6 @@ endif()
 
 set(generic_CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=<INSTALL_DIR> CFLAGS=${ARCH_FLAGS} CXXFLAGS=${ARCH_FLAGS} LDFLAGS=${ARCH_FLAGS} --enable-static --enable-shared=no)
 
-# zlib #######################################################################
-
-set(libz_CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=${localDir} --archs=${ARCH_FLAGS} --static)
-
-ExternalProject_Add(libz
-  URL http://zlib.net/zlib-1.2.7.tar.gz
-  URL_MD5 60df6a37c56e7c1366cca812414f7b85
-  PREFIX ${CMAKE_SOURCE_DIR}/build/zlib
-  CONFIGURE_COMMAND ${libz_CONFIGURE_COMMAND}
-  INSTALL_DIR ${localDir}
-  BUILD_COMMAND ${MAKE}
-  BUILD_IN_SOURCE 1
-)
-
-# libiconv ####################################################################
-
-ExternalProject_Add(libiconv
-  URL http://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.14.tar.gz
-  URL_MD5 e34509b1623cec449dfeb73d7ce9c6c6
-  PREFIX ${CMAKE_SOURCE_DIR}/build/libiconv
-  CONFIGURE_COMMAND ${generic_CONFIGURE_COMMAND}
-  INSTALL_DIR ${localDir}
-  BUILD_COMMAND ${MAKE}
-  BUILD_IN_SOURCE 1
-)
-
-
 # libaudiofile ################################################################
 # libaudiofile doesn't make cleanly, so this must be done by hand
 
@@ -58,23 +31,6 @@ ExternalProject_Add(libiconv
 #  BUILD_COMMAND ${MAKE}
 #  BUILD_IN_SOURCE 1
 #)
-
-# libarchive ##################################################################
-
-set(libarchive_CFLAGS "${ARCH_FLAGS} -I${local_INCLUDE}")
-set(libarchive_LDFLAGS "${ARCH_FLAGS} -L${local_LIB}")
-set(libarchive_CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=<INSTALL_DIR> CFLAGS=${libarchive_CFLAGS} CXXFLAGS=${libarchive_CFLAGS} LDFLAGS=${libarchive_LDFLAGS} --enable-static --enable-shared=no --without-lzmadec --without-lzma)
-
-ExternalProject_Add(libarchive
-  DEPENDS libz libiconv
-  URL https://github.com/downloads/libarchive/libarchive/libarchive-3.0.4.tar.gz
-  URL_MD5 af443ca9a10ddbcbf00f7ae34ca7fc16
-  PREFIX ${CMAKE_SOURCE_DIR}/build/libarchive
-  CONFIGURE_COMMAND ${libarchive_CONFIGURE_COMMAND}
-  INSTALL_DIR ${localDir}
-  BUILD_COMMAND ${MAKE}
-  BUILD_IN_SOURCE 1
-)
 
 # AudioTestData ###############################################################
 
