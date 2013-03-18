@@ -1,3 +1,5 @@
+#if USE_NEW_FILE_API
+
 #include "unit/TestRunner.h"
 #include "base/File.h"
 
@@ -194,3 +196,5 @@ TestSuite addFileTests(void) {
   addTest(testSuite, "FileExistsInvalid", _testFileExistsInvalid);
   return testSuite;
 }
+
+#endif

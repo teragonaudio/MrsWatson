@@ -25,6 +25,8 @@
 // POSSIBILITY OF SUCH DAMAGE. 
 //
 
+#if USE_NEW_FILE_API
+
 #include "base/File.h"
 #include "base/CharString.h"
 
@@ -51,3 +53,5 @@ CharString fileGetExtension(File self);
 boolByte fileExists(File self);
 
 void freeFile(File file);
+
+#endif

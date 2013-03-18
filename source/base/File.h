@@ -28,6 +28,8 @@
 #ifndef MrsWatson_File_h
 #define MrsWatson_File_h
 
+#if USE_NEW_FILE_API
+
 #include <stdlib.h>
 #include "base/CharString.h"
 #include "base/LinkedList.h"
@@ -61,4 +63,5 @@ boolByte fileExists(File self);
 
 void freeFile(File file);
 
+#endif
 #endif
