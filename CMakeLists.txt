@@ -35,8 +35,7 @@ set(generic_CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=<INSTALL_DIR> CFLA
 # AudioTestData ###############################################################
 
 ExternalProject_Add(AudioTestData
-  GIT_REPOSITORY git@github.com:teragonaudio/AudioTestData.git
-  GIT_TAG master
+  SOURCE_DIR ${CMAKE_SOURCE_DIR}/vendor/AudioTestData
   PREFIX ${CMAKE_SOURCE_DIR}/build/AudioTestData
   CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${localDir}
   INSTALL_DIR ${localDir}
