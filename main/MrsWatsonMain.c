@@ -1,19 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <signal.h>
 #include "base/PlatformUtilities.h"
 #include "MrsWatson.h"
 #include "logging/ErrorReporter.h"
 #include "logging/EventLogger.h"
 
-#if UNIX
-#include <signal.h>
-#endif
-
 // This is global so that in case of a crash or signal, we can still generate
 // a complete error report with a reference
 static ErrorReporter gErrorReporter = NULL;
 
-#if UNIX
 static void handleSignal(int signum) {
   logCritical("Sent signal %d, exiting", signum);
   if(gErrorReporter != NULL && gErrorReporter->started) {
@@ -24,25 +20,46 @@ static void handleSignal(int signum) {
   }
   exit(RETURN_CODE_SIGNAL + signum);
 }
-#endif
 
 int main(int argc, char* argv[]) {
   gErrorReporter = newErrorReporter();
 
-#if UNIX
   // Set up signal handling only after logging is initialized. If we crash before
   // here, something is seriously wrong.
+#ifdef SIGHUP
   signal(SIGHUP, handleSignal);
+#endif
+#ifdef SIGINT
   signal(SIGINT, handleSignal);
+#endif
+#ifdef SIGQUIT
   signal(SIGQUIT, handleSignal);
+#endif
+#ifdef SIGILL
   signal(SIGILL, handleSignal);
+#endif
+#ifdef SIGABRT
   signal(SIGABRT, handleSignal);
+#endif
+#ifdef SIGFPE
   signal(SIGFPE, handleSignal);
+#endif
+#ifdef SIGKILL
   signal(SIGKILL, handleSignal);
+#endif
+#ifdef SIGBUS
   signal(SIGBUS, handleSignal);
+#endif
+#ifdef SIGSEGV
   signal(SIGSEGV, handleSignal);
+#endif
+#ifdef SIGSYS
   signal(SIGSYS, handleSignal);
+#endif
+#ifdef SIGPIPE
   signal(SIGPIPE, handleSignal);
+#endif
+#ifdef SIGTERM
   signal(SIGTERM, handleSignal);
 #endif
 
