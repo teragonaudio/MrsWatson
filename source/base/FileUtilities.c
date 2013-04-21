@@ -176,7 +176,7 @@ boolByte removeDirectory(const CharString absolutePath) {
   fileOperation.wFunc = FO_DELETE;
   fileOperation.pFrom = absolutePath->data;
   fileOperation.fFlags = FOF_NO_UI;
-  return SHFileOperationA(&fileOperation);
+  return (SHFileOperationA(&fileOperation) == 0);
 #else
   logUnsupportedFeature("Copy directory recursively");
   return false;
