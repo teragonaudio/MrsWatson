@@ -36,8 +36,9 @@
 int buildInfoGetYear(void) {
   int result = 0;
   CharString buildDate = newCharStringWithCapacity(kCharStringLengthShort);
-  int startingIndex = strlen(__DATE__) - 4;
-  strncpy(buildDate->data, __DATE__ + startingIndex, 4);
+  const char* compilerDate = __DATE__;
+  int startingIndex = strlen(compilerDate) - 4;
+  strncpy(buildDate->data, compilerDate + startingIndex, 4);
   result = strtol(buildDate->data, NULL, 10);
   freeCharString(buildDate);
   return result;
