@@ -1,4 +1,4 @@
-link_directories(${MRSWATSON_BINARY_DIR}/source ${MRSWATSON_BINARY_DIR}/local/lib)
+link_directories(${CMAKE_SOURCE_DIR}/source)
 
 file(GLOB MrsWatson_SOURCES *.c)
 add_executable(mrswatson ${MrsWatson_SOURCES})

@@ -1,5 +1,5 @@
-include_directories(${MRSWATSON_SOURCE_DIR}/source)
-link_directories(${MRSWATSON_BINARY_DIR}/source)
+include_directories(${CMAKE_SOURCE_DIR}/source)
+link_directories(${CMAKE_SOURCE_DIR}/source)
 
 file(GLOB MrsWatsonTest_SOURCES *.c */*.c)
 add_executable(mrswatsontest ${MrsWatsonTest_SOURCES})

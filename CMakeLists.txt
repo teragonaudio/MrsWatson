@@ -2,17 +2,42 @@ cmake_minimum_required(VERSION 2.6)
 project(MrsWatson)
 
 set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
-set(localDir ${CMAKE_SOURCE_DIR}/local)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${localDir}/bin)
 include_directories(${CMAKE_SOURCE_DIR}/source ${localDir}/include ${CMAKE_SOURCE_DIR}/vendor/vstsdk2.4/pluginterfaces/vst2.x)
 
-# Third-party dependencies ###################################################
+# Platform properties ##########################################
+set(platform_bits 32)
+if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+  set(platform_bits 64)
+endif()
+
+if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+  if(${platform_bits} EQUAL 32)
+    set(platform_name "Linux-i686")
+  else()
+    set(platform_name "Linux-x86_64")
+  endif()
+elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+  set(platform_name "Mac OS X")
+elseif(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+  if(${platform_bits} EQUAL 32)
+    set(platform_name "Windows 32-bit")
+  else()
+    set(platform_name "Windows 64-bit")
+  endif()
+else()
+  set(platform_name "Unknown")
+endif()
+
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin/${platform_name})
+
+# Third-party dependencies #####################################
 include(ExternalProject)
 set(local_INCLUDE ${localDir}/include)
 set(local_LIB ${localDir}/lib)
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
   set(ARCH_FLAGS "-m32")
+  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin/${CMAKE_SYSTEM_NAME})
 elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
   set(ARCH_FLAGS "-arch i386")
 endif()
@@ -36,8 +61,8 @@ set(generic_CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=<INSTALL_DIR> CFLA
 
 ExternalProject_Add(AudioTestData
   SOURCE_DIR ${CMAKE_SOURCE_DIR}/vendor/AudioTestData
-  PREFIX ${CMAKE_SOURCE_DIR}/build/AudioTestData
-  CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${localDir}
+  PREFIX ${CMAKE_SOURCE_DIR}/vendor/AudioTestData/build
+  CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_SOURCE_DIR}/vendor/AudioTestData/build
   INSTALL_DIR ${localDir}
 )
 
