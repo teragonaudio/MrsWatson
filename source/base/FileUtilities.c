@@ -83,9 +83,12 @@ boolByte copyFileToDirectory(const CharString fileAbsolutePath, const CharString
   fileBasename = newCharStringWithCString(getFileBasename(fileAbsolutePath->data));
   buildAbsolutePath(directoryAbsolutePath, fileBasename, NULL, fileOutPath);
   input = fopen(fileAbsolutePath->data, "rb");
+  if(input == NULL) {
+    return false;
+  }
   output = fopen(fileOutPath->data, "wb");
-
-  if(input == NULL || output == NULL) {
+  if(output == NULL) {
+    fclose(input);
     return false;
   }
   while(fread(&ch, 1, 1, input) == 1) {
