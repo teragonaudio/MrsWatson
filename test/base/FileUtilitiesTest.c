@@ -63,7 +63,7 @@ static int _testCopyFileToDirectory(void) {
   fclose(fp);
   convertRelativePathToAbsolute(newCharStringWithCString(TEST_FILENAME), tempFile);
   assert(copyFileToDirectory(tempFile, tempDir));
-  removeDirectory(tempDir);
+  assert(removeDirectory(tempDir));
   unlink(TEST_FILENAME);
   return 0;
 }
