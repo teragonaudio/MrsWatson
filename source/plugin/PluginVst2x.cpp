@@ -29,6 +29,7 @@ extern "C" {
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "base/CharString.h"
 #include "base/FileUtilities.h"
 #include "base/PlatformUtilities.h"
 #include "base/StringUtilities.h"
@@ -155,11 +156,11 @@ static AEffect* _loadVst2xPluginWindows(HMODULE moduleHandle) {
   Vst2xPluginEntryFunc entryPoint = (Vst2xPluginEntryFunc)GetProcAddress(moduleHandle, "VSTPluginMain");
   
   if(entryPoint == NULL) {
-    entryPoint = (Vst2xPluginEntryFunc) GetProcAddress(moduleHandle, "VstPluginMain()"); 
+    entryPoint = (Vst2xPluginEntryFunc)GetProcAddress(moduleHandle, "VstPluginMain()"); 
   }
 
   if(entryPoint == NULL) {
-    entryPoint = (Vst2xPluginEntryFunc) GetProcAddress(moduleHandle, "main");
+    entryPoint = (Vst2xPluginEntryFunc)GetProcAddress(moduleHandle, "main");
   }
 
   if(entryPoint == NULL) {
@@ -208,7 +209,8 @@ static AEffect* _loadVst2xPluginLinux(void* libraryHandle) {
 #endif
 
 static void _appendDefaultPluginLocations(PlatformType platformType, LinkedList outLocations) {
-  CharString pwdLocationBuffer, locationBuffer1, locationBuffer2;
+  // TODO: This is pretty lame, need a better solution for this
+  CharString pwdLocationBuffer, locationBuffer1, locationBuffer2, locationBuffer3;
   const char* vstPathEnv;
 
   // Regardless of platform, the current directory should be searched first. This is most useful when debugging
@@ -227,9 +229,15 @@ static void _appendDefaultPluginLocations(PlatformType platformType, LinkedList 
       snprintf(locationBuffer1->data, (size_t)(locationBuffer1->length), "C:\\VstPlugins");
       appendItemToList(outLocations, locationBuffer1);
 
+      // TODO: On a 64-bit windows, this should be c:\program files (x86)
       locationBuffer2 = newCharString();
       snprintf(locationBuffer2->data, (size_t)(locationBuffer2->length), "C:\\Program Files\\Common Files\\VstPlugins");
       appendItemToList(outLocations, locationBuffer2);
+
+      // TODO: On a 64-bit windows, this should be c:\program files (x86)
+      locationBuffer3 = newCharString();
+      snprintf(locationBuffer3->data, (size_t)(locationBuffer3->length), "C:\\Program Files\\Steinberg\\VstPlugins");
+      appendItemToList(outLocations, locationBuffer3);
     }
       break;
     case PLATFORM_MACOSX:
