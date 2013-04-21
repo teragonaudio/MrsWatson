@@ -11,43 +11,44 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\test\AnalysisClipping.c" />
-    <ClCompile Include="..\..\test\AnalysisClippingTest.c" />
-    <ClCompile Include="..\..\test\AnalysisDistortion.c" />
-    <ClCompile Include="..\..\test\AnalysisDistortionTest.c" />
-    <ClCompile Include="..\..\test\AnalysisSilence.c" />
-    <ClCompile Include="..\..\test\AnalysisSilenceTest.c" />
-    <ClCompile Include="..\..\test\AnalyzeFile.c" />
-    <ClCompile Include="..\..\test\ApplicationRunner.c" />
-    <ClCompile Include="..\..\test\ApplicationTestSuite.c" />
-    <ClCompile Include="..\..\test\AudioClockTest.c" />
-    <ClCompile Include="..\..\test\AudioSettingsTest.c" />
-    <ClCompile Include="..\..\test\CharStringTest.c" />
-    <ClCompile Include="..\..\test\FileUtilitiesTest.c" />
-    <ClCompile Include="..\..\test\InternalTestSuite.c" />
-    <ClCompile Include="..\..\test\LinkedListTest.c" />
+    <ClCompile Include="..\..\test\analysis\AnalysisClipping.c" />
+    <ClCompile Include="..\..\test\analysis\AnalysisClippingTest.c" />
+    <ClCompile Include="..\..\test\analysis\AnalysisDistortion.c" />
+    <ClCompile Include="..\..\test\analysis\AnalysisDistortionTest.c" />
+    <ClCompile Include="..\..\test\analysis\AnalysisSilence.c" />
+    <ClCompile Include="..\..\test\analysis\AnalysisSilenceTest.c" />
+    <ClCompile Include="..\..\test\analysis\AnalyzeFile.c" />
+    <ClCompile Include="..\..\test\app\ProgramOptionTest.c" />
+    <ClCompile Include="..\..\test\audio\SampleBufferTest.c" />
+    <ClCompile Include="..\..\test\base\CharStringTest.c" />
+    <ClCompile Include="..\..\test\base\FileTest.c" />
+    <ClCompile Include="..\..\test\base\FileUtilitiesTest.c" />
+    <ClCompile Include="..\..\test\base\LinkedListTest.c" />
+    <ClCompile Include="..\..\test\base\PlatformUtilitiesTest.c" />
+    <ClCompile Include="..\..\test\base\StringUtilitiesTest.c" />
+    <ClCompile Include="..\..\test\io\SampleSourceTest.c" />
+    <ClCompile Include="..\..\test\midi\MidiSourceTest.c" />
     <ClCompile Include="..\..\test\MrsWatsonTestMain.c" />
-    <ClCompile Include="..\..\test\MidiSequenceTest.c" />
-    <ClCompile Include="..\..\test\MidiSourceTest.c" />
-    <ClCompile Include="..\..\test\PlatformUtilitiesTest.c" />
-    <ClCompile Include="..\..\test\PluginChainTest.c" />
-    <ClCompile Include="..\..\test\PluginPresetTest.c" />
-    <ClCompile Include="..\..\test\PluginTest.c" />
-    <ClCompile Include="..\..\test\ProgramOptionTest.c" />
-    <ClCompile Include="..\..\test\SampleBufferTest.c" />
-    <ClCompile Include="..\..\test\SampleSourceTest.c" />
-    <ClCompile Include="..\..\test\StringUtilitiesTest.c" />
-    <ClCompile Include="..\..\test\TaskTimerTest.c" />
-    <ClCompile Include="..\..\test\TestRunner.c" />
+    <ClCompile Include="..\..\test\plugin\PluginChainTest.c" />
+    <ClCompile Include="..\..\test\plugin\PluginPresetTest.c" />
+    <ClCompile Include="..\..\test\plugin\PluginTest.c" />
+    <ClCompile Include="..\..\test\sequencer\AudioClockTest.c" />
+    <ClCompile Include="..\..\test\sequencer\AudioSettingsTest.c" />
+    <ClCompile Include="..\..\test\sequencer\MidiSequenceTest.c" />
+    <ClCompile Include="..\..\test\time\TaskTimerTest.c" />
+    <ClCompile Include="..\..\test\unit\ApplicationRunner.c" />
+    <ClCompile Include="..\..\test\unit\ApplicationTestSuite.c" />
+    <ClCompile Include="..\..\test\unit\InternalTestSuite.c" />
+    <ClCompile Include="..\..\test\unit\TestRunner.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\test\AnalysisClipping.h" />
-    <ClInclude Include="..\..\test\AnalysisDistortion.h" />
-    <ClInclude Include="..\..\test\AnalysisSilence.h" />
-    <ClInclude Include="..\..\test\AnalyzeFile.h" />
-    <ClInclude Include="..\..\test\ApplicationRunner.h" />
+    <ClInclude Include="..\..\test\analysis\AnalysisClipping.h" />
+    <ClInclude Include="..\..\test\analysis\AnalysisDistortion.h" />
+    <ClInclude Include="..\..\test\analysis\AnalysisSilence.h" />
+    <ClInclude Include="..\..\test\analysis\AnalyzeFile.h" />
     <ClInclude Include="..\..\test\MrsWatsonTestMain.h" />
-    <ClInclude Include="..\..\test\TestRunner.h" />
+    <ClInclude Include="..\..\test\unit\ApplicationRunner.h" />
+    <ClInclude Include="..\..\test\unit\TestRunner.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{05956450-720C-4D29-814C-14DE88FA00A3}</ProjectGuid>
@@ -95,7 +96,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32=1;WINDOWS=1;_CRT_SECURE_NO_WARNINGS;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)\..\..\source;$(SolutionDir)\..\..\vendor\vstsdk2.4;$(SolutionDir)\..\..\vendor\vstsdk2.4\pluginterfaces\vst2.x;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\..\..\source;$(SolutionDir)\..\..\test;$(SolutionDir)\..\..\vendor\vstsdk2.4;$(SolutionDir)\..\..\vendor\vstsdk2.4\pluginterfaces\vst2.x;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>
       </MultiProcessorCompilation>
     </ClCompile>
@@ -115,7 +116,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32=1;WINDOWS=1;_CRT_SECURE_NO_WARNINGS;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)\..\..\source;$(SolutionDir)\..\..\vendor\vstsdk2.4;$(SolutionDir)\..\..\vendor\vstsdk2.4\pluginterfaces\vst2.x;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\..\..\source;$(SolutionDir)\..\..\test;$(SolutionDir)\..\..\vendor\vstsdk2.4;$(SolutionDir)\..\..\vendor\vstsdk2.4\pluginterfaces\vst2.x;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>
       </MultiProcessorCompilation>
     </ClCompile>
