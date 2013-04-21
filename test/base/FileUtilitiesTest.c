@@ -44,10 +44,14 @@ static CharString _fileUtilitiesMakeTempDir(void) {
   mktemp(tempDirName->data);
 #elif WINDOWS
   CharString systemTempDir = newCharString();
+  CharString randomDirName = newCharString();
+  snprintf(randomDirName->data, randomDirName->length, "mrswatsontest-%d", rand());
   GetTempPathA(systemTempDir->length, systemTempDir->data);
-  buildAbsolutePath(systemTempDir, newCharStringWithCString("mrswatsontest"), NULL, tempDirName);
+  buildAbsolutePath(systemTempDir, randomDirName, NULL, tempDirName);
 #endif
-  makeDirectory(tempDirName);
+  if(!makeDirectory(tempDirName)) {
+    return NULL;
+  }
   return tempDirName;
 }
 

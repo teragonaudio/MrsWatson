@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #include "app/ProgramOption.h"
 #include "base/FileUtilities.h"
@@ -41,6 +42,7 @@ static const char* DEFAULT_RESOURCES_PATH = "share";
 
 static ProgramOptions newTestProgramOptions(void) {
   ProgramOptions programOptions = newProgramOptions(NUM_TEST_OPTIONS);
+  srand((unsigned int)time(NULL));
   
   programOptionsAdd(programOptions, newProgramOptionWithValues(OPTION_TEST_SUITE, "suite",
     "Choose a test suite to run. Current suites include:\n\

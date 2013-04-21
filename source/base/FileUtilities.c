@@ -156,9 +156,6 @@ int listDirectory(const char* directory, LinkedList outItems) {
 
 boolByte removeDirectory(const CharString absolutePath) {
   boolByte result = false;
-#if WINDOWS
-  
-#endif
 
 #if UNIX
   if(!fileExists(absolutePath->data)) {
