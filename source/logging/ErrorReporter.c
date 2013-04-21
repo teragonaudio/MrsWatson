@@ -58,7 +58,6 @@
 #endif
 
 ErrorReporter newErrorReporter(void) {
-
   ErrorReporter errorReporter = (ErrorReporter)malloc(sizeof(ErrorReporterMembers));
 
   errorReporter->started = false;
@@ -171,8 +170,8 @@ strictly confidential. If the plugin in question has copy protection (or is \
 cracked), or depends on external resources, this probably won't work. But if \
 the plugin can be copied, it greatly helps in fixing bugs.\n\
 Copy the plugin? (y/n) ");
-  CharString wrappedPromptText = newCharStringWithCapacity(promptText->length);
-  CharString pluginAbsolutePath = newCharString();
+  CharString wrappedPromptText = newCharStringWithCapacity(promptText->length * 2); // Extra space for wrapping
+  CharString pluginAbsolutePath;
   Plugin currentPlugin;
   boolByte result = true;
   int i;
@@ -180,8 +179,12 @@ Copy the plugin? (y/n) ");
 
   wrapString(promptText->data, wrappedPromptText->data, 0);
   printf("%s", wrappedPromptText->data);
+  freeCharString(wrappedPromptText);
+  freeCharString(promptText);
+
   response = getchar();
   if(response == 'y' || response == 'Y') {
+    pluginAbsolutePath = newCharString();
     for(i = 0; i < pluginChain->numPlugins; i++) {
       currentPlugin = pluginChain->plugins[i];
       currentPlugin->getAbsolutePath(currentPlugin, pluginAbsolutePath);
@@ -192,6 +195,8 @@ Copy the plugin? (y/n) ");
         result |= copyFileToErrorReportDir(errorReporter, pluginAbsolutePath);      
       }
     }
+
+    freeCharString(pluginAbsolutePath);
     return result;
   }
   return false;
@@ -241,11 +246,14 @@ void printErrorReportInfo(void) {
 in error report mode, which will generate a zipfile on your desktop with \
 any input/output sources and error logs. This also enables some extra \
 arguments and will disable console logging.\n");
-  CharString wrappedInfoText = newCharStringWithCapacity(infoText->length);
+  CharString wrappedInfoText = newCharStringWithCapacity(infoText->length * 2); // Extra space for wrapping
+
   printf("=== Starting error report ===\n");
   wrapString(infoText->data, wrappedInfoText->data, 0);
   // The second newline here is intentional
   printf("%s\n", wrappedInfoText->data);
+  freeCharString(wrappedInfoText);
+  freeCharString(infoText);
 }
 
 void completeErrorReport(ErrorReporter errorReporter) {
