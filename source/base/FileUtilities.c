@@ -185,19 +185,30 @@ boolByte removeDirectory(const CharString absolutePath) {
 
 void buildAbsolutePath(const CharString directory, const CharString file, const char* fileExtension, CharString outString) {
   const char* extension;
+  CharString absoluteDirectory = newCharString();
+  if(!isAbsolutePath(directory)) {
+    convertRelativePathToAbsolute(directory, absoluteDirectory);
+  }
+  else {
+    charStringCopy(directory, absoluteDirectory);
+  }
+
   if(fileExtension != NULL) {
     // Ignore attempts to append the same extension as is already on the file
     extension = getFileExtension(file->data);
     if(extension != NULL && !strncasecmp(extension, fileExtension, strlen(extension))) {
-      buildAbsolutePath(directory, file, NULL, outString);
+      buildAbsolutePath(absoluteDirectory, file, NULL, outString);
     }
     else {
-      snprintf(outString->data, outString->length, "%s%c%s.%s", directory->data, PATH_DELIMITER, file->data, fileExtension);
+      snprintf(outString->data, outString->length, "%s%c%s.%s",
+        absoluteDirectory->data, PATH_DELIMITER, file->data, fileExtension);
     }
   }
   else {
-    snprintf(outString->data, outString->length, "%s%c%s", directory->data, PATH_DELIMITER, file->data);
+    snprintf(outString->data, outString->length, "%s%c%s",
+      absoluteDirectory->data, PATH_DELIMITER, file->data);
   }
+  freeCharString(absoluteDirectory);
 }
 
 void convertRelativePathToAbsolute(const CharString file, CharString outString) {
