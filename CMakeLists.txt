@@ -59,12 +59,12 @@ set(generic_CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=<INSTALL_DIR> CFLA
 
 # AudioTestData ###############################################################
 
-ExternalProject_Add(AudioTestData
-  SOURCE_DIR ${CMAKE_SOURCE_DIR}/vendor/AudioTestData
-  PREFIX ${CMAKE_SOURCE_DIR}/vendor/AudioTestData/build
-  CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_SOURCE_DIR}/vendor/AudioTestData/build
-  INSTALL_DIR ${localDir}
-)
+#ExternalProject_Add(AudioTestData
+#  SOURCE_DIR ${CMAKE_SOURCE_DIR}/vendor/AudioTestData
+#  PREFIX ${CMAKE_SOURCE_DIR}/vendor/AudioTestData/build
+#  CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_SOURCE_DIR}/vendor/AudioTestData/build
+#  INSTALL_DIR ${localDir}
+#)
 
 # MrsWatson ###################################################################
 
