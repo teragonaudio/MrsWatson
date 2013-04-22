@@ -50,6 +50,7 @@ static CharString _fileUtilitiesMakeTempDir(void) {
   buildAbsolutePath(systemTempDir, randomDirName, NULL, tempDirName);
 #endif
   if(!makeDirectory(tempDirName)) {
+    fprintf(stderr, "WARNING: Could not make temporary directory\n");
     return NULL;
   }
   return tempDirName;
