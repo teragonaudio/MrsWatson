@@ -1,3 +1,10 @@
+Version 0.9.4:
+- Fix several heap corruption bugs
+- Fix build on linux
+- Organizing code into packages
+- Various small bugfixes
+- Improve test coverage
+
 Version 0.9.3:
 - Introduce CMake as build system for unix platforms (Linux & Mac OSX)
 - Several crash fixes reported by users
