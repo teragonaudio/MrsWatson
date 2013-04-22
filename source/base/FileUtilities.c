@@ -186,11 +186,11 @@ boolByte removeDirectory(const CharString absolutePath) {
 void buildAbsolutePath(const CharString directory, const CharString file, const char* fileExtension, CharString outString) {
   const char* extension;
   CharString absoluteDirectory = newCharString();
-  if(!isAbsolutePath(directory)) {
-    convertRelativePathToAbsolute(directory, absoluteDirectory);
+  if(isAbsolutePath(directory)) {
+    charStringCopy(absoluteDirectory, directory);
   }
   else {
-    charStringCopy(directory, absoluteDirectory);
+    convertRelativePathToAbsolute(directory, absoluteDirectory);
   }
 
   if(fileExtension != NULL) {
