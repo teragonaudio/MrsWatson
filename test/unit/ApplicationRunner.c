@@ -11,6 +11,8 @@
 #include "analysis/AnalyzeFile.h"
 #include "base/FileUtilities.h"
 
+static const char* TEST_OUTPUT_FOLDER = "mrswatsontest-output";
+
 TestEnvironment newTestEnvironment(char *applicationPath, char *resourcesPath) {
   TestEnvironment testEnvironment = (TestEnvironment)malloc(sizeof(TestEnvironmentMembers));
   testEnvironment->applicationPath = applicationPath;
@@ -35,7 +37,8 @@ static char* _getTestOutputFilename(const char* testName, const char* fileExtens
   CharString filename = newCharString();
   char* space;
   char *spacePtr;
-  snprintf(filename->data, filename->length, "out%c%s.%s", PATH_DELIMITER, testName, fileExtension);
+  snprintf(filename->data, filename->length, "%s%c%s.%s",
+    TEST_OUTPUT_FOLDER, PATH_DELIMITER, testName, fileExtension);
   spacePtr = filename->data;
   do {
     space = strchr(spacePtr + 1, ' ');
@@ -90,7 +93,7 @@ void runApplicationTest(const TestEnvironment testEnvironment,
 
   // Remove files from a previous test run
   _removeOutputFiles(testName);
-  makeDirectory(newCharStringWithCString("out"));
+  makeDirectory(newCharStringWithCString(TEST_OUTPUT_FOLDER));
 
   // Create the command line argument
   charStringAppendCString(arguments, "\"");
