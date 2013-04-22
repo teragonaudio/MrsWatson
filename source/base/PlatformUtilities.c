@@ -79,7 +79,7 @@ CharString getPlatformName(void) {
   Gestalt(gestaltSystemVersionMajor, &major);
   Gestalt(gestaltSystemVersionMinor, &minor);
   Gestalt(gestaltSystemVersionBugFix, &bugfix);
-  snprintf(result->data, result->length, "Mac OSX %ld.%ld.%ld", major, minor, bugfix);
+  snprintf(result->data, result->length, "Mac OS X %ld.%ld.%ld", major, minor, bugfix);
 #elif LINUX
   CharString line = newCharString();
   char *lineDelimiter = NULL;
