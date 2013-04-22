@@ -80,6 +80,22 @@ static void _removeOutputFiles(const char* testName) {
   _removeOutputFile(_getTestOutputFilename(testName, "txt"));
 }
 
+static const char* _getResultCodeString(const int resultCode) {
+  switch(resultCode) {
+    case RETURN_CODE_SUCCESS: return "Success";
+    case RETURN_CODE_NOT_RUN: return "Not run";
+    case RETURN_CODE_INVALID_ARGUMENT: return "Invalid argument";
+    case RETURN_CODE_MISSING_REQUIRED_OPTION: return "Missing required option";
+    case RETURN_CODE_IO_ERROR: return "I/O error";
+    case RETURN_CODE_PLUGIN_ERROR: return "Plugin error";
+    case RETURN_CODE_INVALID_PLUGIN_CHAIN: return "Invalid plugin chain";
+    case RETURN_CODE_UNSUPPORTED_FEATURE: return "Unsupported feature";
+    case RETURN_CODE_INTERNAL_ERROR: return "Internal error";
+    case RETURN_CODE_SIGNAL: return "Caught signal";
+    default: return "Unknown";
+  }
+}
+
 void runApplicationTest(const TestEnvironment testEnvironment,
   const char *testName, const char *testArguments,
   ReturnCodes expectedResultCode, boolByte anazyleOutput)
@@ -158,7 +174,9 @@ Please check the executable path specified in the --mrswatson-path argument.",
     if(testEnvironment->results->onlyPrintFailing) {
       printTestName(testName);
     }
-    fprintf(stderr, "Expected result code %d, got %d. ", expectedResultCode, resultCode);
+    fprintf(stderr, "Expected result code %d (%s), got %d (%s). ",
+      expectedResultCode, _getResultCodeString(expectedResultCode),
+      resultCode, _getResultCodeString(resultCode));
     printTestFail();
     testEnvironment->results->numFail++;
   }
