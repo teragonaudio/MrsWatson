@@ -41,6 +41,7 @@
 #include <dirent.h>
 #if MACOSX
 #include <CoreServices/CoreServices.h>
+#include <mach-o/dyld.h>
 #elif LINUX
 #define LSB_DISTRIBUTION "DISTRIB_DESCRIPTION"
 #include <sys/utsname.h>
@@ -176,7 +177,7 @@ CharString getExecutablePath(void) {
   #if LINUX
   readlink("/proc/self/exe", executablePath->data, executablePath->length);
 #elif MACOSX
-  _NSGetExecutablePath(executablePath->data, &executablePath->length);
+  _NSGetExecutablePath(executablePath->data, (uint32_t*)&executablePath->length);
 #elif WINDOWS
   GetModuleFileNameA(NULL, executablePath->data, executablePath->length);
 #endif
