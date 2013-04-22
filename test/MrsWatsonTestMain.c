@@ -30,14 +30,11 @@ extern int runApplicationTestSuite(TestEnvironment testEnvironment);
 static const char* DEFAULT_TEST_SUITE_NAME = "all";
 
 #if UNIX
-static const char* DEFAULT_MRSWATSON_PATH = "mrswatson";
-static const char* DEFAULT_RESOURCES_PATH = "../share";
+static const char* MRSWATSON_EXE_NAME = "mrswatson";
 #elif WINDOWS
-static const char* DEFAULT_MRSWATSON_PATH = "mrswatson.exe";
-static const char* DEFAULT_RESOURCES_PATH = "..\\share";
+static const char* MRSWATSON_EXE_NAME = "mrswatson.exe";
 #else
-static const char* DEFAULT_MRSWATSON_PATH = "mrswatson";
-static const char* DEFAULT_RESOURCES_PATH = "share";
+static const char* MRSWATSON_EXE_NAME = "mrswatson";
 #endif
 
 static ProgramOptions newTestProgramOptions(void) {
@@ -197,7 +194,7 @@ int main(int argc, char* argv[]) {
     charStringCopy(mrsWatsonPath, programOptions->options[OPTION_TEST_MRSWATSON_PATH]->argument);
   }
   else {
-    buildAbsolutePath(currentPath, newCharStringWithCString(DEFAULT_MRSWATSON_PATH), NULL, mrsWatsonPath);
+    buildAbsolutePath(currentPath, newCharStringWithCString(MRSWATSON_EXE_NAME), NULL, mrsWatsonPath);
   }
   if(runApplicationTests && !fileExists(mrsWatsonPath->data)) {
     printf("Could not find mrswatson at '%s', skipping application tests\n", mrsWatsonPath->data);
@@ -209,7 +206,7 @@ int main(int argc, char* argv[]) {
     charStringCopy(resourcesPath, programOptions->options[OPTION_TEST_RESOURCES_PATH]->argument);
   }
   else {
-    buildAbsolutePath(currentPath, newCharStringWithCString(DEFAULT_RESOURCES_PATH), NULL, resourcesPath);
+    buildAbsolutePath(currentPath, newCharStringWithCString(MRSWATSON_EXE_NAME), NULL, resourcesPath);
   }
   if(runApplicationTests && !fileExists(resourcesPath->data)) {
     printf("Could not find test resources at '%s', skipping application tests\n", resourcesPath->data);
