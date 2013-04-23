@@ -138,12 +138,7 @@ static ReturnCodes setupInputSource(SampleSource inputSource) {
   return RETURN_CODE_SUCCESS;
 }
 
-static ReturnCodes setupOutputSource(SampleSource outputSource, MidiSource midiSource, MidiSequence midiSequence) {
-  // Prepare output source
-  if(!outputSource->openSampleSource(outputSource, SAMPLE_SOURCE_OPEN_WRITE)) {
-    logError("Output source '%s' could not be opened", outputSource->sourceName->data);
-    return RETURN_CODE_IO_ERROR;
-  }
+static ReturnCodes setupMidiSource(MidiSource midiSource, MidiSequence* outSequence) {
   if(midiSource != NULL) {
     if(!midiSource->openMidiSource(midiSource)) {
       logError("MIDI source '%s' could not be opened", midiSource->sourceName->data);
@@ -152,11 +147,21 @@ static ReturnCodes setupOutputSource(SampleSource outputSource, MidiSource midiS
 
     // Read in all events from the MIDI source
     // TODO: This will not work if we want to support streaming MIDI events (ie, from a pipe)
-    midiSequence = newMidiSequence();
-    if(!midiSource->readMidiEvents(midiSource, midiSequence)) {
+    *outSequence = newMidiSequence();
+    if(!midiSource->readMidiEvents(midiSource, *outSequence)) {
       logWarn("Failed reading MIDI events from source '%s'", midiSource->sourceName->data);
       return RETURN_CODE_IO_ERROR;
     }
+  }
+
+  return RETURN_CODE_SUCCESS;
+}
+
+static ReturnCodes setupOutputSource(SampleSource outputSource) {
+  // Prepare output source
+  if(!outputSource->openSampleSource(outputSource, SAMPLE_SOURCE_OPEN_WRITE)) {
+    logError("Output source '%s' could not be opened", outputSource->sourceName->data);
+    return RETURN_CODE_IO_ERROR;
   }
 
   return RETURN_CODE_SUCCESS;
@@ -336,13 +341,23 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
 
   printWelcomeMessage();
   if((result = setupInputSource(inputSource)) != RETURN_CODE_SUCCESS) {
+    logError("Input source could not be opened, exiting");
     return result;
   }
   if((result = buildPluginChain(pluginChain, programOptions->options[OPTION_PLUGIN]->argument,
     pluginSearchRoot)) != RETURN_CODE_SUCCESS) {
+    logError("Plugin chain could not be constructed, exiting");
     return result;
   }
-  if((result = setupOutputSource(outputSource, midiSource, midiSequence)) != RETURN_CODE_SUCCESS) {
+  if(midiSource != NULL) {
+    result = setupMidiSource(midiSource, &midiSequence);
+    if(result != RETURN_CODE_SUCCESS) {
+      logError("MIDI source could not be opened, exiting");
+      return result;
+    }
+  }
+  if((result = setupOutputSource(outputSource)) != RETURN_CODE_SUCCESS) {
+    logError("Output source could not be opened, exiting");
     return result;
   }
 
