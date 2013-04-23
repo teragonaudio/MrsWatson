@@ -123,6 +123,9 @@ static ReturnCodes buildPluginChain(PluginChain pluginChain, const CharString ar
 
 static ReturnCodes setupInputSource(SampleSource inputSource) {
   // Prepare input source
+  if(inputSource == NULL) {
+    return RETURN_CODE_INVALID_ARGUMENT;
+  }
   if(inputSource->sampleSourceType == SAMPLE_SOURCE_TYPE_PCM) {
     setPcmDataSampleRate(inputSource, getSampleRate());
     setPcmDataNumChannels(inputSource, getNumChannels());
