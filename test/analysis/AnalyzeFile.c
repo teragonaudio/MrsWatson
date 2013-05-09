@@ -24,7 +24,7 @@ static void _setupAnalysisFunctions(LinkedList functionsList) {
 
   data = newAnalysisFunctionData();
   data->analysisName = "clipping";
-  data->functionPtr = analysisClipping;
+  data->functionPtr = (void*)analysisClipping;
   data->consecutiveFailCounter = 0;
   data->lastSample = 0.0f;
   data->failedSample = 0;
@@ -32,7 +32,7 @@ static void _setupAnalysisFunctions(LinkedList functionsList) {
 
   data = newAnalysisFunctionData();
   data->analysisName = "distortion";
-  data->functionPtr = analysisDistortion;
+  data->functionPtr = (void*)analysisDistortion;
   data->consecutiveFailCounter = 0;
   data->lastSample = 0.0f;
   data->failedSample = 0;
@@ -40,7 +40,7 @@ static void _setupAnalysisFunctions(LinkedList functionsList) {
 
   data = newAnalysisFunctionData();
   data->analysisName = "silence";
-  data->functionPtr = analysisSilence;
+  data->functionPtr = (void*)analysisSilence;
   data->consecutiveFailCounter = 0;
   data->lastSample = 0.0f;
   data->failedSample = 0;
