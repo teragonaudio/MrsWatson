@@ -5,6 +5,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #endif
+#include <stdarg.h>
 #include "ApplicationRunner.h"
 #include "unit/TestRunner.h"
 #include "base/CharString.h"
@@ -26,10 +27,19 @@ void freeTestEnvironment(TestEnvironment testEnvironment) {
   free(testEnvironment);
 }
 
-static char* _getTestInputFilename(const char* resourcesPath, const char* fileExtension) {
+CharString buildTestArgumentString(const char* arguments, ...) {
+  va_list argumentList;
+  va_start(argumentList, arguments);
+  CharString formattedArguments = newCharStringWithCapacity(kCharStringLengthLong);
+  vsnprintf(formattedArguments->data, formattedArguments->length, arguments, argumentList);
+  va_end(argumentList);
+  return formattedArguments;
+}
+
+char* getTestFilename(const char* resourcesPath, const char* resourceType, const char* resourceName) {
   CharString filename = newCharString();
-  snprintf(filename->data, filename->length, "%s%caudio%ca440-stereo.%s",
-    resourcesPath, PATH_DELIMITER, PATH_DELIMITER, fileExtension);
+  snprintf(filename->data, filename->length, "%s%c%s%c%s",
+    resourcesPath, PATH_DELIMITER, resourceType, PATH_DELIMITER, resourceName);
   return filename->data;
 }
 
@@ -62,9 +72,8 @@ static char* _getTestPluginResourcesPath(const char* resourcesPath) {
 static void _getDefaultArguments(TestEnvironment testEnvironment,
   const char *testName, CharString outString) {
   snprintf(outString->data, outString->length,
-    "--log-file \"%s\" --verbose --input \"%s\" --output \"%s\" --plugin-root \"%s\"",
+    "--log-file \"%s\" --verbose --output \"%s\" --plugin-root \"%s\"",
     _getTestOutputFilename(testName, "txt"),
-    _getTestInputFilename(testEnvironment->resourcesPath, "pcm"),
     _getTestOutputFilename(testName, "pcm"),
     _getTestPluginResourcesPath(testEnvironment->resourcesPath));
 }
@@ -97,7 +106,7 @@ static const char* _getResultCodeString(const int resultCode) {
 }
 
 void runApplicationTest(const TestEnvironment testEnvironment,
-  const char *testName, const char *testArguments,
+  const char *testName, CharString testArguments,
   ReturnCodes expectedResultCode, boolByte anazyleOutput)
 {
   int result = -1;
@@ -119,7 +128,7 @@ void runApplicationTest(const TestEnvironment testEnvironment,
   _getDefaultArguments(testEnvironment, testName, defaultArguments);
   charStringAppend(arguments, defaultArguments);
   charStringAppendCString(arguments, " ");
-  charStringAppendCString(arguments, testArguments);
+  charStringAppend(arguments, testArguments);
 
   if(!testEnvironment->results->onlyPrintFailing) {
     printTestName(testName);
@@ -183,5 +192,6 @@ Please check the executable path specified in the --mrswatson-path argument.",
 
   freeCharString(arguments);
   freeCharString(defaultArguments);
+  freeCharString(testArguments);
   freeCharString(failedAnalysisFunctionName);
 }

@@ -24,7 +24,10 @@ typedef TestEnvironmentMembers* TestEnvironment;
 TestEnvironment newTestEnvironment(char *applicationPath, char *resourcesPath);
 
 void runApplicationTest(const TestEnvironment testEnvironment,
-  const char *testName, const char *testArguments,
+  const char *testName, CharString testArguments,
   ReturnCodes expectedResultCode, boolByte analyzeOutput);
+
+CharString buildTestArgumentString(const char* arguments, ...);
+char* getTestFilename(const char* resourcesPath, const char* resourceType, const char* resourceName);
 
 void freeTestEnvironment(TestEnvironment testEnvironment);
