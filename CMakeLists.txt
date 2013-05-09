@@ -57,8 +57,8 @@ set(generic_CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=<INSTALL_DIR> CFLA
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
   add_definitions(-DLINUX=1)
-  set(CMAKE_C_FLAGS "-fmessage-length=0 -m32 -pipe -Wno-trigraphs -std=c99 -O3 -Wmissing-field-initializers -Wall -Wreturn-type -Wunused-variable -pedantic -Wshadow -Wsign-compare -D__cdecl=\"\" -D_POSIX_C_SOURCE=200809L")
-  set(CMAKE_CXX_FLAGS "-fmessage-length=0 -m32 -pipe -Wno-trigraphs -O3 -Wmissing-field-initializers -Wall -Wreturn-type -Wunused-variable -pedantic -Wshadow -Wsign-compare -D__cdecl=\"\"")
+  set(CMAKE_C_FLAGS "-fmessage-length=0 -m32 -pipe -Wno-trigraphs -std=c99 -O3 -Wmissing-field-initializers -Wall -Wreturn-type -Wunused-variable -Wshadow -Wsign-compare -D__cdecl=\"\" -D_POSIX_C_SOURCE=200809L")
+  set(CMAKE_CXX_FLAGS "-fmessage-length=0 -m32 -pipe -Wno-trigraphs -O3 -Wmissing-field-initializers -Wall -Wreturn-type -Wunused-variable -Wshadow -Wsign-compare -D__cdecl=\"\"")
   set(CMAKE_EXE_LINKER_FLAGS "-m32")
 elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
   add_definitions(-DMACOSX=1)
