@@ -2,7 +2,7 @@
 #include "AnalysisClipping.h"
 
 static int _testAnalysisClipping(void) {
-  SampleBuffer s = newSampleBuffer(1, 8);
+  SampleBuffer s = newSampleBuffer(1, 128);
   AnalysisFunctionData d = newAnalysisFunctionData();
   int i;
   for(i = 0; i < s->blocksize; i++) {

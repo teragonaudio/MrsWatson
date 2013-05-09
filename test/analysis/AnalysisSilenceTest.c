@@ -2,14 +2,14 @@
 #include "unit/TestRunner.h"
 
 static int _testAnalysisSilence(void) {
-  SampleBuffer s = newSampleBuffer(1, 8);
+  SampleBuffer s = newSampleBuffer(1, 64);
   AnalysisFunctionData d = newAnalysisFunctionData();
   assertFalse(analysisSilence(s, d));
   return 0;
 }
 
 static int _testAnalysisNotSilence(void) {
-  SampleBuffer s = newSampleBuffer(2, 8);
+  SampleBuffer s = newSampleBuffer(2, 64);
   AnalysisFunctionData d = newAnalysisFunctionData();
   int i, j;
   for(i = 0; i < s->blocksize; i++) {
@@ -22,7 +22,7 @@ static int _testAnalysisNotSilence(void) {
 }
 
 static int _testAnalysisNotSilenceInOneChannel(void) {
-  SampleBuffer s = newSampleBuffer(1, 8);
+  SampleBuffer s = newSampleBuffer(1, 64);
   AnalysisFunctionData d = newAnalysisFunctionData();
   int i;
   for(i = 0; i < s->blocksize; i++) {

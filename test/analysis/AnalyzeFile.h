@@ -7,7 +7,7 @@
 #define MrsWatson_AnalyzeFile_h
 
 // Number of consecutive samples which need to fail in order for the test to fail
-static const int kAnalysisDefaultFailTolerance = 4;
+static const int kAnalysisDefaultFailTolerance = 16;
 
 typedef struct {
   const char* analysisName;
