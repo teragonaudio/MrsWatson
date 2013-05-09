@@ -665,27 +665,28 @@ static void _processMidiEventsVst2xPlugin(void *pluginPtr, LinkedList midiEvents
   Plugin plugin = (Plugin)pluginPtr;
   PluginVst2xData data = (PluginVst2xData)(plugin->extraData);
 
-  VstEvents vstEvents;
-  vstEvents.numEvents = numItemsInList(midiEvents);
-  vstEvents.events[0] = (VstEvent*)malloc(sizeof(VstMidiEvent) * vstEvents.numEvents);
+  int numEvents = numItemsInList(midiEvents);
+  struct VstEvents *vstEvents = (struct VstEvents*)malloc(sizeof(struct VstEvent) + numEvents * sizeof(struct VstEvent*));
+  vstEvents->numEvents = numEvents;
   LinkedListIterator iterator = midiEvents;
   int outIndex = 0;
-  while(iterator != NULL) {
+  while(iterator != NULL && outIndex < numEvents) {
     MidiEvent midiEvent = (MidiEvent)(iterator->item);
     if(midiEvent != NULL) {
       VstMidiEvent* vstMidiEvent = (VstMidiEvent*)malloc(sizeof(VstMidiEvent));
       _fillVstMidiEvent(midiEvent, vstMidiEvent);
-      vstEvents.events[outIndex] = (VstEvent*)vstMidiEvent;
+      vstEvents->events[outIndex] = (VstEvent*)vstMidiEvent;
     }
     iterator = (LinkedListIterator)(iterator->nextItem);
     outIndex++;
   }
 
   // TODO: I'm not entirely sure that this is the correct way to alloc/free this memory. Possible memory leak.
-  data->dispatcher(data->pluginHandle, effProcessEvents, 0, 0, &vstEvents, 0.0f);
-  for(int i = 0; i < vstEvents.numEvents; i++) {
-    free(vstEvents.events[i]);
+  data->dispatcher(data->pluginHandle, effProcessEvents, 0, 0, vstEvents, 0.0f);
+  for(int i = 0; i < vstEvents->numEvents; i++) {
+    free(vstEvents->events[i]);
   }
+  free(vstEvents);
 }
 
 static void _setParameterVst2xPlugin(void *pluginPtr, int index, float value) {
