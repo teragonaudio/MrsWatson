@@ -230,24 +230,28 @@ void logDebug(const char* message, ...) {
   va_list arguments;
   va_start(arguments, message);
   _logMessage(LOG_DEBUG, message, arguments);
+  va_end(arguments);
 }
 
 void logInfo(const char* message, ...) {
   va_list arguments;
   va_start(arguments, message);
   _logMessage(LOG_INFO, message, arguments);
+  va_end(arguments);
 }
 
 void logWarn(const char* message, ...) {
   va_list arguments;
   va_start(arguments, message);
   _logMessage(LOG_WARN, message, arguments);
+  va_end(arguments);
 }
 
 void logError(const char* message, ...) {
   va_list arguments;
   va_start(arguments, message);
   _logMessage(LOG_ERROR, message, arguments);
+  va_end(arguments);
 }
 
 void logCritical(const char* message, ...) {
@@ -263,6 +267,7 @@ void logCritical(const char* message, ...) {
     fprintf(eventLoggerInstance->logFile, "ERROR: %s\n", wrappedMessage->data);
   }
   freeCharString(formattedMessage);
+  va_end(arguments);
 }
 
 void logInternalError(const char* message, ...) {
@@ -277,6 +282,7 @@ void logInternalError(const char* message, ...) {
   fprintf(eventLoggerInstance->logFile, "INTERNAL ERROR: %s\n", formattedMessage->data);
   }
   freeCharString(formattedMessage);
+  va_end(arguments);
 
   fprintf(stderr, "  This should not have happened. Please take a minute to report a bug.\n");
   fprintf(stderr, "  Support website: %s\n", SUPPORT_WEBSITE);

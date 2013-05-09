@@ -51,6 +51,7 @@ LinkedList newLinkedListWithItems(void* firstItem, ...) {
   while((item = va_arg(arguments, void*)) != NULL) {
     appendItemToList(list, item);
   }
+  va_end(arguments);
 
   return list;
 }
