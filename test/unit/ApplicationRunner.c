@@ -1,11 +1,15 @@
 #include "base/PlatformUtilities.h"
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdarg.h>
+
 #if UNIX
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #endif
-#include <stdarg.h>
+
 #include "ApplicationRunner.h"
 #include "unit/TestRunner.h"
 #include "base/CharString.h"
@@ -28,9 +32,10 @@ void freeTestEnvironment(TestEnvironment testEnvironment) {
 }
 
 CharString buildTestArgumentString(const char* arguments, ...) {
+  CharString formattedArguments;
   va_list argumentList;
   va_start(argumentList, arguments);
-  CharString formattedArguments = newCharStringWithCapacity(kCharStringLengthLong);
+  formattedArguments = newCharStringWithCapacity(kCharStringLengthLong);
   vsnprintf(formattedArguments->data, formattedArguments->length, arguments, argumentList);
   va_end(argumentList);
   return formattedArguments;
