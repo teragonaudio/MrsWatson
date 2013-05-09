@@ -60,15 +60,38 @@ CharString newCharStringWithCString(const char* string) {
   return result;
 }
 
-
 void charStringAppend(CharString self, const CharString string) {
-  // TODO: Need to make sure self is big enough to hold all data
-  strncat(self->data, string->data, self->length);
+  CharString temp;
+  int stringLength = strlen(string->data);
+  int selfLength = strlen(self->data);
+  if(stringLength + selfLength > self->length) {
+    temp = newCharStringWithCString(self->data);
+    freeCharString(self);
+    self = newCharStringWithCapacity(selfLength + stringLength + 1);
+    strcat(self->data, temp->data);
+    strcat(self->data, string->data);
+    freeCharString(temp);
+  }
+  else {
+    strncat(self->data, string->data, self->length);
+  }
 }
 
 void charStringAppendCString(CharString self, const char* string) {
-  // TODO: Need to make sure self is big enough to hold all data
-  strncat(self->data, string, self->length);
+  CharString temp;
+  int stringLength = strlen(string);
+  int selfLength = strlen(self->data);
+  if(stringLength + selfLength > self->length) {
+    temp = newCharStringWithCString(self->data);
+    freeCharString(self);
+    self = newCharStringWithCapacity(selfLength + stringLength + 1);
+    strcat(self->data, temp->data);
+    strcat(self->data, string);
+    freeCharString(temp);
+  }
+  else {
+    strncat(self->data, string, self->length);
+  }
 }
 
 void charStringClear(CharString self) {

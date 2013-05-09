@@ -64,6 +64,30 @@ static int _testIsRegularStringNotEmpty(void) {
   return 0;
 }
 
+static int _testAppendCharStrings(void) {
+  CharString a = newCharStringWithCString("a");
+  CharString b = newCharStringWithCString("b");
+  charStringAppend(a, b);
+  assertCharStringEquals(a, "ab");
+  return 0;
+}
+
+static int _testAppendCharStringsOverCapacity(void) {
+  int i;
+  CharString a = newCharStringWithCapacity(4);
+  CharString b = newCharStringWithCapacity(16);
+  for(i = 0; i < a->length - 1; i++) {
+    a->data[i] = 'a';
+  }
+  for(i = 0; i < b->length - 1; i++) {
+    b->data[i] = 'b';
+  }
+  charStringAppend(a, b);
+  assertCharStringEquals(a, "aaabbbbbbbbbbbbbbb");
+  assertIntEquals(a->length, 19);
+  return 0;
+}
+
 static int _testCharStringEqualsSameString(void) {
   CharString c, c2;
   c = newCharString();
@@ -156,6 +180,9 @@ TestSuite addCharStringTests(void) {
   addTest(testSuite, "EmptyStringIsEmpty", _testIsEmptyStringEmpty);
   addTest(testSuite, "NullIsEmpty", _testIsNullEmptyString);
   addTest(testSuite, "RegularStringIsNotEmpty", _testIsRegularStringNotEmpty);
+
+  addTest(testSuite, "AppendCharStrings", _testAppendCharStrings);
+  addTest(testSuite, "AppendCharStringsOverCapacity", _testAppendCharStringsOverCapacity);
 
   addTest(testSuite, "EqualsSameString", _testCharStringEqualsSameString);
   addTest(testSuite, "DoesNotEqualDifferentString", _testCharStringDoesEqualDifferentString);
