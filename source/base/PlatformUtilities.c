@@ -39,6 +39,7 @@
 #include <Windows.h>
 #elif UNIX
 #include <dirent.h>
+#include <unistd.h>
 #if MACOSX
 #include <CoreServices/CoreServices.h>
 #include <mach-o/dyld.h>
