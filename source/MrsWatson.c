@@ -167,6 +167,28 @@ static ReturnCodes setupOutputSource(SampleSource outputSource) {
   return RETURN_CODE_SUCCESS;
 }
 
+static void _processMidiMetaEvent(void* item, void* userData) {
+  MidiEvent midiEvent = (MidiEvent)item;
+  boolByte *finishedReading = (boolByte*)userData;
+  if(midiEvent->eventType == MIDI_TYPE_META) {
+    switch(midiEvent->status) {
+      case MIDI_META_TYPE_TEMPO:
+        setTempoFromMidiBytes(midiEvent->extraData);
+        break;
+      case MIDI_META_TYPE_TIME_SIGNATURE:
+        setTimeSignatureFromMidiBytes(midiEvent->extraData);
+        break;
+      case MIDI_META_TYPE_TRACK_END:
+        logInfo("Reached end of MIDI track");
+        *finishedReading = true;
+        break;
+      default:
+        logWarn("Don't know how to process MIDI meta event of type 0x%x", midiEvent->status);
+        break;
+    }
+  }
+}
+
 int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   ReturnCodes result;
   // Input/Output sources, plugin chain, and other required objects
@@ -439,6 +461,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
       LinkedList midiEventsForBlock = newLinkedList();
       // MIDI source overrides the value set to finishedReading by the input source
       finishedReading = !fillMidiEventsFromRange(midiSequence, getAudioClockCurrentFrame(), getBlocksize(), midiEventsForBlock);
+      foreachItemInList(midiEventsForBlock, _processMidiMetaEvent, &finishedReading);
       processPluginChainMidiEvents(pluginChain, midiEventsForBlock, taskTimer);
       startTimingTask(taskTimer, hostTaskId);
       freeLinkedList(midiEventsForBlock);

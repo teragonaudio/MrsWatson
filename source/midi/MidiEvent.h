@@ -48,6 +48,21 @@ typedef struct {
   byte* extraData;
 } MidiEventMembers;
 
+
+// MIDI Meta Event types
+#define MIDI_META_TYPE_TEXT 0x01
+#define MIDI_META_TYPE_COPYRIGHT 0x02
+#define MIDI_META_TYPE_SEQUENCE_NAME 0x03
+#define MIDI_META_TYPE_INSTRUMENT 0x04
+#define MIDI_META_TYPE_LYRIC 0x05
+#define MIDI_META_TYPE_MARKER 0x06
+#define MIDI_META_TYPE_CUE_POINT 0x07
+#define MIDI_META_TYPE_PROGRAM_NAME 0x08
+#define MIDI_META_TYPE_DEVICE_NAME 0x09
+#define MIDI_META_TYPE_TEMPO 0x51
+#define MIDI_META_TYPE_TIME_SIGNATURE 0x58
+#define MIDI_META_TYPE_TRACK_END 0x2f
+
 typedef MidiEventMembers* MidiEvent;
 
 MidiEvent newMidiEvent(void);

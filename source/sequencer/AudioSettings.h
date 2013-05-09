@@ -28,6 +28,8 @@
 #ifndef MrsWatson_AudioSettings_h
 #define MrsWatson_AudioSettings_h
 
+#include "base/Types.h"
+
 #define DEFAULT_SAMPLE_RATE 44100.0f
 #define DEFAULT_NUM_CHANNELS 2
 #define DEFAULT_BLOCKSIZE 512
@@ -65,8 +67,10 @@ void setNumChannels(const int numChannels);
 void setBlocksize(const int blocksize);
 void setTimeDivision(const double division);
 void setTempo(const double tempo);
+void setTempoFromMidiBytes(const byte* bytes);
 void setTimeSignatureBeatsPerMeasure(const short beatsPerMeasure);
 void setTimeSignatureNoteValue(const short noteValue);
+void setTimeSignatureFromMidiBytes(const byte* bytes);
 
 void freeAudioSettings(void);
 

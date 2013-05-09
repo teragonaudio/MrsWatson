@@ -65,6 +65,8 @@ boolByte fillMidiEventsFromRange(MidiSequence midiSequence, const unsigned long 
     }
     else if(startTimestamp <= midiEvent->timestamp && stopTimestamp > midiEvent->timestamp) {
       midiEvent->deltaFrames = midiEvent->timestamp - startTimestamp;
+      logDebug("Scheduling MIDI event 0x%x (%x, %x) in %ld frames",
+        midiEvent->status, midiEvent->data1, midiEvent->data2, midiEvent->deltaFrames);
       appendItemToList(outMidiEvents, midiEvent);
       midiSequence->_lastEvent = iterator->nextItem;
       midiSequence->numMidiEventsProcessed++;

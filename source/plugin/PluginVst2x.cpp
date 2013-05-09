@@ -652,6 +652,9 @@ static void _fillVstMidiEvent(const MidiEvent midiEvent, VstMidiEvent* vstMidiEv
     case MIDI_TYPE_SYSEX:
       logUnsupportedFeature("VST2.x plugin sysex messages");
       break;
+    case MIDI_TYPE_META:
+      // Ignore, don't care
+      break;
     default:
       logInternalError("Cannot convert MIDI event type '%d' to VstMidiEvent", midiEvent->eventType);
       break;

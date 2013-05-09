@@ -205,17 +205,26 @@ static boolByte _readMidiFileTrack(FILE *midiFile, const int trackNumber,
 
     midiEvent->timestamp = currentTimeInSampleFrames;
     if(midiEvent->eventType == MIDI_TYPE_META) {
-      logDebug("Parsed MIDI meta event of type 0x%02x", midiEvent->status);
-      // TODO: Need to deal with certain types of meta events, like time signature, etc.
-      // TODO: Also need to handle time signature changes, which really suck
       switch(midiEvent->status) {
-        case 0x51:
-          logUnsupportedFeature("Setting tempo from MIDI files");
+        case MIDI_META_TYPE_TEXT:
+        case MIDI_META_TYPE_COPYRIGHT:
+        case MIDI_META_TYPE_SEQUENCE_NAME:
+        case MIDI_META_TYPE_INSTRUMENT:
+        case MIDI_META_TYPE_LYRIC:
+        case MIDI_META_TYPE_MARKER:
+        case MIDI_META_TYPE_CUE_POINT:
+        case MIDI_META_TYPE_PROGRAM_NAME:
+        case MIDI_META_TYPE_DEVICE_NAME:
+          logDebug("Ignoring MIDI meta event of type 0x%x at %ld", midiEvent->status, midiEvent->timestamp);
           break;
-        case 0x58:
-          logUnsupportedFeature("Setting time signature from MIDI files");
+        case MIDI_META_TYPE_TEMPO:
+        case MIDI_META_TYPE_TIME_SIGNATURE:
+        case MIDI_META_TYPE_TRACK_END:
+          logDebug("Parsed MIDI meta event of type 0x%02x at %ld", midiEvent->status, midiEvent->timestamp);
+          appendMidiEventToSequence(midiSequence, midiEvent);
           break;
         default:
+          logWarn("Ignoring MIDI meta event of type 0x%x at %ld", midiEvent->status, midiEvent->timestamp);
           break;
       }
     }

@@ -27,6 +27,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
 #include "logging/EventLogger.h"
 #include "sequencer/AudioSettings.h"
@@ -78,43 +79,58 @@ short getTimeSignatureNoteValue(void) {
 
 
 void setSampleRate(const double sampleRate) {
-  if(sampleRate == 0.0f) {
-    logError("Ignoring attempt to set sample rate to 0");
+  if(sampleRate <= 0.0f) {
+    logError("Ignoring attempt to set sample rate to %f", sampleRate);
     return;
   }
+  logInfo("Setting sample rate to %gHz", sampleRate);
   _getAudioSettings()->sampleRate = sampleRate;
 }
 
 void setNumChannels(const int numChannels) {
-  if(numChannels == 0) {
-    logError("Ignoring attempt to set num channels to 0");
+  if(numChannels <= 0) {
+    logError("Ignoring attempt to set num channels to %d", numChannels);
     return;
   }
+  logInfo("Setting %d channels", numChannels);
   _getAudioSettings()->numChannels = numChannels;
 }
 
 void setBlocksize(const int blocksize) {
-  if(blocksize == 0) {
-    logError("Ignoring attempt to set blocksize to 0");
+  if(blocksize <= 0) {
+    logError("Ignoring attempt to set invalid blocksize to %d", blocksize);
     return;
   }
+  logInfo("Setting blocksize to %d", blocksize);
   _getAudioSettings()->blocksize = blocksize;
 }
 
 void setTimeDivision(const double division) {
-  if(division == 0) {
-    logError("Ignoring attempt to set division to 0");
+  if(division <= 0) {
+    logError("Ignoring attempt to set division to %f", division);
     return;
   }
   _getAudioSettings()->timeDivision = division;
 }
 
 void setTempo(const double tempo) {
-  if(tempo == 0.0f) {
-    logError("Ignoring attempt to set tempo to 0");
+  if(tempo <= 0.0f) {
+    logError("Ignoring attempt to set tempo to %f", tempo);
     return;
   }
+  logInfo("Setting tempo to %d", tempo);
   _getAudioSettings()->tempo = tempo;
+}
+
+void setTempoFromMidiBytes(const byte* bytes) {
+  double tempo = 0.0;
+  unsigned long beatLengthInMicroseconds = 0;
+  if(bytes != NULL) {
+    beatLengthInMicroseconds = 0x00000000 | (bytes[0] << 16) | (bytes[1] << 8) | (bytes[2]);
+    // Convert beats / microseconds -> beats / minutes
+    tempo = (1000000.0 / (double)beatLengthInMicroseconds) * 60.0;
+    setTempo(tempo);
+  }
 }
 
 void setTimeSignatureBeatsPerMeasure(const short beatsPerMeasure) {
@@ -122,8 +138,8 @@ void setTimeSignatureBeatsPerMeasure(const short beatsPerMeasure) {
   if(beatsPerMeasure < 2 || beatsPerMeasure > 12) {
     logInfo("Freaky time signature, but whatever you say...");
   }
-  if(beatsPerMeasure == 0) {
-    logError("Ignoring attempt to set time signature numerator to 0");
+  if(beatsPerMeasure <= 0) {
+    logError("Ignoring attempt to set time signature numerator to %d", beatsPerMeasure);
     return;
   }
   _getAudioSettings()->timeSignatureBeatsPerMeasure = beatsPerMeasure;
@@ -134,11 +150,18 @@ void setTimeSignatureNoteValue(const short noteValue) {
   if(!(noteValue == 2 || noteValue == 4 || noteValue == 8 || noteValue == 16) || noteValue < 2 || noteValue > 16) {
     logInfo("Interesting time signature you've chosen. I'm sure this piece is going to sound great...");
   }
-  if(noteValue == 0) {
-    logError("Ignoring attempt to set time signature denominator to 0");
+  if(noteValue <= 0) {
+    logError("Ignoring attempt to set time signature denominator to %d", noteValue);
     return;
   }
   _getAudioSettings()->timeSignatureNoteValue = noteValue;
+}
+
+void setTimeSignatureFromMidiBytes(const byte* bytes) {
+  if(bytes != NULL) {
+    setTimeSignatureBeatsPerMeasure(bytes[0]);
+    setTimeSignatureNoteValue((short)powl(2, bytes[1]));
+  }
 }
 
 void freeAudioSettings(void) {
