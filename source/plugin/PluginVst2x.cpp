@@ -66,7 +66,6 @@ typedef struct {
   void* libraryHandle;
 #endif
 } PluginVst2xDataMembers;
-
 typedef PluginVst2xDataMembers* PluginVst2xData;
 
 extern "C" {
