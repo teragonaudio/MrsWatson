@@ -382,7 +382,21 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
     return result;
   }
 
-  // Verify input/output sources
+  // Copy plugins before they have been opened
+  if(programOptions->options[OPTION_ERROR_REPORT]->enabled) {
+    copyPluginsToErrorReportDir(errorReporter, pluginChain);
+  }
+
+  // Initialize the plugin chain after the global sample rate has been set
+  result = initializePluginChain(pluginChain);
+  if(result != RETURN_CODE_SUCCESS) {
+    logError("Could not initialize plugin chain");
+    return result;
+  }
+
+  // Verify input/output sources. This must be done after the plugin chain is initialized
+  // otherwise the head plugin type is not known, which influences whether we must abort
+  // processing.
   if(programOptions->options[OPTION_ERROR_REPORT]->enabled) {
     if(isSampleSourceStreaming(inputSource) || isSampleSourceStreaming(outputSource)) {
       printf("ERROR: Using stdin/stdout is incompatible with --error-report\n");
@@ -407,18 +421,10 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
         return RETURN_CODE_MISSING_REQUIRED_OPTION;
       }
     }
-  }
-
-
-  // Copy plugins before they have been opened
-  if(programOptions->options[OPTION_ERROR_REPORT]->enabled) {
-    copyPluginsToErrorReportDir(errorReporter, pluginChain);
-  }
-
-  // Initialize the plugin chain after the global sample rate has been set
-  if(!initializePluginChain(pluginChain)) {
-    logError("Could not initialize plugin chain");
-    return RETURN_CODE_PLUGIN_ERROR;
+    else {
+      logError("Plugin chain contains only effects, but no input source was supplied");
+      return RETURN_CODE_MISSING_REQUIRED_OPTION;
+    }
   }
 
   // Display info for plugins in the chain before checking for valid input/output sources
