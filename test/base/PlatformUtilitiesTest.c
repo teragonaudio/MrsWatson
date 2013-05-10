@@ -30,14 +30,24 @@ static int _testGetPlatformName(void) {
 
 static int _testGetShortPlatformName(void) {
   CharString p = newCharStringWithCString(getShortPlatformName());
- #if LINUX
-  assertCharStringEquals(p, "linux");
+#if LINUX
+  if(isHost64Bit()) {
+    assertCharStringEquals(p, "Linux-x86_64");
+  }
+  else {
+    assertCharStringEquals(p, "Linux-i686");
+  }
 #elif MACOSX
-  assertCharStringEquals(p, "macosx");
+  assertCharStringEquals(p, "Mac OS X");
 #elif WINDOWS
-  assertCharStringEquals(p, "windows");
+  if(isHost64Bit()) {
+    assertCharStringEquals(p, "Windows 64-bit");
+  }
+  else {
+    assertCharStringEquals(p, "Windows 32-bit");
+  }
 #else
-  assertCharStringEquals(p, "unsupported");
+  assertCharStringEquals(p, "Unsupported");
 #endif
   return 0;
 }

@@ -63,13 +63,23 @@ PlatformType getPlatformType() {
 
 const char* getShortPlatformName(void) {
 #if MACOSX
-  return "macosx";
+  return "Mac OS X";
 #elif WINDOWS
-  return "windows";
+  if(isHost64Bit()) {
+    return "Windows 64-bit";
+  }
+  else {
+    return "Windows 32-bit";
+  }
 #elif LINUX
-  return "linux";
+  if(isHost64Bit()) {
+    return "Linux-x86_64";
+  }
+  else {
+    return "Linux-i686";
+  }
 #else
-  return "unsupported";
+  return "Unsupported";
 #endif
 }
 
