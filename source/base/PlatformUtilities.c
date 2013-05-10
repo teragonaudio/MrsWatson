@@ -195,6 +195,10 @@ CharString getCurrentDirectory(void) {
   return currentDirectory;
 }
 
+boolByte isHost64Bit(void) {
+  return (sizeof(void*) == 8);
+}
+
 boolByte isHostLittleEndian(void) {
   int num = 1;
   boolByte result = (*(char*)&num == 1);
