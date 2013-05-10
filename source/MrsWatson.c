@@ -250,9 +250,8 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
     printVersion();
     return RETURN_CODE_NOT_RUN;
   }
-  else if(programOptions->options[OPTION_LIST_FILE_TYPES]->enabled) {
-    printf("Supported source types: \n");
-    printSupportedSourceTypes();
+  else if(programOptions->options[OPTION_COLOR_TEST]->enabled) {
+    printTestPattern();
     return RETURN_CODE_NOT_RUN;
   }
   // See if we are to make an error report and make necessary changes to the
@@ -356,8 +355,8 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
     listAvailablePlugins(pluginSearchRoot);
     return RETURN_CODE_NOT_RUN;
   }
-  else if(programOptions->options[OPTION_COLOR_TEST]->enabled) {
-    printTestPattern();
+  if(programOptions->options[OPTION_LIST_FILE_TYPES]->enabled) {
+    printSupportedSourceTypes();
     return RETURN_CODE_NOT_RUN;
   }
 
