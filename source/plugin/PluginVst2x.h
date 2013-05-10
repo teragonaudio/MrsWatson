@@ -31,6 +31,7 @@
 #include "base/CharString.h"
 #include "plugin/Plugin.h"
 
+unsigned long getVst2xPluginUniqueId(const Plugin plugin);
 boolByte vst2xPluginExists(const CharString pluginName, const CharString pluginRoot, CharString outLocation);
 void listAvailablePluginsVst2x(const CharString pluginRoot);
 void fillVst2xUniqueIdToString(const long uniqueId, CharString outString);

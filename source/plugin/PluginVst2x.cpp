@@ -463,6 +463,14 @@ static boolByte _initVst2xPlugin(Plugin plugin) {
   return true;
 }
 
+unsigned long getVst2xPluginUniqueId(const Plugin plugin) {
+  if(plugin->interfaceType == PLUGIN_TYPE_VST_2X) {
+    PluginVst2xData data = (PluginVst2xData)plugin->extraData;
+    return data->pluginHandle->uniqueID;
+  }
+  return 0;
+}
+
 static boolByte _openVst2xPlugin(void* pluginPtr) {
   AEffect* pluginHandle;
   Plugin plugin = (Plugin)pluginPtr;
