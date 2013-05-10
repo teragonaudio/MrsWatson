@@ -43,29 +43,30 @@
 #include "logging/EventLogger.h"
 
 void printSupportedSourceTypes(void) {
+  logInfo("Supported audio file types:");
   // We can theoretically support more formats, pretty much anything audiofile supports
   // would work here. However, most of those file types are rather uncommon, and require
   // special setup when writing, so we only choose the most common ones.
 #if HAVE_LIBAUDIOFILE
-  printf("- AIFF (via libaudiofile)\n");
+  logInfo("- AIFF (via libaudiofile)");
 #else
-  printf("- AIFF (internal)\n");
+  logInfo("- AIFF (internal, experimental)");
 #endif
 #if HAVE_LIBFLAC
-  printf("- FLAC\n");
+  logInfo("- FLAC");
 #endif
 #if HAVE_LIBLAME
-  printf("- MP3\n");
+  logInfo("- MP3");
 #endif
 #if HAVE_LIBVORBIS
-  printf("- OGG\n");
+  logInfo("- OGG");
 #endif
   // Always supported
-  printf("- PCM\n");
+  logInfo("- PCM");
 #if HAVE_LIBAUDIOFILE
-  printf("- WAV (via libaudiofile)\n");
+  logInfo("- WAV (via libaudiofile)");
 #else
-  printf("- WAV (internal)\n");
+  logInfo("- WAV (internal)");
 #endif
 }
 
