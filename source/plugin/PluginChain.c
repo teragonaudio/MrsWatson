@@ -142,7 +142,7 @@ static boolByte _loadPresetForPlugin(Plugin plugin, PluginPreset preset) {
       return false;
     }
     if(!preset->loadPreset(preset, plugin)) {
-      logError("Could not load preset '%s'", preset->presetName->data);
+      logError("Could not load preset '%s' to plugin '%s'", preset->presetName->data, plugin->pluginName->data);
       return false;
     }
     logInfo("Loaded preset '%s' to plugin '%s'", preset->presetName->data, plugin->pluginName->data);
