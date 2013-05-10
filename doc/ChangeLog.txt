@@ -1,3 +1,14 @@
+Version 0.9.5:
+0.9.4:
+- Better support for MIDI meta events. Tempo and time signature are now
+  correctly read from MIDI files.
+- Fix a bug where MrsWatson would not know when to stop processing an
+  instrument plugin chain.
+- Fix a bug where some monophonic VSTi's would not receive notes data in
+  an expected format.
+- Fix some memory corruption bugs.
+- Improved application test suite.
+
 Version 0.9.4:
 - Fix several heap corruption bugs
 - Fix build on linux
