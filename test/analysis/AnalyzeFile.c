@@ -7,7 +7,11 @@
 #include "AnalysisSilence.h"
 #include "AnalyzeFile.h"
 
-static const int kNumAnalysisFunctions = 3;
+// Number of consecutive samples which need to fail in order for the test to fail
+static const int kAnalysisDefaultFailTolerance = 16;
+// Use a blocksize of the default * 2 in order to avoid false positives of the
+// silence detection algorithm, since the last block is likely to be silent.
+static const int kAnalysisBlocksize = DEFAULT_BLOCKSIZE * 2;
 
 AnalysisFunctionData newAnalysisFunctionData(void) {
   AnalysisFunctionData result = (AnalysisFunctionData)malloc(sizeof(AnalysisFunctionDataMembers));
@@ -26,25 +30,16 @@ static void _setupAnalysisFunctions(LinkedList functionsList) {
   data = newAnalysisFunctionData();
   data->analysisName = "clipping";
   data->functionPtr = (void*)analysisClipping;
-  data->consecutiveFailCounter = 0;
-  data->lastSample = 0.0f;
-  data->failedSample = 0;
   appendItemToList(functionsList, data);
 
   data = newAnalysisFunctionData();
   data->analysisName = "distortion";
   data->functionPtr = (void*)analysisDistortion;
-  data->consecutiveFailCounter = 0;
-  data->lastSample = 0.0f;
-  data->failedSample = 0;
   appendItemToList(functionsList, data);
 
   data = newAnalysisFunctionData();
   data->analysisName = "silence";
   data->functionPtr = (void*)analysisSilence;
-  data->consecutiveFailCounter = 0;
-  data->lastSample = 0.0f;
-  data->failedSample = 0;
   appendItemToList(functionsList, data);
 }
 
