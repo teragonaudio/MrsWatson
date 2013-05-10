@@ -166,7 +166,7 @@ ReturnCodes initializePluginChain(PluginChain pluginChain) {
       return RETURN_CODE_PLUGIN_ERROR;
     }
     else {
-      if(i > 1 && plugin->pluginType == PLUGIN_TYPE_INSTRUMENT) {
+      if(i > 0 && plugin->pluginType == PLUGIN_TYPE_INSTRUMENT) {
         logError("Instrument plugin '%s' must be first in the chain", plugin->pluginName->data);
         return RETURN_CODE_INVALID_PLUGIN_CHAIN;
       }
