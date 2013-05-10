@@ -154,7 +154,7 @@ static boolByte _loadPresetForPlugin(Plugin plugin, PluginPreset preset) {
   }
 }
 
-boolByte initializePluginChain(PluginChain pluginChain) {
+ReturnCodes initializePluginChain(PluginChain pluginChain) {
   Plugin plugin;
   PluginPreset preset;
   int i;
@@ -163,33 +163,33 @@ boolByte initializePluginChain(PluginChain pluginChain) {
     plugin = pluginChain->plugins[i];
     if(!plugin->open(plugin)) {
       logError("Plugin '%s' could not be opened", plugin->pluginName->data);
-      return false;
+      return RETURN_CODE_PLUGIN_ERROR;
     }
     else {
       if(i > 1 && plugin->pluginType == PLUGIN_TYPE_INSTRUMENT) {
         logError("Instrument plugin '%s' must be first in the chain", plugin->pluginName->data);
-        return false;
+        return RETURN_CODE_INVALID_PLUGIN_CHAIN;
       }
       else if(plugin->pluginType == PLUGIN_TYPE_UNKNOWN) {
         logError("Plugin '%s' has unknown type; It was probably not loaded correctly", plugin->pluginName->data);
-        return false;
+        return RETURN_CODE_PLUGIN_ERROR;
       }
       else if(plugin->pluginType == PLUGIN_TYPE_UNSUPPORTED) {
         logError("Plugin '%s' is of unsupported type", plugin->pluginName->data);
-        return false;
+        return RETURN_CODE_PLUGIN_ERROR;
       }
 
       preset = pluginChain->presets[i];
       if(preset != NULL) {
         if(!_loadPresetForPlugin(plugin, preset)) {
           logError("Could not load preset '%s' for plugin '%s'", preset->presetName->data, plugin->pluginName->data);
-          return false;
+          return RETURN_CODE_INVALID_ARGUMENT;
         }
       }
     }
   }
 
-  return true;
+  return RETURN_CODE_SUCCESS;
 }
 
 void displayPluginInfo(PluginChain pluginChain) {

@@ -28,6 +28,7 @@
 #ifndef MrsWatson_PluginChain_h
 #define MrsWatson_PluginChain_h
 
+#include "app/ReturnCodes.h"
 #include "base/LinkedList.h"
 #include "plugin/Plugin.h"
 #include "plugin/PluginPreset.h"
@@ -48,7 +49,7 @@ typedef PluginChainMembers* PluginChain;
 PluginChain newPluginChain(void);
 
 boolByte addPluginsFromArgumentString(PluginChain pluginChain, const CharString argumentString, const CharString userSearchPath);
-boolByte initializePluginChain(PluginChain pluginChain);
+ReturnCodes initializePluginChain(PluginChain pluginChain);
 
 void displayPluginInfo(PluginChain pluginChain);
 int getMaximumTailTimeInMs(PluginChain pluginChain);
