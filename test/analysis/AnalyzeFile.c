@@ -82,13 +82,13 @@ boolByte analyzeFile(const char* filename, CharString failedAnalysisFunctionName
 
   analysisData->failedAnalysisFunctionName = failedAnalysisFunctionName;
   analysisData->failedAnalysisSample = failedAnalysisSample;
-  analysisData->sampleBuffer = newSampleBuffer(DEFAULT_NUM_CHANNELS, DEFAULT_BLOCKSIZE);
+  analysisData->sampleBuffer = newSampleBuffer(DEFAULT_NUM_CHANNELS, kAnalysisBlocksize);
   analysisData->currentBlockSample = &currentBlockSample;
   analysisData->result = &result;
 
   while(sampleSource->readSampleBlock(sampleSource, analysisData->sampleBuffer) && result) {
     foreachItemInList(analysisFunctions, _runAnalysisFunction, analysisData);
-    currentBlockSample += DEFAULT_BLOCKSIZE;
+    currentBlockSample += kAnalysisBlocksize;
   }
 
   freeSampleSource(sampleSource);
