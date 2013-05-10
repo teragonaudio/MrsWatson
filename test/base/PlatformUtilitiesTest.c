@@ -16,7 +16,7 @@ static int _testGetPlatformType(void) {
 
 static int _testGetPlatformName(void) {
   CharString p = getPlatformName();
-  #if LINUX
+#if LINUX
   assertCharStringContains(p, "Linux");
 #elif MACOSX
   assertCharStringContains(p, "Mac OS X");
