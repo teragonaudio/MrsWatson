@@ -14,7 +14,7 @@ boolByte analysisSilence(const SampleBuffer sampleBuffer, AnalysisFunctionData d
       }
       else {
         if(data->consecutiveFailCounter > 0) {
-          data->consecutiveFailCounter--;
+          data->consecutiveFailCounter = 0;
         }
       }
     }
