@@ -411,7 +411,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
     logInternalError("Default output sample source was null");
     return RETURN_CODE_INTERNAL_ERROR;
   }
-  if(inputSource == NULL) {
+  if(inputSource == NULL || inputSource->sampleSourceType == SAMPLE_SOURCE_TYPE_SILENCE) {
     // If the first plugin in the chain is an instrument, use the silent source as our input and
     // make sure that there is a corresponding MIDI file
     headPlugin = pluginChain->plugins[0];
