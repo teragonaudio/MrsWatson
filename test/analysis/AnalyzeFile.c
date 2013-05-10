@@ -40,6 +40,7 @@ static void _setupAnalysisFunctions(LinkedList functionsList) {
   data = newAnalysisFunctionData();
   data->analysisName = "silence";
   data->functionPtr = (void*)analysisSilence;
+  data->failTolerance = kAnalysisBlocksize;
   appendItemToList(functionsList, data);
 }
 
