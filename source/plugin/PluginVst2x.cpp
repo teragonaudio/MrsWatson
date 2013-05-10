@@ -668,20 +668,34 @@ static void _processMidiEventsVst2xPlugin(void *pluginPtr, LinkedList midiEvents
   int numEvents = numItemsInList(midiEvents);
   struct VstEvents *vstEvents = (struct VstEvents*)malloc(sizeof(struct VstEvent) + numEvents * sizeof(struct VstEvent*));
   vstEvents->numEvents = numEvents;
+
+  // Some monophonic instruments have problems dealing with the order of MIDI events,
+  // so send them all note off events *first* followed by any other event types.
   LinkedListIterator iterator = midiEvents;
   int outIndex = 0;
   while(iterator != NULL && outIndex < numEvents) {
     MidiEvent midiEvent = (MidiEvent)(iterator->item);
-    if(midiEvent != NULL) {
+    if(midiEvent != NULL && (midiEvent->status >> 4) == 0x08) {
       VstMidiEvent* vstMidiEvent = (VstMidiEvent*)malloc(sizeof(VstMidiEvent));
       _fillVstMidiEvent(midiEvent, vstMidiEvent);
       vstEvents->events[outIndex] = (VstEvent*)vstMidiEvent;
+      outIndex++;
     }
     iterator = (LinkedListIterator)(iterator->nextItem);
-    outIndex++;
   }
 
-  // TODO: I'm not entirely sure that this is the correct way to alloc/free this memory. Possible memory leak.
+  iterator = midiEvents;
+  while(iterator != NULL && outIndex < numEvents) {
+    MidiEvent midiEvent = (MidiEvent)(iterator->item);
+    if(midiEvent != NULL && (midiEvent->status >> 4) != 0x08) {
+      VstMidiEvent* vstMidiEvent = (VstMidiEvent*)malloc(sizeof(VstMidiEvent));
+      _fillVstMidiEvent(midiEvent, vstMidiEvent);
+      vstEvents->events[outIndex] = (VstEvent*)vstMidiEvent;
+      outIndex++;
+    }
+    iterator = (LinkedListIterator)(iterator->nextItem);
+  }
+
   data->dispatcher(data->pluginHandle, effProcessEvents, 0, 0, vstEvents, 0.0f);
   for(int i = 0; i < vstEvents->numEvents; i++) {
     free(vstEvents->events[i]);
