@@ -221,7 +221,10 @@ PluginPreset newPluginPresetFxp(const CharString presetName) {
   pluginPreset->loadPreset = _loadPluginPresetFxp;
   pluginPreset->freePresetData = _freePluginPresetDataFxp;
 
+  extraData->fileHandle = NULL;
+  extraData->chunk = NULL;
   pluginPreset->extraData = extraData;
+
   return pluginPreset;
 }
 
