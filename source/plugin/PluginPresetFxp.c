@@ -109,6 +109,10 @@ static boolByte _loadPluginPresetFxp(void* pluginPresetPtr, Plugin plugin) {
   }
   inProgram->fxID = convertBigEndianIntToPlatform(valueBuffer);
   logDebug("Preset's fxID is %d", inProgram->fxID);
+  if(inProgram->fxID != getVst2xPluginUniqueId(plugin)) {
+    logError("Preset '%s' is not compatible with plugin '%s'", pluginPreset->presetName->data, plugin->pluginName->data);
+    return false;
+  }
 
   // TODO: Need to check to make sure this matches the version of the plugin
   numObjectsRead = fread(&valueBuffer, sizeof(unsigned int), 1, extraData->fileHandle);
