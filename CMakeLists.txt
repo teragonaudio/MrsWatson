@@ -6,9 +6,20 @@ include_directories(${CMAKE_SOURCE_DIR}/source ${localDir}/include ${CMAKE_SOURC
 
 # Platform properties ##########################################
 
+if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+  set(platform_bits 64)
+else()
+  set(platform_bits 32)
+endif()
+
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-  set(platform_name "Linux")
-  set(ARCH_FLAGS "-m32")
+  if(${platform_bits} EQUAL 32)
+    set(platform_name "Linux-i686")
+    set(ARCH_FLAGS "-m32")
+  else()
+    set(platform_name "Linux-x86_64")
+    set(ARCH_FLAGS "-m64")
+  endif()
 elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
   set(platform_name "Mac OS X")
   set(ARCH_FLAGS "-arch i386")
