@@ -7,7 +7,7 @@ boolByte analysisClipping(const SampleBuffer sampleBuffer, AnalysisFunctionData 
   for(i = 0; i < sampleBuffer->numChannels; i++) {
     for(j = 0; j < sampleBuffer->blocksize; j++) {
       if(abs((int)sampleBuffer->samples[i][j]) >= 32767) {
-        if(data->consecutiveFailCounter > kAnalysisDefaultFailTolerance) {
+        if(data->consecutiveFailCounter > data->failTolerance) {
           data->failedSample = j;
           return false;
         }

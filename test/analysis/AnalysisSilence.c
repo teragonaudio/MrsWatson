@@ -7,7 +7,7 @@ boolByte analysisSilence(const SampleBuffer sampleBuffer, AnalysisFunctionData d
     for(j = 0; j < sampleBuffer->blocksize; j++) {
       if(sampleBuffer->samples[i][j] == 0.0f) {
         data->consecutiveFailCounter++;
-        if(data->consecutiveFailCounter > kAnalysisDefaultFailTolerance) {
+        if(data->consecutiveFailCounter > data->failTolerance) {
           data->failedSample = j;
           return false;
         }

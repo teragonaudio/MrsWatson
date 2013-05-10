@@ -15,7 +15,8 @@ AnalysisFunctionData newAnalysisFunctionData(void) {
   result->consecutiveFailCounter = 0;
   result->failedSample = 0;
   result->functionPtr = NULL;
-  result->lastSample = 0;
+  result->lastSample = 0.0f;
+  result->failTolerance = kAnalysisDefaultFailTolerance;
   return result;
 }
 
