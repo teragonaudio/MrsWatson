@@ -35,8 +35,6 @@
 #include "io/SampleSourceAiff.h"
 #include "io/SampleSourceFlac.h"
 #include "io/SampleSource.h"
-#include "io/SampleSourceMp3.h"
-#include "io/SampleSourceOgg.h"
 #include "io/SampleSourcePcm.h"
 #include "io/SampleSourceSilence.h"
 #include "io/SampleSourceWave.h"
