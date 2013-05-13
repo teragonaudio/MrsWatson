@@ -43,6 +43,7 @@
     <ClInclude Include="..\..\source\plugin\PluginPreset.h" />
     <ClInclude Include="..\..\source\plugin\PluginPresetFxp.h" />
     <ClInclude Include="..\..\source\plugin\PluginVst2x.h" />
+    <ClInclude Include="..\..\source\plugin\PluginVst2xHostCallback.h" />
     <ClInclude Include="..\..\source\sequencer\AudioClock.h" />
     <ClInclude Include="..\..\source\sequencer\AudioSettings.h" />
     <ClInclude Include="..\..\source\sequencer\MidiSequence.h" />
@@ -80,7 +81,8 @@
     <ClCompile Include="..\..\source\plugin\PluginPreset.c" />
     <ClCompile Include="..\..\source\plugin\PluginPresetFxp.c" />
     <ClCompile Include="..\..\source\plugin\PluginVst2x.cpp" />
-    <ClCompile Include="..\..\source\plugin\Vst2xHostCallback.cpp" />
+    <ClCompile Include="..\..\source\plugin\PluginVst2xHostCallback.cpp" />
+    <ClCompile Include="..\..\source\plugin\PluginVst2xWindows.cpp" />
     <ClCompile Include="..\..\source\sequencer\AudioClock.c" />
     <ClCompile Include="..\..\source\sequencer\AudioSettings.c" />
     <ClCompile Include="..\..\source\sequencer\MidiSequence.c" />

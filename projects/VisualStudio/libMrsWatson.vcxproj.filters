@@ -115,6 +115,9 @@
     <ClInclude Include="..\..\source\time\TaskTimer.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\source\plugin\PluginVst2xHostCallback.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\MrsWatsonOptions.c">
@@ -201,9 +204,6 @@
     <ClCompile Include="..\..\source\plugin\PluginVst2x.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\plugin\Vst2xHostCallback.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\source\plugin\Plugin.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -223,6 +223,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\time\TaskTimer.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\plugin\PluginVst2xWindows.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\plugin\PluginVst2xHostCallback.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
