@@ -52,6 +52,16 @@
 #include <strings.h>
 #endif
 
+#if MACOSX
+typedef BundleRef LibraryHandle;
+#elif LINUX
+typedef void* LibraryHandle;
+#elif WINDOWS
+typedef HMODULE LibraryHandle;
+#else
+typedef void* LibraryHandle;
+#endif
+
 typedef enum {
   PLATFORM_UNSUPPORTED,
   PLATFORM_MACOSX,
