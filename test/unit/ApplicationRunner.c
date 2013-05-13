@@ -18,6 +18,7 @@
 
 static const char* TEST_OUTPUT_FOLDER = "mrswatsontest-output";
 const char* kDefaultTestOutputFileType = "pcm";
+static const int kApplicationRunnerWaitTimeoutInMs = 1000;
 
 TestEnvironment newTestEnvironment(char *applicationPath, char *resourcesPath) {
   TestEnvironment testEnvironment = (TestEnvironment)malloc(sizeof(TestEnvironmentMembers));
@@ -128,6 +129,12 @@ void runApplicationTest(const TestEnvironment testEnvironment,
   char* outputFilename = getTestOutputFilename(testName,
     outputFileType == NULL ? kDefaultTestOutputFileType : outputFileType);
 
+#if WINDOWS
+  STARTUPINFOA startupInfo;
+  PROCESS_INFORMATION  processInfo;
+  CharString errorMessage;
+#endif
+
   // Remove files from a previous test run
   _removeOutputFiles(testName);
   makeDirectory(newCharStringWithCString(TEST_OUTPUT_FOLDER));
@@ -147,8 +154,27 @@ void runApplicationTest(const TestEnvironment testEnvironment,
   }
 
 #if WINDOWS
-  logUnsupportedFeature("Application testing");
-  return;
+  memset(&startupInfo, 0, sizeof(startupInfo));
+  memset(&processInfo, 0, sizeof(processInfo));
+  startupInfo.cb = sizeof(startupInfo);
+  result = CreateProcessA((LPCSTR)(testEnvironment->applicationPath), (LPSTR)(arguments->data),
+    0, 0, false, CREATE_DEFAULT_ERROR_MODE, 0, 0, &startupInfo, &processInfo);
+  if(result) {
+    // TODO: Check return codes for these calls
+    WaitForSingleObject(processInfo.hProcess, kApplicationRunnerWaitTimeoutInMs);
+    GetExitCodeProcess(processInfo.hProcess, (LPDWORD)&resultCode);
+    CloseHandle(processInfo.hProcess);
+    CloseHandle(processInfo.hThread);
+  }
+  else {
+    result = GetLastError();
+    errorMessage = newCharString();
+    FormatMessageA(FORMAT_MESSAGE_FROM_SYSTEM, 0, result, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+      errorMessage->data, errorMessage->length - 1, NULL);
+    logCritical("Could not launch process, got return code %d (%s)", result, errorMessage->data);
+    freeCharString(errorMessage);
+    return;
+  }
 #else
   result = system(arguments->data);
   resultCode = (ReturnCodes)WEXITSTATUS(result);

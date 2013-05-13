@@ -16,7 +16,7 @@ test/mrswatsontest
 MrsWatson.zip
 
 # Test output
-test/out/*
+out/*
 
 # Stuff from various IDE's
 *.perspectivev3
