@@ -182,7 +182,7 @@ static const char* _logTimeZebraStripeColor(const long elapsedTime, const int ze
 }
 
 static void _printMessage(const LogLevel logLevel, const long elapsedTimeInMs, const long numFramesProcessed, const char* message, const EventLogger eventLogger) {
-  char* logString = malloc(sizeof(char) * kCharStringLengthLong);
+  char* logString = (char*)malloc(sizeof(char) * kCharStringLengthLong);
   if(eventLogger->useColor) {
     snprintf(logString, kCharStringLengthLong, "%c ", _logLevelStatusChar(logLevel));
     printToLog(_logLevelStatusColor(logLevel), eventLogger->logFile, logString);
