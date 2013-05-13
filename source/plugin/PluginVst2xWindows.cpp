@@ -26,50 +26,56 @@
 //
 
 #if WINDOWS
+#define VST_FORCE_DEPRECATED 0
+#include "aeffectx.h"
+#include "plugin/PluginVst2xHostCallback.h"
 
+extern "C" {
+#include <stdio.h>
 #include "base/PlatformUtilities.h"
+#include "logging/EventLogger.h"
 
 LinkedList getVst2xPluginLocations(CharString currentDirectory) {
   LinkedList locations = newLinkedList();
   CharString locationBuffer;
 
-  appendItemToList(locations, currentPath);
+  appendItemToList(locations, currentDirectory);
 
   locationBuffer = newCharString();
   snprintf(locationBuffer->data, (size_t)(locationBuffer->length), "C:\\VstPlugins");
-  appendItemToList(outLocations, locationBuffer1);
+  appendItemToList(locations, locationBuffer);
 
   // TODO: On a 64-bit windows, this should be c:\program files (x86) if the host is 32-bit
   locationBuffer = newCharString();
   snprintf(locationBuffer->data, (size_t)(locationBuffer->length), "C:\\Program Files\\Common Files\\VstPlugins");
-  appendItemToList(outLocations, locationBuffer);
+  appendItemToList(locations, locationBuffer);
 
   // TODO: On a 64-bit windows, this should be c:\program files (x86) if the host is 32-bit
   locationBuffer = newCharString();
   snprintf(locationBuffer->data, (size_t)(locationBuffer->length), "C:\\Program Files\\Steinberg\\VstPlugins");
-  appendItemToList(outLocations, locationBuffer);
+  appendItemToList(locations, locationBuffer);
 
   return locations;
 }
 
-LibraryHandle _moduleHandleForPlugin(const CharString pluginAbsolutePath) {
-  HMODULE moduleHandle = LoadLibraryExA((LPCSTR)pluginAbsolutePath->data, NULL, LOAD_WITH_ALTERED_SEARCH_PATH);
-  if(moduleHandle == NULL) {
+LibraryHandle getLibraryHandleForPlugin(const CharString pluginAbsolutePath) {
+  HMODULE libraryHandle = LoadLibraryExA((LPCSTR)pluginAbsolutePath->data, NULL, LOAD_WITH_ALTERED_SEARCH_PATH);
+  if(libraryHandle == NULL) {
     logError("Could not open library, error code '%d'", GetLastError());
     return NULL;
   }
-  return moduleHandle;
+  return libraryHandle;
 }
 
-AEffect* loadVst2xPlugin(LibraryHandle moduleHandle) {
-  Vst2xPluginEntryFunc entryPoint = (Vst2xPluginEntryFunc)GetProcAddress(moduleHandle, "VSTPluginMain");
+AEffect* loadVst2xPlugin(LibraryHandle libraryHandle) {
+  Vst2xPluginEntryFunc entryPoint = (Vst2xPluginEntryFunc)GetProcAddress(libraryHandle, "VSTPluginMain");
 
   if(entryPoint == NULL) {
-    entryPoint = (Vst2xPluginEntryFunc)GetProcAddress(moduleHandle, "VstPluginMain()"); 
+    entryPoint = (Vst2xPluginEntryFunc)GetProcAddress(libraryHandle, "VstPluginMain()"); 
   }
 
   if(entryPoint == NULL) {
-    entryPoint = (Vst2xPluginEntryFunc)GetProcAddress(moduleHandle, "main");
+    entryPoint = (Vst2xPluginEntryFunc)GetProcAddress(libraryHandle, "main");
   }
 
   if(entryPoint == NULL) {
@@ -77,12 +83,13 @@ AEffect* loadVst2xPlugin(LibraryHandle moduleHandle) {
     return NULL;
   }
 
-  AEffect* plugin = entryPoint(vst2xPluginHostCallback);
+  AEffect* plugin = entryPoint(pluginVst2xHostCallback);
   return plugin;
 }
 
-// For closing:
-//   FreeLibrary(data->moduleHandle);
+void closeLibraryHandle(LibraryHandle libraryHandle) {
+  FreeLibrary(libraryHandle);
+}
 
-
+} // extern "C"
 #endif
