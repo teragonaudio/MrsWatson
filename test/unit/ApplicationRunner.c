@@ -112,7 +112,7 @@ static const char* _getResultCodeString(const int resultCode) {
 
 void runApplicationTest(const TestEnvironment testEnvironment,
   const char *testName, CharString testArguments,
-  ReturnCodes expectedResultCode, boolByte anazyleOutput)
+  ReturnCodes expectedResultCode, boolByte analyzeOutput)
 {
   int result = -1;
   ReturnCodes resultCode = (ReturnCodes)result;
@@ -158,7 +158,7 @@ Please check the executable path specified in the --mrswatson-path argument.",
     testEnvironment->results->numFail++;
   }
   else if(resultCode == expectedResultCode) {
-    if(anazyleOutput) {
+    if(analyzeOutput) {
       if(analyzeFile(_getTestOutputFilename(testName, "pcm"), failedAnalysisFunctionName, &failedAnalysisSample)) {
         testEnvironment->results->numSuccess++;
         _removeOutputFiles(testName);
