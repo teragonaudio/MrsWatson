@@ -26,8 +26,6 @@
     <ClInclude Include="..\..\source\io\SampleSourceAiff.h" />
     <ClInclude Include="..\..\source\io\SampleSourceAudiofile.h" />
     <ClInclude Include="..\..\source\io\SampleSourceFlac.h" />
-    <ClInclude Include="..\..\source\io\SampleSourceMp3.h" />
-    <ClInclude Include="..\..\source\io\SampleSourceOgg.h" />
     <ClInclude Include="..\..\source\io\SampleSourcePcm.h" />
     <ClInclude Include="..\..\source\io\SampleSourceSilence.h" />
     <ClInclude Include="..\..\source\io\SampleSourceWave.h" />
@@ -65,8 +63,6 @@
     <ClCompile Include="..\..\source\io\SampleSourceAiff.c" />
     <ClCompile Include="..\..\source\io\SampleSourceAudiofile.c" />
     <ClCompile Include="..\..\source\io\SampleSourceFlac.c" />
-    <ClCompile Include="..\..\source\io\SampleSourceMp3.c" />
-    <ClCompile Include="..\..\source\io\SampleSourceOgg.c" />
     <ClCompile Include="..\..\source\io\SampleSourcePcm.c" />
     <ClCompile Include="..\..\source\io\SampleSourceSilence.c" />
     <ClCompile Include="..\..\source\io\SampleSourceWave.c" />

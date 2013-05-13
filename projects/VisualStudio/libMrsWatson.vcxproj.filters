@@ -49,12 +49,6 @@
     <ClInclude Include="..\..\source\io\SampleSourceFlac.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\io\SampleSourceMp3.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\io\SampleSourceOgg.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\source\io\SampleSourcePcm.h">
       <Filter>Source Files</Filter>
     </ClInclude>
@@ -157,12 +151,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\io\SampleSourceFlac.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\io\SampleSourceMp3.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\io\SampleSourceOgg.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\io\SampleSourcePcm.c">
