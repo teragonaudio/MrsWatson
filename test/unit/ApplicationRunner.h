@@ -1,3 +1,6 @@
+#ifndef MrsWatson_ApplicationRunner_h
+#define MrsWatson_ApplicationRunner_h
+
 #if HAVE_UNISTD_H
 #include <unistd.h>
 #endif
@@ -8,6 +11,8 @@
 #include "logging/EventLogger.h"
 #include "base/CharString.h"
 #include "MrsWatson.h"
+
+extern const char* kDefaultTestOutputFileType;
 
 typedef struct {
   int currentIndex;
@@ -25,9 +30,12 @@ TestEnvironment newTestEnvironment(char *applicationPath, char *resourcesPath);
 
 void runApplicationTest(const TestEnvironment testEnvironment,
   const char *testName, CharString testArguments,
-  ReturnCodes expectedResultCode, boolByte analyzeOutput);
+  ReturnCodes expectedResultCode, const char* outputFileType);
 
 CharString buildTestArgumentString(const char* arguments, ...);
-char* getTestFilename(const char* resourcesPath, const char* resourceType, const char* resourceName);
+char* getTestResourceFilename(const char* resourcesPath, const char* resourceType, const char* resourceName);
+char* getTestOutputFilename(const char* testName, const char* fileExtension);
 
 void freeTestEnvironment(TestEnvironment testEnvironment);
+
+#endif

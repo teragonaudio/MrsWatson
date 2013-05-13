@@ -17,6 +17,7 @@
 #include "base/FileUtilities.h"
 
 static const char* TEST_OUTPUT_FOLDER = "mrswatsontest-output";
+const char* kDefaultTestOutputFileType = "pcm";
 
 TestEnvironment newTestEnvironment(char *applicationPath, char *resourcesPath) {
   TestEnvironment testEnvironment = (TestEnvironment)malloc(sizeof(TestEnvironmentMembers));
@@ -41,14 +42,14 @@ CharString buildTestArgumentString(const char* arguments, ...) {
   return formattedArguments;
 }
 
-char* getTestFilename(const char* resourcesPath, const char* resourceType, const char* resourceName) {
+char* getTestResourceFilename(const char* resourcesPath, const char* resourceType, const char* resourceName) {
   CharString filename = newCharString();
   snprintf(filename->data, filename->length, "%s%c%s%c%s",
     resourcesPath, PATH_DELIMITER, resourceType, PATH_DELIMITER, resourceName);
   return filename->data;
 }
 
-static char* _getTestOutputFilename(const char* testName, const char* fileExtension) {
+char* getTestOutputFilename(const char* testName, const char* fileExtension) {
   CharString filename = newCharString();
   char* space;
   char *spacePtr;
@@ -74,13 +75,13 @@ static char* _getTestPluginResourcesPath(const char* resourcesPath) {
   return pluginRoot->data;
 }
 
-static void _getDefaultArguments(TestEnvironment testEnvironment,
-  const char *testName, CharString outString) {
+static CharString _getDefaultArguments(TestEnvironment testEnvironment, const char *testName, const char* outputFilename) {
+  CharString outString = newCharString();
   snprintf(outString->data, outString->length,
     "--log-file \"%s\" --verbose --output \"%s\" --plugin-root \"%s\"",
-    _getTestOutputFilename(testName, "txt"),
-    _getTestOutputFilename(testName, "pcm"),
+    getTestOutputFilename(testName, "txt"), outputFilename,
     _getTestPluginResourcesPath(testEnvironment->resourcesPath));
+  return outString;
 }
 
 static void _removeOutputFile(char* argument) {
@@ -90,8 +91,12 @@ static void _removeOutputFile(char* argument) {
 }
 
 static void _removeOutputFiles(const char* testName) {
-  _removeOutputFile(_getTestOutputFilename(testName, "pcm"));
-  _removeOutputFile(_getTestOutputFilename(testName, "txt"));
+  // Remove all possible output files generated during testing
+  _removeOutputFile(getTestOutputFilename(testName, "aif"));
+  _removeOutputFile(getTestOutputFilename(testName, "flac"));
+  _removeOutputFile(getTestOutputFilename(testName, "pcm"));
+  _removeOutputFile(getTestOutputFilename(testName, "wav"));
+  _removeOutputFile(getTestOutputFilename(testName, "txt"));
 }
 
 static const char* _getResultCodeString(const int resultCode) {
@@ -112,7 +117,7 @@ static const char* _getResultCodeString(const int resultCode) {
 
 void runApplicationTest(const TestEnvironment testEnvironment,
   const char *testName, CharString testArguments,
-  ReturnCodes expectedResultCode, boolByte analyzeOutput)
+  ReturnCodes expectedResultCode, const char* outputFileType)
 {
   int result = -1;
   ReturnCodes resultCode = (ReturnCodes)result;
@@ -120,6 +125,8 @@ void runApplicationTest(const TestEnvironment testEnvironment,
   CharString defaultArguments = newCharStringWithCapacity(kCharStringLengthLong);
   CharString failedAnalysisFunctionName = newCharString();
   unsigned long failedAnalysisSample;
+  char* outputFilename = getTestOutputFilename(testName,
+    outputFileType == NULL ? kDefaultTestOutputFileType : outputFileType);
 
   // Remove files from a previous test run
   _removeOutputFiles(testName);
@@ -130,7 +137,7 @@ void runApplicationTest(const TestEnvironment testEnvironment,
   charStringAppendCString(arguments, testEnvironment->applicationPath);
   charStringAppendCString(arguments, "\"");
   charStringAppendCString(arguments, " ");
-  _getDefaultArguments(testEnvironment, testName, defaultArguments);
+  defaultArguments = _getDefaultArguments(testEnvironment, testName, outputFilename);
   charStringAppend(arguments, defaultArguments);
   charStringAppendCString(arguments, " ");
   charStringAppend(arguments, testArguments);
@@ -158,8 +165,8 @@ Please check the executable path specified in the --mrswatson-path argument.",
     testEnvironment->results->numFail++;
   }
   else if(resultCode == expectedResultCode) {
-    if(analyzeOutput) {
-      if(analyzeFile(_getTestOutputFilename(testName, "pcm"), failedAnalysisFunctionName, &failedAnalysisSample)) {
+    if(outputFileType != NULL) {
+      if(analyzeFile(outputFilename, failedAnalysisFunctionName, &failedAnalysisSample)) {
         testEnvironment->results->numSuccess++;
         _removeOutputFiles(testName);
         if(!testEnvironment->results->onlyPrintFailing) {
