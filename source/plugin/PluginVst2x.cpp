@@ -25,6 +25,12 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
+// C++ includes
+#define VST_FORCE_DEPRECATED 0
+#include "aeffectx.h"
+#include "plugin/PluginVst2xCallbacks.h"
+
+// C includes
 extern "C" {
 #include <stdio.h>
 #include <stdlib.h>
@@ -38,236 +44,26 @@ extern "C" {
 #include "plugin/PluginVst2x.h"
 #include "sequencer/AudioSettings.h"
 
-#if MACOSX
-#include <CoreFoundation/CFBundle.h>
-#elif LINUX
-#include <dlfcn.h>
-#endif
+extern LinkedList getVst2xPluginLocations(CharString currentDirectory);
+extern LibraryHandle getLibraryHandleForPlugin(const CharString pluginAbsolutePath);
+extern AEffect* loadVst2xPlugin(LibraryHandle libraryHandle);
+extern void closeLibraryHandle(LibraryHandle libraryHandle);
 }
 
-#define VST_FORCE_DEPRECATED 0
-#include "aeffectx.h"
-
-typedef AEffect* (*Vst2xPluginEntryFunc)(audioMasterCallback host);
-typedef VstIntPtr (*Vst2xPluginDispatcherFunc)(AEffect *effect, VstInt32 opCode, VstInt32 index, VstIntPtr value, void *ptr, float opt);
-typedef float (*Vst2xPluginGetParameterFunc)(AEffect *effect, VstInt32 index);
-typedef void (*Vst2xPluginSetParameterFunc)(AEffect *effect, VstInt32 index, float value);
-typedef void (*Vst2xPluginProcessFunc)(AEffect* effect, float** inputs, float** outputs, VstInt32 sampleFrames);
-
+// Opaque struct must be declared here rather than in the header, otherwise many
+// other files in this project must be compiled as C++ code. =/
 typedef struct {
   AEffect *pluginHandle;
   Vst2xPluginDispatcherFunc dispatcher;
-
-#if MACOSX
-  CFBundleRef bundleRef;
-#elif WINDOWS
-  HMODULE moduleHandle;
-#elif LINUX
-  void* libraryHandle;
-#endif
+  LibraryHandle libraryHandle;
 } PluginVst2xDataMembers;
 typedef PluginVst2xDataMembers* PluginVst2xData;
 
+// Implementation body starts here
 extern "C" {
-extern VstIntPtr VSTCALLBACK vst2xPluginHostCallback(AEffect *effect, VstInt32 opcode, VstInt32 index, VstIntPtr value, void *dataPtr, float opt);
-
 void fillVst2xUniqueIdToString(const long uniqueId, CharString outString) {
   for(int i = 0; i < 4; i++) {
     outString->data[i] = (char)(uniqueId >> ((3 - i) * 8) & 0xff);
-  }
-}
-
-#if MACOSX
-static CFBundleRef _bundleRefForVst2xPlugin(const char* pluginPath) {
-  // Create a path to the bundle
-  CFStringRef pluginPathStringRef = CFStringCreateWithCString(NULL, pluginPath, kCFStringEncodingASCII);
-  CFURLRef bundleUrl = CFURLCreateWithFileSystemPath(kCFAllocatorDefault, pluginPathStringRef, kCFURLPOSIXPathStyle, true);
-  if(bundleUrl == NULL) {
-    logError("Couldn't make URL reference for plugin");
-    return NULL;
-  }
-
-  // Open the bundle
-  CFBundleRef bundleRef = CFBundleCreate(kCFAllocatorDefault, bundleUrl);
-  if(bundleRef == NULL) {
-    logError("Couldn't create bundle reference");
-    CFRelease(pluginPathStringRef);
-    CFRelease(bundleUrl);
-    return NULL;
-  }
-
-  // Clean up
-  CFRelease(pluginPathStringRef);
-  CFRelease(bundleUrl);
-
-  return bundleRef;
-}
-
-static AEffect* _loadVst2xPluginMac(CFBundleRef bundle) {
-  // Somewhat cheap hack to avoid a tricky compiler warning. Casting from void* to a proper function
-  // pointer will cause GCC to warn that "ISO C++ forbids casting between pointer-to-function and
-  // pointer-to-object". Here, we represent both types in a union and use the correct one in the given
-  // context, thus avoiding the need to cast anything.
-  // See also: http://stackoverflow.com/a/2742234/14302
-  union {
-    Vst2xPluginEntryFunc entryPointFuncPtr;
-    void *entryPointVoidPtr;
-  } entryPoint;
-
-  entryPoint.entryPointVoidPtr = CFBundleGetFunctionPointerForName(bundle, CFSTR("VSTPluginMain"));
-  Vst2xPluginEntryFunc mainEntryPoint = entryPoint.entryPointFuncPtr;
-  // VST plugins previous to the 2.4 SDK used main_macho for the entry point name
-  if(mainEntryPoint == NULL) {
-    entryPoint.entryPointVoidPtr = CFBundleGetFunctionPointerForName(bundle, CFSTR("main_macho"));
-    mainEntryPoint = entryPoint.entryPointFuncPtr;
-  }
-
-  if(mainEntryPoint == NULL) {
-    logError("Couldn't get a pointer to plugin's main()");
-    CFBundleUnloadExecutable(bundle);
-    CFRelease(bundle);
-    return NULL;
-  }
-
-  AEffect* plugin = mainEntryPoint(vst2xPluginHostCallback);
-  if(plugin == NULL) {
-    logError("Plugin's main() returns null");
-    CFBundleUnloadExecutable(bundle);
-    CFRelease(bundle);
-    return NULL;
-  }
-
-  return plugin;
-}
-#endif
-
-#if WINDOWS
-static HMODULE _moduleHandleForPlugin(const char* pluginAbsolutePath) {
-  HMODULE moduleHandle = LoadLibraryExA((LPCSTR)pluginAbsolutePath, NULL, LOAD_WITH_ALTERED_SEARCH_PATH);
-  if(moduleHandle == NULL) {
-    logError("Could not open library, error code '%d'", GetLastError());
-    return NULL;
-  }
-  return moduleHandle;
-}
-
-static AEffect* _loadVst2xPluginWindows(HMODULE moduleHandle) {
-  Vst2xPluginEntryFunc entryPoint = (Vst2xPluginEntryFunc)GetProcAddress(moduleHandle, "VSTPluginMain");
-  
-  if(entryPoint == NULL) {
-    entryPoint = (Vst2xPluginEntryFunc)GetProcAddress(moduleHandle, "VstPluginMain()"); 
-  }
-
-  if(entryPoint == NULL) {
-    entryPoint = (Vst2xPluginEntryFunc)GetProcAddress(moduleHandle, "main");
-  }
-
-  if(entryPoint == NULL) {
-    logError("Couldn't get a pointer to plugin's main()");
-    return NULL;
-  }
-
-  AEffect* plugin = entryPoint(vst2xPluginHostCallback);
-  return plugin;
-}
-#endif
-
-#if LINUX
-static void* _libraryHandleForPlugin(const char* pluginAbsolutePath) {
-  void* libraryHandle = dlopen(pluginAbsolutePath, RTLD_NOW | RTLD_LOCAL);
-  if(libraryHandle == NULL) {
-    logError("Could not open library, %s", dlerror());
-    return NULL;
-  }
-  return libraryHandle;
-}
-
-static AEffect* _loadVst2xPluginLinux(void* libraryHandle) {
-  // Somewhat cheap hack to avoid a tricky compiler warning. Casting from void* to a proper function
-  // pointer will cause GCC to warn that "ISO C++ forbids casting between pointer-to-function and
-  // pointer-to-object". Here, we represent both types in a union and use the correct one in the given
-  // context, thus avoiding the need to cast anything.
-  // See also: http://stackoverflow.com/a/2742234/14302
-  union {
-    Vst2xPluginEntryFunc entryPointFuncPtr;
-    void *entryPointVoidPtr;
-  } entryPoint;
-
-  entryPoint.entryPointVoidPtr = dlsym(libraryHandle, "VSTPluginMain");
-  if(entryPoint.entryPointVoidPtr == NULL) {
-    entryPoint.entryPointVoidPtr = dlsym(libraryHandle, "main");
-    if(entryPoint.entryPointVoidPtr == NULL) {
-      logError("Couldn't get a pointer to plugin's main()");
-      return NULL;
-    }
-  }
-  Vst2xPluginEntryFunc mainEntryPoint = entryPoint.entryPointFuncPtr;
-  AEffect* plugin = mainEntryPoint(vst2xPluginHostCallback);
-  return plugin;
-}
-#endif
-
-static void _appendDefaultPluginLocations(PlatformType platformType, LinkedList outLocations) {
-  // TODO: This is pretty lame, need a better solution for this
-  CharString pwdLocationBuffer, locationBuffer1, locationBuffer2, locationBuffer3;
-  const char* vstPathEnv;
-
-  // Regardless of platform, the current directory should be searched first. This is most useful when debugging
-  pwdLocationBuffer = newCharString();
-#if WINDOWS
-  GetCurrentDirectoryA(pwdLocationBuffer->length, pwdLocationBuffer->data);
-#else
-  snprintf(pwdLocationBuffer->data, (size_t)pwdLocationBuffer->length, "%s", getenv("PWD"));
-#endif
-  appendItemToList(outLocations, pwdLocationBuffer);
-
-  switch(platformType) {
-    case PLATFORM_WINDOWS:
-    {
-      locationBuffer1 = newCharString();
-      snprintf(locationBuffer1->data, (size_t)(locationBuffer1->length), "C:\\VstPlugins");
-      appendItemToList(outLocations, locationBuffer1);
-
-      // TODO: On a 64-bit windows, this should be c:\program files (x86)
-      locationBuffer2 = newCharString();
-      snprintf(locationBuffer2->data, (size_t)(locationBuffer2->length), "C:\\Program Files\\Common Files\\VstPlugins");
-      appendItemToList(outLocations, locationBuffer2);
-
-      // TODO: On a 64-bit windows, this should be c:\program files (x86)
-      locationBuffer3 = newCharString();
-      snprintf(locationBuffer3->data, (size_t)(locationBuffer3->length), "C:\\Program Files\\Steinberg\\VstPlugins");
-      appendItemToList(outLocations, locationBuffer3);
-    }
-      break;
-    case PLATFORM_MACOSX:
-    {
-      locationBuffer1 = newCharString();
-      snprintf(locationBuffer1->data, (size_t)(locationBuffer1->length), "/Library/Audio/Plug-Ins/VST");
-      appendItemToList(outLocations, locationBuffer1);
-
-      locationBuffer2 = newCharString();
-      snprintf(locationBuffer2->data, (size_t)(locationBuffer2->length), "%s/Library/Audio/Plug-Ins/VST", getenv("HOME"));
-      appendItemToList(outLocations, locationBuffer2);
-    }
-      break;
-    case PLATFORM_LINUX:
-    {
-      locationBuffer1 = newCharString();
-      snprintf(locationBuffer1->data, (size_t)(locationBuffer1->length), "%s/.vst", getenv("HOME"));
-      appendItemToList(outLocations, locationBuffer1);
-
-      locationBuffer2 = newCharString();
-      vstPathEnv = getenv("VST_PATH");
-      if(vstPathEnv != NULL) {
-        snprintf(locationBuffer2->data, (size_t)(locationBuffer2->length), "%s", vstPathEnv);
-        appendItemToList(outLocations, locationBuffer2);
-      }
-    }
-      break;
-    case PLATFORM_UNSUPPORTED:
-    default:
-      logCritical("Unsupported platform detected. Sorry!");
-      break;
   }
 }
 
@@ -285,7 +81,8 @@ static const char* _getVst2xPlatformExtension(void) {
   }
 }
 
-static void _listPluginsVst2xInLocation(const CharString location) {
+static void _listPluginsVst2xInLocation(void* item, void* userData) {
+  CharString location;
   LinkedList locationItems;
   LinkedListIterator iterator;
   char* itemName;
@@ -293,6 +90,7 @@ static void _listPluginsVst2xInLocation(const CharString location) {
   int numItems, numPlugins = 0;
   const char* platformVstExtension = _getVst2xPlatformExtension();
 
+  location = (CharString)item;
   _logPluginLocation(location, PLUGIN_TYPE_VST_2X);
   locationItems = newLinkedList();
   numItems = listDirectory(location->data, locationItems);
@@ -325,18 +123,11 @@ static void _listPluginsVst2xInLocation(const CharString location) {
 
 void listAvailablePluginsVst2x(const CharString pluginRoot) {
   if(!charStringIsEmpty(pluginRoot)) {
-    _listPluginsVst2xInLocation(pluginRoot);
+    _listPluginsVst2xInLocation(pluginRoot, NULL);
   }
 
-  LinkedList pluginLocations = newLinkedList();
-  _appendDefaultPluginLocations(getPlatformType(), pluginLocations);
-  LinkedListIterator iterator = pluginLocations;
-  while(iterator != NULL) {
-    CharString location = (CharString)iterator->item;
-    _listPluginsVst2xInLocation(location);
-    iterator = (LinkedListIterator)iterator->nextItem;
-  }
-
+  LinkedList pluginLocations = getVst2xPluginLocations(getCurrentDirectory());
+  foreachItemInList(pluginLocations, _listPluginsVst2xInLocation, NULL);
   freeLinkedListAndItems(pluginLocations, (LinkedListFreeItemFunc)freeCharString);
 }
 
@@ -381,10 +172,9 @@ static boolByte _fillVst2xPluginAbsolutePath(const CharString pluginName, const 
     }
   }
 
-  // If the plugin wasn't found in the user's plugin root, then try searching the default locations for the platform,
-  // which includes the current directory.
-  LinkedList pluginLocations = newLinkedList();
-  _appendDefaultPluginLocations(getPlatformType(), pluginLocations);
+  // If the plugin wasn't found in the user's plugin root, then try searching 
+  // the default locations for the platform, starting with the current directory.
+  LinkedList pluginLocations = getVst2xPluginLocations(getCurrentDirectory());
   if(pluginLocations->item == NULL) {
     freeLinkedList(pluginLocations);
     return false;
@@ -487,27 +277,11 @@ static boolByte _openVst2xPlugin(void* pluginPtr) {
   }
   logDebug("Plugin location is '%s'", plugin->pluginLocation->data);
 
-#if MACOSX
-  data->bundleRef = _bundleRefForVst2xPlugin(pluginAbsolutePath->data);
-  if(data->bundleRef == NULL) {
-    return false;
-  }
-  pluginHandle = _loadVst2xPluginMac(data->bundleRef);
-#elif WINDOWS
-  data->moduleHandle = _moduleHandleForPlugin(pluginAbsolutePath->data);
-  if(data->moduleHandle == NULL) {
-    return false;
-  }
-  pluginHandle = _loadVst2xPluginWindows(data->moduleHandle);
-#elif LINUX
-  data->libraryHandle = _libraryHandleForPlugin(pluginAbsolutePath->data);
+  data->libraryHandle = getLibraryHandleForPlugin(pluginAbsolutePath);
   if(data->libraryHandle == NULL) {
     return false;
   }
-  pluginHandle = _loadVst2xPluginLinux(data->libraryHandle);
-#else
-#error Unsupported platform
-#endif
+  pluginHandle = loadVst2xPlugin(data->libraryHandle);
 
   if(pluginHandle == NULL) {
     logError("Could not load VST2.x plugin '%s'", pluginAbsolutePath->data);
@@ -728,17 +502,7 @@ static void _freeVst2xPluginData(void* pluginDataPtr) {
   data->dispatcher(data->pluginHandle, effClose, 0, 0, NULL, 0.0f);
   data->dispatcher = NULL;
   data->pluginHandle = NULL;
-
-#if MACOSX
-  CFBundleUnloadExecutable(data->bundleRef);
-  CFRelease(data->bundleRef);
-#elif WINDOWS
-  FreeLibrary(data->moduleHandle);
-#elif LINUX
-  dlclose(data->libraryHandle);
-#else
-#error Unsupported platform
-#endif
+  closeLibraryHandle(data->libraryHandle);
 
   free(data);
 }
