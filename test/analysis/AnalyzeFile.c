@@ -60,6 +60,7 @@ boolByte analyzeFile(const char* filename, CharString failedAnalysisFunctionName
   boolByte result;
   CharString analysisFilename;
   SampleSource sampleSource;
+  SampleSourceType sampleSourceType;
   LinkedList analysisFunctions = newLinkedList();
   AnalysisData analysisData;
   unsigned long currentBlockSample = 0;
@@ -70,8 +71,8 @@ boolByte analyzeFile(const char* filename, CharString failedAnalysisFunctionName
   initAudioSettings();
   _setupAnalysisFunctions(analysisFunctions);
   analysisFilename = newCharStringWithCString(filename);
-  sampleSource = newSampleSource(SAMPLE_SOURCE_TYPE_PCM, analysisFilename);
-
+  sampleSourceType = guessSampleSourceType(analysisFilename);
+  sampleSource = newSampleSource(sampleSourceType, analysisFilename);
   if(sampleSource == NULL) {
     return false;
   }
