@@ -31,12 +31,12 @@
 #define VST_FORCE_DEPRECATED 0
 #include "aeffectx.h"
 
-VstIntPtr VSTCALLBACK vst2xPluginHostCallback(AEffect *effect, VstInt32 opcode, VstInt32 index, VstIntPtr value, void *dataPtr, float opt);
-
 typedef AEffect* (*Vst2xPluginEntryFunc)(audioMasterCallback host);
 typedef VstIntPtr (*Vst2xPluginDispatcherFunc)(AEffect *effect, VstInt32 opCode, VstInt32 index, VstIntPtr value, void *ptr, float opt);
 typedef float (*Vst2xPluginGetParameterFunc)(AEffect *effect, VstInt32 index);
 typedef void (*Vst2xPluginSetParameterFunc)(AEffect *effect, VstInt32 index, float value);
 typedef void (*Vst2xPluginProcessFunc)(AEffect* effect, float** inputs, float** outputs, VstInt32 sampleFrames);
+
+VstIntPtr VSTCALLBACK pluginVst2xHostCallback(AEffect *effect, VstInt32 opcode, VstInt32 index, VstIntPtr value, void *dataPtr, float opt);
 
 #endif

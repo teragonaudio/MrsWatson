@@ -25,6 +25,12 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
+// C++ includes
+#define VST_FORCE_DEPRECATED 0
+#include "aeffectx.h"
+#include "plugin/PluginVst2xHostCallback.h"
+
+// C includes
 extern "C" {
 #include <stdio.h>
 #include <string.h>
@@ -36,9 +42,6 @@ extern "C" {
 #include "sequencer/AudioClock.h"
 #include "sequencer/AudioSettings.h"
 }
-
-#define VST_FORCE_DEPRECATED 0
-#include "aeffectx.h"
 
 extern "C" {
 // TODO: This method is important. We should implement the most common requests made by plugins.
@@ -57,11 +60,11 @@ static int _canHostDo(const char* pluginName, const char* canDoString) {
   
   return result;
 }
+}
 
 VstTimeInfo vstTimeInfo;
 
-VstIntPtr VSTCALLBACK vst2xPluginHostCallback(AEffect *effect, VstInt32 opcode, VstInt32 index, VstIntPtr value, void *dataPtr, float opt);
-VstIntPtr VSTCALLBACK vst2xPluginHostCallback(AEffect *effect, VstInt32 opcode, VstInt32 index, VstIntPtr value, void *dataPtr, float opt) {
+VstIntPtr VSTCALLBACK pluginVst2xHostCallback(AEffect *effect, VstInt32 opcode, VstInt32 index, VstIntPtr value, void *dataPtr, float opt) {
   // This string is used in a bunch of logging calls below
   CharString uniqueIdString = newCharStringWithCapacity(kCharStringLengthShort);
   if(effect != NULL) {
