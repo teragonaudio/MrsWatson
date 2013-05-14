@@ -109,7 +109,7 @@ void initializeErrorReporter(ErrorReporter self) {
   snprintf(self->desktopPath->data, self->desktopPath->length,
     "%s/Desktop", getenv("HOME"));
 #elif WINDOWS
-  SHGetFolderPathA(NULL, CSIDL_DESKTOPDIRECTORY, NULL, 0, errorReporter->desktopPath->data);
+  SHGetFolderPathA(NULL, CSIDL_DESKTOPDIRECTORY, NULL, 0, self->desktopPath->data);
 #endif
   snprintf(self->reportDirPath->data, self->reportDirPath->length,
     "%s%c%s", self->desktopPath->data, PATH_DELIMITER, self->reportName->data);
