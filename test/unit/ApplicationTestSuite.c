@@ -4,6 +4,7 @@ int runApplicationTestSuite(TestEnvironment environment);
 int runApplicationTestSuite(TestEnvironment environment) {
   // Test resource paths
   const char* resourcesPath = environment->resourcesPath;
+  const char* a440_mono_pcm = getTestResourceFilename(resourcesPath, "audio", "a440-mono.pcm");
   const char* a440_stereo_pcm = getTestResourceFilename(resourcesPath, "audio", "a440-stereo.pcm");
   const char* a440_stereo_wav = getTestResourceFilename(resourcesPath, "audio", "a440-stereo.wav");
   const char* c_scale_mid = getTestResourceFilename(resourcesPath, "midi", "c-scale.mid");
@@ -59,7 +60,25 @@ int runApplicationTestSuite(TestEnvironment environment) {
     RETURN_CODE_SUCCESS, "wav"
   );
 
-  // Processing tests
+  // Configuration tests
+  runApplicationTest(environment, "Read mono input source",
+    buildTestArgumentString("--plugin again --input \"%s\" --channels 1", a440_mono_pcm),
+    RETURN_CODE_SUCCESS, kDefaultTestOutputFileType
+  );
+  runApplicationTest(environment, "Read with user-defined sample rate",
+    buildTestArgumentString("--plugin again --input \"%s\" --sample-rate 48000", a440_stereo_pcm),
+    RETURN_CODE_SUCCESS, kDefaultTestOutputFileType
+  );
+  runApplicationTest(environment, "Read with user-defined blocksize",
+    buildTestArgumentString("--plugin again --input \"%s\" --blocksize 128", a440_stereo_pcm),
+    RETURN_CODE_SUCCESS, kDefaultTestOutputFileType
+  );
+  runApplicationTest(environment, "Add tail-time",
+    buildTestArgumentString("--plugin again --input \"%s\" --tail-time 10", a440_stereo_pcm),
+    RETURN_CODE_SUCCESS, kDefaultTestOutputFileType
+  );
+
+  // Plugin processing tests
   runApplicationTest(environment, "Process audio with again plugin",
     buildTestArgumentString("--plugin again --input \"%s\"", a440_stereo_pcm),
     RETURN_CODE_SUCCESS, kDefaultTestOutputFileType
