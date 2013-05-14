@@ -49,10 +49,10 @@ static int _canHostDo(const char* pluginName, const char* canDoString) {
   // TODO: This is just a guess. No idea how long this string can/should be
   const size_t canDoStringLength = 32;
   if(!strncmp(canDoString, EMPTY_STRING, canDoStringLength)) {
-    logWarn("Plugin '%s' asked if we can do an empty string", pluginName);
+    logWarn("Plugin '%s' asked if we can do an empty string. This is probably a bug.", pluginName);
   }
   else {
-    logWarn("Plugin '%s' asked if host canDo '%s' (unimplemented)", canDoString);
+    logInfo("Plugin '%s' asked if host canDo '%s' (unimplemented)", canDoString);
   }
   
   return result;
@@ -79,7 +79,7 @@ VstIntPtr VSTCALLBACK vst2xPluginHostCallback(AEffect *effect, VstInt32 opcode, 
       // The plugin will call this if a parameter has changed via MIDI or the GUI, so the host can update
       // itself accordingly. We don't care about this (for the time being), and as we don't support either
       // GUI's or live MIDI, this shouldn't happen.
-      logWarn("Plugin '%s' asked us to automate parameter %d (unsupported)", uniqueId, index);
+      logInfo("Plugin '%s' asked us to automate parameter %d (unsupported)", uniqueId, index);
       break;
     case audioMasterVersion:
       // We are a VST 2.4 compatible host
@@ -241,7 +241,7 @@ VstIntPtr VSTCALLBACK vst2xPluginHostCallback(AEffect *effect, VstInt32 opcode, 
       result = VERSION_MAJOR * 1000 + VERSION_MINOR * 100 + VERSION_PATCH;
       break;
     case audioMasterVendorSpecific:
-      logWarn("Plugin '%s' made a vendor specific (unsupported). Arguments: %d, %d, %f", uniqueId, index, value, opt);
+      logWarn("Plugin '%s' made a vendor specific call (unsupported). Arguments: %d, %d, %f", uniqueId, index, value, opt);
       break;
     case audioMasterCanDo:
       result = _canHostDo(uniqueId, (char *)dataPtr);
@@ -293,4 +293,4 @@ VstIntPtr VSTCALLBACK vst2xPluginHostCallback(AEffect *effect, VstInt32 opcode, 
   freeCharString(uniqueIdString);
   return result;
 }
-}
+} // extern "C"
