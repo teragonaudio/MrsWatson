@@ -26,9 +26,19 @@
 //
 
 #if MACOSX
-#include <CoreFoundation/CFBundle.h>
-#include "base/PlatformUtilities.h"
+#define VST_FORCE_DEPRECATED 0
+#include "aeffectx.h"
 
+extern "C" {
+#include <stdlib.h>
+#include <CoreFoundation/CFBundle.h>
+#include "base/CharString.h"
+#include "base/LinkedList.h"
+#include "base/PlatformUtilities.h"
+#include "logging/EventLogger.h"
+#include "plugin/PluginVst2xCallbacks.h"
+
+LinkedList getVst2xPluginLocations(CharString currentDirectory);
 LinkedList getVst2xPluginLocations(CharString currentDirectory) {
   LinkedList locations = newLinkedList();
   CharString locationBuffer;
@@ -37,18 +47,19 @@ LinkedList getVst2xPluginLocations(CharString currentDirectory) {
 
   locationBuffer = newCharString();
   snprintf(locationBuffer->data, (size_t)(locationBuffer->length), "/Library/Audio/Plug-Ins/VST");
-  appendItemToList(outLocations, locationBuffer);
+  appendItemToList(locations, locationBuffer);
 
   locationBuffer = newCharString();
   snprintf(locationBuffer->data, (size_t)(locationBuffer->length), "%s/Library/Audio/Plug-Ins/VST", getenv("HOME"));
-  appendItemToList(outLocations, locationBuffer);
+  appendItemToList(locations, locationBuffer);
 
   return locations;
 }
 
-LibraryHandle bundleRefForVst2xPlugin(const CharString pluginPath) {
+LibraryHandle getLibraryHandleForPlugin(const CharString pluginAbsolutePath);
+LibraryHandle getLibraryHandleForPlugin(const CharString pluginAbsolutePath) {
   // Create a path to the bundle
-  CFStringRef pluginPathStringRef = CFStringCreateWithCString(NULL, pluginPath, kCFStringEncodingASCII);
+  CFStringRef pluginPathStringRef = CFStringCreateWithCString(NULL, pluginAbsolutePath->data, kCFStringEncodingASCII);
   CFURLRef bundleUrl = CFURLCreateWithFileSystemPath(kCFAllocatorDefault, pluginPathStringRef, kCFURLPOSIXPathStyle, true);
   if(bundleUrl == NULL) {
     logError("Couldn't make URL reference for plugin");
@@ -71,7 +82,8 @@ LibraryHandle bundleRefForVst2xPlugin(const CharString pluginPath) {
   return bundleRef;
 }
 
-AEffect* loadVst2xPluginMac(CFBundleRef bundle) {
+AEffect* loadVst2xPlugin(LibraryHandle libraryHandle);
+AEffect* loadVst2xPlugin(LibraryHandle libraryHandle) {
   // Somewhat cheap hack to avoid a tricky compiler warning. Casting from void* to a proper function
   // pointer will cause GCC to warn that "ISO C++ forbids casting between pointer-to-function and
   // pointer-to-object". Here, we represent both types in a union and use the correct one in the given
@@ -82,35 +94,37 @@ AEffect* loadVst2xPluginMac(CFBundleRef bundle) {
     void *entryPointVoidPtr;
   } entryPoint;
 
-  entryPoint.entryPointVoidPtr = CFBundleGetFunctionPointerForName(bundle, CFSTR("VSTPluginMain"));
+  entryPoint.entryPointVoidPtr = CFBundleGetFunctionPointerForName(libraryHandle, CFSTR("VSTPluginMain"));
   Vst2xPluginEntryFunc mainEntryPoint = entryPoint.entryPointFuncPtr;
   // VST plugins previous to the 2.4 SDK used main_macho for the entry point name
   if(mainEntryPoint == NULL) {
-    entryPoint.entryPointVoidPtr = CFBundleGetFunctionPointerForName(bundle, CFSTR("main_macho"));
+    entryPoint.entryPointVoidPtr = CFBundleGetFunctionPointerForName(libraryHandle, CFSTR("main_macho"));
     mainEntryPoint = entryPoint.entryPointFuncPtr;
   }
 
   if(mainEntryPoint == NULL) {
     logError("Couldn't get a pointer to plugin's main()");
-    CFBundleUnloadExecutable(bundle);
-    CFRelease(bundle);
+    CFBundleUnloadExecutable(libraryHandle);
+    CFRelease(libraryHandle);
     return NULL;
   }
 
   AEffect* plugin = mainEntryPoint(vst2xPluginHostCallback);
   if(plugin == NULL) {
     logError("Plugin's main() returns null");
-    CFBundleUnloadExecutable(bundle);
-    CFRelease(bundle);
+    CFBundleUnloadExecutable(libraryHandle);
+    CFRelease(libraryHandle);
     return NULL;
   }
 
   return plugin;
 }
 
-// For closing:
-// CFBundleUnloadExecutable(data->bundleRef);
-// CFRelease(data->bundleRef);
+void closeLibraryHandle(LibraryHandle libraryHandle);
+void closeLibraryHandle(LibraryHandle libraryHandle) {
+  CFBundleUnloadExecutable(libraryHandle);
+  CFRelease(libraryHandle);
+}
 
-
+} // extern "C"
 #endif

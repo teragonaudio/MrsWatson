@@ -48,12 +48,14 @@
 #define isatty _isatty
 #define chdir _chdir
 #define unlink _unlink
+#elif MACOSX
+#include <CoreFoundation/CFBundle.h>
 #elif LINUX
 #include <strings.h>
 #endif
 
 #if MACOSX
-typedef BundleRef LibraryHandle;
+typedef CFBundleRef LibraryHandle;
 #elif LINUX
 typedef void* LibraryHandle;
 #elif WINDOWS
