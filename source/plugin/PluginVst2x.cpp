@@ -49,7 +49,7 @@ extern "C" {
 #include "aeffectx.h"
 
 typedef AEffect* (*Vst2xPluginEntryFunc)(audioMasterCallback host);
-typedef VstIntPtr (*Vst2xPluginDispatcherFunc)(AEffect *effect, VstInt32 opCode, VstInt32 index, VstInt32 value, void *ptr, float opt);
+typedef VstIntPtr (*Vst2xPluginDispatcherFunc)(AEffect *effect, VstInt32 opCode, VstInt32 index, VstIntPtr value, void *ptr, float opt);
 typedef float (*Vst2xPluginGetParameterFunc)(AEffect *effect, VstInt32 index);
 typedef void (*Vst2xPluginSetParameterFunc)(AEffect *effect, VstInt32 index, float value);
 typedef void (*Vst2xPluginProcessFunc)(AEffect* effect, float** inputs, float** outputs, VstInt32 sampleFrames);
@@ -458,7 +458,7 @@ static boolByte _initVst2xPlugin(Plugin plugin) {
   }
   struct VstSpeakerArrangement outSpeakers;
   memcpy(&outSpeakers, &inSpeakers, sizeof(VstSpeakerArrangement));
-  data->dispatcher(data->pluginHandle, effSetSpeakerArrangement, 0,(VstInt32)&inSpeakers, &outSpeakers, 0.0f);
+  data->dispatcher(data->pluginHandle, effSetSpeakerArrangement, 0, (VstIntPtr)&inSpeakers, &outSpeakers, 0.0f);
 
   _resumePlugin(plugin);
   return true;
