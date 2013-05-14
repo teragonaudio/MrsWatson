@@ -33,7 +33,11 @@ else()
   set(platform_name "Unknown")
 endif()
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin/${platform_name})
+if(CMAKE_BUILD_TYPE MATCHES "Debug")
+  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/build)
+else()
+  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin/${platform_name})
+endif()
 
 # Third-party dependencies #####################################
 include(ExternalProject)
