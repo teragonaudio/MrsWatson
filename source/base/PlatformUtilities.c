@@ -46,6 +46,7 @@
 #elif LINUX
 #define LSB_DISTRIBUTION "DISTRIB_DESCRIPTION"
 #include <sys/utsname.h>
+#include <errno.h>
 #endif
 #endif
 
@@ -185,8 +186,12 @@ CharString getPlatformName(void) {
 
 CharString getExecutablePath(void) {
   CharString executablePath = newCharString();
-  #if LINUX
-  readlink("/proc/self/exe", executablePath->data, executablePath->length);
+#if LINUX
+  ssize_t result = readlink("/proc/self/exe", executablePath->data, executablePath->length);
+  if(result < 0) {
+    logWarn("Could not find executable path, error '%s'", strerror(errno));
+    return NULL;
+  }
 #elif MACOSX
   _NSGetExecutablePath(executablePath->data, (uint32_t*)&executablePath->length);
 #elif WINDOWS
