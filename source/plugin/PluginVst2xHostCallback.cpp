@@ -63,7 +63,6 @@ static int _canHostDo(const char* pluginName, const char* canDoString) {
   
   return result;
 }
-}
 
 VstIntPtr VSTCALLBACK pluginVst2xHostCallback(AEffect *effect, VstInt32 opcode, VstInt32 index, VstIntPtr value, void *dataPtr, float opt) {
   // This string is used in a bunch of logging calls below
@@ -297,3 +296,4 @@ VstIntPtr VSTCALLBACK pluginVst2xHostCallback(AEffect *effect, VstInt32 opcode, 
   freeCharString(uniqueIdString);
   return result;
 }
+} // extern "C"
