@@ -62,10 +62,8 @@ boolByte analyzeFile(const char* filename, CharString failedAnalysisFunctionName
   SampleSource sampleSource;
   SampleSourceType sampleSourceType;
   LinkedList analysisFunctions = newLinkedList();
-  AnalysisData analysisData;
+  AnalysisData analysisData = (AnalysisData)malloc(sizeof(AnalysisDataMembers));
   unsigned long currentBlockSample = 0;
-
-  analysisData = (AnalysisData)malloc(sizeof(AnalysisDataMembers));
 
   // Needed to initialize new sample sources
   initAudioSettings();
