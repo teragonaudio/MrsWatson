@@ -43,6 +43,9 @@ extern "C" {
 #include "sequencer/AudioSettings.h"
 }
 
+// Global variables (sigh, yes)
+static VstTimeInfo vstTimeInfo;
+
 extern "C" {
 // TODO: This method is important. We should implement the most common requests made by plugins.
 static int _canHostDo(const char* pluginName, const char* canDoString) {
@@ -61,8 +64,6 @@ static int _canHostDo(const char* pluginName, const char* canDoString) {
   return result;
 }
 }
-
-VstTimeInfo vstTimeInfo;
 
 VstIntPtr VSTCALLBACK pluginVst2xHostCallback(AEffect *effect, VstInt32 opcode, VstInt32 index, VstIntPtr value, void *dataPtr, float opt) {
   // This string is used in a bunch of logging calls below
@@ -296,4 +297,3 @@ VstIntPtr VSTCALLBACK pluginVst2xHostCallback(AEffect *effect, VstInt32 opcode, 
   freeCharString(uniqueIdString);
   return result;
 }
-} // extern "C"
