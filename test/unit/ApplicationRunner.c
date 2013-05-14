@@ -16,8 +16,8 @@
 #include "analysis/AnalyzeFile.h"
 #include "base/FileUtilities.h"
 
-static const char* TEST_OUTPUT_FOLDER = "mrswatsontest-output";
 const char* kDefaultTestOutputFileType = "pcm";
+static const char* kApplicationRunnerOutputFolder = "out";
 static const int kApplicationRunnerWaitTimeoutInMs = 1000;
 
 TestEnvironment newTestEnvironment(char *applicationPath, char *resourcesPath) {
@@ -55,7 +55,7 @@ char* getTestOutputFilename(const char* testName, const char* fileExtension) {
   char* space;
   char *spacePtr;
   snprintf(filename->data, filename->length, "%s%c%s.%s",
-    TEST_OUTPUT_FOLDER, PATH_DELIMITER, testName, fileExtension);
+    kApplicationRunnerOutputFolder, PATH_DELIMITER, testName, fileExtension);
   spacePtr = filename->data;
   do {
     space = strchr(spacePtr + 1, ' ');
@@ -137,7 +137,7 @@ void runApplicationTest(const TestEnvironment testEnvironment,
 
   // Remove files from a previous test run
   _removeOutputFiles(testName);
-  makeDirectory(newCharStringWithCString(TEST_OUTPUT_FOLDER));
+  makeDirectory(newCharStringWithCString(kApplicationRunnerOutputFolder));
 
   // Create the command line argument
   charStringAppendCString(arguments, "\"");
