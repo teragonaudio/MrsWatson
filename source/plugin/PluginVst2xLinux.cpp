@@ -36,7 +36,7 @@ extern "C" {
 #include "base/LinkedList.h"
 #include "base/PlatformUtilities.h"
 #include "logging/EventLogger.h"
-#include "plugin/PluginVst2xCallbacks.h"
+#include "plugin/PluginVst2xHostCallback.h"
 
 LinkedList getVst2xPluginLocations(CharString currentDirectory) {
   LinkedList locations = newLinkedList();
@@ -88,7 +88,7 @@ AEffect* loadVst2xPlugin(LibraryHandle libraryHandle) {
     }
   }
   Vst2xPluginEntryFunc mainEntryPoint = entryPoint.entryPointFuncPtr;
-  AEffect* plugin = mainEntryPoint(vst2xPluginHostCallback);
+  AEffect* plugin = mainEntryPoint(pluginVst2xHostCallback);
   return plugin;
 }
 
