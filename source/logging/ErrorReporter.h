@@ -41,17 +41,18 @@ typedef struct {
 typedef ErrorReporterMembers* ErrorReporter;
 
 ErrorReporter newErrorReporter(void);
-void initializeErrorReporter(ErrorReporter errorReporter);
+void initializeErrorReporter(ErrorReporter self);
 
-void createCommandLineLauncher(ErrorReporter errorReporter, int argc, char* argv[]);
-void remapPathToErrorReportDir(ErrorReporter errorReporter, CharString path);
-boolByte copyFileToErrorReportDir(ErrorReporter errorReporter, CharString path);
-boolByte copyPluginsToErrorReportDir(ErrorReporter errorReporter, PluginChain pluginChain);
+void createCommandLineLauncher(ErrorReporter self, int argc, char* argv[]);
+void remapPathToErrorReportDir(ErrorReporter self, CharString path);
+boolByte copyFileToErrorReportDir(ErrorReporter self, CharString path);
+boolByte shouldCopyPluginsToReportDir(void);
+boolByte copyPluginsToErrorReportDir(ErrorReporter self, PluginChain pluginChain);
 
 void printErrorReportInfo(void);
-void completeErrorReport(ErrorReporter errorReporter);
-void printErrorReportComplete(void);
+void completeErrorReport(ErrorReporter self);
+void printErrorReportComplete(ErrorReporter self);
 
-void freeErrorReporter(ErrorReporter errorReporter);
+void freeErrorReporter(ErrorReporter self);
 
 #endif

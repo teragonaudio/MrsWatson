@@ -69,7 +69,10 @@ static void prettyPrintTime(CharString outString, double milliseconds) {
 static void _remapFileToErrorReport(ErrorReporter errorReporter, ProgramOption option, boolByte copyFile) {
   if(option->enabled) {
     if(copyFile) {
-      copyFileToErrorReportDir(errorReporter, option->argument);
+      if(!copyFileToErrorReportDir(errorReporter, option->argument)) {
+        logWarn("Failed copying '%s' to error report directory, please include this file manually",
+          option->argument->data);
+      }
     }
     remapPathToErrorReportDir(errorReporter, option->argument);
   }
@@ -384,7 +387,11 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
 
   // Copy plugins before they have been opened
   if(programOptions->options[OPTION_ERROR_REPORT]->enabled) {
-    copyPluginsToErrorReportDir(errorReporter, pluginChain);
+    if(shouldCopyPluginsToReportDir()) {
+      if(!copyPluginsToErrorReportDir(errorReporter, pluginChain)) {
+        logWarn("Failed copying plugins to error report directory");
+      }
+    }
   }
 
   // Initialize the plugin chain after the global sample rate has been set
@@ -582,7 +589,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
 
   if(errorReporter->started) {
     completeErrorReport(errorReporter);
-    printErrorReportComplete();
+    printErrorReportComplete(errorReporter);
   }
 
   return RETURN_CODE_SUCCESS;
