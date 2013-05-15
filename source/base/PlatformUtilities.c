@@ -65,7 +65,7 @@ const char* getShortPlatformName(void) {
 #if MACOSX
   return "Mac OS X";
 #elif WINDOWS
-  if(isExecutable64Bit()) {
+  if(isHost64Bit()) {
     return "Windows 64-bit";
   }
   else {
