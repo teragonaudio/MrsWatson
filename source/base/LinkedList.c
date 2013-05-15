@@ -104,7 +104,7 @@ void foreachItemInList(LinkedList list, LinkedListForeachFunc foreachFunc, void*
 
 void freeLinkedList(LinkedList list) {
   LinkedListIterator iterator = list;
-  while(true) {
+  while(true && iterator != NULL) {
     if(iterator->nextItem == NULL) {
       free(iterator);
       break;

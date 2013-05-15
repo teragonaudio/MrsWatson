@@ -137,6 +137,11 @@ static int _testForeachOverUserData(void) {
   return 0;
 }
 
+static int _testFreeNullLinkedList(void) {
+  freeLinkedList(NULL);
+  return 0;
+}
+
 TestSuite addLinkedListTests(void);
 TestSuite addLinkedListTests(void) {
   TestSuite testSuite = newTestSuite("LinkedList", _linkedListTestSetup, NULL);
@@ -150,6 +155,7 @@ TestSuite addLinkedListTests(void) {
   addTest(testSuite, "ForeachOverNullList", _testForeachOverNullList);
   addTest(testSuite, "ForeachOverEmptyList", _testForeachOverEmptyList);
   addTest(testSuite, "ForeachOverList", _testForeachOverList);
-  addTest(testSuite, "ForeachWithUserData", _testForeachOverUserData)
+  addTest(testSuite, "ForeachWithUserData", _testForeachOverUserData);
+  addTest(testSuite, "FreeNullLinkedList", _testFreeNullLinkedList);
   return testSuite;
 }
