@@ -402,6 +402,11 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
     return result;
   }
 
+  // Display info for plugins in the chain before checking for valid input/output sources
+  if(shouldDisplayPluginInfo) {
+    displayPluginInfo(pluginChain);
+  }
+
   // Verify input/output sources. This must be done after the plugin chain is initialized
   // otherwise the head plugin type is not known, which influences whether we must abort
   // processing.
@@ -433,11 +438,6 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
       logError("Plugin chain contains only effects, but no input source was supplied");
       return RETURN_CODE_MISSING_REQUIRED_OPTION;
     }
-  }
-
-  // Display info for plugins in the chain before checking for valid input/output sources
-  if(shouldDisplayPluginInfo) {
-    displayPluginInfo(pluginChain);
   }
 
   inputSampleBuffer = newSampleBuffer(getNumChannels(), getBlocksize());
