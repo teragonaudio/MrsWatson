@@ -38,30 +38,30 @@ void addTestToTestSuite(TestSuite testSuite, TestCase testCase) {
 
 void printTestSuccess(void) {
   if(isatty(1)) {
-    printToLog(ANSI_COLOR_FG_GREEN, NULL, "OK");
+    printToLog(COLOR_FG_GREEN, NULL, "OK");
   }
   else {
-    printToLog(NULL, NULL, "OK");
+    printToLog(COLOR_RESET, NULL, "OK");
   }
   flushLog(NULL);
 }
 
 void printTestFail(void) {
   if(isatty(1)) {
-    printToLog(ANSI_COLOR_BG_MAROON, NULL, "FAIL");
+    printToLog(COLOR_BG_MAROON, NULL, "FAIL");
   }
   else {
-    printToLog(NULL, NULL, "FAIL");
+    printToLog(COLOR_RESET, NULL, "FAIL");
   }
   flushLog(NULL);
 }
 
 static void _printTestSkipped(void) {
   if(isatty(1)) {
-    printToLog(ANSI_COLOR_FG_YELLOW, NULL, "Skipped");
+    printToLog(COLOR_FG_YELLOW, NULL, "Skipped");
   }
   else {
-    printToLog(NULL, NULL, "Skipped");
+    printToLog(COLOR_RESET, NULL, "Skipped");
   }
   flushLog(NULL);
 }
@@ -112,12 +112,12 @@ void runTestCase(void* item, void* extraData) {
 void runTestSuite(void* testSuitePtr, void* extraData) {
   TestSuite testSuite = (TestSuite)testSuitePtr;
 
-  printToLog(NULL, NULL, "Running tests in ");
+  printToLog(COLOR_RESET, NULL, "Running tests in ");
   if(isatty(1)) {
-    printToLog(ANSI_COLOR_FG_BLUE, NULL, testSuite->name);
+    printToLog(COLOR_FG_CYAN, NULL, testSuite->name);
   }
   else {
-    printToLog(NULL, NULL, testSuite->name);
+    printToLog(COLOR_RESET, NULL, testSuite->name);
   }
   flushLog(NULL);
 

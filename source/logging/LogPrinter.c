@@ -29,23 +29,44 @@
 
 #include "logging/LogPrinter.h"
 
+#if UNIX
 void printToLog(const char* color, FILE* logFile, const char* message) {
   if(logFile == NULL) {
     if(color == NULL) {
       fprintf(stderr, "%s", message);
     }
     else {
-#if USE_COLORS
-      fprintf(stderr, "%s%s%s", color, message, ANSI_COLOR_RESET);
-#else
-      fprintf(stderr, "%s", message);
-#endif
+      fprintf(stderr, "%s%s%s", color, message, COLOR_RESET);
     }
   }
   else {
     fprintf(logFile, "%s", message);
   }
 }
+#elif WINDOWS
+void printToLog(const LogColor color, FILE* logFile, const char* message) {
+  static HANDLE consoleHandle = NULL;
+  CONSOLE_SCREEN_BUFFER_INFO screenBufferInfo;
+
+  if(logFile == NULL) {
+    if(color != 0) {
+      if(consoleHandle == NULL) {
+        consoleHandle = GetStdHandle(STD_ERROR_HANDLE);
+      }
+      GetConsoleScreenBufferInfo(consoleHandle, &screenBufferInfo);
+      SetConsoleTextAttribute(consoleHandle, color);
+      fprintf(stderr, "%s", message);
+      SetConsoleTextAttribute(consoleHandle, screenBufferInfo.wAttributes);
+    }
+    else {
+      fprintf(stderr, "%s", message);
+    }
+  }
+  else {
+    fprintf(logFile, "%s", message);
+  }
+}
+#endif
 
 void flushLog(FILE* logFile) {
   if(logFile == NULL) {
@@ -59,35 +80,35 @@ void flushLog(FILE* logFile) {
 }
 
 void printTestPattern(void) {
-  printToLog(ANSI_COLOR_FG_BLACK, NULL, "ANSI_COLOR_FG_BLACK"); flushLog(NULL);
-  printToLog(ANSI_COLOR_FG_MAROON, NULL, "ANSI_COLOR_FG_MAROON"); flushLog(NULL);
-  printToLog(ANSI_COLOR_FG_GREEN, NULL, "ANSI_COLOR_FG_GREEN"); flushLog(NULL);
-  printToLog(ANSI_COLOR_FG_OLIVE, NULL, "ANSI_COLOR_FG_OLIVE"); flushLog(NULL);
-  printToLog(ANSI_COLOR_FG_NAVY, NULL, "ANSI_COLOR_FG_NAVY"); flushLog(NULL);
-  printToLog(ANSI_COLOR_FG_PURPLE, NULL, "ANSI_COLOR_FG_PURPLE"); flushLog(NULL);
-  printToLog(ANSI_COLOR_FG_TEAL, NULL, "ANSI_COLOR_FG_TEAL"); flushLog(NULL);
-  printToLog(ANSI_COLOR_FG_GRAY, NULL, "ANSI_COLOR_FG_GRAY"); flushLog(NULL);
-  printToLog(ANSI_COLOR_FG_DKGRAY, NULL, "ANSI_COLOR_FG_DKGRAY"); flushLog(NULL);
-  printToLog(ANSI_COLOR_FG_RED, NULL, "ANSI_COLOR_FG_RED"); flushLog(NULL);
-  printToLog(ANSI_COLOR_FG_YELLOW, NULL, "ANSI_COLOR_FG_YELLOW"); flushLog(NULL);
-  printToLog(ANSI_COLOR_FG_BLUE, NULL, "ANSI_COLOR_FG_BLUE"); flushLog(NULL);
-  printToLog(ANSI_COLOR_FG_FUCHSIA, NULL, "ANSI_COLOR_FG_FUCHSIA"); flushLog(NULL);
-  printToLog(ANSI_COLOR_FG_CYAN, NULL, "ANSI_COLOR_FG_CYAN"); flushLog(NULL);
+  printToLog(COLOR_FG_BLACK, NULL, "COLOR_FG_BLACK"); flushLog(NULL);
+  printToLog(COLOR_FG_MAROON, NULL, "COLOR_FG_MAROON"); flushLog(NULL);
+  printToLog(COLOR_FG_GREEN, NULL, "COLOR_FG_GREEN"); flushLog(NULL);
+  printToLog(COLOR_FG_OLIVE, NULL, "COLOR_FG_OLIVE"); flushLog(NULL);
+  printToLog(COLOR_FG_NAVY, NULL, "COLOR_FG_NAVY"); flushLog(NULL);
+  printToLog(COLOR_FG_PURPLE, NULL, "COLOR_FG_PURPLE"); flushLog(NULL);
+  printToLog(COLOR_FG_TEAL, NULL, "COLOR_FG_TEAL"); flushLog(NULL);
+  printToLog(COLOR_FG_GRAY, NULL, "COLOR_FG_GRAY"); flushLog(NULL);
+  printToLog(COLOR_FG_DKGRAY, NULL, "COLOR_FG_DKGRAY"); flushLog(NULL);
+  printToLog(COLOR_FG_RED, NULL, "COLOR_FG_RED"); flushLog(NULL);
+  printToLog(COLOR_FG_YELLOW, NULL, "COLOR_FG_YELLOW"); flushLog(NULL);
+  printToLog(COLOR_FG_BLUE, NULL, "COLOR_FG_BLUE"); flushLog(NULL);
+  printToLog(COLOR_FG_FUCHSIA, NULL, "COLOR_FG_FUCHSIA"); flushLog(NULL);
+  printToLog(COLOR_FG_CYAN, NULL, "COLOR_FG_CYAN"); flushLog(NULL);
 
-  printToLog(ANSI_COLOR_FG_WHITE, NULL, "ANSI_COLOR_FG_WHITE"); flushLog(NULL);
-  printToLog(ANSI_COLOR_BG_BLACK, NULL, "ANSI_COLOR_BG_BLACK"); flushLog(NULL);
-  printToLog(ANSI_COLOR_BG_MAROON, NULL, "ANSI_COLOR_BG_MAROON"); flushLog(NULL);
-  printToLog(ANSI_COLOR_BG_GREEN, NULL, "ANSI_COLOR_BG_GREEN"); flushLog(NULL);
-  printToLog(ANSI_COLOR_BG_OLIVE, NULL, "ANSI_COLOR_BG_OLIVE"); flushLog(NULL);
-  printToLog(ANSI_COLOR_BG_NAVY, NULL, "ANSI_COLOR_BG_NAVY"); flushLog(NULL);
-  printToLog(ANSI_COLOR_BG_PURPLE, NULL, "ANSI_COLOR_BG_PURPLE"); flushLog(NULL);
-  printToLog(ANSI_COLOR_BG_TEAL, NULL, "ANSI_COLOR_BG_TEAL"); flushLog(NULL);
-  printToLog(ANSI_COLOR_BG_GRAY, NULL, "ANSI_COLOR_BG_GRAY"); flushLog(NULL);
-  printToLog(ANSI_COLOR_BG_DKGRAY, NULL, "ANSI_COLOR_BG_DKGRAY"); flushLog(NULL);
-  printToLog(ANSI_COLOR_BG_RED, NULL, "ANSI_COLOR_BG_RED"); flushLog(NULL);
-  printToLog(ANSI_COLOR_BG_YELLOW, NULL, "ANSI_COLOR_BG_YELLOW"); flushLog(NULL);
-  printToLog(ANSI_COLOR_BG_BLUE, NULL, "ANSI_COLOR_BG_BLUE"); flushLog(NULL);
-  printToLog(ANSI_COLOR_BG_FUCHSIA, NULL, "ANSI_COLOR_BG_FUCHSIA"); flushLog(NULL);
-  printToLog(ANSI_COLOR_BG_CYAN, NULL, "ANSI_COLOR_BG_CYAN"); flushLog(NULL);
-  printToLog(ANSI_COLOR_BG_WHITE, NULL, "ANSI_COLOR_BG_WHITE"); flushLog(NULL);
+  printToLog(COLOR_FG_WHITE, NULL, "COLOR_FG_WHITE"); flushLog(NULL);
+  printToLog(COLOR_BG_BLACK, NULL, "COLOR_BG_BLACK"); flushLog(NULL);
+  printToLog(COLOR_BG_MAROON, NULL, "COLOR_BG_MAROON"); flushLog(NULL);
+  printToLog(COLOR_BG_GREEN, NULL, "COLOR_BG_GREEN"); flushLog(NULL);
+  printToLog(COLOR_BG_OLIVE, NULL, "COLOR_BG_OLIVE"); flushLog(NULL);
+  printToLog(COLOR_BG_NAVY, NULL, "COLOR_BG_NAVY"); flushLog(NULL);
+  printToLog(COLOR_BG_PURPLE, NULL, "COLOR_BG_PURPLE"); flushLog(NULL);
+  printToLog(COLOR_BG_TEAL, NULL, "COLOR_BG_TEAL"); flushLog(NULL);
+  printToLog(COLOR_BG_GRAY, NULL, "COLOR_BG_GRAY"); flushLog(NULL);
+  printToLog(COLOR_BG_DKGRAY, NULL, "COLOR_BG_DKGRAY"); flushLog(NULL);
+  printToLog(COLOR_BG_RED, NULL, "COLOR_BG_RED"); flushLog(NULL);
+  printToLog(COLOR_BG_YELLOW, NULL, "COLOR_BG_YELLOW"); flushLog(NULL);
+  printToLog(COLOR_BG_BLUE, NULL, "COLOR_BG_BLUE"); flushLog(NULL);
+  printToLog(COLOR_BG_FUCHSIA, NULL, "COLOR_BG_FUCHSIA"); flushLog(NULL);
+  printToLog(COLOR_BG_CYAN, NULL, "COLOR_BG_CYAN"); flushLog(NULL);
+  printToLog(COLOR_BG_WHITE, NULL, "COLOR_BG_WHITE"); flushLog(NULL);
 }

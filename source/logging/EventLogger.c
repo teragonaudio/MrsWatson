@@ -179,23 +179,23 @@ static char _logLevelStatusChar(const LogLevel logLevel) {
   }
 }
 
-static const char* _logLevelStatusColor(const LogLevel logLevel) {
+static LogColor _logLevelStatusColor(const LogLevel logLevel) {
   switch(logLevel) {
-    case LOG_DEBUG: return ANSI_COLOR_FG_DKGRAY;
-    case LOG_INFO:  return ANSI_COLOR_RESET;
-    case LOG_WARN:  return ANSI_COLOR_FG_YELLOW;
-    case LOG_ERROR: return ANSI_COLOR_FG_RED;
-    default:        return ANSI_COLOR_RESET;
+    case LOG_DEBUG: return COLOR_FG_DKGRAY;
+    case LOG_INFO:  return COLOR_RESET;
+    case LOG_WARN:  return COLOR_FG_YELLOW;
+    case LOG_ERROR: return COLOR_FG_RED;
+    default:        return COLOR_RESET;
   }
 }
 
-static const char* _logTimeColor(void) {
-  return ANSI_COLOR_FG_BLUE;
+static LogColor _logTimeColor(void) {
+  return COLOR_FG_CYAN;
 }
 
-static const char* _logTimeZebraStripeColor(const long elapsedTime, const int zebraSizeInMs) {
+static LogColor _logTimeZebraStripeColor(const long elapsedTime, const int zebraSizeInMs) {
   boolByte zebraState = (boolByte)((elapsedTime / zebraSizeInMs) % 2);
-  return zebraState ? ANSI_COLOR_FG_OLIVE : ANSI_COLOR_FG_GREEN;
+  return zebraState ? COLOR_FG_OLIVE : COLOR_FG_GREEN;
 }
 
 static void _printMessage(const LogLevel logLevel, const long elapsedTimeInMs, const long numFramesProcessed, const char* message, const EventLogger eventLogger) {
@@ -212,7 +212,7 @@ static void _printMessage(const LogLevel logLevel, const long elapsedTimeInMs, c
   }
   else {
     snprintf(logString, kCharStringLengthLong, "%c %08ld %06ld %s", _logLevelStatusChar(logLevel), numFramesProcessed, elapsedTimeInMs, message);
-    printToLog(NULL, eventLogger->logFile, logString);
+    printToLog(COLOR_RESET, eventLogger->logFile, logString);
   }
   flushLog(eventLogger->logFile);
   free(logString);

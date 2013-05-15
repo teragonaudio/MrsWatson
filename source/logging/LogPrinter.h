@@ -32,82 +32,98 @@
 #include <stdio.h>
 
 #if UNIX
-#define USE_COLORS 1
-#elif WINDOWS
-#define USE_COLORS 0
-#endif
+typedef const char* LogColor;
 
-#if USE_COLORS
-#define ANSI_COLOR_RESET   "\x1b[0m"
+#define COLOR_RESET   "\x1b[0m"
 
-#define ANSI_COLOR_FG_BLACK   "\x1b[30m"
-#define ANSI_COLOR_FG_MAROON  "\x1b[31m"
-#define ANSI_COLOR_FG_GREEN   "\x1b[92m"
-#define ANSI_COLOR_FG_OLIVE   "\x1b[32m"
-#define ANSI_COLOR_FG_NAVY    "\x1b[34m"
-#define ANSI_COLOR_FG_PURPLE  "\x1b[35m"
-#define ANSI_COLOR_FG_TEAL    "\x1b[36m"
-#define ANSI_COLOR_FG_GRAY    "\x1b[37m"
-#define ANSI_COLOR_FG_DKGRAY  "\x1b[90m"
-#define ANSI_COLOR_FG_RED     "\x1b[31m"
-#define ANSI_COLOR_FG_YELLOW  "\x1b[33m"
-#define ANSI_COLOR_FG_BLUE    "\x1b[94m"
-#define ANSI_COLOR_FG_FUCHSIA "\x1b[95m"
-#define ANSI_COLOR_FG_CYAN    "\x1b[96m"
-#define ANSI_COLOR_FG_WHITE   "\x1b[37m"
+#define COLOR_FG_BLACK   "\x1b[30m"
+#define COLOR_FG_MAROON  "\x1b[31m"
+#define COLOR_FG_GREEN   "\x1b[92m"
+#define COLOR_FG_OLIVE   "\x1b[32m"
+#define COLOR_FG_NAVY    "\x1b[34m"
+#define COLOR_FG_PURPLE  "\x1b[35m"
+#define COLOR_FG_TEAL    "\x1b[36m"
+#define COLOR_FG_GRAY    "\x1b[37m"
+#define COLOR_FG_DKGRAY  "\x1b[90m"
+#define COLOR_FG_RED     "\x1b[31m"
+#define COLOR_FG_YELLOW  "\x1b[33m"
+#define COLOR_FG_BLUE    "\x1b[94m"
+#define COLOR_FG_FUCHSIA "\x1b[95m"
+#define COLOR_FG_CYAN    "\x1b[96m"
+#define COLOR_FG_WHITE   "\x1b[37m"
 
-#define ANSI_COLOR_BG_BLACK   "\x1b[40m\x1b[37m"
-#define ANSI_COLOR_BG_MAROON  "\x1b[41m\x1b[37m"
-#define ANSI_COLOR_BG_GREEN   "\x1b[102m\x1b[30m"
-#define ANSI_COLOR_BG_OLIVE   "\x1b[42m\x1b[30m"
-#define ANSI_COLOR_BG_NAVY    "\x1b[44m\x1b[37m"
-#define ANSI_COLOR_BG_PURPLE  "\x1b[45m\x1b[37m"
-#define ANSI_COLOR_BG_TEAL    "\x1b[46m\x1b[30m"
-#define ANSI_COLOR_BG_GRAY    "\x1b[47m\x1b[30m"
-#define ANSI_COLOR_BG_DKGRAY  "\x1b[100m\x1b[37m"
-#define ANSI_COLOR_BG_RED     "\x1b[101m\x1b[37m"
-#define ANSI_COLOR_BG_YELLOW  "\x1b[43m\x1b[30m"
-#define ANSI_COLOR_BG_BLUE    "\x1b[104m\x1b[37m"
-#define ANSI_COLOR_BG_FUCHSIA "\x1b[105m\x1b[30m"
-#define ANSI_COLOR_BG_CYAN    "\x1b[46m\x1b[30m"
-#define ANSI_COLOR_BG_WHITE   "\x1b[47m\x1b[30m"
+#define COLOR_BG_BLACK   "\x1b[40m\x1b[37m"
+#define COLOR_BG_MAROON  "\x1b[41m\x1b[37m"
+#define COLOR_BG_GREEN   "\x1b[102m\x1b[30m"
+#define COLOR_BG_OLIVE   "\x1b[42m\x1b[30m"
+#define COLOR_BG_NAVY    "\x1b[44m\x1b[37m"
+#define COLOR_BG_PURPLE  "\x1b[45m\x1b[37m"
+#define COLOR_BG_TEAL    "\x1b[46m\x1b[30m"
+#define COLOR_BG_GRAY    "\x1b[47m\x1b[30m"
+#define COLOR_BG_DKGRAY  "\x1b[100m\x1b[37m"
+#define COLOR_BG_RED     "\x1b[101m\x1b[37m"
+#define COLOR_BG_YELLOW  "\x1b[43m\x1b[30m"
+#define COLOR_BG_BLUE    "\x1b[104m\x1b[37m"
+#define COLOR_BG_FUCHSIA "\x1b[105m\x1b[30m"
+#define COLOR_BG_CYAN    "\x1b[46m\x1b[30m"
+#define COLOR_BG_WHITE   "\x1b[47m\x1b[30m"
 #else
-#define ANSI_COLOR_RESET   ""
+typedef WORD LogColor;
 
-#define ANSI_COLOR_FG_BLACK   ""
-#define ANSI_COLOR_FG_MAROON  ""
-#define ANSI_COLOR_FG_GREEN   ""
-#define ANSI_COLOR_FG_OLIVE   ""
-#define ANSI_COLOR_FG_NAVY    ""
-#define ANSI_COLOR_FG_PURPLE  ""
-#define ANSI_COLOR_FG_TEAL    ""
-#define ANSI_COLOR_FG_GRAY    ""
-#define ANSI_COLOR_FG_DKGRAY  ""
-#define ANSI_COLOR_FG_RED     ""
-#define ANSI_COLOR_FG_YELLOW  ""
-#define ANSI_COLOR_FG_BLUE    ""
-#define ANSI_COLOR_FG_FUCHSIA ""
-#define ANSI_COLOR_FG_CYAN    ""
-#define ANSI_COLOR_FG_WHITE   ""
+#define COLOR_RESET   0
 
-#define ANSI_COLOR_BG_BLACK   ""
-#define ANSI_COLOR_BG_MAROON  ""
-#define ANSI_COLOR_BG_GREEN   ""
-#define ANSI_COLOR_BG_OLIVE   ""
-#define ANSI_COLOR_BG_NAVY    ""
-#define ANSI_COLOR_BG_PURPLE  ""
-#define ANSI_COLOR_BG_TEAL    ""
-#define ANSI_COLOR_BG_GRAY    ""
-#define ANSI_COLOR_BG_DKGRAY  ""
-#define ANSI_COLOR_BG_RED     ""
-#define ANSI_COLOR_BG_YELLOW  ""
-#define ANSI_COLOR_BG_BLUE    ""
-#define ANSI_COLOR_BG_FUCHSIA ""
-#define ANSI_COLOR_BG_CYAN    ""
-#define ANSI_COLOR_BG_WHITE   ""
+#if 0
+#define BLACK 0
+#define BLUE 1
+#define GREEN 2
+#define CYAN 3
+#define RED 4
+#define MAGENTA 5
+#define BROWN 6
+#define LIGHTGREY 7
+#define DARKGREY 8
+#define LIGHTBLUE 9
+#define LIGHTGREEN 10
+#define LIGHTCYAN 11
+#define LIGHTRED 12
+#define LIGHTMAGENTA 13
+#define YELLOW 14
+#define WHITE 15
+#endif
+#define COLOR_FG_BLACK   0
+#define COLOR_FG_MAROON  0x05
+#define COLOR_FG_GREEN   FOREGROUND_GREEN | FOREGROUND_INTENSITY
+#define COLOR_FG_OLIVE   FOREGROUND_GREEN
+#define COLOR_FG_NAVY    FOREGROUND_BLUE
+#define COLOR_FG_PURPLE  0x0c
+#define COLOR_FG_TEAL    0x03
+#define COLOR_FG_GRAY    0x07
+#define COLOR_FG_DKGRAY  0x08
+#define COLOR_FG_RED     FOREGROUND_RED | FOREGROUND_INTENSITY
+#define COLOR_FG_YELLOW  0x0e
+#define COLOR_FG_BLUE    FOREGROUND_BLUE | FOREGROUND_INTENSITY
+#define COLOR_FG_FUCHSIA 0x0b
+#define COLOR_FG_CYAN    0x03 | FOREGROUND_INTENSITY
+#define COLOR_FG_WHITE   0x0f
+
+#define COLOR_BG_BLACK   0
+#define COLOR_BG_MAROON  BACKGROUND_RED
+#define COLOR_BG_GREEN   BACKGROUND_GREEN | BACKGROUND_INTENSITY
+#define COLOR_BG_OLIVE   BACKGROUND_GREEN
+#define COLOR_BG_NAVY    BACKGROUND_BLUE
+#define COLOR_BG_PURPLE  0xc0
+#define COLOR_BG_TEAL    0x30
+#define COLOR_BG_GRAY    0x70
+#define COLOR_BG_DKGRAY  0x80
+#define COLOR_BG_RED     BACKGROUND_RED | BACKGROUND_INTENSITY
+#define COLOR_BG_YELLOW  0xe0
+#define COLOR_BG_BLUE    BACKGROUND_BLUE | BACKGROUND_INTENSITY
+#define COLOR_BG_FUCHSIA 0xb0
+#define COLOR_BG_CYAN    0x30
+#define COLOR_BG_WHITE   0xf0
 #endif
 
-void printToLog(const char* color, FILE* logFile, const char* message);
+void printToLog(const LogColor color, FILE* logFile, const char* message);
 void flushLog(FILE* logFile);
 void printTestPattern(void);
 
