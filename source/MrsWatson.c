@@ -265,6 +265,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
     printErrorReportInfo();
     programOptions->options[OPTION_VERBOSE]->enabled = true;
     programOptions->options[OPTION_LOG_FILE]->enabled = true;
+    programOptions->options[OPTION_DISPLAY_INFO]->enabled = true;
     charStringCopyCString(programOptions->options[OPTION_LOG_FILE]->argument, "log.txt");
     // Shell script with original command line arguments
     createCommandLineLauncher(errorReporter, argc, argv);
