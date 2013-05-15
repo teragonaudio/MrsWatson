@@ -50,18 +50,19 @@ static ProgramOptions newTestProgramOptions(void) {
     true, kProgramOptionArgumentTypeRequired, NO_DEFAULT_VALUE));
   programOptionsAdd(programOptions, newProgramOptionWithValues(OPTION_TEST_NAME, "test",
     "Run a single test. Tests are named 'Suite:Name', for example:\n\
-\t-t 'LinkedList:Append Item'",
+\t-t 'LinkedList:AppendItem'",
     true, kProgramOptionArgumentTypeRequired, NO_DEFAULT_VALUE));
   programOptionsAdd(programOptions, newProgramOptionWithValues(OPTION_TEST_PRINT_TESTS, "list-tests",
     "List all internal tests in the same format required by --test",
     true, kProgramOptionArgumentTypeNone, NO_DEFAULT_VALUE));
   programOptionsAdd(programOptions, newProgramOptionWithValues(OPTION_TEST_MRSWATSON_PATH, "mrswatson-path",
-    "Path to mrswatson executable. Only required for running application test suite.",
+    "Path to mrswatson executable. By default, mrswatson is assumed to be in the same \
+directory as mrswatsontest. Only required for running application test suite.",
     true, kProgramOptionArgumentTypeRequired, NO_DEFAULT_VALUE));
   programOptionsAdd(programOptions, newProgramOptionWithValues(OPTION_TEST_RESOURCES_PATH, "resources",
     "Path to resources directory. Only required for running application test suite.",
     true, kProgramOptionArgumentTypeRequired, NO_DEFAULT_VALUE));
-  programOptionsAdd(programOptions, newProgramOptionWithValues(OPTION_TEST_PRINT_ONLY_FAILING, "failing",
+  programOptionsAdd(programOptions, newProgramOptionWithValues(OPTION_TEST_PRINT_ONLY_FAILING, "quiet",
     "Print only failing tests. Note that if a test causes the suite to crash, the \
 bad test's name will not be printed. In this case, re-run without this option, as \
 the test names will be printed before the tests are executed.",
