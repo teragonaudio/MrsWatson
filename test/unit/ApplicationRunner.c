@@ -132,7 +132,6 @@ void runApplicationTest(const TestEnvironment testEnvironment,
 #if WINDOWS
   STARTUPINFOA startupInfo;
   PROCESS_INFORMATION  processInfo;
-  CharString errorMessage;
 #endif
 
   // Remove files from a previous test run
@@ -167,12 +166,7 @@ void runApplicationTest(const TestEnvironment testEnvironment,
     CloseHandle(processInfo.hThread);
   }
   else {
-    result = GetLastError();
-    errorMessage = newCharString();
-    FormatMessageA(FORMAT_MESSAGE_FROM_SYSTEM, 0, result, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-      errorMessage->data, errorMessage->length - 1, NULL);
-    logCritical("Could not launch process, got return code %d (%s)", result, errorMessage->data);
-    freeCharString(errorMessage);
+    logCritical("Could not launch process, got error %s", stringForLastError(GetLastError()));
     return;
   }
 #else
