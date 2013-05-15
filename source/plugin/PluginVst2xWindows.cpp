@@ -35,31 +35,13 @@ extern "C" {
 #include "base/PlatformUtilities.h"
 #include "logging/EventLogger.h"
 
-typedef BOOL (WINAPI *IsWow64ProcessFuncPtr)(HANDLE, PBOOL);
-
 static const char* kPlatformWindowsProgramFolder = "C:\\Program Files";
 static const char* kPlatformWindows32BitProgramFolder = "C:\\Program Files (x86)";
-
-boolByte is32BitExeOn64BitHost() {
-  boolByte isWindows64 = false;
-  IsWow64ProcessFuncPtr isWow64ProcessFunc = NULL;
-
-  // The IsWow64Process() function is not available on all versions of Windows,
-  // so it must be looked up first and called only if it exists.
-  isWow64ProcessFunc = (IsWow64ProcessFuncPtr)GetProcAddress(GetModuleHandle(TEXT("kernel32")),"IsWow64Process");
-  if(isWow64ProcessFunc != NULL) {
-    if(isWow64ProcessFunc(GetCurrentProcess(), &isWindows64)) {
-      return true;
-    }
-  }
-
-  return false;
-}
 
 LinkedList getVst2xPluginLocations(CharString currentDirectory) {
   LinkedList locations = newLinkedList();
   CharString locationBuffer;
-  char* programFiles = (isHost64Bit() && is32BitExeOn64BitHost()) ?
+  const char* programFiles = (!isExecutable64Bit() && isHost64Bit()) ?
     kPlatformWindows32BitProgramFolder : kPlatformWindowsProgramFolder;
 
   appendItemToList(locations, currentDirectory);

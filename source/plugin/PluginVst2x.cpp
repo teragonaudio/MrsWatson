@@ -102,7 +102,7 @@ static void _listPluginsVst2xInLocation(void* item, void* userData) {
   _logPluginLocation(location, PLUGIN_TYPE_VST_2X);
   locationItems = listDirectory(location);
   if(numItemsInList(locationItems) == 0) {
-    logDebug("No plugins found in '%s'", location->data);
+    // Empty or does not exist, return
     freeLinkedList(locationItems);
     return;
   }

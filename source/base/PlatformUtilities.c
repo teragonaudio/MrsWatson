@@ -66,7 +66,7 @@ const char* getShortPlatformName(void) {
 #if MACOSX
   return "Mac OS X";
 #elif WINDOWS
-  if(isHost64Bit()) {
+  if(isExecutable64Bit()) {
     return "Windows 64-bit";
   }
   else {
@@ -211,8 +211,31 @@ CharString getCurrentDirectory(void) {
   return currentDirectory;
 }
 
-boolByte isHost64Bit(void) {
+boolByte isExecutable64Bit(void) {
   return (sizeof(void*) == 8);
+}
+
+boolByte isHost64Bit(void) {
+  boolByte result = false;
+
+#if WINDOWS
+  typedef BOOL (WINAPI *IsWow64ProcessFuncPtr)(HANDLE, PBOOL);
+  BOOL isWindows64 = false;
+  IsWow64ProcessFuncPtr isWow64ProcessFunc = NULL;
+
+  // The IsWow64Process() function is not available on all versions of Windows,
+  // so it must be looked up first and called only if it exists.
+  isWow64ProcessFunc = (IsWow64ProcessFuncPtr)GetProcAddress(GetModuleHandle(TEXT("kernel32")), "IsWow64Process");
+  if(isWow64ProcessFunc != NULL) {
+    if(isWow64ProcessFunc(GetCurrentProcess(), &isWindows64)) {
+      result = isWindows64;
+    }
+  }
+#else
+  logUnsupportedFeature("Get host 64-bitness");
+#endif
+
+  return result;
 }
 
 boolByte isHostLittleEndian(void) {

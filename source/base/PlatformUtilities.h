@@ -36,11 +36,11 @@
 #define UNIX 1
 #endif
 
-// Substitutes for POSIX functions not found on Windows
 #if WINDOWS
-#define WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN 1
 #include <Windows.h>
 
+// Substitutes for POSIX functions not found on Windows
 #define strcasecmp _stricmp
 #define strdup _strdup
 #define unlink _unlink
@@ -48,13 +48,11 @@
 #define isatty _isatty
 #define chdir _chdir
 #define unlink _unlink
-#elif MACOSX
-#include <CoreFoundation/CFBundle.h>
-#elif LINUX
-#include <strings.h>
 #endif
 
+// Type definitions
 #if MACOSX
+#include <CoreFoundation/CFBundle.h>
 typedef CFBundleRef LibraryHandle;
 #elif LINUX
 typedef void* LibraryHandle;
@@ -79,6 +77,7 @@ const char* getShortPlatformName(void);
 CharString getExecutablePath(void);
 CharString getCurrentDirectory(void);
 
+boolByte isExecutable64Bit(void);
 boolByte isHost64Bit(void);
 boolByte isHostLittleEndian(void);
 
