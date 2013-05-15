@@ -91,33 +91,33 @@ static int _testCopyFileToInvalidDirectory(void) {
 static int _testListDirectory(void) {
   CharString tempDir = _fileUtilitiesMakeTempDir();
   CharString tempFile = newCharString();
-  LinkedList l = newLinkedList();
+  CharString filename;
+  LinkedList l;
   FILE *f;
 
   buildAbsolutePath(tempDir, newCharStringWithCString(TEST_FILENAME), NULL, tempFile);
   f = fopen(tempFile->data, "w");
   assertNotNull(f);
   fclose(f);
-  assertIntEquals(listDirectory(tempDir->data, l), 1);
-  assertIntEquals(l->_numItems, 1);
-  assertCharStringEquals(newCharStringWithCString((char*)l->item), TEST_FILENAME);
+  l = listDirectory(tempDir);
+  assertIntEquals(numItemsInList(l), 1);
+  filename = l->item;
+  assertCharStringEquals(filename, TEST_FILENAME);
   removeDirectory(tempDir);
   return 0;
 }
 
 static int _testListEmptyDirectory(void) {
   CharString tempDir = _fileUtilitiesMakeTempDir();
-  LinkedList l = newLinkedList();
-  assertIntEquals(listDirectory(tempDir->data, l), 0);
-  assertIntEquals(l->_numItems, 0);
+  LinkedList l = listDirectory(tempDir);
+  assertIntEquals(numItemsInList(l), 0);
   removeDirectory(tempDir);
   return 0;
 }
 
 static int _testListInvalidDirectory(void) {
-  LinkedList l = newLinkedList();
-  assertIntEquals(listDirectory("invalid", l), 0);
-  assertIntEquals(l->_numItems, 0);
+  LinkedList l = listDirectory(newCharStringWithCString("invalid"));
+  assertIntEquals(numItemsInList(l), 0);
   return 0;
 }
 

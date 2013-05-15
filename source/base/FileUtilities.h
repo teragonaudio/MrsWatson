@@ -49,7 +49,11 @@ boolByte copyFileToDirectory(const CharString fileAbsolutePath, const CharString
 
 // Directory operations
 boolByte makeDirectory(const CharString absolutePath);
-int listDirectory(const char* directory, LinkedList outItems);
+/**
+ * Returns a list of CharStrings for all items in a directory
+ * @param directory Directory to search
+ */
+LinkedList listDirectory(const CharString directory);
 boolByte removeDirectory(const CharString absolutePath);
 
 // const char* is used here as it is assumed that the extensions will be defined by the preprocessor

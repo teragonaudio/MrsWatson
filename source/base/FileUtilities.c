@@ -109,22 +109,21 @@ boolByte makeDirectory(const CharString absolutePath) {
 }
 
 // Note that this method skips hidden files
-int listDirectory(const char* directory, LinkedList outItems) {
-  int numItems = 0;
-  char* filename;
+LinkedList listDirectory(const CharString directory) {
+  LinkedList items = newLinkedList();
+  CharString filename;
 
 #if UNIX
-  DIR* directoryPtr = opendir(directory);
+  DIR* directoryPtr = opendir(directory->data);
   if(directoryPtr == NULL) {
     return 0;
   }
   struct dirent* entry;
   while((entry = readdir(directoryPtr)) != NULL) {
     if(entry->d_name[0] != '.') {
-      filename = (char*)malloc(sizeof(char) * kCharStringLengthDefault);
-      strncpy(filename, entry->d_name, kCharStringLengthDefault);
-      appendItemToList(outItems, filename);
-      numItems++;
+      filename = newCharString();
+      strncpy(filename->data, entry->d_name, filename->length);
+      appendItemToList(items, filename);
     }
   }
 
@@ -133,7 +132,7 @@ int listDirectory(const char* directory, LinkedList outItems) {
   HANDLE findHandle;
   CharString searchString = newCharString();
 
-  snprintf(searchString->data, searchString->length, "%s\\*", directory);
+  snprintf(searchString->data, searchString->length, "%s\\*", directory->data);
   findHandle = FindFirstFileA((LPCSTR)(searchString->data), &findData);
   freeCharString(searchString);
   if(findHandle == INVALID_HANDLE_VALUE) {
@@ -141,10 +140,9 @@ int listDirectory(const char* directory, LinkedList outItems) {
   }
   do {
     if(findData.cFileName[0] != '.') {
-      filename = (char*)malloc(sizeof(char) * kCharStringLengthDefault);
-      strncpy(filename, findData.cFileName, kCharStringLengthDefault);
-      appendItemToList(outItems, filename);
-      numItems++;
+      filename = newCharString();
+      strncpy(filename->data, findData.cFileName, filename->length);
+      appendItemToList(items, filename);
     }
   } while(FindNextFileA(findHandle, &findData) != 0);
 
@@ -154,7 +152,7 @@ int listDirectory(const char* directory, LinkedList outItems) {
   logUnsupportedFeature("List directory contents");
 #endif
 
-  return numItems;
+  return items;
 }
 
 boolByte removeDirectory(const CharString absolutePath) {

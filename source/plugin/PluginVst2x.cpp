@@ -81,44 +81,34 @@ static const char* _getVst2xPlatformExtension(void) {
   }
 }
 
+static void _logPluginVst2xInLocation(void* item, void* userData) {
+  CharString itemName = (CharString)item;
+  char* dot;
+
+  dot = strrchr(itemName->data, '.');
+  if(dot != NULL) {
+    if(!strncmp(dot + 1, _getVst2xPlatformExtension(), 3)) {
+      *dot = '\0';
+      logInfo(itemName->data);
+    }
+  }
+}
+
 static void _listPluginsVst2xInLocation(void* item, void* userData) {
   CharString location;
   LinkedList locationItems;
-  LinkedListIterator iterator;
-  char* itemName;
-  char* dot;
-  int numItems, numPlugins = 0;
-  const char* platformVstExtension = _getVst2xPlatformExtension();
 
   location = (CharString)item;
   _logPluginLocation(location, PLUGIN_TYPE_VST_2X);
-  locationItems = newLinkedList();
-  numItems = listDirectory(location->data, locationItems);
-  if(numItems == 0) {
-    logDebug("Directory '%s' does not exist", location->data);
+  locationItems = listDirectory(location);
+  if(numItemsInList(locationItems) == 0) {
+    logDebug("No plugins found in '%s'", location->data);
     freeLinkedList(locationItems);
     return;
   }
 
-  iterator = locationItems;
-  while(iterator != NULL) {
-    itemName = (char*)(iterator->item);
-    dot = strrchr(itemName, '.');
-    if(dot != NULL) {
-      if(!strncmp(dot + 1, platformVstExtension, 3)) {
-        *dot = '\0';
-        logInfo(itemName);
-        numPlugins++;
-      }
-    }
-    iterator = (LinkedListIterator)iterator->nextItem;
-  }
-
-  if(numPlugins == 0) {
-    logInfo("No plugins found");
-  }
-  // TODO: Memory leak here! The list is freed, but not the char* pointers in it
-  freeLinkedList(locationItems);
+  foreachItemInList(locationItems, _logPluginVst2xInLocation, NULL);
+  freeLinkedListAndItems(locationItems, (LinkedListFreeItemFunc)freeCharString);
 }
 
 void listAvailablePluginsVst2x(const CharString pluginRoot) {
