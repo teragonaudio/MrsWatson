@@ -225,6 +225,11 @@ static int _testFreeNullLinkedList(void) {
   return 0;
 }
 
+static int _testFreeNullLinkedList(void) {
+  freeLinkedList(NULL);
+  return 0;
+}
+
 TestSuite addLinkedListTests(void);
 TestSuite addLinkedListTests(void) {
   TestSuite testSuite = newTestSuite("LinkedList", _linkedListTestSetup, NULL);
