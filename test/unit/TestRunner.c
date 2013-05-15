@@ -10,7 +10,7 @@
 // the strings passed in, since they should be allocated on the heap and live for the
 // lifetime of the program.
 TestSuite newTestSuite(char* name, TestCaseSetupFunc setup, TestCaseTeardownFunc teardown) {
-  TestSuite testSuite = malloc(sizeof(TestSuiteMembers));
+  TestSuite testSuite = (TestSuite)malloc(sizeof(TestSuiteMembers));
   testSuite->name = name;
   testSuite->numSuccess = 0;
   testSuite->numFail = 0;
@@ -24,7 +24,7 @@ TestSuite newTestSuite(char* name, TestCaseSetupFunc setup, TestCaseTeardownFunc
 }
 
 TestCase newTestCase(char* name, char* filename, int lineNumber, TestCaseExecFunc testCaseFunc) {
-  TestCase testCase = malloc(sizeof(TestCaseMembers));
+  TestCase testCase = (TestCase)malloc(sizeof(TestCaseMembers));
   testCase->name = name;
   testCase->filename = filename;
   testCase->lineNumber = lineNumber;
