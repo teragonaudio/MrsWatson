@@ -189,7 +189,7 @@ CharString getExecutablePath(void) {
 #if LINUX
   ssize_t result = readlink("/proc/self/exe", executablePath->data, executablePath->length);
   if(result < 0) {
-    logWarn("Could not find executable path, error '%s'", strerror(errno));
+    logWarn("Could not find executable path, %s", stringForLastError(errno));
     return NULL;
   }
 #elif MACOSX

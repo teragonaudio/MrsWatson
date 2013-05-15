@@ -43,7 +43,8 @@
 #if WINDOWS
 #include <Windows.h>
 #include <io.h>
-#else
+#elif UNIX
+#include <string.h>
 #include <sys/time.h>
 #include <unistd.h>
 #endif
@@ -94,7 +95,6 @@ char* stringForLastError(int errorNumber) {
   }
 
 #if UNIX
-#error Test this!
   return strerror(errorNumber);
 #elif WINDOWS
   FormatMessageA(FORMAT_MESSAGE_FROM_SYSTEM, 0, errorNumber, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
