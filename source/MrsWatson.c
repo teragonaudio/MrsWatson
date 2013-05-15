@@ -79,17 +79,16 @@ static void _remapFileToErrorReport(ErrorReporter errorReporter, ProgramOption o
 }
 
 static void printWelcomeMessage(void) {
-  CharString versionString = newCharString();
+  CharString stringBuffer = newCharString();
 
-  fillVersionString(versionString);
-  logInfo("%s initialized, build %ld", versionString->data, buildInfoGetDatestamp());
-  // Recycle versionString to use for the platform name
-  freeCharString(versionString);
+  fillVersionString(stringBuffer);
+  logDebug("%s initialized, build %ld", stringBuffer->data, buildInfoGetDatestamp());
+  // Recycle to use for the platform name
+  freeCharString(stringBuffer);
 
-  versionString = getPlatformName();
-  logInfo("Host platform is %s", versionString->data);
-
-  freeCharString(versionString);
+  stringBuffer = getPlatformName();
+  logDebug("Host platform is %s, application is %d-bit", stringBuffer->data, isExecutable64Bit() ? "64" : "32");
+  freeCharString(stringBuffer);
 }
 
 static void printVersion(void) {
