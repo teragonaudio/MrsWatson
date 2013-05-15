@@ -62,6 +62,7 @@ void initEventLogger(void) {
   eventLoggerInstance->logFile = NULL;
   eventLoggerInstance->useColor = false;
   eventLoggerInstance->zebraStripeSize = (long)DEFAULT_SAMPLE_RATE;
+  eventLoggerInstance->systemErrorMessage = NULL;
 
 #if WINDOWS
   currentTime = GetTickCount();
@@ -84,6 +85,25 @@ static EventLogger _getEventLoggerInstance(void) {
 
 void fillVersionString(CharString outString) {
   snprintf(outString->data, outString->length, "%s version %d.%d.%d", PROGRAM_NAME, VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
+}
+
+char* stringForLastError(int errorNumber) {
+  EventLogger eventLogger = _getEventLoggerInstance();
+  if(eventLogger->systemErrorMessage == NULL) {
+    eventLogger->systemErrorMessage = newCharString();
+  }
+
+#if UNIX
+#error Test this!
+  return strerror(errorNumber);
+#elif WINDOWS
+  FormatMessageA(FORMAT_MESSAGE_FROM_SYSTEM, 0, errorNumber, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+    eventLogger->systemErrorMessage->data, eventLogger->systemErrorMessage->length - 1, NULL);
+#else
+  charStringCopyCString(eventLogger->systemErrorMessage, "Unknown error");
+#endif
+
+  return eventLogger->systemErrorMessage->data;
 }
 
 void setLogLevel(LogLevel logLevel) {
@@ -321,6 +341,7 @@ void freeEventLogger(void) {
   if(eventLoggerInstance->logFile != NULL) {
     fclose(eventLoggerInstance->logFile);
   }
+  freeCharString(eventLoggerInstance->systemErrorMessage);
   free(eventLoggerInstance);
   eventLoggerInstance = NULL;
 }

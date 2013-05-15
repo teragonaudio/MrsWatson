@@ -49,6 +49,7 @@ typedef struct {
   boolByte useColor;
   long zebraStripeSize;
   FILE *logFile;
+  CharString systemErrorMessage;
 } EventLoggerMembers;
 
 typedef EventLoggerMembers* EventLogger;
@@ -57,6 +58,8 @@ extern EventLogger eventLoggerInstance;
 void initEventLogger(void);
 
 void fillVersionString(CharString outString);
+
+char* stringForLastError(int errorNumber);
 
 void setLogLevel(LogLevel logLevel);
 void setLogLevelFromString(const CharString logLevelString);
