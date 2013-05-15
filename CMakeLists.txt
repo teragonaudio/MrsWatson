@@ -40,33 +40,12 @@ else()
 endif()
 
 # Third-party dependencies #####################################
+
 include(ExternalProject)
 
 set(generic_CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=${CMAKE_SOURCE_DIR}/build CFLAGS=${arch_flags} CXXFLAGS=${arch_flags} LDFLAGS=${arch_flags} --enable-static)
 
-# libaudiofile ################################################################
-# libaudiofile doesn't make cleanly, so this must be done by hand
-
-#ExternalProject_Add(libaudiofile
-#  SOURCE_DIR ${CMAKE_SOURCE_DIR}/vendor/audiofile
-#  INSTALL_DIR ${localDir}
-#  CONFIGURE_COMMAND ${libaudiofile_CONFIGURE_COMMAND}
-#  PREFIX ${CMAKE_SOURCE_DIR}/build/audiofile
-#  TMP_DIR ${CMAKE_SOURCE_DIR}/build/audiofile/tmp
-#  BUILD_COMMAND ${MAKE}
-#  BUILD_IN_SOURCE 1
-#)
-
-# AudioTestData ###############################################################
-
-#ExternalProject_Add(AudioTestData
-#  SOURCE_DIR ${CMAKE_SOURCE_DIR}/vendor/AudioTestData
-#  PREFIX ${CMAKE_SOURCE_DIR}/vendor/AudioTestData/build
-#  CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_SOURCE_DIR}/vendor/AudioTestData/build
-#  INSTALL_DIR ${localDir}
-#)
-
-# MrsWatson ###################################################################
+# Build Flags ##################################################
 
 set(common_gcc_flags "-fmessage-length=0 -pipe -Wno-trigraphs -Wno-trigraphs -Wmissing-field-initializers -Wall -Wreturn-type -Wunused-variable -Wshadow -Wsign-compare")
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
@@ -80,6 +59,7 @@ elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
   set(CMAKE_CXX_FLAGS "${arch_flags} ${common_gcc_flags} -fpascal-strings -Wnewline-eof -Wshorten-64-to-32 -fasm-blocks -mmacosx-version-min=10.4")
   set(CMAKE_EXE_LINKER_FLAGS "${arch_flags} -framework Carbon -framework CoreFoundation")
 elseif(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+  # TODO: Set Windows build flags
   set(CMAKE_C_FLAGS "")
   set(CMAKE_CXX_FLAGS "")
 endif()
@@ -91,6 +71,8 @@ if(CMAKE_BUILD_TYPE MATCHES "Debug")
 else()
   add_definitions("-O3")
 endif()
+
+# Subdirectories ###############################################
 
 add_subdirectory(source)
 add_subdirectory(main)
