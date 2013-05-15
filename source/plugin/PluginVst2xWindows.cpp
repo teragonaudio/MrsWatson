@@ -35,9 +35,32 @@ extern "C" {
 #include "base/PlatformUtilities.h"
 #include "logging/EventLogger.h"
 
+typedef BOOL (WINAPI *IsWow64ProcessFuncPtr)(HANDLE, PBOOL);
+
+static const char* kPlatformWindowsProgramFolder = "C:\\Program Files";
+static const char* kPlatformWindows32BitProgramFolder = "C:\\Program Files (x86)";
+
+boolByte is32BitExeOn64BitHost() {
+  boolByte isWindows64 = false;
+  IsWow64ProcessFuncPtr isWow64ProcessFunc = NULL;
+
+  // The IsWow64Process() function is not available on all versions of Windows,
+  // so it must be looked up first and called only if it exists.
+  isWow64ProcessFunc = (IsWow64ProcessFuncPtr)GetProcAddress(GetModuleHandle(TEXT("kernel32")),"IsWow64Process");
+  if(isWow64ProcessFunc != NULL) {
+    if(isWow64ProcessFunc(GetCurrentProcess(), &isWindows64)) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 LinkedList getVst2xPluginLocations(CharString currentDirectory) {
   LinkedList locations = newLinkedList();
   CharString locationBuffer;
+  char* programFiles = (isHost64Bit() && is32BitExeOn64BitHost()) ?
+    kPlatformWindows32BitProgramFolder : kPlatformWindowsProgramFolder;
 
   appendItemToList(locations, currentDirectory);
 
@@ -45,14 +68,12 @@ LinkedList getVst2xPluginLocations(CharString currentDirectory) {
   snprintf(locationBuffer->data, (size_t)(locationBuffer->length), "C:\\VstPlugins");
   appendItemToList(locations, locationBuffer);
 
-  // TODO: On a 64-bit windows, this should be c:\program files (x86) if the host is 32-bit
   locationBuffer = newCharString();
-  snprintf(locationBuffer->data, (size_t)(locationBuffer->length), "C:\\Program Files\\Common Files\\VstPlugins");
+  snprintf(locationBuffer->data, (size_t)(locationBuffer->length), "%s\\Common Files\\VstPlugins", programFiles);
   appendItemToList(locations, locationBuffer);
 
-  // TODO: On a 64-bit windows, this should be c:\program files (x86) if the host is 32-bit
   locationBuffer = newCharString();
-  snprintf(locationBuffer->data, (size_t)(locationBuffer->length), "C:\\Program Files\\Steinberg\\VstPlugins");
+  snprintf(locationBuffer->data, (size_t)(locationBuffer->length), "%s\\Steinberg\\VstPlugins", programFiles);
   appendItemToList(locations, locationBuffer);
 
   return locations;
