@@ -61,11 +61,6 @@ static ProgramOptions newTestProgramOptions(void) {
   programOptionsAdd(programOptions, newProgramOptionWithValues(OPTION_TEST_RESOURCES_PATH, "resources",
     "Path to resources directory. Only required for running application test suite.",
     true, kProgramOptionArgumentTypeRequired, NO_DEFAULT_VALUE));
-  /* TODO: Finish this option
-  addNewProgramOption(programOptions, newProgramOptionWithValues(OPTION_TEST_LOG_FILE, "log-file",
-    "Save test output to log file",
-    true, ARGUMENT_TYPE_REQUIRED, NO_DEFAULT_VALUE);
-  */
   programOptionsAdd(programOptions, newProgramOptionWithValues(OPTION_TEST_PRINT_ONLY_FAILING, "failing",
     "Print only failing tests. Note that if a test causes the suite to crash, the \
 bad test's name will not be printed. In this case, re-run without this option, as \

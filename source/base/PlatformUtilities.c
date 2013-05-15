@@ -149,7 +149,8 @@ CharString getPlatformName(void) {
   snprintf(result->data, result->length, "Windows %d.%d",
     versionInformation.dwMajorVersion, versionInformation.dwMinorVersion);
 
-  // TODO: This is a bit lame, is there a better way to get the OS version name?
+  // This is a bit lame, but it seems that this is the standard way of getting
+  // the platform name on Windows.
   switch(versionInformation.dwMajorVersion) {
     case 6:
       switch(versionInformation.dwMinorVersion) {

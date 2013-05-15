@@ -31,8 +31,6 @@ static int _testAppendEventToNullSequence(void) {
   return 0;
 }
 
-// TODO: In all of the below tests, we should verify the MIDI events returned
-
 static int _testFillMidiEventsFromRangeStart(void) {
   MidiSequence m = newMidiSequence();
   MidiEvent e = newMidiEvent();

@@ -137,7 +137,6 @@ static boolByte _readWaveFileInfo(const char* filename, SampleSourcePcmData extr
   freeRiffChunk(chunk);
   chunk = newRiffChunk();
 
-  // TODO: Option for reading entire file into memory
   if(readNextChunk(extraData->fileHandle, chunk, false)) {
     if(!isChunkIdEqualTo(chunk, "data")) {
       logFileError(filename, "WAVE file has invalid data chunk header");
