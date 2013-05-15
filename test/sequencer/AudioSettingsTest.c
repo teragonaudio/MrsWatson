@@ -113,7 +113,7 @@ static int _testSetTimeSigNoteValue(void) {
   return 0;
 }
 
-static int _testSetTimeSignatureWithMidiBytes() {
+static int _testSetTimeSignatureWithMidiBytes(void) {
   byte bytes[2];
   // Corresponds to a time signature of 3/8
   bytes[0] = 3;
@@ -124,7 +124,7 @@ static int _testSetTimeSignatureWithMidiBytes() {
   return 0;
 }
 
-static int _testSetTimeSignatureWithMidiBytesNull() {
+static int _testSetTimeSignatureWithMidiBytesNull(void) {
   setTimeSignatureBeatsPerMeasure(3);
   setTimeSignatureNoteValue(8);
   assertIntEquals(getTimeSignatureBeatsPerMeasure(), 3);

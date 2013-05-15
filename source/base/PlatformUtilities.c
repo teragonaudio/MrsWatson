@@ -35,7 +35,6 @@
 #include "logging/EventLogger.h"
 
 #if WINDOWS
-#define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 #elif UNIX
 #include <dirent.h>
