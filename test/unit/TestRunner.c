@@ -19,6 +19,7 @@ TestSuite newTestSuite(char* name, TestCaseSetupFunc setup, TestCaseTeardownFunc
   testSuite->setup = setup;
   testSuite->teardown = teardown;
   testSuite->onlyPrintFailing = false;
+  testSuite->keepFiles = false;
   return testSuite;
 }
 

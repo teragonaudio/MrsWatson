@@ -194,7 +194,9 @@ Please check the executable path specified in the --mrswatson-path argument.",
     if(outputFileType != NULL) {
       if(analyzeFile(outputFilename, failedAnalysisFunctionName, &failedAnalysisSample)) {
         testEnvironment->results->numSuccess++;
-        _removeOutputFiles(testName);
+        if(!testEnvironment->results->keepFiles) {
+          _removeOutputFiles(testName);
+        }
         if(!testEnvironment->results->onlyPrintFailing) {
           printTestSuccess();
         }
@@ -211,7 +213,9 @@ Please check the executable path specified in the --mrswatson-path argument.",
     }
     else {
       testEnvironment->results->numSuccess++;
-      _removeOutputFiles(testName);
+      if(!testEnvironment->results->keepFiles) {
+        _removeOutputFiles(testName);
+      }
       if(!testEnvironment->results->onlyPrintFailing) {
         printTestSuccess();
       }

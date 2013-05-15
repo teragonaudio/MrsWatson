@@ -38,6 +38,7 @@ typedef struct {
   TestCaseSetupFunc setup;
   TestCaseTeardownFunc teardown;
   boolByte onlyPrintFailing;
+  boolByte keepFiles;
 } TestSuiteMembers;
 typedef TestSuiteMembers* TestSuite;
 
