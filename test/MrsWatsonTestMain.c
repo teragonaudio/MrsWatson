@@ -205,9 +205,6 @@ int main(int argc, char* argv[]) {
   if(programOptions->options[OPTION_TEST_RESOURCES_PATH]->enabled) {
     charStringCopy(resourcesPath, programOptions->options[OPTION_TEST_RESOURCES_PATH]->argument);
   }
-  else {
-    buildAbsolutePath(currentPath, newCharStringWithCString(MRSWATSON_EXE_NAME), NULL, resourcesPath);
-  }
   if(runApplicationTests && !fileExists(resourcesPath->data)) {
     printf("Could not find test resources at '%s', skipping application tests\n", resourcesPath->data);
     runApplicationTests = false;
