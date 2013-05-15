@@ -6,7 +6,7 @@ static int _testAnalysisDistortion(void) {
   AnalysisFunctionData d = newAnalysisFunctionData();
   int i;
   for(i = 0; i < s->blocksize; i++) {
-    s->samples[0][i] = 32767.0f * (i % 2 ? 1 : -1);
+    s->samples[0][i] = 0.9f * (i % 2 ? 1.0 : -1.0);
   }
   assertFalse(analysisDistortion(s, d));
   return 0;

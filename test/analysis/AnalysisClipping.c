@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <math.h>
 #include "AnalysisClipping.h"
 #include "AnalyzeFile.h"
 
@@ -6,7 +7,7 @@ boolByte analysisClipping(const SampleBuffer sampleBuffer, AnalysisFunctionData 
   int i, j;
   for(i = 0; i < sampleBuffer->numChannels; i++) {
     for(j = 0; j < sampleBuffer->blocksize; j++) {
-      if(abs((int)sampleBuffer->samples[i][j]) >= 32767) {
+      if(fabs(sampleBuffer->samples[i][j]) >= 1.0f) {
         if(data->consecutiveFailCounter > data->failTolerance) {
           data->failedSample = j;
           return false;

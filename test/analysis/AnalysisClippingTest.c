@@ -6,7 +6,7 @@ static int _testAnalysisClipping(void) {
   AnalysisFunctionData d = newAnalysisFunctionData();
   int i;
   for(i = 0; i < s->blocksize; i++) {
-    s->samples[0][i] = 32767;
+    s->samples[0][i] = 1.0f;
   }
   assertFalse(analysisClipping(s, d));
   return 0;
