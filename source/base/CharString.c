@@ -139,6 +139,8 @@ boolByte charStringIsEqualToCString(const CharString self, const char* string, b
 }
 
 void freeCharString(CharString charString) {
-  free(charString->data);
-  free(charString);
+  if(charString != NULL) {
+    free(charString->data);
+    free(charString);
+  }
 }

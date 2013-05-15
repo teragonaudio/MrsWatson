@@ -168,6 +168,11 @@ static int _testCharStringEqualsCStringNull(void) {
   return 0;
 }
 
+static int _testFreeNullCharString(void) {
+  freeCharString(NULL);
+  return 0;
+}
+
 TestSuite addCharStringTests(void);
 TestSuite addCharStringTests(void) {
   TestSuite testSuite = newTestSuite("CharString", NULL, NULL);
@@ -200,6 +205,8 @@ TestSuite addCharStringTests(void) {
   addTest(testSuite, "EqualsSameCStringWithCaseInsensitive", _testCharStringEqualsSameCStringInsensitive);
   addTest(testSuite, "DoesNotEqualSameCStringWithDifferentCase", _testCharStringNotEqualsCStringInsensitive);
   addTest(testSuite, "EqualsCStringNull", _testCharStringEqualsCStringNull);
+
+  addTest(testSuite, "FreeNullCharString", _testFreeNullCharString);
 
   return testSuite;
 }
