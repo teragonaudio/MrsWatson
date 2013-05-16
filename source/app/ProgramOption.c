@@ -108,10 +108,12 @@ void programOptionPrintHelp(const ProgramOption self, boolByte withFullHelp, int
 }
 
 void freeProgramOption(ProgramOption programOption) {
-  freeCharString(programOption->name);
-  freeCharString(programOption->help);
-  freeCharString(programOption->argument);
-  free(programOption);
+  if(programOption != NULL) {
+    freeCharString(programOption->name);
+    freeCharString(programOption->help);
+    freeCharString(programOption->argument);
+    free(programOption);
+  }
 }
 
 
@@ -257,6 +259,9 @@ void freeProgramOptions(ProgramOptions programOptions) {
   ProgramOption option;
   int i;
 
+  if(programOptions == NULL) {
+    return;
+  }
   for(i = 0; i < programOptions->numOptions; i++) {
     option = programOptions->options[i];
     freeProgramOption(option);
