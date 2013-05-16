@@ -1,48 +1,115 @@
 #include "unit/TestRunner.h"
 #include "app/ProgramOption.h"
 
+static ProgramOption _getTestOption(void) {
+  return newProgramOptionWithValues(0, "test", "test help", true, kProgramOptionArgumentTypeOptional, NO_DEFAULT_VALUE);
+}
+
 static int _testNewProgramOptions(void) {
+  ProgramOptions p = newProgramOptions(4);
+  assertIntEquals(p->numOptions, 4);
+  freeProgramOptions(p);
   return 0;
 }
 
 static int _testAddNewProgramOption(void) {
+  ProgramOptions p = newProgramOptions(1);
+  ProgramOption o;
+  programOptionsAdd(p, _getTestOption());
+  assertIntEquals(p->numOptions, 1);
+  o = p->options[0];
+  assertNotNull(o);
+  assertCharStringEquals(o->name, "test");
   return 0;
 }
 
 static int _testParseCommandLineShortOption(void) {
+  ProgramOptions p = newProgramOptions(1);
+  char* argv[2];
+  argv[0] = "exe";
+  argv[1] = "-t";
+  programOptionsAdd(p, _getTestOption());
+  assertFalse(p->options[0]->enabled);
+  assert(programOptionsParseArgs(p, 2, argv));
+  assert(p->options[0]->enabled);
   return 0;
 }
 
 static int _testParseCommandLineLongOption(void) {
+  ProgramOptions p = newProgramOptions(1);
+  char* argv[2];
+  argv[0] = "exe";
+  argv[1] = "--test";
+  programOptionsAdd(p, _getTestOption());
+  assertFalse(p->options[0]->enabled);
+  assert(programOptionsParseArgs(p, 2, argv));
+  assert(p->options[0]->enabled);
   return 0;
 }
 
-static int _testParseCommandLineWrongType(void) {
+static int _testParseCommandLineInvalidOption(void) {
+  ProgramOptions p = newProgramOptions(1);
+  char* argv[2];
+  argv[0] = "exe";
+  argv[1] = "invalid";
+  programOptionsAdd(p, _getTestOption());
+  assertFalse(p->options[0]->enabled);
+  assertFalse(programOptionsParseArgs(p, 2, argv));
+  assertFalse(p->options[0]->enabled);
   return 0;
 }
 
 static int _testParseCommandLineRequiredOption(void) {
+  ProgramOptions p = newProgramOptions(1);
+  ProgramOption o = _getTestOption();
+  char* argv[3];
+  argv[0] = "exe";
+  argv[1] = "--test";
+  argv[2] = "required";
+  o->argumentType = kProgramOptionArgumentTypeRequired;
+  programOptionsAdd(p, o);
+
+  assertFalse(p->options[0]->enabled);
+  assertCharStringEquals(p->options[0]->argument, "");
+  assert(programOptionsParseArgs(p, 3, argv));
+  assertCharStringEquals(p->options[0]->argument, "required");
+  assert(p->options[0]->enabled);
+  assertFalse(programOptionsParseArgs(p, 2, argv));
+
   return 0;
 }
 
 static int _testFindProgramOptionFromString(void) {
+  ProgramOptions p = newProgramOptions(1);
+  ProgramOption o;
+  programOptionsAdd(p, _getTestOption());
+  assertIntEquals(p->numOptions, 1);
+  o = programOptionsFind(p, newCharStringWithCString("test"));
+  assertNotNull(o);
+  assertCharStringEquals(o->name, "test");
   return 0;
 }
 
 static int _testFindProgramOptionFromStringInvalid(void) {
+  ProgramOptions p = newProgramOptions(1);
+  ProgramOption o;
+  programOptionsAdd(p, _getTestOption());
+  assertIntEquals(p->numOptions, 1);
+  o = programOptionsFind(p, newCharStringWithCString("invalid"));
+  assertIsNull(o);
   return 0;
 }
 
 TestSuite addProgramOptionTests(void);
 TestSuite addProgramOptionTests(void) {
   TestSuite testSuite = newTestSuite("ProgramOption", NULL, NULL);
-  addTest(testSuite, "NewObject", NULL); // _testNewProgramOptions);
-  addTest(testSuite, "AddNewProgramOption", NULL); // _testAddNewProgramOption);
-  addTest(testSuite, "ParseCommandLineShortOption", NULL); // _testParseCommandLineShortOption);
-  addTest(testSuite, "ParseCommandLineLongOption", NULL); // _testParseCommandLineLongOption);
-  addTest(testSuite, "ParseCommandLineWrongType", NULL); // _testParseCommandLineWrongType);
-  addTest(testSuite, "ParseCommandLineRequiredOption", NULL); // _testParseCommandLineRequiredOption);
-  addTest(testSuite, "FindProgramOptionFromString", NULL); // _testFindProgramOptionFromString);
-  addTest(testSuite, "FindProgramOptionFromStringInvalid", NULL); // _testFindProgramOptionFromStringInvalid);
+  addTest(testSuite, "NewObject", _testNewProgramOptions);
+  addTest(testSuite, "AddNewProgramOption", _testAddNewProgramOption);
+  addTest(testSuite, "ParseCommandLineShortOption", _testParseCommandLineShortOption);
+  addTest(testSuite, "ParseCommandLineLongOption", _testParseCommandLineLongOption);
+  addTest(testSuite, "ParseCommandLineInvalidOption", _testParseCommandLineInvalidOption);
+  addTest(testSuite, "ParseCommandLineRequiredOption", _testParseCommandLineRequiredOption);
+  addTest(testSuite, "FindProgramOptionFromString", _testFindProgramOptionFromString);
+  addTest(testSuite, "FindProgramOptionFromStringInvalid", _testFindProgramOptionFromStringInvalid);
   return testSuite;
 }
