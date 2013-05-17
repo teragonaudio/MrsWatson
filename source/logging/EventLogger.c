@@ -313,6 +313,10 @@ void logUnsupportedFeature(const char* featureName) {
   fprintf(stderr, "  Support email: %s\n", SUPPORT_EMAIL);
 }
 
+void logDeprecated(const char* functionName, const char* plugin) {
+  logWarn("Call to deprecated function '%s' made by plugin '%s'", functionName, plugin);
+}
+
 void logFileError(const char* filename, const char* message) {
   logCritical("Could not parse file '%s'", filename);
   logCritical("Got error message message: %s", message);
