@@ -321,20 +321,28 @@ static boolByte _openVst2xPlugin(void* pluginPtr) {
     return false;
   }
 
-  // No longer needed
-  freeCharString(pluginAbsolutePath);
+  // The plugin name which is passed into this function is basically just used to find the
+  // actual location. Now that the plugin has been loaded, we can set a friendlier name.
+  charStringCopyCString(plugin->pluginName, pluginBasename);
+  if(data->shellPluginId) {
+    charStringAppendCString(plugin->pluginName, " (");
+    charStringAppend(plugin->pluginName, subpluginId);
+    charStringAppendCString(plugin->pluginName, ")");
+  }
 
   // Check plugin's magic number. If incorrect, then the file either was not loaded
   // properly, is not a real VST plugin, or is otherwise corrupt.
   if(pluginHandle->magic != kEffectMagic) {
     logError("Plugin '%s' has bad magic number, possibly corrupt", plugin->pluginName->data);
-    return false;
+  }
+  else {
+    data->dispatcher = (Vst2xPluginDispatcherFunc)(pluginHandle->dispatcher);
+    data->pluginHandle = pluginHandle;
+    result = _initVst2xPlugin(plugin);
   }
 
-  data->dispatcher = (Vst2xPluginDispatcherFunc)(pluginHandle->dispatcher);
-  data->pluginHandle = pluginHandle;
-  boolByte result = _initVst2xPlugin(plugin);
-
+  freeCharString(pluginAbsolutePath);
+  freeCharString(subpluginId);
   return result;
 }
 
