@@ -37,6 +37,7 @@ extern "C" {
 
 #include "app/BuildInfo.h"
 #include "base/CharString.h"
+#include "base/StringUtilities.h"
 #include "logging/EventLogger.h"
 #include "plugin/PluginVst2x.h"
 #include "sequencer/AudioClock.h"
@@ -111,13 +112,13 @@ static int _canHostDo(const char* pluginName, const char* canDoString) {
 
 VstIntPtr VSTCALLBACK pluginVst2xHostCallback(AEffect *effect, VstInt32 opcode, VstInt32 index, VstIntPtr value, void *dataPtr, float opt) {
   // This string is used in a bunch of logging calls below
-  CharString uniqueIdString = newCharStringWithCapacity(kCharStringLengthShort);
+  CharString uniqueIdString;
   if(effect != NULL) {
-    fillVst2xUniqueIdToString(effect->uniqueID, uniqueIdString);
+    uniqueIdString = convertIntIdToString(effect->uniqueID);
   }
   else {
     // During plugin initialization, the dispatcher can be called without a valid plugin instance
-    charStringCopyCString(uniqueIdString, "????");
+    uniqueIdString = newCharStringWithCString("????");
   }
   const char* uniqueId = uniqueIdString->data;
   int result = 0;

@@ -79,12 +79,6 @@ extern "C" {
 // when setting up the effect chain.
 VstInt32 currentPluginUniqueId;
 
-void fillVst2xUniqueIdToString(const long uniqueId, CharString outString) {
-  for(int i = 0; i < 4; i++) {
-    outString->data[i] = (char)(uniqueId >> ((3 - i) * 8) & 0xff);
-  }
-}
-
 static const char* _getVst2xPlatformExtension(void) {
   PlatformType platformType = getPlatformType();
   switch(platformType) {
@@ -237,9 +231,8 @@ static void _suspendPlugin(Plugin plugin) {
 
 static boolByte _initVst2xPlugin(Plugin plugin) {
   PluginVst2xData data = (PluginVst2xData)plugin->extraData;
-  CharString uniqueIdString = newCharStringWithCapacity(kCharStringLengthShort);
+  CharString uniqueIdString = convertIntIdToString(data->pluginHandle->uniqueID);
 
-  fillVst2xUniqueIdToString(data->pluginHandle->uniqueID, uniqueIdString);
   logDebug("Initializing VST2.x plugin '%s' (%s)", plugin->pluginName->data, uniqueIdString->data);
   freeCharString(uniqueIdString);
 
@@ -251,7 +244,9 @@ static boolByte _initVst2xPlugin(Plugin plugin) {
   }
 
   if(data->pluginHandle->dispatcher(data->pluginHandle, effGetPlugCategory, 0, 0, NULL, 0.0f) == kPlugCategShell) {
-    logDebug("Plugin is a shell plugin");
+    uniqueIdString = convertIntIdToString(data->shellPluginId);
+    logDebug("Plugin is a shell plugin, id '%s'", uniqueIdString->data);
+    freeCharString(uniqueIdString);
     data->isShellPlugin = true;
   }
 
@@ -381,25 +376,27 @@ static void _displayVst2xPluginInfo(void* pluginPtr) {
   int vendorVersion = data->dispatcher(data->pluginHandle, effGetVendorVersion, 0, 0, NULL, 0.0f);
   logInfo("Version: %d", vendorVersion);
   charStringClear(nameBuffer);
-  fillVst2xUniqueIdToString(data->pluginHandle->uniqueID, nameBuffer);
+
+  nameBuffer = convertIntIdToString(data->pluginHandle->uniqueID);
   logInfo("Unique ID: %s", nameBuffer->data);
+  freeCharString(nameBuffer);
+
   logInfo("Version: %d", data->pluginHandle->version);
   logInfo("I/O: %d/%d", data->pluginHandle->numInputs, data->pluginHandle->numOutputs);
 
   if(data->isShellPlugin) {
     logInfo("Shell plugins:", data->pluginHandle->resvd1);
-    CharString shellPluginIdString = newCharStringWithCapacity(kCharStringLengthShort);
     while(true) {
       charStringClear(nameBuffer);
-      charStringClear(shellPluginIdString);
       VstInt32 shellPluginId = data->dispatcher(data->pluginHandle, effShellGetNextPlugin, 0, 0, nameBuffer->data, 0.0f);
       if(shellPluginId == 0 || charStringIsEmpty(nameBuffer)) {
         break;
       }
       else {
-        fillVst2xUniqueIdToString(shellPluginId, shellPluginIdString);
+        CharString shellPluginIdString = convertIntIdToString(shellPluginId);
         logInfo("  '%s' (%s)", shellPluginIdString->data, nameBuffer->data);
         // TODO: List parameters for shell plugin?
+        freeCharString(shellPluginIdString);
       }
     }
   }
