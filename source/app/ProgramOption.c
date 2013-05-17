@@ -121,6 +121,7 @@ ProgramOptions newProgramOptions(int numOptions) {
   ProgramOptions options = (ProgramOptions)malloc(sizeof(ProgramOptionsMembers));
   options->numOptions = numOptions;
   options->options = (ProgramOption*)malloc(sizeof(ProgramOption) * numOptions);
+  memset(options->options, 0, sizeof(ProgramOption) * numOptions);
   return options;
 }
 
