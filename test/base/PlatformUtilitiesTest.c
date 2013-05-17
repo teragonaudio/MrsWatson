@@ -40,8 +40,11 @@ static int _testGetShortPlatformName(void) {
 #elif MACOSX
   assertCharStringEquals(p, "Mac OS X");
 #elif WINDOWS
-  if(isHost64Bit()) {
+  if(isHost64Bit() && isExecutable64Bit()) {
     assertCharStringEquals(p, "Windows 64-bit");
+  }
+  else if(isHost64Bit()) {
+    assertCharStringEquals(p, "Windows 32-bit");
   }
   else {
     assertCharStringEquals(p, "Windows 32-bit");
