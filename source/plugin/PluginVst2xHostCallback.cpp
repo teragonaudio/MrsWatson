@@ -307,7 +307,7 @@ VstIntPtr VSTCALLBACK pluginVst2xHostCallback(AEffect *effect, VstInt32 opcode, 
       logDeprecated("audioMasterOpenWindow", uniqueId);
       break;
     case audioMasterCloseWindow:
-      logDeprecated("audioMasterCloseWindow", uniqueID);
+      logDeprecated("audioMasterCloseWindow", uniqueId);
       break;
     case audioMasterGetDirectory:
       logWarn("Plugin '%s' asked for directory pointer (unsupported)", uniqueId);
@@ -334,7 +334,7 @@ VstIntPtr VSTCALLBACK pluginVst2xHostCallback(AEffect *effect, VstInt32 opcode, 
       logDeprecated("audioMasterGetChunkFile", uniqueId);
       break;
     case audioMasterGetInputSpeakerArrangement:
-      logDeprecated("audioMasterGetInputSpeakerArrangement", uniqueIdString);
+      logDeprecated("audioMasterGetInputSpeakerArrangement", uniqueId);
       break;
     default:
       logWarn("Plugin '%s' asked if host can do unknown opcode %d", uniqueId, opcode);
