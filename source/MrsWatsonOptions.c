@@ -105,8 +105,10 @@ Use '-' to write to stdout. If not given, then defaults to 'out.wav'.",
 placed into a chain in the order specified. Instrument plugins must appear first in any chains. Plugins are searched \
 for in the --plugin-root directory, the current directory, and the standard locations for the OS. File extensions are \
 added automatically to plugin names. Each plugin may be followed by a comma with a program to be loaded, which should \
-be of the corresponding file format for the respective plugin.\
-\nExample: --plugin 'AutoTune,KayneWest.fxp;Compressor,SoftKnee.fxp;Limiter'",
+be of the corresponding file format for the respective plugin. For shell plugins (like Waves), use --display-info to \
+get a list of sub-plugin ID's and then use a colon to indicate which plugin to load.\
+\n\nExample: --plugin 'AutoTune,KayneWest.fxp;Compressor,SoftKnee.fxp;Limiter'\
+\nShell plugin example: --plugin 'WavesShell-VST:IDFX'",
     true, kProgramOptionArgumentTypeRequired, NO_DEFAULT_VALUE));
 
   programOptionsAdd(options, newProgramOptionWithValues(OPTION_PLUGIN_ROOT, "plugin-root",
