@@ -51,11 +51,15 @@ LinkedList getVst2xPluginLocations(CharString currentDirectory) {
   appendItemToList(locations, locationBuffer);
 
   locationBuffer = newCharString();
-  snprintf(locationBuffer->data, (size_t)(locationBuffer->length), "%s\\Common Files\\VstPlugins", programFiles);
+  snprintf(locationBuffer->data, (size_t)(locationBuffer->length), "%s\\VstPlugIns", programFiles);
   appendItemToList(locations, locationBuffer);
 
   locationBuffer = newCharString();
-  snprintf(locationBuffer->data, (size_t)(locationBuffer->length), "%s\\Steinberg\\VstPlugins", programFiles);
+  snprintf(locationBuffer->data, (size_t)(locationBuffer->length), "%s\\Common Files\\VstPlugIns", programFiles);
+  appendItemToList(locations, locationBuffer);
+
+  locationBuffer = newCharString();
+  snprintf(locationBuffer->data, (size_t)(locationBuffer->length), "%s\\Steinberg\\VstPlugIns", programFiles);
   appendItemToList(locations, locationBuffer);
 
   return locations;
