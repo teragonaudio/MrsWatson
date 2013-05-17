@@ -220,6 +220,9 @@ static short _canPluginDo(Plugin plugin, const char* canDoString) {
 static void _resumePlugin(Plugin plugin) {
   logDebug("Resuming plugin '%s'", plugin->pluginName->data);
   PluginVst2xData data = (PluginVst2xData)plugin->extraData;
+  if(data->isPluginShell && data->shellPluginId == 0) {
+    logError("'%s' is a shell plugin, but no sub-plugin ID was given, run with --help plugin", plugin->pluginName->data);
+  }
   data->dispatcher(data->pluginHandle, effMainsChanged, 0, 1, NULL, 0.0f);
 }
 
