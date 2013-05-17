@@ -31,6 +31,8 @@
 #include "base/CharString.h"
 #include "plugin/Plugin.h"
 
+static const char kPluginVst2xSubpluginSeparator = ':';
+
 unsigned long getVst2xPluginUniqueId(const Plugin plugin);
 boolByte vst2xPluginExists(const CharString pluginName, const CharString pluginRoot, CharString outLocation);
 void listAvailablePluginsVst2x(const CharString pluginRoot);
