@@ -44,24 +44,69 @@ extern "C" {
 }
 
 // Global variables (sigh, yes)
+// TODO: This doesn't necessarily have to be global, actually
 static VstTimeInfo vstTimeInfo;
 
 extern "C" {
-// TODO: This method is important. We should implement the most common requests made by plugins.
+// Current plugin ID, which is mostly used by shell plugins during initialization.
+// Instance declared in PluginVst2x.cpp, see explanation for the global-ness and
+// need of this variable there.
+extern VstInt32 currentPluginUniqueId;
+
 static int _canHostDo(const char* pluginName, const char* canDoString) {
-  // Don't know or unsupported
-  int result = 0;
-    
-  // TODO: This is just a guess. No idea how long this string can/should be
-  const size_t canDoStringLength = 32;
-  if(!strncmp(canDoString, EMPTY_STRING, canDoStringLength)) {
+  boolByte supported = false;
+
+  logDebug("Plugin '%s' asked if we can do '%s'", pluginName, canDoString);
+  if(!strcmp(canDoString, EMPTY_STRING)) {
     logWarn("Plugin '%s' asked if we can do an empty string. This is probably a bug.", pluginName);
   }
+  else if(!strcmp(canDoString, "sendVstEvents")) {
+    supported = true;
+  }
+  else if(!strcmp(canDoString, "sendVstMidiEvent")) {
+    supported = true;
+  }
+  else if(!strcmp(canDoString, "sendVstTimeInfo")) {
+    supported = true;
+  }
+  else if(!strcmp(canDoString, "receiveVstEvents")) {
+    supported = false;
+  }
+  else if(!strcmp(canDoString, "receiveVstMidiEvent")) {
+    supported = false;
+  }
+  else if(!strcmp(canDoString, "reportConnectionChanges")) {
+    supported = false;
+  }
+  else if(!strcmp(canDoString, "acceptIOChanges")) {
+    supported = false;
+  }
+  else if(!strcmp(canDoString, "sizeWindow")) {
+    supported = false;
+  }
+  else if(!strcmp(canDoString, "offline")) {
+    supported = false;
+  }
+  else if(!strcmp(canDoString, "openFileSelector")) {
+    supported = false;
+  }
+  else if(!strcmp(canDoString, "closeFileSelector")) {
+    supported = false;
+  }
+  else if(!strcmp(canDoString, "startStopProcess")) {
+    supported = false;
+  }
+  else if(!strcmp(canDoString, "shellCategory")) {
+    supported = true;
+  }
+  else if(!strcmp(canDoString, "sendVstMidiEventFlagIsRealtime")) {
+    supported = false;
+  }
   else {
-    logInfo("Plugin '%s' asked if host canDo '%s' (unimplemented)", canDoString);
+    logInfo("Plugin '%s' asked if host canDo '%s' (unimplemented)", pluginName, canDoString);
   }
   
-  return result;
+  return supported;
 }
 
 VstIntPtr VSTCALLBACK pluginVst2xHostCallback(AEffect *effect, VstInt32 opcode, VstInt32 index, VstIntPtr value, void *dataPtr, float opt) {
@@ -76,7 +121,8 @@ VstIntPtr VSTCALLBACK pluginVst2xHostCallback(AEffect *effect, VstInt32 opcode, 
   }
   const char* uniqueId = uniqueIdString->data;
   int result = 0;
-  
+
+  logDebug("Plugin '%s' called host dispatcher with %d, %d, %d", uniqueId, opcode, index, value);
   switch(opcode) {
     case audioMasterAutomate:
       // The plugin will call this if a parameter has changed via MIDI or the GUI, so the host can update
@@ -89,7 +135,7 @@ VstIntPtr VSTCALLBACK pluginVst2xHostCallback(AEffect *effect, VstInt32 opcode, 
       result = 2400;
       break;
     case audioMasterCurrentId:
-      result = effect->uniqueID;
+      result = currentPluginUniqueId;
       break;
     case audioMasterIdle:
       // Idle is currently ignored
@@ -231,11 +277,11 @@ VstIntPtr VSTCALLBACK pluginVst2xHostCallback(AEffect *effect, VstInt32 opcode, 
       logUnsupportedFeature("VST master opcode audioMasterGetOutputSpeakerArrangement");
       break;
     case audioMasterGetVendorString:
-      strncpy((char *)dataPtr, VENDOR_NAME, kVstMaxVendorStrLen);
+      strncpy((char*)dataPtr, VENDOR_NAME, kVstMaxVendorStrLen);
       result = 1;
       break;
     case audioMasterGetProductString:
-      strncpy((char *)dataPtr, PROGRAM_NAME, kVstMaxProductStrLen);
+      strncpy((char*)dataPtr, PROGRAM_NAME, kVstMaxProductStrLen);
       result = 1;
       break;
     case audioMasterGetVendorVersion:
@@ -247,7 +293,7 @@ VstIntPtr VSTCALLBACK pluginVst2xHostCallback(AEffect *effect, VstInt32 opcode, 
       logWarn("Plugin '%s' made a vendor specific call (unsupported). Arguments: %d, %d, %f", uniqueId, index, value, opt);
       break;
     case audioMasterCanDo:
-      result = _canHostDo(uniqueId, (char *)dataPtr);
+      result = _canHostDo(uniqueId, (char*)dataPtr);
       break;
     case audioMasterSetIcon: // Deprecated
       logWarn("Plugin '%s' asked to set icon (unsupported)", uniqueId);
