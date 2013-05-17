@@ -127,24 +127,25 @@ VstIntPtr VSTCALLBACK pluginVst2xHostCallback(AEffect *effect, VstInt32 opcode, 
     case audioMasterAutomate:
       // The plugin will call this if a parameter has changed via MIDI or the GUI, so the host can update
       // itself accordingly. We don't care about this (for the time being), and as we don't support either
-      // GUI's or live MIDI, this shouldn't happen.
-      logInfo("Plugin '%s' asked us to automate parameter %d (unsupported)", uniqueId, index);
+      // GUI's or live MIDI, this opcode can be ignored.
       break;
     case audioMasterVersion:
       // We are a VST 2.4 compatible host
       result = 2400;
       break;
     case audioMasterCurrentId:
+      // Use the current plugin ID, needed by VST shell plugins to determine which sub-plugin to load
       result = currentPluginUniqueId;
       break;
     case audioMasterIdle:
-      // Idle is currently ignored
+      // Ignore
       break;
-    case audioMasterPinConnected: // Deprecated
-      logWarn("Plugin '%s' asked to connect pin %d (unsupported)", uniqueId, index);
+    case audioMasterPinConnected:
+      logDeprecated("audioMasterPinConnected", uniqueId);
       break;
     case audioMasterWantMidi:
-      // This is called by old VST2.3 plugins to tell us that they are instruments
+      // This is called by old VST2.3 plugins to tell us that they are instruments, ignore
+      logDeprecated("audioMasterWantMidi", uniqueId);
       break;
     case audioMasterGetTime:
       // These values are always valid
@@ -203,23 +204,23 @@ VstIntPtr VSTCALLBACK pluginVst2xHostCallback(AEffect *effect, VstInt32 opcode, 
     case audioMasterProcessEvents:
       logUnsupportedFeature("VST master opcode audioMasterProcessEvents");
       break;
-    case audioMasterSetTime: // Deprecated
-      logUnsupportedFeature("VST master opcode audioMasterSetTime");
+    case audioMasterSetTime:
+      logDeprecated("audioMasterSetTime", uniqueId);
       break;
-    case audioMasterTempoAt: // Deprecated
-      logUnsupportedFeature("VST master opcode audioMasterTempoAt");
+    case audioMasterTempoAt:
+      logDeprecated("audioMasterTempoAt", uniqueId);
       break;
-    case audioMasterGetNumAutomatableParameters: // Deprecated
-      logUnsupportedFeature("VST master opcode audioMasterGetNumAutomatableParameters");
+    case audioMasterGetNumAutomatableParameters:
+      logDeprecated("audioMasterGetNumAutomatableParameters", uniqueId);
       break;
-    case audioMasterGetParameterQuantization: // Deprecated
-      logUnsupportedFeature("VST master opcode audioMasterGetParameterQuantization");
+    case audioMasterGetParameterQuantization:
+      logDeprecated("audioMasterGetParameterQuantization", uniqueId);
       break;
     case audioMasterIOChanged:
       logUnsupportedFeature("VST master opcode audioMasterIOChanged");
       break;
-    case audioMasterNeedIdle: // Deprecated
-      logUnsupportedFeature("VST master opcode audioMasterNeedIdle");
+    case audioMasterNeedIdle:
+      logDeprecated("audioMasterNeedIdle", uniqueId);
       break;
     case audioMasterSizeWindow:
       logWarn("Plugin '%s' asked us to resize window (unsupported)", uniqueId);
@@ -231,24 +232,24 @@ VstIntPtr VSTCALLBACK pluginVst2xHostCallback(AEffect *effect, VstInt32 opcode, 
       result = getBlocksize();
       break;
     case audioMasterGetInputLatency:
-      // Input latency is not supported, and is always 0
+      // Input latency is not used, and is always 0
       result = 0;
       break;
     case audioMasterGetOutputLatency:
-      // Output latency is not supported, and is always 0
+      // Output latency is not used, and is always 0
       result = 0;
       break;
-    case audioMasterGetPreviousPlug: // Deprecated
-      logUnsupportedFeature("VST master opcode audioMasterGetPreviousPlug");
+    case audioMasterGetPreviousPlug:
+      logDeprecated("audioMasterGetPreviousPlug", uniqueId);
       break;
-    case audioMasterGetNextPlug: // Deprecated
-      logUnsupportedFeature("VST master opcode audioMasterGetNextPlug");
+    case audioMasterGetNextPlug:
+      logDeprecated("audioMasterGetNextPlug", uniqueId);
       break;
-    case audioMasterWillReplaceOrAccumulate: // Deprecated
-      logUnsupportedFeature("VST master opcode audioMasterWillReplaceOrAccumulate");
+    case audioMasterWillReplaceOrAccumulate:
+      logDeprecated("audioMasterWillReplaceOrAccumulate", uniqueId);
       break;
     case audioMasterGetCurrentProcessLevel:
-      // We are not a multithreaded app, and have no GUI, so this is unsupported.
+      // We are not a multithreaded app and have no GUI, so this is unsupported.
       result = kVstProcessLevelUnknown;
       break;
     case audioMasterGetAutomationState:
@@ -270,11 +271,11 @@ VstIntPtr VSTCALLBACK pluginVst2xHostCallback(AEffect *effect, VstInt32 opcode, 
     case audioMasterOfflineGetCurrentMetaPass:
       logWarn("Plugin '%s' asked for current offline meta pass (unsupported)", uniqueId);
       break;
-    case audioMasterSetOutputSampleRate: // Deprecated
-      logWarn("Plugin '%s' asked to set sample rate (unsupported)", uniqueId);
+    case audioMasterSetOutputSampleRate:
+      logDeprecated("audioMasterSetOutputSampleRate", uniqueId);
       break;
-    case audioMasterGetOutputSpeakerArrangement: // Deprecated
-      logUnsupportedFeature("VST master opcode audioMasterGetOutputSpeakerArrangement");
+    case audioMasterGetOutputSpeakerArrangement:
+      logDeprecated("audioMasterGetOutputSpeakerArrangement", uniqueId);
       break;
     case audioMasterGetVendorString:
       strncpy((char*)dataPtr, VENDOR_NAME, kVstMaxVendorStrLen);
@@ -295,17 +296,17 @@ VstIntPtr VSTCALLBACK pluginVst2xHostCallback(AEffect *effect, VstInt32 opcode, 
     case audioMasterCanDo:
       result = _canHostDo(uniqueId, (char*)dataPtr);
       break;
-    case audioMasterSetIcon: // Deprecated
-      logWarn("Plugin '%s' asked to set icon (unsupported)", uniqueId);
+    case audioMasterSetIcon:
+      logDeprecated("audioMasterSetIcon", uniqueId);
       break;
     case audioMasterGetLanguage:
       result = kVstLangEnglish;
       break;
-    case audioMasterOpenWindow: // Deprecated
-      logWarn("Plugin '%s' asked to open window (unsupported)", uniqueId);
+    case audioMasterOpenWindow:
+      logDeprecated("audioMasterOpenWindow", uniqueId);
       break;
-    case audioMasterCloseWindow: // Deprecated
-      logWarn("Plugin '%s' asked to close window (unsupported)", uniqueId);
+    case audioMasterCloseWindow:
+      logDeprecated("audioMasterCloseWindow", uniqueID);
       break;
     case audioMasterGetDirectory:
       logWarn("Plugin '%s' asked for directory pointer (unsupported)", uniqueId);
@@ -325,20 +326,20 @@ VstIntPtr VSTCALLBACK pluginVst2xHostCallback(AEffect *effect, VstInt32 opcode, 
     case audioMasterCloseFileSelector:
       logWarn("Plugin '%s' asked us to close file selector (unsupported)", uniqueId);
       break;
-    case audioMasterEditFile: // Deprecated
-      logWarn("Plugin '%s' asked to edit file (unsupported)", uniqueId);
+    case audioMasterEditFile:
+      logDeprecated("audioMasterEditFile", uniqueId);
       break;
-    case audioMasterGetChunkFile: // Deprecated
-      logWarn("Plugin '%s' asked to get file chunk (unsupported)", uniqueId);
+    case audioMasterGetChunkFile:
+      logDeprecated("audioMasterGetChunkFile", uniqueId);
       break;
-    case audioMasterGetInputSpeakerArrangement: // Deprecated
-      logUnsupportedFeature("VST master opcode audioMasterGetInputSpeakerArrangement");
+    case audioMasterGetInputSpeakerArrangement:
+      logDeprecated("audioMasterGetInputSpeakerArrangement", uniqueIdString);
       break;
     default:
       logWarn("Plugin '%s' asked if host can do unknown opcode %d", uniqueId, opcode);
       break;
   }
-  
+
   freeCharString(uniqueIdString);
   return result;
 }
