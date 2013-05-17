@@ -244,7 +244,19 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
       programOptionsPrintHelp(programOptions, false, DEFAULT_INDENT_SIZE);
     }
     else {
-      programOptionsPrintHelp(programOptions, true, DEFAULT_INDENT_SIZE);
+      if(!strcasecmp(programOptions->options[OPTION_HELP]->argument->data, "full")) {
+        programOptionsPrintHelp(programOptions, true, DEFAULT_INDENT_SIZE);
+      }
+      // Yeah this is a bit silly, but the performance obviously doesn't matter here and I don't feel
+      // like cluttering up this already huge function with more variables.
+      else if(programOptionsFind(programOptions, programOptions->options[OPTION_HELP]->argument)) {
+        programOptionPrintHelp(programOptionsFind(programOptions, programOptions->options[OPTION_HELP]->argument),
+          true, DEFAULT_INDENT_SIZE, 0);
+      }
+      else {
+        printf("Invalid option '%s', try running --help full to see help for all options\n",
+          programOptions->options[OPTION_HELP]->argument->data);
+      }
     }
     return RETURN_CODE_NOT_RUN;
   }
