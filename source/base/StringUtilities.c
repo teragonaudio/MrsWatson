@@ -40,6 +40,26 @@ boolByte isNumber(char ch) {
   return (ch >= '0' && ch <= '9');
 }
 
+CharString convertIntIdToString(const unsigned long id) {
+  CharString result = newCharStringWithCapacity(5);
+  int i;
+  for(i = 0; i < 4; i++) {
+    result->data[i] = (char)(id >> ((3 - i) * 8) & 0xff);
+  }
+  return result;
+}
+
+unsigned long convertStringIdToInt(const CharString id) {
+  unsigned long result = 0;
+  int i;
+  if(id != NULL && strlen(id->data) == 4) {
+    for(i = 0; i < 4; i++) {
+      result |= (unsigned long)(id->data[i]) << ((3 - i) * 8);
+    }
+  }
+  return result;
+}
+
 boolByte _wrapString(const char* srcString, char* destString, int indentSize, int lineLength);
 boolByte _wrapString(const char* srcString, char* destString, int indentSize, int lineLength) {
   char* lineBuffer = (char*)malloc(sizeof(char) * lineLength);
