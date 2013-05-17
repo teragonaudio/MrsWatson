@@ -124,7 +124,6 @@ static ReturnCodes buildPluginChain(PluginChain pluginChain, const CharString ar
 }
 
 static ReturnCodes setupInputSource(SampleSource inputSource) {
-  // Prepare input source
   if(inputSource == NULL) {
     return RETURN_CODE_INVALID_ARGUMENT;
   }
@@ -160,7 +159,9 @@ static ReturnCodes setupMidiSource(MidiSource midiSource, MidiSequence* outSeque
 }
 
 static ReturnCodes setupOutputSource(SampleSource outputSource) {
-  // Prepare output source
+  if(outputSource == NULL) {
+    return RETURN_CODE_INVALID_ARGUMENT;
+  }
   if(!outputSource->openSampleSource(outputSource, SAMPLE_SOURCE_OPEN_WRITE)) {
     logError("Output source '%s' could not be opened", outputSource->sourceName->data);
     return RETURN_CODE_IO_ERROR;
@@ -222,7 +223,6 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   initAudioClock();
   programOptions = newMrsWatsonOptions();
   inputSource = newSampleSource(SAMPLE_SOURCE_TYPE_SILENCE, NULL);
-  outputSource = newSampleSource(DEFAULT_OUTPUT_SOURCE_TYPE, newCharStringWithCString(DEFAULT_OUTPUT_SOURCE));
 
   if(!programOptionsParseArgs(programOptions, argc, argv)) {
     printf("Run '%s --help' to see possible options\n", getFileBasename(argv[0]));
@@ -320,7 +320,6 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
           midiSource = newMidiSource(guessMidiSourceType(option->argument), option->argument);
           break;
         case OPTION_OUTPUT_SOURCE:
-          freeSampleSource(outputSource);
           outputSource = newSampleSource(guessSampleSourceType(option->argument), option->argument);
           break;
         case OPTION_PLUGIN_ROOT:
@@ -380,10 +379,6 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
       return result;
     }
   }
-  if((result = setupOutputSource(outputSource)) != RETURN_CODE_SUCCESS) {
-    logError("Output source could not be opened, exiting");
-    return result;
-  }
 
   // Copy plugins before they have been opened
   if(programOptions->options[OPTION_ERROR_REPORT]->enabled) {
@@ -404,6 +399,13 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   // Display info for plugins in the chain before checking for valid input/output sources
   if(shouldDisplayPluginInfo) {
     displayPluginInfo(pluginChain);
+  }
+
+  // Setup output source here. Having an invalid output source should not cause the program
+  // to exit if the user only wants to list plugins or query info about a chain.
+  if((result = setupOutputSource(outputSource)) != RETURN_CODE_SUCCESS) {
+    logError("Output source could not be opened, exiting");
+    return result;
   }
 
   // Verify input/output sources. This must be done after the plugin chain is initialized
