@@ -67,8 +67,14 @@ LinkedList getVst2xPluginLocations(CharString currentDirectory) {
 
 LibraryHandle getLibraryHandleForPlugin(const CharString pluginAbsolutePath) {
   HMODULE libraryHandle = LoadLibraryExA((LPCSTR)pluginAbsolutePath->data, NULL, LOAD_WITH_ALTERED_SEARCH_PATH);
+  DWORD errorCode = GetLastError();
   if(libraryHandle == NULL) {
-    logError("Could not open library, error code '%s'", stringForLastError(GetLastError()));
+    if(errorCode == ERROR_BAD_EXE_FORMAT) {
+      logError("Could not open library, wrong architecture");
+    }
+    else {
+      logError("Could not open library, error code '%s'", stringForLastError(errorCode));
+    }
     return NULL;
   }
   return libraryHandle;
