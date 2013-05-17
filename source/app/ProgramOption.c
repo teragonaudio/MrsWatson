@@ -107,12 +107,12 @@ void programOptionPrintHelp(const ProgramOption self, boolByte withFullHelp, int
   }
 }
 
-void freeProgramOption(ProgramOption programOption) {
-  if(programOption != NULL) {
-    freeCharString(programOption->name);
-    freeCharString(programOption->help);
-    freeCharString(programOption->argument);
-    free(programOption);
+void freeProgramOption(ProgramOption self) {
+  if(self != NULL) {
+    freeCharString(self->name);
+    freeCharString(self->help);
+    freeCharString(self->argument);
+    free(self);
   }
 }
 
@@ -255,17 +255,15 @@ ProgramOption programOptionsFind(const ProgramOptions self, const CharString str
 }
 
 
-void freeProgramOptions(ProgramOptions programOptions) {
-  ProgramOption option;
+void freeProgramOptions(ProgramOptions self) {
   int i;
 
-  if(programOptions == NULL) {
+  if(self == NULL) {
     return;
   }
-  for(i = 0; i < programOptions->numOptions; i++) {
-    option = programOptions->options[i];
-    freeProgramOption(option);
+  for(i = 0; i < self->numOptions; i++) {
+    freeProgramOption(self->options[i]);
   }
-  free(programOptions->options);
-  free(programOptions);
+  free(self->options);
+  free(self);
 }

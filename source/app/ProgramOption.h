@@ -51,7 +51,6 @@ typedef struct {
   CharString argument;
   boolByte enabled;
 } ProgramOptionMembers;
-
 typedef ProgramOptionMembers* ProgramOption;
 
 typedef struct {
@@ -91,9 +90,9 @@ void programOptionPrintHelp(const ProgramOption self, boolByte withFullHelp, int
 
 /**
  * Free memory used by a ProgramOption instance
- * @param option
+ * @param self
  */
-void freeProgramOption(ProgramOption option);
+void freeProgramOption(ProgramOption self);
 
 
 /**
@@ -134,8 +133,8 @@ void programOptionsPrintHelp(const ProgramOptions self, boolByte withFullHelp, i
 
 /**
  * Free memory used by a ProgramOptions array and all options in the collection
- * @param programOptions
+ * @param self
  */
-void freeProgramOptions(ProgramOptions programOptions);
+void freeProgramOptions(ProgramOptions self);
 
 #endif
