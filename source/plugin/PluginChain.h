@@ -54,6 +54,7 @@ ReturnCodes initializePluginChain(PluginChain pluginChain);
 void displayPluginInfo(PluginChain pluginChain);
 int getMaximumTailTimeInMs(PluginChain pluginChain);
 
+void prepareForProcessing(PluginChain self);
 void processPluginChainAudio(PluginChain pluginChain, SampleBuffer inBuffer, SampleBuffer outBuffer, TaskTimer taskTimer);
 void processPluginChainMidiEvents(PluginChain pluginChain, LinkedList midiEvents, TaskTimer taskTimer);
 

@@ -201,6 +201,15 @@ void displayPluginInfo(PluginChain pluginChain) {
   }
 }
 
+void prepareForProcessing(PluginChain self) {
+  Plugin plugin;
+  int i;
+  for(i = 0; i < self->numPlugins; i++) {
+    plugin = self->plugins[i];
+    plugin->prepareForProcessing(plugin);
+  }
+}
+
 int getMaximumTailTimeInMs(PluginChain pluginChain) {
   Plugin plugin;
   int tailTime;

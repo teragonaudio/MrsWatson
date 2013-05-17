@@ -539,6 +539,11 @@ static void _setParameterVst2xPlugin(void *pluginPtr, int index, float value) {
   data->pluginHandle->setParameter(data->pluginHandle, index, value);
 }
 
+static void _prepareForProcessingVst2xPlugin(void* pluginPtr) {
+  Plugin plugin = (Plugin)pluginPtr;
+  _resumePlugin(plugin);
+}
+
 static void _closeVst2xPlugin(void *pluginPtr) {
   Plugin plugin = (Plugin)pluginPtr;
   _suspendPlugin(plugin);
@@ -572,6 +577,7 @@ Plugin newPluginVst2x(const CharString pluginName, const CharString pluginLocati
   plugin->processAudio = _processAudioVst2xPlugin;
   plugin->processMidiEvents = _processMidiEventsVst2xPlugin;
   plugin->setParameter = _setParameterVst2xPlugin;
+  plugin->prepareForProcessing = _prepareForProcessingVst2xPlugin;
   plugin->closePlugin = _closeVst2xPlugin;
   plugin->freePluginData = _freeVst2xPluginData;
 

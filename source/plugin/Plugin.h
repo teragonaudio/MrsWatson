@@ -59,6 +59,7 @@ typedef int (*PluginGetSettingFunc)(void*, PluginSetting pluginSetting);
 typedef void (*PluginProcessAudioFunc)(void* pluginPtr, SampleBuffer inputs, SampleBuffer outputs);
 typedef void (*PluginProcessMidiEventsFunc)(void* pluginPtr, LinkedList midiEvents);
 typedef void (*PluginSetParameterFunc)(void* pluginPtr, int index, float value);
+typedef void (*PluginPrepareForProcessingFunc)(void* pluginPtr);
 typedef void (*ClosePluginFunc)(void* pluginPtr);
 typedef void (*FreePluginDataFunc)(void* pluginDataPtr);
 
@@ -75,6 +76,7 @@ typedef struct {
   PluginProcessAudioFunc processAudio;
   PluginProcessMidiEventsFunc processMidiEvents;
   PluginSetParameterFunc setParameter;
+  PluginPrepareForProcessingFunc prepareForProcessing;
   ClosePluginFunc closePlugin;
   FreePluginDataFunc freePluginData;
 

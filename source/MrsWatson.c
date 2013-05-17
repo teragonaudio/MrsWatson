@@ -468,6 +468,8 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   tailTimeInMs += getMaximumTailTimeInMs(pluginChain);
   tailTimeInFrames = (unsigned long)(tailTimeInMs * getSampleRate()) / 1000l;
 
+  prepareForProcessing(pluginChain);
+
   // Update sample rate on the event logger
   setLoggingZebraSize((long)getSampleRate());
   logInfo("Starting processing input source");
