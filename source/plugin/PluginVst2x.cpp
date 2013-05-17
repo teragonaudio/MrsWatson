@@ -56,7 +56,7 @@ typedef struct {
   AEffect *pluginHandle;
   Vst2xPluginDispatcherFunc dispatcher;
   LibraryHandle libraryHandle;
-  boolByte isShellPlugin;
+  boolByte isPluginShell;
   unsigned long shellPluginId;
 } PluginVst2xDataMembers;
 typedef PluginVst2xDataMembers* PluginVst2xData;
@@ -245,9 +245,9 @@ static boolByte _initVst2xPlugin(Plugin plugin) {
 
   if(data->pluginHandle->dispatcher(data->pluginHandle, effGetPlugCategory, 0, 0, NULL, 0.0f) == kPlugCategShell) {
     uniqueIdString = convertIntIdToString(data->shellPluginId);
-    logDebug("Plugin is a shell plugin, id '%s'", uniqueIdString->data);
+    logDebug("VST is a shell plugin, sub-plugin ID '%s'", uniqueIdString->data);
     freeCharString(uniqueIdString);
-    data->isShellPlugin = true;
+    data->isPluginShell = true;
   }
 
   data->dispatcher(data->pluginHandle, effOpen, 0, 0, NULL, 0.0f);
@@ -269,7 +269,6 @@ static boolByte _initVst2xPlugin(Plugin plugin) {
   memcpy(&outSpeakers, &inSpeakers, sizeof(VstSpeakerArrangement));
   data->dispatcher(data->pluginHandle, effSetSpeakerArrangement, 0, (VstIntPtr)&inSpeakers, &outSpeakers, 0.0f);
 
-  _resumePlugin(plugin);
   return true;
 }
 
@@ -282,14 +281,19 @@ unsigned long getVst2xPluginUniqueId(const Plugin plugin) {
 }
 
 static boolByte _openVst2xPlugin(void* pluginPtr) {
+  boolByte result = false;
   AEffect* pluginHandle;
   Plugin plugin = (Plugin)pluginPtr;
   PluginVst2xData data = (PluginVst2xData)plugin->extraData;
-  char* subpluginSeparator = strrchr(plugin->pluginName->data, kPluginVst2xSubpluginSeparator);
+  const char* pluginBasename = getFileBasename(plugin->pluginName->data);
+  char* subpluginSeparator = strrchr((char*)pluginBasename, kPluginVst2xSubpluginSeparator);
+  CharString subpluginId = NULL;
 
   if(subpluginSeparator != NULL) {
     *subpluginSeparator = '\0';
-    data->shellPluginId = 0; // TODO: String -> uniqueId
+    subpluginId = newCharStringWithCapacity(kCharStringLengthShort);
+    strncpy(subpluginId->data, subpluginSeparator + 1, 4);
+    data->shellPluginId = convertStringIdToInt(subpluginId);
     currentPluginUniqueId = data->shellPluginId;
   }
 
@@ -384,8 +388,9 @@ static void _displayVst2xPluginInfo(void* pluginPtr) {
   logInfo("Version: %d", data->pluginHandle->version);
   logInfo("I/O: %d/%d", data->pluginHandle->numInputs, data->pluginHandle->numOutputs);
 
-  if(data->isShellPlugin) {
-    logInfo("Shell plugins:", data->pluginHandle->resvd1);
+  if(data->isPluginShell && data->shellPluginId == 0) {
+    logInfo("Sub-plugins:");
+    nameBuffer = newCharStringWithCapacity(kCharStringLengthShort);
     while(true) {
       charStringClear(nameBuffer);
       VstInt32 shellPluginId = data->dispatcher(data->pluginHandle, effShellGetNextPlugin, 0, 0, nameBuffer->data, 0.0f);
@@ -395,12 +400,13 @@ static void _displayVst2xPluginInfo(void* pluginPtr) {
       else {
         CharString shellPluginIdString = convertIntIdToString(shellPluginId);
         logInfo("  '%s' (%s)", shellPluginIdString->data, nameBuffer->data);
-        // TODO: List parameters for shell plugin?
         freeCharString(shellPluginIdString);
       }
     }
+    freeCharString(nameBuffer);
   }
   else {
+    nameBuffer = newCharStringWithCapacity(kCharStringLengthShort);
     logInfo("Parameters (%d total):", data->pluginHandle->numParams);
     for(int i = 0; i < data->pluginHandle->numParams; i++) {
       float value = data->pluginHandle->getParameter(data->pluginHandle, i);
@@ -425,8 +431,6 @@ static void _displayVst2xPluginInfo(void* pluginPtr) {
     foreachItemInList(commonCanDos, _displayVst2xPluginCanDo, plugin);
     freeLinkedList(commonCanDos);
   }
-
-  freeCharString(nameBuffer);
 }
 
 static void _getVst2xAbsolutePath(void* pluginPtr, CharString outPath) {
@@ -585,7 +589,7 @@ Plugin newPluginVst2x(const CharString pluginName, const CharString pluginLocati
   extraData->pluginHandle = NULL;
   extraData->dispatcher = NULL;
   extraData->libraryHandle = NULL;
-  extraData->shellPluginId = false;
+  extraData->isPluginShell = false;
   extraData->shellPluginId = 0;
   plugin->extraData = extraData;
 
