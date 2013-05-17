@@ -206,7 +206,7 @@ int main(int argc, char* argv[]) {
     charStringCopy(resourcesPath, programOptions->options[OPTION_TEST_RESOURCES_PATH]->argument);
   }
   if(runApplicationTests && !fileExists(resourcesPath->data)) {
-    printf("Could not find test resources at '%s', skipping application tests\n", resourcesPath->data);
+    printf("Could not find test resources, skipping application tests\n");
     runApplicationTests = false;
   }
 
