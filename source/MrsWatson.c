@@ -87,7 +87,7 @@ static void printWelcomeMessage(void) {
   freeCharString(stringBuffer);
 
   stringBuffer = getPlatformName();
-  logDebug("Host platform is %s, application is %d-bit", stringBuffer->data, isExecutable64Bit() ? "64" : "32");
+  logDebug("Host platform is %s, application is %d-bit", stringBuffer->data, isExecutable64Bit() ? 64 : 32);
   freeCharString(stringBuffer);
 }
 
