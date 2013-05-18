@@ -326,8 +326,8 @@ void logFileError(const char* filename, const char* message) {
 void printPossibleBugMessage(const char* cause) {
   CharString wrappedCause = newCharString();
   CharString extraText = newCharStringWithCString("If you believe this to be a \
-bug, please re-run the program with the --error-report option to generate a \
-diagnostic zipfile to send to support.");
+bug in MrsWatson, please re-run the program with the --error-report option to \
+generate a diagnostic report to send to support.");
   CharString wrappedExtraText = newCharString();
   wrapString(cause, wrappedCause->data, 0);
   wrapString(extraText->data, wrappedExtraText->data, 0);
