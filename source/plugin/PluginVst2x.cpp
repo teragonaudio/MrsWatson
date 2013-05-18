@@ -396,6 +396,18 @@ static void _displayVst2xPluginInfo(void* pluginPtr) {
   logInfo("Unique ID: %s", nameBuffer->data);
   freeCharString(nameBuffer);
 
+  VstInt32 pluginCategory = data->dispatcher(data->pluginHandle, effGetPlugCategory, 0, 0, NULL, 0.0f);
+  switch(plugin->pluginType) {
+    case PLUGIN_TYPE_EFFECT:
+      logInfo("Plugin type: effect, category %d", pluginCategory);
+      break;
+    case PLUGIN_TYPE_INSTRUMENT:
+      logInfo("Plugin type: instrument, category %d", pluginCategory);
+      break;
+    default:
+      logInfo("Plugin type: other, category %d", pluginCategory);
+      break;
+  }
   logInfo("Version: %d", data->pluginHandle->version);
   logInfo("I/O: %d/%d", data->pluginHandle->numInputs, data->pluginHandle->numOutputs);
 
