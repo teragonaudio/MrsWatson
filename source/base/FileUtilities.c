@@ -217,7 +217,12 @@ void convertRelativePathToAbsolute(const CharString file, CharString outString) 
 boolByte isAbsolutePath(const CharString path) {
 #if WINDOWS
   if(path->length > 3) {
+    // Check for strings which start with a drive letter, ie C:\file
     if(path->data[1] == ':' && path->data[2] == PATH_DELIMITER) {
+      return true;
+    }
+    // Check for network paths, ie \\SERVER\file
+    else if(path->data[0] == PATH_DELIMITER && path->data[1] == PATH_DELIMITER) {
       return true;
     }
   }

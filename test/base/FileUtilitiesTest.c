@@ -178,6 +178,13 @@ static int _testIsAbsolutePath(void) {
   return 0;
 }
 
+static int _testIsAbsolutePathUNCWindows(void) {
+#if WINDOWS
+  assert(isAbsolutePath(newCharStringWithCString("\\\\SERVER\\file")));
+#endif
+  return 0;
+}
+
 static int _testIsInvalidFileAbsolutePath(void) {
   assertFalse(isAbsolutePath(newCharStringWithCString("invalid")));
   return 0;
@@ -253,6 +260,7 @@ TestSuite addFileUtilitiesTests(void) {
   addTest(testSuite, "ConvertRelativePathToAbsoluteAlreadyAbsolute", NULL); // _testConvertRelativePathToAbsoluteAlreadyAbsolute);
   addTest(testSuite, "ConvertRelativePathToAbsoluteEmpty", NULL); // _testConvertRelativePathToAbsoluteEmpty);
   addTest(testSuite, "IsAbsolutePath", _testIsAbsolutePath);
+  addTest(testSuite, "IsAbsolutePathUNCWindows", _testIsAbsolutePathUNCWindows);
   addTest(testSuite, "IsInvalidFileAbsolutePath", _testIsInvalidFileAbsolutePath);
 
   addTest(testSuite, "GetFileBasename", _testGetFileBasename);
