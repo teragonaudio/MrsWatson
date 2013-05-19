@@ -1,7 +1,7 @@
 #include "unit/TestRunner.h"
 #include "sequencer/AudioClock.h"
 
-static int const TEST_BLOCKSIZE = 256;
+static const unsigned long kAudioClockTestBlocksize = 256;
 
 static void _audioClockTestSetup(void) {
   initAudioClock();
@@ -19,15 +19,15 @@ static int _testInitAudioClock(void) {
 }
 
 static int _testAdvanceAudioClock(void) {
-  advanceAudioClock(TEST_BLOCKSIZE);
-  assertIntEquals(getAudioClockCurrentFrame(), TEST_BLOCKSIZE);
+  advanceAudioClock(kAudioClockTestBlocksize);
+  assertIntEquals(getAudioClockCurrentFrame(), kAudioClockTestBlocksize);
   assert(getAudioClockIsPlaying());
   assert(getAudioClockTransportChanged());
   return 0;
 }
 
 static int _testStopAudioClock(void) {
-  advanceAudioClock(TEST_BLOCKSIZE);
+  advanceAudioClock(kAudioClockTestBlocksize);
   stopAudioClock();
   assertFalse(getAudioClockIsPlaying());
   assert(getAudioClockTransportChanged())
@@ -35,23 +35,23 @@ static int _testStopAudioClock(void) {
 }
 
 static int _testRestartAudioClock(void) {
-  advanceAudioClock(TEST_BLOCKSIZE);
+  advanceAudioClock(kAudioClockTestBlocksize);
   stopAudioClock();
-  advanceAudioClock(TEST_BLOCKSIZE);
+  advanceAudioClock(kAudioClockTestBlocksize);
   assert(getAudioClockIsPlaying());
   assert(getAudioClockTransportChanged());
-  assertIntEquals(getAudioClockCurrentFrame(), TEST_BLOCKSIZE * 2);
+  assertIntEquals(getAudioClockCurrentFrame(), kAudioClockTestBlocksize * 2);
   return 0;
 }
 
 static int _testAdvanceClockMulitpleTimes(void) {
   int i;
   for(i = 0; i < 100; i++) {
-    advanceAudioClock(TEST_BLOCKSIZE);
+    advanceAudioClock(kAudioClockTestBlocksize);
   }
   assert(getAudioClockIsPlaying());
   assertFalse(getAudioClockTransportChanged());
-  assertIntEquals(getAudioClockCurrentFrame(), TEST_BLOCKSIZE * 100);
+  assertIntEquals(getAudioClockCurrentFrame(), kAudioClockTestBlocksize * 100);
   return 0;
 }
 
