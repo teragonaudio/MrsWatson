@@ -143,13 +143,15 @@ VstIntPtr VSTCALLBACK pluginVst2xHostCallback(AEffect *effect, VstInt32 opcode, 
       break;
     case audioMasterIdle:
       // Ignore
+      result = 1;
       break;
     case audioMasterPinConnected:
       logDeprecated("audioMasterPinConnected", uniqueId);
       break;
     case audioMasterWantMidi:
-      // This is called by old VST2.3 plugins to tell us that they are instruments, ignore
-      logDeprecated("audioMasterWantMidi", uniqueId);
+      // This (deprecated) call is sometimes made by VST2.3 instruments to tell
+      // the host that it is an instrument. We can safely ignore it.
+      result = 1;
       break;
     case audioMasterGetTime:
       // These values are always valid
