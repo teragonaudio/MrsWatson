@@ -201,6 +201,8 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   boolByte shouldDisplayPluginInfo = false;
   MidiSequence midiSequence = NULL;
   MidiSource midiSource = NULL;
+  long maxTimeInMs = 0;
+  unsigned long maxTimeInFrames = 0;
   long tailTimeInMs = 0;
   unsigned long tailTimeInFrames = 0;
   ProgramOptions programOptions;
@@ -326,6 +328,9 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
         case OPTION_INPUT_SOURCE:
           freeSampleSource(inputSource);
           inputSource = newSampleSource(guessSampleSourceType(option->argument), option->argument);
+          break;
+        case OPTION_MAX_TIME:
+          maxTimeInMs = strtol(option->argument->data, NULL, 10);
           break;
         case OPTION_MIDI_SOURCE:
           midiSource = newMidiSource(guessMidiSourceType(option->argument), option->argument);
@@ -463,6 +468,11 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   // Initialization is finished, we should be able to free this memory now
   freeProgramOptions(programOptions);
 
+  // If a maximum time was given, figure it out here
+  if(maxTimeInMs > 0) {
+    maxTimeInFrames = (unsigned long)(maxTimeInMs * getSampleRate()) / 1000l;
+  }
+
   // Get largest tail time requested by any plugin in the chain
   tailTimeInMs += getMaximumTailTimeInMs(pluginChain);
   tailTimeInFrames = (unsigned long)(tailTimeInMs * getSampleRate()) / 1000l;
@@ -492,6 +502,11 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
       processPluginChainMidiEvents(pluginChain, midiEventsForBlock, taskTimer);
       startTimingTask(taskTimer, hostTaskId);
       freeLinkedList(midiEventsForBlock);
+    }
+
+    if(maxTimeInFrames > 0 && getAudioClockCurrentFrame() >= maxTimeInFrames) {
+      logInfo("Maximum time reached, stopping processing after this block");
+      finishedReading = true;
     }
 
     processPluginChainAudio(pluginChain, inputSampleBuffer, outputSampleBuffer, taskTimer);

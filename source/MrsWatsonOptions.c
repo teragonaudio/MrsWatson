@@ -90,6 +90,12 @@ If attached to a terminal device, color is used automatically unless 'none' is g
 Critical errors are always logged.",
     false, kProgramOptionArgumentTypeRequired, NO_DEFAULT_VALUE));
 
+  programOptionsAdd(options, newProgramOptionWithValues(OPTION_MAX_TIME, "max-time",
+    "Force processing to stop after <argument> milliseconds, regardless of the \
+input source length. Mostly useful when using internal plugins as sources. Note \
+that --tail-time is still applied as normal after this limit is reached.",
+    false, kProgramOptionArgumentTypeRequired, NO_DEFAULT_VALUE));
+
   programOptionsAdd(options, newProgramOptionWithValues(OPTION_MIDI_SOURCE, "midi-file",
     "MIDI file to read events from. Required if processing an instrument plugin.",
     true, kProgramOptionArgumentTypeRequired, NO_DEFAULT_VALUE));
