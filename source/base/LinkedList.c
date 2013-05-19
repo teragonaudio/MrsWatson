@@ -42,12 +42,12 @@ LinkedList newLinkedList(void) {
   return list;
 }
 
-void appendItemToList(LinkedList list, void* item) {
-  LinkedListIterator iterator = list;
+void appendItemToList(LinkedList self, void* item) {
+  LinkedListIterator iterator = self;
   LinkedListIterator headNode;
   LinkedList nextItem;
 
-  if(list == NULL || item == NULL) {
+  if(self == NULL || item == NULL) {
     return;
   }
 
@@ -58,7 +58,7 @@ void appendItemToList(LinkedList list, void* item) {
     return;
   }
 
-  headNode = list;
+  headNode = self;
   while(true) {
     if(iterator->nextItem == NULL) {
       nextItem = newLinkedList();
@@ -73,12 +73,12 @@ void appendItemToList(LinkedList list, void* item) {
   }
 }
 
-int numItemsInList(LinkedList list) {
-  return list != NULL ? list->_numItems : 0;
+int numItemsInList(LinkedList self) {
+  return self != NULL ? self->_numItems : 0;
 }
 
-void foreachItemInList(LinkedList list, LinkedListForeachFunc foreachFunc, void* userData) {
-  LinkedListIterator iterator = list;
+void foreachItemInList(LinkedList self, LinkedListForeachFunc foreachFunc, void* userData) {
+  LinkedListIterator iterator = self;
 
   while(iterator != NULL) {
     if(iterator->item != NULL) {
@@ -88,9 +88,9 @@ void foreachItemInList(LinkedList list, LinkedListForeachFunc foreachFunc, void*
   }
 }
 
-void freeLinkedList(LinkedList list) {
-  LinkedListIterator iterator = list;
-  while(true && iterator != NULL) {
+void freeLinkedList(LinkedList self) {
+  LinkedListIterator iterator = self;
+  while(iterator != NULL) {
     if(iterator->nextItem == NULL) {
       free(iterator);
       break;
@@ -103,8 +103,8 @@ void freeLinkedList(LinkedList list) {
   }
 }
 
-void freeLinkedListAndItems(LinkedList list, LinkedListFreeItemFunc freeItem) {
-  LinkedListIterator iterator = list;
+void freeLinkedListAndItems(LinkedList self, LinkedListFreeItemFunc freeItem) {
+  LinkedListIterator iterator = self;
   LinkedList current;
 
   if(iterator->item == NULL){

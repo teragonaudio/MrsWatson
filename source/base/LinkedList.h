@@ -42,15 +42,52 @@ typedef LinkedListMembers *LinkedListIterator;
 typedef void (*LinkedListForeachFunc)(void* item, void* userData);
 typedef void (*LinkedListFreeItemFunc)(void* item);
 
+/**
+ * Create a new linked list
+ * @return Linked list with no items
+ */
 LinkedList newLinkedList(void);
-LinkedList newLinkedListWithItems(void* firstItem, ...);
 
-void appendItemToList(LinkedList list, void* item);
-int numItemsInList(LinkedList list);
-// TODO: Test cases
-void foreachItemInList(LinkedList list, LinkedListForeachFunc foreachFunc, void* userData);
+/**
+ * Add an item to the end of a list
+ * @param self
+ * @param item Item to append. Items should (but do not necessarily have to be)
+ * of the same type. However, if items in the list are not of the same type,
+ * using functions such as foreachItemInList() will be much more difficult.
+ */
+void appendItemToList(LinkedList self, void* item);
 
-void freeLinkedList(LinkedList list);
-void freeLinkedListAndItems(LinkedList list, LinkedListFreeItemFunc freeItem);
+/**
+ * Get the number of items in a list. Use this function instead of accessing
+ * the fields of the list, as the field names or use may change in the future.
+ * @param self
+ * @return Number of items in the list
+ */
+int numItemsInList(LinkedList self);
+
+void** linkedListToArray(LinkedList self);
+
+/**
+ * Iterate over each item in a linked list, calling the given function on each
+ * item.
+ * @param self
+ * @param foreachFunc Function to call
+ * @param userData User data to pass to the function
+ */
+void foreachItemInList(LinkedList self, LinkedListForeachFunc foreachFunc, void* userData);
+
+/**
+ * Free each item in a linked list. The contents of the items themselves are *not*
+ * freed. To do that, call freeLinkedListAndItems() instead.
+ * @param self
+ */
+void freeLinkedList(LinkedList self);
+
+/**
+ * Free a linked list and each of its items.
+ * @param self
+ * @param freeItem Free function to be called for each item
+ */
+void freeLinkedListAndItems(LinkedList self, LinkedListFreeItemFunc freeItem);
 
 #endif
