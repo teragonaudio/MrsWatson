@@ -65,6 +65,7 @@ typedef ProgramOptionsMembers* ProgramOptions;
  * @return An initialized ProgramOption
  */
 ProgramOption newProgramOption(void);
+
 /**
  * Create a new ProgramOption instance with some default values
  * @param opnionIndex Reference index for option (ie, from an enum)
@@ -119,11 +120,12 @@ boolByte programOptionsAdd(const ProgramOptions self, const ProgramOption option
  * @return Matching ProgramOption, NULL otherwise
  */
 ProgramOption programOptionsFind(const ProgramOptions self, const CharString name);
+
 /**
  * Parse a command line argument array.
  * @param self
- * @param argc
- * @param argv
+ * @param argc Number of arguments (ie, from main(int argc, char** argv)
+ * @param argv Argument array (ie, from main(int argc, char** argv)
  * @return False if an error occurred during parsing, such as a missing or invalid argument
  */
 boolByte programOptionsParseArgs(ProgramOptions self, int argc, char** argv);
