@@ -118,7 +118,9 @@ VstIntPtr VSTCALLBACK pluginVst2xHostCallback(AEffect *effect, VstInt32 opcode, 
     uniqueIdString = convertIntIdToString(effect->uniqueID);
   }
   else {
-    // During plugin initialization, the dispatcher can be called without a valid plugin instance
+    // During plugin initialization, the dispatcher can be called without a
+    // valid plugin instance, as the AEffect* struct is still not fully constructed
+    // at that point.
     uniqueIdString = newCharStringWithCString("????");
   }
   const char* uniqueId = uniqueIdString->data;
