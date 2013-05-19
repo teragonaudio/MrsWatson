@@ -111,7 +111,7 @@ int runApplicationTestSuite(TestEnvironment environment) {
     RETURN_CODE_SUCCESS, kDefaultTestOutputFileType
   );
   runApplicationTest(environment, "Load internal program to VST",
-    buildTestArgumentString("--plugin vstsynthx,2 --midi-file \"%s\"", c_scale_mid),
+    buildTestArgumentString("--plugin vstxsynth,2 --midi-file \"%s\"", c_scale_mid),
     RETURN_CODE_SUCCESS, kDefaultTestOutputFileType
   );
 
