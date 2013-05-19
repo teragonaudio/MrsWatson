@@ -33,11 +33,11 @@
 #include "plugin/PluginChain.h"
 
 PluginChain newPluginChain(void) {
-  PluginChain pluginChain = malloc(sizeof(PluginChainMembers));
+  PluginChain pluginChain = (PluginChain)malloc(sizeof(PluginChainMembers));
 
   pluginChain->numPlugins = 0;
-  pluginChain->plugins = malloc(sizeof(Plugin) * MAX_PLUGINS);
-  pluginChain->presets = malloc(sizeof(PluginPreset) * MAX_PLUGINS);
+  pluginChain->plugins = (Plugin)malloc(sizeof(Plugin) * MAX_PLUGINS);
+  pluginChain->presets = (PluginPreset)malloc(sizeof(PluginPreset) * MAX_PLUGINS);
 
   return pluginChain;
 }
