@@ -184,10 +184,10 @@ static boolByte _copyDirectoryToErrorReportDir(ErrorReporter self, CharString pa
 
 boolByte shouldCopyPluginsToReportDir(void) {
   CharString promptText = newCharStringWithCString(kErrorReportCopyPluginsPromptText);
-  CharString wrappedPromptText = newCharStringWithCapacity(promptText->length * 2); // Extra space for wrapping
+  CharString wrappedPromptText;
   char response;
 
-  wrapString(promptText->data, wrappedPromptText->data, 0);
+  wrappedPromptText = wrapString(promptText, 0);
   printf("%s", wrappedPromptText->data);
   freeCharString(wrappedPromptText);
   freeCharString(promptText);
@@ -259,12 +259,13 @@ static void _addFileToArchive(void* item, void* userData) {
 
 void printErrorReportInfo(void) {
   CharString infoText = newCharStringWithCString(kErrorReportInfoText);
-  CharString wrappedInfoText = newCharStringWithCapacity(infoText->length * 2); // Extra space for wrapping
+  CharString wrappedInfoText;
 
   printf("=== Starting error report ===\n");
-  wrapString(infoText->data, wrappedInfoText->data, 0);
+  wrappedInfoText = wrapString(infoText, 0);
   // The second newline here is intentional
   printf("%s\n", wrappedInfoText->data);
+
   freeCharString(wrappedInfoText);
   freeCharString(infoText);
 }

@@ -29,40 +29,33 @@ static int _testIsNotNumber(void) {
 }
 
 static int _testWrapNullSourceString(void) {
-  assertFalse(wrapString(NULL, "test", 0));
-  return 0;
-}
-
-static int _testWrapNullDestString(void) {
-  assertFalse(wrapString("test", NULL, 0));
-  return 0;
-}
-
-static int _testWrapInvalidIndentSize(void) {
-  assertFalse(wrapString("test", "test", -1));
+  assertFalse(wrapString(NULL, 0));
   return 0;
 }
 
 static int _testWrapString(void) {
-  char *src = "1234 6789 bcde 01";
-  CharString dest = newCharString();
-  assert(_wrapString(src, dest->data, 0, 0xf));
+  CharString src = newCharStringWithCString("1234 6789 bcde 01");
+  // Create dest string the same way as in wrapString(), cheap I know...
+  CharString dest = newCharStringWithCapacity(src->length * 2);
+  _wrapString(src->data, dest->data, 0, 0x10);
   assertCharStringEquals(dest, "1234 6789 bcde\n01");
   return 0;
 }
 
 static int _testWrapStringWithIndent(void) {
-  char *src = "1234 6789 bcde 01";
-  CharString dest = newCharString();
-  assert(_wrapString(src, dest->data, 1, 0xe));
+  CharString src = newCharStringWithCString("1234 6789 bcde 01");
+  // Create dest string the same way as in wrapString(), cheap I know...
+  CharString dest = newCharStringWithCapacity(src->length * 2);
+  _wrapString(src->data, dest->data, 1, 0xe);
   assertCharStringEquals(dest, " 1234 6789\n bcde 01");
   return 0;
 }
 
 static int _testWrapStringLongerThanLine(void) {
-  char *src = "123456789abcdef12";
-  CharString dest = newCharString();
-  assert(_wrapString(src, dest->data, 0, 0xf));
+  CharString src = newCharStringWithCString("123456789abcdef12");
+  // Create dest string the same way as in wrapString(), cheap I know...
+  CharString dest = newCharStringWithCapacity(src->length * 2);
+  _wrapString(src->data, dest->data, 0, 0xf);
   assertCharStringEquals(dest, "123456789abcde-\nf12");
   return 0;
 }
@@ -120,8 +113,6 @@ TestSuite addStringUtilitiesTests(void) {
   addTest(testSuite, "ConvertInvalidStringIdToInt", _testConvertInvalidStringIdToInt);
 
   addTest(testSuite, "WrapNullSourceString", _testWrapNullSourceString);
-  addTest(testSuite, "WrapNullDestString", _testWrapNullDestString);
-  addTest(testSuite, "InvalidIndentSize", _testWrapInvalidIndentSize);
   addTest(testSuite, "WrapString", _testWrapString);
   addTest(testSuite, "WrapStringWithIndent", _testWrapStringWithIndent);
   addTest(testSuite, "WrapStringLongerThanLine", _testWrapStringLongerThanLine);

@@ -274,16 +274,20 @@ void logError(const char* message, ...) {
 void logCritical(const char* message, ...) {
   va_list arguments;
   CharString formattedMessage = newCharString();
-  CharString wrappedMessage = newCharString();
+  CharString wrappedMessage;
+
   va_start(arguments, message);
-  // Instead of going through the common logging method, we always dump critical messages to stderr
+  // Instead of going through the common logging method, we always dump critical
+  // messages to stderr
   vsnprintf(formattedMessage->data, formattedMessage->length, message, arguments);
-  wrapString(formattedMessage->data, wrappedMessage->data, 0);
+  wrappedMessage = wrapString(formattedMessage, 0);
   fprintf(stderr, "ERROR: %s\n", wrappedMessage->data);
   if(eventLoggerInstance != NULL && eventLoggerInstance->logFile != NULL) {
     fprintf(eventLoggerInstance->logFile, "ERROR: %s\n", wrappedMessage->data);
   }
+
   freeCharString(formattedMessage);
+  freeCharString(wrappedMessage);
   va_end(arguments);
 }
 
@@ -324,15 +328,19 @@ void logFileError(const char* filename, const char* message) {
 }
 
 void printPossibleBugMessage(const char* cause) {
-  CharString wrappedCause = newCharString();
   CharString extraText = newCharStringWithCString("If you believe this to be a \
 bug in MrsWatson, please re-run the program with the --error-report option to \
 generate a diagnostic report to send to support.");
-  CharString wrappedExtraText = newCharString();
-  wrapString(cause, wrappedCause->data, 0);
-  wrapString(extraText->data, wrappedExtraText->data, 0);
+  CharString wrappedCause;
+  CharString wrappedExtraText;
+
+  wrappedCause = wrapString(newCharStringWithCString(cause), 0);
+  wrappedExtraText = wrapString(extraText, 0);
   fprintf(stderr, "%s\n", wrappedCause->data);
   fprintf(stderr, "%s\n", wrappedExtraText->data);
+
+  freeCharString(wrappedCause);
+  freeCharString(wrappedExtraText);
 }
 
 void flushErrorLog(void) {

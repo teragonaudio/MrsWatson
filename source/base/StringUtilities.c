@@ -60,26 +60,26 @@ unsigned long convertStringIdToInt(const CharString id) {
   return result;
 }
 
-boolByte _wrapString(const char* srcString, char* destString, int indentSize, int lineLength);
-boolByte _wrapString(const char* srcString, char* destString, int indentSize, int lineLength) {
+void _wrapString(const char* srcString, char* destString, int indentSize, int lineLength);
+void _wrapString(const char* srcString, char* destString, int indentSize, int lineLength) {
   char* lineBuffer = (char*)malloc(sizeof(char) * lineLength);
   unsigned long destStringIndex = 0;
   unsigned long srcStringIndex = 0;
-  int lineIndex = 0;
+  size_t lineIndex = 0;
   int indentIndex = 0;
-
-  long bufferLength;
+  size_t bufferLength;
   char* newlinePosition;
   char* lastSpacePosition;
 
-  if(srcString == NULL || destString == NULL) {
-    return false;
+  // Sanity checks
+  if(srcString == NULL) {
+    return;
   }
   else if(indentSize < 0 || indentSize > lineLength) {
-    return false;
+    return;
   }
   else if(lineLength <= 0) {
-    return false;
+    return;
   }
 
   while(srcStringIndex < strlen(srcString)) {
@@ -91,14 +91,17 @@ boolByte _wrapString(const char* srcString, char* destString, int indentSize, in
     }
 
     // Clear out the line buffer, and copy a full line into it
-    memset(lineBuffer, 0, (size_t)lineLength);
-    bufferLength = lineLength - lineIndex;
-    strncpy(lineBuffer, srcString + srcStringIndex, (size_t)bufferLength);
+    memset(lineBuffer, 0, lineLength);
+    bufferLength = lineLength - lineIndex - 1; // don't forget the null!
+    if(bufferLength <= 0) {
+      break;
+    }
+    strncpy(lineBuffer, srcString + srcStringIndex, bufferLength);
 
     // Check to see if we have copied the last line of the source string. If so, append that to
     // the destination string and return.
     if(bufferLength + srcStringIndex >= strlen(srcString)) {
-      strncpy(destString + destStringIndex, lineBuffer, (size_t)bufferLength);
+      strncpy(destString + destStringIndex, lineBuffer, bufferLength);
       break;
     }
 
@@ -106,7 +109,7 @@ boolByte _wrapString(const char* srcString, char* destString, int indentSize, in
     newlinePosition = strchr(lineBuffer, '\n');
     if(newlinePosition != NULL) {
       bufferLength = newlinePosition - lineBuffer + 1;
-      strncpy(destString + destStringIndex, lineBuffer, (size_t)bufferLength);
+      strncpy(destString + destStringIndex, lineBuffer, bufferLength);
       destStringIndex += bufferLength;
       srcStringIndex += bufferLength;
       lineIndex = 0;
@@ -120,7 +123,7 @@ boolByte _wrapString(const char* srcString, char* destString, int indentSize, in
       // a hyphen at the end of the line and start a new line. Also, we need to leave room
       // for the newline, so subtract 2 from the total buffer length.
       bufferLength = lineLength - lineIndex - 1;
-      strncpy(destString + destStringIndex, lineBuffer, (size_t)bufferLength);
+      strncpy(destString + destStringIndex, lineBuffer, bufferLength);
       destString[lineLength - 1] = '-';
       // Move the destination string index ahead 1 to account for the hyphen, and the source
       // string index back one to copy the last character from the previous line.
@@ -129,7 +132,7 @@ boolByte _wrapString(const char* srcString, char* destString, int indentSize, in
     }
     else {
       bufferLength = lastSpacePosition - lineBuffer;
-      strncpy(destString + destStringIndex, lineBuffer, (size_t)bufferLength);
+      strncpy(destString + destStringIndex, lineBuffer, bufferLength);
     }
 
     // Increase string indexes and continue looping
@@ -140,9 +143,18 @@ boolByte _wrapString(const char* srcString, char* destString, int indentSize, in
   }
 
   free(lineBuffer);
-  return true;
 }
 
-boolByte wrapString(const char* srcString, char* destString, int indentSize) {
-  return _wrapString(srcString, destString, indentSize, TERMINAL_LINE_LENGTH);
+CharString wrapString(const CharString srcString, unsigned int indentSize) {
+  CharString destString;
+  if(srcString == NULL) {
+    return NULL;
+  }
+  // Allocate 2x as many characters as needed to avoid buffer overflows.
+  // Since this method is only used in "user-friendly" cases, it's ok to be
+  // a bit wasteful in the name of avoiding memory corruption. Therefore this
+  // function should *not* used for regular logging or text output.
+  destString = newCharStringWithCapacity(srcString->length * 2);
+  _wrapString(srcString->data, destString->data, indentSize, TERMINAL_LINE_LENGTH);
+  return destString;
 }
