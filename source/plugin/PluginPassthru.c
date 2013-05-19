@@ -27,6 +27,7 @@
 
 #include <stdlib.h>
 
+#include "logging/EventLogger.h"
 #include "plugin/PluginPassthru.h"
 
 const char* kInternalPluginPassthruName = INTERNAL_PLUGIN_PREFIX "passthru";
@@ -44,6 +45,12 @@ static void _pluginPassthruGetAbsolutePath(void* pluginPtr, CharString outPath) 
   // an empty string here and let any callers needing the absolute path to check
   // for this value before doing anything important.
   charStringClear(outPath);
+}
+
+static void _pluginPassthruDisplayInfo(void* pluginPtr) {
+  logInfo("Information for Internal plugin '%s'", kInternalPluginPassthruName);
+  logInfo("Type: effect, parameters: none");
+  logInfo("Description: a passthru effect which copies input data to the output");
 }
 
 static int _pluginPassthruGetSetting(void* pluginPtr, PluginSetting pluginSetting) {
@@ -73,7 +80,7 @@ Plugin newPluginPassthru(const CharString pluginName) {
   charStringCopyCString(plugin->pluginLocation, "Internal");
 
   plugin->open = _pluginPassthruOpen;
-  plugin->displayInfo = _pluginPassthruEmpty;
+  plugin->displayInfo = _pluginPassthruDisplayInfo;
   plugin->getAbsolutePath = _pluginPassthruGetAbsolutePath;
   plugin->getSetting = _pluginPassthruGetSetting;
   plugin->processAudio = _pluginPassthruProcessAudio;
