@@ -319,7 +319,7 @@ VstIntPtr VSTCALLBACK pluginVst2xHostCallback(AEffect *effect, VstInt32 opcode, 
       logWarn("Plugin '%s' asked for directory pointer (unsupported)", uniqueId);
       break;
     case audioMasterUpdateDisplay:
-      logWarn("Plugin '%s' asked us to update display (unsupported)", uniqueId);
+      // Ignore
       break;
     case audioMasterBeginEdit:
       logWarn("Plugin '%s' asked to begin parameter automation (unsupported)", uniqueId);
