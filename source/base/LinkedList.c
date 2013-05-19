@@ -42,20 +42,6 @@ LinkedList newLinkedList(void) {
   return list;
 }
 
-LinkedList newLinkedListWithItems(void* firstItem, ...) {
-  va_list arguments;
-  void* item;
-  LinkedList list = newLinkedList();
-
-  va_start(arguments, firstItem);
-  while((item = va_arg(arguments, void*)) != NULL) {
-    appendItemToList(list, item);
-  }
-  va_end(arguments);
-
-  return list;
-}
-
 void appendItemToList(LinkedList list, void* item) {
   LinkedListIterator iterator = list;
   LinkedListIterator headNode;
