@@ -58,6 +58,9 @@ typedef struct {
   LibraryHandle libraryHandle;
   boolByte isPluginShell;
   unsigned long shellPluginId;
+  // Must be retained until processReplacing() is called, so best to keep a
+  // reference in the plugin's data storage.
+  struct VstEvents *vstEvents;
 } PluginVst2xDataMembers;
 typedef PluginVst2xDataMembers* PluginVst2xData;
 
@@ -531,10 +534,18 @@ static void _fillVstMidiEvent(const MidiEvent midiEvent, VstMidiEvent* vstMidiEv
 static void _processMidiEventsVst2xPlugin(void *pluginPtr, LinkedList midiEvents) {
   Plugin plugin = (Plugin)pluginPtr;
   PluginVst2xData data = (PluginVst2xData)(plugin->extraData);
-
   int numEvents = numItemsInList(midiEvents);
-  struct VstEvents *vstEvents = (struct VstEvents*)malloc(sizeof(struct VstEvent) + numEvents * sizeof(struct VstEvent*));
-  vstEvents->numEvents = numEvents;
+
+  // Free events from the previous call
+  if(data->vstEvents != NULL) {
+    for(int i = 0; i < data->vstEvents->numEvents; i++) {
+      free(data->vstEvents->events[i]);
+    }
+    free(data->vstEvents);
+  }
+
+  data->vstEvents = (struct VstEvents*)malloc(sizeof(struct VstEvent) + (numEvents * sizeof(struct VstEvent*)));
+  data->vstEvents->numEvents = numEvents;
 
   // Some monophonic instruments have problems dealing with the order of MIDI events,
   // so send them all note off events *first* followed by any other event types.
@@ -545,7 +556,7 @@ static void _processMidiEventsVst2xPlugin(void *pluginPtr, LinkedList midiEvents
     if(midiEvent != NULL && (midiEvent->status >> 4) == 0x08) {
       VstMidiEvent* vstMidiEvent = (VstMidiEvent*)malloc(sizeof(VstMidiEvent));
       _fillVstMidiEvent(midiEvent, vstMidiEvent);
-      vstEvents->events[outIndex] = (VstEvent*)vstMidiEvent;
+      data->vstEvents->events[outIndex] = (VstEvent*)vstMidiEvent;
       outIndex++;
     }
     iterator = (LinkedListIterator)(iterator->nextItem);
@@ -557,17 +568,13 @@ static void _processMidiEventsVst2xPlugin(void *pluginPtr, LinkedList midiEvents
     if(midiEvent != NULL && (midiEvent->status >> 4) != 0x08) {
       VstMidiEvent* vstMidiEvent = (VstMidiEvent*)malloc(sizeof(VstMidiEvent));
       _fillVstMidiEvent(midiEvent, vstMidiEvent);
-      vstEvents->events[outIndex] = (VstEvent*)vstMidiEvent;
+      data->vstEvents->events[outIndex] = (VstEvent*)vstMidiEvent;
       outIndex++;
     }
     iterator = (LinkedListIterator)(iterator->nextItem);
   }
 
-  data->dispatcher(data->pluginHandle, effProcessEvents, 0, 0, vstEvents, 0.0f);
-  for(int i = 0; i < vstEvents->numEvents; i++) {
-    free(vstEvents->events[i]);
-  }
-  free(vstEvents);
+  data->dispatcher(data->pluginHandle, effProcessEvents, 0, 0, data->vstEvents, 0.0f);
 }
 
 boolByte setVst2xProgram(Plugin plugin, const int programNumber) {
@@ -622,6 +629,12 @@ static void _freeVst2xPluginData(void* pluginDataPtr) {
   data->dispatcher = NULL;
   data->pluginHandle = NULL;
   closeLibraryHandle(data->libraryHandle);
+  if(data->vstEvents != NULL) {
+    for(int i = 0; i < data->vstEvents->numEvents; i++) {
+      free(data->vstEvents->events[i]);
+    }
+    free(data->vstEvents);
+  }
 
   free(data);
 }
@@ -653,6 +666,7 @@ Plugin newPluginVst2x(const CharString pluginName, const CharString pluginLocati
   extraData->libraryHandle = NULL;
   extraData->isPluginShell = false;
   extraData->shellPluginId = 0;
+  extraData->vstEvents = NULL;
   plugin->extraData = extraData;
 
   return plugin;
