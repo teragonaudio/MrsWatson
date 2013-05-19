@@ -116,7 +116,7 @@ boolByte addPluginsFromArgumentString(PluginChain pluginChain, const CharString 
     if(pluginType != PLUGIN_TYPE_INVALID) {
       plugin = newPlugin(pluginType, pluginNameBuffer, pluginLocationBuffer);
       if(!_addPluginToChain(pluginChain, plugin, preset)) {
-        logError("Plugin chain could not be constructed");
+        logError("Plugin '%s' could not be added to the chain", pluginNameBuffer->data);
         return false;
       }
     }
@@ -142,10 +142,10 @@ static boolByte _loadPresetForPlugin(Plugin plugin, PluginPreset preset) {
       return false;
     }
     if(!preset->loadPreset(preset, plugin)) {
-      logError("Could not load preset '%s' to plugin '%s'", preset->presetName->data, plugin->pluginName->data);
+      logError("Could not load preset '%s' in plugin '%s'", preset->presetName->data, plugin->pluginName->data);
       return false;
     }
-    logInfo("Loaded preset '%s' to plugin '%s'", preset->presetName->data, plugin->pluginName->data);
+    logInfo("Loaded preset '%s' in plugin '%s'", preset->presetName->data, plugin->pluginName->data);
     return true;
   }
   else {
@@ -182,7 +182,6 @@ ReturnCodes initializePluginChain(PluginChain pluginChain) {
       preset = pluginChain->presets[i];
       if(preset != NULL) {
         if(!_loadPresetForPlugin(plugin, preset)) {
-          logError("Could not load preset '%s' for plugin '%s'", preset->presetName->data, plugin->pluginName->data);
           return RETURN_CODE_INVALID_ARGUMENT;
         }
       }
