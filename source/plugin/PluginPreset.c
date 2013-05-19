@@ -37,9 +37,22 @@
 #include "plugin/PluginPreset.h"
 
 PluginPresetType guessPluginPresetType(const CharString presetName) {
-  const char* fileExtension = getFileExtension(presetName->data);
-  if(fileExtension == NULL) {
+  const char* fileExtension;
+  int i;
+
+  if(presetName == NULL || charStringIsEmpty(presetName)) {
     return PRESET_TYPE_INVALID;
+  }
+
+  fileExtension = getFileExtension(presetName->data);
+  if(fileExtension == NULL) {
+    for(i = 0; i < strlen(presetName->data); i++) {
+      if(!isNumber(presetName->data[i])) {
+        return PRESET_TYPE_INVALID;
+      }
+    }
+    // If the preset name is all numeric, then it's an internal program number
+    return PRESET_TYPE_INTERNAL_PROGRAM;
   }
   else if(!strcasecmp(fileExtension, "fxp")) {
     return PRESET_TYPE_FXP;
@@ -54,6 +67,8 @@ PluginPreset newPluginPreset(PluginPresetType presetType, const CharString prese
   switch(presetType) {
     case PRESET_TYPE_FXP:
       return newPluginPresetFxp(presetName);
+    case PRESET_TYPE_INTERNAL_PROGRAM:
+      // return newPluginPresetInternalProgram(presetName);
     default:
       return NULL;
   }
