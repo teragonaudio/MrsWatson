@@ -31,6 +31,7 @@
 
 #include "app/ProgramOption.h"
 #include "base/FileUtilities.h"
+#include "base/LinkedList.h"
 #include "base/StringUtilities.h"
 #include "logging/EventLogger.h"
 #include "sequencer/AudioSettings.h"
@@ -244,7 +245,63 @@ boolByte programOptionsParseArgs(ProgramOptions self, int argc, char** argv) {
 }
 
 boolByte programOptionsParseConfigFile(ProgramOptions self, const CharString filename) {
-  return false;
+  boolByte result = false;
+  FILE *configFileHandle = NULL;
+  LinkedList configFileLines = NULL;
+  CharString fileLine = NULL;
+  CharString* argvCharStrings;
+  char* newline;
+  int argc;
+  char** argv;
+  int i;
+
+  if(filename == NULL || charStringIsEmpty(filename)) {
+    logCritical("Cannot read options from empty filename");
+  }
+  else if(!fileExists(filename->data)) {
+    logCritical("Cannot read options from '%s', file does not exist", filename->data);
+  }
+  else {
+    configFileHandle = fopen(filename->data, "r");
+    if(configFileHandle == NULL) {
+      logCritical("Could not open config file '%s' for reading", filename->data);
+    }
+    else {
+      configFileLines = newLinkedList();
+
+      while(!feof(configFileHandle)) {
+        fileLine = newCharString();
+        fgets(fileLine->data, fileLine->length, configFileHandle);
+        if(fileLine->data[0] == '\0') {
+          fclose(configFileHandle);
+          break;
+        }
+        else {
+          newline = strrchr(fileLine->data, '\n');
+          if(newline != NULL) {
+            *newline = '\0';
+          }
+          appendItemToList(configFileLines, fileLine);
+        }
+      }
+
+      argvCharStrings = (CharString*)linkedListToArray(configFileLines);
+      argc = numItemsInList(configFileLines);
+      argv = (char**)malloc(sizeof(char*) * argc + 1);
+      // Normally this would be the application name
+      argv[0] = NULL;
+      for(i = 0; i < argc; i++) {
+        argv[i + 1] = argvCharStrings[i]->data;
+      }
+      argc++;
+      result = programOptionsParseArgs(self, argc, argv);
+      freeLinkedListAndItems(configFileLines, (LinkedListFreeItemFunc)freeCharString);
+      free(argvCharStrings);
+      free(argv);
+    }
+  }
+
+  return result;
 }
 
 void programOptionsPrintHelp(const ProgramOptions self, boolByte withFullHelp, int indentSize) {
