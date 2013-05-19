@@ -82,7 +82,7 @@ static void printWelcomeMessage(void) {
   CharString stringBuffer = newCharString();
 
   fillVersionString(stringBuffer);
-  logDebug("%s initialized, build %ld", stringBuffer->data, buildInfoGetDatestamp());
+  logInfo("%s initialized, build %ld", stringBuffer->data, buildInfoGetDatestamp());
   // Recycle to use for the platform name
   freeCharString(stringBuffer);
 
