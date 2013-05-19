@@ -203,6 +203,7 @@ TestSuite addProgramOptionTests(void) {
   addTest(testSuite, "ParseCommandLineLongOption", _testParseCommandLineLongOption);
   addTest(testSuite, "ParseCommandLineInvalidOption", _testParseCommandLineInvalidOption);
   addTest(testSuite, "ParseCommandLineRequiredOption", _testParseCommandLineRequiredOption);
+  addTest(testSuite, "ParseCommandLineRequiredOptionMissing", _testParseCommandLineRequiredOptionMissing);
 
   addTest(testSuite, "ParseConfigFile", _testParseConfigFile);
   addTest(testSuite, "ParseInvalidConfigFile", _testParseInvalidConfigFile);
