@@ -43,7 +43,7 @@ PluginInterfaceType guessPluginInterfaceType(const CharString pluginName, const 
     logInfo("Plugin '%s' is of type VST2.x", pluginName->data);
     pluginType = PLUGIN_TYPE_VST_2X;
   }
-  else if(!strncmp(INTERNAL_PATH_PREFIX, pluginName->data, strlen(INTERNAL_PATH_PREFIX))) {
+  else if(!strncmp(INTERNAL_PLUGIN_PREFIX, pluginName->data, strlen(INTERNAL_PLUGIN_PREFIX))) {
     logInfo("Plugin '%s' is an internal plugin", pluginName->data);
     pluginType = PLUGIN_TYPE_INTERNAL;
   }
@@ -72,7 +72,7 @@ void _logPluginLocation(const CharString location, PluginInterfaceType interface
 static void _listAvailablePluginsInternal(void) {
   CharString internalLocation = newCharStringWithCString("Internal");
   _logPluginLocation(internalLocation, PLUGIN_TYPE_INTERNAL);
-  logInfo("passthru");
+  logInfo(kInternalPluginPassthruName);
   freeCharString(internalLocation);
 }
 
@@ -81,20 +81,30 @@ void listAvailablePlugins(const CharString pluginRoot) {
   _listAvailablePluginsInternal();
 }
 
+/**
+ * Used to check if an internal plugin (ie, starting with "mrs_" matches an
+ * internal plugin name. This function only compares to the length of the
+ * internal name, so that extra parameters can be appended to the end of the
+ * plugin name argument.
+ * @param pluginName Plugin name to check
+ * @param internalName Internal name to compare against
+ * @return True if the plugin is a match
+ */
+static boolByte _internalPluginNameMatches(const CharString pluginName, const char* internalName) {
+  return strncmp(pluginName->data, internalName, strlen(internalName)) == 0;
+}
+
 Plugin newPlugin(PluginInterfaceType interfaceType, const CharString pluginName, const CharString pluginLocation) {
-  const char* internalDelimiter = NULL;
   switch(interfaceType) {
     case PLUGIN_TYPE_VST_2X:
       return newPluginVst2x(pluginName, pluginLocation);
     case PLUGIN_TYPE_INTERNAL:
-      if((internalDelimiter = strchr(pluginName->data, INTERNAL_PATH_DELIMITER)) != NULL) {
-        charStringCopyCString(pluginName, internalDelimiter + 1);
-        if(!strncasecmp(pluginName->data, "passthru", pluginName->length)) {
-          return newPluginPassthru(pluginName);
-        }
-        else {
-          return NULL;
-        }
+      if(_internalPluginNameMatches(pluginName, kInternalPluginPassthruName)) {
+        return newPluginPassthru(pluginName);
+      }
+      else {
+        logError("'%s' is not a recognized internal plugin", pluginName->data);
+        return NULL;
       }
     case PLUGIN_TYPE_INVALID:
     default:

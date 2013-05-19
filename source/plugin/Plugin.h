@@ -32,6 +32,9 @@
 #include "base/CharString.h"
 #include "base/LinkedList.h"
 
+// All internal plugins should start with this string
+#define INTERNAL_PLUGIN_PREFIX "mrs_"
+
 typedef enum {
   PLUGIN_TYPE_INVALID,
   PLUGIN_TYPE_VST_2X,
@@ -82,7 +85,6 @@ typedef struct {
 
   void* extraData;
 } PluginMembers;
-
 typedef PluginMembers* Plugin;
 
 PluginInterfaceType guessPluginInterfaceType(const CharString pluginName, const CharString pluginRoot, CharString outLocation);

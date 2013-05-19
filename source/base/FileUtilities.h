@@ -40,9 +40,6 @@
 #define ROOT_DIRECTORY "C:\\"
 #endif
 
-#define INTERNAL_PATH_PREFIX "mrswatson:"
-#define INTERNAL_PATH_DELIMITER ':'
-
 // File operations
 boolByte fileExists(const char* path);
 boolByte copyFileToDirectory(const CharString fileAbsolutePath, const CharString directoryAbsolutePath);

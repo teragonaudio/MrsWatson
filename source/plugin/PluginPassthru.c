@@ -29,6 +29,8 @@
 
 #include "plugin/PluginPassthru.h"
 
+const char* kInternalPluginPassthruName = INTERNAL_PLUGIN_PREFIX "passthru";
+
 static void _pluginPassthruEmpty(void* pluginPtr) {
   // Nothing to do here
 }
