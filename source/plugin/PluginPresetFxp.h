@@ -69,7 +69,6 @@ typedef struct {
   FILE* fileHandle;
   byte* chunk;
 } PluginPresetFxpDataMembers;
-
 typedef PluginPresetFxpDataMembers* PluginPresetFxpData;
 
 PluginPreset newPluginPresetFxp(const CharString presetName);
