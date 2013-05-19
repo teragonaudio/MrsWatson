@@ -95,13 +95,15 @@ static const char* _getVst2xPlatformExtension(void) {
 
 static void _logPluginVst2xInLocation(void* item, void* userData) {
   CharString itemName = (CharString)item;
+  boolByte* pluginsFound = (boolByte*)userData;
   char* dot;
 
   dot = strrchr(itemName->data, '.');
   if(dot != NULL) {
     if(!strncmp(dot + 1, _getVst2xPlatformExtension(), 3)) {
       *dot = '\0';
-      logInfo(itemName->data);
+      logInfo("  %s", itemName->data);
+      *pluginsFound = true;
     }
   }
 }
@@ -109,17 +111,23 @@ static void _logPluginVst2xInLocation(void* item, void* userData) {
 static void _listPluginsVst2xInLocation(void* item, void* userData) {
   CharString location;
   LinkedList locationItems;
+  boolByte pluginsFound = false;
 
   location = (CharString)item;
   _logPluginLocation(location, PLUGIN_TYPE_VST_2X);
   locationItems = listDirectory(location);
   if(numItemsInList(locationItems) == 0) {
     // Empty or does not exist, return
+    logInfo("  (Empty or non-existent directory)");
     freeLinkedList(locationItems);
     return;
   }
 
-  foreachItemInList(locationItems, _logPluginVst2xInLocation, NULL);
+  foreachItemInList(locationItems, _logPluginVst2xInLocation, &pluginsFound);
+  if(!pluginsFound) {
+    logInfo("  (No plugins found)");
+  }
+
   freeLinkedListAndItems(locationItems, (LinkedListFreeItemFunc)freeCharString);
 }
 

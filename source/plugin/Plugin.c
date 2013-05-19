@@ -70,9 +70,9 @@ void _logPluginLocation(const CharString location, PluginInterfaceType interface
 }
 
 static void _listAvailablePluginsInternal(void) {
-  CharString internalLocation = newCharStringWithCString("Internal");
+  CharString internalLocation = newCharStringWithCString("(Internal)");
   _logPluginLocation(internalLocation, PLUGIN_TYPE_INTERNAL);
-  logInfo(kInternalPluginPassthruName);
+  logInfo("  %s", kInternalPluginPassthruName);
   freeCharString(internalLocation);
 }
 
