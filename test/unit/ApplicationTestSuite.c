@@ -83,6 +83,15 @@ int runApplicationTestSuite(TestEnvironment environment) {
     buildTestArgumentString("--plugin mrs_passthru --input \"%s\"", a440_stereo_pcm),
     RETURN_CODE_SUCCESS, kDefaultTestOutputFileType
   );
+#if 0
+  // This test case works, but fails the analysis check for silence (obviously).
+  // It will remain disabled until we have a smarter way to specify which analysis
+  // functions should be run for each application test.
+  runApplicationTest(environment, "Process with silence generator",
+    newCharStringWithCString("--plugin mrs_silence --max-time 1000"),
+    RETURN_CODE_SUCCESS, kDefaultTestOutputFileType
+  );
+#endif
 
   // Plugin processing tests
   runApplicationTest(environment, "Process audio with again plugin",
