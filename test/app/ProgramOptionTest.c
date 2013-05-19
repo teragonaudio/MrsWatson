@@ -97,7 +97,23 @@ static int _testParseCommandLineRequiredOption(void) {
   assert(programOptionsParseArgs(p, 3, argv));
   assertCharStringEquals(p->options[0]->argument, "required");
   assert(p->options[0]->enabled);
+
+  return 0;
+}
+
+static int _testParseCommandLineRequiredOptionMissing(void) {
+  ProgramOptions p = newProgramOptions(1);
+  ProgramOption o = _getTestOption();
+  char* argv[2];
+  argv[0] = "exe";
+  argv[1] = "--test";
+  o->argumentType = kProgramOptionArgumentTypeRequired;
+  assert(programOptionsAdd(p, o));
+
+  assertFalse(p->options[0]->enabled);
+  assertCharStringEquals(p->options[0]->argument, "");
   assertFalse(programOptionsParseArgs(p, 2, argv));
+  assertFalse(p->options[0]->enabled);
 
   return 0;
 }

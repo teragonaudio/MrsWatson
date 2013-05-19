@@ -230,8 +230,10 @@ boolByte programOptionsParseArgs(ProgramOptions self, int argc, char** argv) {
       return false;
     }
     else {
-      option->enabled = true;
-      if(!_fillOptionArgument(option, &argumentIndex, argc, argv)) {
+      if(_fillOptionArgument(option, &argumentIndex, argc, argv)) {
+        option->enabled = true;
+      }
+      else {
         return false;
       }
     }
