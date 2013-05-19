@@ -289,6 +289,14 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
     _remapFileToErrorReport(errorReporter, programOptions->options[OPTION_LOG_FILE], false);
   }
 
+  // Read in options from a config file, if given
+  if(programOptions->options[OPTION_CONFIG_FILE]->enabled) {
+    if(!programOptionsParseConfigFile(programOptions,
+      programOptions->options[OPTION_CONFIG_FILE]->argument)) {
+      return RETURN_CODE_INVALID_ARGUMENT;
+    }
+  }
+
   // Parse these options first so that log messages displayed in the below
   // loop are properly displayed
   if(programOptions->options[OPTION_VERBOSE]->enabled) {
