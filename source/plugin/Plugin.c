@@ -107,6 +107,13 @@ Plugin newPlugin(PluginInterfaceType interfaceType, const CharString pluginName,
       else if(_internalPluginNameMatches(pluginName, kInternalPluginSilenceName)) {
         return newPluginSilence(pluginName);
       }
+      // h4r h4r easter eggs
+      else if(_internalPluginNameMatches(pluginName, INTERNAL_PLUGIN_PREFIX "watson")) {
+        logError("Yo dawg, I heard you like MrsWatson, so I put some mrs_watson \
+in your MrsWatson so you can run plugins in your plugins!");
+        logError("http://open.spotify.com/track/4apmxBhNKCBuiYEGHcK5yo");
+        return NULL;
+      }
       else {
         logError("'%s' is not a recognized internal plugin", pluginName->data);
         return NULL;
