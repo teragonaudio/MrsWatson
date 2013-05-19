@@ -35,6 +35,7 @@
 #include "base/StringUtilities.h"
 #include "io/SampleSource.h"
 #include "io/SampleSourcePcm.h"
+#include "io/SampleSourceSilence.h"
 #include "io/SampleSourceWave.h"
 #include "logging/EventLogger.h"
 #include "logging/LogPrinter.h"
@@ -447,8 +448,20 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
     headPlugin = pluginChain->plugins[0];
     if(headPlugin->pluginType == PLUGIN_TYPE_INSTRUMENT) {
       if(midiSource == NULL) {
-        logError("Plugin chain contains an instrument, but no MIDI source was supplied");
-        return RETURN_CODE_MISSING_REQUIRED_OPTION;
+        // I guess some instruments (like white noise generators etc.) don't necessarily
+        // need MIDI, actually this is most useful for our internal plugins and generators.
+        // Anyways, this should only be a soft warning for those who know what they're doing.
+        logWarn("Plugin chain contains an instrument, but no MIDI source was supplied");
+        if(maxTimeInMs == 0) {
+          // However, if --max-time wasn't given, then there is effectively no input source
+          // and thus processing would continue forever. That won't work.
+          logError("No valid input source or maximum time, don't know when to stop processing");
+          return RETURN_CODE_MISSING_REQUIRED_OPTION;
+        }
+        else {
+          // If maximum time was given and there is no other input source, then use silence
+          inputSource = newSampleSourceSilence();
+        }
       }
     }
     else {
