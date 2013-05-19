@@ -51,46 +51,27 @@ CharString newCharStringWithCString(const char* string) {
     logError("Can't create string with length %d", length);
   }
   else {
-    // Add 1 to compensate for trailing null (should be 1, anyways).
-    // On OSX this code segfaults if "length + 1" is used instead.
-    // Not sure why that is, am I missing something obvious?
-    result = newCharStringWithCapacity(length + 2);
+    // Add 1 to compensate for trailing null character
+    result = newCharStringWithCapacity(length + 1);
     strncpy(result->data, string, length);
   }
   return result;
 }
 
 void charStringAppend(CharString self, const CharString string) {
-  CharString temp;
-  int stringLength = strlen(string->data);
-  int selfLength = strlen(self->data);
-  if(stringLength + selfLength > self->length) {
-    temp = newCharStringWithCString(self->data);
-    freeCharString(self);
-    self = newCharStringWithCapacity(selfLength + stringLength + 1);
-    strcat(self->data, temp->data);
-    strcat(self->data, string->data);
-    freeCharString(temp);
-  }
-  else {
-    strncat(self->data, string->data, self->length);
-  }
+  charStringAppendCString(self, string->data);
 }
 
 void charStringAppendCString(CharString self, const char* string) {
-  CharString temp;
-  int stringLength = strlen(string);
-  int selfLength = strlen(self->data);
-  if(stringLength + selfLength > self->length) {
-    temp = newCharStringWithCString(self->data);
-    freeCharString(self);
-    self = newCharStringWithCapacity(selfLength + stringLength + 1);
-    strcat(self->data, temp->data);
+  size_t stringLength = strlen(string);
+  size_t selfLength = strlen(self->data);
+  if(stringLength + selfLength >= self->length) {
+    self->length = stringLength + selfLength + 1; // don't forget the null!
+    self->data = realloc(self->data, self->length);
     strcat(self->data, string);
-    freeCharString(temp);
   }
   else {
-    strncat(self->data, string, self->length);
+    strcat(self->data, string);
   }
 }
 

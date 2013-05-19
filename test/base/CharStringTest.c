@@ -73,18 +73,12 @@ static int _testAppendCharStrings(void) {
 }
 
 static int _testAppendCharStringsOverCapacity(void) {
-  int i;
-  CharString a = newCharStringWithCapacity(4);
-  CharString b = newCharStringWithCapacity(16);
-  for(i = 0; i < a->length - 1; i++) {
-    a->data[i] = 'a';
-  }
-  for(i = 0; i < b->length - 1; i++) {
-    b->data[i] = 'b';
-  }
+  CharString a = newCharStringWithCString("a");
+  assertIntEquals(a->length, 2);
+  CharString b = newCharStringWithCString("1234567890");
   charStringAppend(a, b);
-  assertCharStringEquals(a, "aaabbbbbbbbbbbbbbb");
-  assertIntEquals(a->length, 19);
+  assertCharStringEquals(a, "a1234567890");
+  assertIntEquals(a->length, 12);
   return 0;
 }
 
@@ -187,12 +181,7 @@ TestSuite addCharStringTests(void) {
   addTest(testSuite, "RegularStringIsNotEmpty", _testIsRegularStringNotEmpty);
 
   addTest(testSuite, "AppendCharStrings", _testAppendCharStrings);
-#if MACOSX
-  // There is a bizarre and stupid bug lurking on OSX, skip this test for now
-  addTest(testSuite, "AppendCharStringsOverCapacity", NULL);
-#else
   addTest(testSuite, "AppendCharStringsOverCapacity", _testAppendCharStringsOverCapacity);
-#endif
 
   addTest(testSuite, "EqualsSameString", _testCharStringEqualsSameString);
   addTest(testSuite, "DoesNotEqualDifferentString", _testCharStringDoesEqualDifferentString);

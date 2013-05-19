@@ -43,6 +43,7 @@ static const int kCharStringLengthLong = 8192;
 #endif
 
 typedef struct {
+  // TODO: Should be size_t
   int length;
   char* data;
 } CharStringMembers;
