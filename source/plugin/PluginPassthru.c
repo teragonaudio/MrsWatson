@@ -83,6 +83,7 @@ Plugin newPluginPassthru(const CharString pluginName) {
   plugin->displayInfo = _pluginPassthruDisplayInfo;
   plugin->getAbsolutePath = _pluginPassthruGetAbsolutePath;
   plugin->getSetting = _pluginPassthruGetSetting;
+  plugin->prepareForProcessing = _pluginPassthruEmpty;
   plugin->processAudio = _pluginPassthruProcessAudio;
   plugin->processMidiEvents = _pluginPassthruProcessMidiEvents;
   plugin->setParameter = _pluginPassthruSetParameter;
