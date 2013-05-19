@@ -18,6 +18,7 @@ MrsWatson.zip
 
 # Test output
 out/*
+out.wav
 
 # Stuff from various IDE's
 *.perspectivev3
