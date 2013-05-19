@@ -124,8 +124,12 @@ ProgramOptions newProgramOptions(int numOptions) {
   return options;
 }
 
-void programOptionsAdd(const ProgramOptions self, const ProgramOption option) {
-  self->options[option->index] = option;
+boolByte programOptionsAdd(const ProgramOptions self, const ProgramOption option) {
+  if(option != NULL && option->index < self->numOptions) {
+    self->options[option->index] = option;
+    return true;
+  }
+  return false;
 }
 
 static boolByte _isStringShortOption(const char* testString) {

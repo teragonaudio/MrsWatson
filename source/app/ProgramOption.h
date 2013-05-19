@@ -105,9 +105,13 @@ ProgramOptions newProgramOptions(int numOptions);
 /**
  * Add a ProgramOption instance to the collection
  * @param self
- * @param option
+ * @param option Option to add to the collection. Note that this option must have
+ * its index set correctly, as the ProgramOptions options array is statically
+ * allocated to a set size when the object is initialized.
+ * @return True on success, false if option is null or has an invalid index
  */
-void programOptionsAdd(const ProgramOptions self, const ProgramOption option);
+boolByte programOptionsAdd(const ProgramOptions self, const ProgramOption option);
+
 /**
  * Find a ProgramOption by name
  * @param self

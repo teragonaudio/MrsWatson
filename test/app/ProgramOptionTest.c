@@ -23,11 +23,26 @@ static int _testNewProgramOptions(void) {
 static int _testAddNewProgramOption(void) {
   ProgramOptions p = newProgramOptions(1);
   ProgramOption o;
-  programOptionsAdd(p, _getTestOption());
+  assert(programOptionsAdd(p, _getTestOption()));
   assertIntEquals(p->numOptions, 1);
   o = p->options[0];
   assertNotNull(o);
   assertCharStringEquals(o->name, "test");
+  return 0;
+}
+
+static int _testAddNullProgramOption(void) {
+  ProgramOptions p = newProgramOptions(1);
+  assertFalse(programOptionsAdd(p, NULL));
+  return 0;
+}
+
+static int _testAddNewProgramOptionOutsideRange(void) {
+  ProgramOptions p = newProgramOptions(1);
+  ProgramOption o = _getTestOption();
+  o->index++;
+  assertFalse(programOptionsAdd(p, o));
+  assertIntEquals(p->numOptions, 1);
   return 0;
 }
 
@@ -36,7 +51,7 @@ static int _testParseCommandLineShortOption(void) {
   char* argv[2];
   argv[0] = "exe";
   argv[1] = "-t";
-  programOptionsAdd(p, _getTestOption());
+  assert(programOptionsAdd(p, _getTestOption()));
   assertFalse(p->options[0]->enabled);
   assert(programOptionsParseArgs(p, 2, argv));
   assert(p->options[0]->enabled);
@@ -48,7 +63,7 @@ static int _testParseCommandLineLongOption(void) {
   char* argv[2];
   argv[0] = "exe";
   argv[1] = "--test";
-  programOptionsAdd(p, _getTestOption());
+  assert(programOptionsAdd(p, _getTestOption()));
   assertFalse(p->options[0]->enabled);
   assert(programOptionsParseArgs(p, 2, argv));
   assert(p->options[0]->enabled);
@@ -60,7 +75,7 @@ static int _testParseCommandLineInvalidOption(void) {
   char* argv[2];
   argv[0] = "exe";
   argv[1] = "invalid";
-  programOptionsAdd(p, _getTestOption());
+  assert(programOptionsAdd(p, _getTestOption()));
   assertFalse(p->options[0]->enabled);
   assertFalse(programOptionsParseArgs(p, 2, argv));
   assertFalse(p->options[0]->enabled);
@@ -75,7 +90,7 @@ static int _testParseCommandLineRequiredOption(void) {
   argv[1] = "--test";
   argv[2] = "required";
   o->argumentType = kProgramOptionArgumentTypeRequired;
-  programOptionsAdd(p, o);
+  assert(programOptionsAdd(p, o));
 
   assertFalse(p->options[0]->enabled);
   assertCharStringEquals(p->options[0]->argument, "");
@@ -140,7 +155,7 @@ static int _testParseConfigFileWithInvalidOptions(void) {
 static int _testFindProgramOptionFromString(void) {
   ProgramOptions p = newProgramOptions(1);
   ProgramOption o;
-  programOptionsAdd(p, _getTestOption());
+  assert(programOptionsAdd(p, _getTestOption()));
   assertIntEquals(p->numOptions, 1);
   o = programOptionsFind(p, newCharStringWithCString("test"));
   assertNotNull(o);
@@ -151,7 +166,7 @@ static int _testFindProgramOptionFromString(void) {
 static int _testFindProgramOptionFromStringInvalid(void) {
   ProgramOptions p = newProgramOptions(1);
   ProgramOption o;
-  programOptionsAdd(p, _getTestOption());
+  assert(programOptionsAdd(p, _getTestOption()));
   assertIntEquals(p->numOptions, 1);
   o = programOptionsFind(p, newCharStringWithCString("invalid"));
   assertIsNull(o);
@@ -163,6 +178,9 @@ TestSuite addProgramOptionTests(void) {
   TestSuite testSuite = newTestSuite("ProgramOption", NULL, NULL);
   addTest(testSuite, "NewObject", _testNewProgramOptions);
   addTest(testSuite, "AddNewProgramOption", _testAddNewProgramOption);
+  addTest(testSuite, "AddNullProgramOption", _testAddNullProgramOption);
+  addTest(testSuite, "AddNewProgramOptionOutsideRange", _testAddNewProgramOptionOutsideRange);
+
   addTest(testSuite, "ParseCommandLineShortOption", _testParseCommandLineShortOption);
   addTest(testSuite, "ParseCommandLineLongOption", _testParseCommandLineLongOption);
   addTest(testSuite, "ParseCommandLineInvalidOption", _testParseCommandLineInvalidOption);
