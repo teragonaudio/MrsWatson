@@ -78,6 +78,12 @@ int runApplicationTestSuite(TestEnvironment environment) {
     RETURN_CODE_SUCCESS, kDefaultTestOutputFileType
   );
 
+  // Internal plugins
+  runApplicationTest(environment, "Process with internal passthru plugin",
+    buildTestArgumentString("--plugin mrs_passthru --input \"%s\"", a440_stereo_pcm),
+    RETURN_CODE_SUCCESS, kDefaultTestOutputFileType
+  );
+
   // Plugin processing tests
   runApplicationTest(environment, "Process audio with again plugin",
     buildTestArgumentString("--plugin again --input \"%s\"", a440_stereo_pcm),
