@@ -119,12 +119,12 @@ static int _testParseCommandLineRequiredOptionMissing(void) {
 }
 
 static ProgramOptions _getTestProgramOptionsForConfigFile(void) {
-  ProgramOptions p = newProgramOptions(1);
-  ProgramOption o;
-  o = newProgramOptionWithValues(0, "test", "test help", true, kProgramOptionArgumentTypeNone, NO_DEFAULT_VALUE);
-  programOptionsAdd(p, o);
-  o = newProgramOptionWithValues(1, "stest", "test help", true, kProgramOptionArgumentTypeRequired, NO_DEFAULT_VALUE);
-  programOptionsAdd(p, o);
+  ProgramOptions p = newProgramOptions(2);
+  ProgramOption o1, o2;
+  o1 = newProgramOptionWithValues(0, "test", "test help", true, kProgramOptionArgumentTypeNone, NO_DEFAULT_VALUE);
+  programOptionsAdd(p, o1);
+  o2 = newProgramOptionWithValues(1, "stest", "test help", true, kProgramOptionArgumentTypeRequired, NO_DEFAULT_VALUE);
+  programOptionsAdd(p, o2);
   return p;
 }
 
