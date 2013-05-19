@@ -570,6 +570,35 @@ static void _processMidiEventsVst2xPlugin(void *pluginPtr, LinkedList midiEvents
   free(vstEvents);
 }
 
+boolByte setVst2xProgram(Plugin plugin, const int programNumber) {
+  PluginVst2xData data = (PluginVst2xData)plugin->extraData;
+  VstInt32 result;
+
+  if(programNumber < data->pluginHandle->numPrograms) {
+    result = data->pluginHandle->dispatcher(data->pluginHandle, effSetProgram, 0, programNumber, NULL, 0.0f);
+    if(result != 0) {
+      logError("Plugin '%s' failed to load program number %d", plugin->pluginName->data, programNumber);
+      return false;
+    }
+    else {
+      result = data->pluginHandle->dispatcher(data->pluginHandle, effGetProgram, 0, 0, NULL, 0.0f);
+      if(result != programNumber) {
+        logError("Plugin '%s' claimed to load program %d successfully, but current program is %d",
+          plugin->pluginName->data, programNumber, result);
+        return false;
+      }
+      else {
+        return true;
+      }
+    }
+  }
+  else {
+    logError("Cannot load program, plugin '%s' only has %d programs",
+      plugin->pluginName->data, data->pluginHandle->numPrograms - 1);
+    return false;
+  }
+}
+
 static void _setParameterVst2xPlugin(void *pluginPtr, int index, float value) {
   Plugin plugin = (Plugin)pluginPtr;
   PluginVst2xData data = (PluginVst2xData)(plugin->extraData);

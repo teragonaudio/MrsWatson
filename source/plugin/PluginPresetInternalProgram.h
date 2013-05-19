@@ -1,7 +1,7 @@
 //
-// PluginVst2x.h - MrsWatson
-// Created by Nik Reiman on 1/3/12.
-// Copyright (c) 2012 Teragon Audio. All rights reserved.
+// PluginPresetInternalProgram.h - MrsWatson
+// Created by Nik Reiman on 19 May 13.
+// Copyright (c) 2013 Teragon Audio. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are met:
@@ -25,19 +25,16 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef MrsWatson_PluginVst2x_h
-#define MrsWatson_PluginVst2x_h
+#ifndef MrsWatson_PluginPresetInternalProgram_h
+#define MrsWatson_PluginPresetInternalProgram_h
 
-#include "base/CharString.h"
-#include "plugin/Plugin.h"
+#include "plugin/PluginPreset.h"
 
-static const char kPluginVst2xSubpluginSeparator = ':';
+typedef struct {
+  unsigned int programNumber;
+} PluginPresetInternalProgramDataMembers;
+typedef PluginPresetInternalProgramDataMembers* PluginPresetInternalProgramData;
 
-unsigned long getVst2xPluginUniqueId(const Plugin plugin);
-boolByte vst2xPluginExists(const CharString pluginName, const CharString pluginRoot, CharString outLocation);
-void listAvailablePluginsVst2x(const CharString pluginRoot);
-boolByte setVst2xProgram(Plugin plugin, const int programNumber);
-void setVst2xPluginChunk(Plugin plugin, char* chunk, int chunkSize);
-Plugin newPluginVst2x(const CharString pluginName, const CharString pluginLocation);
+PluginPreset newPluginPresetInternalProgram(const CharString presetName);
 
 #endif

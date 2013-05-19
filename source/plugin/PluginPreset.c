@@ -68,7 +68,7 @@ PluginPreset newPluginPreset(PluginPresetType presetType, const CharString prese
     case PRESET_TYPE_FXP:
       return newPluginPresetFxp(presetName);
     case PRESET_TYPE_INTERNAL_PROGRAM:
-      // return newPluginPresetInternalProgram(presetName);
+      return newPluginPresetInternalProgram(presetName);
     default:
       return NULL;
   }

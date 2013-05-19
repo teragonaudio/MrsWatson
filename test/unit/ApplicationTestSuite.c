@@ -110,6 +110,10 @@ int runApplicationTestSuite(TestEnvironment environment) {
     buildTestArgumentString("--plugin \"again,%s\" --input \"%s\"", again_test_fxp, a440_stereo_pcm),
     RETURN_CODE_SUCCESS, kDefaultTestOutputFileType
   );
+  runApplicationTest(environment, "Load internal program to VST",
+    buildTestArgumentString("--plugin vstsynthx,2 --midi-file \"%s\"", c_scale_mid),
+    RETURN_CODE_SUCCESS, kDefaultTestOutputFileType
+  );
 
   fprintf(stderr, "\n== Ran %d application tests: %d passed, %d failed, %d skipped ==\n",
     environment->results->numSuccess +
