@@ -42,6 +42,8 @@
     <ClInclude Include="..\..\source\plugin\PluginPassthru.h" />
     <ClInclude Include="..\..\source\plugin\PluginPreset.h" />
     <ClInclude Include="..\..\source\plugin\PluginPresetFxp.h" />
+    <ClInclude Include="..\..\source\plugin\PluginPresetInternalProgram.h" />
+    <ClInclude Include="..\..\source\plugin\PluginSilence.h" />
     <ClInclude Include="..\..\source\plugin\PluginVst2x.h" />
     <ClInclude Include="..\..\source\plugin\PluginVst2xHostCallback.h" />
     <ClInclude Include="..\..\source\sequencer\AudioClock.h" />
@@ -80,6 +82,8 @@
     <ClCompile Include="..\..\source\plugin\PluginPassthru.c" />
     <ClCompile Include="..\..\source\plugin\PluginPreset.c" />
     <ClCompile Include="..\..\source\plugin\PluginPresetFxp.c" />
+    <ClCompile Include="..\..\source\plugin\PluginPresetInternalProgram.c" />
+    <ClCompile Include="..\..\source\plugin\PluginSilence.c" />
     <ClCompile Include="..\..\source\plugin\PluginVst2x.cpp" />
     <ClCompile Include="..\..\source\plugin\PluginVst2xHostCallback.cpp" />
     <ClCompile Include="..\..\source\plugin\PluginVst2xWindows.cpp" />

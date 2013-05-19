@@ -118,6 +118,12 @@
     <ClInclude Include="..\..\source\plugin\PluginVst2xHostCallback.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\source\plugin\PluginPresetInternalProgram.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\plugin\PluginSilence.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\MrsWatsonOptions.c">
@@ -229,6 +235,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\plugin\PluginVst2xHostCallback.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\plugin\PluginPresetInternalProgram.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\plugin\PluginSilence.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
