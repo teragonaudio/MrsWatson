@@ -224,12 +224,14 @@ static void _resumePlugin(Plugin plugin) {
     logError("'%s' is a shell plugin, but no sub-plugin ID was given, run with --help plugin", plugin->pluginName->data);
   }
   data->dispatcher(data->pluginHandle, effMainsChanged, 0, 1, NULL, 0.0f);
+  data->dispatcher(data->pluginHandle, effStartProcess, 0, 0, NULL, 0.0f);
 }
 
 static void _suspendPlugin(Plugin plugin) {
   logDebug("Suspending plugin '%s'", plugin->pluginName->data);
   PluginVst2xData data = (PluginVst2xData)plugin->extraData;
   data->dispatcher(data->pluginHandle, effMainsChanged, 0, 0, NULL, 0.0f);
+  data->dispatcher(data->pluginHandle, effStopProcess, 0, 0, NULL, 0.0f);
 }
 
 static boolByte _initVst2xPlugin(Plugin plugin) {

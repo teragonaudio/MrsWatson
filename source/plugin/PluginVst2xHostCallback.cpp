@@ -95,7 +95,7 @@ static int _canHostDo(const char* pluginName, const char* canDoString) {
     supported = false;
   }
   else if(!strcmp(canDoString, "startStopProcess")) {
-    supported = false;
+    supported = true;
   }
   else if(!strcmp(canDoString, "shellCategory")) {
     supported = true;
