@@ -56,9 +56,13 @@ If attached to a terminal device, color is used automatically unless 'none' is g
     false, kProgramOptionArgumentTypeNone, NO_DEFAULT_VALUE));
 
   programOptionsAdd(options, newProgramOptionWithValues(OPTION_CONFIG_FILE, "config-file",
-    "Load options from a configuration file (format is plain-text, one option per line). \
-The config file will be read *after* other options have been parsed, so any options given \
-on the command line will be overriden by those from the file.",
+    "Load options from a configuration file. The file will be read *after* other \
+options have been parsed, so any options given on the command line will be overriden \
+by those from the file. The file should be plain text, and one argument per line, \
+like so:\n\n\
+\t--plugin-root\n\
+\t/path/to/my/plugins\n\
+\t--verbose",
     false, kProgramOptionArgumentTypeRequired, NO_DEFAULT_VALUE));
 
   programOptionsAdd(options, newProgramOptionWithValues(OPTION_DISPLAY_INFO, "display-info",
@@ -118,13 +122,16 @@ placed into a chain in the order specified. Instrument plugins must appear first
 for in the --plugin-root directory, the current directory, and the standard locations for the OS. File extensions are \
 added automatically to plugin names. Each plugin may be followed by a comma with a program to be loaded, which should \
 be of the corresponding file format for the respective plugin. For shell plugins (like Waves), use --display-info to \
-get a list of sub-plugin ID's and then use a colon to indicate which plugin to load.\
-\n\nExample: --plugin 'AutoTune,KayneWest.fxp;Compressor,SoftKnee.fxp;Limiter'\
-\nShell plugin example: --plugin 'WavesShell-VST:IDFX'",
+get a list of sub-plugin ID's and then use a colon to indicate which plugin to load. Examples:\n\n\
+\t--plugin LFX-1310\n\
+\t--plugin 'AutoTune,KayneWest.fxp;Compressor,SoftKnee.fxp;Limiter'\n\
+\t--plugin 'WavesShell-VST' --display-info (list shell sub-plugins)\n\
+\t--plugin 'WavesShell-VST:IDFX' (load a shell plugins)",
     true, kProgramOptionArgumentTypeRequired, NO_DEFAULT_VALUE));
 
   programOptionsAdd(options, newProgramOptionWithValues(OPTION_PLUGIN_ROOT, "plugin-root",
-    "Custom non-system directory to use when searching for plugins.",
+    "Custom non-system directory to use when searching for plugins. Will be searched \
+  before system directories if given.",
     false, kProgramOptionArgumentTypeRequired, NO_DEFAULT_VALUE));
 
   programOptionsAdd(options, newProgramOptionWithValues(OPTION_QUIET, "quiet",
