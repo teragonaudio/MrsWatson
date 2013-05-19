@@ -34,6 +34,7 @@
 extern "C" {
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
 
 #include "app/BuildInfo.h"
 #include "base/CharString.h"
@@ -155,8 +156,8 @@ VstIntPtr VSTCALLBACK pluginVst2xHostCallback(AEffect *effect, VstInt32 opcode, 
 
       // Set flags for transport state
       vstTimeInfo.flags = 0;
-      vstTimeInfo.flags |= getAudioClockTransportChanged();
-      vstTimeInfo.flags |= getAudioClockIsPlaying();
+      vstTimeInfo.flags |= getAudioClockTransportChanged() ? kVstTransportChanged : 0;
+      vstTimeInfo.flags |= getAudioClockIsPlaying() ? kVstTransportPlaying : 0;
 
       // Fill values based on other flags which may have been requested
       if(value & kVstNanosValid) {
@@ -165,39 +166,40 @@ VstIntPtr VSTCALLBACK pluginVst2xHostCallback(AEffect *effect, VstInt32 opcode, 
         // the plugin calculates here will probably be wrong given the way we are running.
         // However, for realtime mode, this flag should be implemented in that case.
         logWarn("Plugin '%s' asked for time in nanoseconds (unsupported)", uniqueId);
-        vstTimeInfo.flags |= 0;
       }
       if(value & kVstPpqPosValid) {
-        // TODO: This calculation might be wrong
-        double quarterNotesPerMinute = getTempo() * (getTimeSignatureBeatsPerMeasure() / getTimeSignatureNoteValue());
-        double millisecondsPerBeat = 1000.0 * 60.0 / quarterNotesPerMinute;
-        vstTimeInfo.ppqPos = millisecondsPerBeat / getTimeDivision();
-        vstTimeInfo.flags |= 1;
+        double samplesPerBeat = (getSampleRate() * 60.0) / getTempo();
+        // Musical time starts with 1, not 0
+        vstTimeInfo.ppqPos = samplesPerBeat * vstTimeInfo.samplePos + 1.0;
+        logDebug("Current PPQ position is %g", vstTimeInfo.ppqPos);
+        vstTimeInfo.flags |= kVstPpqPosValid;
       }
       if(value & kVstTempoValid) {
         vstTimeInfo.tempo = getTempo();
-        vstTimeInfo.flags |= 1;
+        vstTimeInfo.flags |= kVstTempoValid;
       }
       if(value & kVstBarsValid) {
-        logUnsupportedFeature("Current position in Bars");
-        vstTimeInfo.flags |= 0;
+        if(!(value & kVstPpqPosValid)) {
+          logError("Plugin requested position in bars, but not PPQ");
+        }
+        double currentBarPos = floor(vstTimeInfo.ppqPos / (double)getTimeSignatureBeatsPerMeasure());
+        vstTimeInfo.barStartPos = currentBarPos * (double)getTimeSignatureBeatsPerMeasure() + 1.0;
+        logDebug("Current bar is %g", vstTimeInfo.barStartPos);
+        vstTimeInfo.flags |= kVstBarsValid;
       }
       if(value & kVstCyclePosValid) {
-        // We don't care about the cycle position
-        vstTimeInfo.flags |= 0;
+        // We don't support cycling, so this is always 0
       }
       if(value & kVstTimeSigValid) {
         vstTimeInfo.timeSigNumerator = getTimeSignatureBeatsPerMeasure();
         vstTimeInfo.timeSigDenominator = getTimeSignatureNoteValue();
-        vstTimeInfo.flags |= 1;
+        vstTimeInfo.flags |= kVstTimeSigValid;
       }
       if(value & kVstSmpteValid) {
         logUnsupportedFeature("Current time in SMPTE format");
-        vstTimeInfo.flags |= 0;
       }
       if(value & kVstClockValid) {
         logUnsupportedFeature("Sample frames until next clock");
-        vstTimeInfo.flags |= 0;
       }
 
       dataPtr = &vstTimeInfo;
