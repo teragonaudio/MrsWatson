@@ -34,6 +34,7 @@
 #include "plugin/Plugin.h"
 #include "plugin/PluginPassthru.h"
 #include "plugin/PluginVst2x.h"
+#include "plugin/PluginSilence.h"
 
 PluginInterfaceType guessPluginInterfaceType(const CharString pluginName, const CharString pluginSearchRoot, CharString outLocation) {
   PluginInterfaceType pluginType = PLUGIN_TYPE_INVALID;
@@ -73,6 +74,7 @@ static void _listAvailablePluginsInternal(void) {
   CharString internalLocation = newCharStringWithCString("(Internal)");
   _logPluginLocation(internalLocation, PLUGIN_TYPE_INTERNAL);
   logInfo("  %s", kInternalPluginPassthruName);
+  logInfo("  %s", kInternalPluginSilenceName);
   freeCharString(internalLocation);
 }
 
@@ -101,6 +103,9 @@ Plugin newPlugin(PluginInterfaceType interfaceType, const CharString pluginName,
     case PLUGIN_TYPE_INTERNAL:
       if(_internalPluginNameMatches(pluginName, kInternalPluginPassthruName)) {
         return newPluginPassthru(pluginName);
+      }
+      else if(_internalPluginNameMatches(pluginName, kInternalPluginSilenceName)) {
+        return newPluginSilence(pluginName);
       }
       else {
         logError("'%s' is not a recognized internal plugin", pluginName->data);
