@@ -142,6 +142,7 @@ static int _testParseConfigFile(void) {
   assert(p->options[0]->enabled);
   assert(p->options[1]->enabled);
   assertCharStringEquals(p->options[1]->argument, "foo");
+  unlink(TEST_CONFIG_FILE);
   return 0;
 }
 
@@ -165,6 +166,7 @@ static int _testParseConfigFileWithInvalidOptions(void) {
   assertFalse(programOptionsParseConfigFile(p, newCharStringWithCString(TEST_CONFIG_FILE)));
   assert(p->options[0]->enabled);
   assertFalse(p->options[1]->enabled);
+  unlink(TEST_CONFIG_FILE);
   return 0;
 }
 
