@@ -77,6 +77,27 @@ int numItemsInList(LinkedList self) {
   return self != NULL ? self->_numItems : 0;
 }
 
+void** linkedListToArray(LinkedList self) {
+  LinkedListIterator iterator = self;
+  void** array;
+  int i = 0;
+
+  if(self == NULL || numItemsInList(self) == 0) {
+    return NULL;
+  }
+
+  array = (void**)malloc(sizeof(void*) * numItemsInList(self) + 1);
+  while(iterator != NULL) {
+    if(iterator->item != NULL) {
+      array[i++] = iterator->item;
+    }
+    iterator = iterator->nextItem;
+  }
+
+  array[i] = NULL;
+  return array;
+}
+
 void foreachItemInList(LinkedList self, LinkedListForeachFunc foreachFunc, void* userData) {
   LinkedListIterator iterator = self;
 
