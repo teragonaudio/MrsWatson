@@ -52,7 +52,7 @@ If attached to a terminal device, color is used automatically unless 'none' is g
     false, kProgramOptionArgumentTypeOptional, NO_DEFAULT_VALUE));
 
   programOptionsAdd(options, newProgramOptionWithValues(OPTION_COLOR_TEST, "color-test",
-    "Run an ANSI color test.",
+    "Run a test of all color output combinations.",
     false, kProgramOptionArgumentTypeNone, NO_DEFAULT_VALUE));
 
   programOptionsAdd(options, newProgramOptionWithValues(OPTION_DISPLAY_INFO, "display-info",
