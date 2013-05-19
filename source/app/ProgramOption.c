@@ -237,6 +237,10 @@ boolByte programOptionsParseArgs(ProgramOptions self, int argc, char** argv) {
   return true;
 }
 
+boolByte programOptionsParseConfigFile(ProgramOptions self, const CharString filename) {
+  return false;
+}
+
 void programOptionsPrintHelp(const ProgramOptions self, boolByte withFullHelp, int indentSize) {
   int i;
   for(i = 0; i < self->numOptions; i++) {

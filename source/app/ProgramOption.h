@@ -123,6 +123,17 @@ ProgramOption programOptionsFind(const ProgramOptions self, const CharString nam
  * @return False if an error occurred during parsing, such as a missing or invalid argument
  */
 boolByte programOptionsParseArgs(ProgramOptions self, int argc, char** argv);
+
+/**
+ * Parse a configuration file to options. File should be plain text with one
+ * argument per line
+ * @param self
+ * @param filename Filename to parse
+ * @return True if all options were correctly parsed, false if there was an error
+ * either opening the file or with the arguments themselves.
+ */
+boolByte programOptionsParseConfigFile(ProgramOptions self, const CharString filename);
+
 /**
  * Print out help for all options
  * @param self

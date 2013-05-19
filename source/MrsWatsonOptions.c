@@ -55,6 +55,12 @@ If attached to a terminal device, color is used automatically unless 'none' is g
     "Run a test of all color output combinations.",
     false, kProgramOptionArgumentTypeNone, NO_DEFAULT_VALUE));
 
+  programOptionsAdd(options, newProgramOptionWithValues(OPTION_CONFIG_FILE, "config-file",
+    "Load options from a configuration file (format is plain-text, one option per line). \
+The config file will be read *after* other options have been parsed, so any options given \
+on the command line will be overriden by those from the file.",
+    false, kProgramOptionArgumentTypeRequired, NO_DEFAULT_VALUE));
+
   programOptionsAdd(options, newProgramOptionWithValues(OPTION_DISPLAY_INFO, "display-info",
     "Print information about each plugin in the chain.",
     false, kProgramOptionArgumentTypeNone, NO_DEFAULT_VALUE));
