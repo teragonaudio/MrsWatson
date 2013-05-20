@@ -29,6 +29,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "audio/AudioSettings.h"
 #include "base/CharString.h"
 #include "base/PlatformUtilities.h"
 #include "io/RiffFile.h"
@@ -36,7 +37,6 @@
 #include "io/SampleSourcePcm.h"
 #include "io/SampleSourceWave.h"
 #include "logging/EventLogger.h"
-#include "sequencer/AudioSettings.h"
 
 #if HAVE_LIBAUDIOFILE
 #include "io/SampleSourceAudiofile.h"

@@ -1,7 +1,7 @@
 #include <stdlib.h>
+#include "audio/AudioSettings.h"
 #include "base/LinkedList.h"
 #include "io/SampleSource.h"
-#include "sequencer/AudioSettings.h"
 #include "AnalysisClipping.h"
 #include "AnalysisDistortion.h"
 #include "AnalysisSilence.h"

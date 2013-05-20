@@ -29,8 +29,8 @@
 #include <stdlib.h>
 #include <math.h>
 
+#include "audio/AudioSettings.h"
 #include "logging/EventLogger.h"
-#include "sequencer/AudioSettings.h"
 
 AudioSettings audioSettingsInstance = NULL;
 

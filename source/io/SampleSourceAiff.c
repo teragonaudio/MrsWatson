@@ -28,13 +28,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "audio/AudioSettings.h"
 #include "base/PlatformUtilities.h"
 #include "io/SampleSourceAiff.h"
 #include "io/SampleSource.h"
 #include "io/SampleSourcePcm.h"
 #include "io/SampleSourceWave.h"
 #include "logging/EventLogger.h"
-#include "sequencer/AudioSettings.h"
 
 #if HAVE_LIBAUDIOFILE
 #include "io/SampleSourceAudiofile.h"

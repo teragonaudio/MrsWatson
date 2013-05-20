@@ -30,11 +30,11 @@
 #include <string.h>
 
 #include "app/ProgramOption.h"
+#include "audio/AudioSettings.h"
 #include "base/FileUtilities.h"
 #include "base/LinkedList.h"
 #include "base/StringUtilities.h"
 #include "logging/EventLogger.h"
-#include "sequencer/AudioSettings.h"
 
 ProgramOption newProgramOption(void) {
   return newProgramOptionWithValues(-1, EMPTY_STRING, EMPTY_STRING,

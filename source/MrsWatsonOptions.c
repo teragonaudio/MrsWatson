@@ -28,8 +28,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include "audio/AudioSettings.h"
 #include "base/FileUtilities.h"
-#include "sequencer/AudioSettings.h"
 
 #include "MrsWatsonOptions.h"
 

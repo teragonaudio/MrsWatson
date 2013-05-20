@@ -30,6 +30,7 @@
 #include <string.h>
 
 #include "app/BuildInfo.h"
+#include "audio/AudioSettings.h"
 #include "base/FileUtilities.h"
 #include "base/PlatformUtilities.h"
 #include "base/StringUtilities.h"
@@ -42,7 +43,6 @@
 #include "midi/MidiSource.h"
 #include "plugin/PluginChain.h"
 #include "sequencer/AudioClock.h"
-#include "sequencer/AudioSettings.h"
 #include "sequencer/MidiSequence.h"
 
 #include "MrsWatsonOptions.h"

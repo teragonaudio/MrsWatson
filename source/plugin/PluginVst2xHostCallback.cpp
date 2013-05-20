@@ -37,12 +37,12 @@ extern "C" {
 #include <math.h>
 
 #include "app/BuildInfo.h"
+#include "audio/AudioSettings.h"
 #include "base/CharString.h"
 #include "base/StringUtilities.h"
 #include "logging/EventLogger.h"
 #include "plugin/PluginVst2x.h"
 #include "sequencer/AudioClock.h"
-#include "sequencer/AudioSettings.h"
 }
 
 // Global variables (sigh, yes)

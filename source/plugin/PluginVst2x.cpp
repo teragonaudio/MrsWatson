@@ -35,6 +35,7 @@ extern "C" {
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "audio/AudioSettings.h"
 #include "base/CharString.h"
 #include "base/FileUtilities.h"
 #include "base/PlatformUtilities.h"
@@ -42,7 +43,6 @@ extern "C" {
 #include "logging/EventLogger.h"
 #include "midi/MidiEvent.h"
 #include "plugin/PluginVst2x.h"
-#include "sequencer/AudioSettings.h"
 
 extern LinkedList getVst2xPluginLocations(CharString currentDirectory);
 extern LibraryHandle getLibraryHandleForPlugin(const CharString pluginAbsolutePath);
