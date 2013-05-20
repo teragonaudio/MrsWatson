@@ -16,15 +16,12 @@ message("Platform bitness: ${platform_bits}-bit")
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
   if(${platform_bits} EQUAL 32)
     set(platform_name "Linux-i686")
-    set(arch_flags "-m32")
   else()
     set(platform_name "Linux-x86_64")
-    set(arch_flags "-m64")
   endif()
-elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+elseif(APPLE)
   set(platform_name "Mac OS X")
-  set(arch_flags "-arch i386")
-elseif(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+elseif(WIN32)
   if(${platform_bits} EQUAL 32)
     set(platform_name "Windows 32-bit")
   else()
@@ -37,16 +34,18 @@ message("Platform name: ${platform_name}")
 
 if(CMAKE_BUILD_TYPE MATCHES "Debug")
   set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/build)
+  set(LIBRARY_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/build)
 else()
   set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/bin/${platform_name})
+  set(LIBRARY_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/bin/${platform_name})
 endif()
 message("Output directory: ${EXECUTABLE_OUTPUT_PATH}")
 
 # Third-party dependencies #####################################
 
-include(ExternalProject)
-
-set(generic_CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=${CMAKE_SOURCE_DIR}/build CFLAGS=${arch_flags} CXXFLAGS=${arch_flags} LDFLAGS=${arch_flags} --enable-static)
+# TODO: Currently unused, but probably needed soon
+#include(ExternalProject)
+#set(generic_CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=${CMAKE_SOURCE_DIR}/build CFLAGS=${arch_flags} CXXFLAGS=${arch_flags} LDFLAGS=${arch_flags} --enable-static)
 
 # Build Flags ##################################################
 
@@ -67,20 +66,29 @@ if(MSVC)
   add_definitions("/W3 /D _CRT_SECURE_NO_WARNINGS=1 /D WIN32=1 /D WINDOWS=1")
 endif()
 
-if(CMAKE_COMPILER_IS_GNUCC)
+if(UNIX)
   set(common_gcc_flags "-fmessage-length=0 -pipe -Wno-trigraphs -Wno-trigraphs -Wmissing-field-initializers -Wall -Wreturn-type -Wunused-variable -Wshadow -Wsign-compare")
+
   if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     set(CMAKE_C_FLAGS_DEBUG "-std=c99 -D_POSIX_C_SOURCE=200809L -O0 -g")
     set(CMAKE_C_FLAGS_RELEASE "-std=c99 -D_POSIX_C_SOURCE=200809L -O3")
     set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g")
     set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
-    # TODO: Is this needed?
-    set(CMAKE_EXE_LINKER_FLAGS "${arch_flags}")
+    add_definitions("${common_gcc_flags} -DLINUX=1 -D__cdecl=\"\"")
+  endif()
 
-    add_definitions("${common_gcc_flags} ${arch_flags} -DLINUX=1 -D__cdecl=\"\"")
-  elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-    # TODO: How many of these are common to unix GCC?
+  if(APPLE)
+    if(CMAKE_BUILD_TYPE MATCHES "Debug")
+      if(${platform_bits} EQUAL 32)
+        set(CMAKE_OSX_ARCHITECTURES i386)
+      else()
+        set(CMAKE_OSX_ARCHITECTURES x86_64)
+      endif()
+    else()
+      set(CMAKE_OSX_ARCHITECTURES "x86_64;i386")
+    endif()
+    message("Building for architecture: ${CMAKE_OSX_ARCHITECTURES}")
     set(CMAKE_C_FLAGS_DEBUG "-std=c99 -O0 -g")
     set(CMAKE_C_FLAGS_RELEASE "-std=c99 -O3")
     set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g")
@@ -88,7 +96,8 @@ if(CMAKE_COMPILER_IS_GNUCC)
 
     set(CMAKE_EXE_LINKER_FLAGS "-framework Carbon -framework CoreFoundation")
 
-    add_definitions("${common_gcc_flags} ${arch_flags} -DMACOSX=1 -fpascal-strings -Wmising-prototypes -Wnewline-eof -Wshorten-64-to-32 -fasm-blacks -mmacosx-version-min=10.5")
+    # TODO: How many of these are common to unix GCC?
+    add_definitions("${common_gcc_flags} -DMACOSX=1 -fpascal-strings -Wmissing-prototypes -Wnewline-eof -Wshorten-64-to-32 -fasm-blocks -mmacosx-version-min=10.5")
   endif()
 endif()
 
