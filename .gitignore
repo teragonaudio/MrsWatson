@@ -17,6 +17,7 @@ out.wav
 
 # Stuff from various IDE's
 .idea/*
+nbproject/*
 *.perspectivev3
 *.pbxuser
 *.user
