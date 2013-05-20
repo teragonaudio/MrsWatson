@@ -57,9 +57,14 @@
 "NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED " \
 "OF THE POSSIBILITY OF SUCH DAMAGE."
 
-/** @return Year the application was built in */
+/**
+ * @return Year the application was built in
+ */
 unsigned long buildInfoGetYear(void);
-/** @return Build timestamp in the form YYYYMMDD */
+
+/**
+ * @return Build timestamp in the form YYYYMMDD
+ */
 unsigned long buildInfoGetDatestamp(void);
 
 #endif

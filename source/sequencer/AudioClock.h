@@ -30,15 +30,26 @@
 
 #include "base/Types.h"
 
+/**
+ * The AudioClock class keeps track of the sequence time and delivers the
+ * position in a variety of formats. Unlike most other classes, this one
+ * maintains a singleton instance because it must be accessed from C++
+ * callbacks where it is difficult to pass a void* pointer.
+ */
+
 typedef struct {
   boolByte transportChanged;
   boolByte isPlaying;
   unsigned long currentFrame;
 } AudioClockMembers;
 typedef AudioClockMembers* AudioClock;
-
 extern AudioClock audioClockInstance;
 
+/**
+ * Initialize the global audio clock instance. Should be called fairly
+ * early in the program initialization, as other components may depend
+ * on knowing the current position.
+ */
 void initAudioClock(void);
 
 AudioClock getAudioClock(void);
