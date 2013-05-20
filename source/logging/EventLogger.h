@@ -51,14 +51,13 @@ typedef struct {
   FILE *logFile;
   CharString systemErrorMessage;
 } EventLoggerMembers;
-
 typedef EventLoggerMembers* EventLogger;
 extern EventLogger eventLoggerInstance;
 
 void initEventLogger(void);
 
+// TODO: Move elsewhere? PlatformUtilities maybe?
 void fillVersionString(CharString outString);
-
 char* stringForLastError(int errorNumber);
 
 boolByte isLogLevelAtLeast(LogLevel logLevel);
@@ -79,7 +78,7 @@ void logInternalError(const char* message, ...);
 void logUnsupportedFeature(const char* featureName);
 void logDeprecated(const char* functionName, const char* plugin);
 void logFileError(const char* filename, const char* message);
-void printPossibleBugMessage(const char* cause);
+void logPossibleBug(const char* cause);
 
 void flushErrorLog(void);
 void freeEventLogger(void);

@@ -17,7 +17,7 @@ static void handleSignal(int signum) {
     errorReporterClose(gErrorReporter);
   }
   else {
-    printPossibleBugMessage("MrsWatson (or one of its hosted plugins) has encountered a serious error and crashed.");
+    logPossibleBug("MrsWatson (or one of its hosted plugins) has encountered a serious error and crashed.");
   }
   exit(RETURN_CODE_SIGNAL + signum);
 }

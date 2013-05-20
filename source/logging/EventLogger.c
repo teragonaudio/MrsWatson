@@ -329,10 +329,10 @@ void logDeprecated(const char* functionName, const char* plugin) {
 void logFileError(const char* filename, const char* message) {
   logCritical("Could not parse file '%s'", filename);
   logCritical("Got error message message: %s", message);
-  printPossibleBugMessage("This file is either corrupt or was parsed incorrectly");
+  logPossibleBug("This file is either corrupt or was parsed incorrectly");
 }
 
-void printPossibleBugMessage(const char* cause) {
+void logPossibleBug(const char* cause) {
   CharString extraText = newCharStringWithCString("If you believe this to be a \
 bug in MrsWatson, please re-run the program with the --error-report option to \
 generate a diagnostic report to send to support.");
