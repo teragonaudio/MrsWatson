@@ -70,12 +70,12 @@ static void prettyPrintTime(CharString outString, double milliseconds) {
 static void _remapFileToErrorReport(ErrorReporter errorReporter, ProgramOption option, boolByte copyFile) {
   if(option->enabled) {
     if(copyFile) {
-      if(!copyFileToErrorReportDir(errorReporter, option->argument)) {
+      if(!errorReportCopyFileToReport(errorReporter, option->argument)) {
         logWarn("Failed copying '%s' to error report directory, please include this file manually",
           option->argument->data);
       }
     }
-    remapPathToErrorReportDir(errorReporter, option->argument);
+    errorReporterRemapPath(errorReporter, option->argument);
   }
 }
 
@@ -294,14 +294,13 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   // options for good diagnostics. Note that error reports cannot be generated
   // for any of the above options which return with RETURN_CODE_NOT_RUN.
   else if(programOptions->options[OPTION_ERROR_REPORT]->enabled) {
-    initializeErrorReporter(errorReporter);
-    printErrorReportInfo();
+    errorReporterInitialize(errorReporter);
     programOptions->options[OPTION_VERBOSE]->enabled = true;
     programOptions->options[OPTION_LOG_FILE]->enabled = true;
     programOptions->options[OPTION_DISPLAY_INFO]->enabled = true;
     charStringCopyCString(programOptions->options[OPTION_LOG_FILE]->argument, "log.txt");
     // Shell script with original command line arguments
-    createCommandLineLauncher(errorReporter, argc, argv);
+    errorReporterCreateLauncher(errorReporter, argc, argv);
     // Rewrite some paths before any input or output sources have been opened.
     _remapFileToErrorReport(errorReporter, programOptions->options[OPTION_INPUT_SOURCE], true);
     _remapFileToErrorReport(errorReporter, programOptions->options[OPTION_OUTPUT_SOURCE], false);
@@ -427,8 +426,8 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
 
   // Copy plugins before they have been opened
   if(programOptions->options[OPTION_ERROR_REPORT]->enabled) {
-    if(shouldCopyPluginsToReportDir()) {
-      if(!copyPluginsToErrorReportDir(errorReporter, pluginChain)) {
+    if(errorReporterShouldCopyPlugins()) {
+      if(!errorReporterCopyPlugins(errorReporter, pluginChain)) {
         logWarn("Failed copying plugins to error report directory");
       }
     }
@@ -659,8 +658,8 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   freeEventLogger();
 
   if(errorReporter->started) {
-    completeErrorReport(errorReporter);
-    printErrorReportComplete(errorReporter);
+    errorReporterClose(errorReporter);
+    freeErrorReporter(errorReporter);
   }
 
   return RETURN_CODE_SUCCESS;

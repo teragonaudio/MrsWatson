@@ -82,10 +82,17 @@ ErrorReporter newErrorReporter(void) {
   return errorReporter;
 }
 
-void initializeErrorReporter(ErrorReporter self) {
+void errorReporterInitialize(ErrorReporter self) {
+  CharString infoText = newCharStringWithCString(kErrorReportInfoText);
+  CharString wrappedInfoText;
   time_t now;
   int length;
   int i;
+
+  printf("=== Starting error report ===\n");
+  wrappedInfoText = wrapString(infoText, 0);
+  // The second newline here is intentional
+  printf("%s\n", wrappedInfoText->data);
 
   time(&now);
   self->started = true;
@@ -114,15 +121,18 @@ void initializeErrorReporter(ErrorReporter self) {
   snprintf(self->reportDirPath->data, self->reportDirPath->length,
     "%s%c%s", self->desktopPath->data, PATH_DELIMITER, self->reportName->data);
   makeDirectory(self->reportDirPath);
+
+  freeCharString(wrappedInfoText);
+  freeCharString(infoText);
 }
 
-void createCommandLineLauncher(ErrorReporter self, int argc, char* argv[]) {
+void errorReporterCreateLauncher(ErrorReporter self, int argc, char* argv[]) {
   CharString outScriptName = newCharString();
   FILE *scriptFilePointer;
   int i;
 
   charStringCopyCString(outScriptName, "run.sh");
-  remapPathToErrorReportDir(self, outScriptName);
+  errorReporterRemapPath(self, outScriptName);
   scriptFilePointer = fopen(outScriptName->data, "w");
   fprintf(scriptFilePointer, "#!/bin/sh\n");
   fprintf(scriptFilePointer, "mrswatson");
@@ -136,7 +146,7 @@ void createCommandLineLauncher(ErrorReporter self, int argc, char* argv[]) {
   fclose(scriptFilePointer);
 }
 
-void remapPathToErrorReportDir(ErrorReporter self, CharString path) {
+void errorReporterRemapPath(ErrorReporter self, CharString path) {
   CharString basename = newCharString();
   CharString outString = newCharStringWithCapacity(path->length);
 
@@ -148,12 +158,12 @@ void remapPathToErrorReportDir(ErrorReporter self, CharString path) {
   freeCharString(outString);
 }
 
-boolByte copyFileToErrorReportDir(ErrorReporter self, CharString path) {
+boolByte errorReportCopyFileToReport(ErrorReporter self, CharString path) {
   boolByte success = false;
   CharString destination = newCharString();
 
   charStringCopy(destination, path);
-  remapPathToErrorReportDir(self, destination);
+  errorReporterRemapPath(self, destination);
   success = copyFileToDirectory(path, self->reportDirPath);
 
   freeCharString(destination);
@@ -182,7 +192,7 @@ static boolByte _copyDirectoryToErrorReportDir(ErrorReporter self, CharString pa
   return success;
 }
 
-boolByte shouldCopyPluginsToReportDir(void) {
+boolByte errorReporterShouldCopyPlugins(void) {
   CharString promptText = newCharStringWithCString(kErrorReportCopyPluginsPromptText);
   CharString wrappedPromptText;
   char response;
@@ -196,7 +206,7 @@ boolByte shouldCopyPluginsToReportDir(void) {
   return (response == 'y' || response == 'Y');
 }
 
-boolByte copyPluginsToErrorReportDir(ErrorReporter self, PluginChain pluginChain) {
+boolByte errorReporterCopyPlugins(ErrorReporter self, PluginChain pluginChain) {
   CharString pluginAbsolutePath;
   Plugin currentPlugin;
   boolByte failed = false;
@@ -210,7 +220,7 @@ boolByte copyPluginsToErrorReportDir(ErrorReporter self, PluginChain pluginChain
       failed |= !_copyDirectoryToErrorReportDir(self, pluginAbsolutePath);
     }
     else {
-      failed |= !copyFileToErrorReportDir(self, pluginAbsolutePath);
+      failed |= !errorReportCopyFileToReport(self, pluginAbsolutePath);
     }
   }
 
@@ -257,20 +267,7 @@ static void _addFileToArchive(void* item, void* userData) {
 }
 #endif
 
-void printErrorReportInfo(void) {
-  CharString infoText = newCharStringWithCString(kErrorReportInfoText);
-  CharString wrappedInfoText;
-
-  printf("=== Starting error report ===\n");
-  wrappedInfoText = wrapString(infoText, 0);
-  // The second newline here is intentional
-  printf("%s\n", wrappedInfoText->data);
-
-  freeCharString(wrappedInfoText);
-  freeCharString(infoText);
-}
-
-void completeErrorReport(ErrorReporter self) {
+void errorReporterClose(ErrorReporter self) {
 #if HAVE_LIBARCHIVE
   struct archive* outArchive;
   CharString outputFilename = newCharString();
@@ -305,9 +302,7 @@ void completeErrorReport(ErrorReporter self) {
     removeDirectory(self->reportDirPath);
   }
 #endif
-}
 
-void printErrorReportComplete(ErrorReporter self) {
   printf("\n=== Error report complete ===\n");
   printf("Created error report at %s\n", self->reportDirPath->data);
 #if HAVE_LIBARCHIVE
