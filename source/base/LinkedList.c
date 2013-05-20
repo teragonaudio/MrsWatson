@@ -42,7 +42,7 @@ LinkedList newLinkedList(void) {
   return list;
 }
 
-void appendItemToList(LinkedList self, void* item) {
+void linkedListAppend(LinkedList self, void* item) {
   LinkedListIterator iterator = self;
   LinkedListIterator headNode;
   LinkedList nextItem;
@@ -73,7 +73,7 @@ void appendItemToList(LinkedList self, void* item) {
   }
 }
 
-int numItemsInList(LinkedList self) {
+int linkedListLength(LinkedList self) {
   return self != NULL ? self->_numItems : 0;
 }
 
@@ -82,11 +82,11 @@ void** linkedListToArray(LinkedList self) {
   void** array;
   int i = 0;
 
-  if(self == NULL || numItemsInList(self) == 0) {
+  if(self == NULL || linkedListLength(self) == 0) {
     return NULL;
   }
 
-  array = (void**)malloc(sizeof(void*) * numItemsInList(self) + 1);
+  array = (void**)malloc(sizeof(void*) * linkedListLength(self) + 1);
   while(iterator != NULL) {
     if(iterator->item != NULL) {
       array[i++] = iterator->item;
@@ -98,7 +98,7 @@ void** linkedListToArray(LinkedList self) {
   return array;
 }
 
-void foreachItemInList(LinkedList self, LinkedListForeachFunc foreachFunc, void* userData) {
+void linkedListForeach(LinkedList self, LinkedListForeachFunc foreachFunc, void* userData) {
   LinkedListIterator iterator = self;
 
   while(iterator != NULL) {

@@ -44,23 +44,23 @@ LinkedList getVst2xPluginLocations(CharString currentDirectory) {
   const char* programFiles = (!isExecutable64Bit() && isHost64Bit()) ?
     kPlatformWindows32BitProgramFolder : kPlatformWindowsProgramFolder;
 
-  appendItemToList(locations, currentDirectory);
+  linkedListAppend(locations, currentDirectory);
 
   locationBuffer = newCharString();
   snprintf(locationBuffer->data, (size_t)(locationBuffer->length), "C:\\VstPlugins");
-  appendItemToList(locations, locationBuffer);
+  linkedListAppend(locations, locationBuffer);
 
   locationBuffer = newCharString();
   snprintf(locationBuffer->data, (size_t)(locationBuffer->length), "%s\\VstPlugIns", programFiles);
-  appendItemToList(locations, locationBuffer);
+  linkedListAppend(locations, locationBuffer);
 
   locationBuffer = newCharString();
   snprintf(locationBuffer->data, (size_t)(locationBuffer->length), "%s\\Common Files\\VstPlugIns", programFiles);
-  appendItemToList(locations, locationBuffer);
+  linkedListAppend(locations, locationBuffer);
 
   locationBuffer = newCharString();
   snprintf(locationBuffer->data, (size_t)(locationBuffer->length), "%s\\Steinberg\\VstPlugIns", programFiles);
-  appendItemToList(locations, locationBuffer);
+  linkedListAppend(locations, locationBuffer);
 
   return locations;
 }

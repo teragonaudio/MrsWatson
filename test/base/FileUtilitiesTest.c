@@ -100,7 +100,7 @@ static int _testListDirectory(void) {
   assertNotNull(f);
   fclose(f);
   l = listDirectory(tempDir);
-  assertIntEquals(numItemsInList(l), 1);
+  assertIntEquals(linkedListLength(l), 1);
   filename = l->item;
   assertCharStringEquals(filename, TEST_FILENAME);
   removeDirectory(tempDir);
@@ -110,14 +110,14 @@ static int _testListDirectory(void) {
 static int _testListEmptyDirectory(void) {
   CharString tempDir = _fileUtilitiesMakeTempDir();
   LinkedList l = listDirectory(tempDir);
-  assertIntEquals(numItemsInList(l), 0);
+  assertIntEquals(linkedListLength(l), 0);
   removeDirectory(tempDir);
   return 0;
 }
 
 static int _testListInvalidDirectory(void) {
   LinkedList l = listDirectory(newCharStringWithCString("invalid"));
-  assertIntEquals(numItemsInList(l), 0);
+  assertIntEquals(linkedListLength(l), 0);
   return 0;
 }
 

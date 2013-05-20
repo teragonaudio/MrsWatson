@@ -5,7 +5,7 @@
 static int _testNewMidiSequence(void) {
   MidiSequence m = newMidiSequence();
   assertNotNull(m);
-  assertIntEquals(numItemsInList(m->midiEvents), 0);
+  assertIntEquals(linkedListLength(m->midiEvents), 0);
   return 0;
 }
 
@@ -13,14 +13,14 @@ static int _testAppendMidiEventToSequence(void) {
   MidiSequence m = newMidiSequence();
   MidiEvent e = newMidiEvent();
   appendMidiEventToSequence(m, e);
-  assertIntEquals(numItemsInList(m->midiEvents), 1);
+  assertIntEquals(linkedListLength(m->midiEvents), 1);
   return 0;
 }
 
 static int _testAppendNullMidiEventToSequence(void) {
   MidiSequence m = newMidiSequence();
   appendMidiEventToSequence(m, NULL);
-  assertIntEquals(numItemsInList(m->midiEvents), 0);
+  assertIntEquals(linkedListLength(m->midiEvents), 0);
   return 0;
 }
 
@@ -39,7 +39,7 @@ static int _testFillMidiEventsFromRangeStart(void) {
   e->timestamp = 100;
   appendMidiEventToSequence(m, e);
   assertFalse(fillMidiEventsFromRange(m, 0, 256, l));
-  assertIntEquals(numItemsInList(l), 1);
+  assertIntEquals(linkedListLength(l), 1);
   assertIntEquals(((MidiEvent)l->item)->status, 0xf7)
   return 0;
 }
@@ -52,7 +52,7 @@ static int _testFillEventsFromEmptyRange(void) {
   e->timestamp = 100;
   appendMidiEventToSequence(m, e);
   assert(fillMidiEventsFromRange(m, 0, 0, l));
-  assertIntEquals(numItemsInList(l), 0);
+  assertIntEquals(linkedListLength(l), 0);
   return 0;
 }
 
@@ -68,10 +68,10 @@ static int _testFillEventsSequentially(void) {
   appendMidiEventToSequence(m, e);
   appendMidiEventToSequence(m, e2);
   assert(fillMidiEventsFromRange(m, 0, 256, l));
-  assertIntEquals(numItemsInList(l), 1);
+  assertIntEquals(linkedListLength(l), 1);
   l = newLinkedList();
   assertFalse(fillMidiEventsFromRange(m, 256, 256, l));
-  assertIntEquals(numItemsInList(l), 1);
+  assertIntEquals(linkedListLength(l), 1);
   return 0;
 }
 
@@ -84,10 +84,10 @@ static int _testFillEventsFromRangePastSequence(void) {
   appendMidiEventToSequence(m, e);
   // Should return false since this is the last event in the sequence
   assertFalse(fillMidiEventsFromRange(m, 0, 200, l));
-  assertIntEquals(numItemsInList(l), 1);
+  assertIntEquals(linkedListLength(l), 1);
   l = newLinkedList();
   assertFalse(fillMidiEventsFromRange(m, 200, 256, l));
-  assertIntEquals(numItemsInList(l), 0);
+  assertIntEquals(linkedListLength(l), 0);
   return 0;
 }
 

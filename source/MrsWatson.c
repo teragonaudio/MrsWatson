@@ -539,7 +539,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
       LinkedList midiEventsForBlock = newLinkedList();
       // MIDI source overrides the value set to finishedReading by the input source
       finishedReading = !fillMidiEventsFromRange(midiSequence, getAudioClockCurrentFrame(), getBlocksize(), midiEventsForBlock);
-      foreachItemInList(midiEventsForBlock, _processMidiMetaEvent, &finishedReading);
+      linkedListForeach(midiEventsForBlock, _processMidiMetaEvent, &finishedReading);
       processPluginChainMidiEvents(pluginChain, midiEventsForBlock, taskTimer);
       startTimingTask(taskTimer, hostTaskId);
       freeLinkedList(midiEventsForBlock);

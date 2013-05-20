@@ -123,7 +123,7 @@ LinkedList listDirectory(const CharString directory) {
     if(entry->d_name[0] != '.') {
       filename = newCharString();
       strncpy(filename->data, entry->d_name, filename->length);
-      appendItemToList(items, filename);
+      linkedListAppend(items, filename);
     }
   }
 
@@ -142,7 +142,7 @@ LinkedList listDirectory(const CharString directory) {
     if(findData.cFileName[0] != '.') {
       filename = newCharString();
       strncpy(filename->data, findData.cFileName, filename->length);
-      appendItemToList(items, filename);
+      linkedListAppend(items, filename);
     }
   } while(FindNextFileA(findHandle, &findData) != 0);
 

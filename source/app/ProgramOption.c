@@ -281,12 +281,12 @@ boolByte programOptionsParseConfigFile(ProgramOptions self, const CharString fil
           if(newline != NULL) {
             *newline = '\0';
           }
-          appendItemToList(configFileLines, fileLine);
+          linkedListAppend(configFileLines, fileLine);
         }
       }
 
       argvCharStrings = (CharString*)linkedListToArray(configFileLines);
-      argc = numItemsInList(configFileLines);
+      argc = linkedListLength(configFileLines);
       argv = (char**)malloc(sizeof(char*) * argc + 1);
       // Normally this would be the application name
       argv[0] = NULL;

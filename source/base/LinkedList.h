@@ -55,7 +55,7 @@ LinkedList newLinkedList(void);
  * of the same type. However, if items in the list are not of the same type,
  * using functions such as foreachItemInList() will be much more difficult.
  */
-void appendItemToList(LinkedList self, void* item);
+void linkedListAppend(LinkedList self, void* item);
 
 /**
  * Get the number of items in a list. Use this function instead of accessing
@@ -63,18 +63,23 @@ void appendItemToList(LinkedList self, void* item);
  * @param self
  * @return Number of items in the list
  */
-int numItemsInList(LinkedList self);
+int linkedListLength(LinkedList self);
 
+/**
+ * Flatten a LinkedList to an array. The resulting array will be size N + 1,
+ * with a NULL object at the end of the array.
+ * @param self
+ * @return Array of void* objects with terminating NULL member
+ */
 void** linkedListToArray(LinkedList self);
 
 /**
- * Iterate over each item in a linked list, calling the given function on each
- * item.
+ * Iterate over each item in a linked list, calling the given function on each item.
  * @param self
  * @param foreachFunc Function to call
  * @param userData User data to pass to the function
  */
-void foreachItemInList(LinkedList self, LinkedListForeachFunc foreachFunc, void* userData);
+void linkedListForeach(LinkedList self, LinkedListForeachFunc foreachFunc, void* userData);
 
 /**
  * Free each item in a linked list. The contents of the items themselves are *not*

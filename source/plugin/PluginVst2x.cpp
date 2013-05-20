@@ -119,14 +119,14 @@ static void _listPluginsVst2xInLocation(void* item, void* userData) {
   location = (CharString)item;
   _logPluginLocation(location, PLUGIN_TYPE_VST_2X);
   locationItems = listDirectory(location);
-  if(numItemsInList(locationItems) == 0) {
+  if(linkedListLength(locationItems) == 0) {
     // Empty or does not exist, return
     logInfo("  (Empty or non-existent directory)");
     freeLinkedList(locationItems);
     return;
   }
 
-  foreachItemInList(locationItems, _logPluginVst2xInLocation, &pluginsFound);
+  linkedListForeach(locationItems, _logPluginVst2xInLocation, &pluginsFound);
   if(!pluginsFound) {
     logInfo("  (No plugins found)");
   }
@@ -140,7 +140,7 @@ void listAvailablePluginsVst2x(const CharString pluginRoot) {
   }
 
   LinkedList pluginLocations = getVst2xPluginLocations(getCurrentDirectory());
-  foreachItemInList(pluginLocations, _listPluginsVst2xInLocation, NULL);
+  linkedListForeach(pluginLocations, _listPluginsVst2xInLocation, NULL);
   freeLinkedListAndItems(pluginLocations, (LinkedListFreeItemFunc)freeCharString);
 }
 
@@ -361,14 +361,14 @@ static boolByte _openVst2xPlugin(void* pluginPtr) {
 
 static LinkedList _getCommonCanDos(void) {
   LinkedList result = newLinkedList();
-  appendItemToList(result, (char*)"sendVstEvents");
-  appendItemToList(result, (char*)"sendVstMidiEvent");
-  appendItemToList(result, (char*)"receiveVstEvents");
-  appendItemToList(result, (char*)"receiveVstMidiEvent");
-  appendItemToList(result, (char*)"receiveVstTimeInfo");
-  appendItemToList(result, (char*)"offline");
-  appendItemToList(result, (char*)"midiProgramNames");
-  appendItemToList(result, (char*)"bypass");
+  linkedListAppend(result, (char*)"sendVstEvents");
+  linkedListAppend(result, (char*)"sendVstMidiEvent");
+  linkedListAppend(result, (char*)"receiveVstEvents");
+  linkedListAppend(result, (char*)"receiveVstMidiEvent");
+  linkedListAppend(result, (char*)"receiveVstTimeInfo");
+  linkedListAppend(result, (char*)"offline");
+  linkedListAppend(result, (char*)"midiProgramNames");
+  linkedListAppend(result, (char*)"bypass");
   return result;
 }
 
@@ -464,7 +464,7 @@ static void _displayVst2xPluginInfo(void* pluginPtr) {
 
     logInfo("Common canDo's:");
     LinkedList commonCanDos = _getCommonCanDos();
-    foreachItemInList(commonCanDos, _displayVst2xPluginCanDo, plugin);
+    linkedListForeach(commonCanDos, _displayVst2xPluginCanDo, plugin);
     freeLinkedList(commonCanDos);
   }
 }
@@ -534,7 +534,7 @@ static void _fillVstMidiEvent(const MidiEvent midiEvent, VstMidiEvent* vstMidiEv
 static void _processMidiEventsVst2xPlugin(void *pluginPtr, LinkedList midiEvents) {
   Plugin plugin = (Plugin)pluginPtr;
   PluginVst2xData data = (PluginVst2xData)(plugin->extraData);
-  int numEvents = numItemsInList(midiEvents);
+  int numEvents = linkedListLength(midiEvents);
 
   // Free events from the previous call
   if(data->vstEvents != NULL) {

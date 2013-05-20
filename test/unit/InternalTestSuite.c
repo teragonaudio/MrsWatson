@@ -35,29 +35,29 @@ static void _sumTestSuiteResults(void* item, void* extraData) {
 
 static LinkedList _getTestSuites(void) {
   LinkedList internalTestSuites = newLinkedList();
-  appendItemToList(internalTestSuites, addAudioClockTests());
-  appendItemToList(internalTestSuites, addAudioSettingsTests());
-  appendItemToList(internalTestSuites, addCharStringTests());
+  linkedListAppend(internalTestSuites, addAudioClockTests());
+  linkedListAppend(internalTestSuites, addAudioSettingsTests());
+  linkedListAppend(internalTestSuites, addCharStringTests());
 #if USE_NEW_FILE_API
-  appendItemToList(internalTestSuites, addFileTests());
+  linkedListAppend(internalTestSuites, addFileTests());
 #endif
-  appendItemToList(internalTestSuites, addFileUtilitiesTests());
-  appendItemToList(internalTestSuites, addLinkedListTests());
-  appendItemToList(internalTestSuites, addMidiSequenceTests());
-  appendItemToList(internalTestSuites, addMidiSourceTests());
-  appendItemToList(internalTestSuites, addPlatformUtilitiesTests());
-  appendItemToList(internalTestSuites, addPluginTests());
-  appendItemToList(internalTestSuites, addPluginChainTests());
-  appendItemToList(internalTestSuites, addPluginPresetTests());
-  appendItemToList(internalTestSuites, addProgramOptionTests());
-  appendItemToList(internalTestSuites, addSampleBufferTests());
-  appendItemToList(internalTestSuites, addSampleSourceTests());
-  appendItemToList(internalTestSuites, addStringUtilitiesTests());
-  appendItemToList(internalTestSuites, addTaskTimerTests());
+  linkedListAppend(internalTestSuites, addFileUtilitiesTests());
+  linkedListAppend(internalTestSuites, addLinkedListTests());
+  linkedListAppend(internalTestSuites, addMidiSequenceTests());
+  linkedListAppend(internalTestSuites, addMidiSourceTests());
+  linkedListAppend(internalTestSuites, addPlatformUtilitiesTests());
+  linkedListAppend(internalTestSuites, addPluginTests());
+  linkedListAppend(internalTestSuites, addPluginChainTests());
+  linkedListAppend(internalTestSuites, addPluginPresetTests());
+  linkedListAppend(internalTestSuites, addProgramOptionTests());
+  linkedListAppend(internalTestSuites, addSampleBufferTests());
+  linkedListAppend(internalTestSuites, addSampleSourceTests());
+  linkedListAppend(internalTestSuites, addStringUtilitiesTests());
+  linkedListAppend(internalTestSuites, addTaskTimerTests());
 
-  appendItemToList(internalTestSuites, addAnalysisClippingTests());
-  appendItemToList(internalTestSuites, addAnalysisDistortionTests());
-  appendItemToList(internalTestSuites, addAnalysisSilenceTests());
+  linkedListAppend(internalTestSuites, addAnalysisClippingTests());
+  linkedListAppend(internalTestSuites, addAnalysisDistortionTests());
+  linkedListAppend(internalTestSuites, addAnalysisSilenceTests());
 
   return internalTestSuites;
 }
@@ -73,12 +73,12 @@ void runInternalTestSuite(boolByte onlyPrintFailing) {
   LinkedList internalTestSuites = _getTestSuites();
 
   if(onlyPrintFailing) {
-    foreachItemInList(internalTestSuites, _setTestSuiteOnlyPrintFailing, NULL);
+    linkedListForeach(internalTestSuites, _setTestSuiteOnlyPrintFailing, NULL);
   }
-  foreachItemInList(internalTestSuites, runTestSuite, NULL);
+  linkedListForeach(internalTestSuites, runTestSuite, NULL);
   // Create a new test suite to be used as the userData passed to the foreach loop
   suiteResults = newTestSuite("Suite results", NULL, NULL);
-  foreachItemInList(internalTestSuites, _sumTestSuiteResults, suiteResults);
+  linkedListForeach(internalTestSuites, _sumTestSuiteResults, suiteResults);
 
   fprintf(stderr, "\n== Ran %d function tests: %d passed, %d failed, %d skipped ==\n",
     suiteResults->numSuccess + suiteResults->numFail + suiteResults->numSkips,
@@ -130,11 +130,11 @@ static void _printTestCases(void* item, void* userData) {
 
 static void _printTestsInSuite(void* item, void* userData) {
   TestSuite testSuite = (TestSuite)item;
-  foreachItemInList(testSuite->testCases, _printTestCases, testSuite->name);
+  linkedListForeach(testSuite->testCases, _printTestCases, testSuite->name);
 }
 
 void printInternalTests(void);
 void printInternalTests(void) {
   LinkedList internalTestSuites = _getTestSuites();
-  foreachItemInList(internalTestSuites, _printTestsInSuite, NULL);
+  linkedListForeach(internalTestSuites, _printTestsInSuite, NULL);
 }

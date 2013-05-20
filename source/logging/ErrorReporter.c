@@ -294,9 +294,9 @@ void completeErrorReport(ErrorReporter self) {
       archive_write_set_format_pax_restricted(outArchive);
       archive_write_open_filename(outArchive, outputFilename->data);
 
-      foreachItemInList(reportContents, _remapFileToErrorReportRelativePath, self);
+      linkedListForeach(reportContents, _remapFileToErrorReportRelativePath, self);
       chdir(self->desktopPath->data);
-      foreachItemInList(reportContents, _addFileToArchive, outArchive);
+      linkedListForeach(reportContents, _addFileToArchive, outArchive);
 
       archive_write_close(outArchive);
       archive_write_free(outArchive);

@@ -44,7 +44,7 @@ MidiSequence newMidiSequence(void) {
 
 void appendMidiEventToSequence(MidiSequence midiSequence, MidiEvent midiEvent) {
   if(midiSequence != NULL && midiEvent != NULL) {
-    appendItemToList(midiSequence->midiEvents, midiEvent);
+    linkedListAppend(midiSequence->midiEvents, midiEvent);
   }
 }
 
@@ -67,7 +67,7 @@ boolByte fillMidiEventsFromRange(MidiSequence midiSequence, const unsigned long 
       midiEvent->deltaFrames = midiEvent->timestamp - startTimestamp;
       logDebug("Scheduling MIDI event 0x%x (%x, %x) in %ld frames",
         midiEvent->status, midiEvent->data1, midiEvent->data2, midiEvent->deltaFrames);
-      appendItemToList(outMidiEvents, midiEvent);
+      linkedListAppend(outMidiEvents, midiEvent);
       midiSequence->_lastEvent = iterator->nextItem;
       midiSequence->numMidiEventsProcessed++;
     }

@@ -30,18 +30,18 @@ static void _setupAnalysisFunctions(LinkedList functionsList) {
   data = newAnalysisFunctionData();
   data->analysisName = "clipping";
   data->functionPtr = (void*)analysisClipping;
-  appendItemToList(functionsList, data);
+  linkedListAppend(functionsList, data);
 
   data = newAnalysisFunctionData();
   data->analysisName = "distortion";
   data->functionPtr = (void*)analysisDistortion;
-  appendItemToList(functionsList, data);
+  linkedListAppend(functionsList, data);
 
   data = newAnalysisFunctionData();
   data->analysisName = "silence";
   data->functionPtr = (void*)analysisSilence;
   data->failTolerance = kAnalysisBlocksize;
-  appendItemToList(functionsList, data);
+  linkedListAppend(functionsList, data);
 }
 
 static void _runAnalysisFunction(void* item, void* userData) {
@@ -86,7 +86,7 @@ boolByte analyzeFile(const char* filename, CharString failedAnalysisFunctionName
   analysisData->result = &result;
 
   while(sampleSource->readSampleBlock(sampleSource, analysisData->sampleBuffer) && result) {
-    foreachItemInList(analysisFunctions, _runAnalysisFunction, analysisData);
+    linkedListForeach(analysisFunctions, _runAnalysisFunction, analysisData);
     currentBlockSample += kAnalysisBlocksize;
   }
 

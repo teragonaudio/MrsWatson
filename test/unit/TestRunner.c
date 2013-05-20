@@ -33,7 +33,7 @@ TestCase newTestCase(char* name, char* filename, int lineNumber, TestCaseExecFun
 }
 
 void addTestToTestSuite(TestSuite testSuite, TestCase testCase) {
-  appendItemToList(testSuite->testCases, testCase);
+  linkedListAppend(testSuite->testCases, testCase);
 }
 
 void printTestSuccess(void) {
@@ -121,5 +121,5 @@ void runTestSuite(void* testSuitePtr, void* extraData) {
   }
   flushLog(NULL);
 
-  foreachItemInList(testSuite->testCases, runTestCase, testSuite);
+  linkedListForeach(testSuite->testCases, runTestCase, testSuite);
 }

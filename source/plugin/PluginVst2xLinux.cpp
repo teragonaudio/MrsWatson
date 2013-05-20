@@ -43,17 +43,17 @@ LinkedList getVst2xPluginLocations(CharString currentDirectory) {
   CharString locationBuffer;
   char* vstPathEnv;
 
-  appendItemToList(locations, currentDirectory);
+  linkedListAppend(locations, currentDirectory);
 
   locationBuffer = newCharString();
   snprintf(locationBuffer->data, (size_t)(locationBuffer->length), "%s/.vst", getenv("HOME"));
-  appendItemToList(locations, locationBuffer);
+  linkedListAppend(locations, locationBuffer);
 
   locationBuffer = newCharString();
   vstPathEnv = getenv("VST_PATH");
   if(vstPathEnv != NULL) {
     snprintf(locationBuffer->data, (size_t)(locationBuffer->length), "%s", vstPathEnv);
-    appendItemToList(locations, locationBuffer);
+    linkedListAppend(locations, locationBuffer);
   }
 
   return locations;
