@@ -67,7 +67,7 @@ boolByte addPluginsFromArgumentString(PluginChain pluginChain, const CharString 
   CharString pluginNameBuffer = newCharString();
   CharString presetNameBuffer;
   char* presetSeparator;
-  PluginPreset preset = NULL;
+  PluginPreset preset;
   PluginPresetType presetType;
   Plugin plugin;
   size_t substringLength;
@@ -101,6 +101,7 @@ boolByte addPluginsFromArgumentString(PluginChain pluginChain, const CharString 
     }
 
     // Find preset for this plugin (if given)
+    preset = NULL;
     if(strlen(presetNameBuffer->data) > 0) {
       logInfo("Opening preset '%s' for plugin", presetNameBuffer->data);
       presetType = guessPluginPresetType(presetNameBuffer);
