@@ -79,17 +79,37 @@ static void _remapFileToErrorReport(ErrorReporter errorReporter, ProgramOption o
   }
 }
 
-static void printWelcomeMessage(void) {
+static void printWelcomeMessage(int argc, char** argv) {
   CharString stringBuffer = newCharString();
+  char* space;
+  int i;
 
   fillVersionString(stringBuffer);
   logInfo("%s initialized, build %ld", stringBuffer->data, buildInfoGetDatestamp());
   // Recycle to use for the platform name
   freeCharString(stringBuffer);
 
-  stringBuffer = getPlatformName();
-  logDebug("Host platform is %s, application is %d-bit", stringBuffer->data, isExecutable64Bit() ? 64 : 32);
-  freeCharString(stringBuffer);
+  // Prevent a bunch of silly work in case the log level isn't debug
+  if(isLogLevelAtLeast(LOG_DEBUG)) {
+    stringBuffer = getPlatformName();
+    logDebug("Host platform is %s, application is %d-bit", stringBuffer->data, isExecutable64Bit() ? 64 : 32);
+    freeCharString(stringBuffer);
+
+    stringBuffer = newCharString();
+    for(i = 1; i < argc; i++) {
+      space = strchr(argv[i], ' ');
+      if(space != NULL) {
+        charStringAppendCString(stringBuffer, "\"");
+      }
+      charStringAppendCString(stringBuffer, argv[i]);
+      if(space != NULL) {
+        charStringAppendCString(stringBuffer, "\"");
+      }
+      charStringAppendCString(stringBuffer, " ");
+    }
+    logDebug("Launched with options: %s", stringBuffer->data);
+    freeCharString(stringBuffer);
+  }
 }
 
 static void printVersion(void) {
@@ -387,7 +407,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
     return RETURN_CODE_NOT_RUN;
   }
 
-  printWelcomeMessage();
+  printWelcomeMessage(argc, argv);
   if((result = setupInputSource(inputSource)) != RETURN_CODE_SUCCESS) {
     logError("Input source could not be opened, exiting");
     return result;
