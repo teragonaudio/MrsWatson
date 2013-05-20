@@ -1,6 +1,8 @@
-# Build directories
+# Build products
 build/*
-local/*
+MrsWatson.zip
+**/Debug/*
+**/Release/*
 
 # Temporary files
 *.swp
@@ -9,37 +11,28 @@ local/*
 *.obj
 *.so
 
-# Build products
-main/mrswatson
-main/mrswatson.exe
-source/libMrsWatson.a
-test/mrswatsontest
-MrsWatson.zip
-
 # Test output
 out/*
 out.wav
 
 # Stuff from various IDE's
+.idea/*
 *.perspectivev3
 *.pbxuser
 *.user
 *.sdf
 *.opensdf
 *.suo
-cscope.out
-projects/Xcode/.idea/workspace.xml
-projects/Xcode/.idea/dictionaries/*
-projects/Xcode/MrsWatson.xcodeproj/xcuserdata
-projects/NetBeans/MrsWatson/nbproject/private/
-projects/VisualStudio/ipch/*
 *.log
 *.tlog
 *.idb
 *.pdb
+*.sln
+*.vcxproj
+*.vcxproj.filters
 *.lastbuildstate
 
-# Third-party libraries
+# Non-redistributable third-party
 vendor/vstsdk2.4/*
 
 # Vim helpers
@@ -52,3 +45,4 @@ CMakeFiles
 Makefile
 Makefile.in
 *.cmake
+**/*.dir
