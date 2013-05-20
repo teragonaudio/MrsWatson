@@ -86,7 +86,7 @@ void** linkedListToArray(LinkedList self) {
     return NULL;
   }
 
-  array = (void**)malloc(sizeof(void*) * linkedListLength(self) + 1);
+  array = (void**)malloc(sizeof(void*) * (linkedListLength(self) + 1));
   while(iterator != NULL) {
     if(iterator->item != NULL) {
       array[i++] = iterator->item;
