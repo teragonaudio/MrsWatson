@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.6)
 project(MrsWatson)
 
 set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
-include_directories(${CMAKE_SOURCE_DIR}/source ${localDir}/include ${CMAKE_SOURCE_DIR}/vendor/vstsdk2.4/pluginterfaces/vst2.x)
+include_directories(${CMAKE_SOURCE_DIR}/source ${CMAKE_SOURCE_DIR}/vendor/vstsdk2.4/pluginterfaces/vst2.x)
 
 # Platform properties ##########################################
 
@@ -11,6 +11,7 @@ if(CMAKE_SIZEOF_VOID_P EQUAL 8)
 else()
   set(platform_bits 32)
 endif()
+message("Platform bitness: ${platform_bits}-bit")
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
   if(${platform_bits} EQUAL 32)
@@ -32,12 +33,14 @@ elseif(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 else()
   set(platform_name "Unknown")
 endif()
+message("Platform name: ${platform_name}")
 
 if(CMAKE_BUILD_TYPE MATCHES "Debug")
-  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/build)
+  set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/build)
 else()
-  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin/${platform_name})
+  set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/bin/${platform_name})
 endif()
+message("Output directory: ${EXECUTABLE_OUTPUT_PATH}")
 
 # Third-party dependencies #####################################
 
@@ -47,29 +50,46 @@ set(generic_CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=${CMAKE_SOURCE_DIR
 
 # Build Flags ##################################################
 
-set(common_gcc_flags "-fmessage-length=0 -pipe -Wno-trigraphs -Wno-trigraphs -Wmissing-field-initializers -Wall -Wreturn-type -Wunused-variable -Wshadow -Wsign-compare")
-if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-  add_definitions(-DLINUX=1)
-  set(CMAKE_C_FLAGS "${arch_flags} ${common_gcc_flags} -D__cdecl=\"\" -D_POSIX_C_SOURCE=200809L")
-  set(CMAKE_CXX_FLAGS "${arch_flags} ${common_gcc_flags} -D__cdecl=\"\"")
-  set(CMAKE_EXE_LINKER_FLAGS "${arch_flags}")
-elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-  add_definitions(-DMACOSX=1)
-  set(CMAKE_C_FLAGS "${arch_flags} ${common_gcc_flags} -fpascal-strings -std=c99 -Wmissing-prototypes -Wnewline-eof -Wshorten-64-to-32 -fasm-blocks -mmacosx-version-min=10.4")
-  set(CMAKE_CXX_FLAGS "${arch_flags} ${common_gcc_flags} -fpascal-strings -Wnewline-eof -Wshorten-64-to-32 -fasm-blocks -mmacosx-version-min=10.4")
-  set(CMAKE_EXE_LINKER_FLAGS "${arch_flags} -framework Carbon -framework CoreFoundation")
-elseif(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-  # TODO: Set Windows build flags
-  set(CMAKE_C_FLAGS "")
-  set(CMAKE_CXX_FLAGS "")
+if(MSVC)
+  # We don't care about intdir, binary output path is set above
+  set(CMAKE_CFG_INTDIR ".")
+
+  set(CMAKE_C_FLAGS_DEBUG "/D DEBUG=1 /D _DEBUG /MTd /Ob0 /Od /RTC1")
+  set(CMAKE_C_FLAGS_MINSIZEREL "/MT /O1 /Ob1 /Oi /D NDEBUG")
+  set(CMAKE_C_FLAGS_RELEASE "/MT /O2 /Ob2 /Oi /D NDEBUG")
+  set(CMAKE_C_FLAGS_RELWITHDEBINFO "/MT /Zi /O2 /Ob1 /D NDEBUG")
+
+  set(CMAKE_CXX_FLAGS_DEBUG "/D DEBUG=1 /D _DEBUG /MTd /Zi /Ob0 /Od /RTC1")
+  set(CMAKE_CXX_FLAGS_MINSIZEREL "/MT /O1 /Ob1 /Oi /D NDEBUG")
+  set(CMAKE_CXX_FLAGS_RELEASE "/MT /O2 /Ob2 /Oi /D NDEBUG")
+  set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "/MT /Zi /O2 /Ob1 /D NDEBUG")
+
+  add_definitions("/W3 /D _CRT_SECURE_NO_WARNINGS=1 /D WIN32=1 /D WINDOWS=1")
 endif()
 
-if(CMAKE_BUILD_TYPE MATCHES "Debug")
-  add_definitions("-O0")
-  add_definitions("-g")
-  add_definitions("-DDEBUG=1")
-else()
-  add_definitions("-O3")
+if(CMAKE_COMPILER_IS_GNUCC)
+  set(common_gcc_flags "-fmessage-length=0 -pipe -Wno-trigraphs -Wno-trigraphs -Wmissing-field-initializers -Wall -Wreturn-type -Wunused-variable -Wshadow -Wsign-compare")
+  if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+    set(CMAKE_C_FLAGS_DEBUG "-std=c99 -D_POSIX_C_SOURCE=200809L -O0 -g")
+    set(CMAKE_C_FLAGS_RELEASE "-std=c99 -D_POSIX_C_SOURCE=200809L -O3")
+    set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g")
+    set(CMAKE_CXX_FLAGS_RELEASE "-O3")
+
+    # TODO: Is this needed?
+    set(CMAKE_EXE_LINKER_FLAGS "${arch_flags}")
+
+    add_definitions("${common_gcc_flags} ${arch_flags} -DLINUX=1 -D__cdecl=\"\"")
+  elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    # TODO: How many of these are common to unix GCC?
+    set(CMAKE_C_FLAGS_DEBUG "-std=c99 -O0 -g")
+    set(CMAKE_C_FLAGS_RELEASE "-std=c99 -O3")
+    set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g")
+    set(CMAKE_CXX_FLAGS_RELEASE "-O3")
+
+    set(CMAKE_EXE_LINKER_FLAGS "-framework Carbon -framework CoreFoundation")
+
+    add_definitions("${common_gcc_flags} ${arch_flags} -DMACOSX=1 -fpascal-strings -Wmising-prototypes -Wnewline-eof -Wshorten-64-to-32 -fasm-blacks -mmacosx-version-min=10.5")
+  endif()
 endif()
 
 # Subdirectories ###############################################
