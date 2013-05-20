@@ -106,6 +106,11 @@ char* stringForLastError(int errorNumber) {
   return eventLogger->systemErrorMessage->data;
 }
 
+boolByte isLogLevelAtLeast(LogLevel logLevel) {
+  EventLogger eventLogger = _getEventLoggerInstance();
+  return (eventLogger->logLevel >= logLevel);
+}
+
 void setLogLevel(LogLevel logLevel) {
   EventLogger eventLogger = _getEventLoggerInstance();
   eventLogger->logLevel = logLevel;

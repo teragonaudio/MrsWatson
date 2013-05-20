@@ -61,6 +61,7 @@ void fillVersionString(CharString outString);
 
 char* stringForLastError(int errorNumber);
 
+boolByte isLogLevelAtLeast(LogLevel logLevel);
 void setLogLevel(LogLevel logLevel);
 void setLogLevelFromString(const CharString logLevelString);
 void setLogFile(const CharString logFileName);
