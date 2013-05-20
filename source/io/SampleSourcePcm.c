@@ -96,7 +96,7 @@ static void _convertPcmDataToSampleBuffer(const short* inPcmSamples, SampleBuffe
   }
 }
 
-size_t readPcmDataFromFile(SampleSourcePcmData pcmData, SampleBuffer sampleBuffer) {
+size_t sampleSourcePcmRead(SampleSourcePcmData pcmData, SampleBuffer sampleBuffer) {
   size_t pcmSamplesRead = 0;
 
   if(pcmData == NULL || pcmData->fileHandle == NULL) {
@@ -128,7 +128,7 @@ static boolByte readBlockFromPcmFile(void* sampleSourcePtr, SampleBuffer sampleB
   SampleSource sampleSource = (SampleSource)sampleSourcePtr;
   SampleSourcePcmData extraData = (SampleSourcePcmData)(sampleSource->extraData);
   int originalBlocksize = sampleBuffer->blocksize;
-  size_t samplesRead = readPcmDataFromFile(extraData, sampleBuffer);
+  size_t samplesRead = sampleSourcePcmRead(extraData, sampleBuffer);
   sampleSource->numSamplesProcessed += samplesRead;
   return (originalBlocksize == sampleBuffer->blocksize);
 }
@@ -161,7 +161,7 @@ void convertSampleBufferToPcmData(const SampleBuffer sampleBuffer, short* outPcm
   }
 }
 
-size_t writePcmDataToFile(SampleSourcePcmData pcmData, const SampleBuffer sampleBuffer) {
+size_t sampleSourcePcmWrite(SampleSourcePcmData pcmData, const SampleBuffer sampleBuffer) {
   size_t pcmSamplesWritten = 0;
   size_t numSamplesToWrite = (size_t)(sampleBuffer->numChannels * sampleBuffer->blocksize);
 
@@ -192,7 +192,7 @@ size_t writePcmDataToFile(SampleSourcePcmData pcmData, const SampleBuffer sample
 static boolByte writeBlockToPcmFile(void* sampleSourcePtr, const SampleBuffer sampleBuffer) {
   SampleSource sampleSource = (SampleSource)sampleSourcePtr;
   SampleSourcePcmData extraData = (SampleSourcePcmData)(sampleSource->extraData);
-  int samplesWritten = (int)writePcmDataToFile(extraData, sampleBuffer);
+  int samplesWritten = (int)sampleSourcePcmWrite(extraData, sampleBuffer);
   sampleSource->numSamplesProcessed += samplesWritten;
   return (samplesWritten == sampleBuffer->blocksize);
 }
@@ -205,13 +205,13 @@ static void _closeSampleSourcePcm(void* sampleSourcePtr) {
   }
 }
 
-void setPcmDataSampleRate(void* sampleSourcePtr, double sampleRate) {
+void sampleSourcePcmSetSampleRate(void* sampleSourcePtr, double sampleRate) {
   SampleSource sampleSource = (SampleSource)sampleSourcePtr;
   SampleSourcePcmData extraData = (SampleSourcePcmData)sampleSource->extraData;
   extraData->sampleRate = (long)sampleRate;
 }
 
-void setPcmDataNumChannels(void* sampleSourcePtr, int numChannels) {
+void sampleSourcePcmSetNumChannels(void* sampleSourcePtr, int numChannels) {
   SampleSource sampleSource = (SampleSource)sampleSourcePtr;
   SampleSourcePcmData extraData = (SampleSourcePcmData)sampleSource->extraData;
   extraData->numChannels = numChannels;

@@ -148,8 +148,8 @@ static ReturnCodes setupInputSource(SampleSource inputSource) {
     return RETURN_CODE_INVALID_ARGUMENT;
   }
   if(inputSource->sampleSourceType == SAMPLE_SOURCE_TYPE_PCM) {
-    setPcmDataSampleRate(inputSource, getSampleRate());
-    setPcmDataNumChannels(inputSource, getNumChannels());
+    sampleSourcePcmSetSampleRate(inputSource, getSampleRate());
+    sampleSourcePcmSetNumChannels(inputSource, getNumChannels());
   }
   if(!inputSource->openSampleSource(inputSource, SAMPLE_SOURCE_OPEN_READ)) {
     logError("Input source '%s' could not be opened", inputSource->sourceName->data);

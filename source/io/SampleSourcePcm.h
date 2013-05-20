@@ -43,16 +43,17 @@ typedef struct {
   unsigned int sampleRate;
   unsigned short bitsPerSample;
 } SampleSourcePcmDataMembers;
-
 typedef SampleSourcePcmDataMembers *SampleSourcePcmData;
 
 SampleSource newSampleSourcePcm(const CharString sampleSourceName);
-size_t readPcmDataFromFile(SampleSourcePcmData pcmData, SampleBuffer sampleBuffer);
-size_t writePcmDataToFile(SampleSourcePcmData pcmData, const SampleBuffer sampleBuffer);
+
+size_t sampleSourcePcmRead(SampleSourcePcmData pcmData, SampleBuffer sampleBuffer);
+size_t sampleSourcePcmWrite(SampleSourcePcmData pcmData, const SampleBuffer sampleBuffer);
+// TODO: Move to SampleBuffer class
 void convertSampleBufferToPcmData(const SampleBuffer sampleBuffer, short* outPcmSamples, boolByte isDataLittleEndian);
 
-void setPcmDataSampleRate(void* sampleSourcePtr, double sampleRate);
-void setPcmDataNumChannels(void* sampleSourcePtr, int numChannels);
+void sampleSourcePcmSetSampleRate(void* sampleSourcePtr, double sampleRate);
+void sampleSourcePcmSetNumChannels(void* sampleSourcePtr, int numChannels);
 
 void freeSampleSourceDataPcm(void* sampleSourceDataPtr);
 
