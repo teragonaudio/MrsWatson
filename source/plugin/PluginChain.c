@@ -58,7 +58,7 @@ boolByte pluginChainAppend(PluginChain self, Plugin plugin, PluginPreset preset)
   }
 }
 
-boolByte addPluginsFromArgumentString(PluginChain pluginChain, const CharString argumentString, const CharString userSearchPath) {
+boolByte pluginChainAddFromArgumentString(PluginChain pluginChain, const CharString argumentString, const CharString userSearchPath) {
   // Expect a semicolon-separated string of plugins with comma separators for preset names
   // Example: plugin1,preset1name;plugin2,preset2name
   char* substringStart;
@@ -155,7 +155,7 @@ static boolByte _loadPresetForPlugin(Plugin plugin, PluginPreset preset) {
   }
 }
 
-ReturnCodes initializePluginChain(PluginChain pluginChain) {
+ReturnCodes pluginChainInitialize(PluginChain pluginChain) {
   Plugin plugin;
   PluginPreset preset;
   int i;
@@ -192,7 +192,7 @@ ReturnCodes initializePluginChain(PluginChain pluginChain) {
   return RETURN_CODE_SUCCESS;
 }
 
-void displayPluginInfo(PluginChain pluginChain) {
+void pluginChainInspect(PluginChain pluginChain) {
   Plugin plugin;
   int i;
   for(i = 0; i < pluginChain->numPlugins; i++) {
@@ -201,7 +201,7 @@ void displayPluginInfo(PluginChain pluginChain) {
   }
 }
 
-void prepareForProcessing(PluginChain self) {
+void pluginChainPrepareForProcessing(PluginChain self) {
   Plugin plugin;
   int i;
   for(i = 0; i < self->numPlugins; i++) {
@@ -210,7 +210,7 @@ void prepareForProcessing(PluginChain self) {
   }
 }
 
-int getMaximumTailTimeInMs(PluginChain pluginChain) {
+int pluginChainGetMaximumTailTimeInMs(PluginChain pluginChain) {
   Plugin plugin;
   int tailTime;
   int maxTailTime = 0;
@@ -225,7 +225,7 @@ int getMaximumTailTimeInMs(PluginChain pluginChain) {
   return maxTailTime;
 }
 
-void processPluginChainAudio(PluginChain pluginChain, SampleBuffer inBuffer, SampleBuffer outBuffer, TaskTimer taskTimer) {
+void pluginChainProcessAudio(PluginChain pluginChain, SampleBuffer inBuffer, SampleBuffer outBuffer, TaskTimer taskTimer) {
   Plugin plugin;
   int i;
 
@@ -246,7 +246,7 @@ void processPluginChainAudio(PluginChain pluginChain, SampleBuffer inBuffer, Sam
   }
 }
 
-void processPluginChainMidiEvents(PluginChain pluginChain, LinkedList midiEvents, TaskTimer taskTimer) {
+void pluginChainProcessMidi(PluginChain pluginChain, LinkedList midiEvents, TaskTimer taskTimer) {
   Plugin plugin;
   if(midiEvents->item != NULL) {
     logDebug("Processing plugin chain MIDI events");
@@ -258,7 +258,7 @@ void processPluginChainMidiEvents(PluginChain pluginChain, LinkedList midiEvents
   }
 }
 
-void closePluginChain(PluginChain pluginChain) {
+void pluginChainShutdown(PluginChain pluginChain) {
   Plugin plugin;
   int i;
   for(i = 0; i < pluginChain->numPlugins; i++) {

@@ -12,28 +12,28 @@ static int _testNewPluginChain(void) {
 
 static int _testAddPluginFromArgumentStringNull(void) {
   PluginChain p = newPluginChain();
-  assertFalse(addPluginsFromArgumentString(p, NULL, newCharStringWithCString("/")));
+  assertFalse(pluginChainAddFromArgumentString(p, NULL, newCharStringWithCString("/")));
   assertIntEquals(p->numPlugins, 0);
   return 0;
 }
 
 static int _testAddPluginFromArgumentStringEmpty(void) {
   PluginChain p = newPluginChain();
-  assertFalse(addPluginsFromArgumentString(p, newCharString(), newCharStringWithCString("/")));
+  assertFalse(pluginChainAddFromArgumentString(p, newCharString(), newCharStringWithCString("/")));
   assertIntEquals(p->numPlugins, 0);
   return 0;
 }
 
 static int _testAddPluginFromArgumentStringEmptyLocation(void) {
   PluginChain p = newPluginChain();
-  assert(addPluginsFromArgumentString(p, newCharStringWithCString(kInternalPluginPassthruName), newCharString()));
+  assert(pluginChainAddFromArgumentString(p, newCharStringWithCString(kInternalPluginPassthruName), newCharString()));
   assertIntEquals(p->numPlugins, 1);
   return 0;
 }
 
 static int _testAddPluginFromArgumentStringNullLocation(void) {
   PluginChain p = newPluginChain();
-  assert(addPluginsFromArgumentString(p, newCharStringWithCString(kInternalPluginPassthruName), NULL));
+  assert(pluginChainAddFromArgumentString(p, newCharStringWithCString(kInternalPluginPassthruName), NULL));
   assertIntEquals(p->numPlugins, 1);
   return 0;
 }
@@ -41,7 +41,7 @@ static int _testAddPluginFromArgumentStringNullLocation(void) {
 static int _testAddPluginFromArgumentString(void) {
   PluginChain p = newPluginChain();
   CharString testArgs = newCharStringWithCString(kInternalPluginPassthruName);
-  assert(addPluginsFromArgumentString(p, testArgs, NULL));
+  assert(pluginChainAddFromArgumentString(p, testArgs, NULL));
   assertIntEquals(p->numPlugins, 1);
   assertNotNull(p->plugins[0]);
   assertIntEquals(p->plugins[0]->pluginType, PLUGIN_TYPE_INTERNAL);
@@ -54,8 +54,8 @@ static int _testAddPluginsFromArgumentString(void) {
   CharString testArgs = newCharStringWithCString(kInternalPluginPassthruName);
   int i;
 
-  assert(addPluginsFromArgumentString(p, testArgs, NULL));
-  assert(addPluginsFromArgumentString(p, testArgs, NULL));
+  assert(pluginChainAddFromArgumentString(p, testArgs, NULL));
+  assert(pluginChainAddFromArgumentString(p, testArgs, NULL));
   assertIntEquals(p->numPlugins, 2);
   for(i = 0; i < p->numPlugins; i++) {
     assertNotNull(p->plugins[i]);
@@ -69,7 +69,7 @@ static int _testAddPluginsFromArgumentString(void) {
 static int _testAddPluginWithPresetFromArgumentString(void) {
   PluginChain p = newPluginChain();
   CharString testArgs = newCharStringWithCString("mrs_passthru,testPreset.fxp");
-  assert(addPluginsFromArgumentString(p, testArgs, NULL));
+  assert(pluginChainAddFromArgumentString(p, testArgs, NULL));
   assertIntEquals(p->numPlugins, 1);
   assertIntEquals(p->plugins[0]->pluginType, PLUGIN_TYPE_INTERNAL);
   assertCharStringEquals(p->plugins[0]->pluginName, kInternalPluginPassthruName);
@@ -81,7 +81,7 @@ static int _testAddPluginWithPresetFromArgumentString(void) {
 static int _testAddPluginFromArgumentStringWithPresetSpaces(void) {
   PluginChain p = newPluginChain();
   CharString testArgs = newCharStringWithCString("mrs_passthru,test preset.fxp");
-  assert(addPluginsFromArgumentString(p, testArgs, NULL));
+  assert(pluginChainAddFromArgumentString(p, testArgs, NULL));
   assertIntEquals(p->numPlugins, 1);
   assertIntEquals(p->plugins[0]->pluginType, PLUGIN_TYPE_INTERNAL);
   assertCharStringEquals(p->plugins[0]->pluginName, kInternalPluginPassthruName);

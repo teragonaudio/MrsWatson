@@ -129,7 +129,7 @@ static void printVersion(void) {
 
 static ReturnCodes buildPluginChain(PluginChain pluginChain, const CharString argument, const CharString pluginSearchRoot) {
   // Construct plugin chain
-  if(!addPluginsFromArgumentString(pluginChain, argument, pluginSearchRoot)) {
+  if(!pluginChainAddFromArgumentString(pluginChain, argument, pluginSearchRoot)) {
     return RETURN_CODE_INVALID_PLUGIN_CHAIN;
   }
   // No longer needed
@@ -436,7 +436,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   }
 
   // Initialize the plugin chain after the global sample rate has been set
-  result = initializePluginChain(pluginChain);
+  result = pluginChainInitialize(pluginChain);
   if(result != RETURN_CODE_SUCCESS) {
     logError("Could not initialize plugin chain");
     return result;
@@ -444,7 +444,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
 
   // Display info for plugins in the chain before checking for valid input/output sources
   if(shouldDisplayPluginInfo) {
-    displayPluginInfo(pluginChain);
+    pluginChainInspect(pluginChain);
   }
 
   // Setup output source here. Having an invalid output source should not cause the program
@@ -516,10 +516,9 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   }
 
   // Get largest tail time requested by any plugin in the chain
-  tailTimeInMs += getMaximumTailTimeInMs(pluginChain);
+  tailTimeInMs += pluginChainGetMaximumTailTimeInMs(pluginChain);
   tailTimeInFrames = (unsigned long)(tailTimeInMs * getSampleRate()) / 1000l;
-
-  prepareForProcessing(pluginChain);
+  pluginChainPrepareForProcessing(pluginChain);
 
   // Update sample rate on the event logger
   setLoggingZebraSize((long)getSampleRate());
@@ -541,7 +540,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
       // MIDI source overrides the value set to finishedReading by the input source
       finishedReading = !fillMidiEventsFromRange(midiSequence, audioClock->currentFrame, getBlocksize(), midiEventsForBlock);
       linkedListForeach(midiEventsForBlock, _processMidiMetaEvent, &finishedReading);
-      processPluginChainMidiEvents(pluginChain, midiEventsForBlock, taskTimer);
+      pluginChainProcessMidi(pluginChain, midiEventsForBlock, taskTimer);
       startTimingTask(taskTimer, hostTaskId);
       freeLinkedList(midiEventsForBlock);
     }
@@ -551,7 +550,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
       finishedReading = true;
     }
 
-    processPluginChainAudio(pluginChain, inputSampleBuffer, outputSampleBuffer, taskTimer);
+    pluginChainProcessAudio(pluginChain, inputSampleBuffer, outputSampleBuffer, taskTimer);
     startTimingTask(taskTimer, hostTaskId);
 
     if(finishedReading) {
@@ -585,7 +584,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
       startTimingTask(taskTimer, hostTaskId);
       silentSampleInput->readSampleBlock(silentSampleInput, inputSampleBuffer);
 
-      processPluginChainAudio(pluginChain, inputSampleBuffer, outputSampleBuffer, taskTimer);
+      pluginChainProcessAudio(pluginChain, inputSampleBuffer, outputSampleBuffer, taskTimer);
 
       startTimingTask(taskTimer, hostTaskId);
       outputSource->writeSampleBlock(outputSource, outputSampleBuffer);
@@ -645,7 +644,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   freeSampleSource(outputSource);
   freeSampleBuffer(inputSampleBuffer);
   freeSampleBuffer(outputSampleBuffer);
-  closePluginChain(pluginChain);
+  pluginChainShutdown(pluginChain);
   freePluginChain(pluginChain);
 
   if(midiSource != NULL) {

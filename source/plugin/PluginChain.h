@@ -48,17 +48,18 @@ typedef PluginChainMembers* PluginChain;
 PluginChain newPluginChain(void);
 
 boolByte pluginChainAppend(PluginChain self, Plugin plugin, PluginPreset preset);
-boolByte addPluginsFromArgumentString(PluginChain pluginChain, const CharString argumentString, const CharString userSearchPath);
-ReturnCodes initializePluginChain(PluginChain pluginChain);
+boolByte pluginChainAddFromArgumentString(PluginChain self, const CharString argumentString, const CharString userSearchPath);
+ReturnCodes pluginChainInitialize(PluginChain self);
 
-void displayPluginInfo(PluginChain pluginChain);
-int getMaximumTailTimeInMs(PluginChain pluginChain);
+void pluginChainInspect(PluginChain self);
+int pluginChainGetMaximumTailTimeInMs(PluginChain self);
 
-void prepareForProcessing(PluginChain self);
-void processPluginChainAudio(PluginChain pluginChain, SampleBuffer inBuffer, SampleBuffer outBuffer, TaskTimer taskTimer);
-void processPluginChainMidiEvents(PluginChain pluginChain, LinkedList midiEvents, TaskTimer taskTimer);
+void pluginChainPrepareForProcessing(PluginChain self);
+void pluginChainProcessAudio(PluginChain self, SampleBuffer inBuffer, SampleBuffer outBuffer, TaskTimer taskTimer);
+void pluginChainProcessMidi(PluginChain self, LinkedList midiEvents, TaskTimer taskTimer);
 
-void closePluginChain(PluginChain pluginChain);
-void freePluginChain(PluginChain pluginChain);
+void pluginChainShutdown(PluginChain self);
+void freePluginChain(PluginChain self);
 
 #endif
+
