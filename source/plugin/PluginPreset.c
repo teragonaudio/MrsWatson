@@ -39,7 +39,7 @@
 
 PluginPresetType guessPluginPresetType(const CharString presetName) {
   const char* fileExtension;
-  int i;
+  size_t i;
 
   if(presetName == NULL || charStringIsEmpty(presetName)) {
     return PRESET_TYPE_INVALID;

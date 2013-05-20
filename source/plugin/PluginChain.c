@@ -36,8 +36,8 @@ PluginChain newPluginChain(void) {
   PluginChain pluginChain = (PluginChain)malloc(sizeof(PluginChainMembers));
 
   pluginChain->numPlugins = 0;
-  pluginChain->plugins = (Plugin)malloc(sizeof(Plugin) * MAX_PLUGINS);
-  pluginChain->presets = (PluginPreset)malloc(sizeof(PluginPreset) * MAX_PLUGINS);
+  pluginChain->plugins = (Plugin*)malloc(sizeof(Plugin) * MAX_PLUGINS);
+  pluginChain->presets = (PluginPreset*)malloc(sizeof(PluginPreset) * MAX_PLUGINS);
 
   return pluginChain;
 }
