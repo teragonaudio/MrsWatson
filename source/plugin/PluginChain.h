@@ -43,11 +43,11 @@ typedef struct {
   Plugin* plugins;
   PluginPreset* presets;
 } PluginChainMembers;
-
 typedef PluginChainMembers* PluginChain;
 
 PluginChain newPluginChain(void);
 
+boolByte pluginChainAppend(PluginChain self, Plugin plugin, PluginPreset preset);
 boolByte addPluginsFromArgumentString(PluginChain pluginChain, const CharString argumentString, const CharString userSearchPath);
 ReturnCodes initializePluginChain(PluginChain pluginChain);
 

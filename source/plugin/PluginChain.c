@@ -42,18 +42,18 @@ PluginChain newPluginChain(void) {
   return pluginChain;
 }
 
-static boolByte _addPluginToChain(PluginChain pluginChain, Plugin plugin, PluginPreset preset) {
+boolByte pluginChainAppend(PluginChain self, Plugin plugin, PluginPreset preset) {
   if(plugin == NULL) {
     return false;
   }
-  else if(pluginChain->numPlugins + 1 >= MAX_PLUGINS) {
+  else if(self->numPlugins + 1 >= MAX_PLUGINS) {
     logError("Could not add plugin '%s', maximum number reached", plugin->pluginName->data);
     return false;
   }
   else {
-    pluginChain->plugins[pluginChain->numPlugins] = plugin;
-    pluginChain->presets[pluginChain->numPlugins] = preset;
-    pluginChain->numPlugins++;
+    self->plugins[self->numPlugins] = plugin;
+    self->presets[self->numPlugins] = preset;
+    self->numPlugins++;
     return true;
   }
 }
@@ -116,7 +116,7 @@ boolByte addPluginsFromArgumentString(PluginChain pluginChain, const CharString 
     pluginType = guessPluginInterfaceType(pluginNameBuffer, userSearchPath, pluginLocationBuffer);
     if(pluginType != PLUGIN_TYPE_INVALID) {
       plugin = newPlugin(pluginType, pluginNameBuffer, pluginLocationBuffer);
-      if(!_addPluginToChain(pluginChain, plugin, preset)) {
+      if(!pluginChainAppend(pluginChain, plugin, preset)) {
         logError("Plugin '%s' could not be added to the chain", pluginNameBuffer->data);
         return false;
       }
