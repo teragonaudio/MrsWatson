@@ -40,7 +40,7 @@
 #include "io/SampleSourceWave.h"
 #include "logging/EventLogger.h"
 
-void printSupportedSourceTypes(void) {
+void sampleSourcePrintSupportedTypes(void) {
   logInfo("Supported audio file types:");
   // We can theoretically support more formats, pretty much anything audiofile supports
   // would work here. However, most of those file types are rather uncommon, and require
@@ -68,7 +68,7 @@ void printSupportedSourceTypes(void) {
 #endif
 }
 
-SampleSourceType guessSampleSourceType(const CharString sampleSourceTypeString) {
+SampleSourceType sampleSourceGuess(const CharString sampleSourceTypeString) {
   if(!charStringIsEmpty(sampleSourceTypeString)) {
     // Look for stdin/stdout
     if(strlen(sampleSourceTypeString->data) == 1 && sampleSourceTypeString->data[0] == '-') {
@@ -116,7 +116,7 @@ SampleSourceType guessSampleSourceType(const CharString sampleSourceTypeString) 
   }
 }
 
-boolByte isSampleSourceStreaming(SampleSource sampleSource) {
+boolByte sampleSourceIsStreaming(SampleSource sampleSource) {
   if(sampleSource == NULL) {
     return false;
   }

@@ -4,23 +4,23 @@
 const char* TEST_SAMPLESOURCE_FILENAME = "test.pcm";
 
 static int _testGuessSampleSourceTypePcm(void) {
-  assertIntEquals(guessSampleSourceType(newCharStringWithCString(TEST_SAMPLESOURCE_FILENAME)),
+  assertIntEquals(sampleSourceGuess(newCharStringWithCString(TEST_SAMPLESOURCE_FILENAME)),
     SAMPLE_SOURCE_TYPE_PCM);
   return 0;
 }
 
 static int _testGuessSampleSourceTypeEmpty(void) {
-  assertIntEquals(guessSampleSourceType(newCharString()), SAMPLE_SOURCE_TYPE_INVALID);
+  assertIntEquals(sampleSourceGuess(newCharString()), SAMPLE_SOURCE_TYPE_INVALID);
   return 0;
 }
 
 static int _testGuessSampleSourceTypeInvalid(void) {
-  assertIntEquals(guessSampleSourceType(newCharString()), SAMPLE_SOURCE_TYPE_INVALID);
+  assertIntEquals(sampleSourceGuess(newCharString()), SAMPLE_SOURCE_TYPE_INVALID);
   return 0;
 }
 
 static int _testGuessSampleSourceTypeWrongCase(void) {
-  assertIntEquals(guessSampleSourceType(newCharStringWithCString("TEST.PCM")),
+  assertIntEquals(sampleSourceGuess(newCharStringWithCString("TEST.PCM")),
     SAMPLE_SOURCE_TYPE_PCM);
   return 0;
 }

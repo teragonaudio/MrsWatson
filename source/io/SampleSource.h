@@ -76,13 +76,14 @@ typedef struct {
 
   void* extraData;
 } SampleSourceMembers;
-
 typedef SampleSourceMembers* SampleSource;
 
-void printSupportedSourceTypes(void);
-SampleSourceType guessSampleSourceType(const CharString sampleSourceTypeString);
-boolByte isSampleSourceStreaming(SampleSource sampleSource);
 SampleSource newSampleSource(SampleSourceType sampleSourceType, const CharString sampleSourceName);
+
+void sampleSourcePrintSupportedTypes(void);
+SampleSourceType sampleSourceGuess(const CharString sampleSourceTypeString);
+boolByte sampleSourceIsStreaming(SampleSource sampleSource);
+
 void freeSampleSource(SampleSource sampleSource);
 
 #endif

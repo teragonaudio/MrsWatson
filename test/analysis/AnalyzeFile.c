@@ -69,7 +69,7 @@ boolByte analyzeFile(const char* filename, CharString failedAnalysisFunctionName
   initAudioSettings();
   _setupAnalysisFunctions(analysisFunctions);
   analysisFilename = newCharStringWithCString(filename);
-  sampleSourceType = guessSampleSourceType(analysisFilename);
+  sampleSourceType = sampleSourceGuess(analysisFilename);
   sampleSource = newSampleSource(sampleSourceType, analysisFilename);
   if(sampleSource == NULL) {
     return false;

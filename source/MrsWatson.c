@@ -356,7 +356,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
           break;
         case OPTION_INPUT_SOURCE:
           freeSampleSource(inputSource);
-          inputSource = newSampleSource(guessSampleSourceType(option->argument), option->argument);
+          inputSource = newSampleSource(sampleSourceGuess(option->argument), option->argument);
           break;
         case OPTION_MAX_TIME:
           maxTimeInMs = strtol(option->argument->data, NULL, 10);
@@ -365,7 +365,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
           midiSource = newMidiSource(guessMidiSourceType(option->argument), option->argument);
           break;
         case OPTION_OUTPUT_SOURCE:
-          outputSource = newSampleSource(guessSampleSourceType(option->argument), option->argument);
+          outputSource = newSampleSource(sampleSourceGuess(option->argument), option->argument);
           break;
         case OPTION_PLUGIN_ROOT:
           charStringCopy(pluginSearchRoot, option->argument);
@@ -403,7 +403,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
     return RETURN_CODE_NOT_RUN;
   }
   if(programOptions->options[OPTION_LIST_FILE_TYPES]->enabled) {
-    printSupportedSourceTypes();
+    sampleSourcePrintSupportedTypes();
     return RETURN_CODE_NOT_RUN;
   }
 
@@ -457,7 +457,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   // otherwise the head plugin type is not known, which influences whether we must abort
   // processing.
   if(programOptions->options[OPTION_ERROR_REPORT]->enabled) {
-    if(isSampleSourceStreaming(inputSource) || isSampleSourceStreaming(outputSource)) {
+    if(sampleSourceIsStreaming(inputSource) || sampleSourceIsStreaming(outputSource)) {
       printf("ERROR: Using stdin/stdout is incompatible with --error-report\n");
       return RETURN_CODE_NOT_RUN;
     }
