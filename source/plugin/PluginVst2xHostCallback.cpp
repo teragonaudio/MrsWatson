@@ -153,15 +153,17 @@ VstIntPtr VSTCALLBACK pluginVst2xHostCallback(AEffect *effect, VstInt32 opcode, 
       // the host that it is an instrument. We can safely ignore it.
       result = 1;
       break;
-    case audioMasterGetTime:
+    case audioMasterGetTime: {
+      AudioClock audioClock = getAudioClock();
+
       // These values are always valid
-      vstTimeInfo.samplePos = getAudioClockCurrentFrame();
+      vstTimeInfo.samplePos = audioClock->currentFrame;
       vstTimeInfo.sampleRate = getSampleRate();
 
       // Set flags for transport state
       vstTimeInfo.flags = 0;
-      vstTimeInfo.flags |= getAudioClockTransportChanged() ? kVstTransportChanged : 0;
-      vstTimeInfo.flags |= getAudioClockIsPlaying() ? kVstTransportPlaying : 0;
+      vstTimeInfo.flags |= audioClock->transportChanged ? kVstTransportChanged : 0;
+      vstTimeInfo.flags |= audioClock->isPlaying ? kVstTransportPlaying : 0;
 
       // Fill values based on other flags which may have been requested
       if(value & kVstNanosValid) {
@@ -208,6 +210,7 @@ VstIntPtr VSTCALLBACK pluginVst2xHostCallback(AEffect *effect, VstInt32 opcode, 
 
       dataPtr = &vstTimeInfo;
       break;
+    }
     case audioMasterProcessEvents:
       logUnsupportedFeature("VST master opcode audioMasterProcessEvents");
       break;

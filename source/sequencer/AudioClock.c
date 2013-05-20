@@ -39,40 +39,27 @@ void initAudioClock(void) {
   audioClockInstance->isPlaying = false;
 }
 
-static AudioClock _getAudioClockInstance(void) {
+AudioClock getAudioClock(void) {
   return audioClockInstance;
 }
 
-void advanceAudioClock(const int blocksize) {
-  AudioClock audioClock = _getAudioClockInstance();
-  if(audioClock->currentFrame == 0 || !audioClock->isPlaying) {
-    audioClock->transportChanged = true;
-    audioClock->isPlaying = true;
+void advanceAudioClock(AudioClock self, const int blocksize) {
+  if(self->currentFrame == 0 || !self->isPlaying) {
+    self->transportChanged = true;
+    self->isPlaying = true;
   }
   else {
-    audioClock->transportChanged = false;
+    self->transportChanged = false;
   }
-  audioClock->currentFrame += blocksize;
+  self->currentFrame += blocksize;
 }
 
-void stopAudioClock(void) {
-  _getAudioClockInstance()->isPlaying = false;
-  _getAudioClockInstance()->transportChanged = true;
+void audioClockStop(AudioClock self) {
+  self->isPlaying = false;
+  self->transportChanged = true;
 }
 
-unsigned long getAudioClockCurrentFrame(void) {
-  return _getAudioClockInstance()->currentFrame;
-}
-
-boolByte getAudioClockTransportChanged(void) {
-  return _getAudioClockInstance()->transportChanged;
-}
-
-boolByte getAudioClockIsPlaying(void) {
-  return _getAudioClockInstance()->isPlaying;
-}
-
-void freeAudioClock(void) {
-  free(audioClockInstance);
-  audioClockInstance = NULL;
+void freeAudioClock(AudioClock self) {
+  free(self);
+  self = NULL;
 }

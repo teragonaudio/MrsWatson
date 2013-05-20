@@ -217,6 +217,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   // Input/Output sources, plugin chain, and other required objects
   SampleSource inputSource = NULL;
   SampleSource outputSource = NULL;
+  AudioClock audioClock;
   PluginChain pluginChain = newPluginChain();
   CharString pluginSearchRoot = newCharString();
   boolByte shouldDisplayPluginInfo = false;
@@ -243,6 +244,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   initEventLogger();
   initAudioSettings();
   initAudioClock();
+  audioClock = getAudioClock();
   programOptions = newMrsWatsonOptions();
   inputSource = newSampleSource(SAMPLE_SOURCE_TYPE_SILENCE, NULL);
 
@@ -537,14 +539,14 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
     if(midiSequence != NULL) {
       LinkedList midiEventsForBlock = newLinkedList();
       // MIDI source overrides the value set to finishedReading by the input source
-      finishedReading = !fillMidiEventsFromRange(midiSequence, getAudioClockCurrentFrame(), getBlocksize(), midiEventsForBlock);
+      finishedReading = !fillMidiEventsFromRange(midiSequence, audioClock->currentFrame, getBlocksize(), midiEventsForBlock);
       linkedListForeach(midiEventsForBlock, _processMidiMetaEvent, &finishedReading);
       processPluginChainMidiEvents(pluginChain, midiEventsForBlock, taskTimer);
       startTimingTask(taskTimer, hostTaskId);
       freeLinkedList(midiEventsForBlock);
     }
 
-    if(maxTimeInFrames > 0 && getAudioClockCurrentFrame() >= maxTimeInFrames) {
+    if(maxTimeInFrames > 0 && audioClock->currentFrame >= maxTimeInFrames) {
       logInfo("Maximum time reached, stopping processing after this block");
       finishedReading = true;
     }
@@ -571,15 +573,15 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
     }
     outputSource->writeSampleBlock(outputSource, outputSampleBuffer);
 
-    advanceAudioClock(getBlocksize());
+    advanceAudioClock(audioClock, getBlocksize());
   }
 
   // Process tail time
   if(tailTimeInMs > 0) {
-    stopFrame = getAudioClockCurrentFrame() + tailTimeInFrames;
-    logInfo("Adding %d extra frames", stopFrame - getAudioClockCurrentFrame());
+    stopFrame = audioClock->currentFrame + tailTimeInFrames;
+    logInfo("Adding %d extra frames", stopFrame - audioClock->currentFrame);
     silentSampleInput = newSampleSource(SAMPLE_SOURCE_TYPE_SILENCE, NULL);
-    while(getAudioClockCurrentFrame() < stopFrame) {
+    while(audioClock->currentFrame < stopFrame) {
       startTimingTask(taskTimer, hostTaskId);
       silentSampleInput->readSampleBlock(silentSampleInput, inputSampleBuffer);
 
@@ -587,7 +589,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
 
       startTimingTask(taskTimer, hostTaskId);
       outputSource->writeSampleBlock(outputSource, outputSampleBuffer);
-      advanceAudioClock(getBlocksize());
+      advanceAudioClock(audioClock, getBlocksize());
     }
   }
 
@@ -598,7 +600,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   // Print out statistics about each plugin's time usage
   // TODO: On windows, the total processing time is stored in clocks and not milliseconds
   // These values must be converted using the QueryPerformanceFrequency() function
-  stopAudioClock();
+  audioClockStop(audioClock);
   stopTiming(taskTimer);
   for(i = 0; i < taskTimer->numTasks; i++) {
     totalProcessingTime += taskTimer->totalTaskTimes[i];

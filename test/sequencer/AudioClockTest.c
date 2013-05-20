@@ -8,50 +8,55 @@ static void _audioClockTestSetup(void) {
 }
 
 static void _audioClockTestTeardown(void) {
-  freeAudioClock();
+  freeAudioClock(getAudioClock());
 }
 
 static int _testInitAudioClock(void) {
-  assertIntEquals(getAudioClockCurrentFrame(), 0);
-  assertFalse(getAudioClockIsPlaying());
-  assertFalse(getAudioClockTransportChanged());
+  AudioClock audioClock = getAudioClock();
+  assertUnsignedLongEquals(audioClock->currentFrame, 0);
+  assertFalse(audioClock->isPlaying);
+  assertFalse(audioClock->transportChanged);
   return 0;
 }
 
 static int _testAdvanceAudioClock(void) {
-  advanceAudioClock(kAudioClockTestBlocksize);
-  assertIntEquals(getAudioClockCurrentFrame(), kAudioClockTestBlocksize);
-  assert(getAudioClockIsPlaying());
-  assert(getAudioClockTransportChanged());
+  AudioClock audioClock = getAudioClock();
+  advanceAudioClock(audioClock, kAudioClockTestBlocksize);
+  assertUnsignedLongEquals(audioClock->currentFrame, kAudioClockTestBlocksize);
+  assert(audioClock->isPlaying);
+  assert(audioClock->transportChanged);
   return 0;
 }
 
 static int _testStopAudioClock(void) {
-  advanceAudioClock(kAudioClockTestBlocksize);
-  stopAudioClock();
-  assertFalse(getAudioClockIsPlaying());
-  assert(getAudioClockTransportChanged())
+  AudioClock audioClock = getAudioClock();
+  advanceAudioClock(audioClock, kAudioClockTestBlocksize);
+  audioClockStop(audioClock);
+  assertFalse(audioClock->isPlaying);
+  assert(audioClock->transportChanged)
   return 0;
 }
 
 static int _testRestartAudioClock(void) {
-  advanceAudioClock(kAudioClockTestBlocksize);
-  stopAudioClock();
-  advanceAudioClock(kAudioClockTestBlocksize);
-  assert(getAudioClockIsPlaying());
-  assert(getAudioClockTransportChanged());
-  assertIntEquals(getAudioClockCurrentFrame(), kAudioClockTestBlocksize * 2);
+  AudioClock audioClock = getAudioClock();
+  advanceAudioClock(audioClock, kAudioClockTestBlocksize);
+  audioClockStop(audioClock);
+  advanceAudioClock(audioClock, kAudioClockTestBlocksize);
+  assert(audioClock->isPlaying);
+  assert(audioClock->transportChanged);
+  assertUnsignedLongEquals(audioClock->currentFrame, kAudioClockTestBlocksize * 2);
   return 0;
 }
 
 static int _testAdvanceClockMulitpleTimes(void) {
+  AudioClock audioClock = getAudioClock();
   int i;
   for(i = 0; i < 100; i++) {
-    advanceAudioClock(kAudioClockTestBlocksize);
+    advanceAudioClock(audioClock, kAudioClockTestBlocksize);
   }
-  assert(getAudioClockIsPlaying());
-  assertFalse(getAudioClockTransportChanged());
-  assertIntEquals(getAudioClockCurrentFrame(), kAudioClockTestBlocksize * 100);
+  assert(audioClock->isPlaying);
+  assertFalse(audioClock->transportChanged);
+  assertUnsignedLongEquals(audioClock->currentFrame, kAudioClockTestBlocksize * 100);
   return 0;
 }
 

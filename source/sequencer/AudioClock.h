@@ -35,18 +35,16 @@ typedef struct {
   boolByte isPlaying;
   unsigned long currentFrame;
 } AudioClockMembers;
-
 typedef AudioClockMembers* AudioClock;
+
 extern AudioClock audioClockInstance;
 
 void initAudioClock(void);
 
-void advanceAudioClock(const int blocksize);
-void stopAudioClock(void);
-unsigned long getAudioClockCurrentFrame(void);
-boolByte getAudioClockTransportChanged(void);
-boolByte getAudioClockIsPlaying(void);
+AudioClock getAudioClock(void);
+void advanceAudioClock(AudioClock self, const int blocksize);
+void audioClockStop(AudioClock self);
 
-void freeAudioClock(void);
+void freeAudioClock(AudioClock self);
 
 #endif
