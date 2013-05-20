@@ -38,13 +38,12 @@ typedef struct {
   unsigned int size;
   byte* data;
 } RiffChunkMembers;
-
 typedef RiffChunkMembers* RiffChunk;
 
 RiffChunk newRiffChunk(void);
 
-boolByte readNextChunk(FILE* fileHandle, RiffChunk outChunk, boolByte readData);
-boolByte isChunkIdEqualTo(const RiffChunk chunk, const char* id);
+boolByte riffChunkReadNext(FILE* fileHandle, RiffChunk outChunk, boolByte readData);
+boolByte riffChunkIsIdEqualTo(const RiffChunk chunk, const char* id);
 
 void freeRiffChunk(RiffChunk chunk);
 

@@ -39,7 +39,7 @@ RiffChunk newRiffChunk(void) {
   return chunk;
 }
 
-boolByte readNextChunk(FILE* fileHandle, RiffChunk outChunk, boolByte readData) {
+boolByte riffChunkReadNext(FILE* fileHandle, RiffChunk outChunk, boolByte readData) {
   unsigned int itemsRead = 0;
   byte* chunkSize;
 
@@ -71,7 +71,7 @@ boolByte readNextChunk(FILE* fileHandle, RiffChunk outChunk, boolByte readData) 
   return !feof(fileHandle);
 }
 
-boolByte isChunkIdEqualTo(const RiffChunk chunk, const char*id) {
+boolByte riffChunkIsIdEqualTo(const RiffChunk chunk, const char*id) {
   return strncmp(chunk->id, id, 4) == 0;
 }
 
