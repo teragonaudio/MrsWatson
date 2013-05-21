@@ -128,37 +128,6 @@ static int _testLinkedListWithEmptyList(void) {
   LinkedList l = newLinkedList();
   arr = (CharString**)linkedListToArray(l);
   assertIsNull(arr);
-  freeLinkedList(l);
-  return 0;
-}
-
-static int _testLinkedListToArray(void) {
-  LinkedList l = newLinkedList();
-  CharString* arr;
-
-  appendItemToList(l, newCharStringWithCString("one"));
-  appendItemToList(l, newCharStringWithCString("two"));
-  arr = (CharString*)linkedListToArray(l);
-  assertNotNull(arr);
-  assertCharStringEquals((CharString)arr[0], "one");
-  assertCharStringEquals((CharString)arr[1], "two");
-  assertIsNull(arr[2]);
-
-  return 0;
-}
-
-static int _testLinkedListToArrayWithNull(void) {
-  CharString** arr;
-  arr = (CharString**)linkedListToArray(NULL);
-  assertIsNull(arr);
-  return 0;
-}
-
-static int _testLinkedListWithEmptyList(void) {
-  CharString** arr;
-  LinkedList l = newLinkedList();
-  arr = (CharString**)linkedListToArray(l);
-  assertIsNull(arr);
   return 0;
 }
 
