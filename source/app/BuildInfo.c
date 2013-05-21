@@ -33,11 +33,11 @@
 #include "base/CharString.h"
 #include "logging/EventLogger.h"
 
-int buildInfoGetYear(void) {
-  int result = 0;
+unsigned long buildInfoGetYear(void) {
+  unsigned long result = 0;
   CharString buildDate = newCharStringWithCapacity(kCharStringLengthShort);
   const char* compilerDate = __DATE__;
-  int startingIndex = strlen(compilerDate) - 4;
+  size_t startingIndex = strlen(compilerDate) - 4;
   strncpy(buildDate->data, compilerDate + startingIndex, 4);
   result = strtol(buildDate->data, NULL, 10);
   freeCharString(buildDate);
@@ -63,8 +63,8 @@ static short _getMonthNumber(const char* abbreviatedMonthName) {
   }
 }
 
-long buildInfoGetDatestamp(void) {
-  long result = buildInfoGetYear() * 10000;
+unsigned long buildInfoGetDatestamp(void) {
+  unsigned long result = buildInfoGetYear() * 10000;
 
   CharString buffer = newCharStringWithCapacity(kCharStringLengthShort);
   strncpy(buffer->data, __DATE__, 3);

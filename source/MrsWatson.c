@@ -117,7 +117,7 @@ static void printVersion(void) {
   CharString wrappedLicenseInfo;
 
   fillVersionString(versionString);
-  printf("%s, build %ld\nCopyright (c) %d, %s. All rights reserved.\n\n",
+  printf("%s, build %ld\nCopyright (c) %ld, %s. All rights reserved.\n\n",
     versionString->data, buildInfoGetDatestamp(), buildInfoGetYear(), VENDOR_NAME);
 
   wrappedLicenseInfo = wrapString(newCharStringWithCString(LICENSE_STRING), 0);

@@ -58,8 +58,8 @@
 "OF THE POSSIBILITY OF SUCH DAMAGE."
 
 /** @return Year the application was built in */
-int buildInfoGetYear(void);
+unsigned long buildInfoGetYear(void);
 /** @return Build timestamp in the form YYYYMMDD */
-long buildInfoGetDatestamp(void);
+unsigned long buildInfoGetDatestamp(void);
 
 #endif

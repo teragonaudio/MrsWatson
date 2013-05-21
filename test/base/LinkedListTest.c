@@ -89,13 +89,16 @@ static int _testNumItemsInNullList(void) {
 static int _testLinkedListToArray(void) {
   LinkedList l = newLinkedList();
   CharString* arr;
+  CharString c;
 
   linkedListAppend(l, newCharStringWithCString("one"));
   linkedListAppend(l, newCharStringWithCString("two"));
   arr = (CharString*)linkedListToArray(l);
   assertNotNull(arr);
-  assertCharStringEquals((CharString)arr[0], "one");
-  assertCharStringEquals((CharString)arr[1], "two");
+  c = (CharString)arr[0];
+  assertCharStringEquals(c, "one");
+  c = (CharString)arr[1];
+  assertCharStringEquals(c, "two");
   assertIsNull(arr[2]);
 
   return 0;

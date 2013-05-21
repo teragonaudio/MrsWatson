@@ -34,7 +34,7 @@
 static boolByte _openPluginPresetInternalProgram(void* pluginPresetPtr) {
   PluginPreset pluginPreset = (PluginPreset)pluginPresetPtr;
   PluginPresetInternalProgramData extraData = (PluginPresetInternalProgramData)pluginPreset->extraData;
-  extraData->programNumber = strtol(pluginPreset->presetName->data, NULL, 10);
+  extraData->programNumber = (unsigned int)strtoul(pluginPreset->presetName->data, NULL, 10);
   return true;
 }
 
