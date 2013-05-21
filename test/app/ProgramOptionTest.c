@@ -45,6 +45,7 @@ static int _testAddNewProgramOptionOutsideRange(void) {
   o->index++;
   assertFalse(programOptionsAdd(p, o));
   assertIntEquals(p->numOptions, 1);
+  freeProgramOption(o);
   freeProgramOptions(p);
   return 0;
 }

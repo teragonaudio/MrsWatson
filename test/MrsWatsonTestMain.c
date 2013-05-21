@@ -219,6 +219,14 @@ int main(int argc, char* argv[]) {
   }
 
   printf("\n=== Finished with %d total failed tests ===\n", totalTestsFailed);
+
+  freeTestEnvironment(testEnvironment);
   freeProgramOptions(programOptions);
+  freeCharString(testSuiteToRun);
+  freeCharString(executablePath);
+  freeCharString(currentPath);
+  freeCharString(mrsWatsonPath);
+  freeCharString(resourcesPath);
+
   return totalTestsFailed;
 }

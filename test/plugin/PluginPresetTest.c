@@ -4,19 +4,26 @@
 const char* TEST_PRESET_FILENAME = "test.fxp";
 
 static int _testGuessPluginPresetType(void) {
-  assertIntEquals(guessPluginPresetType(newCharStringWithCString(TEST_PRESET_FILENAME)), PRESET_TYPE_FXP);
+  CharString c = newCharStringWithCString(TEST_PRESET_FILENAME);
+  assertIntEquals(guessPluginPresetType(c), PRESET_TYPE_FXP);
+  freeCharString(c);
   return 0;
 }
 
 static int _testGuessPluginPresetTypeInvalid(void) {
-  assertIntEquals(guessPluginPresetType(newCharStringWithCString("invalid")), PRESET_TYPE_INVALID);
+  CharString c = newCharStringWithCString("invalid");
+  assertIntEquals(guessPluginPresetType(c), PRESET_TYPE_INVALID);
+  freeCharString(c);
   return 0;
 }
 
 static int _testNewObject(void) {
-  PluginPreset p = newPluginPreset(PRESET_TYPE_FXP, newCharStringWithCString(TEST_PRESET_FILENAME));
+  CharString c = newCharStringWithCString(TEST_PRESET_FILENAME);
+  PluginPreset p = newPluginPreset(PRESET_TYPE_FXP, c);
   assertIntEquals(p->presetType, PRESET_TYPE_FXP);
   assertCharStringEquals(p->presetName, TEST_PRESET_FILENAME);
+  freePluginPreset(p);
+  freeCharString(c);
   return 0;
 }
 

@@ -7,6 +7,7 @@ static int _testNewPluginChain(void) {
   assertIntEquals(p->numPlugins, 0);
   assertNotNull(p->plugins);
   assertNotNull(p->presets);
+  freePluginChain(p);
   return 0;
 }
 
@@ -14,6 +15,7 @@ static int _testAddPluginFromArgumentStringNull(void) {
   PluginChain p = newPluginChain();
   assertFalse(pluginChainAddFromArgumentString(p, NULL, newCharStringWithCString("/")));
   assertIntEquals(p->numPlugins, 0);
+  freePluginChain(p);
   return 0;
 }
 
@@ -21,6 +23,7 @@ static int _testAddPluginFromArgumentStringEmpty(void) {
   PluginChain p = newPluginChain();
   assertFalse(pluginChainAddFromArgumentString(p, newCharString(), newCharStringWithCString("/")));
   assertIntEquals(p->numPlugins, 0);
+  freePluginChain(p);
   return 0;
 }
 
@@ -28,6 +31,7 @@ static int _testAddPluginFromArgumentStringEmptyLocation(void) {
   PluginChain p = newPluginChain();
   assert(pluginChainAddFromArgumentString(p, newCharStringWithCString(kInternalPluginPassthruName), newCharString()));
   assertIntEquals(p->numPlugins, 1);
+  freePluginChain(p);
   return 0;
 }
 
@@ -35,17 +39,22 @@ static int _testAddPluginFromArgumentStringNullLocation(void) {
   PluginChain p = newPluginChain();
   assert(pluginChainAddFromArgumentString(p, newCharStringWithCString(kInternalPluginPassthruName), NULL));
   assertIntEquals(p->numPlugins, 1);
+  freePluginChain(p);
   return 0;
 }
 
 static int _testAddPluginFromArgumentString(void) {
   PluginChain p = newPluginChain();
   CharString testArgs = newCharStringWithCString(kInternalPluginPassthruName);
+
   assert(pluginChainAddFromArgumentString(p, testArgs, NULL));
   assertIntEquals(p->numPlugins, 1);
   assertNotNull(p->plugins[0]);
   assertIntEquals(p->plugins[0]->pluginType, PLUGIN_TYPE_INTERNAL);
   assertCharStringEquals(p->plugins[0]->pluginName, kInternalPluginPassthruName);
+
+  freePluginChain(p);
+  freeCharString(testArgs);
   return 0;
 }
 
@@ -63,30 +72,40 @@ static int _testAddPluginsFromArgumentString(void) {
     assertCharStringEquals(p->plugins[i]->pluginName, kInternalPluginPassthruName);
   }
 
+  freePluginChain(p);
+  freeCharString(testArgs);
   return 0;
 }
 
 static int _testAddPluginWithPresetFromArgumentString(void) {
   PluginChain p = newPluginChain();
   CharString testArgs = newCharStringWithCString("mrs_passthru,testPreset.fxp");
+
   assert(pluginChainAddFromArgumentString(p, testArgs, NULL));
   assertIntEquals(p->numPlugins, 1);
   assertIntEquals(p->plugins[0]->pluginType, PLUGIN_TYPE_INTERNAL);
   assertCharStringEquals(p->plugins[0]->pluginName, kInternalPluginPassthruName);
   assertNotNull(p->presets[0]);
   assertCharStringEquals(p->presets[0]->presetName, "testPreset.fxp");
+
+  freePluginChain(p);
+  freeCharString(testArgs);
   return 0;
 }
 
 static int _testAddPluginFromArgumentStringWithPresetSpaces(void) {
   PluginChain p = newPluginChain();
   CharString testArgs = newCharStringWithCString("mrs_passthru,test preset.fxp");
+
   assert(pluginChainAddFromArgumentString(p, testArgs, NULL));
   assertIntEquals(p->numPlugins, 1);
   assertIntEquals(p->plugins[0]->pluginType, PLUGIN_TYPE_INTERNAL);
   assertCharStringEquals(p->plugins[0]->pluginName, kInternalPluginPassthruName);
   assertNotNull(p->presets[0]);
   assertCharStringEquals(p->presets[0]->presetName, "test preset.fxp");
+
+  freePluginChain(p);
+  freeCharString(testArgs);
   return 0;
 }
 

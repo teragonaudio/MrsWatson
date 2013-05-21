@@ -39,6 +39,8 @@ static int _testWrapString(void) {
   CharString dest = newCharStringWithCapacity(src->length * 2);
   _wrapString(src->data, dest->data, 0, 0x10);
   assertCharStringEquals(dest, "1234 6789 bcde\n01");
+  freeCharString(src);
+  freeCharString(dest);
   return 0;
 }
 
@@ -48,6 +50,8 @@ static int _testWrapStringWithIndent(void) {
   CharString dest = newCharStringWithCapacity(src->length * 2);
   _wrapString(src->data, dest->data, 1, 0xe);
   assertCharStringEquals(dest, " 1234 6789\n bcde 01");
+  freeCharString(src);
+  freeCharString(dest);
   return 0;
 }
 
@@ -57,6 +61,8 @@ static int _testWrapStringLongerThanLine(void) {
   CharString dest = newCharStringWithCapacity(src->length * 2);
   _wrapString(src->data, dest->data, 0, 0xf);
   assertCharStringEquals(dest, "123456789abcde-\nf12");
+  freeCharString(src);
+  freeCharString(dest);
   return 0;
 }
 
@@ -64,23 +70,27 @@ static int _testConvertIntIdToString(void) {
   CharString test = newCharStringWithCString("abcd");
   unsigned long id = convertStringIdToInt(test);
   assertIntEquals(id, 0x61626364);
+  freeCharString(test);
   return 0;
 }
 
 static int _testConvertZeroIntIdToString(void) {
   CharString c = convertIntIdToString(0);
   assert(charStringIsEmpty(c));
+  freeCharString(c);
   return 0;
 }
 
 static int _testConvertStringIdToInt(void) {
   CharString c = convertIntIdToString(0x61626364);
   assertCharStringEquals(c, "abcd");
+  freeCharString(c);
   return 0;
 }
 
 static int _testConvertEmptyStringIdToInt(void) {
-  unsigned long id = convertStringIdToInt(newCharString());
+  CharString c = newCharString();
+  unsigned long id = convertStringIdToInt(c);
   assertIntEquals(id, 0);
   return 0;
 }
@@ -92,7 +102,8 @@ static int _testConvertNullStringIdToInt(void) {
 }
 
 static int _testConvertInvalidStringIdToInt(void) {
-  unsigned long id = convertStringIdToInt(newCharStringWithCString("a"));
+  CharString c = newCharStringWithCString("a");
+  unsigned long id = convertStringIdToInt(c);
   assertIntEquals(id, 0);
   return 0;
 }
