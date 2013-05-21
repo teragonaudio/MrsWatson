@@ -181,10 +181,54 @@ static int _testBuildAbsolutePathWithFileExtension(void) {
 }
 
 static int _testBuildAbsolutePathEmptyPath(void) {
+  CharString d = newCharString();
+  CharString f = newCharStringWithCString(TEST_FILENAME);
+  CharString out = newCharString();
+
+  buildAbsolutePath(d, f, NULL, out);
+  assert(charStringIsEmpty(out));
+
+  freeCharString(d);
+  freeCharString(f);
+  freeCharString(out);
   return 0;
 }
 
 static int _testBuildAbsolutePathEmptyFile(void) {
+  CharString d = getCurrentDirectory();
+  CharString f = newCharString();
+  CharString out = newCharString();
+
+  buildAbsolutePath(d, f, NULL, out);
+  assert(charStringIsEmpty(out));
+
+  freeCharString(d);
+  freeCharString(f);
+  freeCharString(out);
+  return 0;
+}
+
+static int _testBuildAbsolutePathNullPath(void) {
+  CharString f = newCharString();
+  CharString out = newCharString();
+
+  buildAbsolutePath(NULL, f, NULL, out);
+  assert(charStringIsEmpty(out));
+
+  freeCharString(f);
+  freeCharString(out);
+  return 0;
+}
+
+static int _testBuildAbsolutePathNullFile(void) {
+  CharString d = getCurrentDirectory();
+  CharString out = newCharString();
+
+  buildAbsolutePath(d, NULL, NULL, out);
+  assert(charStringIsEmpty(out));
+
+  freeCharString(d);
+  freeCharString(out);
   return 0;
 }
 
@@ -311,8 +355,10 @@ TestSuite addFileUtilitiesTests(void) {
 
   addTest(testSuite, "BuildAbsolutePath", NULL); // _testBuildAbsolutePath);
   addTest(testSuite, "BuildAbsolutePathWithFileExtension", NULL); // _testBuildAbsolutePathWithFileExtension);
-  addTest(testSuite, "BuildAbsolutePathEmptyPath", NULL); // _testBuildAbsolutePathEmptyPath);
-  addTest(testSuite, "BuildAbsolutePathEmptyFile", NULL); // _testBuildAbsolutePathEmptyFile);
+  addTest(testSuite, "BuildAbsolutePathEmptyPath", _testBuildAbsolutePathEmptyPath);
+  addTest(testSuite, "BuildAbsolutePathEmptyFile", _testBuildAbsolutePathEmptyFile);
+  addTest(testSuite, "BuildAbsolutePathNullPath", _testBuildAbsolutePathNullPath);
+  addTest(testSuite, "BuildAbsolutePathNullFile", _testBuildAbsolutePathNullFile);
   addTest(testSuite, "BuildAbsolutePathWithFileExtensionTwice", _testBuildAbsolutePathWithFileExtensionTwice);
   addTest(testSuite, "ConvertRelativePathToAbsolute", NULL); // _testConvertRelativePathToAbsolute);
   addTest(testSuite, "ConvertRelativePathToAbsoluteAlreadyAbsolute", NULL); // _testConvertRelativePathToAbsoluteAlreadyAbsolute);

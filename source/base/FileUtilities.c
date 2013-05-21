@@ -190,8 +190,18 @@ boolByte removeDirectory(const CharString absolutePath) {
 
 void buildAbsolutePath(const CharString directory, const CharString file, const char* fileExtension, CharString outString) {
   const char* extension;
-  CharString absoluteDirectory = newCharString();
+  CharString absoluteDirectory;
 
+  if(directory == NULL || charStringIsEmpty(directory)) {
+    logWarn("Attempt to build absolute path with empty directory");
+    return;
+  }
+  if(file == NULL || charStringIsEmpty(file)) {
+    logWarn("Attempt to build absolute path with empty file");
+    return;
+  }
+
+  absoluteDirectory = newCharString();
   if(isAbsolutePath(directory)) {
     charStringCopy(absoluteDirectory, directory);
   }
