@@ -336,7 +336,10 @@ static boolByte _openVst2xPlugin(void* pluginPtr) {
 
   // The plugin name which is passed into this function is basically just used to find the
   // actual location. Now that the plugin has been loaded, we can set a friendlier name.
-  charStringCopyCString(plugin->pluginName, pluginBasename);
+  CharString temp = plugin->pluginName;
+  plugin->pluginName = newCharStringWithCString(pluginBasename);
+  freeCharString(temp);
+
   if(data->shellPluginId) {
     charStringAppendCString(plugin->pluginName, " (");
     charStringAppend(plugin->pluginName, subpluginId);
