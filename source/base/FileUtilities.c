@@ -74,30 +74,35 @@ boolByte fileExists(const char* path) {
 }
 
 boolByte copyFileToDirectory(const CharString fileAbsolutePath, const CharString directoryAbsolutePath) {
+  boolByte result = false;
   CharString fileOutPath = newCharStringWithCapacity(kCharStringLengthLong);
   CharString fileBasename = newCharString();
-  FILE *input;
-  FILE *output;
+  FILE *input = NULL;
+  FILE *output = NULL;
   char ch;
 
   fileBasename = newCharStringWithCString(getFileBasename(fileAbsolutePath->data));
   buildAbsolutePath(directoryAbsolutePath, fileBasename, NULL, fileOutPath);
   input = fopen(fileAbsolutePath->data, "rb");
-  if(input == NULL) {
-    return false;
-  }
-  output = fopen(fileOutPath->data, "wb");
-  if(output == NULL) {
-    fclose(input);
-    return false;
-  }
-  while(fread(&ch, 1, 1, input) == 1) {
-    fwrite(&ch, 1, 1, output);
+  if(input != NULL) {
+    output = fopen(fileOutPath->data, "wb");
+    if(output != NULL) {
+      while(fread(&ch, 1, 1, input) == 1) {
+        fwrite(&ch, 1, 1, output);
+      }
+      result = true;
+    }
   }
 
-  fclose(input);
-  fclose(output);
-  return true;
+  if(input != NULL) {
+    fclose(input);
+  }
+  if(output != NULL) {
+    fclose(output);
+  }
+  freeCharString(fileOutPath);
+  freeCharString(fileBasename);
+  return result;
 }
 
 boolByte makeDirectory(const CharString absolutePath) {
@@ -121,11 +126,11 @@ LinkedList listDirectory(const CharString directory) {
   struct dirent* entry;
   while((entry = readdir(directoryPtr)) != NULL) {
     if(entry->d_name[0] != '.') {
-      filename = newCharString();
-      strncpy(filename->data, entry->d_name, filename->length);
+      filename = newCharStringWithCString(entry->d_name);
       linkedListAppend(items, filename);
     }
   }
+  closedir(directoryPtr);
 
 #elif WINDOWS
   WIN32_FIND_DATAA findData;
