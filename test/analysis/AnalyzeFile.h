@@ -29,5 +29,6 @@ typedef AnalysisDataMembers* AnalysisData;
 
 AnalysisFunctionData newAnalysisFunctionData(void);
 boolByte analyzeFile(const char* filename, CharString failedAnalysisFunctionName, unsigned long *failedAnalysisSample);
+void freeAnalysisFunctionData(AnalysisFunctionData self);
 
 #endif

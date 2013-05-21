@@ -16,12 +16,14 @@ static int _testNewFileWithRelativePath(void) {
   sprintf(p->data, "%s%c%s", "test", PATH_DELIMITER, "file");
   CharString pAbs = newCharString();
   sprintf(p->data, "%s%s%c%s%c%s", ROOT_DIRECTORY, get);
+  freeCharString(p);
   return 0;
 }
 
 static int _testNewFileWithAbsolutePath(void) {
   CharString p = newCharString();
   sprintf(p->data, "%s%c%s", "test", PATH_DELIMITER, "file");
+  freeCharString(c);
   
   return 0;
 }

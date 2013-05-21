@@ -13,19 +13,9 @@ static const int kAnalysisDefaultFailTolerance = 16;
 // silence detection algorithm, since the last block is likely to be silent.
 static const int kAnalysisBlocksize = DEFAULT_BLOCKSIZE * 2;
 
-AnalysisFunctionData newAnalysisFunctionData(void) {
-  AnalysisFunctionData result = (AnalysisFunctionData)malloc(sizeof(AnalysisFunctionDataMembers));
-  result->analysisName = NULL;
-  result->consecutiveFailCounter = 0;
-  result->failedSample = 0;
-  result->functionPtr = NULL;
-  result->lastSample = 0.0f;
-  result->failTolerance = kAnalysisDefaultFailTolerance;
-  return result;
-}
-
-static void _setupAnalysisFunctions(LinkedList functionsList) {
+static LinkedList _getAnalysisFunctions(void) {
   AnalysisFunctionData data;
+  LinkedList functionsList = newLinkedList();
 
   data = newAnalysisFunctionData();
   data->analysisName = "clipping";
@@ -42,6 +32,8 @@ static void _setupAnalysisFunctions(LinkedList functionsList) {
   data->functionPtr = (void*)analysisSilence;
   data->failTolerance = kAnalysisBlocksize;
   linkedListAppend(functionsList, data);
+
+  return functionsList;
 }
 
 static void _runAnalysisFunction(void* item, void* userData) {
@@ -61,13 +53,13 @@ boolByte analyzeFile(const char* filename, CharString failedAnalysisFunctionName
   CharString analysisFilename;
   SampleSource sampleSource;
   SampleSourceType sampleSourceType;
-  LinkedList analysisFunctions = newLinkedList();
+  LinkedList analysisFunctions;
   AnalysisData analysisData = (AnalysisData)malloc(sizeof(AnalysisDataMembers));
   unsigned long currentBlockSample = 0;
 
   // Needed to initialize new sample sources
   initAudioSettings();
-  _setupAnalysisFunctions(analysisFunctions);
+  analysisFunctions = _getAnalysisFunctions();
   analysisFilename = newCharStringWithCString(filename);
   sampleSourceType = sampleSourceGuess(analysisFilename);
   sampleSource = newSampleSource(sampleSourceType, analysisFilename);
@@ -94,6 +86,23 @@ boolByte analyzeFile(const char* filename, CharString failedAnalysisFunctionName
   freeCharString(analysisFilename);
   freeAudioSettings();
   freeSampleBuffer(analysisData->sampleBuffer);
+  freeLinkedListAndItems(analysisFunctions, (LinkedListFreeItemFunc)freeAnalysisFunctionData);
   free(analysisData);
   return result;
 }
+
+void freeAnalysisFunctionData(AnalysisFunctionData self) {
+  free(self);
+}
+
+AnalysisFunctionData newAnalysisFunctionData(void) {
+  AnalysisFunctionData result = (AnalysisFunctionData)malloc(sizeof(AnalysisFunctionDataMembers));
+  result->analysisName = NULL;
+  result->consecutiveFailCounter = 0;
+  result->failedSample = 0;
+  result->functionPtr = NULL;
+  result->lastSample = 0.0f;
+  result->failTolerance = kAnalysisDefaultFailTolerance;
+  return result;
+}
+

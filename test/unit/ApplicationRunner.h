@@ -25,7 +25,6 @@ typedef struct {
   TestSuite results;
 } TestEnvironmentMembers;
 typedef TestEnvironmentMembers* TestEnvironment;
-
 TestEnvironment newTestEnvironment(char *applicationPath, char *resourcesPath);
 
 void runApplicationTest(const TestEnvironment testEnvironment,
@@ -33,8 +32,8 @@ void runApplicationTest(const TestEnvironment testEnvironment,
   ReturnCodes expectedResultCode, const char* outputFileType);
 
 CharString buildTestArgumentString(const char* arguments, ...);
-char* getTestResourceFilename(const char* resourcesPath, const char* resourceType, const char* resourceName);
-char* getTestOutputFilename(const char* testName, const char* fileExtension);
+CharString getTestResourceFilename(const char* resourcesPath, const char* resourceType, const char* resourceName);
+CharString getTestOutputFilename(const char* testName, const char* fileExtension);
 
 void freeTestEnvironment(TestEnvironment testEnvironment);
 

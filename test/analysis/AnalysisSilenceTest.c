@@ -5,6 +5,8 @@ static int _testAnalysisSilence(void) {
   SampleBuffer s = newSampleBuffer(1, 64);
   AnalysisFunctionData d = newAnalysisFunctionData();
   assertFalse(analysisSilence(s, d));
+  freeAnalysisFunctionData(d);
+  freeSampleBuffer(s);
   return 0;
 }
 
@@ -18,6 +20,8 @@ static int _testAnalysisNotSilence(void) {
     }
   }
   assert(analysisSilence(s, d));
+  freeAnalysisFunctionData(d);
+  freeSampleBuffer(s);
   return 0;
 }
 
@@ -29,6 +33,8 @@ static int _testAnalysisNotSilenceInOneChannel(void) {
     s->samples[0][i] = 32767.0;
   }
   assert(analysisSilence(s, d));
+  freeAnalysisFunctionData(d);
+  freeSampleBuffer(s);
   return 0;
 }
 

@@ -28,12 +28,14 @@ static int _testAddNewProgramOption(void) {
   o = p->options[0];
   assertNotNull(o);
   assertCharStringEquals(o->name, "test");
+  freeProgramOptions(p);
   return 0;
 }
 
 static int _testAddNullProgramOption(void) {
   ProgramOptions p = newProgramOptions(1);
   assertFalse(programOptionsAdd(p, NULL));
+  freeProgramOptions(p);
   return 0;
 }
 
@@ -43,6 +45,7 @@ static int _testAddNewProgramOptionOutsideRange(void) {
   o->index++;
   assertFalse(programOptionsAdd(p, o));
   assertIntEquals(p->numOptions, 1);
+  freeProgramOptions(p);
   return 0;
 }
 
@@ -55,6 +58,7 @@ static int _testParseCommandLineShortOption(void) {
   assertFalse(p->options[0]->enabled);
   assert(programOptionsParseArgs(p, 2, argv));
   assert(p->options[0]->enabled);
+  freeProgramOptions(p);
   return 0;
 }
 
@@ -67,6 +71,7 @@ static int _testParseCommandLineLongOption(void) {
   assertFalse(p->options[0]->enabled);
   assert(programOptionsParseArgs(p, 2, argv));
   assert(p->options[0]->enabled);
+  freeProgramOptions(p);
   return 0;
 }
 
@@ -79,6 +84,7 @@ static int _testParseCommandLineInvalidOption(void) {
   assertFalse(p->options[0]->enabled);
   assertFalse(programOptionsParseArgs(p, 2, argv));
   assertFalse(p->options[0]->enabled);
+  freeProgramOptions(p);
   return 0;
 }
 
@@ -98,6 +104,7 @@ static int _testParseCommandLineRequiredOption(void) {
   assertCharStringEquals(p->options[0]->argument, "required");
   assert(p->options[0]->enabled);
 
+  freeProgramOptions(p);
   return 0;
 }
 
@@ -115,6 +122,7 @@ static int _testParseCommandLineRequiredOptionMissing(void) {
   assertFalse(programOptionsParseArgs(p, 2, argv));
   assertFalse(p->options[0]->enabled);
 
+  freeProgramOptions(p);
   return 0;
 }
 
@@ -135,59 +143,82 @@ static FILE* _openTestProgramConfigFile(void) {
 
 static int _testParseConfigFile(void) {
   ProgramOptions p = _getTestProgramOptionsForConfigFile();
+  CharString filename = newCharStringWithCString(TEST_CONFIG_FILE);
   FILE* fp = _openTestProgramConfigFile();
   fprintf(fp, "--test\n-s\nfoo\n");
   fclose(fp);
-  assert(programOptionsParseConfigFile(p, newCharStringWithCString(TEST_CONFIG_FILE)));
+  assert(programOptionsParseConfigFile(p, filename));
   assert(p->options[0]->enabled);
   assert(p->options[1]->enabled);
   assertCharStringEquals(p->options[1]->argument, "foo");
+
   unlink(TEST_CONFIG_FILE);
+  freeProgramOptions(p);
+  freeCharString(filename);
   return 0;
 }
 
 static int _testParseInvalidConfigFile(void) {
   ProgramOptions p = newProgramOptions(1);
-  assertFalse(programOptionsParseConfigFile(p, newCharStringWithCString("invalid")));
+  CharString filename = newCharStringWithCString("invalid");
+  assertFalse(programOptionsParseConfigFile(p, filename));
+  freeProgramOptions(p);
+  freeCharString(filename);
   return 0;
 }
 
 static int _testParseNullConfigFile(void) {
   ProgramOptions p = newProgramOptions(1);
   assertFalse(programOptionsParseConfigFile(p, NULL));
+  freeProgramOptions(p);
   return 0;
 }
 
 static int _testParseConfigFileWithInvalidOptions(void) {
   ProgramOptions p = _getTestProgramOptionsForConfigFile();
+  CharString filename = newCharStringWithCString(TEST_CONFIG_FILE);
   FILE* fp = _openTestProgramConfigFile();
+
   fprintf(fp, "--test\n-s\n");
   fclose(fp);
-  assertFalse(programOptionsParseConfigFile(p, newCharStringWithCString(TEST_CONFIG_FILE)));
+  assertFalse(programOptionsParseConfigFile(p, filename));
   assert(p->options[0]->enabled);
   assertFalse(p->options[1]->enabled);
+
   unlink(TEST_CONFIG_FILE);
+  freeProgramOptions(p);
+  freeCharString(filename);
   return 0;
 }
 
 static int _testFindProgramOptionFromString(void) {
   ProgramOptions p = newProgramOptions(1);
+  CharString c = newCharStringWithCString("test");
   ProgramOption o;
+
   assert(programOptionsAdd(p, _getTestOption()));
   assertIntEquals(p->numOptions, 1);
-  o = programOptionsFind(p, newCharStringWithCString("test"));
+  o = programOptionsFind(p, c);
   assertNotNull(o);
   assertCharStringEquals(o->name, "test");
+
+  freeProgramOptions(p);
+  freeCharString(c);
   return 0;
 }
 
 static int _testFindProgramOptionFromStringInvalid(void) {
   ProgramOptions p = newProgramOptions(1);
+  CharString c = newCharStringWithCString("invalid");
   ProgramOption o;
+
   assert(programOptionsAdd(p, _getTestOption()));
   assertIntEquals(p->numOptions, 1);
-  o = programOptionsFind(p, newCharStringWithCString("invalid"));
+  o = programOptionsFind(p, c);
   assertIsNull(o);
+
+  freeProgramOptions(p);
+  freeCharString(c);
   return 0;
 }
 

@@ -18,6 +18,7 @@ static int _testNewLinkedList(void) {
   assertIsNull(l->nextItem);
   assertIntEquals(linkedListLength(l), 0);
   assert(l->item == NULL);
+  freeLinkedList(l);
   return 0;
 }
 
@@ -29,6 +30,7 @@ static int _testAppendItemToList(void) {
   assertNotNull(l->item);
   assertCharStringEquals(((CharString)l->item), TEST_ITEM_STRING);
   assertIsNull(l->nextItem);
+  freeLinkedListAndItems(l, (LinkedListFreeItemFunc)freeCharString);
   return 0;
 }
 
@@ -37,6 +39,7 @@ static int _testAppendMultipleItemsToList(void) {
   LinkedList l = newLinkedList();
   CharString c = newCharString();
   CharString c2 = newCharString();
+
   charStringCopyCString(c, TEST_ITEM_STRING);
   charStringCopyCString(c2, OTHER_TEST_ITEM_STRING);
   linkedListAppend(l, c);
@@ -49,6 +52,8 @@ static int _testAppendMultipleItemsToList(void) {
   assertCharStringEquals(((CharString)i->item), OTHER_TEST_ITEM_STRING);
   assertIsNull(i->nextItem);
   assertIntEquals(linkedListLength(l), 2);
+
+  freeLinkedListAndItems(l, (LinkedListFreeItemFunc)freeCharString);
   return 0;
 }
 
@@ -58,6 +63,7 @@ static int _testAppendNullItemToList(void) {
   assertIsNull(l->item);
   assertIsNull(l->nextItem);
   assertIntEquals(linkedListLength(l), 0);
+  freeLinkedList(l);
   return 0;
 }
 
@@ -65,6 +71,7 @@ static int _testAppendItemToNullList(void) {
   CharString c = newCharString();
   // The test here is not to crash
   linkedListAppend(NULL, c);
+  freeCharString(c);
   return 0;
 }
 
@@ -78,6 +85,7 @@ static int _testNumItemsInList(void) {
     linkedListAppend(l, c);
   }
   assertIntEquals(linkedListLength(l), 100);
+  freeLinkedListAndItems(l, (LinkedListFreeItemFunc)freeCharString);
   return 0;
 }
 
@@ -101,6 +109,7 @@ static int _testLinkedListToArray(void) {
   assertCharStringEquals(c, "two");
   assertIsNull(arr[2]);
 
+  freeLinkedListAndItems(l, (LinkedListFreeItemFunc)freeCharString);
   return 0;
 }
 
@@ -116,6 +125,7 @@ static int _testLinkedListWithEmptyList(void) {
   LinkedList l = newLinkedList();
   arr = (CharString**)linkedListToArray(l);
   assertIsNull(arr);
+  freeLinkedList(l);
   return 0;
 }
 
@@ -130,9 +140,10 @@ static int _testForeachOverNullList(void) {
 }
 
 static int _testForeachOverEmptyList(void) {
-  LinkedList list = newLinkedList();
-  linkedListForeach(list, _linkedListEmptyCallback, NULL);
+  LinkedList l = newLinkedList();
+  linkedListForeach(l, _linkedListEmptyCallback, NULL);
   assertIntEquals(_gNumForeachCallbacksMade, 0);
+  freeLinkedList(l);
   return 0;
 }
 
@@ -143,13 +154,16 @@ static void _linkedListTestStringCallback(void* item, void* userData) {
 }
 
 static int _testForeachOverList(void) {
-  LinkedList list = newLinkedList();
-  CharString charString = newCharString();
-  charStringCopyCString(charString, TEST_ITEM_STRING);
-  linkedListAppend(list, charString);
-  linkedListForeach(list, _linkedListTestStringCallback, NULL);
+  LinkedList l = newLinkedList();
+  CharString c = newCharString();
+
+  charStringCopyCString(c, TEST_ITEM_STRING);
+  linkedListAppend(l, c);
+  linkedListForeach(l, _linkedListTestStringCallback, NULL);
   assertIntEquals(_gNumForeachCallbacksMade, 1);
   assert(_gForeachCallbackOk);
+
+  freeLinkedListAndItems(l, (LinkedListFreeItemFunc)freeCharString);
   return 0;
 }
 
@@ -160,13 +174,16 @@ static void _linkedListUserDataCallback(void* item, void* userData) {
 }
 
 static int _testForeachOverUserData(void) {
-  LinkedList list = newLinkedList();
-  CharString charString = newCharString();
-  charStringCopyCString(charString, TEST_ITEM_STRING);
-  linkedListAppend(list, charString);
-  linkedListForeach(list, _linkedListUserDataCallback, charString);
+  LinkedList l = newLinkedList();
+  CharString c = newCharString();
+
+  charStringCopyCString(c, TEST_ITEM_STRING);
+  linkedListAppend(l, c);
+  linkedListForeach(l, _linkedListUserDataCallback, c);
   assertIntEquals(_gNumForeachCallbacksMade, 1);
   assert(_gForeachCallbackOk);
+
+  freeLinkedListAndItems(l, (LinkedListFreeItemFunc)freeCharString);
   return 0;
 }
 

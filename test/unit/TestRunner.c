@@ -6,32 +6,6 @@
 #include "unit/TestRunner.h"
 #include "logging/LogPrinter.h"
 
-// In both the TestSuite and TestCase objects we assume that we do not need ownership of
-// the strings passed in, since they should be allocated on the heap and live for the
-// lifetime of the program.
-TestSuite newTestSuite(char* name, TestCaseSetupFunc setup, TestCaseTeardownFunc teardown) {
-  TestSuite testSuite = (TestSuite)malloc(sizeof(TestSuiteMembers));
-  testSuite->name = name;
-  testSuite->numSuccess = 0;
-  testSuite->numFail = 0;
-  testSuite->numSkips = 0;
-  testSuite->testCases = newLinkedList();
-  testSuite->setup = setup;
-  testSuite->teardown = teardown;
-  testSuite->onlyPrintFailing = false;
-  testSuite->keepFiles = false;
-  return testSuite;
-}
-
-TestCase newTestCase(char* name, char* filename, int lineNumber, TestCaseExecFunc testCaseFunc) {
-  TestCase testCase = (TestCase)malloc(sizeof(TestCaseMembers));
-  testCase->name = name;
-  testCase->filename = filename;
-  testCase->lineNumber = lineNumber;
-  testCase->testCaseFunc = testCaseFunc;
-  return testCase;
-}
-
 void addTestToTestSuite(TestSuite testSuite, TestCase testCase) {
   linkedListAppend(testSuite->testCases, testCase);
 }
@@ -122,4 +96,38 @@ void runTestSuite(void* testSuitePtr, void* extraData) {
   flushLog(NULL);
 
   linkedListForeach(testSuite->testCases, runTestCase, testSuite);
+}
+
+// In both the TestSuite and TestCase objects we assume that we do not need ownership of
+// the strings passed in, since they should be allocated on the heap and live for the
+// lifetime of the program.
+TestSuite newTestSuite(char* name, TestCaseSetupFunc setup, TestCaseTeardownFunc teardown) {
+  TestSuite testSuite = (TestSuite)malloc(sizeof(TestSuiteMembers));
+  testSuite->name = name;
+  testSuite->numSuccess = 0;
+  testSuite->numFail = 0;
+  testSuite->numSkips = 0;
+  testSuite->testCases = newLinkedList();
+  testSuite->setup = setup;
+  testSuite->teardown = teardown;
+  testSuite->onlyPrintFailing = false;
+  testSuite->keepFiles = false;
+  return testSuite;
+}
+
+TestCase newTestCase(char* name, char* filename, int lineNumber, TestCaseExecFunc testCaseFunc) {
+  TestCase testCase = (TestCase)malloc(sizeof(TestCaseMembers));
+  testCase->name = name;
+  testCase->filename = filename;
+  testCase->lineNumber = lineNumber;
+  testCase->testCaseFunc = testCaseFunc;
+  return testCase;
+}
+
+void freeTestCase(TestCase self) {
+  free(self);
+}
+
+void freeTestSuite(TestSuite self) {
+  freeLinkedListAndItems(self->testCases, (LinkedListFreeItemFunc)freeTestCase);
 }

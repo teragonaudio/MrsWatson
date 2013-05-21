@@ -48,6 +48,8 @@ static CharString _fileUtilitiesMakeTempDir(void) {
   snprintf(randomDirName->data, randomDirName->length, "mrswatsontest-%d", rand());
   GetTempPathA(systemTempDir->length, systemTempDir->data);
   buildAbsolutePath(systemTempDir, randomDirName, NULL, tempDirName);
+  freeCharString(systemTempDir);
+  freeCharString(randomDirName);
 #endif
   if(!makeDirectory(tempDirName)) {
     fprintf(stderr, "WARNING: Could not make temporary directory\n");
@@ -59,12 +61,16 @@ static CharString _fileUtilitiesMakeTempDir(void) {
 static int _testCopyFileToDirectory(void) {
   CharString tempDir = _fileUtilitiesMakeTempDir();
   CharString tempFile = newCharString();
+
   FILE *fp = fopen(TEST_FILENAME, "w");
   assertNotNull(fp);
   fclose(fp);
   convertRelativePathToAbsolute(newCharStringWithCString(TEST_FILENAME), tempFile);
   assert(copyFileToDirectory(tempFile, tempDir));
   assert(removeDirectory(tempDir));
+
+  freeCharString(tempDir);
+  freeCharString(tempFile);
   unlink(TEST_FILENAME);
   return 0;
 }
@@ -74,6 +80,7 @@ static int _testCopyInvalidFileToDirectory(void) {
   convertRelativePathToAbsolute(newCharStringWithCString(TEST_FILENAME), newCharStringWithCString("invalid"));
   assertFalse(copyFileToDirectory(newCharStringWithCString("invalid"), tempDir));
   removeDirectory(tempDir);
+  freeCharString(tempDir);
   return 0;
 }
 
@@ -85,6 +92,7 @@ static int _testCopyFileToInvalidDirectory(void) {
   convertRelativePathToAbsolute(newCharStringWithCString(TEST_FILENAME), tempFile);
   assertFalse(copyFileToDirectory(tempFile, newCharStringWithCString("invalid")));
   unlink(TEST_FILENAME);
+  freeCharString(tempFile);
   return 0;
 }
 
@@ -92,10 +100,11 @@ static int _testListDirectory(void) {
   CharString tempDir = _fileUtilitiesMakeTempDir();
   CharString tempFile = newCharString();
   CharString filename;
+  CharString testFilename = newCharStringWithCString(TEST_FILENAME);
   LinkedList l;
   FILE *f;
 
-  buildAbsolutePath(tempDir, newCharStringWithCString(TEST_FILENAME), NULL, tempFile);
+  buildAbsolutePath(tempDir, testFilename, NULL, tempFile);
   f = fopen(tempFile->data, "w");
   assertNotNull(f);
   fclose(f);
@@ -103,7 +112,12 @@ static int _testListDirectory(void) {
   assertIntEquals(linkedListLength(l), 1);
   filename = l->item;
   assertCharStringEquals(filename, TEST_FILENAME);
+
   removeDirectory(tempDir);
+  freeCharString(tempDir);
+  freeCharString(tempFile);
+  freeCharString(testFilename);
+  freeLinkedListAndItems(l, (LinkedListFreeItemFunc)freeCharString);
   return 0;
 }
 
@@ -112,12 +126,17 @@ static int _testListEmptyDirectory(void) {
   LinkedList l = listDirectory(tempDir);
   assertIntEquals(linkedListLength(l), 0);
   removeDirectory(tempDir);
+  freeCharString(tempDir);
+  freeLinkedListAndItems(l, (LinkedListFreeItemFunc)freeCharString);
   return 0;
 }
 
 static int _testListInvalidDirectory(void) {
-  LinkedList l = listDirectory(newCharStringWithCString("invalid"));
+  CharString c = newCharStringWithCString("invalid");
+  LinkedList l = listDirectory(c);
   assertIntEquals(linkedListLength(l), 0);
+  freeLinkedList(l);
+  freeCharString(c);
   return 0;
 }
 
@@ -126,11 +145,14 @@ static int _testRemoveDirectory(void) {
   assert(fileExists(tempDir->data));
   assert(removeDirectory(tempDir));
   assertFalse(fileExists(tempDir->data));
+  freeCharString(tempDir);
   return 0;
 }
 
 static int _testRemoveInvalidDirectory(void) {
-  assertFalse(removeDirectory(newCharStringWithCString("invalid")));
+  CharString c = newCharStringWithCString("invalid");
+  assertFalse(removeDirectory(c));
+  freeCharString(c);
   return 0;
 }
 
@@ -155,9 +177,15 @@ static int _testBuildAbsolutePathWithFileExtensionTwice(void) {
   CharString out = newCharString();
   CharString f = newCharStringWithCString(TEST_FILENAME);
   CharString expected = newCharString();
+
   snprintf(expected->data, expected->length, "%s%c%s", ROOT_DIRECTORY, PATH_DELIMITER, TEST_FILENAME);
   buildAbsolutePath(d, f, "txt", out);
   assertCharStringEquals(out, expected->data);
+
+  freeCharString(d);
+  freeCharString(out);
+  freeCharString(f);
+  freeCharString(expected);
   return 0;
 }
 
@@ -186,12 +214,16 @@ static int _testIsAbsolutePathUNCWindows(void) {
 }
 
 static int _testIsInvalidFileAbsolutePath(void) {
-  assertFalse(isAbsolutePath(newCharStringWithCString("invalid")));
+  CharString c = newCharStringWithCString("invalid");
+  assertFalse(isAbsolutePath(c));
+  freeCharString(c);
   return 0;
 }
 
 static int _testGetFileBasename(void) {
-  assertCharStringEquals(newCharStringWithCString(getFileBasename(ABSOLUTE_TEST_FILENAME)), TEST_FILENAME);
+  CharString c = newCharStringWithCString(getFileBasename(ABSOLUTE_TEST_FILENAME));
+  assertCharStringEquals(c, TEST_FILENAME);
+  freeCharString(c);
   return 0;
 }
 
@@ -201,7 +233,9 @@ static int _testGetNullFileBasename(void) {
 }
 
 static int _testGetFileExtension(void) {
-  assertCharStringEquals(newCharStringWithCString(getFileExtension(TEST_FILENAME)), "txt");
+  CharString c = newCharStringWithCString(getFileExtension(TEST_FILENAME));
+  assertCharStringEquals(c, "txt");
+  freeCharString(c);
   return 0;
 }
 
@@ -219,6 +253,7 @@ static int _testGetFileDirname(void) {
   CharString filename = newCharStringWithCString(ABSOLUTE_TEST_FILENAME);
   CharString expected = newCharString();
   CharString result = newCharString();
+
 #if UNIX
   charStringCopyCString(expected, "/tmp");
 #elif WINDOWS
@@ -226,12 +261,17 @@ static int _testGetFileDirname(void) {
 #endif
   getFileDirname(filename, result);
   assertCharStringEquals(result, expected->data);
+
+  freeCharString(filename);
+  freeCharString(expected);
+  freeCharString(result);
   return 0;
 }
 
 static int _testGetNullFileDirname(void) {
   CharString result = newCharString();
   getFileDirname(NULL, result);
+  freeCharString(result);
   return 0;
 }
 

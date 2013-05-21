@@ -52,6 +52,9 @@ void printTestFail(void);
 TestSuite newTestSuite(char* name, TestCaseSetupFunc setup, TestCaseTeardownFunc teardown);
 TestCase newTestCase(char* name, char* filename, int lineNumber, TestCaseExecFunc testCaseFunc);
 
+void freeTestCase(TestCase self);
+void freeTestSuite(TestSuite self);
+
 #define addTest(testSuite, name, testCaseFunc) { \
   addTestToTestSuite(testSuite, newTestCase(name, __FILE__, __LINE__, testCaseFunc)); \
 }

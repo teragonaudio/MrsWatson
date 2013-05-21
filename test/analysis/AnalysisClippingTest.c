@@ -9,6 +9,8 @@ static int _testAnalysisClipping(void) {
     s->samples[0][i] = 1.0f;
   }
   assertFalse(analysisClipping(s, d));
+  freeAnalysisFunctionData(d);
+  freeSampleBuffer(s);
   return 0;
 }
 
@@ -16,6 +18,8 @@ static int _testAnalysisNotClipping(void) {
   SampleBuffer s = newSampleBuffer(1, 8);
   AnalysisFunctionData d = newAnalysisFunctionData();
   assert(analysisClipping(s, d));
+  freeAnalysisFunctionData(d);
+  freeSampleBuffer(s);
   return 0;
 }
 

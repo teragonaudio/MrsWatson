@@ -9,6 +9,7 @@ static int _testNewCharString(void) {
   CharString c = newCharString();
   assertIntEquals(c->length, kCharStringLengthDefault);
   assertCharStringEquals(c, "");
+  freeCharString(c);
   return 0;
 }
 
@@ -16,6 +17,7 @@ static int _testNewCharStringWithCapacity(void) {
   CharString c = newCharStringWithCapacity(123);
   assertIntEquals(c->length, 123);
   assertCharStringEquals(c, "");
+  freeCharString(c);
   return 0;
 }
 
@@ -25,6 +27,7 @@ static int _testClearCharString(void) {
   charStringClear(c);
   assertIntEquals(c->length, kCharStringLengthDefault);
   assertCharStringEquals(c, "");
+  freeCharString(c);
   return 0;
 }
 
@@ -33,6 +36,7 @@ static int _testCopyToCharString(void) {
   charStringCopyCString(c, TEST_STRING);
   assertIntEquals(c->length, kCharStringLengthDefault);
   assertCharStringEquals(c, TEST_STRING);
+  freeCharString(c);
   return 0;
 }
 
@@ -43,12 +47,14 @@ static int _testCopyCharStrings(void) {
   charStringCopyCString(c, TEST_STRING);
   charStringCopy(c2, c);
   assertCharStringEquals(c, c2->data);
+  freeCharString(c);
   return 0;
 }
 
 static int _testIsEmptyStringEmpty(void) {
   CharString c = newCharString();
   assert(charStringIsEmpty(c));
+  freeCharString(c);
   return 0;
 }
 
@@ -61,6 +67,7 @@ static int _testIsRegularStringNotEmpty(void) {
   CharString c = newCharString();
   charStringCopyCString(c, TEST_STRING);
   assertFalse(charStringIsEmpty(c));
+  freeCharString(c);
   return 0;
 }
 
@@ -69,6 +76,8 @@ static int _testAppendCharStrings(void) {
   CharString b = newCharStringWithCString("b");
   charStringAppend(a, b);
   assertCharStringEquals(a, "ab");
+  freeCharString(a);
+  freeCharString(b);
   return 0;
 }
 
@@ -79,6 +88,8 @@ static int _testAppendCharStringsOverCapacity(void) {
   charStringAppend(a, b);
   assertCharStringEquals(a, "a1234567890");
   assertIntEquals(a->length, 12);
+  freeCharString(a);
+  freeCharString(b);
   return 0;
 }
 
@@ -89,6 +100,8 @@ static int _testCharStringEqualsSameString(void) {
   charStringCopyCString(c, TEST_STRING);
   charStringCopyCString(c2, TEST_STRING);
   assert(charStringIsEqualTo(c, c2, false));
+  freeCharString(c);
+  freeCharString(c2);
   return 0;
 }
 
@@ -99,6 +112,8 @@ static int _testCharStringDoesEqualDifferentString(void) {
   charStringCopyCString(c, TEST_STRING);
   charStringCopyCString(c2, OTHER_TEST_STRING);
   assertFalse(charStringIsEqualTo(c, c2, false));
+  freeCharString(c);
+  freeCharString(c2);
   return 0;
 }
 
@@ -109,6 +124,8 @@ static int _testCharStringEqualsSameStringInsensitive(void) {
   charStringCopyCString(c, TEST_STRING);
   charStringCopyCString(c2, TEST_STRING_CAPS);
   assert(charStringIsEqualTo(c, c2, true));
+  freeCharString(c);
+  freeCharString(c2);
   return 0;
 }
 
@@ -119,12 +136,15 @@ static int _testCharStringDoesNotEqualSameStringInsensitive(void) {
   charStringCopyCString(c, TEST_STRING);
   charStringCopyCString(c2, TEST_STRING_CAPS);
   assertFalse(charStringIsEqualTo(c, c2, false));
+  freeCharString(c);
+  freeCharString(c2);
   return 0;
 }
 
 static int _testCharStringEqualsNull(void) {
   CharString c = newCharString();
   assertFalse(charStringIsEqualTo(c, NULL, false));
+  freeCharString(c);
   return 0;
 }
 
@@ -132,6 +152,7 @@ static int _testCharStringEqualsSameCString(void) {
   CharString c = newCharString();
   charStringCopyCString(c, TEST_STRING);
   assert(charStringIsEqualToCString(c, TEST_STRING, false));
+  freeCharString(c);
   return 0;
 }
 
@@ -139,6 +160,7 @@ static int _testCharStringNotEqualToDifferentCString(void) {
   CharString c = newCharString();
   charStringCopyCString(c, TEST_STRING);
   assertFalse(charStringIsEqualToCString(c, OTHER_TEST_STRING, false));
+  freeCharString(c);
   return 0;
 }
 
@@ -146,6 +168,7 @@ static int _testCharStringEqualsSameCStringInsensitive(void) {
   CharString c = newCharString();
   charStringCopyCString(c, TEST_STRING);
   assert(charStringIsEqualToCString(c, TEST_STRING_CAPS, true));
+  freeCharString(c);
   return 0;
 }
 
@@ -153,12 +176,14 @@ static int _testCharStringNotEqualsCStringInsensitive(void) {
   CharString c = newCharString();
   charStringCopyCString(c, TEST_STRING);
   assertFalse(charStringIsEqualToCString(c, TEST_STRING_CAPS, false));
+  freeCharString(c);
   return 0;
 }
 
 static int _testCharStringEqualsCStringNull(void) {
   CharString c = newCharString();
   assertFalse(charStringIsEqualToCString(c, NULL, false));
+  freeCharString(c);
   return 0;
 }
 

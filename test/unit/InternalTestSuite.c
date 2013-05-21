@@ -83,6 +83,8 @@ void runInternalTestSuite(boolByte onlyPrintFailing) {
   fprintf(stderr, "\n== Ran %d function tests: %d passed, %d failed, %d skipped ==\n",
     suiteResults->numSuccess + suiteResults->numFail + suiteResults->numSkips,
     suiteResults->numSuccess, suiteResults->numFail, suiteResults->numSkips);
+
+  freeLinkedListAndItems(internalTestSuites, (LinkedListFreeItemFunc)freeTestSuite);
 }
 
 TestCase findTestCase(TestSuite testSuite, char* testName);

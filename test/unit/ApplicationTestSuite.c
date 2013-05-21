@@ -4,11 +4,16 @@ int runApplicationTestSuite(TestEnvironment environment);
 int runApplicationTestSuite(TestEnvironment environment) {
   // Test resource paths
   const char* resourcesPath = environment->resourcesPath;
-  const char* a440_mono_pcm = getTestResourceFilename(resourcesPath, "audio", "a440-mono.pcm");
-  const char* a440_stereo_pcm = getTestResourceFilename(resourcesPath, "audio", "a440-stereo.pcm");
-  const char* a440_stereo_wav = getTestResourceFilename(resourcesPath, "audio", "a440-stereo.wav");
-  const char* c_scale_mid = getTestResourceFilename(resourcesPath, "midi", "c-scale.mid");
-  const char* again_test_fxp = getTestResourceFilename(resourcesPath, "presets", "again-test.fxp");
+  CharString _a440_mono_pcm = getTestResourceFilename(resourcesPath, "audio", "a440-mono.pcm");
+  CharString _a440_stereo_pcm = getTestResourceFilename(resourcesPath, "audio", "a440-stereo.pcm");
+  CharString _a440_stereo_wav = getTestResourceFilename(resourcesPath, "audio", "a440-stereo.wav");
+  CharString _c_scale_mid = getTestResourceFilename(resourcesPath, "midi", "c-scale.mid");
+  CharString _again_test_fxp = getTestResourceFilename(resourcesPath, "presets", "again-test.fxp");
+  const char* a440_mono_pcm = _a440_mono_pcm->data;
+  const char* a440_stereo_pcm = _a440_stereo_pcm->data;
+  const char* a440_stereo_wav = _a440_stereo_wav->data;
+  const char* c_scale_mid = _c_scale_mid->data;
+  const char* again_test_fxp = _again_test_fxp->data;
 
   // Basic non-processing operations
   runApplicationTest(environment, "List plugins",
@@ -123,5 +128,10 @@ int runApplicationTestSuite(TestEnvironment environment) {
     environment->results->numFail,
     environment->results->numSkips);
 
+  freeCharString(_a440_mono_pcm);
+  freeCharString(_a440_stereo_pcm);
+  freeCharString(_a440_stereo_wav);
+  freeCharString(_c_scale_mid);
+  freeCharString(_again_test_fxp);
   return environment->results->numFail;
 }

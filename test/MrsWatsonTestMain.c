@@ -219,5 +219,6 @@ int main(int argc, char* argv[]) {
   }
 
   printf("\n=== Finished with %d total failed tests ===\n", totalTestsFailed);
+  freeProgramOptions(programOptions);
   return totalTestsFailed;
 }

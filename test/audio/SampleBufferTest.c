@@ -10,18 +10,21 @@ static int _testNewSampleBuffer(void) {
   SampleBuffer s = _newMockSampleBuffer();
   assertIntEquals(s->numChannels, 1);
   assertIntEquals(s->blocksize, 1);
+  freeSampleBuffer(s);
   return 0;
 }
 
 static int _testNewSampleBufferInvalidNumChannels(void) {
   SampleBuffer s = newSampleBuffer(0, 1);
   assertIsNull(s);
+  freeSampleBuffer(s);
   return 0;
 }
 
 static int _testNewSampleBufferInvalidSampleRate(void) {
   SampleBuffer s = newSampleBuffer(1, 0);
   assertIsNull(s);
+  freeSampleBuffer(s);
   return 0;
 }
 
@@ -30,6 +33,7 @@ static int _testClearSampleBuffer(void) {
   s->samples[0][0] = 123;
   sampleBufferClear(s);
   assertDoubleEquals(s->samples[0][0], 0.0, TEST_FLOAT_TOLERANCE);
+  freeSampleBuffer(s);
   return 0;
 }
 
@@ -39,6 +43,8 @@ static int _testCopySampleBuffers(void) {
   s1->samples[0][0] = 123.0;
   sampleBufferCopy(s2, s1);
   assertDoubleEquals(s2->samples[0][0], 123.0, TEST_FLOAT_TOLERANCE);
+  freeSampleBuffer(s1);
+  freeSampleBuffer(s2);
   return 0;
 }
 
@@ -49,6 +55,8 @@ static int _testCopySampleBuffersDifferentBlocksizes(void) {
   sampleBufferCopy(s2, s1);
   // Contents should not change; copying with different sizes is invalid
   assertDoubleEquals(s1->samples[0][0], 123.0, TEST_FLOAT_TOLERANCE);
+  freeSampleBuffer(s1);
+  freeSampleBuffer(s2);
   return 0;
 }
 
@@ -59,6 +67,13 @@ static int _testCopySampleBuffersDifferentChannels(void) {
   sampleBufferCopy(s2, s1);
   // Contents should not change; copying with different sizes is invalid
   assertDoubleEquals(s1->samples[0][0], 123.0, TEST_FLOAT_TOLERANCE);
+  freeSampleBuffer(s1);
+  freeSampleBuffer(s2);
+  return 0;
+}
+
+static int _testFreeNullSampleBuffer(void) {
+  freeSampleBuffer(NULL);
   return 0;
 }
 
@@ -72,5 +87,6 @@ TestSuite addSampleBufferTests(void) {
   addTest(testSuite, "CopySampleBuffers", _testCopySampleBuffers);
   addTest(testSuite, "CopySampleBuffersDifferentSizes",  _testCopySampleBuffersDifferentBlocksizes);
   addTest(testSuite, "CopySampleBuffersDifferentChannels",  _testCopySampleBuffersDifferentChannels);
+  addTest(testSuite, "FreeNullSampleBuffer", _testFreeNullSampleBuffer);
   return testSuite;
 }

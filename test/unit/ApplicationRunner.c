@@ -43,17 +43,18 @@ CharString buildTestArgumentString(const char* arguments, ...) {
   return formattedArguments;
 }
 
-char* getTestResourceFilename(const char* resourcesPath, const char* resourceType, const char* resourceName) {
+CharString getTestResourceFilename(const char* resourcesPath, const char* resourceType, const char* resourceName) {
   CharString filename = newCharString();
   snprintf(filename->data, filename->length, "%s%c%s%c%s",
     resourcesPath, PATH_DELIMITER, resourceType, PATH_DELIMITER, resourceName);
-  return filename->data;
+  return filename;
 }
 
-char* getTestOutputFilename(const char* testName, const char* fileExtension) {
+CharString getTestOutputFilename(const char* testName, const char* fileExtension) {
   CharString filename = newCharString();
   char* space;
   char *spacePtr;
+
   snprintf(filename->data, filename->length, "%s%c%s.%s",
     kApplicationRunnerOutputFolder, PATH_DELIMITER, testName, fileExtension);
   spacePtr = filename->data;
@@ -66,26 +67,30 @@ char* getTestOutputFilename(const char* testName, const char* fileExtension) {
       *space = '-';
     }
   } while(true);
-  return filename->data;
+
+  return filename;
 }
 
-static char* _getTestPluginResourcesPath(const char* resourcesPath) {
+static CharString _getTestPluginResourcesPath(const char* resourcesPath) {
   CharString pluginRoot = newCharString();
   snprintf(pluginRoot->data, pluginRoot->length, "%s%cvst%c%s",
     resourcesPath, PATH_DELIMITER, PATH_DELIMITER, getShortPlatformName());
-  return pluginRoot->data;
+  return pluginRoot;
 }
 
 static CharString _getDefaultArguments(TestEnvironment testEnvironment, const char *testName, const char* outputFilename) {
-  CharString outString = newCharString();
+  CharString outString = newCharStringWithCapacity(kCharStringLengthLong);
+  CharString logfileName = getTestOutputFilename(testName, "txt");
+  CharString resourcesPath = _getTestPluginResourcesPath(testEnvironment->resourcesPath);
   snprintf(outString->data, outString->length,
     "--log-file \"%s\" --verbose --output \"%s\" --plugin-root \"%s\"",
-    getTestOutputFilename(testName, "txt"), outputFilename,
-    _getTestPluginResourcesPath(testEnvironment->resourcesPath));
+    logfileName->data, outputFilename, resourcesPath->data);
+  freeCharString(logfileName);
+  freeCharString(resourcesPath);
   return outString;
 }
 
-static void _removeOutputFile(char* argument) {
+static void _removeOutputFile(const char* argument) {
   if(fileExists(argument)) {
     unlink(argument);
   }
@@ -93,11 +98,23 @@ static void _removeOutputFile(char* argument) {
 
 static void _removeOutputFiles(const char* testName) {
   // Remove all possible output files generated during testing
-  _removeOutputFile(getTestOutputFilename(testName, "aif"));
-  _removeOutputFile(getTestOutputFilename(testName, "flac"));
-  _removeOutputFile(getTestOutputFilename(testName, "pcm"));
-  _removeOutputFile(getTestOutputFilename(testName, "wav"));
-  _removeOutputFile(getTestOutputFilename(testName, "txt"));
+  CharString outputFilename;
+
+  outputFilename = getTestOutputFilename(testName, "aif");
+  _removeOutputFile(outputFilename->data);
+  freeCharString(outputFilename);
+  outputFilename = getTestOutputFilename(testName, "flac");
+  _removeOutputFile(outputFilename->data);
+  freeCharString(outputFilename);
+  outputFilename = getTestOutputFilename(testName, "pcm");
+  _removeOutputFile(outputFilename->data);
+  freeCharString(outputFilename);
+  outputFilename = getTestOutputFilename(testName, "wav");
+  _removeOutputFile(outputFilename->data);
+  freeCharString(outputFilename);
+  outputFilename = getTestOutputFilename(testName, "txt");
+  _removeOutputFile(outputFilename->data);
+  freeCharString(outputFilename);
 }
 
 static const char* _getResultCodeString(const int resultCode) {
@@ -123,10 +140,10 @@ void runApplicationTest(const TestEnvironment testEnvironment,
   int result = -1;
   ReturnCodes resultCode = (ReturnCodes)result;
   CharString arguments = newCharStringWithCapacity(kCharStringLengthLong);
-  CharString defaultArguments = newCharStringWithCapacity(kCharStringLengthLong);
+  CharString defaultArguments;
   CharString failedAnalysisFunctionName = newCharString();
   unsigned long failedAnalysisSample;
-  char* outputFilename = getTestOutputFilename(testName,
+  CharString outputFilename = getTestOutputFilename(testName,
     outputFileType == NULL ? kDefaultTestOutputFileType : outputFileType);
 
 #if WINDOWS
@@ -143,7 +160,7 @@ void runApplicationTest(const TestEnvironment testEnvironment,
   charStringAppendCString(arguments, testEnvironment->applicationPath);
   charStringAppendCString(arguments, "\"");
   charStringAppendCString(arguments, " ");
-  defaultArguments = _getDefaultArguments(testEnvironment, testName, outputFilename);
+  defaultArguments = _getDefaultArguments(testEnvironment, testName, outputFilename->data);
   charStringAppend(arguments, defaultArguments);
   charStringAppendCString(arguments, " ");
   charStringAppend(arguments, testArguments);
@@ -186,7 +203,7 @@ Please check the executable path specified in the --mrswatson-path argument.",
   }
   else if(resultCode == expectedResultCode) {
     if(outputFileType != NULL) {
-      if(analyzeFile(outputFilename, failedAnalysisFunctionName, &failedAnalysisSample)) {
+      if(analyzeFile(outputFilename->data, failedAnalysisFunctionName, &failedAnalysisSample)) {
         testEnvironment->results->numSuccess++;
         if(!testEnvironment->results->keepFiles) {
           _removeOutputFiles(testName);
@@ -226,6 +243,7 @@ Please check the executable path specified in the --mrswatson-path argument.",
     testEnvironment->results->numFail++;
   }
 
+  freeCharString(outputFilename);
   freeCharString(arguments);
   freeCharString(defaultArguments);
   freeCharString(testArguments);
