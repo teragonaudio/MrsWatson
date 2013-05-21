@@ -89,6 +89,10 @@ static void printWelcomeMessage(int argc, char** argv) {
   // Recycle to use for the platform name
   freeCharString(stringBuffer);
 
+  if(isExecutable64Bit()) {
+    logWarn("Running in 64-bit mode, this is experimental. Hold on to your hats!");
+  }
+
   // Prevent a bunch of silly work in case the log level isn't debug
   if(isLogLevelAtLeast(LOG_DEBUG)) {
     stringBuffer = getPlatformName();
