@@ -92,7 +92,8 @@ static void printWelcomeMessage(int argc, char** argv) {
   // Prevent a bunch of silly work in case the log level isn't debug
   if(isLogLevelAtLeast(LOG_DEBUG)) {
     stringBuffer = getPlatformName();
-    logDebug("Host platform is %s, application is %d-bit", stringBuffer->data, isExecutable64Bit() ? 64 : 32);
+    logDebug("Host platform is %s (%s)", getShortPlatformName(), stringBuffer->data);
+    logDebug("Application is %d-bit", isExecutable64Bit() ? 64 : 32);
     freeCharString(stringBuffer);
 
     stringBuffer = newCharString();
