@@ -199,7 +199,7 @@ static boolByte _fillVst2xPluginAbsolutePath(const CharString pluginName, const 
   // the default locations for the platform, starting with the current directory.
   LinkedList pluginLocations = getVst2xPluginLocations(getCurrentDirectory());
   if(pluginLocations->item == NULL) {
-    freeLinkedList(pluginLocations);
+    freeLinkedListAndItems(pluginLocations, (LinkedListFreeItemFunc)freeCharString);
     return false;
   }
 
