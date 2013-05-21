@@ -129,5 +129,8 @@ void freeTestCase(TestCase self) {
 }
 
 void freeTestSuite(TestSuite self) {
-  freeLinkedListAndItems(self->testCases, (LinkedListFreeItemFunc)freeTestCase);
+  if(self != NULL) {
+    freeLinkedListAndItems(self->testCases, (LinkedListFreeItemFunc)freeTestCase);
+    free(self);
+  }
 }

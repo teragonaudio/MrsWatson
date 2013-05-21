@@ -85,6 +85,7 @@ void runInternalTestSuite(boolByte onlyPrintFailing) {
     suiteResults->numSuccess, suiteResults->numFail, suiteResults->numSkips);
 
   freeLinkedListAndItems(internalTestSuites, (LinkedListFreeItemFunc)freeTestSuite);
+  freeTestSuite(suiteResults);
 }
 
 TestCase findTestCase(TestSuite testSuite, char* testName);

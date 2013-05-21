@@ -202,7 +202,9 @@ static int _testConvertRelativePathToAbsoluteEmpty(void) {
 }
 
 static int _testIsAbsolutePath(void) {
-  assert(isAbsolutePath(newCharStringWithCString(ABSOLUTE_TEST_FILENAME)));
+  CharString c = newCharStringWithCString(ABSOLUTE_TEST_FILENAME);
+  assert(isAbsolutePath(c));
+  freeCharString(c);
   return 0;
 }
 

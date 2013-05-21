@@ -103,10 +103,10 @@ void stopTiming(TaskTimer taskTimer) {
   taskTimer->currentTask = -1;
 }
 
-void freeTaskTimer(TaskTimer taskTimer) {
-  free(taskTimer->totalTaskTimes);
+void freeTaskTimer(TaskTimer self) {
+  free(self->totalTaskTimes);
 #if UNIX
-  free(taskTimer->startTime);
+  free(self->startTime);
 #endif
-  free(taskTimer);
+  free(self);
 }
