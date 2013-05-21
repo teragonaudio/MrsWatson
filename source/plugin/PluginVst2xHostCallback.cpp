@@ -124,7 +124,7 @@ VstIntPtr VSTCALLBACK pluginVst2xHostCallback(AEffect *effect, VstInt32 opcode, 
     uniqueIdString = newCharStringWithCString("????");
   }
   const char* uniqueId = uniqueIdString->data;
-  int result = 0;
+  VstIntPtr result = 0;
 
   logDebug("Plugin '%s' called host dispatcher with %d, %d, %d", uniqueId, opcode, index, value);
   switch(opcode) {
@@ -174,6 +174,7 @@ VstIntPtr VSTCALLBACK pluginVst2xHostCallback(AEffect *effect, VstInt32 opcode, 
         logWarn("Plugin '%s' asked for time in nanoseconds (unsupported)", uniqueId);
       }
       if(value & kVstPpqPosValid) {
+        // TODO: Move calculations to AudioClock
         double samplesPerBeat = (60.0 / getTempo()) * getSampleRate();
         // Musical time starts with 1, not 0
         vstTimeInfo.ppqPos = (vstTimeInfo.samplePos / samplesPerBeat) + 1.0;
@@ -188,6 +189,7 @@ VstIntPtr VSTCALLBACK pluginVst2xHostCallback(AEffect *effect, VstInt32 opcode, 
         if(!(value & kVstPpqPosValid)) {
           logError("Plugin requested position in bars, but not PPQ");
         }
+        // TODO: Move calculations to AudioClock
         double currentBarPos = floor(vstTimeInfo.ppqPos / (double)getTimeSignatureBeatsPerMeasure());
         vstTimeInfo.barStartPos = currentBarPos * (double)getTimeSignatureBeatsPerMeasure() + 1.0;
         logDebug("Current bar is %g", vstTimeInfo.barStartPos);
@@ -208,7 +210,7 @@ VstIntPtr VSTCALLBACK pluginVst2xHostCallback(AEffect *effect, VstInt32 opcode, 
         logUnsupportedFeature("Sample frames until next clock");
       }
 
-      dataPtr = &vstTimeInfo;
+      result = (VstIntPtr)&vstTimeInfo;
       break;
     }
     case audioMasterProcessEvents:
