@@ -3,27 +3,37 @@ project(mrswatsoncore)
 
 file(GLOB mrswatsoncore_SOURCES *.c */*.c */*.cpp)
 
-add_library(mrswatsoncore32 ${mrswatsoncore_SOURCES})
+# On unix, we can build both the 32/64 bit versions at once. However with
+# Visual Studio we need to generate two separate out-of-source build dirs,
+# one for each architecture.
+
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-  set_target_properties(mrswatsoncore32 PROPERTIES COMPILE_FLAGS "-m32")
-  set_target_properties(mrswatsoncore32 PROPERTIES LINK_FLAGS "-m32")
+  add_library(mrswatsoncore ${mrswatsoncore_SOURCES})
+  set_target_properties(mrswatsoncore PROPERTIES COMPILE_FLAGS "-m32")
+  set_target_properties(mrswatsoncore PROPERTIES LINK_FLAGS "-m32")
 elseif(APPLE)
-  set_target_properties(mrswatsoncore32 PROPERTIES COMPILE_FLAGS "-arch i386")
-  set_target_properties(mrswatsoncore32 PROPERTIES LINK_FLAGS "-arch i386")
+  add_library(mrswatsoncore ${mrswatsoncore_SOURCES})
+  set_target_properties(mrswatsoncore PROPERTIES COMPILE_FLAGS "-arch i386")
+  set_target_properties(mrswatsoncore PROPERTIES LINK_FLAGS "-arch i386")
 elseif(MSVC)
-  # TODO: Not tested
-  set_target_properties(mrswatsoncore32 PROPERTIES COMPILE_FLAGS "/D WIN32=1")
+  if(${platform_bits} EQUAL 32)
+    add_library(mrswatsoncore ${mrswatsoncore_SOURCES})
+    set_target_properties(mrswatsoncore PROPERTIES COMPILE_FLAGS "/D WIN32=1")
+  endif()
 endif()
 
-add_library(mrswatsoncore64 ${mrswatsoncore_SOURCES})
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+  add_library(mrswatsoncore64 ${mrswatsoncore_SOURCES})
   set_target_properties(mrswatsoncore64 PROPERTIES COMPILE_FLAGS "-m64")
   set_target_properties(mrswatsoncore64 PROPERTIES LINK_FLAGS "-m64")
 elseif(APPLE)
+  add_library(mrswatsoncore64 ${mrswatsoncore_SOURCES})
   set_target_properties(mrswatsoncore64 PROPERTIES COMPILE_FLAGS "-arch x86_64")
   set_target_properties(mrswatsoncore64 PROPERTIES LINK_FLAGS "-arch x86_64")
 elseif(MSVC)
-  # TODO: Not tested
-  set_target_properties(mrswatsoncore64 PROPERTIES COMPILE_FLAGS "/MACHINE:X64 /env x64 /D WIN64=1")
+  if(${platform_bits} EQUAL 64)
+    add_library(mrswatsoncore64 ${mrswatsoncore_SOURCES})
+    set_target_properties(mrswatsoncore64 PROPERTIES COMPILE_FLAGS "/MACHINE:X64 /D WIN64=1")
+  endif()
 endif()
 
