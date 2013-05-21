@@ -174,9 +174,9 @@ VstIntPtr VSTCALLBACK pluginVst2xHostCallback(AEffect *effect, VstInt32 opcode, 
         logWarn("Plugin '%s' asked for time in nanoseconds (unsupported)", uniqueId);
       }
       if(value & kVstPpqPosValid) {
-        double samplesPerBeat = (getSampleRate() * 60.0) / getTempo();
+        double samplesPerBeat = (60.0 / getTempo()) * getSampleRate();
         // Musical time starts with 1, not 0
-        vstTimeInfo.ppqPos = samplesPerBeat * vstTimeInfo.samplePos + 1.0;
+        vstTimeInfo.ppqPos = (vstTimeInfo.samplePos / samplesPerBeat) + 1.0;
         logDebug("Current PPQ position is %g", vstTimeInfo.ppqPos);
         vstTimeInfo.flags |= kVstPpqPosValid;
       }
