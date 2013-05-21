@@ -220,7 +220,16 @@ boolByte isExecutable64Bit(void) {
 boolByte isHost64Bit(void) {
   boolByte result = false;
 
-#if WINDOWS
+#if LINUX
+  struct utsname systemInfo;
+  if(uname(&systemInfo) != 0) {
+    logError("Could not get system bitness from uname");
+  }
+  else {
+    result = (strcmp(systemInfo.machine, "x86_64") == 0);
+  }
+#elif MACOSX
+#elif WINDOWS
   typedef BOOL (WINAPI *IsWow64ProcessFuncPtr)(HANDLE, PBOOL);
   BOOL isWindows64 = false;
   IsWow64ProcessFuncPtr isWow64ProcessFunc = NULL;
