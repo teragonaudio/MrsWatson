@@ -121,6 +121,7 @@ LinkedList listDirectory(const CharString directory) {
 #if UNIX
   DIR* directoryPtr = opendir(directory->data);
   if(directoryPtr == NULL) {
+    freeLinkedList(items);
     return 0;
   }
   struct dirent* entry;
@@ -141,6 +142,7 @@ LinkedList listDirectory(const CharString directory) {
   findHandle = FindFirstFileA((LPCSTR)(searchString->data), &findData);
   freeCharString(searchString);
   if(findHandle == INVALID_HANDLE_VALUE) {
+    freeLinkedList(items);
     return 0;
   }
   do {

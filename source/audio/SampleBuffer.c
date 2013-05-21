@@ -33,7 +33,7 @@
 #include "logging/EventLogger.h"
 
 SampleBuffer newSampleBuffer(int numChannels, int blocksize) {
-  SampleBuffer sampleBuffer = (SampleBuffer)malloc(sizeof(SampleBufferMembers));
+  SampleBuffer sampleBuffer = NULL;
   int i;
 
   if(numChannels <= 0) {
@@ -44,11 +44,12 @@ SampleBuffer newSampleBuffer(int numChannels, int blocksize) {
     logUnsupportedFeature("Channel count >2");
     return NULL;
   }
-  if(blocksize <= 0) {
+  else if(blocksize <= 0) {
     logError("Cannot create sample buffer with blocksize %d", blocksize);
     return NULL;
   }
 
+  sampleBuffer = (SampleBuffer)malloc(sizeof(SampleBufferMembers));
   sampleBuffer->numChannels = numChannels;
   sampleBuffer->blocksize = blocksize;
 
