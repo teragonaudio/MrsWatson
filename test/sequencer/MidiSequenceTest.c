@@ -103,6 +103,7 @@ static int _testFillEventsFromRangePastSequence(void) {
   // Should return false since this is the last event in the sequence
   assertFalse(fillMidiEventsFromRange(m, 0, 200, l));
   assertIntEquals(linkedListLength(l), 1);
+  freeLinkedList(l);
   l = newLinkedList();
   assertFalse(fillMidiEventsFromRange(m, 200, 256, l));
   assertIntEquals(linkedListLength(l), 0);
