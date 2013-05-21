@@ -4,24 +4,30 @@
 const char* TEST_SAMPLESOURCE_FILENAME = "test.pcm";
 
 static int _testGuessSampleSourceTypePcm(void) {
-  assertIntEquals(sampleSourceGuess(newCharStringWithCString(TEST_SAMPLESOURCE_FILENAME)),
-    SAMPLE_SOURCE_TYPE_PCM);
+  CharString c = newCharStringWithCString(TEST_SAMPLESOURCE_FILENAME);
+  assertIntEquals(sampleSourceGuess(c), SAMPLE_SOURCE_TYPE_PCM);
+  freeCharString(c);
   return 0;
 }
 
 static int _testGuessSampleSourceTypeEmpty(void) {
-  assertIntEquals(sampleSourceGuess(newCharString()), SAMPLE_SOURCE_TYPE_INVALID);
+  CharString empty = newCharString();
+  assertIntEquals(sampleSourceGuess(empty), SAMPLE_SOURCE_TYPE_INVALID);
+  freeCharString(empty);
   return 0;
 }
 
 static int _testGuessSampleSourceTypeInvalid(void) {
-  assertIntEquals(sampleSourceGuess(newCharString()), SAMPLE_SOURCE_TYPE_INVALID);
+  CharString empty = newCharString();
+  assertIntEquals(sampleSourceGuess(empty), SAMPLE_SOURCE_TYPE_INVALID);
+  freeCharString(empty);
   return 0;
 }
 
 static int _testGuessSampleSourceTypeWrongCase(void) {
-  assertIntEquals(sampleSourceGuess(newCharStringWithCString("TEST.PCM")),
-    SAMPLE_SOURCE_TYPE_PCM);
+  CharString c = newCharStringWithCString("TEST.PCM");
+  assertIntEquals(sampleSourceGuess(c), SAMPLE_SOURCE_TYPE_PCM);
+  freeCharString(c);
   return 0;
 }
 

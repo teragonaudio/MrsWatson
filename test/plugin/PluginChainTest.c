@@ -13,33 +13,53 @@ static int _testNewPluginChain(void) {
 
 static int _testAddPluginFromArgumentStringNull(void) {
   PluginChain p = newPluginChain();
-  assertFalse(pluginChainAddFromArgumentString(p, NULL, newCharStringWithCString("/")));
+  CharString c = newCharStringWithCString("/");
+
+  assertFalse(pluginChainAddFromArgumentString(p, NULL, c));
   assertIntEquals(p->numPlugins, 0);
+
   freePluginChain(p);
+  freeCharString(c);
   return 0;
 }
 
 static int _testAddPluginFromArgumentStringEmpty(void) {
   PluginChain p = newPluginChain();
-  assertFalse(pluginChainAddFromArgumentString(p, newCharString(), newCharStringWithCString("/")));
+  CharString c = newCharStringWithCString("/");
+  CharString empty = newCharString();
+
+  assertFalse(pluginChainAddFromArgumentString(p, empty, c));
   assertIntEquals(p->numPlugins, 0);
+
   freePluginChain(p);
+  freeCharString(c);
+  freeCharString(empty);
   return 0;
 }
 
 static int _testAddPluginFromArgumentStringEmptyLocation(void) {
   PluginChain p = newPluginChain();
-  assert(pluginChainAddFromArgumentString(p, newCharStringWithCString(kInternalPluginPassthruName), newCharString()));
+  CharString c = newCharStringWithCString(kInternalPluginPassthruName);
+  CharString empty = newCharString();
+
+  assert(pluginChainAddFromArgumentString(p, c, empty));
   assertIntEquals(p->numPlugins, 1);
+
   freePluginChain(p);
+  freeCharString(c);
+  freeCharString(empty);
   return 0;
 }
 
 static int _testAddPluginFromArgumentStringNullLocation(void) {
   PluginChain p = newPluginChain();
-  assert(pluginChainAddFromArgumentString(p, newCharStringWithCString(kInternalPluginPassthruName), NULL));
+  CharString c = newCharStringWithCString(kInternalPluginPassthruName);
+
+  assert(pluginChainAddFromArgumentString(p, c, NULL));
   assertIntEquals(p->numPlugins, 1);
+
   freePluginChain(p);
+  freeCharString(c);
   return 0;
 }
 

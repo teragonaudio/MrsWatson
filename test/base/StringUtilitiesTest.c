@@ -92,6 +92,7 @@ static int _testConvertEmptyStringIdToInt(void) {
   CharString c = newCharString();
   unsigned long id = convertStringIdToInt(c);
   assertIntEquals(id, 0);
+  freeCharString(c);
   return 0;
 }
 

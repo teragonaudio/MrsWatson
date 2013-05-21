@@ -25,6 +25,7 @@ static int _testGetPlatformName(void) {
 #else
   assertCharStringEquals(p, "Unsupported platform");
 #endif
+  freeCharString(p);
   return 0;
 }
 
@@ -52,6 +53,7 @@ static int _testGetShortPlatformName(void) {
 #else
   assertCharStringEquals(p, "Unsupported");
 #endif
+  freeCharString(p);
   return 0;
 }
 
