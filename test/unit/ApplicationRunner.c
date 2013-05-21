@@ -20,19 +20,6 @@ const char* kDefaultTestOutputFileType = "pcm";
 static const char* kApplicationRunnerOutputFolder = "out";
 static const int kApplicationRunnerWaitTimeoutInMs = 1000;
 
-TestEnvironment newTestEnvironment(char *applicationPath, char *resourcesPath) {
-  TestEnvironment testEnvironment = (TestEnvironment)malloc(sizeof(TestEnvironmentMembers));
-  testEnvironment->applicationPath = applicationPath;
-  testEnvironment->resourcesPath = resourcesPath;
-  testEnvironment->results = newTestSuite("Results", NULL, NULL);
-  return testEnvironment;
-}
-
-void freeTestEnvironment(TestEnvironment testEnvironment) {
-  free(testEnvironment->results);
-  free(testEnvironment);
-}
-
 CharString buildTestArgumentString(const char* arguments, ...) {
   CharString formattedArguments;
   va_list argumentList;
@@ -248,4 +235,19 @@ Please check the executable path specified in the --mrswatson-path argument.",
   freeCharString(defaultArguments);
   freeCharString(testArguments);
   freeCharString(failedAnalysisFunctionName);
+}
+
+void freeTestEnvironment(TestEnvironment self) {
+  if(self != NULL) {
+    freeTestSuite(self->results);
+    free(self);
+  }
+}
+
+TestEnvironment newTestEnvironment(char *applicationPath, char *resourcesPath) {
+  TestEnvironment testEnvironment = (TestEnvironment)malloc(sizeof(TestEnvironmentMembers));
+  testEnvironment->applicationPath = applicationPath;
+  testEnvironment->resourcesPath = resourcesPath;
+  testEnvironment->results = newTestSuite("Results", NULL, NULL);
+  return testEnvironment;
 }

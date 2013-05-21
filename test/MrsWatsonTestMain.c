@@ -90,7 +90,7 @@ int main(int argc, char* argv[]) {
   boolByte runApplicationTests = false;
   TestCase testCase;
   TestSuite testSuite;
-  TestEnvironment testEnvironment;
+  TestEnvironment testEnvironment = NULL;
   char* testArgument;
   char* colon;
   char* testCaseName;
