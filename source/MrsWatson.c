@@ -575,8 +575,8 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
       }
       logDebug("Using buffer size of %d for final block", outputSampleBuffer->blocksize);
     }
-    outputSource->writeSampleBlock(outputSource, outputSampleBuffer);
 
+    outputSource->writeSampleBlock(outputSource, outputSampleBuffer);
     advanceAudioClock(audioClock, getBlocksize());
   }
 

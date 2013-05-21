@@ -139,6 +139,7 @@ void convertSampleBufferToPcmData(const SampleBuffer sampleBuffer, short* outPcm
   int currentChannel = 0;
   short shortValue;
   Sample sample;
+
   for(currentSample = 0; currentSample < sampleBuffer->blocksize; currentSample++) {
     for(currentChannel = 0; currentChannel < sampleBuffer->numChannels; currentChannel++) {
       sample = sampleBuffer->samples[currentChannel][currentSample];

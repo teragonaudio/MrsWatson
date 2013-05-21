@@ -227,6 +227,5 @@ int main(int argc, char* argv[]) {
   freeCharString(currentPath);
   freeCharString(mrsWatsonPath);
   freeCharString(resourcesPath);
-
   return totalTestsFailed;
 }
