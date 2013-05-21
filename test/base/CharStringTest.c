@@ -48,6 +48,7 @@ static int _testCopyCharStrings(void) {
   charStringCopy(c2, c);
   assertCharStringEquals(c, c2->data);
   freeCharString(c);
+  freeCharString(c2);
   return 0;
 }
 

@@ -64,8 +64,8 @@ boolByte pluginChainAddFromArgumentString(PluginChain pluginChain, const CharStr
   char* substringStart;
   char* pluginSeparator;
   char* endChar;
-  CharString pluginNameBuffer = newCharString();
-  CharString presetNameBuffer;
+  CharString pluginNameBuffer = NULL;
+  CharString presetNameBuffer = NULL;
   char* presetSeparator;
   PluginPreset preset;
   PluginPresetType presetType;
@@ -89,6 +89,7 @@ boolByte pluginChainAddFromArgumentString(PluginChain pluginChain, const CharStr
     else {
       substringLength = pluginSeparator - substringStart;
     }
+    pluginNameBuffer = newCharString();
     strncpy(pluginNameBuffer->data, substringStart, substringLength);
 
     // Look for the separator for presets to load into these plugins
@@ -109,7 +110,6 @@ boolByte pluginChainAddFromArgumentString(PluginChain pluginChain, const CharStr
         preset = newPluginPreset(presetType, presetNameBuffer);
       }
     }
-    freeCharString(presetNameBuffer);
 
     // Guess the plugin type from the file extension, search root, etc.
     pluginLocationBuffer = newCharString();
@@ -133,6 +133,7 @@ boolByte pluginChainAddFromArgumentString(PluginChain pluginChain, const CharStr
   } while(substringStart < endChar);
 
   freeCharString(pluginNameBuffer);
+  freeCharString(presetNameBuffer);
   return true;
 }
 

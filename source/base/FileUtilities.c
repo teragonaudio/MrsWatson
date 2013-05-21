@@ -76,7 +76,7 @@ boolByte fileExists(const char* path) {
 boolByte copyFileToDirectory(const CharString fileAbsolutePath, const CharString directoryAbsolutePath) {
   boolByte result = false;
   CharString fileOutPath = newCharStringWithCapacity(kCharStringLengthLong);
-  CharString fileBasename = newCharString();
+  CharString fileBasename = NULL;
   FILE *input = NULL;
   FILE *output = NULL;
   char ch;
@@ -170,9 +170,9 @@ boolByte removeDirectory(const CharString absolutePath) {
 
   // This is a bit lazy, perhaps...
   CharString removeCommand = newCharString();
-  snprintf(removeCommand->data, removeCommand->length, "/bin/rm -rf \"%s\"",
-    absolutePath->data);
+  snprintf(removeCommand->data, removeCommand->length, "/bin/rm -rf \"%s\"", absolutePath->data);
   result = system(removeCommand->data);
+  freeCharString(removeCommand);
   return (result == 0);
 #elif WINDOWS
   SHFILEOPSTRUCTA fileOperation = {0};
@@ -189,6 +189,7 @@ boolByte removeDirectory(const CharString absolutePath) {
 void buildAbsolutePath(const CharString directory, const CharString file, const char* fileExtension, CharString outString) {
   const char* extension;
   CharString absoluteDirectory = newCharString();
+
   if(isAbsolutePath(directory)) {
     charStringCopy(absoluteDirectory, directory);
   }
@@ -211,12 +212,14 @@ void buildAbsolutePath(const CharString directory, const CharString file, const 
     snprintf(outString->data, outString->length, "%s%c%s",
       absoluteDirectory->data, PATH_DELIMITER, file->data);
   }
+
   freeCharString(absoluteDirectory);
 }
 
 void convertRelativePathToAbsolute(const CharString file, CharString outString) {
   CharString currentDirectory = getCurrentDirectory();
   snprintf(outString->data, outString->length, "%s%c%s", currentDirectory->data, PATH_DELIMITER, file->data);
+  freeCharString(currentDirectory);
 }
 
 boolByte isAbsolutePath(const CharString path) {

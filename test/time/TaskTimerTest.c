@@ -17,8 +17,11 @@
 
 static int _testNewTaskTimer(void) {
   TaskTimer t = newTaskTimer(1);
+
   assertIntEquals(t->numTasks, 1);
   assertIntEquals(t->currentTask, -1);
+
+  freeTaskTimer(t);
   return 0;
 }
 
@@ -35,18 +38,22 @@ static void _testSleep(void) {
 
 static int _testTaskTimerDuration(void) {
   TaskTimer t = newTaskTimer(1);
+
   assertIntEquals(t->currentTask, -1);
   startTimingTask(t, 0);
   _testSleep();
   stopTiming(t);
   assertIntEquals(t->currentTask, -1);
   assertDoubleEquals(t->totalTaskTimes[0], SLEEP_DURATION_MS, MAX_TIMER_TOLERANCE_MS);
+
+  freeTaskTimer(t);
   return 0;
 }
 
 static int _testTaskTimerDurationMultipleTimes(void) {
   TaskTimer t = newTaskTimer(1);
   int i;
+
   for(i = 0; i < 5; i++) {
     assertIntEquals(t->currentTask, -1);
     startTimingTask(t, 0);
@@ -55,22 +62,28 @@ static int _testTaskTimerDurationMultipleTimes(void) {
     assertIntEquals(t->currentTask, -1);
   }
   assertDoubleEquals(t->totalTaskTimes[0], 5.0 * SLEEP_DURATION_MS, MAX_TIMER_TOLERANCE_MS * 5.0);
+
+  freeTaskTimer(t);
   return 0;
 }
 
 static int _testTaskTimerCallStartTwice(void) {
   TaskTimer t = newTaskTimer(1);
+
   startTimingTask(t, 0);
   startTimingTask(t, 0);
   _testSleep();
   stopTiming(t);
   assertIntEquals(t->currentTask, -1);
   assertDoubleEquals(t->totalTaskTimes[0], SLEEP_DURATION_MS, MAX_TIMER_TOLERANCE_MS);
+
+  freeTaskTimer(t);
   return 0;
 }
 
 static int _testTaskTimerCallStopTwice(void) {
   TaskTimer t = newTaskTimer(1);
+
   startTimingTask(t, 0);
   _testSleep();
   stopTiming(t);
@@ -78,11 +91,14 @@ static int _testTaskTimerCallStopTwice(void) {
   assertIntEquals(t->currentTask, -1);
   // Recorded time should be at most 1ms off
   assertDoubleEquals(t->totalTaskTimes[0], SLEEP_DURATION_MS, MAX_TIMER_TOLERANCE_MS);
+
+  freeTaskTimer(t);
   return 0;
 }
 
 static int _testCallStopBeforeStart(void) {
   TaskTimer t = newTaskTimer(1);
+
   stopTiming(t);
   assertIntEquals(t->currentTask, -1);
   startTimingTask(t, 0);
@@ -92,6 +108,8 @@ static int _testCallStopBeforeStart(void) {
   assertIntEquals(t->currentTask, -1);
   // Recorded time should be at most 1ms off
   assertDoubleEquals(t->totalTaskTimes[0], SLEEP_DURATION_MS, MAX_TIMER_TOLERANCE_MS);
+
+  freeTaskTimer(t);
   return 0;
 }
 
