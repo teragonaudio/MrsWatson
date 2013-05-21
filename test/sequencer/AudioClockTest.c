@@ -13,7 +13,7 @@ static void _audioClockTestTeardown(void) {
 
 static int _testInitAudioClock(void) {
   AudioClock audioClock = getAudioClock();
-  assertUnsignedLongEquals(audioClock->currentFrame, 0);
+  assertUnsignedLongEquals(audioClock->currentFrame, 0l);
   assertFalse(audioClock->isPlaying);
   assertFalse(audioClock->transportChanged);
   return 0;

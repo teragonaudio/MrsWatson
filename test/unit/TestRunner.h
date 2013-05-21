@@ -81,7 +81,7 @@ void freeTestSuite(TestSuite self);
 #define assertUnsignedLongEquals(condition, expected) { \
   unsigned long result = condition; \
   if(result != expected) { \
-    fprintf(stderr, "Assertion failed at %s:%d. Expected %d, got %d. ", getFileBasename(__FILE__), __LINE__, expected, result); \
+    fprintf(stderr, "Assertion failed at %s:%d. Expected %ld, got %ld. ", getFileBasename(__FILE__), __LINE__, expected, result); \
     return 1; \
   } \
 }
