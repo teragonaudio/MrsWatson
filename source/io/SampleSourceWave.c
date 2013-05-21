@@ -316,7 +316,7 @@ static boolByte _openSampleSourceWave(void *sampleSourcePtr, const SampleSourceO
 
 static boolByte _readBlockFromWaveFile(void* sampleSourcePtr, SampleBuffer sampleBuffer) {
   SampleSource sampleSource = (SampleSource)sampleSourcePtr;
-  SampleSourcePcmData extraData = sampleSource->extraData;
+  SampleSourcePcmData extraData = (SampleSourcePcmData)sampleSource->extraData;
   int originalBlocksize = sampleBuffer->blocksize;
   size_t samplesRead = sampleSourcePcmRead(extraData, sampleBuffer);
   sampleSource->numSamplesProcessed += samplesRead;
@@ -325,7 +325,7 @@ static boolByte _readBlockFromWaveFile(void* sampleSourcePtr, SampleBuffer sampl
 
 static boolByte _writeBlockToWaveFile(void* sampleSourcePtr, const SampleBuffer sampleBuffer) {
   SampleSource sampleSource = (SampleSource)sampleSourcePtr;
-  SampleSourcePcmData extraData = sampleSource->extraData;
+  SampleSourcePcmData extraData = (SampleSourcePcmData)sampleSource->extraData;
   int samplesWritten = (int)sampleSourcePcmWrite(extraData, sampleBuffer);
   sampleSource->numSamplesProcessed += samplesWritten;
   return (samplesWritten == sampleBuffer->blocksize);
