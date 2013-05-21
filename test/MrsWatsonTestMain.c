@@ -84,6 +84,7 @@ int main(int argc, char* argv[]) {
   CharString testSuiteToRun;
   CharString executablePath;
   CharString currentPath;
+  CharString mrsWatsonExeName = newCharStringWithCString(MRSWATSON_EXE_NAME);
   CharString mrsWatsonPath;
   CharString resourcesPath;
   boolByte runInternalTests = false;
@@ -194,7 +195,7 @@ int main(int argc, char* argv[]) {
     charStringCopy(mrsWatsonPath, programOptions->options[OPTION_TEST_MRSWATSON_PATH]->argument);
   }
   else {
-    buildAbsolutePath(currentPath, newCharStringWithCString(MRSWATSON_EXE_NAME), NULL, mrsWatsonPath);
+    buildAbsolutePath(currentPath, mrsWatsonExeName, NULL, mrsWatsonPath);
   }
   if(runApplicationTests && !fileExists(mrsWatsonPath->data)) {
     printf("Could not find mrswatson at '%s', skipping application tests\n", mrsWatsonPath->data);
@@ -226,6 +227,7 @@ int main(int argc, char* argv[]) {
   freeCharString(executablePath);
   freeCharString(currentPath);
   freeCharString(mrsWatsonPath);
+  freeCharString(mrsWatsonExeName);
   freeCharString(resourcesPath);
   return totalTestsFailed;
 }

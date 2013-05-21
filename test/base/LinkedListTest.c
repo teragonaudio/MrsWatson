@@ -101,6 +101,7 @@ static int _testLinkedListToArray(void) {
 
   linkedListAppend(l, newCharStringWithCString("one"));
   linkedListAppend(l, newCharStringWithCString("two"));
+
   arr = (CharString*)linkedListToArray(l);
   assertNotNull(arr);
   c = (CharString)arr[0];
@@ -109,6 +110,7 @@ static int _testLinkedListToArray(void) {
   assertCharStringEquals(c, "two");
   assertIsNull(arr[2]);
 
+  free(arr);
   freeLinkedListAndItems(l, (LinkedListFreeItemFunc)freeCharString);
   return 0;
 }

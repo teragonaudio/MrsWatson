@@ -106,6 +106,7 @@ static int _testConvertInvalidStringIdToInt(void) {
   CharString c = newCharStringWithCString("a");
   unsigned long id = convertStringIdToInt(c);
   assertIntEquals(id, 0);
+  freeCharString(c);
   return 0;
 }
 

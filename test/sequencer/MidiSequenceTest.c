@@ -82,6 +82,7 @@ static int _testFillEventsSequentially(void) {
   appendMidiEventToSequence(m, e2);
   assert(fillMidiEventsFromRange(m, 0, 256, l));
   assertIntEquals(linkedListLength(l), 1);
+  freeLinkedList(l);
   l = newLinkedList();
   assertFalse(fillMidiEventsFromRange(m, 256, 256, l));
   assertIntEquals(linkedListLength(l), 1);

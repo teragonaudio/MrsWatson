@@ -61,38 +61,52 @@ static CharString _fileUtilitiesMakeTempDir(void) {
 static int _testCopyFileToDirectory(void) {
   CharString tempDir = _fileUtilitiesMakeTempDir();
   CharString tempFile = newCharString();
+  CharString testFilename = newCharStringWithCString(TEST_FILENAME);
 
   FILE *fp = fopen(TEST_FILENAME, "w");
   assertNotNull(fp);
   fclose(fp);
-  convertRelativePathToAbsolute(newCharStringWithCString(TEST_FILENAME), tempFile);
+  convertRelativePathToAbsolute(testFilename, tempFile);
   assert(copyFileToDirectory(tempFile, tempDir));
   assert(removeDirectory(tempDir));
 
+  unlink(TEST_FILENAME);
   freeCharString(tempDir);
   freeCharString(tempFile);
-  unlink(TEST_FILENAME);
+  freeCharString(testFilename);
   return 0;
 }
 
 static int _testCopyInvalidFileToDirectory(void) {
   CharString tempDir = _fileUtilitiesMakeTempDir();
-  convertRelativePathToAbsolute(newCharStringWithCString(TEST_FILENAME), newCharStringWithCString("invalid"));
-  assertFalse(copyFileToDirectory(newCharStringWithCString("invalid"), tempDir));
+  CharString testFilename = newCharStringWithCString(TEST_FILENAME);
+  CharString invalid = newCharStringWithCString("invalid");
+
+  convertRelativePathToAbsolute(testFilename, invalid);
+  assertFalse(copyFileToDirectory(invalid, tempDir));
   removeDirectory(tempDir);
+
+  freeCharString(testFilename);
   freeCharString(tempDir);
+  freeCharString(invalid);
   return 0;
 }
 
 static int _testCopyFileToInvalidDirectory(void) {
   CharString tempFile = newCharString();
+  CharString testFilename = newCharStringWithCString(TEST_FILENAME);
+  CharString invalid = newCharStringWithCString("invalid");
   FILE *fp = fopen(TEST_FILENAME, "w");
+
   assertNotNull(fp);
   fclose(fp);
-  convertRelativePathToAbsolute(newCharStringWithCString(TEST_FILENAME), tempFile);
-  assertFalse(copyFileToDirectory(tempFile, newCharStringWithCString("invalid")));
+  convertRelativePathToAbsolute(testFilename, tempFile);
+  assertFalse(copyFileToDirectory(tempFile, invalid));
+
   unlink(TEST_FILENAME);
   freeCharString(tempFile);
+  freeCharString(testFilename);
+  freeCharString(invalid);
   return 0;
 }
 
@@ -124,8 +138,10 @@ static int _testListDirectory(void) {
 static int _testListEmptyDirectory(void) {
   CharString tempDir = _fileUtilitiesMakeTempDir();
   LinkedList l = listDirectory(tempDir);
+
   assertIntEquals(linkedListLength(l), 0);
   removeDirectory(tempDir);
+
   freeCharString(tempDir);
   freeLinkedListAndItems(l, (LinkedListFreeItemFunc)freeCharString);
   return 0;
