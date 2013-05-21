@@ -52,7 +52,7 @@ TaskTimer newTaskTimer(const int numTasks) {
   QueryPerformanceFrequency(&queryFrequency);
   taskTimer->counterFrequency = (double)(queryFrequency.QuadPart) / 1000.0;
 #elif UNIX
-  taskTimer->startTime = malloc(sizeof(struct timeval));
+  taskTimer->startTime = (struct timeval*)malloc(sizeof(struct timeval));
 #endif
 
   return taskTimer;
@@ -65,7 +65,7 @@ void startTimingTask(TaskTimer taskTimer, const int taskId) {
   stopTiming(taskTimer);
 #if WINDOWS
   QueryPerformanceCounter(&(taskTimer->startTime));
-#else
+#elif UNIX
   gettimeofday(taskTimer->startTime, NULL);
 #endif
   taskTimer->currentTask = taskId;
@@ -80,7 +80,7 @@ void stopTiming(TaskTimer taskTimer) {
     elapsedTimeInClocks = stopTime.QuadPart - taskTimer->startTime.QuadPart;
     taskTimer->totalTaskTimes[taskTimer->currentTask] += (double)(elapsedTimeInClocks) / taskTimer->counterFrequency;
   }
-#else
+#elif UNIX
   double elapsedTimeInMs;
   double elapsedFullSeconds;
   double elapsedMicroseconds;

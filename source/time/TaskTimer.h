@@ -38,16 +38,17 @@ typedef struct {
 #if WINDOWS
   LARGE_INTEGER startTime;
   double counterFrequency;
-#else
+#elif UNIX
   struct timeval* startTime;
 #endif
 } TaskTimerMembers;
-
 typedef TaskTimerMembers* TaskTimer;
 
 TaskTimer newTaskTimer(const int maxTasks);
+
 void startTimingTask(TaskTimer taskTimer, const int taskId);
 void stopTiming(TaskTimer taskTimer);
+
 void freeTaskTimer(TaskTimer taskTimer);
 
 #endif
