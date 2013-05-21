@@ -55,6 +55,9 @@ LinkedList getVst2xPluginLocations(CharString currentDirectory) {
     snprintf(locationBuffer->data, (size_t)(locationBuffer->length), "%s", vstPathEnv);
     linkedListAppend(locations, locationBuffer);
   }
+  else {
+    freeCharString(locationBuffer);
+  }
 
   return locations;
 }

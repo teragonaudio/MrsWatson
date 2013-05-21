@@ -273,6 +273,7 @@ boolByte programOptionsParseConfigFile(ProgramOptions self, const CharString fil
         fileLine = newCharString();
         fgets(fileLine->data, fileLine->length, configFileHandle);
         if(fileLine->data[0] == '\0') {
+          freeCharString(fileLine);
           fclose(configFileHandle);
           break;
         }
