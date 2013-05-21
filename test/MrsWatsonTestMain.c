@@ -37,7 +37,7 @@ static const char* MRSWATSON_EXE_NAME = "mrswatson.exe";
 static const char* MRSWATSON_EXE_NAME = "mrswatson";
 #endif
 
-static ProgramOptions newTestProgramOptions(void) {
+static ProgramOptions _newTestProgramOptions(void) {
   ProgramOptions programOptions = newProgramOptions(NUM_TEST_OPTIONS);
   srand((unsigned int)time(NULL));
   
@@ -96,7 +96,7 @@ int main(int argc, char* argv[]) {
   char* testCaseName;
   char* testSuiteName;
 
-  programOptions = newTestProgramOptions();
+  programOptions = _newTestProgramOptions();
   if(!programOptionsParseArgs(programOptions, argc, argv)) {
     printf("Or run %s --help (option) to see help for a single option\n", getFileBasename(argv[0]));
     return -1;
