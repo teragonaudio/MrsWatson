@@ -88,9 +88,14 @@ void sampleBufferCopy(SampleBuffer self, const SampleBuffer buffer) {
 
 void freeSampleBuffer(SampleBuffer sampleBuffer) {
   int i;
-  for(i = 0; i < sampleBuffer->numChannels; i++) {
-    free(sampleBuffer->samples[i]);
+  if(sampleBuffer == NULL) {
+    return;
   }
-  free(sampleBuffer->samples);
+  if(sampleBuffer->samples != NULL) {
+    for(i = 0; i < 2; i++) {
+      free(sampleBuffer->samples[i]);
+    }
+    free(sampleBuffer->samples);
+  }
   free(sampleBuffer);
 }
