@@ -32,19 +32,15 @@
 #include "audio/SampleBuffer.h"
 #include "logging/EventLogger.h"
 
-SampleBuffer newSampleBuffer(int numChannels, int blocksize) {
+SampleBuffer newSampleBuffer(unsigned int numChannels, unsigned long blocksize) {
   SampleBuffer sampleBuffer = NULL;
-  int i;
+  unsigned int i;
 
   if(numChannels <= 0) {
     logError("Cannot create sample buffer with channel count %d", numChannels);
     return NULL;
   }
-  else if(numChannels > 2) {
-    logUnsupportedFeature("Channel count >2");
-    return NULL;
-  }
-  else if(blocksize <= 0) {
+  if(blocksize <= 0) {
     logError("Cannot create sample buffer with blocksize %d", blocksize);
     return NULL;
   }
@@ -53,13 +49,8 @@ SampleBuffer newSampleBuffer(int numChannels, int blocksize) {
   sampleBuffer->numChannels = numChannels;
   sampleBuffer->blocksize = blocksize;
 
-  // Bah, VST plugins are essentially hardcoded to be stereo, so we need to force
-  // two channels here even if we have a mono input source. This is not so flexible
-  // but should at least allow mono input sources to work correctly.
-  // Also note that internally, the numChannels member should still be correct,
-  // this is just a workaround to prevent segfaults.
-  sampleBuffer->samples = (Samples*)malloc(sizeof(Samples) * 2);
-  for(i = 0; i < 2; i++) {
+  sampleBuffer->samples = (Samples*)malloc(sizeof(Samples) * numChannels);
+  for(i = 0; i < numChannels; i++) {
     sampleBuffer->samples[i] = (Samples)malloc(sizeof(Sample) * blocksize);
   }
   sampleBufferClear(sampleBuffer);
@@ -68,32 +59,81 @@ SampleBuffer newSampleBuffer(int numChannels, int blocksize) {
 }
 
 void sampleBufferClear(SampleBuffer self) {
-  int i;
+  unsigned int i;
   for(i = 0; i < self->numChannels; i++) {
     memset(self->samples[i], 0, sizeof(Sample) * self->blocksize);
   }
 }
 
-void sampleBufferCopy(SampleBuffer self, const SampleBuffer buffer) {
-  int i;
+boolByte sampleBufferCopy(SampleBuffer self, const SampleBuffer buffer) {
+  unsigned int i;
+
+  // Definitely not supported, otherwise it would be hard to deal with partial
+  // copies and so forth.
   if(self->blocksize != buffer->blocksize) {
-    return;
+    return false;
   }
-  else if(self->numChannels != buffer->numChannels) {
-    return;
+
+  // If the other buffer is bigger (or the same size) as this buffer, then only
+  // copy up to the channel count of this buffer. Any other data will be lost,
+  // sorry about that!
+  if(buffer->numChannels >= self->numChannels) {
+    for(i = 0; i < self->numChannels; i++) {
+      memcpy(self->samples[i], buffer->samples[i], sizeof(Sample) * self->blocksize);
+    }
   }
-  for(i = 0; i < self->numChannels; i++) {
-    memcpy(self->samples[i], buffer->samples[i], sizeof(Sample) * self->blocksize);
+  // But if this buffer is bigger than the other buffer, then copy all channels
+  // to this one. For example, if this buffer is 4 channels and the other buffer
+  // is 2 channels, then we copy the stereo pair to this channel (L R L R).
+  else {
+    for(i = 0; i < self->numChannels; i++) {
+      memcpy(self->samples[i], buffer->samples[i % buffer->numChannels], sizeof(Sample) * self->blocksize);
+    }
   }
+
+  return true;
+}
+
+boolByte sampleBuffeResize(SampleBuffer self, const unsigned int numChannels, boolByte copy) {
+  unsigned int i;
+
+  if(numChannels == self->numChannels || numChannels == 0) {
+    return false;
+  }
+  else if(numChannels < self->numChannels) {
+    for(i = self->numChannels - 1; i >= numChannels; i--) {
+      free(self->samples[i]);
+    }
+    self->numChannels = numChannels;
+    return true;
+  }
+  else if(numChannels > self->numChannels) {
+    for(i = self->numChannels; i < numChannels; i++) {
+      self->samples[i] = (Samples)malloc(sizeof(Sample) * self->blocksize);
+      if(copy) {
+        memcpy(self->samples[i], self->samples[0], sizeof(Sample) * self->blocksize);
+      }
+      else {
+        memset(self->samples[i], 0, sizeof(Sample) * self->blocksize);
+      }
+    }
+    self->numChannels = numChannels;
+    return true;
+  }
+  else {
+    // Invalid state, probably shouldn't happen...
+  }
+
+  return false;
 }
 
 void freeSampleBuffer(SampleBuffer sampleBuffer) {
-  int i;
+  unsigned int i;
   if(sampleBuffer == NULL) {
     return;
   }
   if(sampleBuffer->samples != NULL) {
-    for(i = 0; i < 2; i++) {
+    for(i = 0; i < sampleBuffer->numChannels; i++) {
       free(sampleBuffer->samples[i]);
     }
     free(sampleBuffer->samples);

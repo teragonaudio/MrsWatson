@@ -28,12 +28,14 @@
 #ifndef MrsWatson_SampleBuffer_h
 #define MrsWatson_SampleBuffer_h
 
+#include "base/Types.h"
+
 typedef float Sample;
 typedef Sample* Samples;
 
 typedef struct {
-  int numChannels;
-  int blocksize;
+  unsigned int numChannels;
+  unsigned long blocksize;
   Samples* samples;
 } SampleBufferMembers;
 typedef SampleBufferMembers* SampleBuffer;
@@ -44,19 +46,31 @@ typedef SampleBufferMembers* SampleBuffer;
  * @param blocksize Processing blocksize to use
  * @return An initialized SampleBuffer instance
  */
-SampleBuffer newSampleBuffer(int numChannels, int blocksize);
+SampleBuffer newSampleBuffer(unsigned int numChannels, unsigned long blocksize);
 
 /**
  * Set all samples to zero
  * @param self
  */
 void sampleBufferClear(SampleBuffer self);
+
 /**
  * Copy all samples from another buffer to this one
  * @param self
  * @param buffer Other buffer to copy from
+ * @return True on success, false on failure
  */
-void sampleBufferCopy(SampleBuffer self, const SampleBuffer buffer);
+boolByte sampleBufferCopy(SampleBuffer self, const SampleBuffer buffer);
+
+/**
+ * Expand or shrink the channel count of a sample buffer. Useful for copying
+ * between stereo/mono and such.
+ * @param self
+ * @param numChannels New channel count
+ * @param copy Clone data from channel 0 to new channels if expanding the SampleBuffer
+ * @return True on success, false on failure
+ */
+boolByte sampleBuffeResize(SampleBuffer self, const unsigned int numChannels, boolByte copy);
 
 /**
  * Free all memory used by a SampleBuffer instance
