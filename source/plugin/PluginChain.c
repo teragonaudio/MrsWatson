@@ -232,8 +232,17 @@ void pluginChainProcessAudio(PluginChain pluginChain, SampleBuffer inBuffer, Sam
 
   for(i = 0; i < pluginChain->numPlugins; i++) {
     sampleBufferClear(outBuffer);
+
     plugin = pluginChain->plugins[i];
     logDebug("Processing audio with plugin '%s'", plugin->pluginName->data);
+    if(inBuffer->numChannels < plugin->numInputs) {
+      logDebug("Expanding input source from %d -> %d channels", inBuffer->numChannels, plugin->numInputs);
+      sampleBufferResize(inBuffer, plugin->numInputs, true);
+    }
+    if(outBuffer->numChannels < plugin->numOutputs) {
+      logDebug("Expanding output source from %d -> %d channels", outBuffer->numChannels, plugin->numOutputs);
+      sampleBufferResize(outBuffer, plugin->numOutputs, false);
+    }
     startTimingTask(taskTimer, i);
     plugin->processAudio(plugin, inBuffer, outBuffer);
     // TODO: Last task ID is the host, but this is a bit hacky

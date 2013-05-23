@@ -108,6 +108,7 @@ boolByte sampleBufferResize(SampleBuffer self, const unsigned int numChannels, b
     return true;
   }
   else if(numChannels > self->numChannels) {
+    realloc(self->samples, sizeof(Samples) * numChannels);
     for(i = self->numChannels; i < numChannels; i++) {
       self->samples[i] = (Samples)malloc(sizeof(Sample) * self->blocksize);
       if(copy) {

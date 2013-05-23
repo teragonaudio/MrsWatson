@@ -235,7 +235,9 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   ProgramOptions programOptions;
   ProgramOption option;
   Plugin headPlugin;
-  SampleBuffer inputSampleBuffer, outputSampleBuffer;
+  SampleBuffer inputSampleBuffer = NULL;
+  SampleBuffer outputSampleBuffer = NULL;
+  SampleBuffer outputSampleBufferResized = NULL;
   TaskTimer taskTimer;
   CharString totalTimeString;
   boolByte finishedReading = false;
@@ -505,6 +507,8 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   }
 
   inputSampleBuffer = newSampleBuffer(getNumChannels(), getBlocksize());
+  // By default, the output buffer has the same channel count as the input buffer,
+  // but if a plugin requests a larger I/O configuration this buffer will be resized.
   outputSampleBuffer = newSampleBuffer(getNumChannels(), getBlocksize());
 
   // Initialize task timer to record how much time was used by each plugin (and us). The
@@ -530,7 +534,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   logInfo("Starting processing input source");
   logDebug("Sample rate: %.0f", getSampleRate());
   logDebug("Blocksize: %d", getBlocksize());
-  logDebug("Channel configuration: %s", getNumChannels() == 1 ? "mono" : "stereo");
+  logDebug("Channels: %d", getNumChannels());
   logDebug("Tempo: %.2f", getTempo());
   logDebug("Time signature: %d/%d", getTimeSignatureBeatsPerMeasure(), getTimeSignatureNoteValue());
 
@@ -576,7 +580,19 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
       logDebug("Using buffer size of %d for final block", outputSampleBuffer->blocksize);
     }
 
-    outputSource->writeSampleBlock(outputSource, outputSampleBuffer);
+    // Before writing the output source, see if one of the plugins in the chain
+    // has expanded the channel count. If so, we need to allocate a new buffer
+    // which will hold only the channels needed.
+    if(outputSampleBuffer->numChannels > getNumChannels()) {
+      if(outputSampleBufferResized == NULL) {
+        outputSampleBufferResized = newSampleBuffer(getNumChannels(), getBlocksize());
+      }
+      sampleBufferCopy(outputSampleBufferResized, outputSampleBuffer);
+      //outputSource->writeSampleBlock(outputSource, outputSampleBufferResized);
+    }
+    else {
+      outputSource->writeSampleBlock(outputSource, outputSampleBuffer);
+    }
     advanceAudioClock(audioClock, getBlocksize());
   }
 

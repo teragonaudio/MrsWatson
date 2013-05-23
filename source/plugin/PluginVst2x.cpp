@@ -259,6 +259,9 @@ static boolByte _initVst2xPlugin(Plugin plugin) {
     plugin->pluginType = PLUGIN_TYPE_EFFECT;
   }
 
+  plugin->numInputs = data->pluginHandle->numInputs;
+  plugin->numOutputs = data->pluginHandle->numOutputs;
+
   if(data->pluginHandle->dispatcher(data->pluginHandle, effGetPlugCategory, 0, 0, NULL, 0.0f) == kPlugCategShell) {
     uniqueIdString = convertIntIdToString(data->shellPluginId);
     logDebug("VST is a shell plugin, sub-plugin ID '%s'", uniqueIdString->data);
@@ -651,6 +654,8 @@ Plugin newPluginVst2x(const CharString pluginName, const CharString pluginLocati
   charStringCopy(plugin->pluginName, pluginName);
   plugin->pluginLocation = newCharString();
   charStringCopy(plugin->pluginLocation, pluginLocation);
+  plugin->numInputs = 0;
+  plugin->numOutputs = 0;
 
   plugin->open = _openVst2xPlugin;
   plugin->displayInfo = _displayVst2xPluginInfo;
