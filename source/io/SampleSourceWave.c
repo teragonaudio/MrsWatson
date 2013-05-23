@@ -335,29 +335,66 @@ void closeSampleSourceWave(void* sampleSourceDataPtr) {
 #if ! HAVE_LIBAUDIOFILE
   SampleSource sampleSource = (SampleSource)sampleSourceDataPtr;
   SampleSourcePcmData extraData = (SampleSourcePcmData)sampleSource->extraData;
+  unsigned int numBytesWritten;
+  size_t bytesWrittenToFile;
+  RiffChunk chunk;
 
   if(sampleSource->openedAs == SAMPLE_SOURCE_OPEN_WRITE) {
-    unsigned int numBytesWritten;
-    RiffChunk chunk = newRiffChunk();
-
     // Re-open the file for editing
     fflush(extraData->fileHandle);
-    fclose(extraData->fileHandle);
+    if(!fclose(extraData->fileHandle)) {
+      logError("Could not close WAVE file for finalization");
+      return;
+    }
     extraData->fileHandle = fopen(sampleSource->sourceName->data, "rb+");
+    if(extraData->fileHandle == NULL) {
+      logError("Could not reopen WAVE file for finalization");
+      return;
+    }
 
     // First go to the second chunk in the file and re-read the chunk length
-    fseek(extraData->fileHandle, 12, SEEK_SET);
-    riffChunkReadNext(extraData->fileHandle, chunk, false);
+    if(!fseek(extraData->fileHandle, 12, SEEK_SET)) {
+      logError("Could not seek to second chunk during WAVE file finalization");
+      fclose(extraData->fileHandle);
+      return;
+    }
+    chunk = newRiffChunk();
+    if(!riffChunkReadNext(extraData->fileHandle, chunk, false)) {
+      logError("Could not read RIFF chunk during WAVE file finalization");
+      fclose(extraData->fileHandle);
+      freeRiffChunk(chunk);
+      return;
+    }
 
     // Go to the next chunk, and then skip the type and write the new length
-    fseek(extraData->fileHandle, chunk->size + 4, SEEK_CUR);
+    if(!fseek(extraData->fileHandle, chunk->size + 4, SEEK_CUR)) {
+      logError("Could not seek to next chunk during WAVE file finalization");
+      fclose(extraData->fileHandle);
+      freeRiffChunk(chunk);
+      return;
+    }
     numBytesWritten = sampleSource->numSamplesProcessed * extraData->bitsPerSample / 8;
-    fwrite(&numBytesWritten, sizeof(unsigned int), 1, extraData->fileHandle);
+    if(fwrite(&numBytesWritten, sizeof(unsigned int), 1, extraData->fileHandle) != 1) {
+      logError("Could not write WAVE file size during finalization");
+      fclose(extraData->fileHandle);
+      freeRiffChunk(chunk);
+      return;
+    }
 
     // Add 40 bytes for fmt chunk size and write the RIFF chunk size
     numBytesWritten += ftell(extraData->fileHandle) - 8;
-    fseek(extraData->fileHandle, 4, SEEK_SET);
-    fwrite(&numBytesWritten, sizeof(unsigned int), 1, extraData->fileHandle);
+    if(!fseek(extraData->fileHandle, 4, SEEK_SET)) {
+      logError("Could not seek to fmt chunk during WAVE file finalization");
+      fclose(extraData->fileHandle);
+      freeRiffChunk(chunk);
+      return;
+    }
+    if(fwrite(&numBytesWritten, sizeof(unsigned int), 1, extraData->fileHandle) != 1) {
+      logError("Could not write WAVE file size in fmt chunk during finalization");
+      fclose(extraData->fileHandle);
+      freeRiffChunk(chunk);
+      return;
+    }
     fflush(extraData->fileHandle);
     fclose(extraData->fileHandle);
     freeRiffChunk(chunk);
