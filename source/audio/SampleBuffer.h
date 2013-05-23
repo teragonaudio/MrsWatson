@@ -70,7 +70,7 @@ boolByte sampleBufferCopy(SampleBuffer self, const SampleBuffer buffer);
  * @param copy Clone data from channel 0 to new channels if expanding the SampleBuffer
  * @return True on success, false on failure
  */
-boolByte sampleBuffeResize(SampleBuffer self, const unsigned int numChannels, boolByte copy);
+boolByte sampleBufferResize(SampleBuffer self, const unsigned int numChannels, boolByte copy);
 
 /**
  * Free all memory used by a SampleBuffer instance

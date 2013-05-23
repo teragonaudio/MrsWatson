@@ -118,7 +118,7 @@ static int _testCopySampleBuffersDifferentChannelsSmaller(void) {
 static int _testResizeSampleBufferExpand(void) {
   SampleBuffer s = _newMockSampleBuffer();
   s->samples[0][0] = 1.0;
-  assert(sampleBuffeResize(s, 2, false));
+  assert(sampleBufferResize(s, 2, false));
   assertIntEquals(s->numChannels, 2);
   assertDoubleEquals(s->samples[0][0], 1.0, TEST_FLOAT_TOLERANCE);
   assertDoubleEquals(s->samples[1][0], 0.0, TEST_FLOAT_TOLERANCE);
@@ -129,7 +129,7 @@ static int _testResizeSampleBufferExpand(void) {
 static int _testResizeSampleBufferExpandCopy(void) {
   SampleBuffer s = _newMockSampleBuffer();
   s->samples[0][0] = 1.0;
-  assert(sampleBuffeResize(s, 2, true));
+  assert(sampleBufferResize(s, 2, true));
   assertIntEquals(s->numChannels, 2);
   assertDoubleEquals(s->samples[0][0], 1.0, TEST_FLOAT_TOLERANCE);
   assertDoubleEquals(s->samples[1][0], 1.0, TEST_FLOAT_TOLERANCE);
@@ -140,7 +140,7 @@ static int _testResizeSampleBufferExpandCopy(void) {
 static int _testResizeSampleBufferShrink(void) {
   SampleBuffer s = newSampleBuffer(2, 1);
   s->samples[0][0] = 1.0;
-  assert(sampleBuffeResize(s, 1, false));
+  assert(sampleBufferResize(s, 1, false));
   assertIntEquals(s->numChannels, 1);
   assertDoubleEquals(s->samples[0][0], 1.0, TEST_FLOAT_TOLERANCE);
   freeSampleBuffer(s);
@@ -149,14 +149,14 @@ static int _testResizeSampleBufferShrink(void) {
 
 static int _testResizeSampleBufferInvalidSize(void) {
   SampleBuffer s = _newMockSampleBuffer();
-  assertFalse(sampleBuffeResize(s, 0, true));
+  assertFalse(sampleBufferResize(s, 0, true));
   freeSampleBuffer(s);
   return 0;  
 }
 
 static int _testResizeSampleBufferSameSize(void) {
   SampleBuffer s = _newMockSampleBuffer();
-  assertFalse(sampleBuffeResize(s, s->numChannels, true));
+  assertFalse(sampleBufferResize(s, s->numChannels, true));
   freeSampleBuffer(s);
   return 0;  
 }
