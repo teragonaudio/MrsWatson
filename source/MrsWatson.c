@@ -355,7 +355,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
           setBlocksize(strtol(option->argument->data, NULL, 10));
           break;
         case OPTION_CHANNELS:
-          setNumChannels(strtol(option->argument->data, NULL, 10));
+          setNumChannels((unsigned int)strtol(option->argument->data, NULL, 10));
           break;
         case OPTION_DISPLAY_INFO:
           shouldDisplayPluginInfo = true;

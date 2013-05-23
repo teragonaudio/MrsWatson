@@ -43,7 +43,8 @@ typedef MidiSequenceMembers* MidiSequence;
 MidiSequence newMidiSequence(void);
 
 void appendMidiEventToSequence(MidiSequence midiSequence, MidiEvent midiEvent);
-boolByte fillMidiEventsFromRange(MidiSequence midiSequence, const unsigned long startTimestamp, const int blocksize, LinkedList outMidiEvents);
+boolByte fillMidiEventsFromRange(MidiSequence midiSequence, const unsigned long startTimestamp,
+  const unsigned long blocksize, LinkedList outMidiEvents);
 
 void freeMidiSequence(MidiSequence midiSequence);
 

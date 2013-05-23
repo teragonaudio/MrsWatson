@@ -94,7 +94,7 @@ boolByte sampleBufferCopy(SampleBuffer self, const SampleBuffer buffer) {
   return true;
 }
 
-boolByte sampleBuffeResize(SampleBuffer self, const unsigned int numChannels, boolByte copy) {
+boolByte sampleBufferResize(SampleBuffer self, const unsigned int numChannels, boolByte copy) {
   unsigned int i;
 
   if(numChannels == self->numChannels || numChannels == 0) {

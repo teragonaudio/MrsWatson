@@ -12,7 +12,7 @@ static void _audioSettingsTeardown(void) {
 static int _testInitAudioSettings(void) {
   assertDoubleEquals(getSampleRate(), DEFAULT_SAMPLE_RATE, TEST_FLOAT_TOLERANCE);
   assertIntEquals(getNumChannels(), DEFAULT_NUM_CHANNELS);
-  assertIntEquals(getBlocksize(), DEFAULT_BLOCKSIZE);
+  assertUnsignedLongEquals(getBlocksize(), DEFAULT_BLOCKSIZE);
   assertDoubleEquals(getTempo(), DEFAULT_TEMPO, TEST_FLOAT_TOLERANCE);
   assertIntEquals(getTimeSignatureBeatsPerMeasure(), DEFAULT_TIMESIG_BEATS_PER_MEASURE);
   assertIntEquals(getTimeSignatureNoteValue(), DEFAULT_TIMESIG_NOTE_VALUE);
@@ -28,8 +28,6 @@ static int _testSetSampleRate(void) {
 static int _testSetInvalidSampleRate(void) {
   setSampleRate(22050.0);
   assertDoubleEquals(getSampleRate(), 22050.0, TEST_FLOAT_TOLERANCE);
-  setSampleRate(-22.0);
-  assertDoubleEquals(getSampleRate(), 22050.0, TEST_FLOAT_TOLERANCE);
   setSampleRate(0.0);
   assertDoubleEquals(getSampleRate(), 22050.0, TEST_FLOAT_TOLERANCE);
   return 0;
@@ -44,8 +42,6 @@ static int _testSetNumChannels(void) {
 static int _testSetInvalidNumChannels(void) {
   setNumChannels(2);
   assertIntEquals(getNumChannels(), 2);
-  setNumChannels(-2);
-  assertIntEquals(getNumChannels(), 2);
   setNumChannels(0);
   assertIntEquals(getNumChannels(), 2);
   return 0;
@@ -53,17 +49,15 @@ static int _testSetInvalidNumChannels(void) {
 
 static int _testSetBlocksize(void) {
   setBlocksize(123);
-  assertIntEquals(getBlocksize(), 123);
+  assertUnsignedLongEquals(getBlocksize(), 123l);
   return 0;
 }
 
 static int _testSetInvalidBlocksize(void) {
   setBlocksize(123);
-  assertIntEquals(getBlocksize(), 123);
+  assertUnsignedLongEquals(getBlocksize(), 123l);
   setBlocksize(0);
-  assertIntEquals(getBlocksize(), 123);
-  setBlocksize(-10);
-  assertIntEquals(getBlocksize(), 123);
+  assertUnsignedLongEquals(getBlocksize(), 123l);
   return 0;
 }
 

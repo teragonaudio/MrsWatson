@@ -43,7 +43,7 @@ AudioClock getAudioClock(void) {
   return audioClockInstance;
 }
 
-void advanceAudioClock(AudioClock self, const int blocksize) {
+void advanceAudioClock(AudioClock self, const unsigned long blocksize) {
   if(self->currentFrame == 0 || !self->isPlaying) {
     self->transportChanged = true;
     self->isPlaying = true;

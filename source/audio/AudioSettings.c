@@ -53,11 +53,11 @@ double getSampleRate(void) {
   return _getAudioSettings()->sampleRate;
 }
 
-int getNumChannels(void) {
+unsigned int getNumChannels(void) {
   return _getAudioSettings()->numChannels;
 }
 
-int getBlocksize(void) {
+unsigned long getBlocksize(void) {
   return _getAudioSettings()->blocksize;
 }
 
@@ -87,7 +87,7 @@ void setSampleRate(const double sampleRate) {
   _getAudioSettings()->sampleRate = sampleRate;
 }
 
-void setNumChannels(const int numChannels) {
+void setNumChannels(const unsigned int numChannels) {
   if(numChannels <= 0) {
     logError("Ignoring attempt to set num channels to %d", numChannels);
     return;
@@ -96,12 +96,12 @@ void setNumChannels(const int numChannels) {
   _getAudioSettings()->numChannels = numChannels;
 }
 
-void setBlocksize(const int blocksize) {
+void setBlocksize(const unsigned long blocksize) {
   if(blocksize <= 0) {
     logError("Ignoring attempt to set invalid blocksize to %d", blocksize);
     return;
   }
-  logInfo("Setting blocksize to %d", blocksize);
+  logInfo("Setting blocksize to %ld", blocksize);
   _getAudioSettings()->blocksize = blocksize;
 }
 

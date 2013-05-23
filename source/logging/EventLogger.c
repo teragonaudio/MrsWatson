@@ -169,7 +169,7 @@ void setLoggingColorEnabledWithString(const CharString colorSchemeName) {
   }
 }
 
-void setLoggingZebraSize(const long zebraStripeSize) {
+void setLoggingZebraSize(const unsigned long zebraStripeSize) {
   EventLogger eventLogger = _getEventLoggerInstance();
   eventLogger->zebraStripeSize = zebraStripeSize;
 }

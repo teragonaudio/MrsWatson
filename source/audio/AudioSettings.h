@@ -32,7 +32,7 @@
 
 #define DEFAULT_SAMPLE_RATE 44100.0f
 #define DEFAULT_NUM_CHANNELS 2
-#define DEFAULT_BLOCKSIZE 512
+#define DEFAULT_BLOCKSIZE 512l
 #define DEFAULT_TIME_DIVISION 96
 #define DEFAULT_BITRATE 16
 #define DEFAULT_TEMPO 120.0f
@@ -41,8 +41,8 @@
 
 typedef struct {
   double sampleRate;
-  int numChannels;
-  int blocksize;
+  unsigned int numChannels;
+  unsigned long blocksize;
   double timeDivision;
   double tempo;
   short timeSignatureBeatsPerMeasure;
@@ -55,16 +55,16 @@ extern AudioSettings audioSettingsInstance;
 void initAudioSettings(void);
 
 double getSampleRate(void);
-int getNumChannels(void);
-int getBlocksize(void);
+unsigned int getNumChannels(void);
+unsigned long getBlocksize(void);
 double getTimeDivision(void);
 double getTempo(void);
 short getTimeSignatureBeatsPerMeasure(void);
 short getTimeSignatureNoteValue(void);
 
 void setSampleRate(const double sampleRate);
-void setNumChannels(const int numChannels);
-void setBlocksize(const int blocksize);
+void setNumChannels(const unsigned int numChannels);
+void setBlocksize(const unsigned long blocksize);
 void setTimeDivision(const double division);
 void setTempo(const double tempo);
 void setTempoFromMidiBytes(const byte* bytes);

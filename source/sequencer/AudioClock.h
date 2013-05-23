@@ -53,7 +53,7 @@ extern AudioClock audioClockInstance;
 void initAudioClock(void);
 
 AudioClock getAudioClock(void);
-void advanceAudioClock(AudioClock self, const int blocksize);
+void advanceAudioClock(AudioClock self, const unsigned long blocksize);
 void audioClockStop(AudioClock self);
 
 void freeAudioClock(AudioClock self);
