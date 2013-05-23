@@ -42,7 +42,7 @@ static boolByte openSampleSourcePcm(void* sampleSourcePtr, const SampleSourceOpe
   if(openAs == SAMPLE_SOURCE_OPEN_READ) {
     if(charStringIsEqualToCString(sampleSource->sourceName, "-", false)) {
       extraData->fileHandle = stdin;
-      strncpy(sampleSource->sourceName->data, "stdin", (size_t)sampleSource->sourceName->length);
+      charStringCopyCString(sampleSource->sourceName, "stdin");
       extraData->isStream = true;
     }
     else {
@@ -52,7 +52,7 @@ static boolByte openSampleSourcePcm(void* sampleSourcePtr, const SampleSourceOpe
   else if(openAs == SAMPLE_SOURCE_OPEN_WRITE) {
     if(charStringIsEqualToCString(sampleSource->sourceName, "-", false)) {
       extraData->fileHandle = stdout;
-      strncpy(sampleSource->sourceName->data, "stdout", (size_t)sampleSource->sourceName->length);
+      charStringCopyCString(sampleSource->sourceName, "stdout");
       extraData->isStream = true;
     }
     else {
