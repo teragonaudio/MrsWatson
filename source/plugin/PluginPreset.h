@@ -56,11 +56,13 @@ typedef struct {
 
 typedef PluginPresetMembers* PluginPreset;
 
-PluginPresetType guessPluginPresetType(const CharString presetName);
 PluginPreset newPluginPreset(PluginPresetType presetType, const CharString presetName);
+PluginPresetType pluginPresetGuessType(const CharString presetName);
+
 // Consider this "protected"
-void _setPresetCompatibleWithPluginType(PluginPreset pluginPreset, PluginInterfaceType interfaceType);
-boolByte isPresetCompatibleWithPlugin(const PluginPreset pluginPreset, const Plugin plugin);
+void _pluginPresetSetCompatibleWith(PluginPreset pluginPreset, PluginInterfaceType interfaceType);
+boolByte pluginPresetIsCompatibleWith(const PluginPreset pluginPreset, const Plugin plugin);
+
 void freePluginPreset(PluginPreset pluginPreset);
 
 #endif

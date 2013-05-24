@@ -37,7 +37,7 @@
 #include "plugin/PluginPresetFxp.h"
 #include "plugin/PluginPresetInternalProgram.h"
 
-PluginPresetType guessPluginPresetType(const CharString presetName) {
+PluginPresetType pluginPresetGuessType(const CharString presetName) {
   const char* fileExtension;
   size_t i;
 
@@ -75,11 +75,11 @@ PluginPreset newPluginPreset(PluginPresetType presetType, const CharString prese
   }
 }
 
-void _setPresetCompatibleWithPluginType(PluginPreset pluginPreset, PluginInterfaceType interfaceType) {
+void _pluginPresetSetCompatibleWith(PluginPreset pluginPreset, PluginInterfaceType interfaceType) {
   pluginPreset->compatiblePluginTypes |= (1 << interfaceType);
 }
 
-boolByte isPresetCompatibleWithPlugin(const PluginPreset pluginPreset, const Plugin plugin) {
+boolByte pluginPresetIsCompatibleWith(const PluginPreset pluginPreset, const Plugin plugin) {
   return (pluginPreset->compatiblePluginTypes & (1 << plugin->interfaceType));
 }
 

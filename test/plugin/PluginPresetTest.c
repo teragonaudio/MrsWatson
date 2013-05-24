@@ -5,14 +5,14 @@ const char* TEST_PRESET_FILENAME = "test.fxp";
 
 static int _testGuessPluginPresetType(void) {
   CharString c = newCharStringWithCString(TEST_PRESET_FILENAME);
-  assertIntEquals(guessPluginPresetType(c), PRESET_TYPE_FXP);
+  assertIntEquals(pluginPresetGuessType(c), PRESET_TYPE_FXP);
   freeCharString(c);
   return 0;
 }
 
 static int _testGuessPluginPresetTypeInvalid(void) {
   CharString c = newCharStringWithCString("invalid");
-  assertIntEquals(guessPluginPresetType(c), PRESET_TYPE_INVALID);
+  assertIntEquals(pluginPresetGuessType(c), PRESET_TYPE_INVALID);
   freeCharString(c);
   return 0;
 }

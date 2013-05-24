@@ -105,7 +105,7 @@ boolByte pluginChainAddFromArgumentString(PluginChain pluginChain, const CharStr
     preset = NULL;
     if(strlen(presetNameBuffer->data) > 0) {
       logInfo("Opening preset '%s' for plugin", presetNameBuffer->data);
-      presetType = guessPluginPresetType(presetNameBuffer);
+      presetType = pluginPresetGuessType(presetNameBuffer);
       if(presetType != PRESET_TYPE_INVALID) {
         preset = newPluginPreset(presetType, presetNameBuffer);
       }
@@ -138,7 +138,7 @@ boolByte pluginChainAddFromArgumentString(PluginChain pluginChain, const CharStr
 }
 
 static boolByte _loadPresetForPlugin(Plugin plugin, PluginPreset preset) {
-  if(isPresetCompatibleWithPlugin(preset, plugin)) {
+  if(pluginPresetIsCompatibleWith(preset, plugin)) {
     if(!preset->openPreset(preset)) {
       logError("Could not open preset '%s'", preset->presetName->data);
       return false;

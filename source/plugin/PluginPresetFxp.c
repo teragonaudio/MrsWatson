@@ -215,7 +215,7 @@ PluginPreset newPluginPresetFxp(const CharString presetName) {
   pluginPreset->presetName = newCharString();
   charStringCopy(pluginPreset->presetName, presetName);
   pluginPreset->compatiblePluginTypes = 0;
-  _setPresetCompatibleWithPluginType(pluginPreset, PLUGIN_TYPE_VST_2X);
+  _pluginPresetSetCompatibleWith(pluginPreset, PLUGIN_TYPE_VST_2X);
 
   pluginPreset->openPreset = _openPluginPresetFxp;
   pluginPreset->loadPreset = _loadPluginPresetFxp;
