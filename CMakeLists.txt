@@ -3,6 +3,11 @@ project(MrsWatson)
 
 set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 include_directories(${CMAKE_SOURCE_DIR}/source ${CMAKE_SOURCE_DIR}/vendor/vstsdk2.4/pluginterfaces/vst2.x)
+if(CMAKE_BUILD_TYPE MATCHES "Debug")
+  message("Configuring debug build")
+else()
+  message("Configuring release build")
+endif()
 
 # Platform properties ##########################################
 
