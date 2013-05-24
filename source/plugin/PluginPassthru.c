@@ -78,6 +78,8 @@ Plugin newPluginPassthru(const CharString pluginName) {
   charStringCopy(plugin->pluginName, pluginName);
   plugin->pluginLocation = newCharString();
   charStringCopyCString(plugin->pluginLocation, "Internal");
+  plugin->numInputs = 2;
+  plugin->numOutputs = 2;
 
   plugin->open = _pluginPassthruOpen;
   plugin->displayInfo = _pluginPassthruDisplayInfo;
