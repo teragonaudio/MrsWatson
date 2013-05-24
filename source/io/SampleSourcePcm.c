@@ -75,12 +75,14 @@ static boolByte openSampleSourcePcm(void* sampleSourcePtr, const SampleSourceOpe
 }
 
 static void _convertPcmDataToSampleBuffer(const short* inPcmSamples, SampleBuffer sampleBuffer) {
-  int numInterlacedSamples = sampleBuffer->numChannels * sampleBuffer->blocksize;
-  int currentInterlacedSample = 0;
-  int currentDeinterlacedSample = 0;
-  int currentChannel;
+  const int numChannels = sampleBuffer->numChannels;
+  const unsigned long numInterlacedSamples = numChannels * sampleBuffer->blocksize;
+  unsigned int currentInterlacedSample = 0;
+  unsigned int currentDeinterlacedSample = 0;
+  unsigned int currentChannel;
+
   while(currentInterlacedSample < numInterlacedSamples) {
-    for(currentChannel = 0; currentChannel < sampleBuffer->numChannels; currentChannel++) {
+    for(currentChannel = 0; currentChannel < numChannels; ++currentChannel) {
       Sample convertedSample = (Sample)inPcmSamples[currentInterlacedSample++] / 32767.0f;
 #if USE_BRICKWALL_LIMITER
       if(convertedSample > 1.0f) {
@@ -92,7 +94,7 @@ static void _convertPcmDataToSampleBuffer(const short* inPcmSamples, SampleBuffe
 #endif
       sampleBuffer->samples[currentChannel][currentDeinterlacedSample] = convertedSample;
     }
-    currentDeinterlacedSample++;
+    ++currentDeinterlacedSample;
   }
 }
 
@@ -134,14 +136,16 @@ static boolByte readBlockFromPcmFile(void* sampleSourcePtr, SampleBuffer sampleB
 }
 
 void convertSampleBufferToPcmData(const SampleBuffer sampleBuffer, short* outPcmSamples, boolByte flipEndian) {
-  int currentInterlacedSample = 0;
-  int currentSample = 0;
-  int currentChannel = 0;
+  const unsigned long blocksize = sampleBuffer->blocksize;
+  const unsigned int numChannels = sampleBuffer->numChannels;
+  unsigned int currentInterlacedSample = 0;
+  unsigned int currentSample = 0;
+  unsigned int currentChannel = 0;
   short shortValue;
   Sample sample;
 
-  for(currentSample = 0; currentSample < sampleBuffer->blocksize; currentSample++) {
-    for(currentChannel = 0; currentChannel < sampleBuffer->numChannels; currentChannel++) {
+  for(currentSample = 0; currentSample < blocksize; ++currentSample) {
+    for(currentChannel = 0; currentChannel < numChannels; ++currentChannel) {
       sample = sampleBuffer->samples[currentChannel][currentSample];
 #if USE_BRICKWALL_LIMITER
       if(sample > 1.0f) {
