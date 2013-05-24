@@ -28,6 +28,23 @@ static int _testNewObject(void) {
 }
 
 static int _testIsPresetCompatibleWithPlugin(void) {
+  CharString c = newCharStringWithCString(TEST_PRESET_FILENAME);
+  PluginPreset p = newPluginPreset(PRESET_TYPE_FXP, c);
+  CharString name = newCharStringWithCString("name");
+  CharString location = newCharStringWithCString("location");
+  Plugin plug1 = newPlugin(PLUGIN_TYPE_INTERNAL, name, location);
+  Plugin plug2 = newPlugin(PLUGIN_TYPE_UNSUPPORTED, name, location);
+
+  _pluginPresetSetCompatibleWith(p, PLUGIN_TYPE_INTERNAL);
+  assert(pluginPresetIsCompatibleWith(p, plug1));
+  assertFalse(pluginPresetIsCompatibleWith(p, plug2));
+
+  freePlugin(plug1);
+  freePlugin(plug2);
+  freeCharString(name);
+  freeCharString(location);
+  freeCharString(c);
+  freePluginPreset(p);
   return 0;
 }
 
