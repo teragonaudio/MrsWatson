@@ -42,6 +42,8 @@ typedef struct {
   int numPlugins;
   Plugin* plugins;
   PluginPreset* presets;
+  TaskTimer* audioTimers;
+  TaskTimer* midiTimers;
 } PluginChainMembers;
 typedef PluginChainMembers* PluginChain;
 
@@ -55,8 +57,8 @@ void pluginChainInspect(PluginChain self);
 int pluginChainGetMaximumTailTimeInMs(PluginChain self);
 
 void pluginChainPrepareForProcessing(PluginChain self);
-void pluginChainProcessAudio(PluginChain self, SampleBuffer inBuffer, SampleBuffer outBuffer, TaskTimer taskTimer);
-void pluginChainProcessMidi(PluginChain self, LinkedList midiEvents, TaskTimer taskTimer);
+void pluginChainProcessAudio(PluginChain self, SampleBuffer inBuffer, SampleBuffer outBuffer);
+void pluginChainProcessMidi(PluginChain self, LinkedList midiEvents);
 
 void pluginChainShutdown(PluginChain self);
 void freePluginChain(PluginChain self);
