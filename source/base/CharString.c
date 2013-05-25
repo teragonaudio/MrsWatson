@@ -45,16 +45,22 @@ CharString newCharStringWithCapacity(size_t length) {
 }
 
 CharString newCharStringWithCString(const char* string) {
-  size_t length = strlen(string);
+  size_t length;
   CharString result = NULL;
-  if(length <= 0 || length > kCharStringLengthLong) {
+
+  length = string != NULL ? strlen(string) : 0;
+  if(length > kCharStringLengthLong) {
     logError("Can't create string with length %d", length);
+  }
+  else if(length == 0) {
+    result = newCharString();
   }
   else {
     // Add 1 to compensate for trailing null character
     result = newCharStringWithCapacity(length + 1);
     strncpy(result->data, string, length);
   }
+
   return result;
 }
 

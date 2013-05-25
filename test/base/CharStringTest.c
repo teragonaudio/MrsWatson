@@ -21,6 +21,22 @@ static int _testNewCharStringWithCapacity(void) {
   return 0;
 }
 
+static int _testNewObjectWithNullCString(void) {
+  CharString c = newCharStringWithCString(NULL);
+  assertIntEquals(c->length, kCharStringLengthDefault);
+  assertCharStringEquals(c, "");
+  freeCharString(c);
+  return 0;
+}
+
+static int _testNewObjectWithEmptyCString(void) {
+  CharString c = newCharStringWithCString(EMPTY_STRING);
+  assertIntEquals(c->length, kCharStringLengthDefault);
+  assertCharStringEquals(c, EMPTY_STRING);
+  freeCharString(c);
+  return 0;
+}
+
 static int _testClearCharString(void) {
   CharString c = newCharString();
   charStringCopyCString(c, TEST_STRING);
@@ -199,6 +215,9 @@ TestSuite addCharStringTests(void) {
 
   addTest(testSuite, "NewObject", _testNewCharString);
   addTest(testSuite, "NewObjectWithCapacity", _testNewCharStringWithCapacity);
+  addTest(testSuite, "NewObjectWithNullCString", _testNewObjectWithNullCString);
+  addTest(testSuite, "NewObjectWithEmptyCString", _testNewObjectWithEmptyCString);
+
   addTest(testSuite, "ClearString", _testClearCharString);
   addTest(testSuite, "CopyToCharString", _testCopyToCharString);
   addTest(testSuite, "CopyCharStrings", _testCopyCharStrings);
