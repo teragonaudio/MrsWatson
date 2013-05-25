@@ -81,16 +81,16 @@ etc.). Normally these files are automatically removed if a test succeeds.",
 int main(int argc, char* argv[]) {
   ProgramOptions programOptions;
   int totalTestsFailed = 0;
-  CharString testSuiteToRun;
-  CharString executablePath;
-  CharString currentPath;
-  CharString mrsWatsonExeName = newCharStringWithCString(MRSWATSON_EXE_NAME);
-  CharString mrsWatsonPath;
-  CharString resourcesPath;
+  CharString testSuiteToRun = NULL;
+  CharString executablePath = NULL;
+  CharString currentPath = NULL;
+  CharString mrsWatsonExeName = NULL;
+  CharString mrsWatsonPath = NULL;
+  CharString resourcesPath = NULL;
   boolByte runInternalTests = false;
   boolByte runApplicationTests = false;
-  TestCase testCase;
-  TestSuite testSuite;
+  TestCase testCase = NULL;
+  TestSuite testSuite = NULL;
   TestEnvironment testEnvironment = NULL;
   char* testArgument;
   char* colon;
