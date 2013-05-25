@@ -35,19 +35,22 @@
 #include <sys/time.h>
 #endif
 
-TaskTimer newTaskTimer(const int numTasks) {
+TaskTimer newTaskTimer(const CharString component, const char* subcomponent) {
+  return newTaskTimerWithCString(component->data, subcomponent);
+}
+
+TaskTimer newTaskTimerWithCString(const char* component, const char* subcomponent) {
   TaskTimer taskTimer = (TaskTimer)malloc(sizeof(TaskTimerMembers));
-  int i;
 #if WINDOWS
   LARGE_INTEGER queryFrequency;
 #endif
 
-  taskTimer->numTasks = numTasks;
-  taskTimer->currentTask = -1;
-  taskTimer->totalTaskTimes = (double*)malloc(sizeof(double) * numTasks);
-  for(i = 0; i < numTasks; i++) {
-    taskTimer->totalTaskTimes[i] = 0.0;
-  }
+  taskTimer->component = newCharStringWithCString(component);
+  taskTimer->subcomponent = newCharStringWithCString(subcomponent);
+  taskTimer->enabled = true;
+  taskTimer->_running = false;
+  taskTimer->totalTaskTime = 0.0;
+
 #if WINDOWS
   QueryPerformanceFrequency(&queryFrequency);
   taskTimer->counterFrequency = (double)(queryFrequency.QuadPart) / 1000.0;
@@ -58,55 +61,61 @@ TaskTimer newTaskTimer(const int numTasks) {
   return taskTimer;
 }
 
-void startTimingTask(TaskTimer taskTimer, const int taskId) {
-  if(taskId == taskTimer->currentTask) {
-    return;
+void taskTimerStart(TaskTimer self) {
+  if(self->_running) {
+    taskTimerStop(self);
   }
-  stopTiming(taskTimer);
 #if WINDOWS
-  QueryPerformanceCounter(&(taskTimer->startTime));
+  QueryPerformanceCounter(&(self->startTime));
 #elif UNIX
-  gettimeofday(taskTimer->startTime, NULL);
+  gettimeofday(self->startTime, NULL);
 #endif
-  taskTimer->currentTask = taskId;
+  self->_running = true;
 }
 
-void stopTiming(TaskTimer taskTimer) {
-#if WINDOWS
-  LONGLONG elapsedTimeInClocks;
-  if(taskTimer->currentTask >= 0) {
-    LARGE_INTEGER stopTime;
-    QueryPerformanceCounter(&stopTime);
-    elapsedTimeInClocks = stopTime.QuadPart - taskTimer->startTime.QuadPart;
-    taskTimer->totalTaskTimes[taskTimer->currentTask] += (double)(elapsedTimeInClocks) / taskTimer->counterFrequency;
-  }
-#elif UNIX
+void taskTimerStop(TaskTimer self) {
+#if UNIX
   double elapsedTimeInMs;
   double elapsedFullSeconds;
   double elapsedMicroseconds;
   struct timeval currentTime;
+#elif WINDOWS
+  LONGLONG elapsedTimeInClocks;
+  LARGE_INTEGER stopTime;
+#endif
 
-  if(taskTimer->currentTask >= 0) {
+  if(!self->_running) {
+    return;
+  }
+
+#if UNIX
+  if(self->currentTask >= 0) {
     if(gettimeofday(&currentTime, NULL) == 0) {
-      if(currentTime.tv_sec == taskTimer->startTime->tv_sec) {
-        elapsedTimeInMs = (double)(currentTime.tv_usec - taskTimer->startTime->tv_usec) / 1000.0;
+      if(currentTime.tv_sec == self->startTime->tv_sec) {
+        elapsedTimeInMs = (double)(currentTime.tv_usec - self->startTime->tv_usec) / 1000.0;
       }
       else {
-        elapsedFullSeconds = (double)(currentTime.tv_sec - taskTimer->startTime->tv_sec - 1);
-        elapsedMicroseconds = (double)(currentTime.tv_usec + (1000000l - taskTimer->startTime->tv_usec));
+        elapsedFullSeconds = (double)(currentTime.tv_sec - self->startTime->tv_sec - 1);
+        elapsedMicroseconds = (double)(currentTime.tv_usec + (1000000l - self->startTime->tv_usec));
         elapsedTimeInMs = (elapsedFullSeconds * 1000.0) + (elapsedMicroseconds / 1000.0);
       }
-      taskTimer->totalTaskTimes[taskTimer->currentTask] += elapsedTimeInMs;
+      self->totalTaskTimes[taskTimer->currentTask] += elapsedTimeInMs;
     }
   }
+#elif WINDOWS
+  QueryPerformanceCounter(&stopTime);
+  elapsedTimeInClocks = stopTime.QuadPart - self->startTime.QuadPart;
+  self->totalTaskTime += (double)(elapsedTimeInClocks) / self->counterFrequency;
 #endif
-  taskTimer->currentTask = -1;
+
+  self->_running = false;
 }
 
 void freeTaskTimer(TaskTimer self) {
-  free(self->totalTaskTimes);
+  if(self != NULL) {
 #if UNIX
-  free(self->startTime);
+    free(self->startTime);
 #endif
-  free(self);
+    free(self);
+  }
 }

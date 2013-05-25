@@ -48,6 +48,7 @@
 #include "MrsWatsonOptions.h"
 #include "MrsWatson.h"
 
+// TODO: Move somewhere else, maybe EventLogger or StringUtilities?
 static void prettyPrintTime(CharString outString, double milliseconds) {
   int minutes;
   double seconds;
@@ -65,6 +66,16 @@ static void prettyPrintTime(CharString outString, double milliseconds) {
     minutes = (int)seconds % 60;
     snprintf(outString->data, outString->length, "%d:%.2gsec", minutes, seconds);
   }
+}
+
+static void _printTaskTime(void* item, void* userData) {
+  TaskTimer taskTimer = (TaskTimer)item;
+  TaskTimer totalTimer = (TaskTimer)userData;
+  CharString prettyTimeString = newCharString();
+  double timePercentage = 100.0f * taskTimer->totalTaskTime / totalTimer->totalTaskTime;
+  prettyPrintTime(prettyTimeString, taskTimer->totalTaskTime); 
+  logInfo("  %s %s: %s (%2.1f%%)", taskTimer->component->data, taskTimer->subcomponent->data, prettyTimeString->data, timePercentage);
+  freeCharString(prettyTimeString);
 }
 
 static void _remapFileToErrorReport(ErrorReporter errorReporter, ProgramOption option, boolByte copyFile) {
@@ -238,15 +249,18 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   SampleBuffer inputSampleBuffer = NULL;
   SampleBuffer outputSampleBuffer = NULL;
   SampleBuffer outputSampleBufferResized = NULL;
-  TaskTimer taskTimer;
+  TaskTimer initTimer, totalTimer, inputTimer, outputTimer = NULL;
+  LinkedList taskTimerList = NULL;
   CharString totalTimeString;
   boolByte finishedReading = false;
-  int hostTaskId;
   SampleSource silentSampleInput;
-  double totalProcessingTime = 0.0;
   unsigned long stopFrame;
-  double timePercentage;
   int i;
+
+  initTimer = newTaskTimerWithCString(PROGRAM_NAME, "Initialization");
+  totalTimer = newTaskTimerWithCString(PROGRAM_NAME, "Total Time");
+  taskTimerStart(initTimer);
+  taskTimerStart(totalTimer);
 
   initEventLogger();
   initAudioSettings();
@@ -507,14 +521,11 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   }
 
   inputSampleBuffer = newSampleBuffer(getNumChannels(), getBlocksize());
+  inputTimer = newTaskTimerWithCString(PROGRAM_NAME, "Input Source");
   // By default, the output buffer has the same channel count as the input buffer,
   // but if a plugin requests a larger I/O configuration this buffer will be resized.
   outputSampleBuffer = newSampleBuffer(getNumChannels(), getBlocksize());
-
-  // Initialize task timer to record how much time was used by each plugin (and us). The
-  // last index in the task timer will be reserved for the host.
-  taskTimer = newTaskTimer(pluginChain->numPlugins + 1);
-  hostTaskId = taskTimer->numTasks - 1;
+  outputTimer = newTaskTimerWithCString(PROGRAM_NAME, "Output Source");
 
   // Initialization is finished, we should be able to free this memory now
   freeProgramOptions(programOptions);
@@ -537,10 +548,11 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   logDebug("Channels: %d", getNumChannels());
   logDebug("Tempo: %.2f", getTempo());
   logDebug("Time signature: %d/%d", getTimeSignatureBeatsPerMeasure(), getTimeSignatureNoteValue());
+  taskTimerStop(initTimer);
 
   // Main processing loop
   while(!finishedReading) {
-    startTimingTask(taskTimer, hostTaskId);
+    taskTimerStart(inputTimer);
     finishedReading = !inputSource->readSampleBlock(inputSource, inputSampleBuffer);
 
     // TODO: For streaming MIDI, we would need to read in events from source here
@@ -549,19 +561,19 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
       // MIDI source overrides the value set to finishedReading by the input source
       finishedReading = !fillMidiEventsFromRange(midiSequence, audioClock->currentFrame, getBlocksize(), midiEventsForBlock);
       linkedListForeach(midiEventsForBlock, _processMidiMetaEvent, &finishedReading);
-      pluginChainProcessMidi(pluginChain, midiEventsForBlock, taskTimer);
-      startTimingTask(taskTimer, hostTaskId);
+      pluginChainProcessMidi(pluginChain, midiEventsForBlock);
       freeLinkedList(midiEventsForBlock);
     }
+    taskTimerStop(inputTimer);
 
     if(maxTimeInFrames > 0 && audioClock->currentFrame >= maxTimeInFrames) {
       logInfo("Maximum time reached, stopping processing after this block");
       finishedReading = true;
     }
 
-    pluginChainProcessAudio(pluginChain, inputSampleBuffer, outputSampleBuffer, taskTimer);
-    startTimingTask(taskTimer, hostTaskId);
-
+    pluginChainProcessAudio(pluginChain, inputSampleBuffer, outputSampleBuffer);
+ 
+    taskTimerStart(outputTimer);
     if(finishedReading) {
       logInfo("Finished processing input source");
       // Tail time is given to process, but it will fill up this entire block.
@@ -593,6 +605,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
     else {
       outputSource->writeSampleBlock(outputSource, outputSampleBuffer);
     }
+    taskTimerStop(outputTimer);
     advanceAudioClock(audioClock, getBlocksize());
   }
 
@@ -602,13 +615,15 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
     logInfo("Adding %d extra frames", stopFrame - audioClock->currentFrame);
     silentSampleInput = newSampleSource(SAMPLE_SOURCE_TYPE_SILENCE, NULL);
     while(audioClock->currentFrame < stopFrame) {
-      startTimingTask(taskTimer, hostTaskId);
+      taskTimerStart(inputTimer);
       silentSampleInput->readSampleBlock(silentSampleInput, inputSampleBuffer);
+      taskTimerStop(inputTimer);
 
-      pluginChainProcessAudio(pluginChain, inputSampleBuffer, outputSampleBuffer, taskTimer);
+      pluginChainProcessAudio(pluginChain, inputSampleBuffer, outputSampleBuffer);
 
-      startTimingTask(taskTimer, hostTaskId);
+      taskTimerStart(outputTimer);
       outputSource->writeSampleBlock(outputSource, outputSampleBuffer);
+      taskTimerStop(outputTimer);
       advanceAudioClock(audioClock, getBlocksize());
     }
   }
@@ -621,28 +636,30 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   // TODO: On windows, the total processing time is stored in clocks and not milliseconds
   // These values must be converted using the QueryPerformanceFrequency() function
   audioClockStop(audioClock);
-  stopTiming(taskTimer);
-  for(i = 0; i < taskTimer->numTasks; i++) {
-    totalProcessingTime += taskTimer->totalTaskTimes[i];
-  }
-
+  taskTimerStop(totalTimer);
   totalTimeString = newCharString();
-  if(totalProcessingTime > 0) {
-    prettyPrintTime(totalTimeString, totalProcessingTime);
-    logInfo("Total processing time %s, breakdown by component:", totalTimeString->data);
+
+  if(totalTimer->totalTaskTime > 0) {
+    taskTimerList = newLinkedList();
+    linkedListAppend(taskTimerList, initTimer);
+    linkedListAppend(taskTimerList, inputTimer);
+    linkedListAppend(taskTimerList, outputTimer);
     for(i = 0; i < pluginChain->numPlugins; i++) {
-      timePercentage = 100.0f * taskTimer->totalTaskTimes[i] / totalProcessingTime;
-      prettyPrintTime(totalTimeString, taskTimer->totalTaskTimes[i]); 
-      logInfo("%s: %s, %2.1f%%", pluginChain->plugins[i]->pluginName->data, totalTimeString->data, timePercentage);
+      linkedListAppend(taskTimerList, pluginChain->audioTimers[i]);
+      linkedListAppend(taskTimerList, pluginChain->midiTimers[i]);
     }
-    timePercentage = 100.0f * taskTimer->totalTaskTimes[hostTaskId] / totalProcessingTime;
-    prettyPrintTime(totalTimeString, taskTimer->totalTaskTimes[hostTaskId]);
-    logInfo("%s: %s, %2.1f%%", PROGRAM_NAME, totalTimeString->data, timePercentage);
+
+    prettyPrintTime(totalTimeString, totalTimer->totalTaskTime);
+    logInfo("Total processing time %s, approximate breakdown:", totalTimeString->data);
+    linkedListForeach(taskTimerList, _printTaskTime, totalTimer);
   }
   else {
+    // Woo-hoo!
     logInfo("Total processing time <1ms. Either something went wrong, or your computer is smokin' fast!");
   }
-  freeTaskTimer(taskTimer);
+  freeTaskTimer(initTimer);
+  freeTaskTimer(totalTimer);
+  freeLinkedList(taskTimerList);
   freeCharString(totalTimeString);
 
   if(midiSequence != NULL) {

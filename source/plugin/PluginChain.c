@@ -38,6 +38,8 @@ PluginChain newPluginChain(void) {
   pluginChain->numPlugins = 0;
   pluginChain->plugins = (Plugin*)malloc(sizeof(Plugin) * MAX_PLUGINS);
   pluginChain->presets = (PluginPreset*)malloc(sizeof(PluginPreset) * MAX_PLUGINS);
+  pluginChain->audioTimers = (TaskTimer*)malloc(sizeof(TaskTimer) * MAX_PLUGINS);
+  pluginChain->midiTimers = (TaskTimer*)malloc(sizeof(TaskTimer) * MAX_PLUGINS);
 
   return pluginChain;
 }
@@ -53,6 +55,8 @@ boolByte pluginChainAppend(PluginChain self, Plugin plugin, PluginPreset preset)
   else {
     self->plugins[self->numPlugins] = plugin;
     self->presets[self->numPlugins] = preset;
+    self->audioTimers[self->numPlugins] = newTaskTimer(plugin->pluginName, "Audio Processing");
+    self->midiTimers[self->numPlugins] = newTaskTimer(plugin->pluginName, "MIDI Processing");
     self->numPlugins++;
     return true;
   }
@@ -226,7 +230,7 @@ int pluginChainGetMaximumTailTimeInMs(PluginChain pluginChain) {
   return maxTailTime;
 }
 
-void pluginChainProcessAudio(PluginChain pluginChain, SampleBuffer inBuffer, SampleBuffer outBuffer, TaskTimer taskTimer) {
+void pluginChainProcessAudio(PluginChain pluginChain, SampleBuffer inBuffer, SampleBuffer outBuffer) {
   Plugin plugin;
   int i;
 
@@ -243,11 +247,10 @@ void pluginChainProcessAudio(PluginChain pluginChain, SampleBuffer inBuffer, Sam
       logDebug("Expanding output source from %d -> %d channels", outBuffer->numChannels, plugin->numOutputs);
       sampleBufferResize(outBuffer, plugin->numOutputs, false);
     }
-    startTimingTask(taskTimer, i);
+    taskTimerStart(pluginChain->audioTimers[i]);
     plugin->processAudio(plugin, inBuffer, outBuffer);
-    // TODO: Last task ID is the host, but this is a bit hacky
-    startTimingTask(taskTimer, taskTimer->numTasks - 1);
-
+    taskTimerStop(pluginChain->audioTimers[i]);
+    
     // If this is not the last plugin in the chain, then copy the output of this plugin
     // back to the input for the next one in the chain.
     if(i + 1 < pluginChain->numPlugins) {
@@ -256,15 +259,16 @@ void pluginChainProcessAudio(PluginChain pluginChain, SampleBuffer inBuffer, Sam
   }
 }
 
-void pluginChainProcessMidi(PluginChain pluginChain, LinkedList midiEvents, TaskTimer taskTimer) {
+void pluginChainProcessMidi(PluginChain pluginChain, LinkedList midiEvents) {
   Plugin plugin;
   if(midiEvents->item != NULL) {
     logDebug("Processing plugin chain MIDI events");
     // Right now, we only process MIDI in the first plugin in the chain
     // TODO: Is this really the correct behavior? How do other sequencers do it?
     plugin = pluginChain->plugins[0];
-    startTimingTask(taskTimer, 0);
+    taskTimerStart(pluginChain->midiTimers[0]);
     plugin->processMidiEvents(plugin, midiEvents);
+    taskTimerStop(pluginChain->midiTimers[0]);
   }
 }
 
@@ -284,18 +288,15 @@ void freePluginChain(PluginChain pluginChain) {
   int i;
 
   for(i = 0; i < pluginChain->numPlugins; i++) {
-    plugin = pluginChain->plugins[i];
-    freePlugin(plugin);
+    freePluginPreset(pluginChain->presets[i]);
+    freePlugin(pluginChain->plugins[i]);
+    freeTaskTimer(pluginChain->audioTimers[i]);
+    freeTaskTimer(pluginChain->midiTimers[i]);
   }
-  free(pluginChain->plugins);
 
-  for(i = 0; i < pluginChain->numPlugins; i++) {
-    preset = pluginChain->presets[i];
-    if(preset != NULL) {
-      freePluginPreset(preset);
-    }
-  }
   free(pluginChain->presets);
-
+  free(pluginChain->plugins);
+  free(pluginChain->audioTimers);
+  free(pluginChain->midiTimers);
   free(pluginChain);
 }

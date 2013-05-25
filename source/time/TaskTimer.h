@@ -32,9 +32,12 @@
 #include "base/PlatformUtilities.h"
 
 typedef struct {
-  int numTasks;
-  int currentTask;
-  double* totalTaskTimes;
+  CharString component;
+  CharString subcomponent;
+  boolByte enabled;
+  boolByte _running;
+  double totalTaskTime;
+
 #if WINDOWS
   LARGE_INTEGER startTime;
   double counterFrequency;
@@ -44,11 +47,12 @@ typedef struct {
 } TaskTimerMembers;
 typedef TaskTimerMembers* TaskTimer;
 
-TaskTimer newTaskTimer(const int maxTasks);
+TaskTimer newTaskTimer(const CharString component, const char* subcomponent);
+TaskTimer newTaskTimerWithCString(const char* component, const char* subcomponent);
 
-void startTimingTask(TaskTimer taskTimer, const int taskId);
-void stopTiming(TaskTimer taskTimer);
+void taskTimerStart(TaskTimer self);
+void taskTimerStop(TaskTimer self);
 
-void freeTaskTimer(TaskTimer taskTimer);
+void freeTaskTimer(TaskTimer self);
 
 #endif
