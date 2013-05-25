@@ -28,11 +28,12 @@
 #ifndef MrsWatson_CharString_h
 #define MrsWatson_CharString_h
 
+#include <stdlib.h>
 #include "base/Types.h"
 
-static const int kCharStringLengthDefault = 256;
-static const int kCharStringLengthShort = 32;
-static const int kCharStringLengthLong = 8192;
+static const size_t kCharStringLengthDefault = 256;
+static const size_t kCharStringLengthShort = 32;
+static const size_t kCharStringLengthLong = 8192;
 
 #define EMPTY_STRING ""
 
@@ -43,8 +44,7 @@ static const int kCharStringLengthLong = 8192;
 #endif
 
 typedef struct {
-  // TODO: Should be size_t
-  int length;
+  size_t length;
   char* data;
 } CharStringMembers;
 typedef CharStringMembers* CharString;
@@ -55,7 +55,7 @@ CharString newCharString(void);
  * @param length Number of characters
  * @return Create a new CharString instance
  */
-CharString newCharStringWithCapacity(int length);
+CharString newCharStringWithCapacity(size_t length);
 /**
  * Create a new CharString from a C-String
  * @param string C-String to use (copied to contents)

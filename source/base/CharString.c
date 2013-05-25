@@ -36,7 +36,7 @@ CharString newCharString(void) {
   return newCharStringWithCapacity(kCharStringLengthDefault);
 }
 
-CharString newCharStringWithCapacity(int length) {
+CharString newCharStringWithCapacity(size_t length) {
   CharString charString = (CharString)malloc(sizeof(CharStringMembers));
   charString->length = length;
   charString->data = (char*)malloc(sizeof(char) * length);
@@ -45,7 +45,7 @@ CharString newCharStringWithCapacity(int length) {
 }
 
 CharString newCharStringWithCString(const char* string) {
-  int length = strlen(string);
+  size_t length = strlen(string);
   CharString result = NULL;
   if(length <= 0 || length > kCharStringLengthLong) {
     logError("Can't create string with length %d", length);
@@ -67,7 +67,7 @@ void charStringAppendCString(CharString self, const char* string) {
   size_t selfLength = strlen(self->data);
   if(stringLength + selfLength >= self->length) {
     self->length = stringLength + selfLength + 1; // don't forget the null!
-    self->data = realloc(self->data, self->length);
+    self->data = (char*)realloc(self->data, self->length);
     strcat(self->data, string);
   }
   else {
@@ -76,15 +76,15 @@ void charStringAppendCString(CharString self, const char* string) {
 }
 
 void charStringClear(CharString self) {
-  memset(self->data, 0, (size_t)(self->length));
+  memset(self->data, 0, self->length);
 }
 
 void charStringCopyCString(CharString self, const char* string) {
-  strncpy(self->data, string, (size_t)(self->length));
+  strncpy(self->data, string, self->length);
 }
 
 void charStringCopy(CharString self, const CharString string) {
-  strncpy(self->data, string->data, (size_t)(self->length));
+  strncpy(self->data, string->data, self->length);
 }
 
 boolByte charStringIsEmpty(const CharString self) {
@@ -98,7 +98,7 @@ boolByte charStringIsEqualTo(const CharString self, const CharString string, boo
   }
 
   // Only compare to the length of the smaller of the two strings
-  comparisonSize = (size_t)((self->length < string->length) ? self->length : string->length);
+  comparisonSize = self->length < string->length ? self->length : string->length;
   if(caseInsensitive) {
     return strncasecmp(self->data, string->data, comparisonSize) == 0;
   }
@@ -112,10 +112,10 @@ boolByte charStringIsEqualToCString(const CharString self, const char* string, b
     return false;
   }
   else if(caseInsensitive) {
-    return strncasecmp(self->data, string, (size_t)self->length) == 0;
+    return strncasecmp(self->data, string, self->length) == 0;
   }
   else {
-    return strncmp(self->data, string, (size_t)self->length) == 0;
+    return strncmp(self->data, string, self->length) == 0;
   }
 }
 
