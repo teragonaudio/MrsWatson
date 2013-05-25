@@ -195,6 +195,10 @@ int main(int argc, char* argv[]) {
     charStringCopy(mrsWatsonPath, programOptions->options[OPTION_TEST_MRSWATSON_PATH]->argument);
   }
   else {
+    mrsWatsonExeName = newCharStringWithCString(MRSWATSON_EXE_NAME);
+    if(isExecutable64Bit()) {
+      charStringAppendCString(mrsWatsonExeName, "64");
+    }
     buildAbsolutePath(currentPath, mrsWatsonExeName, NULL, mrsWatsonPath);
   }
   if(runApplicationTests && !fileExists(mrsWatsonPath->data)) {
