@@ -342,7 +342,7 @@ void closeSampleSourceWave(void* sampleSourceDataPtr) {
   if(sampleSource->openedAs == SAMPLE_SOURCE_OPEN_WRITE) {
     // Re-open the file for editing
     fflush(extraData->fileHandle);
-    if(!fclose(extraData->fileHandle)) {
+    if(fclose(extraData->fileHandle) != 0) {
       logError("Could not close WAVE file for finalization");
       return;
     }
@@ -353,7 +353,7 @@ void closeSampleSourceWave(void* sampleSourceDataPtr) {
     }
 
     // First go to the second chunk in the file and re-read the chunk length
-    if(!fseek(extraData->fileHandle, 12, SEEK_SET)) {
+    if(fseek(extraData->fileHandle, 12, SEEK_SET) != 0) {
       logError("Could not seek to second chunk during WAVE file finalization");
       fclose(extraData->fileHandle);
       return;
@@ -367,7 +367,7 @@ void closeSampleSourceWave(void* sampleSourceDataPtr) {
     }
 
     // Go to the next chunk, and then skip the type and write the new length
-    if(!fseek(extraData->fileHandle, chunk->size + 4, SEEK_CUR)) {
+    if(fseek(extraData->fileHandle, chunk->size + 4, SEEK_CUR) != 0) {
       logError("Could not seek to next chunk during WAVE file finalization");
       fclose(extraData->fileHandle);
       freeRiffChunk(chunk);
@@ -383,7 +383,7 @@ void closeSampleSourceWave(void* sampleSourceDataPtr) {
 
     // Add 40 bytes for fmt chunk size and write the RIFF chunk size
     numBytesWritten += ftell(extraData->fileHandle) - 8;
-    if(!fseek(extraData->fileHandle, 4, SEEK_SET)) {
+    if(fseek(extraData->fileHandle, 4, SEEK_SET) != 0) {
       logError("Could not seek to fmt chunk during WAVE file finalization");
       fclose(extraData->fileHandle);
       freeRiffChunk(chunk);
