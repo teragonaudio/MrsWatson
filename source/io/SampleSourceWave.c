@@ -336,7 +336,6 @@ void closeSampleSourceWave(void* sampleSourceDataPtr) {
   SampleSource sampleSource = (SampleSource)sampleSourceDataPtr;
   SampleSourcePcmData extraData = (SampleSourcePcmData)sampleSource->extraData;
   unsigned int numBytesWritten;
-  size_t bytesWrittenToFile;
   RiffChunk chunk;
 
   if(sampleSource->openedAs == SAMPLE_SOURCE_OPEN_WRITE) {

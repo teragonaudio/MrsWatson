@@ -7,7 +7,8 @@
 static const Sample kAnalysisDistortionTolerance = 0.5f;
 
 boolByte analysisDistortion(const SampleBuffer sampleBuffer, AnalysisFunctionData data) {
-  int i, j;
+  unsigned int i;
+  unsigned long j;
   Sample difference;
   for(i = 0; i < sampleBuffer->numChannels; i++) {
     data->lastSample = sampleBuffer->samples[i][0];

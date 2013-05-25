@@ -13,7 +13,8 @@ static int _testAnalysisSilence(void) {
 static int _testAnalysisNotSilence(void) {
   SampleBuffer s = newSampleBuffer(2, 64);
   AnalysisFunctionData d = newAnalysisFunctionData();
-  int i, j;
+  unsigned long i;
+  unsigned int j;
   for(i = 0; i < s->blocksize; i++) {
     for(j = 0; j < s->numChannels; j++) {
       s->samples[j][i] = 32767.0;
@@ -28,7 +29,7 @@ static int _testAnalysisNotSilence(void) {
 static int _testAnalysisNotSilenceInOneChannel(void) {
   SampleBuffer s = newSampleBuffer(1, 64);
   AnalysisFunctionData d = newAnalysisFunctionData();
-  int i;
+  unsigned long i;
   for(i = 0; i < s->blocksize; i++) {
     s->samples[0][i] = 32767.0;
   }

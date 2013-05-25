@@ -4,7 +4,7 @@
 static int _testAnalysisDistortion(void) {
   SampleBuffer s = newSampleBuffer(1, 8);
   AnalysisFunctionData d = newAnalysisFunctionData();
-  int i;
+  unsigned int i;
   for(i = 0; i < s->blocksize; i++) {
     s->samples[0][i] = 0.9f * (i % 2 ? 1.0f : -1.0f);
   }

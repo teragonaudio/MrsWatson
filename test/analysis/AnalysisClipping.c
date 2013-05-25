@@ -4,7 +4,8 @@
 #include "AnalyzeFile.h"
 
 boolByte analysisClipping(const SampleBuffer sampleBuffer, AnalysisFunctionData data) {
-  int i, j;
+  unsigned int i;
+  unsigned long j;
   for(i = 0; i < sampleBuffer->numChannels; i++) {
     for(j = 0; j < sampleBuffer->blocksize; j++) {
       if(fabs(sampleBuffer->samples[i][j]) >= 1.0f) {

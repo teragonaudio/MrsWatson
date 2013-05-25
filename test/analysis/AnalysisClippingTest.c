@@ -4,7 +4,7 @@
 static int _testAnalysisClipping(void) {
   SampleBuffer s = newSampleBuffer(1, 128);
   AnalysisFunctionData d = newAnalysisFunctionData();
-  int i;
+  unsigned long i;
   for(i = 0; i < s->blocksize; i++) {
     s->samples[0][i] = 1.0f;
   }

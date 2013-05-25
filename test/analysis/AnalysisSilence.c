@@ -2,7 +2,8 @@
 #include "AnalyzeFile.h"
 
 boolByte analysisSilence(const SampleBuffer sampleBuffer, AnalysisFunctionData data) {
-  int i, j;
+  unsigned int i;
+  unsigned long j;
   for(i = 0; i < sampleBuffer->numChannels; i++) {
     for(j = 0; j < sampleBuffer->blocksize; j++) {
       if(sampleBuffer->samples[i][j] == 0.0f) {

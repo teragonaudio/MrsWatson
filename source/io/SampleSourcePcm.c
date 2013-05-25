@@ -75,7 +75,7 @@ static boolByte openSampleSourcePcm(void* sampleSourcePtr, const SampleSourceOpe
 }
 
 static void _convertPcmDataToSampleBuffer(const short* inPcmSamples, SampleBuffer sampleBuffer) {
-  const int numChannels = sampleBuffer->numChannels;
+  const unsigned int numChannels = sampleBuffer->numChannels;
   const unsigned long numInterlacedSamples = numChannels * sampleBuffer->blocksize;
   unsigned int currentInterlacedSample = 0;
   unsigned int currentDeinterlacedSample = 0;
