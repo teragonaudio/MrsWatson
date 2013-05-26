@@ -40,6 +40,10 @@
 #define WIN32_LEAN_AND_MEAN 1
 #include <Windows.h>
 
+// Even redefining most of the functions below doesn't stop the compiler
+// from nagging about them.
+#pragma warning(disable: 4996)
+
 // Substitutes for POSIX functions not found on Windows
 #define strcasecmp _stricmp
 #define strdup _strdup
