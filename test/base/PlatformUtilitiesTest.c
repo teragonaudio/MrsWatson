@@ -32,7 +32,7 @@ static int _testGetPlatformName(void) {
 static int _testGetShortPlatformName(void) {
   CharString p = newCharStringWithCString(getShortPlatformName());
 #if LINUX
-  if(isHost64Bit()) {
+  if(isHost64Bit() && isExecutable64Bit()) {
     assertCharStringEquals(p, "Linux-x86_64");
   }
   else {
@@ -43,9 +43,6 @@ static int _testGetShortPlatformName(void) {
 #elif WINDOWS
   if(isHost64Bit() && isExecutable64Bit()) {
     assertCharStringEquals(p, "Windows 64-bit");
-  }
-  else if(isHost64Bit()) {
-    assertCharStringEquals(p, "Windows 32-bit");
   }
   else {
     assertCharStringEquals(p, "Windows 32-bit");
