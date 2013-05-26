@@ -118,11 +118,120 @@ boolByte charStringIsEqualToCString(const CharString self, const char* string, b
     return false;
   }
   else if(caseInsensitive) {
-    return strncasecmp(self->data, string, self->length) == 0;
+    return strncasecmp(self->data, string, self->capacity) == 0;
   }
   else {
-    return strncmp(self->data, string, self->length) == 0;
+    return strncmp(self->data, string, self->capacity) == 0;
   }
+}
+
+boolByte charStringIsLetter(const CharString self, const size_t index) {
+  const char ch = self->data[index];
+  return ((ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z'));
+}
+
+boolByte charStringIsNumber(const CharString self, const size_t index) {
+  const char ch = self->data[index];
+  return (ch >= '0' && ch <= '9');
+}
+
+void _charStringWrap(const char* srcString, char* destString, int indentSize, int lineLength);
+void _charStringWrap(const char* srcString, char* destString, int indentSize, int lineLength) {
+  char* lineBuffer = (char*)malloc(sizeof(char) * lineLength);
+  unsigned long destStringIndex = 0;
+  unsigned long srcStringIndex = 0;
+  size_t lineIndex = 0;
+  int indentIndex = 0;
+  size_t bufferLength;
+  char* newlinePosition;
+  char* lastSpacePosition;
+
+  // Sanity checks
+  if(srcString == NULL) {
+    return;
+  }
+  else if(indentSize < 0 || indentSize > lineLength) {
+    return;
+  }
+  else if(lineLength <= 0) {
+    return;
+  }
+
+  while(srcStringIndex < strlen(srcString)) {
+    if(lineIndex == 0) {
+      for(indentIndex = 0; indentIndex < indentSize; indentIndex++) {
+        destString[destStringIndex++] = ' ';
+        lineIndex++;
+      }
+    }
+
+    // Clear out the line buffer, and copy a full line into it
+    memset(lineBuffer, 0, lineLength);
+    bufferLength = lineLength - lineIndex - 1; // don't forget the null!
+    if(bufferLength <= 0) {
+      break;
+    }
+    strncpy(lineBuffer, srcString + srcStringIndex, bufferLength);
+
+    // Check to see if we have copied the last line of the source string. If so, append that to
+    // the destination string and return.
+    if(bufferLength + srcStringIndex >= strlen(srcString)) {
+      strncpy(destString + destStringIndex, lineBuffer, bufferLength);
+      break;
+    }
+
+    // Look for any newlines in the buffer, and stop there if we find any
+    newlinePosition = strchr(lineBuffer, '\n');
+    if(newlinePosition != NULL) {
+      bufferLength = newlinePosition - lineBuffer + 1;
+      strncpy(destString + destStringIndex, lineBuffer, bufferLength);
+      destStringIndex += bufferLength;
+      srcStringIndex += bufferLength;
+      lineIndex = 0;
+      continue;
+    }
+
+    // If no newlines were found, then find the last space in this line and copy to that point
+    lastSpacePosition = strrchr(lineBuffer, ' ');
+    if(lastSpacePosition == NULL) {
+      // If NULL is returned here, then there are no spaces in this line. In this case, insert
+      // a hyphen at the end of the line and start a new line. Also, we need to leave room
+      // for the newline, so subtract 2 from the total buffer length.
+      bufferLength = lineLength - lineIndex - 1;
+      strncpy(destString + destStringIndex, lineBuffer, bufferLength);
+      destString[lineLength - 1] = '-';
+      // Move the destination string index ahead 1 to account for the hyphen, and the source
+      // string index back one to copy the last character from the previous line.
+      destStringIndex++;
+      srcStringIndex--;
+    }
+    else {
+      bufferLength = lastSpacePosition - lineBuffer;
+      strncpy(destString + destStringIndex, lineBuffer, bufferLength);
+    }
+
+    // Increase string indexes and continue looping
+    destStringIndex += bufferLength;
+    destString[destStringIndex++] = '\n';
+    srcStringIndex += bufferLength + 1;
+    lineIndex = 0;
+  }
+
+  free(lineBuffer);
+}
+
+CharString charStringWrap(const CharString srcString, unsigned int indentSize) {
+  CharString destString;
+  if(srcString == NULL) {
+    return NULL;
+  }
+  // Allocate 2x as many characters as needed to avoid buffer overflows.
+  // Since this method is only used in "user-friendly" cases, it's ok to be
+  // a bit wasteful in the name of avoiding memory corruption. Therefore this
+  // function should *not* used for regular logging or text output.
+  destString = newCharStringWithCapacity(srcString->capacity * 2);
+  _charStringWrap(srcString->data, destString->data, indentSize, TERMINAL_LINE_LENGTH);
+  return destString;
 }
 
 void freeCharString(CharString charString) {

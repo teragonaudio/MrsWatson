@@ -284,8 +284,8 @@ void logCritical(const char* message, ...) {
   va_start(arguments, message);
   // Instead of going through the common logging method, we always dump critical
   // messages to stderr
-  vsnprintf(formattedMessage->data, formattedMessage->length, message, arguments);
-  wrappedMessage = wrapString(formattedMessage, 0);
+  vsnprintf(formattedMessage->data, formattedMessage->capacity, message, arguments);
+  wrappedMessage = charStringWrap(formattedMessage, 0);
   fprintf(stderr, "ERROR: %s\n", wrappedMessage->data);
   if(eventLoggerInstance != NULL && eventLoggerInstance->logFile != NULL) {
     fprintf(eventLoggerInstance->logFile, "ERROR: %s\n", wrappedMessage->data);
@@ -339,8 +339,8 @@ generate a diagnostic report to send to support.");
   CharString wrappedCause;
   CharString wrappedExtraText;
 
-  wrappedCause = wrapString(newCharStringWithCString(cause), 0);
-  wrappedExtraText = wrapString(extraText, 0);
+  wrappedCause = charStringWrap(newCharStringWithCString(cause), 0);
+  wrappedExtraText = charStringWrap(extraText, 0);
   fprintf(stderr, "%s\n", wrappedCause->data);
   fprintf(stderr, "%s\n", wrappedExtraText->data);
 

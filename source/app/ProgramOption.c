@@ -98,7 +98,7 @@ void programOptionPrintHelp(const ProgramOption self, boolByte withFullHelp, int
 
   if(withFullHelp) {
     // Newline and indentation before help
-    wrappedHelpString = wrapString(self->help, initialIndent + indentSize);
+    wrappedHelpString = charStringWrap(self->help, initialIndent + indentSize);
     printf("\n%s\n\n", wrappedHelpString->data);
     freeCharString(wrappedHelpString);
   }

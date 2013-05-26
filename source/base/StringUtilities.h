@@ -31,17 +31,10 @@
 #include "base/CharString.h"
 #include "base/Types.h"
 
-#define DEFAULT_INDENT_SIZE 2
-#ifndef TERMINAL_LINE_LENGTH
-#define TERMINAL_LINE_LENGTH 80
-#endif
-
 boolByte isLetter(char ch);
 boolByte isNumber(char ch);
 
 CharString convertIntIdToString(const unsigned long id);
 unsigned long convertStringIdToInt(const CharString id);
-
-CharString wrapString(const CharString srcString, unsigned int indentSize);
 
 #endif

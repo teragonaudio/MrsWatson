@@ -90,7 +90,7 @@ void errorReporterInitialize(ErrorReporter self) {
   int i;
 
   printf("=== Starting error report ===\n");
-  wrappedInfoText = wrapString(infoText, 0);
+  wrappedInfoText = charStringWrap(infoText, 0);
   // The second newline here is intentional
   printf("%s\n", wrappedInfoText->data);
 
@@ -197,7 +197,7 @@ boolByte errorReporterShouldCopyPlugins(void) {
   CharString wrappedPromptText;
   char response;
 
-  wrappedPromptText = wrapString(promptText, 0);
+  wrappedPromptText = charStringWrap(promptText, 0);
   printf("%s", wrappedPromptText->data);
   freeCharString(wrappedPromptText);
   freeCharString(promptText);

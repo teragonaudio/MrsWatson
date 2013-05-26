@@ -36,6 +36,10 @@ static const size_t kCharStringLengthShort = 32;
 static const size_t kCharStringLengthLong = 8192;
 
 #define EMPTY_STRING ""
+#define DEFAULT_INDENT_SIZE 2
+#ifndef TERMINAL_LINE_LENGTH
+#define TERMINAL_LINE_LENGTH 80
+#endif
 
 #if WINDOWS
 #define strncasecmp _strnicmp
@@ -114,6 +118,10 @@ boolByte charStringIsEqualTo(const CharString self, const CharString string, boo
  * @return True if the strings are equal, false otherwise
  */
 boolByte charStringIsEqualToCString(const CharString self, const char* string, boolByte caseInsensitive);
+
+/**
+ */
+CharString charStringWrap(const CharString self, unsigned int indentSize);
 
 /**
  * Free a CharStar and its contents

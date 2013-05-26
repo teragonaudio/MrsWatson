@@ -1,12 +1,6 @@
 #include "unit/TestRunner.h"
 #include "base/StringUtilities.h"
 
-// This function is not technically public, but we test against it instead of
-// the public version in order to set a shorter line length. This makes test
-// cases much easier to construct.
-extern boolByte _wrapString(const char* srcString, char* destString,
-  int indentSize, int lineLength);
-
 static int _testIsLetter(void) {
   assert(isLetter('a'));
   assert(isLetter('A'));
@@ -33,38 +27,6 @@ static int _testWrapNullSourceString(void) {
   return 0;
 }
 
-static int _testWrapString(void) {
-  CharString src = newCharStringWithCString("1234 6789 bcde 01");
-  // Create dest string the same way as in wrapString(), cheap I know...
-  CharString dest = newCharStringWithCapacity(src->length * 2);
-  _wrapString(src->data, dest->data, 0, 0x10);
-  assertCharStringEquals(dest, "1234 6789 bcde\n01");
-  freeCharString(src);
-  freeCharString(dest);
-  return 0;
-}
-
-static int _testWrapStringWithIndent(void) {
-  CharString src = newCharStringWithCString("1234 6789 bcde 01");
-  // Create dest string the same way as in wrapString(), cheap I know...
-  CharString dest = newCharStringWithCapacity(src->length * 2);
-  _wrapString(src->data, dest->data, 1, 0xe);
-  assertCharStringEquals(dest, " 1234 6789\n bcde 01");
-  freeCharString(src);
-  freeCharString(dest);
-  return 0;
-}
-
-static int _testWrapStringLongerThanLine(void) {
-  CharString src = newCharStringWithCString("123456789abcdef12");
-  // Create dest string the same way as in wrapString(), cheap I know...
-  CharString dest = newCharStringWithCapacity(src->length * 2);
-  _wrapString(src->data, dest->data, 0, 0xf);
-  assertCharStringEquals(dest, "123456789abcde-\nf12");
-  freeCharString(src);
-  freeCharString(dest);
-  return 0;
-}
 
 static int _testConvertIntIdToString(void) {
   CharString test = newCharStringWithCString("abcd");
@@ -125,9 +87,5 @@ TestSuite addStringUtilitiesTests(void) {
   addTest(testSuite, "ConvertEmptyStringIdToInt", _testConvertEmptyStringIdToInt);
   addTest(testSuite, "ConvertInvalidStringIdToInt", _testConvertInvalidStringIdToInt);
 
-  addTest(testSuite, "WrapNullSourceString", _testWrapNullSourceString);
-  addTest(testSuite, "WrapString", _testWrapString);
-  addTest(testSuite, "WrapStringWithIndent", _testWrapStringWithIndent);
-  addTest(testSuite, "WrapStringLongerThanLine", _testWrapStringLongerThanLine);
   return testSuite;
 }
