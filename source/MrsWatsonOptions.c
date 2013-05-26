@@ -39,7 +39,7 @@ ProgramOptions newMrsWatsonOptions(void) {
   programOptionsAdd(options, newProgramOptionWithValues(OPTION_BLOCKSIZE, "blocksize",
     "Blocksize in frames to use for processing. If input source is not an even multiple of the blocksize, then \
 empty frames will be added to the last block.",
-    true, kProgramOptionArgumentTypeRequired, getBlocksize()));
+    true, kProgramOptionArgumentTypeRequired, (int)getBlocksize()));
 
   programOptionsAdd(options, newProgramOptionWithValues(OPTION_CHANNELS, "channels",
     "Number of channels for output source. If the input source specifies a channel count, then that value \
