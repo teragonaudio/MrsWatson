@@ -195,7 +195,7 @@ CharString getExecutablePath(void) {
 #elif MACOSX
   _NSGetExecutablePath(executablePath->data, (uint32_t*)&executablePath->length);
 #elif WINDOWS
-  GetModuleFileNameA(NULL, executablePath->data, executablePath->length);
+  GetModuleFileNameA(NULL, executablePath->data, (DWORD)executablePath->length);
 #endif
   return executablePath;
 }
@@ -205,7 +205,7 @@ CharString getCurrentDirectory(void) {
 #if UNIX
   charStringCopyCString(currentDirectory, getenv("PWD"));
 #elif WINDOWS
-  GetCurrentDirectoryA(currentDirectory->length, currentDirectory->data);
+  GetCurrentDirectoryA((DWORD)currentDirectory->length, currentDirectory->data);
 #endif
   return currentDirectory;
 }
