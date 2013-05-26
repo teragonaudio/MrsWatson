@@ -147,11 +147,17 @@ programs are **incompatible** and have **fundamentally different behavior**.
 They are also written in different languages (the original in C++, MrsWatson
 in C), and have completely different internal architecture.
 
+But just as wildfires usher in new growth, the rewrite of MissWatson to
+MrsWatson has had some advantages as well. Benchmarking the old application
+against the new one shows that the rewrite performs over twice as fast as the
+previous version! Additionally, the new version is much more portable, easier
+to maintain, and extensible than its predecessor.
+
 If you have built some system which used the original MissWatson, then you
 will likely have to make some big changes to migrate to MrsWatson. Likewise,
 if you were using some of the original MissWatson code in your project, you
 will *not* be able to replace it with MrsWatson without significant work on
-your end.
+your end. Migration to the new MrsWatson is strongly encouraged.
 
 
 Donate
