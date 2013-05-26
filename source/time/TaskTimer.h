@@ -57,6 +57,8 @@ TaskTimer newTaskTimerWithCString(const char* component, const char* subcomponen
 void taskTimerStart(TaskTimer self);
 void taskTimerStop(TaskTimer self);
 
+CharString taskTimerHumanReadbleString(TaskTimer self);
+
 void freeTaskTimer(TaskTimer self);
 
 #endif

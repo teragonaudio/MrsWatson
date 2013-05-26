@@ -103,6 +103,33 @@ void taskTimerStop(TaskTimer self) {
   self->_running = false;
 }
 
+CharString taskTimerHumanReadbleString(TaskTimer self) {
+  int hours, minutes, seconds;
+  CharString outString = newCharStringWithCapacity(kCharStringLengthShort);
+
+  if(self->totalTaskTime < 1000) {
+    snprintf(outString->data, outString->length, "%dms", (int)self->totalTaskTime);
+  }
+  else if(self->totalTaskTime < 60 * 1000) {
+    seconds = (int)(self->totalTaskTime / 1000.0);
+    snprintf(outString->data, outString->length, "%dsec", (int)seconds);
+  }
+  else {
+    seconds = (int)(self->totalTaskTime / 1000.0) % 60;
+    minutes = (int)(self->totalTaskTime / (1000.0 * 60.0));
+    if(minutes > 60) {
+      hours = minutes / 60;
+      minutes = (minutes % 60);
+      snprintf(outString->data, outString->length, "%d:%d:%dsec", hours, minutes, seconds);
+    }
+    else {
+      snprintf(outString->data, outString->length, "%d:%dsec", minutes, seconds);
+    }
+  }
+
+  return outString;
+}
+
 void freeTaskTimer(TaskTimer self) {
   if(self != NULL) {
     freeCharString(self->component);

@@ -156,6 +156,52 @@ static int _testCallStopBeforeStart(void) {
   return 0;
 }
 
+static int _testHumanReadableTimeMs(void) {
+  CharString s;
+  _testTaskTimer->totalTaskTime = 230;
+  s = taskTimerHumanReadbleString(_testTaskTimer);
+  assertCharStringEquals(s, "230ms");
+  freeCharString(s);
+  return 0;
+}
+
+static int _testHumanReadableTimeSec(void) {
+  CharString s;
+  // 23 seconds
+  _testTaskTimer->totalTaskTime = 23000;
+  s = taskTimerHumanReadbleString(_testTaskTimer);
+  assertCharStringEquals(s, "23sec");
+  freeCharString(s);
+  return 0;
+}
+
+static int _testHumanReadableTimeMinSec(void) {
+  CharString s;
+  // 10 minutes, 23 seconds
+  _testTaskTimer->totalTaskTime = 600000 + 23000;
+  s = taskTimerHumanReadbleString(_testTaskTimer);
+  assertCharStringEquals(s, "10:23sec");
+  freeCharString(s);
+  return 0;
+}
+
+static int _testHumanReadableTimeHoursMinSec(void) {
+  CharString s;
+  // 2 hours, 10 minutes, 23 seconds
+  _testTaskTimer->totalTaskTime = (1000 * 60 * 60 * 2) + 600000 + 23000;
+  s = taskTimerHumanReadbleString(_testTaskTimer);
+  assertCharStringEquals(s, "2:10:23sec");
+  freeCharString(s);
+  return 0;
+}
+
+static int _testHumanReadableTimeNotStarted(void) {
+  CharString s = taskTimerHumanReadbleString(_testTaskTimer);
+  assertCharStringEquals(s, "0ms");
+  freeCharString(s);
+  return 0;
+}
+
 TestSuite addTaskTimerTests(void);
 TestSuite addTaskTimerTests(void) {
   TestSuite testSuite = newTestSuite("TaskTimer", _testTaskTimerSetup, _testTaskTimerTeardown);
@@ -170,5 +216,10 @@ TestSuite addTaskTimerTests(void) {
   addTest(testSuite, "CallStopTwice", _testTaskTimerCallStopTwice);
   addTest(testSuite, "CallStartTwice", _testTaskTimerCallStartTwice);
   addTest(testSuite, "CallStopBeforeStart", _testCallStopBeforeStart);
+  addTest(testSuite, "HumanReadableTimeMs", _testHumanReadableTimeMs);
+  addTest(testSuite, "HumanReadableTimeSec", _testHumanReadableTimeSec);
+  addTest(testSuite, "HumanReadableTimeMinSec", _testHumanReadableTimeMinSec);
+  addTest(testSuite, "HumanReadableTimeHoursMinSec", _testHumanReadableTimeHoursMinSec);
+  addTest(testSuite, "HumanReadableTimeNotStarted", _testHumanReadableTimeNotStarted);
   return testSuite;
 }

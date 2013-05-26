@@ -48,32 +48,11 @@
 #include "MrsWatsonOptions.h"
 #include "MrsWatson.h"
 
-// TODO: Move somewhere else, maybe EventLogger or StringUtilities?
-static void prettyPrintTime(CharString outString, double milliseconds) {
-  int minutes;
-  double seconds;
-
-  charStringClear(outString);
-  if(milliseconds < 1000) {
-    snprintf(outString->data, outString->length, "%.2fms", milliseconds);
-  }
-  else if(milliseconds < 60 * 1000) {
-    seconds = milliseconds / 1000.0;
-    snprintf(outString->data, outString->length, "%.2fsec", seconds);
-  }
-  else {
-    seconds = milliseconds / 1000.0;
-    minutes = (int)seconds % 60;
-    snprintf(outString->data, outString->length, "%d:%.2gsec", minutes, seconds);
-  }
-}
-
 static void _printTaskTime(void* item, void* userData) {
   TaskTimer taskTimer = (TaskTimer)item;
   TaskTimer totalTimer = (TaskTimer)userData;
-  CharString prettyTimeString = newCharString();
+  CharString prettyTimeString = taskTimerHumanReadbleString(taskTimer);
   double timePercentage = 100.0f * taskTimer->totalTaskTime / totalTimer->totalTaskTime;
-  prettyPrintTime(prettyTimeString, taskTimer->totalTaskTime); 
   logInfo("  %s %s: %s (%2.1f%%)", taskTimer->component->data, taskTimer->subcomponent->data, prettyTimeString->data, timePercentage);
   freeCharString(prettyTimeString);
 }
@@ -649,7 +628,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
       linkedListAppend(taskTimerList, pluginChain->midiTimers[i]);
     }
 
-    prettyPrintTime(totalTimeString, totalTimer->totalTaskTime);
+    totalTimeString = taskTimerHumanReadbleString(totalTimer);
     logInfo("Total processing time %s, approximate breakdown:", totalTimeString->data);
     linkedListForeach(taskTimerList, _printTaskTime, totalTimer);
   }
