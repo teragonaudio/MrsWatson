@@ -234,9 +234,9 @@ CharString charStringWrap(const CharString srcString, unsigned int indentSize) {
   return destString;
 }
 
-void freeCharString(CharString charString) {
-  if(charString != NULL) {
-    free(charString->data);
-    free(charString);
+void freeCharString(CharString self) {
+  if(self != NULL) {
+    free(self->data);
+    free(self);
   }
 }

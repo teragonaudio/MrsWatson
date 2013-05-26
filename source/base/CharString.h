@@ -130,16 +130,39 @@ boolByte charStringIsEqualTo(const CharString self, const CharString string, boo
 boolByte charStringIsEqualToCString(const CharString self, const char* string, boolByte caseInsensitive);
 
 /**
+ * Test if a given character in this string is a letter. This function does not
+ * do any bounds checking, and "letter" means an ASCII character.
+ * @param self
+ * @param index String index. If beyond the bounds of the string, undefined
+ * behavior will result.
+ * @return True if an ASCII character
  */
 boolByte charStringIsLetter(const CharString self, const size_t index);
+
+/**
+ * Test if a given character in this string is a number. This function does not
+ * do any bounds checking.
+ * @param self
+ * @param index String index. If beyond the bounds of the string, undefined
+ * behavior will result.
+ * @return True is character is a number
+ */
 boolByte charStringIsNumber(const CharString self, const size_t index);
 
+/**
+ * Wrap a string to fix nicely within the width of a terminal window. This
+ * function is a bit inefficient, and should not be called in performance
+ * crucial code areas.
+ * @param self
+ * @param indentSize Initial indenting size to use
+ * @return The copy of the string line wrapped to fit in a terminal window
+ */
 CharString charStringWrap(const CharString self, unsigned int indentSize);
 
 /**
  * Free a CharStar and its contents
- * @param string
+ * @param self
  */
-void freeCharString(CharString string);
+void freeCharString(CharString self);
 
 #endif
