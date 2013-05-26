@@ -17,6 +17,21 @@
 #define TEST_COMPONENT_NAME "component"
 #define TEST_SUBCOMPONENT_NAME "subcomponent"
 
+// Keep a static task timer which can easily be destroyed in the teardown. The
+// reason for this is that when running the test suite in valgrind, the timing
+// tests often fail, which will cuase the suite to leak. Having failed timing
+// tests is probably ok when running in valgrind, but leaking memory isn't, as
+// that's the entire point of running it there. :)
+static TaskTimer _testTaskTimer;
+
+static void _testTaskTimerSetup(void) {
+  _testTaskTimer = newTaskTimerWithCString(TEST_COMPONENT_NAME, TEST_SUBCOMPONENT_NAME);
+}
+
+static void _testTaskTimerTeardown(void) {
+  freeTaskTimer(_testTaskTimer);
+}
+
 static int _testNewTaskTimer(void) {
   CharString c = newCharStringWithCString(TEST_COMPONENT_NAME);
   TaskTimer t = newTaskTimer(c, TEST_SUBCOMPONENT_NAME);
@@ -94,77 +109,56 @@ static void _testSleep(void) {
 }
 
 static int _testTaskTimerDuration(void) {
-  TaskTimer t = newTaskTimerWithCString(TEST_COMPONENT_NAME, TEST_SUBCOMPONENT_NAME);
-
-  taskTimerStart(t);
+  taskTimerStart(_testTaskTimer);
   _testSleep();
-  taskTimerStop(t);
-  assertDoubleEquals(t->totalTaskTime, SLEEP_DURATION_MS, MAX_TIMER_TOLERANCE_MS);
-
-  freeTaskTimer(t);
+  taskTimerStop(_testTaskTimer);
+  assertDoubleEquals(_testTaskTimer->totalTaskTime, SLEEP_DURATION_MS, MAX_TIMER_TOLERANCE_MS);
   return 0;
 }
 
 static int _testTaskTimerDurationMultipleTimes(void) {
-  TaskTimer t = newTaskTimerWithCString(TEST_COMPONENT_NAME, TEST_SUBCOMPONENT_NAME);
   int i;
 
   for(i = 0; i < 5; i++) {
-    taskTimerStart(t);
+    taskTimerStart(_testTaskTimer);
     _testSleep();
-    taskTimerStop(t);
+    taskTimerStop(_testTaskTimer);
   }
-  assertDoubleEquals(t->totalTaskTime, 5.0 * SLEEP_DURATION_MS, MAX_TIMER_TOLERANCE_MS * 5.0);
+  assertDoubleEquals(_testTaskTimer->totalTaskTime, 5.0 * SLEEP_DURATION_MS, MAX_TIMER_TOLERANCE_MS * 5.0);
 
-  freeTaskTimer(t);
   return 0;
 }
 
 static int _testTaskTimerCallStartTwice(void) {
-  TaskTimer t = newTaskTimerWithCString(TEST_COMPONENT_NAME, TEST_SUBCOMPONENT_NAME);
-  int i;
-
-  taskTimerStart(t);
-  taskTimerStart(t);
+  taskTimerStart(_testTaskTimer);
+  taskTimerStart(_testTaskTimer);
   _testSleep();
-  taskTimerStop(t);
-  assertDoubleEquals(t->totalTaskTime, SLEEP_DURATION_MS, MAX_TIMER_TOLERANCE_MS);
-
-  freeTaskTimer(t);
+  taskTimerStop(_testTaskTimer);
+  assertDoubleEquals(_testTaskTimer->totalTaskTime, SLEEP_DURATION_MS, MAX_TIMER_TOLERANCE_MS);
   return 0;
 }
 
 static int _testTaskTimerCallStopTwice(void) {
-  TaskTimer t = newTaskTimerWithCString(TEST_COMPONENT_NAME, TEST_SUBCOMPONENT_NAME);
-  int i;
-
-  taskTimerStart(t);
+  taskTimerStart(_testTaskTimer);
   _testSleep();
-  taskTimerStop(t);
-  taskTimerStop(t);
-  assertDoubleEquals(t->totalTaskTime, SLEEP_DURATION_MS, MAX_TIMER_TOLERANCE_MS);
-
-  freeTaskTimer(t);
+  taskTimerStop(_testTaskTimer);
+  taskTimerStop(_testTaskTimer);
+  assertDoubleEquals(_testTaskTimer->totalTaskTime, SLEEP_DURATION_MS, MAX_TIMER_TOLERANCE_MS);
   return 0;
 }
 
 static int _testCallStopBeforeStart(void) {
-  TaskTimer t = newTaskTimerWithCString(TEST_COMPONENT_NAME, TEST_SUBCOMPONENT_NAME);
-  int i;
-
-  taskTimerStop(t);
-  taskTimerStart(t);
+  taskTimerStop(_testTaskTimer);
+  taskTimerStart(_testTaskTimer);
   _testSleep();
-  taskTimerStop(t);
-  assertDoubleEquals(t->totalTaskTime, SLEEP_DURATION_MS, MAX_TIMER_TOLERANCE_MS);
-
-  freeTaskTimer(t);
+  taskTimerStop(_testTaskTimer);
+  assertDoubleEquals(_testTaskTimer->totalTaskTime, SLEEP_DURATION_MS, MAX_TIMER_TOLERANCE_MS);
   return 0;
 }
 
 TestSuite addTaskTimerTests(void);
 TestSuite addTaskTimerTests(void) {
-  TestSuite testSuite = newTestSuite("TaskTimer", NULL, NULL);
+  TestSuite testSuite = newTestSuite("TaskTimer", _testTaskTimerSetup, _testTaskTimerTeardown);
   addTest(testSuite, "NewObject", _testNewTaskTimer);
   addTest(testSuite, "NewObjectWithEmptyComponent", _testNewObjectWithEmptyComponent);
   addTest(testSuite, "NewObjectWithEmptySubcomponent", _testNewObjectWithEmptySubcomponent);
