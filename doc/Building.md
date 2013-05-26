@@ -1,88 +1,135 @@
-Binary Installation
-===================
-
-MrsWatson is provided in binary form for Windows and MacOSX. You can find a
-statically-compiled binary for these platforms from the [official project
-webpage](http://github.com/teragonaudio/MrsWatson).
-
-To install these, simply copy the `mrswatson` file to somewhere in
-your PATH. Make sure that the file has executable rights on unix-based
-platforms (chmod +x).
-
 Building MrsWatson from Source
 ==============================
 
-To build MrsWatson on any platform, you will need to acquire a copy of the VST
-SDK source code. Due to licensing restrictions of the VST SDK, this code is
-not distributed with MrsWatson itself. It can be downloaded from [Steinberg's
-Developer Page](http://www.steinberg.net/en/company/3rd_party_developer.html),
-and then extracted to the `vendor/vstsdk2.4` subdirectory of the project
-before compiling.
+To build MrsWatson on any platform, you will need to acquire a copy of the
+VST SDK source code. Due to licensing restrictions of the VST SDK, this code
+is not distributed with MrsWatson itself. It can be downloaded from
+[Steinberg's Developer Page][1], and then extracted to the
+`vendor/vstsdk2.4` subdirectory of the project before compiling.
+
+The MrsWatson source code also contains a few submodules, it is recommended
+that you sync the submodules before building the code.
+
 
 Mac OSX
 -------
 
-To build MrsWatson on Mac OSX, you will need to have Apple's Developer Tools
-installed. An Xcode project is provided which will automatically build the
-project and copy the resulting binary to `/usr/local/bin`.
+To build MrsWatson on Mac OS X, you will need to have Apple's Developer
+Tools installed. You can download Xcode either from Apple's developer
+website or from the Mac App Store. You also need to install the command line
+tools provided by Xcode, which are not installed by default. To do this, go
+to Xcode's preferences, then to the downloads tab, and in "Components" you
+find a button to install the command line tools.
 
-Make sure that your user has permissions to write the the `/usr/local/bin`
-directory. Otherwise, you will need to go through the tedious step of
-building the product for archiving it and copying the resulting file to a
-useful location.
+[Homebrew][2] is also recommended for building MrsWatson on Mac OS X. from
+homebrew, you will need the cmake package, but possibly automake and
+autoconf as well. See the homebrew webpage for details on installation of
+packages.
 
-If you don't want to deal with Xcode, you can go the unix route and install
-using:
+If you want to use Xcode to develop MrsWatson you will need to generate a
+project file like so:
 
-    ./configure
-    make
-    make install
+    cmake -G Xcode .
 
-Note that you will still need Xcode installed for this to work, as it provides
-gcc and other necessary build tools.
+This command will generate an Xcode project in the current directory which
+you can use to compile the software as you would any other project. For
+other IDE's, such as NetBeans, emacs, or vim, you can generate a regular
+makefile to build the software like any other Unix package. To do that you
+must generate the makefiles like so:
 
-Windows
--------
-
-Because Visual Studio does not support C99, MrsWatson is built on this
-platform using [MinGW MSYS](http://www.mingw.org). Download and install MSYS,
-including extra development tools and such. You will then need to [add the
-MSYS directories to the path](http://www.mingw.org/wiki/Getting_Started#toc4).
-
-Although the documentation implies that `C:\MinGW\MSYS\1.0\bin` is an optional
-path, it is needed for several GNU tools.
-
-After you have installed MSYS, you can unpack the MrsWatson source, and build
-it with:
-
-    ./configure
+    cmake -G "Unix Makefiles" .
     make
 
-This will create `source\mrswatson.exe`, which can then be copied to the
-location of your choice.
 
 Linux
 -----
 
-**NOTE: Linux is currently an experimental platform!**
-
-MrsWatson may not work for you without some extra work, but linux is a desired
-target platform, so please submit any necessary patches or bug reports to the
-official project webpage. As MrsWatson is a 32-bit program, you will need to
-have a complete 32-bit build environment set up for your machine.
-
-On Ubuntu, this can be done by installing the following packages:
+Building MrsWatson on Linux may require a few additional packages on your
+computer, including those necessary to make a 32-bit build on 64-bit
+machines. By default, the software is built with your native architecture,
+so if you would like to make a 32-bit build on a 64-bit machine, you will
+also need the following packages:
 
   * libstdc++
   * g++-multilib
   * ia32-libs
-  * libaudiofile0
-  * libaudiofile-dev
 
-This is in addition to the standard build tools (autoconf, gcc, g++, etc).
-Otherwise, building on linux should be a matter of:
+This is in addition to the standard build tools (gcc, g++, etc).  Otherwise,
+building on Linux should be a simple matter of:
 
-    ./configure
+    cmake .
     make
     make install
 
+
+General Unix Tips
+-----------------
+
+There are several other generators supported by cmake, you can see the list
+of supported ones by running cmake -h on the command line. By default, cmake
+will generate a release build configuration, which will place binaries in
+the "bin" directory. If you want debuggable binaries, then you must run the
+following command when you generate your build environment:
+
+    cmake -DCMAKE_BUILD_TYPE=Debug -G "Your generator of choice" .
+    make clean && make
+
+On Unix (including both Mac OS X and Linux), the project generated by cmake
+will produce both 32 and 64-bit binaries. These binaries will have the
+number "64" appended to the end. Even though Mac OS X has the Universal
+Binary format that could contain both architectures, two separate binaries
+are shipped on this platform to avoid confusion when loading plugins.
+
+
+Windows
+-------
+
+On Windows, Visual Studio is used to compile the software. The MrsWatson
+source code does not include a Visual Studio project, instead cmake is used
+to generate Visual Studio project which can then be used to build the
+software. After you've installed cmkae for Windows, you must generate the
+build directory where the Visual Studio product will be placed. Unlike on
+Unix, you cannot build the software from the same directory as the source
+code. So generating the Visual Studio project will look something like this:
+
+    cd c:\wherever
+    mkdir MrsWatson-build
+    cd MrsWatson-build
+    cmake -G "Visual Studio 11" C:\path\to\MrsWatson
+
+This command will generate a Visual Studio project in
+`C:\wherever\MrsWatson-build` which can use to build the software. Just like
+on Unix, cmake supports several different generators which can be listed by
+running cmake -h. Namely, several different versions of Visual Studio are
+supported, and you should pick the one which matches your installation.
+
+Unlike on Unix, the generated Visual Studio project will not generate both
+32- and 64-bit builds of the software. Instead you must create another build
+directory for the 64-bit project. That is done like so:
+
+    cd c:\wherever
+    mkdir MrsWatson-build64
+    cd MrsWatson-build64
+    cmake -G "Visual Studio 11 Win64" C:\path\to\MrsWatson
+
+
+Testing
+-------
+
+MrsWatson has a test suite that can be used to verify the application is
+running correctly. All releases of MrsWatson must pass the entire test suite
+with no failed tests, so if you modify any of the source code, it is a good
+idea to run the suite to make sure that all tasks continue to pass.
+
+The test suite is built by the generated project file, and is named
+`mrswatsontest`. By default, this application runs a series of internal
+tests, but it is also capable of loading an external executable and
+verifying that it processes audio correctly in a variety of circumstances.
+To run the application test suite, you will need to provide `mrswatsontest`
+with the location of the AudioTestData repository (which is included as a
+submodule of MrsWatson), and the location of MrsWatson itself. For more
+information, run `mrswatsontest --help full` from the command line.
+
+
+[1]: http://www.steinberg.net/en/company/3rd_party_developer.html
+[2]: http://mxcl.github.io/homebrew/
