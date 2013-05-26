@@ -48,7 +48,7 @@ PluginPresetType pluginPresetGuessType(const CharString presetName) {
   fileExtension = getFileExtension(presetName->data);
   if(fileExtension == NULL) {
     for(i = 0; i < strlen(presetName->data); i++) {
-      if(!isNumber(presetName->data[i])) {
+      if(!charStringIsNumber(presetName, i)) {
         return PRESET_TYPE_INVALID;
       }
     }

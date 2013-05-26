@@ -32,14 +32,6 @@
 #include "base/PlatformUtilities.h"
 #include "base/StringUtilities.h"
 
-boolByte isLetter(char ch) {
-  return ((ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z'));
-}
-
-boolByte isNumber(char ch) {
-  return (ch >= '0' && ch <= '9');
-}
-
 CharString convertIntIdToString(const unsigned long id) {
   CharString result = newCharStringWithCapacity(5);
   int i;

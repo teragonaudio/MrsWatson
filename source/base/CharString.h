@@ -131,6 +131,9 @@ boolByte charStringIsEqualToCString(const CharString self, const char* string, b
 
 /**
  */
+boolByte charStringIsLetter(const CharString self, const size_t index);
+boolByte charStringIsNumber(const CharString self, const size_t index);
+
 CharString charStringWrap(const CharString self, unsigned int indentSize);
 
 /**

@@ -31,9 +31,7 @@
 #include "base/CharString.h"
 #include "base/Types.h"
 
-boolByte isLetter(char ch);
-boolByte isNumber(char ch);
-
+// TODO: Move to PluginId class
 CharString convertIntIdToString(const unsigned long id);
 unsigned long convertStringIdToInt(const CharString id);
 

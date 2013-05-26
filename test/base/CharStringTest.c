@@ -204,6 +204,34 @@ static int _testCharStringEqualsCStringNull(void) {
   return 0;
 }
 
+static int _testIsLetter(void) {
+  CharString c = newCharStringWithCString("a");
+  assert(charStringIsLetter(c, 0));
+  freeCharString(c);
+  return 0;
+}
+
+static int _testIsNotLetter(void) {
+  CharString c = newCharStringWithCString("0");
+  assertFalse(charStringIsLetter(c, 0));
+  freeCharString(c);
+  return 0;
+}
+
+static int _testIsNumber(void) {
+  CharString c = newCharStringWithCString("0");
+  assert(charStringIsNumber(c, 0));
+  freeCharString(c);
+  return 0;
+}
+
+static int _testIsNotNumber(void) {
+  CharString c = newCharStringWithCString("a");
+  assertFalse(charStringIsNumber(c, 0));
+  freeCharString(c);
+  return 0;
+}
+
 // This function is not technically public, but we test against it instead of
 // the public version in order to set a shorter line length. This makes test
 // cases much easier to construct.
@@ -283,6 +311,11 @@ TestSuite addCharStringTests(void) {
   addTest(testSuite, "EqualsSameCStringWithCaseInsensitive", _testCharStringEqualsSameCStringInsensitive);
   addTest(testSuite, "DoesNotEqualSameCStringWithDifferentCase", _testCharStringNotEqualsCStringInsensitive);
   addTest(testSuite, "EqualsCStringNull", _testCharStringEqualsCStringNull);
+
+  addTest(testSuite, "IsLetter", _testIsLetter);
+  addTest(testSuite, "IsNotLetter", _testIsNotLetter);
+  addTest(testSuite, "IsNumber", _testIsNumber);
+  addTest(testSuite, "IsNotNumber", _testIsNotNumber);
 
   addTest(testSuite, "WrapNullSourceString", _testWrapNullSourceString);
   addTest(testSuite, "WrapString", _testWrapString);
