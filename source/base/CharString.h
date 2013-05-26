@@ -44,7 +44,7 @@ static const size_t kCharStringLengthLong = 8192;
 #endif
 
 typedef struct {
-  size_t length;
+  size_t capacity;
   char* data;
 } CharStringMembers;
 typedef CharStringMembers* CharString;

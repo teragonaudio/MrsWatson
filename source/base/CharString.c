@@ -38,7 +38,7 @@ CharString newCharString(void) {
 
 CharString newCharStringWithCapacity(size_t length) {
   CharString charString = (CharString)malloc(sizeof(CharStringMembers));
-  charString->length = length;
+  charString->capacity = length;
   charString->data = (char*)malloc(sizeof(char) * length);
   charStringClear(charString);
   return charString;
@@ -71,9 +71,9 @@ void charStringAppend(CharString self, const CharString string) {
 void charStringAppendCString(CharString self, const char* string) {
   size_t stringLength = strlen(string);
   size_t selfLength = strlen(self->data);
-  if(stringLength + selfLength >= self->length) {
-    self->length = stringLength + selfLength + 1; // don't forget the null!
-    self->data = (char*)realloc(self->data, self->length);
+  if(stringLength + selfLength >= self->capacity) {
+    self->capacity = stringLength + selfLength + 1; // don't forget the null!
+    self->data = (char*)realloc(self->data, self->capacity);
     strcat(self->data, string);
   }
   else {
@@ -82,15 +82,15 @@ void charStringAppendCString(CharString self, const char* string) {
 }
 
 void charStringClear(CharString self) {
-  memset(self->data, 0, self->length);
+  memset(self->data, 0, self->capacity);
 }
 
 void charStringCopyCString(CharString self, const char* string) {
-  strncpy(self->data, string, self->length);
+  strncpy(self->data, string, self->capacity);
 }
 
 void charStringCopy(CharString self, const CharString string) {
-  strncpy(self->data, string->data, self->length);
+  strncpy(self->data, string->data, self->capacity);
 }
 
 boolByte charStringIsEmpty(const CharString self) {
@@ -104,7 +104,7 @@ boolByte charStringIsEqualTo(const CharString self, const CharString string, boo
   }
 
   // Only compare to the length of the smaller of the two strings
-  comparisonSize = self->length < string->length ? self->length : string->length;
+  comparisonSize = self->capacity < string->capacity ? self->capacity : string->capacity;
   if(caseInsensitive) {
     return strncasecmp(self->data, string->data, comparisonSize) == 0;
   }

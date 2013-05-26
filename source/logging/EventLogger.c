@@ -85,7 +85,7 @@ static EventLogger _getEventLoggerInstance(void) {
 }
 
 void fillVersionString(CharString outString) {
-  snprintf(outString->data, outString->length, "%s version %d.%d.%d", PROGRAM_NAME, VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
+  snprintf(outString->data, outString->capacity, "%s version %d.%d.%d", PROGRAM_NAME, VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
 }
 
 char* stringForLastError(int errorNumber) {
@@ -98,7 +98,7 @@ char* stringForLastError(int errorNumber) {
   return strerror(errorNumber);
 #elif WINDOWS
   FormatMessageA(FORMAT_MESSAGE_FROM_SYSTEM, 0, errorNumber, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-    eventLogger->systemErrorMessage->data, eventLogger->systemErrorMessage->length - 1, NULL);
+    eventLogger->systemErrorMessage->data, eventLogger->systemErrorMessage->capacity - 1, NULL);
 #else
   charStringCopyCString(eventLogger->systemErrorMessage, "Unknown error");
 #endif
@@ -234,7 +234,7 @@ static void _logMessage(const LogLevel logLevel, const char* message, va_list ar
 
   if(eventLogger != NULL && logLevel >= eventLogger->logLevel) {
     CharString formattedMessage = newCharString();
-    vsnprintf(formattedMessage->data, formattedMessage->length, message, arguments);
+    vsnprintf(formattedMessage->data, formattedMessage->capacity, message, arguments);
 #if WINDOWS
     currentTime = GetTickCount();
     elapsedTimeInMs = (unsigned long)(currentTime - eventLogger->startTimeInMs);
@@ -302,7 +302,7 @@ void logInternalError(const char* message, ...) {
 
   va_start(arguments, message);
   // Instead of going through the common logging method, we always dump critical messages to stderr
-  vsnprintf(formattedMessage->data, formattedMessage->length, message, arguments);
+  vsnprintf(formattedMessage->data, formattedMessage->capacity, message, arguments);
   fprintf(stderr, "INTERNAL ERROR: %s\n", formattedMessage->data);
   if(eventLoggerInstance != NULL && eventLoggerInstance->logFile != NULL) {
   fprintf(eventLoggerInstance->logFile, "INTERNAL ERROR: %s\n", formattedMessage->data);

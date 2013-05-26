@@ -108,11 +108,11 @@ CharString taskTimerHumanReadbleString(TaskTimer self) {
   CharString outString = newCharStringWithCapacity(kCharStringLengthShort);
 
   if(self->totalTaskTime < 1000) {
-    snprintf(outString->data, outString->length, "%dms", (int)self->totalTaskTime);
+    snprintf(outString->data, outString->capacity, "%dms", (int)self->totalTaskTime);
   }
   else if(self->totalTaskTime < 60 * 1000) {
     seconds = (int)(self->totalTaskTime / 1000.0);
-    snprintf(outString->data, outString->length, "%dsec", (int)seconds);
+    snprintf(outString->data, outString->capacity, "%dsec", (int)seconds);
   }
   else {
     seconds = (int)(self->totalTaskTime / 1000.0) % 60;
@@ -120,10 +120,10 @@ CharString taskTimerHumanReadbleString(TaskTimer self) {
     if(minutes > 60) {
       hours = minutes / 60;
       minutes = (minutes % 60);
-      snprintf(outString->data, outString->length, "%d:%d:%dsec", hours, minutes, seconds);
+      snprintf(outString->data, outString->capacity, "%d:%d:%dsec", hours, minutes, seconds);
     }
     else {
-      snprintf(outString->data, outString->length, "%d:%dsec", minutes, seconds);
+      snprintf(outString->data, outString->capacity, "%d:%dsec", minutes, seconds);
     }
   }
 

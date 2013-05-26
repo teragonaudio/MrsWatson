@@ -148,7 +148,7 @@ LinkedList listDirectory(const CharString directory) {
   do {
     if(findData.cFileName[0] != '.') {
       filename = newCharString();
-      strncpy(filename->data, findData.cFileName, filename->length);
+      strncpy(filename->data, findData.cFileName, filename->capacity);
       linkedListAppend(items, filename);
     }
   } while(FindNextFileA(findHandle, &findData) != 0);
@@ -172,7 +172,7 @@ boolByte removeDirectory(const CharString absolutePath) {
 
   // This is a bit lazy, perhaps...
   CharString removeCommand = newCharString();
-  snprintf(removeCommand->data, removeCommand->length, "/bin/rm -rf \"%s\"", absolutePath->data);
+  snprintf(removeCommand->data, removeCommand->capacity, "/bin/rm -rf \"%s\"", absolutePath->data);
   result = system(removeCommand->data);
   freeCharString(removeCommand);
   return (result == 0);
@@ -216,12 +216,12 @@ void buildAbsolutePath(const CharString directory, const CharString file, const 
       buildAbsolutePath(absoluteDirectory, file, NULL, outString);
     }
     else {
-      snprintf(outString->data, outString->length, "%s%c%s.%s",
+      snprintf(outString->data, outString->capacity, "%s%c%s.%s",
         absoluteDirectory->data, PATH_DELIMITER, file->data, fileExtension);
     }
   }
   else {
-    snprintf(outString->data, outString->length, "%s%c%s",
+    snprintf(outString->data, outString->capacity, "%s%c%s",
       absoluteDirectory->data, PATH_DELIMITER, file->data);
   }
 
@@ -230,13 +230,13 @@ void buildAbsolutePath(const CharString directory, const CharString file, const 
 
 void convertRelativePathToAbsolute(const CharString file, CharString outString) {
   CharString currentDirectory = getCurrentDirectory();
-  snprintf(outString->data, outString->length, "%s%c%s", currentDirectory->data, PATH_DELIMITER, file->data);
+  snprintf(outString->data, outString->capacity, "%s%c%s", currentDirectory->data, PATH_DELIMITER, file->data);
   freeCharString(currentDirectory);
 }
 
 boolByte isAbsolutePath(const CharString path) {
 #if WINDOWS
-  if(path->length > 3) {
+  if(path->capacity > 3) {
     // Check for strings which start with a drive letter, ie C:\file
     if(path->data[1] == ':' && path->data[2] == PATH_DELIMITER) {
       return true;
@@ -247,7 +247,7 @@ boolByte isAbsolutePath(const CharString path) {
     }
   }
 #else
-  if(path->length > 1 && path->data[0] == PATH_DELIMITER) {
+  if(path->capacity > 1 && path->data[0] == PATH_DELIMITER) {
     return true;
   }
 #endif

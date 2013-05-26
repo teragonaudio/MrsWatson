@@ -90,7 +90,7 @@ CharString getPlatformName(void) {
   Gestalt(gestaltSystemVersionMajor, &major);
   Gestalt(gestaltSystemVersionMinor, &minor);
   Gestalt(gestaltSystemVersionBugFix, &bugfix);
-  snprintf(result->data, result->length, "Mac OS X %d.%d.%d", (int)major, (int)minor, (int)bugfix);
+  snprintf(result->data, result->capacity, "Mac OS X %d.%d.%d", (int)major, (int)minor, (int)bugfix);
 #elif LINUX
   CharString line = newCharString();
   char *lineDelimiter = NULL;
@@ -132,7 +132,7 @@ CharString getPlatformName(void) {
   }
 
   if(charStringIsEmpty(result)) {
-    snprintf(result->data, result->length, "Linux %s, kernel %s %s",
+    snprintf(result->data, result->capacity, "Linux %s, kernel %s %s",
       distributionName->data, systemInfo.release, systemInfo.machine);
   }
 
@@ -145,7 +145,7 @@ CharString getPlatformName(void) {
   versionInformation.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
   GetVersionEx((OSVERSIONINFO*)&versionInformation);
   // Generic string which will also work with newer versions of windows
-  snprintf(result->data, result->length, "Windows %d.%d",
+  snprintf(result->data, result->capacity, "Windows %d.%d",
     versionInformation.dwMajorVersion, versionInformation.dwMinorVersion);
 
   // This is a bit lame, but it seems that this is the standard way of getting
@@ -187,15 +187,15 @@ CharString getPlatformName(void) {
 CharString getExecutablePath(void) {
   CharString executablePath = newCharString();
 #if LINUX
-  ssize_t result = readlink("/proc/self/exe", executablePath->data, executablePath->length);
+  ssize_t result = readlink("/proc/self/exe", executablePath->data, executablePath->capacity);
   if(result < 0) {
     logWarn("Could not find executable path, %s", stringForLastError(errno));
     return NULL;
   }
 #elif MACOSX
-  _NSGetExecutablePath(executablePath->data, (uint32_t*)&executablePath->length);
+  _NSGetExecutablePath(executablePath->data, (uint32_t*)&executablePath->capacity);
 #elif WINDOWS
-  GetModuleFileNameA(NULL, executablePath->data, (DWORD)executablePath->length);
+  GetModuleFileNameA(NULL, executablePath->data, (DWORD)executablePath->capacity);
 #endif
   return executablePath;
 }
@@ -205,7 +205,7 @@ CharString getCurrentDirectory(void) {
 #if UNIX
   charStringCopyCString(currentDirectory, getenv("PWD"));
 #elif WINDOWS
-  GetCurrentDirectoryA((DWORD)currentDirectory->length, currentDirectory->data);
+  GetCurrentDirectoryA((DWORD)currentDirectory->capacity, currentDirectory->data);
 #endif
   return currentDirectory;
 }

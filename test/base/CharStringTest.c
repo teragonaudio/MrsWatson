@@ -7,7 +7,7 @@ static char *const OTHER_TEST_STRING = "other test string";
 
 static int _testNewCharString(void) {
   CharString c = newCharString();
-  assertIntEquals(c->length, kCharStringLengthDefault);
+  assertUnsignedLongEquals(c->capacity, kCharStringLengthDefault);
   assertCharStringEquals(c, "");
   freeCharString(c);
   return 0;
@@ -15,7 +15,7 @@ static int _testNewCharString(void) {
 
 static int _testNewCharStringWithCapacity(void) {
   CharString c = newCharStringWithCapacity(123);
-  assertIntEquals(c->length, 123);
+  assertUnsignedLongEquals(c->capacity, 123l);
   assertCharStringEquals(c, "");
   freeCharString(c);
   return 0;
@@ -23,7 +23,7 @@ static int _testNewCharStringWithCapacity(void) {
 
 static int _testNewObjectWithNullCString(void) {
   CharString c = newCharStringWithCString(NULL);
-  assertIntEquals(c->length, kCharStringLengthDefault);
+  assertUnsignedLongEquals(c->capacity, kCharStringLengthDefault);
   assertCharStringEquals(c, "");
   freeCharString(c);
   return 0;
@@ -31,7 +31,7 @@ static int _testNewObjectWithNullCString(void) {
 
 static int _testNewObjectWithEmptyCString(void) {
   CharString c = newCharStringWithCString(EMPTY_STRING);
-  assertIntEquals(c->length, kCharStringLengthDefault);
+  assertUnsignedLongEquals(c->capacity, kCharStringLengthDefault);
   assertCharStringEquals(c, EMPTY_STRING);
   freeCharString(c);
   return 0;
@@ -41,7 +41,7 @@ static int _testClearCharString(void) {
   CharString c = newCharString();
   charStringCopyCString(c, TEST_STRING);
   charStringClear(c);
-  assertIntEquals(c->length, kCharStringLengthDefault);
+  assertUnsignedLongEquals(c->capacity, kCharStringLengthDefault);
   assertCharStringEquals(c, "");
   freeCharString(c);
   return 0;
@@ -50,7 +50,7 @@ static int _testClearCharString(void) {
 static int _testCopyToCharString(void) {
   CharString c = newCharString();
   charStringCopyCString(c, TEST_STRING);
-  assertIntEquals(c->length, kCharStringLengthDefault);
+  assertUnsignedLongEquals(c->capacity, kCharStringLengthDefault);
   assertCharStringEquals(c, TEST_STRING);
   freeCharString(c);
   return 0;
@@ -101,10 +101,10 @@ static int _testAppendCharStrings(void) {
 static int _testAppendCharStringsOverCapacity(void) {
   CharString a = newCharStringWithCString("a");
   CharString b = newCharStringWithCString("1234567890");
-  assertIntEquals(a->length, 2);
+  assertIntEquals(a->capacity, 2);
   charStringAppend(a, b);
   assertCharStringEquals(a, "a1234567890");
-  assertIntEquals(a->length, 12);
+  assertIntEquals(a->capacity, 12);
   freeCharString(a);
   freeCharString(b);
   return 0;

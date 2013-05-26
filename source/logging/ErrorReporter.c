@@ -97,7 +97,7 @@ void errorReporterInitialize(ErrorReporter self) {
   time(&now);
   self->started = true;
 
-  snprintf(self->reportName->data, self->reportName->length,
+  snprintf(self->reportName->data, self->reportName->capacity,
     "MrsWatson Report %s", ctime(&now));
   // Trim the final newline character from this string if it exists
   length = strlen(self->reportName->data);
@@ -113,12 +113,12 @@ void errorReporterInitialize(ErrorReporter self) {
   }
 
  #if UNIX
-  snprintf(self->desktopPath->data, self->desktopPath->length,
+  snprintf(self->desktopPath->data, self->desktopPath->capacity,
     "%s/Desktop", getenv("HOME"));
 #elif WINDOWS
   SHGetFolderPathA(NULL, CSIDL_DESKTOPDIRECTORY, NULL, 0, self->desktopPath->data);
 #endif
-  snprintf(self->reportDirPath->data, self->reportDirPath->length,
+  snprintf(self->reportDirPath->data, self->reportDirPath->capacity,
     "%s%c%s", self->desktopPath->data, PATH_DELIMITER, self->reportName->data);
   makeDirectory(self->reportDirPath);
 
@@ -148,7 +148,7 @@ void errorReporterCreateLauncher(ErrorReporter self, int argc, char* argv[]) {
 
 void errorReporterRemapPath(ErrorReporter self, CharString path) {
   CharString basename = newCharString();
-  CharString outString = newCharStringWithCapacity(path->length);
+  CharString outString = newCharStringWithCapacity(path->capacity);
 
   charStringCopyCString(basename, getFileBasename(path->data));
   buildAbsolutePath(self->reportDirPath, basename, NULL, outString);
@@ -178,7 +178,7 @@ static boolByte _copyDirectoryToErrorReportDir(ErrorReporter self, CharString pa
   int result;
   CharString copyCommand = newCharString();
   // TODO: This is the lazy way of doing this...
-  snprintf(copyCommand->data, copyCommand->length, "/bin/cp -r \"%s\" \"%s\"",
+  snprintf(copyCommand->data, copyCommand->capacity, "/bin/cp -r \"%s\" \"%s\"",
     path->data, self->reportDirPath->data);
   result = system(copyCommand->data);
   success = (WEXITSTATUS(result) == 0);

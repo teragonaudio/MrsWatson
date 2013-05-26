@@ -40,7 +40,7 @@ static int _testInvalidFileExists(void) {
 static CharString _fileUtilitiesMakeTempDir(void) {
   CharString tempDirName = newCharString();
 #if UNIX
-  snprintf(tempDirName->data, tempDirName->length, "/tmp/mrswatsontest-XXXXXX");
+  snprintf(tempDirName->data, tempDirName->capacity, "/tmp/mrswatsontest-XXXXXX");
   mktemp(tempDirName->data);
 #elif WINDOWS
   CharString systemTempDir = newCharString();
@@ -238,7 +238,7 @@ static int _testBuildAbsolutePathWithFileExtensionTwice(void) {
   CharString f = newCharStringWithCString(TEST_FILENAME);
   CharString expected = newCharString();
 
-  snprintf(expected->data, expected->length, "%s%c%s", ROOT_DIRECTORY, PATH_DELIMITER, TEST_FILENAME);
+  snprintf(expected->data, expected->capacity, "%s%c%s", ROOT_DIRECTORY, PATH_DELIMITER, TEST_FILENAME);
   buildAbsolutePath(d, f, "txt", out);
   assertCharStringEquals(out, expected->data);
 

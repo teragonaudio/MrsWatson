@@ -25,14 +25,14 @@ CharString buildTestArgumentString(const char* arguments, ...) {
   va_list argumentList;
   va_start(argumentList, arguments);
   formattedArguments = newCharStringWithCapacity(kCharStringLengthLong);
-  vsnprintf(formattedArguments->data, formattedArguments->length, arguments, argumentList);
+  vsnprintf(formattedArguments->data, formattedArguments->capacity, arguments, argumentList);
   va_end(argumentList);
   return formattedArguments;
 }
 
 CharString getTestResourceFilename(const char* resourcesPath, const char* resourceType, const char* resourceName) {
   CharString filename = newCharString();
-  snprintf(filename->data, filename->length, "%s%c%s%c%s",
+  snprintf(filename->data, filename->capacity, "%s%c%s%c%s",
     resourcesPath, PATH_DELIMITER, resourceType, PATH_DELIMITER, resourceName);
   return filename;
 }
@@ -42,7 +42,7 @@ CharString getTestOutputFilename(const char* testName, const char* fileExtension
   char* space;
   char *spacePtr;
 
-  snprintf(filename->data, filename->length, "%s%c%s.%s",
+  snprintf(filename->data, filename->capacity, "%s%c%s.%s",
     kApplicationRunnerOutputFolder, PATH_DELIMITER, testName, fileExtension);
   spacePtr = filename->data;
   do {
@@ -60,7 +60,7 @@ CharString getTestOutputFilename(const char* testName, const char* fileExtension
 
 static CharString _getTestPluginResourcesPath(const char* resourcesPath) {
   CharString pluginRoot = newCharString();
-  snprintf(pluginRoot->data, pluginRoot->length, "%s%cvst%c%s",
+  snprintf(pluginRoot->data, pluginRoot->capacity, "%s%cvst%c%s",
     resourcesPath, PATH_DELIMITER, PATH_DELIMITER, getShortPlatformName());
   return pluginRoot;
 }
@@ -69,7 +69,7 @@ static CharString _getDefaultArguments(TestEnvironment testEnvironment, const ch
   CharString outString = newCharStringWithCapacity(kCharStringLengthLong);
   CharString logfileName = getTestOutputFilename(testName, "txt");
   CharString resourcesPath = _getTestPluginResourcesPath(testEnvironment->resourcesPath);
-  snprintf(outString->data, outString->length,
+  snprintf(outString->data, outString->capacity,
     "--log-file \"%s\" --verbose --output \"%s\" --plugin-root \"%s\"",
     logfileName->data, outputFilename, resourcesPath->data);
   freeCharString(logfileName);
