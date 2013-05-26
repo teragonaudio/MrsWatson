@@ -129,7 +129,7 @@ size_t sampleSourcePcmRead(SampleSourcePcmData pcmData, SampleBuffer sampleBuffe
 static boolByte readBlockFromPcmFile(void* sampleSourcePtr, SampleBuffer sampleBuffer) {
   SampleSource sampleSource = (SampleSource)sampleSourcePtr;
   SampleSourcePcmData extraData = (SampleSourcePcmData)(sampleSource->extraData);
-  int originalBlocksize = sampleBuffer->blocksize;
+  unsigned int originalBlocksize = sampleBuffer->blocksize;
   size_t samplesRead = sampleSourcePcmRead(extraData, sampleBuffer);
   sampleSource->numSamplesProcessed += samplesRead;
   return (originalBlocksize == sampleBuffer->blocksize);
@@ -197,7 +197,7 @@ size_t sampleSourcePcmWrite(SampleSourcePcmData pcmData, const SampleBuffer samp
 static boolByte writeBlockToPcmFile(void* sampleSourcePtr, const SampleBuffer sampleBuffer) {
   SampleSource sampleSource = (SampleSource)sampleSourcePtr;
   SampleSourcePcmData extraData = (SampleSourcePcmData)(sampleSource->extraData);
-  int samplesWritten = (int)sampleSourcePcmWrite(extraData, sampleBuffer);
+  unsigned int samplesWritten = (int)sampleSourcePcmWrite(extraData, sampleBuffer);
   sampleSource->numSamplesProcessed += samplesWritten;
   return (samplesWritten == sampleBuffer->blocksize);
 }

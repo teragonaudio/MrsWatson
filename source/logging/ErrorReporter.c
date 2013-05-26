@@ -86,7 +86,7 @@ void errorReporterInitialize(ErrorReporter self) {
   CharString infoText = newCharStringWithCString(kErrorReportInfoText);
   CharString wrappedInfoText;
   time_t now;
-  int length;
+  size_t length;
   int i;
 
   printf("=== Starting error report ===\n");
