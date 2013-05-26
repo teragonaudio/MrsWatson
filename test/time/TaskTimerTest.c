@@ -122,7 +122,6 @@ static int _testTaskTimerDurationMultipleTimes(void) {
 
 static int _testTaskTimerCallStartTwice(void) {
   TaskTimer t = newTaskTimerWithCString(TEST_COMPONENT_NAME, TEST_SUBCOMPONENT_NAME);
-  int i;
 
   taskTimerStart(t);
   taskTimerStart(t);
@@ -136,7 +135,6 @@ static int _testTaskTimerCallStartTwice(void) {
 
 static int _testTaskTimerCallStopTwice(void) {
   TaskTimer t = newTaskTimerWithCString(TEST_COMPONENT_NAME, TEST_SUBCOMPONENT_NAME);
-  int i;
 
   taskTimerStart(t);
   _testSleep();
@@ -150,7 +148,6 @@ static int _testTaskTimerCallStopTwice(void) {
 
 static int _testCallStopBeforeStart(void) {
   TaskTimer t = newTaskTimerWithCString(TEST_COMPONENT_NAME, TEST_SUBCOMPONENT_NAME);
-  int i;
 
   taskTimerStop(t);
   taskTimerStart(t);
