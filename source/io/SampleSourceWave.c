@@ -53,7 +53,7 @@ static boolByte _readWaveFileInfo(const char* filename, SampleSourcePcmData extr
   unsigned int blockAlign;
   unsigned int expectedBlockAlign;
 
-  if(riffChunkReadNext(extraData->fileHandle, chunk, false)) {
+  if(riffChunkReadNext(chunk, extraData->fileHandle, false)) {
     if(!riffChunkIsIdEqualTo(chunk, "RIFF")) {
       logFileError(filename, "Invalid RIFF chunk descriptor");
       freeRiffChunk(chunk);
@@ -76,7 +76,7 @@ static boolByte _readWaveFileInfo(const char* filename, SampleSourcePcmData extr
     return false;
   }
 
-  if(riffChunkReadNext(extraData->fileHandle, chunk, true)) {
+  if(riffChunkReadNext(chunk, extraData->fileHandle, true)) {
     if(!riffChunkIsIdEqualTo(chunk, "fmt ")) {
       logError(filename, "Invalid format chunk header");
       freeRiffChunk(chunk);
@@ -137,7 +137,7 @@ static boolByte _readWaveFileInfo(const char* filename, SampleSourcePcmData extr
   freeRiffChunk(chunk);
   chunk = newRiffChunk();
 
-  if(riffChunkReadNext(extraData->fileHandle, chunk, false)) {
+  if(riffChunkReadNext(chunk, extraData->fileHandle, false)) {
     if(!riffChunkIsIdEqualTo(chunk, "data")) {
       logFileError(filename, "WAVE file has invalid data chunk header");
       freeRiffChunk(chunk);
@@ -358,7 +358,7 @@ void closeSampleSourceWave(void* sampleSourceDataPtr) {
       return;
     }
     chunk = newRiffChunk();
-    if(!riffChunkReadNext(extraData->fileHandle, chunk, false)) {
+    if(!riffChunkReadNext(chunk, extraData->fileHandle, false)) {
       logError("Could not read RIFF chunk during WAVE file finalization");
       fclose(extraData->fileHandle);
       freeRiffChunk(chunk);
