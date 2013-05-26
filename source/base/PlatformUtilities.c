@@ -68,14 +68,11 @@ const char* getShortPlatformName(void) {
   if(isHost64Bit() && isExecutable64Bit()) {
     return "Windows 64-bit";
   }
-  else if(isHost64Bit()) {
-    return "Windows 32-bit";
-  }
   else {
     return "Windows 32-bit";
   }
 #elif LINUX
-  if(isHost64Bit()) {
+  if(isHost64Bit() && isExecutable64Bit()) {
     return "Linux-x86_64";
   }
   else {
