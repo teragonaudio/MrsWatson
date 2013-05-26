@@ -31,6 +31,10 @@
 #include "base/CharString.h"
 #include "base/PlatformUtilities.h"
 
+#if UNIX
+#include <sys/time.h>
+#endif
+
 typedef struct {
   CharString component;
   CharString subcomponent;
@@ -42,7 +46,7 @@ typedef struct {
   LARGE_INTEGER startTime;
   double counterFrequency;
 #elif UNIX
-  struct timeval* startTime;
+  struct timeval startTime;
 #endif
 } TaskTimerMembers;
 typedef TaskTimerMembers* TaskTimer;

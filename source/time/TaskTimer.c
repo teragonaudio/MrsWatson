@@ -31,10 +31,6 @@
 #include "base/PlatformUtilities.h"
 #include "time/TaskTimer.h"
 
-#if UNIX
-#include <sys/time.h>
-#endif
-
 TaskTimer newTaskTimer(const CharString component, const char* subcomponent) {
   return newTaskTimerWithCString(component->data, subcomponent);
 }
@@ -54,8 +50,6 @@ TaskTimer newTaskTimerWithCString(const char* component, const char* subcomponen
 #if WINDOWS
   QueryPerformanceFrequency(&queryFrequency);
   taskTimer->counterFrequency = (double)(queryFrequency.QuadPart) / 1000.0;
-#elif UNIX
-  taskTimer->startTime = (struct timeval*)malloc(sizeof(struct timeval));
 #endif
 
   return taskTimer;
@@ -68,7 +62,7 @@ void taskTimerStart(TaskTimer self) {
 #if WINDOWS
   QueryPerformanceCounter(&(self->startTime));
 #elif UNIX
-  gettimeofday(self->startTime, NULL);
+  gettimeofday(&self->startTime, NULL);
 #endif
   self->_running = true;
 }
@@ -89,18 +83,16 @@ void taskTimerStop(TaskTimer self) {
   }
 
 #if UNIX
-  if(self->currentTask >= 0) {
-    if(gettimeofday(&currentTime, NULL) == 0) {
-      if(currentTime.tv_sec == self->startTime->tv_sec) {
-        elapsedTimeInMs = (double)(currentTime.tv_usec - self->startTime->tv_usec) / 1000.0;
-      }
-      else {
-        elapsedFullSeconds = (double)(currentTime.tv_sec - self->startTime->tv_sec - 1);
-        elapsedMicroseconds = (double)(currentTime.tv_usec + (1000000l - self->startTime->tv_usec));
-        elapsedTimeInMs = (elapsedFullSeconds * 1000.0) + (elapsedMicroseconds / 1000.0);
-      }
-      self->totalTaskTimes[taskTimer->currentTask] += elapsedTimeInMs;
+  if(gettimeofday(&currentTime, NULL) == 0) {
+    if(currentTime.tv_sec == self->startTime.tv_sec) {
+      elapsedTimeInMs = (double)(currentTime.tv_usec - self->startTime.tv_usec) / 1000.0;
     }
+    else {
+      elapsedFullSeconds = (double)(currentTime.tv_sec - self->startTime.tv_sec - 1);
+      elapsedMicroseconds = (double)(currentTime.tv_usec + (1000000l - self->startTime.tv_usec));
+      elapsedTimeInMs = (elapsedFullSeconds * 1000.0) + (elapsedMicroseconds / 1000.0);
+    }
+    self->totalTaskTime += elapsedTimeInMs;
   }
 #elif WINDOWS
   QueryPerformanceCounter(&stopTime);
@@ -113,9 +105,6 @@ void taskTimerStop(TaskTimer self) {
 
 void freeTaskTimer(TaskTimer self) {
   if(self != NULL) {
-#if UNIX
-    free(self->startTime);
-#endif
     free(self);
   }
 }
