@@ -153,10 +153,6 @@ value will be used and added to <argument>.",
     "Tempo to use when processing.",
     false, kProgramOptionArgumentTypeRequired, (int)getTempo()));
 
-  programOptionsAdd(options, newProgramOptionWithValues(OPTION_TIME_DIVISION, "time-division",
-    "Time division in PPQ. If using a MIDI file input, this value will be ignored.",
-    false, kProgramOptionArgumentTypeRequired, DEFAULT_TIME_DIVISION));
-
   programOptionsAdd(options, newProgramOptionWithValues(OPTION_TIME_SIGNATURE_TOP, "time-signature-top",
     "Set the numerator of the time signature, which determines the number of beats per measure.",
     false, kProgramOptionArgumentTypeRequired, getTimeSignatureBeatsPerMeasure()));

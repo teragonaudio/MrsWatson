@@ -380,9 +380,6 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
         case OPTION_TEMPO:
           setTempo(strtod(option->argument->data, NULL));
           break;
-        case OPTION_TIME_DIVISION:
-          setTimeDivision(strtod(option->argument->data, NULL));
-          break;
         case OPTION_TIME_SIGNATURE_TOP:
           setTimeSignatureBeatsPerMeasure((short)strtol(option->argument->data, NULL, 10));
           break;

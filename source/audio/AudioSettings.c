@@ -39,7 +39,6 @@ void initAudioSettings(void) {
   audioSettingsInstance->sampleRate = DEFAULT_SAMPLE_RATE;
   audioSettingsInstance->numChannels = DEFAULT_NUM_CHANNELS;
   audioSettingsInstance->blocksize = DEFAULT_BLOCKSIZE;
-  audioSettingsInstance->timeDivision = DEFAULT_TIME_DIVISION;
   audioSettingsInstance->tempo = DEFAULT_TEMPO;
   audioSettingsInstance->timeSignatureBeatsPerMeasure = DEFAULT_TIMESIG_BEATS_PER_MEASURE;
   audioSettingsInstance->timeSignatureNoteValue = DEFAULT_TIMESIG_NOTE_VALUE;
@@ -59,10 +58,6 @@ unsigned int getNumChannels(void) {
 
 unsigned long getBlocksize(void) {
   return _getAudioSettings()->blocksize;
-}
-
-double getTimeDivision(void) {
-  return _getAudioSettings()->timeDivision;
 }
 
 double getTempo(void) {
@@ -103,14 +98,6 @@ void setBlocksize(const unsigned long blocksize) {
   }
   logInfo("Setting blocksize to %ld", blocksize);
   _getAudioSettings()->blocksize = blocksize;
-}
-
-void setTimeDivision(const double division) {
-  if(division <= 0) {
-    logError("Ignoring attempt to set division to %f", division);
-    return;
-  }
-  _getAudioSettings()->timeDivision = division;
 }
 
 void setTempo(const double tempo) {
