@@ -46,7 +46,7 @@ static boolByte _readWaveFileInfo(const char* filename, SampleSourcePcmData extr
   int chunkOffset = 0;
   RiffChunk chunk = newRiffChunk();
   char format[4];
-  unsigned int itemsRead;
+  size_t itemsRead;
   unsigned int audioFormat;
   unsigned int byteRate;
   unsigned int expectedByteRate;
@@ -317,7 +317,7 @@ static boolByte _openSampleSourceWave(void *sampleSourcePtr, const SampleSourceO
 static boolByte _readBlockFromWaveFile(void* sampleSourcePtr, SampleBuffer sampleBuffer) {
   SampleSource sampleSource = (SampleSource)sampleSourcePtr;
   SampleSourcePcmData extraData = (SampleSourcePcmData)sampleSource->extraData;
-  unsigned int originalBlocksize = sampleBuffer->blocksize;
+  unsigned long originalBlocksize = sampleBuffer->blocksize;
   size_t samplesRead = sampleSourcePcmRead(extraData, sampleBuffer);
   sampleSource->numSamplesProcessed += samplesRead;
   return (originalBlocksize == sampleBuffer->blocksize);
@@ -335,7 +335,7 @@ void closeSampleSourceWave(void* sampleSourceDataPtr) {
 #if ! HAVE_LIBAUDIOFILE
   SampleSource sampleSource = (SampleSource)sampleSourceDataPtr;
   SampleSourcePcmData extraData = (SampleSourcePcmData)sampleSource->extraData;
-  unsigned int numBytesWritten;
+  size_t numBytesWritten;
   RiffChunk chunk;
 
   if(sampleSource->openedAs == SAMPLE_SOURCE_OPEN_WRITE) {
