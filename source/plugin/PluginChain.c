@@ -279,6 +279,8 @@ void pluginChainShutdown(PluginChain pluginChain) {
 }
 
 void freePluginChain(PluginChain pluginChain) {
+  Plugin plugin;
+  PluginPreset preset;
   int i;
 
   for(i = 0; i < pluginChain->numPlugins; i++) {
