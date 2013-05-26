@@ -1,5 +1,19 @@
+Version 0.9.6:
+- Compatibility with VST shell plugins (including Waves plugins)
+- Compatibility fixes with plugins that declare more than 2 outputs
+  (including Independence)
+- Compatibility fixes for Chainer and other plugins which rely on VstEvents*
+  struct to remain in memory during processReplacing()
+- MrsWatson now sends correct musical time in PPQ/Bars when asked by
+  plugin
+- Add 64-bit binaries to distribution zipfile (experimental)
+- Fix tons of memory leaks; test suite now runs with 0 bytes leaked
+- Fix several memory corruption bugs, valgrind now runs test suite
+  with no errors
+- Windows build migrated to cmake
+- Several other bugfixes and small improvements
+
 Version 0.9.5:
-0.9.4:
 - Better support for MIDI meta events. Tempo and time signature are now
   correctly read from MIDI files.
 - Fix a bug where MrsWatson would not know when to stop processing an
