@@ -105,6 +105,8 @@ void taskTimerStop(TaskTimer self) {
 
 void freeTaskTimer(TaskTimer self) {
   if(self != NULL) {
+    freeCharString(self->component);
+    freeCharString(self->subcomponent);
     free(self);
   }
 }
