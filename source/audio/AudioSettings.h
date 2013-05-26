@@ -51,11 +51,36 @@ typedef struct {
 typedef AudioSettingsMembers* AudioSettings;
 extern AudioSettings audioSettingsInstance;
 
+/**
+ * Initialize the global audio settings instance. Since many different classes
+ * require quick access to the audio settings, this is one of the few classes
+ * that has a global singleton instance rather than a "new" allocator.
+ */
 void initAudioSettings(void);
 
+/**
+ * Get the current sample rate.
+ * @return Sample rate in Hertz
+ */
 double getSampleRate(void);
+
+/**
+ * Get the number of output channels.
+ * @return Number of channels
+ */
 unsigned int getNumChannels(void);
+
+/**
+ * Give the current block size, which is the number of sample frames sent to the
+ * plug-in each time process is called. Note that the blocksize is the number of
+ * *frames* sent to the plug-in, so if the channel count is 2 and the blocksize
+ * is 512, 1024 samples will be sent to the plug-in. However in that case this
+ * function would still return 512.
+ * @return Blocksize, in sample frames
+ */
 unsigned long getBlocksize(void);
+
+
 double getTempo(void);
 short getTimeSignatureBeatsPerMeasure(void);
 short getTimeSignatureNoteValue(void);
