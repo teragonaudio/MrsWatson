@@ -72,28 +72,97 @@ unsigned int getNumChannels(void);
 
 /**
  * Give the current block size, which is the number of sample frames sent to the
- * plug-in each time process is called. Note that the blocksize is the number of
- * *frames* sent to the plug-in, so if the channel count is 2 and the blocksize
- * is 512, 1024 samples will be sent to the plug-in. However in that case this
+ * plugin each time process is called. Note that the blocksize is the number of
+ * *frames* sent to the plugin, so if the channel count is 2 and the blocksize
+ * is 512, 1024 samples will be sent to the plugin. However in that case this
  * function would still return 512.
  * @return Blocksize, in sample frames
  */
 unsigned long getBlocksize(void);
 
-
+/**
+ * Get the current tempo, in beats per minute
+ * @return Temo in BPM
+ */
 double getTempo(void);
+
+/**
+ * Get the current time signature's numerator, the number of beats per measure.
+ * @return Time signature numerator
+ */
 short getTimeSignatureBeatsPerMeasure(void);
+
+/**
+ * Get the current time signatures denominator, the value of one beat unit.
+ * @return Time signature denominator
+ */
 short getTimeSignatureNoteValue(void);
 
+/**
+ * Set the sample rate to be used during processing. This must be set before the
+ * plugin chain is initialized. This function only requires a nonzero value,
+ * however some plugins may behave strangely when sent unusual sample rates.
+ * @param sampleRate Sample rate, in Hertz
+ */
 void setSampleRate(const double sampleRate);
+
+/**
+ * Set the number of channels to be used during processing. Note that if the
+ * input source defines a channel called, it may override this value.
+ * @param numChannels Number of channels
+ */
 void setNumChannels(const unsigned int numChannels);
+
+/**
+ * Set the blocksize to be used during processing. Again this should be called
+ * before initializing the plugin chain.
+ * @param blocksize Blocksize in sample frames
+ */
 void setBlocksize(const unsigned long blocksize);
+
+/**
+ * Set tempo to be used during processing.
+ * @param tempo Tempo in beats per minute
+ */
 void setTempo(const double tempo);
+
+/**
+ * MIDI files represent tempo in meta events with a three-byte payload. This
+ * method transforms the three byte sequence from such file into an actual tempo
+ * in beats per minute, and then sets the global tempo to this value.
+ * @param bytes Three byte sequence as read from a MIDI file
+ */
 void setTempoFromMidiBytes(const byte* bytes);
+
+/**
+ * Set the time signature's numerator. This function does very little error
+ * checking, but it does require a non-zero value. However, many plugins may act
+ * strangely with unusual time signatures.
+ * @param beatsPerMeasure Time signature numerator
+ */
 void setTimeSignatureBeatsPerMeasure(const short beatsPerMeasure);
+
+/**
+ * Set the time signature's denominator. This function does very little error
+ * checking, but it does require a non-zero value. However, many plugins may act
+ * strangely with unusual time signatures.
+ * @param noteValue Time signature denominator
+ */
 void setTimeSignatureNoteValue(const short noteValue);
+
+/**
+ * MIDI files represent musical time signature with a two-byte sequence. This
+ * function takes two bytes, derives the corresponding time signature, and sets
+ * it in the global instance.
+ * @param bytes Two byte sequence as read from a MIDI file
+ */
 void setTimeSignatureFromMidiBytes(const byte* bytes);
 
+/**
+ * Release memory of the global audio settings instance. Any attempt to use the
+ * audio settings functions after this has been called will result in undefined
+ * behavior.
+ */
 void freeAudioSettings(void);
 
 #endif
