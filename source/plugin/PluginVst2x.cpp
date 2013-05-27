@@ -585,6 +585,7 @@ static void _processMidiEventsVst2xPlugin(void *pluginPtr, LinkedList midiEvents
 
 boolByte setVst2xProgram(Plugin plugin, const int programNumber) {
   PluginVst2xData data = (PluginVst2xData)plugin->extraData;
+  CharString currentProgram;
   VstInt32 result;
 
   if(programNumber < data->pluginHandle->numPrograms) {
@@ -601,6 +602,10 @@ boolByte setVst2xProgram(Plugin plugin, const int programNumber) {
         return false;
       }
       else {
+        currentProgram = newCharStringWithCapacity(kVstMaxProgNameLen + 1);
+        data->dispatcher(data->pluginHandle, effGetProgramName, 0, 0, currentProgram->data, 0.0f);
+        logDebug("Current program is now '%s'", currentProgram->data);
+        freeCharString(currentProgram);
         return true;
       }
     }
