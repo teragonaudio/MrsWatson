@@ -143,8 +143,8 @@ SampleSource newSampleSource(SampleSourceType sampleSourceType, const CharString
   }
 }
 
-void freeSampleSource(SampleSource sampleSource) {
-  sampleSource->freeSampleSourceData(sampleSource->extraData);
-  freeCharString(sampleSource->sourceName);
-  free(sampleSource);
+void freeSampleSource(SampleSource self) {
+  self->freeSampleSourceData(self->extraData);
+  freeCharString(self->sourceName);
+  free(self);
 }
