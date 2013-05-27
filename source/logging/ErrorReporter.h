@@ -40,16 +40,72 @@ typedef struct {
 } ErrorReporterMembers;
 typedef ErrorReporterMembers* ErrorReporter;
 
+/**
+ * Create a new ErrorReporter
+ * @return ErrorReporter object
+ */
 ErrorReporter newErrorReporter(void);
+
+/**
+ * Create the necessary resources used by the ErrorReporter. This is not done
+ * during object construction because large files can be copied and interactive
+ * input requested from the user.
+ * @param self
+ */
 void errorReporterInitialize(ErrorReporter self);
 
+/**
+ * Create a shell script that can be used to launch MrsWatson with the same
+ * arguments which caused the error to happen
+ * @param self
+ * @param argc Number of arguments, as taken from main()
+ * @param argv Argument array, as taken from main()
+ */
 void errorReporterCreateLauncher(ErrorReporter self, int argc, char* argv[]);
+
+/**
+ * Remap a resource to point to the ErrorReporter's directory. This ensures all
+ * resources are contained within the same folder, and can be easily compressed
+ * for sending after the program finishes executing.
+ * @param self
+ * @param path Input path to be remapped
+ */
 void errorReporterRemapPath(ErrorReporter self, CharString path);
+
+/**
+ * Copy a file to the ErrorReporter's directory
+ * @param self
+ * @param path File to copy
+ * @return True if the file successfully copied
+ */
 boolByte errorReportCopyFileToReport(ErrorReporter self, CharString path);
+
+/**
+ * Ask the user if plugins should be copied to the report directory in addition
+ * to other files. Because there can be copy protection issues, not to mention
+ * file sizes, it is better to ask the user before copying the plugins.
+ * @return True if the user wishes to copy all plugins
+ */
 boolByte errorReporterShouldCopyPlugins(void);
+
+/**
+ * Copy all plug-ins to the ErrorReporter directory
+ * @param self
+ * @param pluginChain Initialized plugin chain
+ * @return True if all plugins were copied
+ */
 boolByte errorReporterCopyPlugins(ErrorReporter self, PluginChain pluginChain);
 
+/**
+ * Close any resources associated with the ErrorReporter
+ * @param self
+ */
 void errorReporterClose(ErrorReporter self);
+
+/**
+ * Free all memory associated with an ErrorReporter instance
+ * @param self
+ */
 void freeErrorReporter(ErrorReporter self);
 
 #endif
