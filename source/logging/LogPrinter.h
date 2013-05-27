@@ -123,8 +123,23 @@ typedef WORD LogColor;
 #define COLOR_BG_WHITE   0xf0
 #endif
 
+/**
+ * Print a message with colors to the log
+ * @param color Color to use
+ * @param logFile Log file to write to
+ * @param message Message contents
+ */
 void printToLog(const LogColor color, FILE* logFile, const char* message);
+
+/**
+ * Flush the log file to disk
+ * @param logFile Log file
+ */
 void flushLog(FILE* logFile);
+
+/**
+ * Print a test pattern of all known color combinations.
+ */
 void printTestPattern(void);
 
 #endif
