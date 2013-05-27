@@ -87,7 +87,7 @@ void errorReporterInitialize(ErrorReporter self) {
   CharString wrappedInfoText;
   time_t now;
   size_t length;
-  int i;
+  size_t i;
 
   printf("=== Starting error report ===\n");
   wrappedInfoText = charStringWrap(infoText, 0);
