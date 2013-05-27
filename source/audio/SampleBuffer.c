@@ -65,35 +65,6 @@ void sampleBufferClear(SampleBuffer self) {
   }
 }
 
-boolByte sampleBufferCopy(SampleBuffer self, const SampleBuffer buffer) {
-  unsigned int i;
-
-  // Definitely not supported, otherwise it would be hard to deal with partial
-  // copies and so forth.
-  if(self->blocksize != buffer->blocksize) {
-    return false;
-  }
-
-  // If the other buffer is bigger (or the same size) as this buffer, then only
-  // copy up to the channel count of this buffer. Any other data will be lost,
-  // sorry about that!
-  if(buffer->numChannels >= self->numChannels) {
-    for(i = 0; i < self->numChannels; i++) {
-      memcpy(self->samples[i], buffer->samples[i], sizeof(Sample) * self->blocksize);
-    }
-  }
-  // But if this buffer is bigger than the other buffer, then copy all channels
-  // to this one. For example, if this buffer is 4 channels and the other buffer
-  // is 2 channels, then we copy the stereo pair to this channel (L R L R).
-  else {
-    for(i = 0; i < self->numChannels; i++) {
-      memcpy(self->samples[i], buffer->samples[i % buffer->numChannels], sizeof(Sample) * self->blocksize);
-    }
-  }
-
-  return true;
-}
-
 boolByte sampleBufferResize(SampleBuffer self, const unsigned int numChannels, boolByte copy) {
   unsigned int i;
 
@@ -126,6 +97,74 @@ boolByte sampleBufferResize(SampleBuffer self, const unsigned int numChannels, b
   }
 
   return false;
+}
+
+boolByte sampleBufferCopy(SampleBuffer self, const SampleBuffer buffer) {
+  unsigned int i;
+
+  // Definitely not supported, otherwise it would be hard to deal with partial
+  // copies and so forth.
+  if(self->blocksize != buffer->blocksize) {
+    return false;
+  }
+
+  // If the other buffer is bigger (or the same size) as this buffer, then only
+  // copy up to the channel count of this buffer. Any other data will be lost,
+  // sorry about that!
+  if(buffer->numChannels >= self->numChannels) {
+    for(i = 0; i < self->numChannels; i++) {
+      memcpy(self->samples[i], buffer->samples[i], sizeof(Sample) * self->blocksize);
+    }
+  }
+  // But if this buffer is bigger than the other buffer, then copy all channels
+  // to this one. For example, if this buffer is 4 channels and the other buffer
+  // is 2 channels, then we copy the stereo pair to this channel (L R L R).
+  else {
+    for(i = 0; i < self->numChannels; i++) {
+      memcpy(self->samples[i], buffer->samples[i % buffer->numChannels], sizeof(Sample) * self->blocksize);
+    }
+  }
+
+  return true;
+}
+
+void sampleBufferCopyPcmSamples(SampleBuffer self, const short* inPcmSamples) {
+  const unsigned int numChannels = self->numChannels;
+  const unsigned long numInterlacedSamples = numChannels * self->blocksize;
+  unsigned int currentInterlacedSample = 0;
+  unsigned int currentDeinterlacedSample = 0;
+  unsigned int currentChannel;
+
+  while(currentInterlacedSample < numInterlacedSamples) {
+    for(currentChannel = 0; currentChannel < numChannels; ++currentChannel) {
+      Sample convertedSample = (Sample)inPcmSamples[currentInterlacedSample++] / 32767.0f;
+      self->samples[currentChannel][currentDeinterlacedSample] = convertedSample;
+    }
+    ++currentDeinterlacedSample;
+  }
+}
+
+void sampleBufferGetPcmSamples(const SampleBuffer self, short* outPcmSamples, boolByte flipEndian) {
+  const unsigned long blocksize = self->blocksize;
+  const unsigned int numChannels = self->numChannels;
+  unsigned int currentInterlacedSample = 0;
+  unsigned int currentSample = 0;
+  unsigned int currentChannel = 0;
+  short shortValue;
+  Sample sample;
+
+  for(currentSample = 0; currentSample < blocksize; ++currentSample) {
+    for(currentChannel = 0; currentChannel < numChannels; ++currentChannel) {
+      sample = self->samples[currentChannel][currentSample];
+      shortValue = (short)(sample * 32767.0f);
+      if(flipEndian) {
+        outPcmSamples[currentInterlacedSample++] = flipShortEndian(shortValue);
+      }
+      else {
+        outPcmSamples[currentInterlacedSample++] = shortValue;
+      }
+    }
+  }
 }
 
 void freeSampleBuffer(SampleBuffer sampleBuffer) {

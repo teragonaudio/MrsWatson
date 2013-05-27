@@ -32,10 +32,6 @@
 #include "base/CharString.h"
 #include "base/Types.h"
 
-// Force all samples to be within {1.0, -1.0} range. This uses a bit of extra
-// CPU, and I'm not sure it's even necessary, so it is disabled at present.
-#define USE_BRICKWALL_LIMITER 0
-
 typedef enum {
   SAMPLE_SOURCE_TYPE_INVALID,
   SAMPLE_SOURCE_TYPE_SILENCE,
