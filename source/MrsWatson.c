@@ -455,7 +455,8 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   // otherwise the head plugin type is not known, which influences whether we must abort
   // processing.
   if(programOptions->options[OPTION_ERROR_REPORT]->enabled) {
-    if(sampleSourceIsStreaming(inputSource) || sampleSourceIsStreaming(outputSource)) {
+    if(charStringIsEqualToCString(inputSource->sourceName, "-", false) ||
+       charStringIsEqualToCString(outputSource->sourceName, "-", false)) {
       printf("ERROR: Using stdin/stdout is incompatible with --error-report\n");
       return RETURN_CODE_NOT_RUN;
     }

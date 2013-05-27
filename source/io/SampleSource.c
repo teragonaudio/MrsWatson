@@ -116,15 +116,6 @@ SampleSourceType sampleSourceGuess(const CharString sampleSourceTypeString) {
   }
 }
 
-boolByte sampleSourceIsStreaming(SampleSource sampleSource) {
-  if(sampleSource == NULL) {
-    return false;
-  }
-  else {
-    return (strcmp(sampleSource->sourceName->data, "-") == 0);
-  }
-}
-
 SampleSource newSampleSource(SampleSourceType sampleSourceType, const CharString sampleSourceName) {
   switch(sampleSourceType) {
     case SAMPLE_SOURCE_TYPE_SILENCE:

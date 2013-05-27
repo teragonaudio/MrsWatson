@@ -82,7 +82,6 @@ SampleSource newSampleSource(SampleSourceType sampleSourceType, const CharString
 
 void sampleSourcePrintSupportedTypes(void);
 SampleSourceType sampleSourceGuess(const CharString sampleSourceTypeString);
-boolByte sampleSourceIsStreaming(SampleSource sampleSource);
 
 void freeSampleSource(SampleSource sampleSource);
 
