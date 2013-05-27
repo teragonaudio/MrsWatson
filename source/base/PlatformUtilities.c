@@ -112,7 +112,7 @@ CharString getPlatformName(void) {
   if(fileExists("/etc/lsb-release")) {
     lsbRelease = fopen("/etc/lsb-release", "r");
     if(lsbRelease != NULL) {
-      while(fgets(line->data, line->length, lsbRelease) != NULL) {
+      while(fgets(line->data, line->capacity, lsbRelease) != NULL) {
         lineDelimiter = strchr(line->data, '=');
         if(lineDelimiter != NULL) {
           if(!strncmp(line->data, LSB_DISTRIBUTION, strlen(LSB_DISTRIBUTION))) {
