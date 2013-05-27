@@ -44,9 +44,9 @@ MidiEvent newMidiEvent(void) {
   return midiEvent;
 }
 
-void freeMidiEvent(MidiEvent midiEvent) {
-  if(midiEvent->eventType == MIDI_TYPE_SYSEX || midiEvent->eventType == MIDI_TYPE_META) {
-    free(midiEvent->extraData);
+void freeMidiEvent(MidiEvent self) {
+  if(self->eventType == MIDI_TYPE_SYSEX || self->eventType == MIDI_TYPE_META) {
+    free(self->extraData);
   }
-  free(midiEvent);
+  free(self);
 }
