@@ -56,8 +56,6 @@ extern EventLogger eventLoggerInstance;
 
 void initEventLogger(void);
 
-// TODO: Move elsewhere? PlatformUtilities maybe?
-void fillVersionString(CharString outString);
 char* stringForLastError(int errorNumber);
 
 boolByte isLogLevelAtLeast(LogLevel logLevel);

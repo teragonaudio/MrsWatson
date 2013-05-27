@@ -71,13 +71,14 @@ static void _remapFileToErrorReport(ErrorReporter errorReporter, ProgramOption o
 
 static void printWelcomeMessage(int argc, char** argv) {
   CharString stringBuffer = newCharString();
+  CharString versionString = buildInfoGetVersionString();
   char* space;
   int i;
 
-  fillVersionString(stringBuffer);
-  logInfo("%s initialized, build %ld", stringBuffer->data, buildInfoGetDatestamp());
+  logInfo("%s initialized, build %ld", versionString->data, buildInfoGetDatestamp());
   // Recycle to use for the platform name
   freeCharString(stringBuffer);
+  freeCharString(versionString);
 
   if(isExecutable64Bit()) {
     logWarn("Running in 64-bit mode, this is experimental. Hold on to your hats!");
@@ -108,10 +109,9 @@ static void printWelcomeMessage(int argc, char** argv) {
 }
 
 static void printVersion(void) {
-  CharString versionString = newCharString();
+  CharString versionString = buildInfoGetVersionString();
   CharString wrappedLicenseInfo;
 
-  fillVersionString(versionString);
   printf("%s, build %ld\nCopyright (c) %ld, %s. All rights reserved.\n\n",
     versionString->data, buildInfoGetDatestamp(), buildInfoGetYear(), VENDOR_NAME);
 

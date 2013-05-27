@@ -84,10 +84,6 @@ static EventLogger _getEventLoggerInstance(void) {
   return eventLoggerInstance;
 }
 
-void fillVersionString(CharString outString) {
-  snprintf(outString->data, outString->capacity, "%s version %d.%d.%d", PROGRAM_NAME, VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
-}
-
 char* stringForLastError(int errorNumber) {
   EventLogger eventLogger = _getEventLoggerInstance();
   if(eventLogger->systemErrorMessage == NULL) {

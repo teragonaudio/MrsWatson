@@ -77,3 +77,10 @@ unsigned long buildInfoGetDatestamp(void) {
   freeCharString(buffer);
   return result;
 }
+
+CharString buildInfoGetVersionString(void) {
+  CharString result = newCharStringWithCapacity(kCharStringLengthShort);
+  snprintf(result->data, result->capacity, "%s version %d.%d.%d",
+    PROGRAM_NAME, VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
+  return result;
+}
