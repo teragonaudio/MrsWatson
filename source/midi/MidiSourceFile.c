@@ -213,8 +213,12 @@ static boolByte _readMidiFileTrack(FILE *midiFile, const int trackNumber,
         case MIDI_META_TYPE_LYRIC:
         case MIDI_META_TYPE_MARKER:
         case MIDI_META_TYPE_CUE_POINT:
+        // This event type could theoretically be supported, as long as the
+        // plugin supports it
         case MIDI_META_TYPE_PROGRAM_NAME:
         case MIDI_META_TYPE_DEVICE_NAME:
+        case MIDI_META_TYPE_KEY_SIGNATURE:
+        case MIDI_META_TYPE_PROPRIETARY:
           logDebug("Ignoring MIDI meta event of type 0x%x at %ld", midiEvent->status, midiEvent->timestamp);
           break;
         case MIDI_META_TYPE_TEMPO:
