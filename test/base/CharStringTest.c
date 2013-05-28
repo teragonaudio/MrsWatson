@@ -7,15 +7,16 @@ static char *const OTHER_TEST_STRING = "other test string";
 
 static int _testNewCharString(void) {
   CharString c = newCharString();
-  assertUnsignedLongEquals(c->capacity, kCharStringLengthDefault);
+  assertSizeEquals(c->capacity, kCharStringLengthDefault);
   assertCharStringEquals(c, "");
   freeCharString(c);
   return 0;
 }
 
 static int _testNewCharStringWithCapacity(void) {
-  CharString c = newCharStringWithCapacity(123);
-  assertUnsignedLongEquals(c->capacity, 123l);
+  size_t testSize = 123;
+  CharString c = newCharStringWithCapacity(testSize);
+  assertSizeEquals(c->capacity, testSize);
   assertCharStringEquals(c, "");
   freeCharString(c);
   return 0;
@@ -23,7 +24,7 @@ static int _testNewCharStringWithCapacity(void) {
 
 static int _testNewObjectWithNullCString(void) {
   CharString c = newCharStringWithCString(NULL);
-  assertUnsignedLongEquals(c->capacity, kCharStringLengthDefault);
+  assertSizeEquals(c->capacity, kCharStringLengthDefault);
   assertCharStringEquals(c, "");
   freeCharString(c);
   return 0;
@@ -31,7 +32,7 @@ static int _testNewObjectWithNullCString(void) {
 
 static int _testNewObjectWithEmptyCString(void) {
   CharString c = newCharStringWithCString(EMPTY_STRING);
-  assertUnsignedLongEquals(c->capacity, kCharStringLengthDefault);
+  assertSizeEquals(c->capacity, kCharStringLengthDefault);
   assertCharStringEquals(c, EMPTY_STRING);
   freeCharString(c);
   return 0;
@@ -41,7 +42,7 @@ static int _testClearCharString(void) {
   CharString c = newCharString();
   charStringCopyCString(c, TEST_STRING);
   charStringClear(c);
-  assertUnsignedLongEquals(c->capacity, kCharStringLengthDefault);
+  assertSizeEquals(c->capacity, kCharStringLengthDefault);
   assertCharStringEquals(c, "");
   freeCharString(c);
   return 0;
@@ -50,7 +51,7 @@ static int _testClearCharString(void) {
 static int _testCopyToCharString(void) {
   CharString c = newCharString();
   charStringCopyCString(c, TEST_STRING);
-  assertUnsignedLongEquals(c->capacity, kCharStringLengthDefault);
+  assertSizeEquals(c->capacity, kCharStringLengthDefault);
   assertCharStringEquals(c, TEST_STRING);
   freeCharString(c);
   return 0;

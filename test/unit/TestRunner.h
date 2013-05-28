@@ -86,6 +86,14 @@ void freeTestSuite(TestSuite self);
   } \
 }
 
+#define assertSizeEquals(condition, expected) { \
+  size_t result = condition; \
+  if(result != expected) { \
+    fprintf(stderr, "Assertion failed at %s:%d. Expected %zu, got %zu. ", getFileBasename(__FILE__), __LINE__, expected, result); \
+    return 1; \
+  } \
+}
+
 #define TEST_FLOAT_TOLERANCE 0.01
 #define assertDoubleEquals(condition, expected, tolerance) { \
   double result = fabs(condition - expected); \
