@@ -67,7 +67,7 @@ if(MSVC)
 endif()
 
 if(UNIX)
-  set(common_gcc_flags "-fmessage-length=0 -pipe -Wno-trigraphs -Wno-trigraphs -Wmissing-field-initializers -Wall -Wreturn-type -Wunused-variable -Wshadow -Wsign-compare")
+  set(common_gcc_flags "-fmessage-length=0 -pipe -Wno-trigraphs -Wno-trigraphs -Wmissing-field-initializers -Wall -Wreturn-type -Wunused-variable -Wshadow -Wsign-compare -Wswitch -Wswitch-default -Wuninitialized")
 
   if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     set(CMAKE_C_FLAGS_DEBUG "-std=c99 -D_POSIX_C_SOURCE=200809L -O0 -g")
@@ -87,7 +87,7 @@ if(UNIX)
     set(CMAKE_EXE_LINKER_FLAGS "-framework Carbon -framework CoreFoundation")
 
     # TODO: How many of these are common to unix GCC?
-    add_definitions("${common_gcc_flags} -DMACOSX=1 -fpascal-strings -Wmissing-prototypes -Wnewline-eof -Wshorten-64-to-32 -fasm-blocks -mmacosx-version-min=10.5")
+    add_definitions("${common_gcc_flags} -DMACOSX=1 -fpascal-strings -Wnewline-eof -Wshorten-64-to-32 -fasm-blocks -mmacosx-version-min=10.5")
   endif()
 endif()
 
