@@ -42,7 +42,7 @@
 #include "logging/LogPrinter.h"
 #include "midi/MidiSource.h"
 #include "plugin/PluginChain.h"
-#include "sequencer/AudioClock.h"
+#include "time/AudioClock.h"
 #include "sequencer/MidiSequence.h"
 
 #include "MrsWatsonOptions.h"

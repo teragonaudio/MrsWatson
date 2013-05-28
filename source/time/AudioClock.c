@@ -28,7 +28,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "sequencer/AudioClock.h"
+#include "time/AudioClock.h"
 
 AudioClock audioClockInstance = NULL;
 

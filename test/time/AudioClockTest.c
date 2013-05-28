@@ -1,5 +1,5 @@
 #include "unit/TestRunner.h"
-#include "sequencer/AudioClock.h"
+#include "time/AudioClock.h"
 
 static const unsigned long kAudioClockTestBlocksize = 256;
 

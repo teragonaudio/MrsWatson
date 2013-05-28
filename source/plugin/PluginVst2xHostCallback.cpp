@@ -42,7 +42,7 @@ extern "C" {
 #include "base/StringUtilities.h"
 #include "logging/EventLogger.h"
 #include "plugin/PluginVst2x.h"
-#include "sequencer/AudioClock.h"
+#include "time/AudioClock.h"
 }
 
 // Global variables (sigh, yes)

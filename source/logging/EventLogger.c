@@ -36,7 +36,7 @@
 #include "base/StringUtilities.h"
 #include "logging/EventLogger.h"
 #include "logging/LogPrinter.h"
-#include "sequencer/AudioClock.h"
+#include "time/AudioClock.h"
 
 #include "MrsWatson.h"
 
