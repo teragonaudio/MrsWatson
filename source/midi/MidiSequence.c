@@ -42,16 +42,16 @@ MidiSequence newMidiSequence(void) {
   return midiSequence;
 }
 
-void appendMidiEventToSequence(MidiSequence midiSequence, MidiEvent midiEvent) {
-  if(midiSequence != NULL && midiEvent != NULL) {
-    linkedListAppend(midiSequence->midiEvents, midiEvent);
+void appendMidiEventToSequence(MidiSequence self, MidiEvent midiEvent) {
+  if(self != NULL && midiEvent != NULL) {
+    linkedListAppend(self->midiEvents, midiEvent);
   }
 }
 
-boolByte fillMidiEventsFromRange(MidiSequence midiSequence, const unsigned long startTimestamp,
+boolByte fillMidiEventsFromRange(MidiSequence self, const unsigned long startTimestamp,
   const unsigned long blocksize, LinkedList outMidiEvents) {
   MidiEvent midiEvent;
-  LinkedListIterator iterator = midiSequence->_lastEvent;
+  LinkedListIterator iterator = self->_lastEvent;
   const unsigned long stopTimestamp = startTimestamp + blocksize;
 
   while(true) {
@@ -69,8 +69,8 @@ boolByte fillMidiEventsFromRange(MidiSequence midiSequence, const unsigned long 
       logDebug("Scheduling MIDI event 0x%x (%x, %x) in %ld frames",
         midiEvent->status, midiEvent->data1, midiEvent->data2, midiEvent->deltaFrames);
       linkedListAppend(outMidiEvents, midiEvent);
-      midiSequence->_lastEvent = iterator->nextItem;
-      midiSequence->numMidiEventsProcessed++;
+      self->_lastEvent = iterator->nextItem;
+      self->numMidiEventsProcessed++;
     }
     else if(startTimestamp > midiEvent->timestamp) {
       logInternalError("Inconsistent MIDI sequence ordering");
@@ -89,7 +89,7 @@ boolByte fillMidiEventsFromRange(MidiSequence midiSequence, const unsigned long 
   return true;
 }
 
-void freeMidiSequence(MidiSequence midiSequence) {
-  freeLinkedListAndItems(midiSequence->midiEvents, (LinkedListFreeItemFunc)freeMidiEvent);
-  free(midiSequence);
+void freeMidiSequence(MidiSequence self) {
+  freeLinkedListAndItems(self->midiEvents, (LinkedListFreeItemFunc)freeMidiEvent);
+  free(self);
 }
