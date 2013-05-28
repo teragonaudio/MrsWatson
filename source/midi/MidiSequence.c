@@ -28,8 +28,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "sequencer/MidiSequence.h"
 #include "logging/EventLogger.h"
+#include "midi/MidiSequence.h"
 
 MidiSequence newMidiSequence(void) {
   MidiSequence midiSequence = malloc(sizeof(MidiSequenceMembers));

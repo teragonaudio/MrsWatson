@@ -40,10 +40,10 @@
 #include "io/SampleSourceWave.h"
 #include "logging/EventLogger.h"
 #include "logging/LogPrinter.h"
+#include "midi/MidiSequence.h"
 #include "midi/MidiSource.h"
 #include "plugin/PluginChain.h"
 #include "time/AudioClock.h"
-#include "sequencer/MidiSequence.h"
 
 #include "MrsWatsonOptions.h"
 #include "MrsWatson.h"

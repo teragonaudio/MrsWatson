@@ -30,7 +30,7 @@
 
 #include "base/CharString.h"
 #include "base/Types.h"
-#include "sequencer/MidiSequence.h"
+#include "midi/MidiSequence.h"
 
 typedef enum {
   MIDI_SOURCE_TYPE_INVALID,
