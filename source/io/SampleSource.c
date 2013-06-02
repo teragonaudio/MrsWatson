@@ -68,14 +68,17 @@ void sampleSourcePrintSupportedTypes(void) {
 #endif
 }
 
-SampleSourceType sampleSourceGuess(const CharString sampleSourceTypeString) {
-  if(!charStringIsEmpty(sampleSourceTypeString)) {
+static SampleSourceType _sampleSourceGuess(const CharString sampleSourceName) {
+  if(sampleSourceName == NULL || charStringIsEmpty(sampleSourceName)) {
+    return SAMPLE_SOURCE_TYPE_SILENCE;
+  }
+  else {
     // Look for stdin/stdout
-    if(strlen(sampleSourceTypeString->data) == 1 && sampleSourceTypeString->data[0] == '-') {
+    if(strlen(sampleSourceName->data) == 1 && sampleSourceName->data[0] == '-') {
       return SAMPLE_SOURCE_TYPE_PCM;
     }
     else {
-      const char* fileExtension = getFileExtension(sampleSourceTypeString->data);
+      const char* fileExtension = getFileExtension(sampleSourceName->data);
       // If there is no file extension, then automatically assume raw PCM data. Deal with it!
       if(fileExtension == NULL) {
         return SAMPLE_SOURCE_TYPE_PCM;
@@ -106,17 +109,15 @@ SampleSourceType sampleSourceGuess(const CharString sampleSourceTypeString) {
         return SAMPLE_SOURCE_TYPE_WAVE;
       }
       else {
-        logCritical("Sample source '%s' does not match any supported type", sampleSourceTypeString->data);
+        logCritical("Sample source '%s' does not match any supported type", sampleSourceName->data);
         return SAMPLE_SOURCE_TYPE_INVALID;
       }
     }
   }
-  else {
-    return SAMPLE_SOURCE_TYPE_INVALID;
-  }
 }
 
-SampleSource newSampleSource(SampleSourceType sampleSourceType, const CharString sampleSourceName) {
+SampleSource sampleSourceFactory(const CharString sampleSourceName) {
+  SampleSourceType sampleSourceType = _sampleSourceGuess(sampleSourceName);
   switch(sampleSourceType) {
     case SAMPLE_SOURCE_TYPE_SILENCE:
       return newSampleSourceSilence();

@@ -76,25 +76,15 @@ typedef SampleSourceMembers* SampleSource;
 
 /**
  * Factory method to create a new sample source
- * @param sampleSourceType Source type, using sampleSourceGuess() to obtain a
- * valid type
  * @param sampleSourceName Source name. Used mostly for display purposes.
  * @return Initialized sample source, or NULL if none could be created
  */
-SampleSource newSampleSource(SampleSourceType sampleSourceType, const CharString sampleSourceName);
+SampleSource sampleSourceFactory(const CharString sampleSourceName);
 
 /**
  * Print a list of all supported sample source pipes to the log
  */
 void sampleSourcePrintSupportedTypes(void);
-
-/**
- * Determine an appropriate sample source type for a given file. Note that this
- * method examines the file extension, not the contents of the file itself.
- * @param sampleSourceTypeString Source name to examine
- * @return Corresponding SampleSourceType for name string
- */
-SampleSourceType sampleSourceGuess(const CharString sampleSourceTypeString);
 
 /**
  * Release a sample source and associated resources
