@@ -30,6 +30,7 @@
 #include <string.h>
 
 #include "audio/SampleBuffer.h"
+#include "base/PlatformUtilities.h"
 #include "logging/EventLogger.h"
 
 SampleBuffer newSampleBuffer(unsigned int numChannels, unsigned long blocksize) {
@@ -79,7 +80,7 @@ boolByte sampleBufferResize(SampleBuffer self, const unsigned int numChannels, b
     return true;
   }
   else if(numChannels > self->numChannels) {
-    self->samples = realloc(self->samples, sizeof(Samples) * numChannels);
+    self->samples = (Samples*)realloc(self->samples, sizeof(Samples) * numChannels);
     for(i = self->numChannels; i < numChannels; i++) {
       self->samples[i] = (Samples)malloc(sizeof(Sample) * self->blocksize);
       if(copy) {
