@@ -138,7 +138,7 @@ LinkedList listDirectory(const CharString directory) {
   HANDLE findHandle;
   CharString searchString = newCharString();
 
-  snprintf(searchString->data, searchString->length, "%s\\*", directory->data);
+  snprintf(searchString->data, searchString->capacity, "%s\\*", directory->data);
   findHandle = FindFirstFileA((LPCSTR)(searchString->data), &findData);
   freeCharString(searchString);
   if(findHandle == INVALID_HANDLE_VALUE) {

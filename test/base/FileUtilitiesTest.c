@@ -45,8 +45,8 @@ static CharString _fileUtilitiesMakeTempDir(void) {
 #elif WINDOWS
   CharString systemTempDir = newCharString();
   CharString randomDirName = newCharString();
-  snprintf(randomDirName->data, randomDirName->length, "mrswatsontest-%d", rand());
-  GetTempPathA(systemTempDir->length, systemTempDir->data);
+  snprintf(randomDirName->data, randomDirName->capacity, "mrswatsontest-%d", rand());
+  GetTempPathA(systemTempDir->capacity, systemTempDir->data);
   buildAbsolutePath(systemTempDir, randomDirName, NULL, tempDirName);
   freeCharString(systemTempDir);
   freeCharString(randomDirName);
@@ -124,7 +124,7 @@ static int _testListDirectory(void) {
   fclose(f);
   l = listDirectory(tempDir);
   assertIntEquals(linkedListLength(l), 1);
-  filename = l->item;
+  filename = (CharString)l->item;
   assertCharStringEquals(filename, TEST_FILENAME);
 
   removeDirectory(tempDir);

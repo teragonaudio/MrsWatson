@@ -31,6 +31,7 @@
 
 #include "app/BuildInfo.h"
 #include "base/CharString.h"
+#include "base/PlatformUtilities.h"
 #include "logging/EventLogger.h"
 
 unsigned long buildInfoGetYear(void) {
