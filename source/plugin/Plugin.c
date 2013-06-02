@@ -36,11 +36,11 @@
 #include "plugin/PluginVst2x.h"
 #include "plugin/PluginSilence.h"
 
-PluginInterfaceType guessPluginInterfaceType(const CharString pluginName, const CharString pluginSearchRoot, CharString outLocation) {
+static PluginInterfaceType _guessPluginInterfaceType(const CharString pluginName, const CharString pluginSearchRoot) {
   PluginInterfaceType pluginType = PLUGIN_TYPE_INVALID;
   logDebug("Trying to find plugin '%s'", pluginName->data);
 
-  if(vst2xPluginExists(pluginName, pluginSearchRoot, outLocation)) {
+  if(vst2xPluginExists(pluginName, pluginSearchRoot)) {
     logInfo("Plugin '%s' is of type VST2.x", pluginName->data);
     pluginType = PLUGIN_TYPE_VST_2X;
   }
@@ -96,10 +96,13 @@ static boolByte _internalPluginNameMatches(const CharString pluginName, const ch
   return strncmp(pluginName->data, internalName, strlen(internalName)) == 0;
 }
 
-Plugin newPlugin(PluginInterfaceType interfaceType, const CharString pluginName, const CharString pluginLocation) {
+// Plugin newPlugin(PluginInterfaceType interfaceType, const CharString pluginName, const CharString pluginLocation) {
+Plugin pluginFactory(const CharString pluginName, const CharString pluginRoot) {
+  PluginInterfaceType interfaceType = _guessPluginInterfaceType(pluginName, pluginRoot);
+
   switch(interfaceType) {
     case PLUGIN_TYPE_VST_2X:
-      return newPluginVst2x(pluginName, pluginLocation);
+      return newPluginVst2x(pluginName, pluginRoot);
     case PLUGIN_TYPE_INTERNAL:
       if(_internalPluginNameMatches(pluginName, kInternalPluginPassthruName)) {
         return newPluginPassthru(pluginName);
@@ -120,7 +123,7 @@ in your MrsWatson so you can run plugins in your plugins!");
       }
     case PLUGIN_TYPE_INVALID:
     default:
-      logError("Plugin type not supported");
+      logError("Could not find plugin type for '%s'", pluginName->data);
       return NULL;
   }
 }

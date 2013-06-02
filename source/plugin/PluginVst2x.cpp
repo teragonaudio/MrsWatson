@@ -178,20 +178,16 @@ static boolByte _doesVst2xPluginExistAtLocation(const CharString pluginName, con
   return result;
 }
 
-static boolByte _fillVst2xPluginAbsolutePath(const CharString pluginName, const CharString pluginRoot, CharString outLocation) {
-  boolByte result = false;
-
+static CharString _getVst2xPluginLocation(const CharString pluginName, const CharString pluginRoot) {
   // First see if an absolute path was given as the plugin name
   if(isAbsolutePath(pluginName) && fileExists(pluginName->data)) {
-    charStringCopy(outLocation, pluginName);
-    return true;
+    return newCharStringWithCString(getFileBasename(pluginName->data));
   }
 
   // Then search the path given to --plugin-root, if given
   if(!charStringIsEmpty(pluginRoot)) {
     if(_doesVst2xPluginExistAtLocation(pluginName, pluginRoot)) {
-      charStringCopy(outLocation, pluginRoot);
-      return true;
+      return newCharStringWithCString(pluginRoot->data);
     }
   }
 
@@ -200,26 +196,28 @@ static boolByte _fillVst2xPluginAbsolutePath(const CharString pluginName, const 
   LinkedList pluginLocations = getVst2xPluginLocations(getCurrentDirectory());
   if(pluginLocations->item == NULL) {
     freeLinkedListAndItems(pluginLocations, (LinkedListFreeItemFunc)freeCharString);
-    return false;
+    return NULL;
   }
 
   LinkedListIterator iterator = pluginLocations;
   while(iterator != NULL) {
     CharString searchLocation = (CharString)(iterator->item);
     if(_doesVst2xPluginExistAtLocation(pluginName, searchLocation)) {
-      charStringCopy(outLocation, searchLocation);
-      result = true;
+      return newCharStringWithCString(searchLocation->data);
       break;
     }
     iterator = (LinkedListIterator)iterator->nextItem;
   }
 
   freeLinkedListAndItems(pluginLocations, (LinkedListFreeItemFunc)freeCharString);
-  return result;
+  return NULL;
 }
 
-boolByte vst2xPluginExists(const CharString pluginName, const CharString pluginRoot, CharString outLocation) {
-  return _fillVst2xPluginAbsolutePath(pluginName, pluginRoot, outLocation);
+boolByte vst2xPluginExists(const CharString pluginName, const CharString pluginRoot) {
+  CharString pluginLocation = _getVst2xPluginLocation(pluginName, pluginRoot);
+  boolByte result = (pluginLocation != NULL) && !charStringIsEmpty(pluginLocation);
+  freeCharString(pluginLocation);
+  return result;
 }
 
 static short _canPluginDo(Plugin plugin, const char* canDoString) {
@@ -258,9 +256,6 @@ static boolByte _initVst2xPlugin(Plugin plugin) {
   else {
     plugin->pluginType = PLUGIN_TYPE_EFFECT;
   }
-
-  plugin->numInputs = data->pluginHandle->numInputs;
-  plugin->numOutputs = data->pluginHandle->numOutputs;
 
   if(data->pluginHandle->dispatcher(data->pluginHandle, effGetPlugCategory, 0, 0, NULL, 0.0f) == kPlugCategShell) {
     uniqueIdString = convertIntIdToString(data->shellPluginId);
@@ -495,6 +490,10 @@ static int _getVst2xPluginSetting(void* pluginPtr, PluginSetting pluginSetting) 
         return (int)((double)tailSize * getSampleRate() / 1000.0f);
       }
     }
+    case PLUGIN_NUM_INPUTS:
+      return data->pluginHandle->numInputs;
+    case PLUGIN_NUM_OUTPUTS:
+      return data->pluginHandle->numOutputs;
     default:
       logUnsupportedFeature("Plugin setting for VST2.x");
       return 0;
@@ -650,17 +649,14 @@ static void _freeVst2xPluginData(void* pluginDataPtr) {
   free(data);
 }
 
-Plugin newPluginVst2x(const CharString pluginName, const CharString pluginLocation) {
+Plugin newPluginVst2x(const CharString pluginName, const CharString pluginRoot) {
   Plugin plugin = (Plugin)malloc(sizeof(PluginMembers));
 
   plugin->interfaceType = PLUGIN_TYPE_VST_2X;
   plugin->pluginType = PLUGIN_TYPE_UNKNOWN;
   plugin->pluginName = newCharString();
   charStringCopy(plugin->pluginName, pluginName);
-  plugin->pluginLocation = newCharString();
-  charStringCopy(plugin->pluginLocation, pluginLocation);
-  plugin->numInputs = 0;
-  plugin->numOutputs = 0;
+  plugin->pluginLocation = _getVst2xPluginLocation(pluginName, pluginRoot);
 
   plugin->open = _openVst2xPlugin;
   plugin->displayInfo = _displayVst2xPluginInfo;

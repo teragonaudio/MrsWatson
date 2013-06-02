@@ -52,6 +52,8 @@ typedef enum {
 
 typedef enum {
   PLUGIN_SETTING_TAIL_TIME_IN_MS,
+  PLUGIN_NUM_INPUTS,
+  PLUGIN_NUM_OUTPUTS,
   NUM_PLUGIN_SETTINGS
 } PluginSetting;
 
@@ -71,8 +73,6 @@ typedef struct {
   PluginType pluginType;
   CharString pluginName;
   CharString pluginLocation;
-  unsigned int numInputs;
-  unsigned int numOutputs;
 
   OpenPluginFunc open;
   PluginDisplayInfoFunc displayInfo;
@@ -89,10 +89,11 @@ typedef struct {
 } PluginMembers;
 typedef PluginMembers* Plugin;
 
-PluginInterfaceType guessPluginInterfaceType(const CharString pluginName, const CharString pluginRoot, CharString outLocation);
+Plugin pluginFactory(const CharString pluginName, const CharString pluginRoot);
+
 void listAvailablePlugins(const CharString pluginRoot);
 void _logPluginLocation(const CharString location, PluginInterfaceType interfaceType);
-Plugin newPlugin(PluginInterfaceType pluginInterfaceType, const CharString pluginName, const CharString pluginLocation);
+
 void freePlugin(Plugin plugin);
 
 #endif

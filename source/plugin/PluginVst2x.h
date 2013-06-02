@@ -33,11 +33,12 @@
 
 static const char kPluginVst2xSubpluginSeparator = ':';
 
+Plugin newPluginVst2x(const CharString pluginName, const CharString pluginRoot);
+
 unsigned long getVst2xPluginUniqueId(const Plugin plugin);
-boolByte vst2xPluginExists(const CharString pluginName, const CharString pluginRoot, CharString outLocation);
+boolByte vst2xPluginExists(const CharString pluginName, const CharString pluginRoot);
 void listAvailablePluginsVst2x(const CharString pluginRoot);
 boolByte setVst2xProgram(Plugin plugin, const int programNumber);
 void setVst2xPluginChunk(Plugin plugin, char* chunk, int chunkSize);
-Plugin newPluginVst2x(const CharString pluginName, const CharString pluginLocation);
 
 #endif

@@ -72,11 +72,8 @@ boolByte pluginChainAddFromArgumentString(PluginChain pluginChain, const CharStr
   CharString presetNameBuffer = NULL;
   char* presetSeparator;
   PluginPreset preset;
-  PluginPresetType presetType;
   Plugin plugin;
   size_t substringLength;
-  CharString pluginLocationBuffer;
-  PluginInterfaceType pluginType;
 
   if(charStringIsEmpty(argumentString)) {
     logWarn("Plugin chain string is empty");
@@ -109,23 +106,17 @@ boolByte pluginChainAddFromArgumentString(PluginChain pluginChain, const CharStr
     preset = NULL;
     if(strlen(presetNameBuffer->data) > 0) {
       logInfo("Opening preset '%s' for plugin", presetNameBuffer->data);
-      presetType = pluginPresetGuessType(presetNameBuffer);
-      if(presetType != PRESET_TYPE_INVALID) {
-        preset = newPluginPreset(presetType, presetNameBuffer);
-      }
+      preset = pluginPresetFactory(presetNameBuffer);
     }
 
     // Guess the plugin type from the file extension, search root, etc.
-    pluginLocationBuffer = newCharString();
-    pluginType = guessPluginInterfaceType(pluginNameBuffer, userSearchPath, pluginLocationBuffer);
-    if(pluginType != PLUGIN_TYPE_INVALID) {
-      plugin = newPlugin(pluginType, pluginNameBuffer, pluginLocationBuffer);
+    plugin = pluginFactory(pluginNameBuffer, userSearchPath);
+    if(plugin != NULL) {
       if(!pluginChainAppend(pluginChain, plugin, preset)) {
         logError("Plugin '%s' could not be added to the chain", pluginNameBuffer->data);
         return false;
       }
     }
-    freeCharString(pluginLocationBuffer);
 
     if(pluginSeparator == NULL) {
       break;
@@ -232,6 +223,7 @@ int pluginChainGetMaximumTailTimeInMs(PluginChain pluginChain) {
 
 void pluginChainProcessAudio(PluginChain pluginChain, SampleBuffer inBuffer, SampleBuffer outBuffer) {
   Plugin plugin;
+  unsigned int pluginInputs, pluginOutputs;
   int i;
 
   for(i = 0; i < pluginChain->numPlugins; i++) {
@@ -239,13 +231,15 @@ void pluginChainProcessAudio(PluginChain pluginChain, SampleBuffer inBuffer, Sam
 
     plugin = pluginChain->plugins[i];
     logDebug("Processing audio with plugin '%s'", plugin->pluginName->data);
-    if(inBuffer->numChannels < plugin->numInputs) {
-      logDebug("Expanding input source from %d -> %d channels", inBuffer->numChannels, plugin->numInputs);
-      sampleBufferResize(inBuffer, plugin->numInputs, true);
+    pluginInputs = plugin->getSetting(plugin, PLUGIN_NUM_INPUTS);
+    if(inBuffer->numChannels < pluginInputs) {
+      logDebug("Expanding input source from %d -> %d channels", inBuffer->numChannels, pluginInputs);
+      sampleBufferResize(inBuffer, pluginInputs, true);
     }
-    if(outBuffer->numChannels < plugin->numOutputs) {
-      logDebug("Expanding output source from %d -> %d channels", outBuffer->numChannels, plugin->numOutputs);
-      sampleBufferResize(outBuffer, plugin->numOutputs, false);
+    pluginOutputs = plugin->getSetting(plugin, PLUGIN_NUM_OUTPUTS);
+    if(outBuffer->numChannels < pluginOutputs) {
+      logDebug("Expanding output source from %d -> %d channels", outBuffer->numChannels, pluginOutputs);
+      sampleBufferResize(outBuffer, pluginOutputs, false);
     }
     taskTimerStart(pluginChain->audioTimers[i]);
     plugin->processAudio(plugin, inBuffer, outBuffer);

@@ -54,7 +54,16 @@ static void _pluginSilenceDisplayInfo(void* pluginPtr) {
 }
 
 static int _pluginSilenceGetSetting(void* pluginPtr, PluginSetting pluginSetting) {
-  return 0;
+  switch(pluginSetting) {
+    case PLUGIN_SETTING_TAIL_TIME_IN_MS:
+      return 0;
+    case PLUGIN_NUM_INPUTS:
+      return 0;
+    case PLUGIN_NUM_OUTPUTS:
+      return 2;
+    default:
+      return 0;
+  }
 }
 
 static void _pluginSilenceProcessAudio(void* pluginPtr, SampleBuffer inputs, SampleBuffer outputs) {
@@ -78,8 +87,6 @@ Plugin newPluginSilence(const CharString pluginName) {
   charStringCopy(plugin->pluginName, pluginName);
   plugin->pluginLocation = newCharString();
   charStringCopyCString(plugin->pluginLocation, "Internal");
-  plugin->numInputs = 0;
-  plugin->numOutputs = 2;
 
   plugin->open = _pluginSilenceOpen;
   plugin->displayInfo = _pluginSilenceDisplayInfo;
