@@ -37,7 +37,7 @@
 #include "plugin/PluginPresetFxp.h"
 #include "plugin/PluginPresetInternalProgram.h"
 
-PluginPresetType pluginPresetGuessType(const CharString presetName) {
+static PluginPresetType _pluginPresetGuessType(const CharString presetName) {
   const char* fileExtension;
   size_t i;
 
@@ -64,7 +64,8 @@ PluginPresetType pluginPresetGuessType(const CharString presetName) {
   }
 }
 
-PluginPreset newPluginPreset(PluginPresetType presetType, const CharString presetName) {
+PluginPreset pluginPresetFactory(const CharString presetName) {
+  PluginPresetType presetType = _pluginPresetGuessType(presetName);
   switch(presetType) {
     case PRESET_TYPE_FXP:
       return newPluginPresetFxp(presetName);

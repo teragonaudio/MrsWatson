@@ -5,21 +5,25 @@ const char* TEST_PRESET_FILENAME = "test.fxp";
 
 static int _testGuessPluginPresetType(void) {
   CharString c = newCharStringWithCString(TEST_PRESET_FILENAME);
-  assertIntEquals(pluginPresetGuessType(c), PRESET_TYPE_FXP);
+  PluginPreset p = pluginPresetFactory(c);
+  assertIntEquals(p->presetType, PRESET_TYPE_FXP);
+  freePluginPreset(p);
   freeCharString(c);
   return 0;
 }
 
 static int _testGuessPluginPresetTypeInvalid(void) {
   CharString c = newCharStringWithCString("invalid");
-  assertIntEquals(pluginPresetGuessType(c), PRESET_TYPE_INVALID);
+  PluginPreset p = pluginPresetFactory(c);
+  assertIsNull(p);
+  freePluginPreset(p);
   freeCharString(c);
   return 0;
 }
 
 static int _testNewObject(void) {
   CharString c = newCharStringWithCString(TEST_PRESET_FILENAME);
-  PluginPreset p = newPluginPreset(PRESET_TYPE_FXP, c);
+  PluginPreset p = pluginPresetFactory(c);
   assertIntEquals(p->presetType, PRESET_TYPE_FXP);
   assertCharStringEquals(p->presetName, TEST_PRESET_FILENAME);
   freePluginPreset(p);
@@ -29,11 +33,12 @@ static int _testNewObject(void) {
 
 static int _testIsPresetCompatibleWithPlugin(void) {
   CharString c = newCharStringWithCString(TEST_PRESET_FILENAME);
-  PluginPreset p = newPluginPreset(PRESET_TYPE_FXP, c);
-  CharString name = newCharStringWithCString("name");
+  PluginPreset p = pluginPresetFactory(c);
+  CharString internal_name = newCharStringWithCString("mrs_name");
+  CharString unsupported_name = newCharStringWithCString("unsupported");
   CharString location = newCharStringWithCString("location");
-  Plugin plug1 = newPlugin(PLUGIN_TYPE_INTERNAL, name, location);
-  Plugin plug2 = newPlugin(PLUGIN_TYPE_UNSUPPORTED, name, location);
+  Plugin plug1 = pluginFactory(internal_name, location);
+  Plugin plug2 = pluginFactory(unsupported_name, location);
 
   _pluginPresetSetCompatibleWith(p, PLUGIN_TYPE_INTERNAL);
   assert(pluginPresetIsCompatibleWith(p, plug1));
@@ -41,7 +46,8 @@ static int _testIsPresetCompatibleWithPlugin(void) {
 
   freePlugin(plug1);
   freePlugin(plug2);
-  freeCharString(name);
+  freeCharString(internal_name);
+  freeCharString(unsupported_name);
   freeCharString(location);
   freeCharString(c);
   freePluginPreset(p);
