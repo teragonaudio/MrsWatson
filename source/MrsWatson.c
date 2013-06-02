@@ -246,7 +246,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   initAudioClock();
   audioClock = getAudioClock();
   programOptions = newMrsWatsonOptions();
-  inputSource = newSampleSource(SAMPLE_SOURCE_TYPE_SILENCE, NULL);
+  inputSource = sampleSourceFactory(NULL);
 
   if(!programOptionsParseArgs(programOptions, argc, argv)) {
     printf("Run '%s --help' to see possible options\n", getFileBasename(argv[0]));
@@ -357,7 +357,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
           break;
         case OPTION_INPUT_SOURCE:
           freeSampleSource(inputSource);
-          inputSource = newSampleSource(sampleSourceGuess(option->argument), option->argument);
+          inputSource = sampleSourceFactory(option->argument);
           break;
         case OPTION_MAX_TIME:
           maxTimeInMs = strtol(option->argument->data, NULL, 10);
@@ -366,7 +366,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
           midiSource = newMidiSource(guessMidiSourceType(option->argument), option->argument);
           break;
         case OPTION_OUTPUT_SOURCE:
-          outputSource = newSampleSource(sampleSourceGuess(option->argument), option->argument);
+          outputSource = sampleSourceFactory(option->argument);
           break;
         case OPTION_PLUGIN_ROOT:
           charStringCopy(pluginSearchRoot, option->argument);
@@ -590,7 +590,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   if(tailTimeInMs > 0) {
     stopFrame = audioClock->currentFrame + tailTimeInFrames;
     logInfo("Adding %d extra frames", stopFrame - audioClock->currentFrame);
-    silentSampleInput = newSampleSource(SAMPLE_SOURCE_TYPE_SILENCE, NULL);
+    silentSampleInput = sampleSourceFactory(NULL);
     while(audioClock->currentFrame < stopFrame) {
       taskTimerStart(inputTimer);
       silentSampleInput->readSampleBlock(silentSampleInput, inputSampleBuffer);
