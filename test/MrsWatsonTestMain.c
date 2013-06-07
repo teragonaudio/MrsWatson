@@ -274,11 +274,13 @@ int main(int argc, char* argv[]) {
     totalTestsSkipped += testEnvironment->results->numSkips;
   }
 
-  printf("\n=== Finished ===\n");
-  _printTestSummary(totalTestsRun, totalTestsPassed, totalTestsFailed, totalTestsSkipped);
   taskTimerStop(timer);
-  totalTimeString = taskTimerHumanReadbleString(timer);
-  printf("Total time: %s\n", totalTimeString->data);
+  if(runInternalTests || runApplicationTests) {
+    printf("\n=== Finished ===\n");
+    _printTestSummary(totalTestsRun, totalTestsPassed, totalTestsFailed, totalTestsSkipped);
+    totalTimeString = taskTimerHumanReadbleString(timer);
+    printf("Total time: %s\n", totalTimeString->data);
+  }
 
   freeTestEnvironment(testEnvironment);
   freeProgramOptions(programOptions);
