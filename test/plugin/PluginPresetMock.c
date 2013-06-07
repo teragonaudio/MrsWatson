@@ -24,7 +24,7 @@ PluginPreset newPluginPresetMock(void) {
   pluginPreset->presetType = PRESET_TYPE_INTERNAL_PROGRAM;
   pluginPreset->presetName = newCharString();
   pluginPreset->compatiblePluginTypes = 0;
-  _pluginPresetSetCompatibleWith(pluginPreset, PLUGIN_TYPE_INTERNAL);
+  pluginPresetSetCompatibleWith(pluginPreset, PLUGIN_TYPE_INTERNAL);
 
   pluginPreset->openPreset = _openPluginPresetMock;
   pluginPreset->loadPreset = _loadPluginPresetMock;

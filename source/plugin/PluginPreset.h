@@ -58,10 +58,9 @@ typedef PluginPresetMembers* PluginPreset;
 
 PluginPreset pluginPresetFactory(const CharString presetName);
 
-// Consider this "protected"
-void _pluginPresetSetCompatibleWith(PluginPreset pluginPreset, PluginInterfaceType interfaceType);
 boolByte pluginPresetIsCompatibleWith(const PluginPreset pluginPreset, const Plugin plugin);
 
 void freePluginPreset(PluginPreset pluginPreset);
+void pluginPresetSetCompatibleWith(PluginPreset self, PluginInterfaceType interfaceType);
 
 #endif

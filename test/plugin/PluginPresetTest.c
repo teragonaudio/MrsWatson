@@ -37,7 +37,7 @@ static int _testIsPresetCompatibleWithPlugin(void) {
   PluginPreset p = pluginPresetFactory(c);
   Plugin mockPlugin = newPluginMock();
 
-  _pluginPresetSetCompatibleWith(p, PLUGIN_TYPE_INTERNAL);
+  pluginPresetSetCompatibleWith(p, PLUGIN_TYPE_INTERNAL);
   assert(pluginPresetIsCompatibleWith(p, mockPlugin));
 
   freePlugin(mockPlugin);
@@ -51,7 +51,7 @@ static int _testIsPresetNotCompatibleWithPlugin(void) {
   PluginPreset p = pluginPresetFactory(c);
   Plugin mockPlugin = newPluginMock();
 
-  _pluginPresetSetCompatibleWith(p, PLUGIN_TYPE_VST_2X);
+  pluginPresetSetCompatibleWith(p, PLUGIN_TYPE_VST_2X);
   assertFalse(pluginPresetIsCompatibleWith(p, mockPlugin));
 
   freePlugin(mockPlugin);

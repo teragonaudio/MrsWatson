@@ -76,7 +76,7 @@ PluginPreset pluginPresetFactory(const CharString presetName) {
   }
 }
 
-void _pluginPresetSetCompatibleWith(PluginPreset pluginPreset, PluginInterfaceType interfaceType) {
+void pluginPresetSetCompatibleWith(PluginPreset pluginPreset, PluginInterfaceType interfaceType) {
   pluginPreset->compatiblePluginTypes |= (1 << interfaceType);
 }
 
