@@ -14,6 +14,7 @@ extern TestSuite addPlatformUtilitiesTests(void);
 extern TestSuite addPluginTests(void);
 extern TestSuite addPluginChainTests(void);
 extern TestSuite addPluginPresetTests(void);
+extern TestSuite addPluginVst2xIdTests(void);
 extern TestSuite addProgramOptionTests(void);
 extern TestSuite addSampleBufferTests(void);
 extern TestSuite addSampleSourceTests(void);
@@ -50,6 +51,7 @@ static LinkedList _getTestSuites(void) {
   linkedListAppend(internalTestSuites, addPluginTests());
   linkedListAppend(internalTestSuites, addPluginChainTests());
   linkedListAppend(internalTestSuites, addPluginPresetTests());
+  linkedListAppend(internalTestSuites, addPluginVst2xIdTests());
   linkedListAppend(internalTestSuites, addProgramOptionTests());
   linkedListAppend(internalTestSuites, addSampleBufferTests());
   linkedListAppend(internalTestSuites, addSampleSourceTests());

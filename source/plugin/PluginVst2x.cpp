@@ -43,6 +43,7 @@ extern "C" {
 #include "logging/EventLogger.h"
 #include "midi/MidiEvent.h"
 #include "plugin/PluginVst2x.h"
+#include "plugin/PluginVst2xId.h"
 
 extern LinkedList getVst2xPluginLocations(CharString currentDirectory);
 extern LibraryHandle getLibraryHandleForPlugin(const CharString pluginAbsolutePath);
@@ -54,6 +55,7 @@ extern void closeLibraryHandle(LibraryHandle libraryHandle);
 // other files in this project must be compiled as C++ code. =/
 typedef struct {
   AEffect *pluginHandle;
+  PluginVst2xId pluginId;
   Vst2xPluginDispatcherFunc dispatcher;
   LibraryHandle libraryHandle;
   boolByte isPluginShell;
@@ -249,11 +251,9 @@ static void _suspendPlugin(Plugin plugin) {
 
 static boolByte _initVst2xPlugin(Plugin plugin) {
   PluginVst2xData data = (PluginVst2xData)plugin->extraData;
-  CharString uniqueIdString = convertIntIdToString(data->pluginHandle->uniqueID);
+  PluginVst2xId subpluginId;
 
-  logDebug("Initializing VST2.x plugin '%s' (%s)", plugin->pluginName->data, uniqueIdString->data);
-  freeCharString(uniqueIdString);
-
+  logDebug("Initializing VST2.x plugin '%s'", plugin->pluginName->data);
   if(data->pluginHandle->flags & effFlagsIsSynth) {
     plugin->pluginType = PLUGIN_TYPE_INSTRUMENT;
   }
@@ -262,9 +262,9 @@ static boolByte _initVst2xPlugin(Plugin plugin) {
   }
 
   if(data->pluginHandle->dispatcher(data->pluginHandle, effGetPlugCategory, 0, 0, NULL, 0.0f) == kPlugCategShell) {
-    uniqueIdString = convertIntIdToString(data->shellPluginId);
-    logDebug("VST is a shell plugin, sub-plugin ID '%s'", uniqueIdString->data);
-    freeCharString(uniqueIdString);
+    subpluginId = newPluginVst2xIdWithId(data->shellPluginId);
+    logDebug("VST is a shell plugin, sub-plugin ID '%s'", subpluginId->idString->data);
+    freePluginVst2xId(subpluginId);
     data->isPluginShell = true;
   }
 
@@ -305,14 +305,16 @@ static boolByte _openVst2xPlugin(void* pluginPtr) {
   PluginVst2xData data = (PluginVst2xData)plugin->extraData;
   const char* pluginBasename = getFileBasename(plugin->pluginName->data);
   char* subpluginSeparator = strrchr((char*)pluginBasename, kPluginVst2xSubpluginSeparator);
-  CharString subpluginId = NULL;
+  CharString subpluginIdString = NULL;
 
   if(subpluginSeparator != NULL) {
     *subpluginSeparator = '\0';
-    subpluginId = newCharStringWithCapacity(kCharStringLengthShort);
-    strncpy(subpluginId->data, subpluginSeparator + 1, 4);
-    data->shellPluginId = (VstInt32)convertStringIdToInt(subpluginId);
+    subpluginIdString = newCharStringWithCapacity(kCharStringLengthShort);
+    strncpy(subpluginIdString->data, subpluginSeparator + 1, 4);
+    PluginVst2xId subpluginId = newPluginVst2xIdWithStringId(subpluginIdString);
+    data->shellPluginId = (VstInt32)subpluginId->id;
     currentPluginUniqueId = data->shellPluginId;
+    freePluginVst2xId(subpluginId);
   }
 
   logInfo("Opening VST2.x plugin '%s'", plugin->pluginName->data);
@@ -344,7 +346,7 @@ static boolByte _openVst2xPlugin(void* pluginPtr) {
 
   if(data->shellPluginId) {
     charStringAppendCString(plugin->pluginName, " (");
-    charStringAppend(plugin->pluginName, subpluginId);
+    charStringAppend(plugin->pluginName, subpluginIdString);
     charStringAppendCString(plugin->pluginName, ")");
   }
 
@@ -357,10 +359,13 @@ static boolByte _openVst2xPlugin(void* pluginPtr) {
     data->dispatcher = (Vst2xPluginDispatcherFunc)(pluginHandle->dispatcher);
     data->pluginHandle = pluginHandle;
     result = _initVst2xPlugin(plugin);
+    if(result) {
+      data->pluginId = newPluginVst2xIdWithId(data->pluginHandle->uniqueID);
+    }
   }
 
   freeCharString(pluginAbsolutePath);
-  freeCharString(subpluginId);
+  freeCharString(subpluginIdString);
   return result;
 }
 
@@ -410,8 +415,7 @@ static void _displayVst2xPluginInfo(void* pluginPtr) {
   logInfo("Version: %d", vendorVersion);
   charStringClear(nameBuffer);
 
-  nameBuffer = convertIntIdToString(data->pluginHandle->uniqueID);
-  logInfo("Unique ID: %s", nameBuffer->data);
+  logInfo("Unique ID: %s", data->pluginId->idString->data);
   freeCharString(nameBuffer);
 
   VstInt32 pluginCategory = (VstInt32)data->dispatcher(data->pluginHandle, effGetPlugCategory, 0, 0, NULL, 0.0f);
@@ -439,9 +443,9 @@ static void _displayVst2xPluginInfo(void* pluginPtr) {
         break;
       }
       else {
-        CharString shellPluginIdString = convertIntIdToString(shellPluginId);
-        logInfo("  '%s' (%s)", shellPluginIdString->data, nameBuffer->data);
-        freeCharString(shellPluginIdString);
+        PluginVst2xId subpluginId = newPluginVst2xIdWithId(shellPluginId);
+        logInfo("  '%s' (%s)", subpluginId->idString->data, nameBuffer->data);
+        freePluginVst2xId(subpluginId);
       }
     }
     freeCharString(nameBuffer);
@@ -642,6 +646,7 @@ static void _freeVst2xPluginData(void* pluginDataPtr) {
   data->dispatcher(data->pluginHandle, effClose, 0, 0, NULL, 0.0f);
   data->dispatcher = NULL;
   data->pluginHandle = NULL;
+  freePluginVst2xId(data->pluginId);
   closeLibraryHandle(data->libraryHandle);
   if(data->vstEvents != NULL) {
     for(int i = 0; i < data->vstEvents->numEvents; i++) {
@@ -673,6 +678,7 @@ Plugin newPluginVst2x(const CharString pluginName, const CharString pluginRoot) 
 
   PluginVst2xData extraData = (PluginVst2xData)malloc(sizeof(PluginVst2xDataMembers));
   extraData->pluginHandle = NULL;
+  extraData->pluginId = NULL;
   extraData->dispatcher = NULL;
   extraData->libraryHandle = NULL;
   extraData->isPluginShell = false;
