@@ -45,6 +45,11 @@ typedef struct {
   TaskTimer* audioTimers;
   TaskTimer* midiTimers;
 } PluginChainMembers;
+
+/**
+ * Class which holds multiple plugins which process audio in serial. Only one
+ * instrument may be present in a plugin chain.
+ */
 typedef PluginChainMembers* PluginChain;
 
 /**

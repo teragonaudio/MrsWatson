@@ -69,6 +69,10 @@ typedef struct {
   void* extraData;
 } PluginPresetMembers;
 
+/**
+ * Class which is used to hold preset data which will be loaded into a plugin
+ * before audio processing.
+ */
 typedef PluginPresetMembers* PluginPreset;
 
 /**

@@ -145,6 +145,10 @@ typedef struct {
   void* extraData;
 } PluginMembers;
 
+/**
+ * One of the base classes of the API, this represents a plugin. Currently only
+ * instrument and effect plugins are supported.
+ */
 typedef PluginMembers* Plugin;
 
 /**

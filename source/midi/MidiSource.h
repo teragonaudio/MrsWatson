@@ -52,6 +52,10 @@ typedef struct {
 
   void* extraData;
 } MidiSourceMembers;
+
+/**
+ * A class which acts as a source for MIDI data.
+ */
 typedef MidiSourceMembers* MidiSource;
 
 /**
