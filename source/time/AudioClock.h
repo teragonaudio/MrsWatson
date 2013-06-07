@@ -52,10 +52,31 @@ extern AudioClock audioClockInstance;
  */
 void initAudioClock(void);
 
+/**
+ * Get a reference to the global audio clock instance.
+ * @return Reference to global audio clock, or NULL if the global instance has
+ * not yet been initialized.
+ */
 AudioClock getAudioClock(void);
+
+/**
+ * Advanced the global audio clock by a given number of samples. This should be
+ * called after processing each block.
+ * @param self
+ * @param blocksize Block size in sample frames.
+ */
 void advanceAudioClock(AudioClock self, const unsigned long blocksize);
+
+/**
+ * Indicate that playback is stopped.
+ * @param self
+ */
 void audioClockStop(AudioClock self);
 
+/**
+ * Free an audio clock instance and its associated resources.
+ * @param self
+ */
 void freeAudioClock(AudioClock self);
 
 #endif

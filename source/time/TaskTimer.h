@@ -51,14 +51,49 @@ typedef struct {
 } TaskTimerMembers;
 typedef TaskTimerMembers* TaskTimer;
 
+/**
+ * Create a new task timer.
+ * @param component Component name which this timer belongs to. NULL or empty
+ * string may be passed for this argument.
+ * @param subcomponent Subcomponent which this timer is measured. NULL or empty
+ * string may be passed for this argument.
+ * @return Initialized instance
+ */
 TaskTimer newTaskTimer(const CharString component, const char* subcomponent);
+
+/**
+ * Create a new task timer.
+ * @param component Component name which this timer belongs to. NULL or empty
+ * string may be passed for this argument.
+ * @param subcomponent Subcomponent which this timer is measured. NULL or empty
+ * string may be passed for this argument.
+ * @return Initialized instance
+ */
 TaskTimer newTaskTimerWithCString(const char* component, const char* subcomponent);
 
+/**
+ * Start the timer. Timers may be stopped and started multiple times.
+ * @param self
+ */
 void taskTimerStart(TaskTimer self);
+
+/**
+ * Stop the timer. Timers may be stopped and started multiple times.
+ * @param self
+ */
 void taskTimerStop(TaskTimer self);
 
+/**
+ * Get the string representation of the total accumulated time for this timer.
+ * @param self
+ * @return Formatted string, which the caller must free themselves when finished
+ */
 CharString taskTimerHumanReadbleString(TaskTimer self);
 
+/**
+ * Free a task timer and its associated resources
+ * @param self
+ */
 void freeTaskTimer(TaskTimer self);
 
 #endif
