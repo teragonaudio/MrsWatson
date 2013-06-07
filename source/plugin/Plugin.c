@@ -118,7 +118,10 @@ in your MrsWatson so you can run plugins in your plugins!");
 }
 
 void freePlugin(Plugin self) {
-  self->freePluginData(self->extraData);
+  if(self->extraData) {
+    self->freePluginData(self->extraData);
+    free(self->extraData);
+  }
   freeCharString(self->pluginLocation);
   freeCharString(self->pluginName);
   free(self);

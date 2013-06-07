@@ -204,7 +204,6 @@ static void _freePluginPresetDataFxp(void* extraDataPtr) {
   if(extraData->chunk != NULL) {
     free(extraData->chunk);
   }
-  free(extraData);
 }
 
 PluginPreset newPluginPresetFxp(const CharString presetName) {

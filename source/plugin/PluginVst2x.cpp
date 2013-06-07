@@ -649,8 +649,6 @@ static void _freeVst2xPluginData(void* pluginDataPtr) {
     }
     free(data->vstEvents);
   }
-
-  free(data);
 }
 
 Plugin newPluginVst2x(const CharString pluginName, const CharString pluginRoot) {

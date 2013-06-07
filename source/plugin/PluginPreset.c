@@ -86,7 +86,10 @@ boolByte pluginPresetIsCompatibleWith(const PluginPreset pluginPreset, const Plu
 
 void freePluginPreset(PluginPreset pluginPreset) {
   if(pluginPreset != NULL) {
-    pluginPreset->freePresetData(pluginPreset->extraData);
+    if(pluginPreset->extraData != NULL) {
+      pluginPreset->freePresetData(pluginPreset->extraData);
+      free(pluginPreset->extraData);
+    }
     freeCharString(pluginPreset->presetName);
     free(pluginPreset);
   }

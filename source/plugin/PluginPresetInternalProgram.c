@@ -45,7 +45,7 @@ static boolByte _loadPluginPresetInternalProgram(void* pluginPresetPtr, Plugin p
 }
 
 static void _freePluginPresetInternalProgram(void* extraDataPtr) {
-  free(extraDataPtr);
+  // Nothing needed here
 }
 
 PluginPreset newPluginPresetInternalProgram(const CharString presetName) {
