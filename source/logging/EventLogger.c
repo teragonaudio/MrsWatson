@@ -33,7 +33,6 @@
 #include "audio/AudioSettings.h"
 #include "base/CharString.h"
 #include "base/PlatformUtilities.h"
-#include "base/StringUtilities.h"
 #include "logging/EventLogger.h"
 #include "logging/LogPrinter.h"
 #include "time/AudioClock.h"

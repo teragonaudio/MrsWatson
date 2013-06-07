@@ -39,7 +39,6 @@ extern "C" {
 #include "base/CharString.h"
 #include "base/FileUtilities.h"
 #include "base/PlatformUtilities.h"
-#include "base/StringUtilities.h"
 #include "logging/EventLogger.h"
 #include "midi/MidiEvent.h"
 #include "plugin/PluginVst2x.h"

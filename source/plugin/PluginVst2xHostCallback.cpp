@@ -39,7 +39,6 @@ extern "C" {
 #include "app/BuildInfo.h"
 #include "audio/AudioSettings.h"
 #include "base/CharString.h"
-#include "base/StringUtilities.h"
 #include "logging/EventLogger.h"
 #include "plugin/PluginVst2x.h"
 #include "plugin/PluginVst2xId.h"

@@ -33,7 +33,6 @@
 #include "audio/AudioSettings.h"
 #include "base/FileUtilities.h"
 #include "base/LinkedList.h"
-#include "base/StringUtilities.h"
 #include "logging/EventLogger.h"
 
 ProgramOption newProgramOption(void) {

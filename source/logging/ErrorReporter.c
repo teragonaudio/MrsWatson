@@ -34,7 +34,6 @@
 #include "app/BuildInfo.h"
 #include "base/FileUtilities.h"
 #include "base/PlatformUtilities.h"
-#include "base/StringUtilities.h"
 #include "logging/ErrorReporter.h"
 #include "logging/EventLogger.h"
 #include "MrsWatson.h"

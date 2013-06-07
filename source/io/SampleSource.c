@@ -31,7 +31,6 @@
 
 #include "base/FileUtilities.h"
 #include "base/PlatformUtilities.h"
-#include "base/StringUtilities.h"
 #include "io/SampleSourceAiff.h"
 #include "io/SampleSourceFlac.h"
 #include "io/SampleSource.h"

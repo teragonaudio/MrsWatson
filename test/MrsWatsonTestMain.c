@@ -14,7 +14,6 @@
 #include "app/ProgramOption.h"
 #include "base/FileUtilities.h"
 #include "base/PlatformUtilities.h"
-#include "base/StringUtilities.h"
 #include "unit/ApplicationRunner.h"
 #include "unit/TestRunner.h"
 

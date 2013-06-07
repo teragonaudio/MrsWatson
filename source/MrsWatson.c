@@ -33,7 +33,6 @@
 #include "audio/AudioSettings.h"
 #include "base/FileUtilities.h"
 #include "base/PlatformUtilities.h"
-#include "base/StringUtilities.h"
 #include "io/SampleSource.h"
 #include "io/SampleSourcePcm.h"
 #include "io/SampleSourceSilence.h"

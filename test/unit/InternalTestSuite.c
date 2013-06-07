@@ -18,7 +18,6 @@ extern TestSuite addPluginVst2xIdTests(void);
 extern TestSuite addProgramOptionTests(void);
 extern TestSuite addSampleBufferTests(void);
 extern TestSuite addSampleSourceTests(void);
-extern TestSuite addStringUtilitiesTests(void);
 extern TestSuite addTaskTimerTests(void);
 
 extern TestSuite addAnalysisClippingTests(void);
@@ -55,7 +54,6 @@ static LinkedList _getTestSuites(void) {
   linkedListAppend(internalTestSuites, addProgramOptionTests());
   linkedListAppend(internalTestSuites, addSampleBufferTests());
   linkedListAppend(internalTestSuites, addSampleSourceTests());
-  linkedListAppend(internalTestSuites, addStringUtilitiesTests());
   linkedListAppend(internalTestSuites, addTaskTimerTests());
 
   linkedListAppend(internalTestSuites, addAnalysisClippingTests());
