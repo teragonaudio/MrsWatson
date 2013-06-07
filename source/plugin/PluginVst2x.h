@@ -35,10 +35,43 @@ static const char kPluginVst2xSubpluginSeparator = ':';
 
 Plugin newPluginVst2x(const CharString pluginName, const CharString pluginRoot);
 
-unsigned long getVst2xPluginUniqueId(const Plugin plugin);
+/**
+ * Get the VST2.x unique ID
+ * @param self
+ * @return Unique ID, or 0 if not known (yes, this can happen)
+ */
+unsigned long getVst2xPluginUniqueId(const Plugin self);
+
+/**
+ * See if a VST2.x plugin exists with the given name. Absolute paths will also
+ * be respected if passed.
+ * @param pluginName Plugin name (short name or absolute path)
+ * @param pluginRoot User-provided plugin root path
+ * @return True if such a plugin exists in any location, false otherwise
+ */
 boolByte vst2xPluginExists(const CharString pluginName, const CharString pluginRoot);
+
+/**
+ * List all available VST2.x plugins in common system locations. Note that this
+ * function does not do recursive searches (yet).
+ * @param pluginRoot User-provided plugin root path to search
+ */
 void listAvailablePluginsVst2x(const CharString pluginRoot);
-boolByte setVst2xProgram(Plugin plugin, const int programNumber);
-void setVst2xPluginChunk(Plugin plugin, char* chunk, int chunkSize);
+
+/**
+ * Set an internal program number for a VST2.x plugin.
+ * @param self
+ * @param programNumber Program to set
+ * @return True if the program could be set and verified
+ */
+boolByte setVst2xProgram(Plugin self, const int programNumber);
+
+/**
+ * Set chuck preset data from an FXP preset to a VST2.x plugin.
+ * @param self
+ * @param chunk Chunk data to set
+ * @param chunkSize Chunk size
+ */
+void setVst2xPluginChunk(Plugin self, char* chunk, size_t chunkSize);
 
 #endif
