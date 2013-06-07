@@ -24,6 +24,7 @@ extern TestSuite addAnalysisClippingTests(void);
 extern TestSuite addAnalysisDistortionTests(void);
 extern TestSuite addAnalysisSilenceTests(void);
 
+extern void _printTestSummary(int testsRun, int testsPassed, int testsFailed, int testsSkipped);
 
 static void _sumTestSuiteResults(void* item, void* extraData) {
   TestSuite testSuite = (TestSuite)item;
@@ -67,8 +68,8 @@ static void _setTestSuiteOnlyPrintFailing(void* item, void* userData) {
   testSuite->onlyPrintFailing = true;
 }
 
-void runInternalTestSuite(boolByte onlyPrintFailing);
-void runInternalTestSuite(boolByte onlyPrintFailing) {
+TestSuite runInternalTestSuite(boolByte onlyPrintFailing);
+TestSuite runInternalTestSuite(boolByte onlyPrintFailing) {
   TestSuite suiteResults;
   LinkedList internalTestSuites = _getTestSuites();
 
@@ -80,12 +81,11 @@ void runInternalTestSuite(boolByte onlyPrintFailing) {
   suiteResults = newTestSuite("Suite results", NULL, NULL);
   linkedListForeach(internalTestSuites, _sumTestSuiteResults, suiteResults);
 
-  fprintf(stderr, "\n== Ran %d function tests: %d passed, %d failed, %d skipped ==\n",
-    suiteResults->numSuccess + suiteResults->numFail + suiteResults->numSkips,
+  _printTestSummary(suiteResults->numSuccess + suiteResults->numFail + suiteResults->numSkips,
     suiteResults->numSuccess, suiteResults->numFail, suiteResults->numSkips);
 
   freeLinkedListAndItems(internalTestSuites, (LinkedListFreeItemFunc)freeTestSuite);
-  freeTestSuite(suiteResults);
+  return suiteResults;
 }
 
 TestCase findTestCase(TestSuite testSuite, char* testName);

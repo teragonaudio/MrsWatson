@@ -20,12 +20,13 @@
 
 #include "MrsWatsonTestMain.h"
 #include "MrsWatson.h"
+#include "logging/LogPrinter.h"
 
 extern TestSuite findTestSuite(char* testSuiteName);
 extern TestCase findTestCase(TestSuite testSuite, char* testName);
 extern void printInternalTests(void);
-extern void runInternalTestSuite(boolByte onlyPrintFailing);
-extern int runApplicationTestSuite(TestEnvironment testEnvironment);
+extern TestSuite runInternalTestSuite(boolByte onlyPrintFailing);
+extern TestSuite runApplicationTestSuite(TestEnvironment testEnvironment);
 
 static const char* DEFAULT_TEST_SUITE_NAME = "all";
 
@@ -78,9 +79,45 @@ etc.). Normally these files are automatically removed if a test succeeds.",
   return programOptions;
 }
 
+void _printTestSummary(int testsRun, int testsPassed, int testsFailed, int testsSkipped) {
+  CharString numberBuffer = newCharStringWithCapacity(kCharStringLengthShort);
+
+  printToLog(COLOR_RESET, NULL, "Ran ");
+  sprintf(numberBuffer->data, "%d", testsRun);
+  printToLog(COLOR_FG_CYAN, NULL, numberBuffer->data);
+  printToLog(COLOR_RESET, NULL, " tests: ");
+  sprintf(numberBuffer->data, "%d", testsPassed);
+  printToLog(COLOR_FG_GREEN, NULL, numberBuffer->data);
+  printToLog(COLOR_RESET, NULL, " passed, ");
+
+  sprintf(numberBuffer->data, "%d", testsFailed);
+  if(testsFailed > 0) {
+    printToLog(COLOR_BG_MAROON, NULL, numberBuffer->data);
+  }
+  else {
+    printToLog(COLOR_RESET, NULL, numberBuffer->data);
+  }
+  printToLog(COLOR_RESET, NULL, " failed, ");
+
+  sprintf(numberBuffer->data, "%d", testsSkipped);
+  if(testsSkipped > 0) {
+    printToLog(COLOR_FG_YELLOW, NULL, numberBuffer->data);
+  }
+  else {
+    printToLog(COLOR_RESET, NULL, numberBuffer->data);
+  }
+  printToLog(COLOR_RESET, NULL, " skipped");
+  flushLog(NULL);
+
+  freeCharString(numberBuffer);
+}
+
 int main(int argc, char* argv[]) {
   ProgramOptions programOptions;
+  int totalTestsRun = 0;
+  int totalTestsPassed = 0;
   int totalTestsFailed = 0;
+  int totalTestsSkipped = 0;
   CharString testSuiteToRun = NULL;
   CharString executablePath = NULL;
   CharString currentPath = NULL;
@@ -91,6 +128,7 @@ int main(int argc, char* argv[]) {
   boolByte runApplicationTests = false;
   TestCase testCase = NULL;
   TestSuite testSuite = NULL;
+  TestSuite internalTestResults = NULL;
   TestEnvironment testEnvironment = NULL;
   char* testArgument;
   char* colon;
@@ -181,8 +219,12 @@ int main(int argc, char* argv[]) {
 
   if(runInternalTests) {
     printf("=== Internal tests ===\n");
-    runInternalTestSuite(programOptions->options[OPTION_TEST_PRINT_ONLY_FAILING]->enabled);
-    totalTestsFailed = 0;
+    internalTestResults = runInternalTestSuite(programOptions->options[OPTION_TEST_PRINT_ONLY_FAILING]->enabled);
+    totalTestsRun += internalTestResults->numSuccess + internalTestResults->numFail;
+    totalTestsPassed += internalTestResults->numSuccess;
+    totalTestsFailed += internalTestResults->numFail;
+    totalTestsSkipped += internalTestResults->numSkips;
+    freeTestSuite(internalTestResults);
   }
 
   // Find out where this program is being run from to find mrswatson and resources
@@ -220,10 +262,15 @@ int main(int argc, char* argv[]) {
     testEnvironment = newTestEnvironment(mrsWatsonPath->data, resourcesPath->data);
     testEnvironment->results->onlyPrintFailing = programOptions->options[OPTION_TEST_PRINT_ONLY_FAILING]->enabled;
     testEnvironment->results->keepFiles = programOptions->options[OPTION_TEST_KEEP_FILES]->enabled;
-    totalTestsFailed += runApplicationTestSuite(testEnvironment);
+    runApplicationTestSuite(testEnvironment);
+    totalTestsRun += testEnvironment->results->numSuccess + testEnvironment->results->numFail;
+    totalTestsPassed += testEnvironment->results->numSuccess;
+    totalTestsFailed += testEnvironment->results->numFail;
+    totalTestsSkipped += testEnvironment->results->numSkips;
   }
 
-  printf("\n=== Finished with %d total failed tests ===\n", totalTestsFailed);
+  printf("\n=== Finished ===\n");
+  _printTestSummary(totalTestsRun, totalTestsPassed, totalTestsFailed, totalTestsSkipped);
 
   freeTestEnvironment(testEnvironment);
   freeProgramOptions(programOptions);
