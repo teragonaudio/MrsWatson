@@ -38,9 +38,24 @@ typedef enum {
   NUM_PRESET_TYPES
 } PluginPresetType;
 
-typedef boolByte (*OpenPresetFunc)(void*);
-typedef boolByte (*LoadPresetFunc)(void*, Plugin);
-typedef void (*FreePresetDataFunc)(void*);
+/**
+ * Called when the preset is to be loaded from the filesystem
+ * @param pluginPresetPtr self
+ */
+typedef boolByte (*OpenPresetFunc)(void* pluginPresetPtr);
+/**
+ * Called when the preset is to be loaded into a plugin
+ * @param plugin Plugin which will receive the preset. This should check that
+ * the preset is compatible with the given plugging before loading it.
+ * @param pluginPresetPtr self
+ * @return True on success, false on failure
+ */
+typedef boolByte (*LoadPresetFunc)(void* pluginPresetPtr, Plugin plugin);
+/**
+ * Free a preset and it's related data
+ * @param pluginPresetPtr self
+ */
+typedef void (*FreePresetDataFunc)(void* pluginPresetPtr);
 
 typedef struct {
   PluginPresetType presetType;
@@ -56,11 +71,37 @@ typedef struct {
 
 typedef PluginPresetMembers* PluginPreset;
 
+/**
+ * Create a new plugin preset from a given name. Usually this function inspects
+ * the name and guesses an appropriate handler based on the file extension.
+ * @param presetName Preset name
+ * @return Initialized PluginPreset or NULL if no preset type found
+ */
 PluginPreset pluginPresetFactory(const CharString presetName);
 
-boolByte pluginPresetIsCompatibleWith(const PluginPreset pluginPreset, const Plugin plugin);
+/**
+ * Check if a preset will be compatible with a plugin. Some plugin interface
+ * types have extra safety checks to make sure that a preset must match the
+ * plugin's ID, this call essentially wraps this functionality.
+ * @param self
+ * @param plugin Plugin to check against
+ * @return True if the preset can be loaded into the plugin
+ */
+boolByte pluginPresetIsCompatibleWith(const PluginPreset self, const Plugin plugin);
 
-void freePluginPreset(PluginPreset pluginPreset);
+/**
+ * Set interface compatibility for a preset type. This function should only be
+ * called from a PluginPreset subclass, you should not have to manually call
+ * this in normal host operations.
+ * @param self
+ * @param interfaceType Interface type to set
+ */
 void pluginPresetSetCompatibleWith(PluginPreset self, PluginInterfaceType interfaceType);
+
+/**
+ * Free a PluginPreset and all associated resources
+ * @param self
+ */
+void freePluginPreset(PluginPreset self);
 
 #endif
