@@ -88,7 +88,7 @@ Plugin newPluginSilence(const CharString pluginName) {
   plugin->pluginLocation = newCharString();
   charStringCopyCString(plugin->pluginLocation, "Internal");
 
-  plugin->open = _pluginSilenceOpen;
+  plugin->openPlugin = _pluginSilenceOpen;
   plugin->displayInfo = _pluginSilenceDisplayInfo;
   plugin->getAbsolutePath = _pluginSilenceGetAbsolutePath;
   plugin->getSetting = _pluginSilenceGetSetting;

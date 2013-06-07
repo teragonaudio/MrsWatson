@@ -158,7 +158,7 @@ ReturnCodes pluginChainInitialize(PluginChain pluginChain) {
 
   for(i = 0; i < pluginChain->numPlugins; i++) {
     plugin = pluginChain->plugins[i];
-    if(!plugin->open(plugin)) {
+    if(!plugin->openPlugin(plugin)) {
       logError("Plugin '%s' could not be opened", plugin->pluginName->data);
       return RETURN_CODE_PLUGIN_ERROR;
     }

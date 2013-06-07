@@ -55,24 +55,13 @@ static PluginInterfaceType _guessPluginInterfaceType(const CharString pluginName
   return pluginType;
 }
 
-static const char* _getNameForInterfaceType(PluginInterfaceType interfaceType) {
-  switch(interfaceType) {
-    case PLUGIN_TYPE_VST_2X:
-      return "VST 2.x";
-    case PLUGIN_TYPE_INTERNAL:
-      return "Internal";
-    default:
-      return "Unknown";
-  }
-}
-
-void _logPluginLocation(const CharString location, PluginInterfaceType interfaceType) {
-  logInfo("Location '%s', type %s:", location->data, _getNameForInterfaceType(interfaceType));
+static void _logPluginLocation(const CharString location) {
+  logInfo("Location (internal):", location->data);
 }
 
 static void _listAvailablePluginsInternal(void) {
   CharString internalLocation = newCharStringWithCString("(Internal)");
-  _logPluginLocation(internalLocation, PLUGIN_TYPE_INTERNAL);
+  _logPluginLocation(internalLocation);
   logInfo("  %s", kInternalPluginPassthruName);
   logInfo("  %s", kInternalPluginSilenceName);
   freeCharString(internalLocation);
@@ -128,9 +117,9 @@ in your MrsWatson so you can run plugins in your plugins!");
   }
 }
 
-void freePlugin(Plugin plugin) {
-  plugin->freePluginData(plugin->extraData);
-  freeCharString(plugin->pluginLocation);
-  freeCharString(plugin->pluginName);
-  free(plugin);
+void freePlugin(Plugin self) {
+  self->freePluginData(self->extraData);
+  freeCharString(self->pluginLocation);
+  freeCharString(self->pluginName);
+  free(self);
 }

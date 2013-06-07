@@ -111,13 +111,17 @@ static void _logPluginVst2xInLocation(void* item, void* userData) {
   }
 }
 
+static void _logPluginLocation(const CharString location) {
+  logInfo("Location '%s', type VST 2.x:", location->data);
+}
+
 static void _listPluginsVst2xInLocation(void* item, void* userData) {
   CharString location;
   LinkedList locationItems;
   boolByte pluginsFound = false;
 
   location = (CharString)item;
-  _logPluginLocation(location, PLUGIN_TYPE_VST_2X);
+  _logPluginLocation(location);
   locationItems = listDirectory(location);
   if(linkedListLength(locationItems) == 0) {
     // Empty or does not exist, return
@@ -658,7 +662,7 @@ Plugin newPluginVst2x(const CharString pluginName, const CharString pluginRoot) 
   charStringCopy(plugin->pluginName, pluginName);
   plugin->pluginLocation = _getVst2xPluginLocation(pluginName, pluginRoot);
 
-  plugin->open = _openVst2xPlugin;
+  plugin->openPlugin = _openVst2xPlugin;
   plugin->displayInfo = _displayVst2xPluginInfo;
   plugin->getAbsolutePath = _getVst2xAbsolutePath;
   plugin->getSetting = _getVst2xPluginSetting;
