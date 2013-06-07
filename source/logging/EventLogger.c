@@ -194,7 +194,7 @@ static LogColor _logTimeColor(void) {
   return COLOR_FG_CYAN;
 }
 
-static LogColor _logTimeZebraStripeColor(const long elapsedTime, const int zebraSizeInMs) {
+static LogColor _logTimeZebraStripeColor(const long elapsedTime, const unsigned long zebraSizeInMs) {
   boolByte zebraState = (boolByte)((elapsedTime / zebraSizeInMs) % 2);
   return zebraState ? COLOR_FG_OLIVE : COLOR_FG_GREEN;
 }
