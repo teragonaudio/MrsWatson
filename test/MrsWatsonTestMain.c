@@ -124,16 +124,21 @@ int main(int argc, char* argv[]) {
   CharString mrsWatsonExeName = NULL;
   CharString mrsWatsonPath = NULL;
   CharString resourcesPath = NULL;
+  CharString totalTimeString = NULL;
   boolByte runInternalTests = false;
   boolByte runApplicationTests = false;
   TestCase testCase = NULL;
   TestSuite testSuite = NULL;
   TestSuite internalTestResults = NULL;
   TestEnvironment testEnvironment = NULL;
+  TaskTimer timer;
   char* testArgument;
   char* colon;
   char* testCaseName;
   char* testSuiteName;
+
+  timer = newTaskTimer(NULL, NULL);
+  taskTimerStart(timer);
 
   programOptions = _newTestProgramOptions();
   if(!programOptionsParseArgs(programOptions, argc, argv)) {
@@ -271,6 +276,9 @@ int main(int argc, char* argv[]) {
 
   printf("\n=== Finished ===\n");
   _printTestSummary(totalTestsRun, totalTestsPassed, totalTestsFailed, totalTestsSkipped);
+  taskTimerStop(timer);
+  totalTimeString = taskTimerHumanReadbleString(timer);
+  printf("Total time: %s\n", totalTimeString->data);
 
   freeTestEnvironment(testEnvironment);
   freeProgramOptions(programOptions);
@@ -280,5 +288,7 @@ int main(int argc, char* argv[]) {
   freeCharString(mrsWatsonPath);
   freeCharString(mrsWatsonExeName);
   freeCharString(resourcesPath);
+  freeCharString(totalTimeString);
+  freeTaskTimer(timer);
   return totalTestsFailed;
 }
