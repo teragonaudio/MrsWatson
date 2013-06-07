@@ -41,7 +41,7 @@ static boolByte _openPluginPresetInternalProgram(void* pluginPresetPtr) {
 static boolByte _loadPluginPresetInternalProgram(void* pluginPresetPtr, Plugin plugin) {
   PluginPreset pluginPreset = (PluginPreset)pluginPresetPtr;
   PluginPresetInternalProgramData extraData = (PluginPresetInternalProgramData)pluginPreset->extraData;
-  return setVst2xProgram(plugin, extraData->programNumber);
+  return pluginVst2xSetProgram(plugin, extraData->programNumber);
 }
 
 static void _freePluginPresetInternalProgram(void* extraDataPtr) {

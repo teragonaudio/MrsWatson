@@ -33,24 +33,6 @@
 
 static const char kPluginVst2xSubpluginSeparator = ':';
 
-Plugin newPluginVst2x(const CharString pluginName, const CharString pluginRoot);
-
-/**
- * Get the VST2.x unique ID
- * @param self
- * @return Unique ID, or 0 if not known (yes, this can happen)
- */
-unsigned long getVst2xPluginUniqueId(const Plugin self);
-
-/**
- * See if a VST2.x plugin exists with the given name. Absolute paths will also
- * be respected if passed.
- * @param pluginName Plugin name (short name or absolute path)
- * @param pluginRoot User-provided plugin root path
- * @return True if such a plugin exists in any location, false otherwise
- */
-boolByte vst2xPluginExists(const CharString pluginName, const CharString pluginRoot);
-
 /**
  * List all available VST2.x plugins in common system locations. Note that this
  * function does not do recursive searches (yet).
@@ -59,12 +41,36 @@ boolByte vst2xPluginExists(const CharString pluginName, const CharString pluginR
 void listAvailablePluginsVst2x(const CharString pluginRoot);
 
 /**
+ * Create a new instance of a VST 2.x plugin
+ * @param pluginName Plugin name
+ * @param pluginRoot User-defined plugin root path
+ * @return Initialized Plugin object, or NULL if no such plugin was found
+ */
+Plugin newPluginVst2x(const CharString pluginName, const CharString pluginRoot);
+
+/**
+ * Get the VST2.x unique ID
+ * @param self
+ * @return Unique ID, or 0 if not known (yes, this can happen)
+ */
+unsigned long pluginVst2xGetUniqueId(const Plugin self);
+
+/**
+ * See if a VST2.x plugin exists with the given name. Absolute paths will also
+ * be respected if passed.
+ * @param pluginName Plugin name (short name or absolute path)
+ * @param pluginRoot User-provided plugin root path
+ * @return True if such a plugin exists in any location, false otherwise
+ */
+boolByte pluginVst2xExists(const CharString pluginName, const CharString pluginRoot);
+
+/**
  * Set an internal program number for a VST2.x plugin.
  * @param self
  * @param programNumber Program to set
  * @return True if the program could be set and verified
  */
-boolByte setVst2xProgram(Plugin self, const int programNumber);
+boolByte pluginVst2xSetProgram(Plugin self, const int programNumber);
 
 /**
  * Set chuck preset data from an FXP preset to a VST2.x plugin.
@@ -72,6 +78,6 @@ boolByte setVst2xProgram(Plugin self, const int programNumber);
  * @param chunk Chunk data to set
  * @param chunkSize Chunk size
  */
-void setVst2xPluginChunk(Plugin self, char* chunk, size_t chunkSize);
+void pluginVst2xSetProgramChunk(Plugin self, char* chunk, size_t chunkSize);
 
 #endif

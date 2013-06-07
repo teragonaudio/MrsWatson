@@ -109,7 +109,7 @@ static boolByte _loadPluginPresetFxp(void* pluginPresetPtr, Plugin plugin) {
   }
   inProgram->fxID = convertBigEndianIntToPlatform(valueBuffer);
   logDebug("Preset's fxID is %d", inProgram->fxID);
-  if(inProgram->fxID != getVst2xPluginUniqueId(plugin)) {
+  if(inProgram->fxID != pluginVst2xGetUniqueId(plugin)) {
     logError("Preset '%s' is not compatible with plugin '%s'", pluginPreset->presetName->data, plugin->pluginName->data);
     return false;
   }
@@ -178,7 +178,7 @@ static boolByte _loadPluginPresetFxp(void* pluginPresetPtr, Plugin plugin) {
 
     // The chunk has been read, set it to the actual plugin
     if(plugin->interfaceType == PLUGIN_TYPE_VST_2X) {
-      setVst2xPluginChunk(plugin, chunk, chunkSize);
+      pluginVst2xSetProgramChunk(plugin, chunk, chunkSize);
       free(chunk);
       return true;
     }

@@ -217,7 +217,7 @@ static CharString _getVst2xPluginLocation(const CharString pluginName, const Cha
   return NULL;
 }
 
-boolByte vst2xPluginExists(const CharString pluginName, const CharString pluginRoot) {
+boolByte pluginVst2xExists(const CharString pluginName, const CharString pluginRoot) {
   CharString pluginLocation = _getVst2xPluginLocation(pluginName, pluginRoot);
   boolByte result = (pluginLocation != NULL) && !charStringIsEmpty(pluginLocation);
   freeCharString(pluginLocation);
@@ -290,7 +290,7 @@ static boolByte _initVst2xPlugin(Plugin plugin) {
   return true;
 }
 
-unsigned long getVst2xPluginUniqueId(const Plugin self) {
+unsigned long pluginVst2xGetUniqueId(const Plugin self) {
   if(self->interfaceType == PLUGIN_TYPE_VST_2X) {
     PluginVst2xData data = (PluginVst2xData)self->extraData;
     return data->pluginHandle->uniqueID;
@@ -504,7 +504,7 @@ static int _getVst2xPluginSetting(void* pluginPtr, PluginSetting pluginSetting) 
   }
 }
 
-void setVst2xPluginChunk(Plugin plugin, char* chunk, size_t chunkSize) {
+void pluginVst2xSetProgramChunk(Plugin plugin, char* chunk, size_t chunkSize) {
   PluginVst2xData data = (PluginVst2xData)plugin->extraData;
   data->dispatcher(data->pluginHandle, effSetChunk, 1, chunkSize, chunk, 0.0f);
 }
@@ -586,7 +586,7 @@ static void _processMidiEventsVst2xPlugin(void *pluginPtr, LinkedList midiEvents
   data->dispatcher(data->pluginHandle, effProcessEvents, 0, 0, data->vstEvents, 0.0f);
 }
 
-boolByte setVst2xProgram(Plugin plugin, const int programNumber) {
+boolByte pluginVst2xSetProgram(Plugin plugin, const int programNumber) {
   PluginVst2xData data = (PluginVst2xData)plugin->extraData;
   CharString currentProgram;
   VstInt32 result;
