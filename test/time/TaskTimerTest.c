@@ -72,6 +72,28 @@ static int _testNewObjectWithEmptySubcomponent(void) {
   return 0;
 }
 
+static int _testNewObjectWithNullComponent(void) {
+  TaskTimer t = newTaskTimer(NULL, NULL);
+
+  assertNotNull(t);
+  assertCharStringEquals(t->component, EMPTY_STRING);
+  assertCharStringEquals(t->subcomponent, EMPTY_STRING);
+
+  freeTaskTimer(t);
+  return 0;
+}
+
+static int _testNewObjectWithNullComponentCString(void) {
+  TaskTimer t = newTaskTimerWithCString(NULL, NULL);
+
+  assertNotNull(t);
+  assertCharStringEquals(t->component, EMPTY_STRING);
+  assertCharStringEquals(t->subcomponent, EMPTY_STRING);
+
+  freeTaskTimer(t);
+  return 0;
+}
+
 static int _testNewObjectWithNullSubcomponent(void) {
   CharString c = newCharStringWithCString(TEST_COMPONENT_NAME);
   TaskTimer t = newTaskTimer(c, NULL);
@@ -208,6 +230,8 @@ TestSuite addTaskTimerTests(void) {
   addTest(testSuite, "NewObject", _testNewTaskTimer);
   addTest(testSuite, "NewObjectWithEmptyComponent", _testNewObjectWithEmptyComponent);
   addTest(testSuite, "NewObjectWithEmptySubcomponent", _testNewObjectWithEmptySubcomponent);
+  addTest(testSuite, "NewObjectWithNullComponent", _testNewObjectWithNullComponent);
+  addTest(testSuite, "NewObjectWithNullComponentCString", _testNewObjectWithNullComponentCString);
   addTest(testSuite, "NewObjectWithNullSubcomponent", _testNewObjectWithNullSubcomponent);
   addTest(testSuite, "NewObjectWithCStrings", _testNewObjectWithCStrings);
   addTest(testSuite, "TaskDuration", _testTaskTimerDuration);

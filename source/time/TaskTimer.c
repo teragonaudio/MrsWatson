@@ -32,7 +32,8 @@
 #include "time/TaskTimer.h"
 
 TaskTimer newTaskTimer(const CharString component, const char* subcomponent) {
-  return newTaskTimerWithCString(component->data, subcomponent);
+  const char* componentCString = component != NULL ? component->data : NULL;
+  return newTaskTimerWithCString(componentCString, subcomponent);
 }
 
 TaskTimer newTaskTimerWithCString(const char* component, const char* subcomponent) {
