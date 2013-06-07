@@ -47,21 +47,80 @@ typedef struct {
 } PluginChainMembers;
 typedef PluginChainMembers* PluginChain;
 
+/**
+ * Create a new PluginChain instance
+ * @return PluginChain instance
+ */
 PluginChain newPluginChain(void);
 
+/**
+ * Append a plugin to the end of the chain
+ * @param self
+ * @param plugin Plugin to add
+ * @param preset Preset to be loaded into the plugin. If no preset is desired,
+ * passed NULL here.
+ * @return True if the plugin could be added to the end of the chain
+ */
 boolByte pluginChainAppend(PluginChain self, Plugin plugin, PluginPreset preset);
+
+// TODO: Deprecate and remove this function
 boolByte pluginChainAddFromArgumentString(PluginChain self, const CharString argumentString, const CharString userSearchPath);
+
+/**
+ * Open and initialize all plugins in the chain.
+ * @param self
+ * @return RETURN_CODE_SUCCESS on success, other code on failure
+ */
 ReturnCodes pluginChainInitialize(PluginChain self);
 
+/**
+ * Inspect each plugin in the chain
+ * @param self
+ */
 void pluginChainInspect(PluginChain self);
+
+/**
+ * Get the maximum amount of tail time (post*processing time with empty input)
+ * needed for the chain. This is essentially the largest tail time value for any
+ * plug-in in the chain.
+ * @param self
+ * @return Maximum tail time, in milliseconds
+ */
 int pluginChainGetMaximumTailTimeInMs(PluginChain self);
 
+/**
+ * Prepare each plugin in the chain for processing. This should be called before
+ * the first block of audio is sent to the chain.
+ * @param self
+ */
 void pluginChainPrepareForProcessing(PluginChain self);
+
+/**
+ * Process a single block of samples through each plugin in the chain.
+ * @param self
+ * @param inBuffer Input sample block
+ * @param outBuffer Output sample block
+ */
 void pluginChainProcessAudio(PluginChain self, SampleBuffer inBuffer, SampleBuffer outBuffer);
+
+/**
+ * Send a list of MIDI events to be processed by the chain. Currently, only the
+ * first plugin in the chain will receive these events.
+ * @param self
+ * @param midiEvents List of events to process
+ */
 void pluginChainProcessMidi(PluginChain self, LinkedList midiEvents);
 
+/**
+ * Close all plugins in the chain
+ * @param self
+ */
 void pluginChainShutdown(PluginChain self);
+
+/**
+ * Free the plugin chain and all associated resources (including all plugins)
+ * @param self
+ */
 void freePluginChain(PluginChain self);
 
 #endif
-
