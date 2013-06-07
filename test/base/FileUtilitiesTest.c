@@ -172,14 +172,6 @@ static int _testRemoveInvalidDirectory(void) {
   return 0;
 }
 
-static int _testBuildAbsolutePath(void) {
-  return 0;
-}
-
-static int _testBuildAbsolutePathWithFileExtension(void) {
-  return 0;
-}
-
 static int _testBuildAbsolutePathEmptyPath(void) {
   CharString d = newCharString();
   CharString f = newCharStringWithCString(TEST_FILENAME);
@@ -246,18 +238,6 @@ static int _testBuildAbsolutePathWithFileExtensionTwice(void) {
   freeCharString(out);
   freeCharString(f);
   freeCharString(expected);
-  return 0;
-}
-
-static int _testConvertRelativePathToAbsolute(void) {
-  return 0;
-}
-
-static int _testConvertRelativePathToAbsoluteAlreadyAbsolute(void) {
-  return 0;
-}
-
-static int _testConvertRelativePathToAbsoluteEmpty(void) {
   return 0;
 }
 
@@ -353,16 +333,11 @@ TestSuite addFileUtilitiesTests(void) {
   addTest(testSuite, "RemoveDirectory", _testRemoveDirectory);
   addTest(testSuite, "RemoveInvalidDirectory", _testRemoveInvalidDirectory);
 
-  addTest(testSuite, "BuildAbsolutePath", NULL); // _testBuildAbsolutePath);
-  addTest(testSuite, "BuildAbsolutePathWithFileExtension", NULL); // _testBuildAbsolutePathWithFileExtension);
   addTest(testSuite, "BuildAbsolutePathEmptyPath", _testBuildAbsolutePathEmptyPath);
   addTest(testSuite, "BuildAbsolutePathEmptyFile", _testBuildAbsolutePathEmptyFile);
   addTest(testSuite, "BuildAbsolutePathNullPath", _testBuildAbsolutePathNullPath);
   addTest(testSuite, "BuildAbsolutePathNullFile", _testBuildAbsolutePathNullFile);
   addTest(testSuite, "BuildAbsolutePathWithFileExtensionTwice", _testBuildAbsolutePathWithFileExtensionTwice);
-  addTest(testSuite, "ConvertRelativePathToAbsolute", NULL); // _testConvertRelativePathToAbsolute);
-  addTest(testSuite, "ConvertRelativePathToAbsoluteAlreadyAbsolute", NULL); // _testConvertRelativePathToAbsoluteAlreadyAbsolute);
-  addTest(testSuite, "ConvertRelativePathToAbsoluteEmpty", NULL); // _testConvertRelativePathToAbsoluteEmpty);
   addTest(testSuite, "IsAbsolutePath", _testIsAbsolutePath);
   addTest(testSuite, "IsAbsolutePathUNCWindows", _testIsAbsolutePathUNCWindows);
   addTest(testSuite, "IsInvalidFileAbsolutePath", _testIsInvalidFileAbsolutePath);
