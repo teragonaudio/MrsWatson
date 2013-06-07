@@ -57,7 +57,7 @@ typedef struct {
   Vst2xPluginDispatcherFunc dispatcher;
   LibraryHandle libraryHandle;
   boolByte isPluginShell;
-  unsigned long shellPluginId;
+  VstInt32 shellPluginId;
   // Must be retained until processReplacing() is called, so best to keep a
   // reference in the plugin's data storage.
   struct VstEvents *vstEvents;
@@ -290,9 +290,9 @@ static boolByte _initVst2xPlugin(Plugin plugin) {
   return true;
 }
 
-unsigned long getVst2xPluginUniqueId(const Plugin plugin) {
-  if(plugin->interfaceType == PLUGIN_TYPE_VST_2X) {
-    PluginVst2xData data = (PluginVst2xData)plugin->extraData;
+unsigned long getVst2xPluginUniqueId(const Plugin self) {
+  if(self->interfaceType == PLUGIN_TYPE_VST_2X) {
+    PluginVst2xData data = (PluginVst2xData)self->extraData;
     return data->pluginHandle->uniqueID;
   }
   return 0;
@@ -311,7 +311,7 @@ static boolByte _openVst2xPlugin(void* pluginPtr) {
     *subpluginSeparator = '\0';
     subpluginId = newCharStringWithCapacity(kCharStringLengthShort);
     strncpy(subpluginId->data, subpluginSeparator + 1, 4);
-    data->shellPluginId = convertStringIdToInt(subpluginId);
+    data->shellPluginId = (VstInt32)convertStringIdToInt(subpluginId);
     currentPluginUniqueId = data->shellPluginId;
   }
 
@@ -406,7 +406,7 @@ static void _displayVst2xPluginInfo(void* pluginPtr) {
   logInfo("Information for VST2.x plugin '%s'", plugin->pluginName->data);
   data->dispatcher(data->pluginHandle, effGetVendorString, 0, 0, nameBuffer->data, 0.0f);
   logInfo("Vendor: %s", nameBuffer->data);
-  int vendorVersion = data->dispatcher(data->pluginHandle, effGetVendorVersion, 0, 0, NULL, 0.0f);
+  VstInt32 vendorVersion = (VstInt32)data->dispatcher(data->pluginHandle, effGetVendorVersion, 0, 0, NULL, 0.0f);
   logInfo("Version: %d", vendorVersion);
   charStringClear(nameBuffer);
 
@@ -414,7 +414,7 @@ static void _displayVst2xPluginInfo(void* pluginPtr) {
   logInfo("Unique ID: %s", nameBuffer->data);
   freeCharString(nameBuffer);
 
-  VstInt32 pluginCategory = data->dispatcher(data->pluginHandle, effGetPlugCategory, 0, 0, NULL, 0.0f);
+  VstInt32 pluginCategory = (VstInt32)data->dispatcher(data->pluginHandle, effGetPlugCategory, 0, 0, NULL, 0.0f);
   switch(plugin->pluginType) {
     case PLUGIN_TYPE_EFFECT:
       logInfo("Plugin type: effect, category %d", pluginCategory);
@@ -434,7 +434,7 @@ static void _displayVst2xPluginInfo(void* pluginPtr) {
     nameBuffer = newCharStringWithCapacity(kCharStringLengthShort);
     while(true) {
       charStringClear(nameBuffer);
-      VstInt32 shellPluginId = data->dispatcher(data->pluginHandle, effShellGetNextPlugin, 0, 0, nameBuffer->data, 0.0f);
+      VstInt32 shellPluginId = (VstInt32)data->dispatcher(data->pluginHandle, effShellGetNextPlugin, 0, 0, nameBuffer->data, 0.0f);
       if(shellPluginId == 0 || charStringIsEmpty(nameBuffer)) {
         break;
       }
@@ -484,7 +484,7 @@ static int _getVst2xPluginSetting(void* pluginPtr, PluginSetting pluginSetting) 
   PluginVst2xData data = (PluginVst2xData)plugin->extraData;
   switch(pluginSetting) {
     case PLUGIN_SETTING_TAIL_TIME_IN_MS: {
-      int tailSize = data->dispatcher(data->pluginHandle, effGetTailSize, 0, 0, NULL, 0.0f);
+      VstInt32 tailSize = (VstInt32)data->dispatcher(data->pluginHandle, effGetTailSize, 0, 0, NULL, 0.0f);
       // For some reason, the VST SDK says that plugins return a 1 here for no tail.
       if(tailSize == 1 || tailSize == 0) {
         return 0;
@@ -504,7 +504,7 @@ static int _getVst2xPluginSetting(void* pluginPtr, PluginSetting pluginSetting) 
   }
 }
 
-void setVst2xPluginChunk(Plugin plugin, char* chunk, int chunkSize) {
+void setVst2xPluginChunk(Plugin plugin, char* chunk, size_t chunkSize) {
   PluginVst2xData data = (PluginVst2xData)plugin->extraData;
   data->dispatcher(data->pluginHandle, effSetChunk, 1, chunkSize, chunk, 0.0f);
 }
@@ -512,7 +512,7 @@ void setVst2xPluginChunk(Plugin plugin, char* chunk, int chunkSize) {
 static void _processAudioVst2xPlugin(void* pluginPtr, SampleBuffer inputs, SampleBuffer outputs) {
   Plugin plugin = (Plugin)pluginPtr;
   PluginVst2xData data = (PluginVst2xData)plugin->extraData;
-  data->pluginHandle->processReplacing(data->pluginHandle, inputs->samples, outputs->samples, outputs->blocksize);
+  data->pluginHandle->processReplacing(data->pluginHandle, inputs->samples, outputs->samples, (VstInt32)outputs->blocksize);
 }
 
 static void _fillVstMidiEvent(const MidiEvent midiEvent, VstMidiEvent* vstMidiEvent) {
@@ -520,7 +520,7 @@ static void _fillVstMidiEvent(const MidiEvent midiEvent, VstMidiEvent* vstMidiEv
     case MIDI_TYPE_REGULAR:
       vstMidiEvent->type = kVstMidiType;
       vstMidiEvent->byteSize = sizeof(VstMidiEvent);
-      vstMidiEvent->deltaFrames = midiEvent->deltaFrames;
+      vstMidiEvent->deltaFrames = (VstInt32)midiEvent->deltaFrames;
       vstMidiEvent->midiData[0] = midiEvent->status;
       vstMidiEvent->midiData[1] = midiEvent->data1;
       vstMidiEvent->midiData[2] = midiEvent->data2;
@@ -592,13 +592,13 @@ boolByte setVst2xProgram(Plugin plugin, const int programNumber) {
   VstInt32 result;
 
   if(programNumber < data->pluginHandle->numPrograms) {
-    result = data->pluginHandle->dispatcher(data->pluginHandle, effSetProgram, 0, programNumber, NULL, 0.0f);
+    result = (VstInt32)data->pluginHandle->dispatcher(data->pluginHandle, effSetProgram, 0, programNumber, NULL, 0.0f);
     if(result != 0) {
       logError("Plugin '%s' failed to load program number %d", plugin->pluginName->data, programNumber);
       return false;
     }
     else {
-      result = data->pluginHandle->dispatcher(data->pluginHandle, effGetProgram, 0, 0, NULL, 0.0f);
+      result = (VstInt32)data->pluginHandle->dispatcher(data->pluginHandle, effGetProgram, 0, 0, NULL, 0.0f);
       if(result != programNumber) {
         logError("Plugin '%s' claimed to load program %d successfully, but current program is %d",
           plugin->pluginName->data, programNumber, result);

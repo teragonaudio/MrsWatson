@@ -105,7 +105,7 @@ size_t sampleSourcePcmRead(SampleSourcePcmData self, SampleBuffer sampleBuffer) 
 static boolByte readBlockFromPcmFile(void* sampleSourcePtr, SampleBuffer sampleBuffer) {
   SampleSource sampleSource = (SampleSource)sampleSourcePtr;
   SampleSourcePcmData extraData = (SampleSourcePcmData)(sampleSource->extraData);
-  unsigned int originalBlocksize = sampleBuffer->blocksize;
+  unsigned long originalBlocksize = sampleBuffer->blocksize;
   size_t samplesRead = sampleSourcePcmRead(extraData, sampleBuffer);
   sampleSource->numSamplesProcessed += samplesRead;
   return (originalBlocksize == sampleBuffer->blocksize);
@@ -158,7 +158,7 @@ static void _closeSampleSourcePcm(void* sampleSourcePtr) {
 void sampleSourcePcmSetSampleRate(void* sampleSourcePtr, double sampleRate) {
   SampleSource sampleSource = (SampleSource)sampleSourcePtr;
   SampleSourcePcmData extraData = (SampleSourcePcmData)sampleSource->extraData;
-  extraData->sampleRate = (long)sampleRate;
+  extraData->sampleRate = (unsigned int)sampleRate;
 }
 
 void sampleSourcePcmSetNumChannels(void* sampleSourcePtr, int numChannels) {

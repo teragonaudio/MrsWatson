@@ -52,9 +52,9 @@ static boolByte _loadPluginPresetFxp(void* pluginPresetPtr, Plugin plugin) {
   PluginPresetFxpProgramType programType;
 
   char* chunk;
-  unsigned int chunkSize;
+  size_t chunkSize;
   unsigned int valueBuffer;
-  unsigned int numObjectsRead;
+  size_t numObjectsRead;
   float parameterValue;
   unsigned int i;
 

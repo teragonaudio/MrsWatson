@@ -5,7 +5,7 @@
 static int _testConvertIntIdToString(void) {
   CharString test = newCharStringWithCString("abcd");
   unsigned long id = convertStringIdToInt(test);
-  assertIntEquals(id, 0x61626364);
+  assertUnsignedLongEquals(id, 0x61626364l);
   freeCharString(test);
   return 0;
 }
@@ -27,21 +27,21 @@ static int _testConvertStringIdToInt(void) {
 static int _testConvertEmptyStringIdToInt(void) {
   CharString c = newCharString();
   unsigned long id = convertStringIdToInt(c);
-  assertIntEquals(id, 0);
+  assertUnsignedLongEquals(id, 0l);
   freeCharString(c);
   return 0;
 }
 
 static int _testConvertNullStringIdToInt(void) {
   unsigned long id = convertStringIdToInt(NULL);
-  assertIntEquals(id, 0);
+  assertUnsignedLongEquals(id, 0l);
   return 0;
 }
 
 static int _testConvertInvalidStringIdToInt(void) {
   CharString c = newCharStringWithCString("a");
   unsigned long id = convertStringIdToInt(c);
-  assertIntEquals(id, 0);
+  assertUnsignedLongEquals(id, 0l);
   freeCharString(c);
   return 0;
 }
