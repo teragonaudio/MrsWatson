@@ -1,5 +1,6 @@
 #include "unit/TestRunner.h"
 #include "plugin/PluginPreset.h"
+#include "PluginMock.h"
 
 const char* TEST_PRESET_FILENAME = "test.fxp";
 
@@ -34,21 +35,26 @@ static int _testNewObject(void) {
 static int _testIsPresetCompatibleWithPlugin(void) {
   CharString c = newCharStringWithCString(TEST_PRESET_FILENAME);
   PluginPreset p = pluginPresetFactory(c);
-  CharString internal_name = newCharStringWithCString("mrs_name");
-  CharString unsupported_name = newCharStringWithCString("unsupported");
-  CharString location = newCharStringWithCString("location");
-  Plugin plug1 = pluginFactory(internal_name, location);
-  Plugin plug2 = pluginFactory(unsupported_name, location);
+  Plugin mockPlugin = newPluginMock();
 
   _pluginPresetSetCompatibleWith(p, PLUGIN_TYPE_INTERNAL);
-  assert(pluginPresetIsCompatibleWith(p, plug1));
-  assertFalse(pluginPresetIsCompatibleWith(p, plug2));
+  assert(pluginPresetIsCompatibleWith(p, mockPlugin));
 
-  freePlugin(plug1);
-  freePlugin(plug2);
-  freeCharString(internal_name);
-  freeCharString(unsupported_name);
-  freeCharString(location);
+  freePlugin(mockPlugin);
+  freeCharString(c);
+  freePluginPreset(p);
+  return 0;
+}
+
+static int _testIsPresetNotCompatibleWithPlugin(void) {
+  CharString c = newCharStringWithCString(TEST_PRESET_FILENAME);
+  PluginPreset p = pluginPresetFactory(c);
+  Plugin mockPlugin = newPluginMock();
+
+  _pluginPresetSetCompatibleWith(p, PLUGIN_TYPE_VST_2X);
+  assertFalse(pluginPresetIsCompatibleWith(p, mockPlugin));
+
+  freePlugin(mockPlugin);
   freeCharString(c);
   freePluginPreset(p);
   return 0;
@@ -60,6 +66,7 @@ TestSuite addPluginPresetTests(void) {
   addTest(testSuite, "GuessPluginPresetType", _testGuessPluginPresetType);
   addTest(testSuite, "GuessPluginPresetTypeInvalid", _testGuessPluginPresetTypeInvalid);
   addTest(testSuite, "NewObject", _testNewObject);
-  addTest(testSuite, "IsPresetCompatibleWithPlugin", NULL); // _testIsPresetCompatibleWithPlugin);
+  addTest(testSuite, "IsPresetCompatibleWithPlugin", _testIsPresetCompatibleWithPlugin);
+  addTest(testSuite, "IsPresetNotCompatibleWithPlugin", _testIsPresetNotCompatibleWithPlugin);
   return testSuite;
 }
