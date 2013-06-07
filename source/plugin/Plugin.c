@@ -38,6 +38,12 @@
 
 static PluginInterfaceType _guessPluginInterfaceType(const CharString pluginName, const CharString pluginSearchRoot) {
   PluginInterfaceType pluginType = PLUGIN_TYPE_INVALID;
+
+  if(pluginName == NULL || charStringIsEmpty(pluginName)) {
+    logError("Attempt to guess plugin with empty name");
+    return pluginType;
+  }
+
   logDebug("Trying to find plugin '%s'", pluginName->data);
 
   if(pluginVst2xExists(pluginName, pluginSearchRoot)) {
@@ -88,6 +94,9 @@ static boolByte _internalPluginNameMatches(const CharString pluginName, const ch
 // Plugin newPlugin(PluginInterfaceType interfaceType, const CharString pluginName, const CharString pluginLocation) {
 Plugin pluginFactory(const CharString pluginName, const CharString pluginRoot) {
   PluginInterfaceType interfaceType = _guessPluginInterfaceType(pluginName, pluginRoot);
+  if(interfaceType == PLUGIN_TYPE_INVALID) {
+    return NULL;
+  }
 
   switch(interfaceType) {
     case PLUGIN_TYPE_VST_2X:
@@ -110,7 +119,6 @@ in your MrsWatson so you can run plugins in your plugins!");
         logError("'%s' is not a recognized internal plugin", pluginName->data);
         return NULL;
       }
-    case PLUGIN_TYPE_INVALID:
     default:
       logError("Could not find plugin type for '%s'", pluginName->data);
       return NULL;
@@ -118,11 +126,13 @@ in your MrsWatson so you can run plugins in your plugins!");
 }
 
 void freePlugin(Plugin self) {
-  if(self->extraData) {
-    self->freePluginData(self->extraData);
-    free(self->extraData);
+  if(self != NULL) {
+    if(self->extraData != NULL) {
+      self->freePluginData(self->extraData);
+      free(self->extraData);
+    }
+    freeCharString(self->pluginLocation);
+    freeCharString(self->pluginName);
+    free(self);
   }
-  freeCharString(self->pluginLocation);
-  freeCharString(self->pluginName);
-  free(self);
 }
