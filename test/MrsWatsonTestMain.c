@@ -218,6 +218,10 @@ int main(int argc, char* argv[]) {
     else {
       testSuite->onlyPrintFailing = programOptions->options[OPTION_TEST_PRINT_ONLY_FAILING]->enabled;
       runTestSuite(testSuite, NULL);
+      totalTestsRun = testSuite->numSuccess + testSuite->numFail;
+      totalTestsPassed = testSuite->numSuccess;
+      totalTestsFailed = testSuite->numFail;
+      totalTestsSkipped = testSuite->numSkips;
     }
   }
 
@@ -274,7 +278,7 @@ int main(int argc, char* argv[]) {
   }
 
   taskTimerStop(timer);
-  if(runInternalTests || runApplicationTests) {
+  if(totalTestsRun > 0) {
     printf("\n=== Finished ===\n");
     _printTestSummary(totalTestsRun, totalTestsPassed, totalTestsFailed, totalTestsSkipped);
     totalTimeString = taskTimerHumanReadbleString(timer);
