@@ -8,6 +8,7 @@
 #include "base/PlatformUtilities.h"
 #include "base/CharString.h"
 #include "base/FileUtilities.h"
+#include "logging/LogPrinter.h"
 
 #if UNIX
 #include <unistd.h>
@@ -16,6 +17,16 @@
 #ifndef __func__
 #define __func__ __FUNCTION__
 #endif
+
+typedef enum {
+  kTestLogEventSection,
+  kTestLogEventPass,
+  kTestLogEventFail,
+  kTestLogEventSkip,
+  kTestLogEventReset,
+  kTestLogEventInvalid
+} TestLogEventType;
+const LogColor getLogColor(TestLogEventType eventType);
 
 typedef int (*TestCaseExecFunc)(void);
 typedef void (*TestCaseSetupFunc)(void);

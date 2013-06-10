@@ -81,31 +81,31 @@ etc.). Normally these files are automatically removed if a test succeeds.",
 void _printTestSummary(int testsRun, int testsPassed, int testsFailed, int testsSkipped) {
   CharString numberBuffer = newCharStringWithCapacity(kCharStringLengthShort);
 
-  printToLog(COLOR_RESET, NULL, "Ran ");
+  printToLog(getLogColor(kTestLogEventReset), NULL, "Ran ");
   sprintf(numberBuffer->data, "%d", testsRun);
-  printToLog(COLOR_FG_CYAN, NULL, numberBuffer->data);
-  printToLog(COLOR_RESET, NULL, " tests: ");
+  printToLog(getLogColor(kTestLogEventSection), NULL, numberBuffer->data);
+  printToLog(getLogColor(kTestLogEventReset), NULL, " tests: ");
   sprintf(numberBuffer->data, "%d", testsPassed);
-  printToLog(COLOR_FG_GREEN, NULL, numberBuffer->data);
-  printToLog(COLOR_RESET, NULL, " passed, ");
+  printToLog(getLogColor(kTestLogEventPass), NULL, numberBuffer->data);
+  printToLog(getLogColor(kTestLogEventReset), NULL, " passed, ");
 
   sprintf(numberBuffer->data, "%d", testsFailed);
   if(testsFailed > 0) {
-    printToLog(COLOR_BG_MAROON, NULL, numberBuffer->data);
+    printToLog(getLogColor(kTestLogEventFail), NULL, numberBuffer->data);
   }
   else {
-    printToLog(COLOR_RESET, NULL, numberBuffer->data);
+    printToLog(getLogColor(kTestLogEventReset), NULL, numberBuffer->data);
   }
-  printToLog(COLOR_RESET, NULL, " failed, ");
+  printToLog(getLogColor(kTestLogEventReset), NULL, " failed, ");
 
   sprintf(numberBuffer->data, "%d", testsSkipped);
   if(testsSkipped > 0) {
-    printToLog(COLOR_FG_YELLOW, NULL, numberBuffer->data);
+    printToLog(getLogColor(kTestLogEventSkip), NULL, numberBuffer->data);
   }
   else {
-    printToLog(COLOR_RESET, NULL, numberBuffer->data);
+    printToLog(getLogColor(kTestLogEventReset), NULL, numberBuffer->data);
   }
-  printToLog(COLOR_RESET, NULL, " skipped");
+  printToLog(getLogColor(kTestLogEventReset), NULL, " skipped");
   flushLog(NULL);
 
   freeCharString(numberBuffer);
