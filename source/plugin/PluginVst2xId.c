@@ -56,7 +56,7 @@ PluginVst2xId newPluginVst2xId(void) {
   PluginVst2xId pluginVst2xId = (PluginVst2xId)malloc(sizeof(PluginVst2xIdMembers));
 
   pluginVst2xId->id = 0;
-  pluginVst2xId->idString = newCharStringWithCString(kPluginVst2xIdUnknown);
+  pluginVst2xId->idString = newCharStringWithCString(PLUGIN_VST2X_ID_UNKNOWN);
 
   return pluginVst2xId;
 }

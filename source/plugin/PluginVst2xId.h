@@ -28,7 +28,7 @@
 #ifndef MrsWatson_PluginVst2xId_h
 #define MrsWatson_PluginVst2xId_h
 
-static const char* kPluginVst2xIdUnknown = "????";
+#define PLUGIN_VST2X_ID_UNKNOWN "????"
 
 typedef struct {
   unsigned long id;
