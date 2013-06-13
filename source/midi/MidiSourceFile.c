@@ -142,6 +142,7 @@ static boolByte _readMidiFileTrack(FILE *midiFile, const int trackNumber,
   itemsRead = fread(trackData, 1, numBytes, midiFile);
   if(itemsRead != numBytes) {
     logError("Short read of MIDI file (at track %d)", trackNumber);
+    free(trackData);
     return false;
   }
 
@@ -171,7 +172,8 @@ static boolByte _readMidiFileTrack(FILE *midiFile, const int trackNumber,
         }
         break;
       case 0x7f:
-        logUnsupportedFeature("Parsing MIDI sysex events from file");
+        logUnsupportedFeature("MIDI files containing sysex events");
+        free(trackData);
         return false;
       default:
         midiEvent->eventType = MIDI_TYPE_REGULAR;

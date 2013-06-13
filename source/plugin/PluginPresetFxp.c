@@ -184,6 +184,7 @@ static boolByte _loadPluginPresetFxp(void* pluginPresetPtr, Plugin plugin) {
     }
     else {
       logInternalError("Load FXP preset to wrong plugin type");
+      free(chunk);
       return false;
     }
   }

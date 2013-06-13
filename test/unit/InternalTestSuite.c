@@ -122,7 +122,8 @@ TestSuite findTestSuite(char *testSuiteName) {
     iterator = iterator->nextItem;
   }
 
-  return NULL;
+  freeLinkedListAndItems(internalTestSuites, (LinkedListFreeItemFunc)freeTestSuite);
+  return testSuite;
 }
 
 static void _printTestCases(void* item, void* userData) {
@@ -140,4 +141,5 @@ void printInternalTests(void);
 void printInternalTests(void) {
   LinkedList internalTestSuites = _getTestSuites();
   linkedListForeach(internalTestSuites, _printTestsInSuite, NULL);
+  freeLinkedListAndItems(internalTestSuites, (LinkedListFreeItemFunc)freeTestSuite);
 }

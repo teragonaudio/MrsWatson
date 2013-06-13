@@ -110,13 +110,14 @@ static void printWelcomeMessage(int argc, char** argv) {
 static void printVersion(void) {
   CharString versionString = buildInfoGetVersionString();
   CharString wrappedLicenseInfo;
+  CharString licenseString = newCharStringWithCString(LICENSE_STRING);
 
   printf("%s, build %ld\nCopyright (c) %ld, %s. All rights reserved.\n\n",
     versionString->data, buildInfoGetDatestamp(), buildInfoGetYear(), VENDOR_NAME);
-
-  wrappedLicenseInfo = charStringWrap(newCharStringWithCString(LICENSE_STRING), 0);
+  wrappedLicenseInfo = charStringWrap(licenseString, 0);
   printf("%s\n\n", wrappedLicenseInfo->data);
 
+  freeCharString(licenseString);
   freeCharString(wrappedLicenseInfo);
   freeCharString(versionString);
 }

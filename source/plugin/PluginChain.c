@@ -114,6 +114,8 @@ boolByte pluginChainAddFromArgumentString(PluginChain pluginChain, const CharStr
     if(plugin != NULL) {
       if(!pluginChainAppend(pluginChain, plugin, preset)) {
         logError("Plugin '%s' could not be added to the chain", pluginNameBuffer->data);
+        free(pluginNameBuffer);
+        free(presetNameBuffer);
         return false;
       }
     }

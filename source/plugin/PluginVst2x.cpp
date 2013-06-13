@@ -343,7 +343,7 @@ static boolByte _openVst2xPlugin(void* pluginPtr) {
   plugin->pluginName = newCharStringWithCString(pluginBasename);
   freeCharString(temp);
 
-  if(data->shellPluginId) {
+  if(data->shellPluginId && subpluginIdString != NULL) {
     charStringAppendCString(plugin->pluginName, " (");
     charStringAppend(plugin->pluginName, subpluginIdString);
     charStringAppendCString(plugin->pluginName, ")");

@@ -137,7 +137,7 @@ boolByte charStringIsNumber(const CharString self, const size_t index) {
 
 void _charStringWrap(const char* srcString, char* destString, int indentSize, int lineLength);
 void _charStringWrap(const char* srcString, char* destString, int indentSize, int lineLength) {
-  char* lineBuffer = (char*)malloc(sizeof(char) * lineLength);
+  char* lineBuffer = NULL;
   unsigned long destStringIndex = 0;
   unsigned long srcStringIndex = 0;
   size_t lineIndex = 0;
@@ -157,6 +157,7 @@ void _charStringWrap(const char* srcString, char* destString, int indentSize, in
     return;
   }
 
+  lineBuffer = (char*)malloc(sizeof(char) * lineLength);
   while(srcStringIndex < strlen(srcString)) {
     if(lineIndex == 0) {
       for(indentIndex = 0; indentIndex < indentSize; indentIndex++) {

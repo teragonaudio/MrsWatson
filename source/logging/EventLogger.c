@@ -94,11 +94,9 @@ char* stringForLastError(int errorNumber) {
 #elif WINDOWS
   FormatMessageA(FORMAT_MESSAGE_FROM_SYSTEM, 0, errorNumber, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
     eventLogger->systemErrorMessage->data, eventLogger->systemErrorMessage->capacity - 1, NULL);
-#else
-  charStringCopyCString(eventLogger->systemErrorMessage, "Unknown error");
+  return eventLogger->systemErrorMessage->data;
 #endif
 
-  return eventLogger->systemErrorMessage->data;
 }
 
 boolByte isLogLevelAtLeast(LogLevel logLevel) {
