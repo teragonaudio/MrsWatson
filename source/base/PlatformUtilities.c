@@ -30,6 +30,7 @@
 #include <string.h>
 #include <sys/stat.h>
 
+#include "base/File.h"
 #include "base/FileUtilities.h"
 #include "base/PlatformUtilities.h"
 #include "logging/EventLogger.h"
@@ -92,31 +93,34 @@ CharString getPlatformName(void) {
   Gestalt(gestaltSystemVersionBugFix, &bugfix);
   snprintf(result->data, result->capacity, "Mac OS X %d.%d.%d", (int)major, (int)minor, (int)bugfix);
 #elif LINUX
-  CharString line = newCharString();
-  char *lineDelimiter = NULL;
   char *distributionStringStart = NULL;
   char *distributionStringEnd = NULL;
   CharString distributionName = newCharString();
   struct utsname systemInfo;
-  FILE *lsbRelease = NULL;
+  File lsbRelease = NULL;
+  CharString lsbReleasePath = newCharStringWithCString("/etc/lsb-release");
+  CharString lsbReleaseContents = NULL;
+  LinkedList lsbReleaseContentsStrings = NULL;
+  CharString *lsbReleaseItems = NULL;
 
   if(uname(&systemInfo) != 0) {
     logWarn("Could not get system information from uname");
     charStringCopyCString(result, "Linux (Unknown platform)");
     freeCharString(distributionName);
-    freeCharString(line);
     return result;
   }
   charStringCopyCString(distributionName, "(Unknown distribution)");
 
-  if(_fileExists("/etc/lsb-release")) {
-    lsbRelease = fopen("/etc/lsb-release", "r");
-    if(lsbRelease != NULL) {
-      while(fgets(line->data, line->capacity, lsbRelease) != NULL) {
-        lineDelimiter = strchr(line->data, '=');
-        if(lineDelimiter != NULL) {
-          if(!strncmp(line->data, LSB_DISTRIBUTION, strlen(LSB_DISTRIBUTION))) {
-            distributionStringStart = strchr(lineDelimiter + 1, '"');
+  lsbRelease = newFileWithPath(lsbReleasePath);
+  if(fileExists(lsbRelease)) {
+    lsbReleaseContents = fileReadContents(lsbRelease);
+    if(lsbReleaseContents != NULL) {
+      lsbReleaseContentsStrings = charStringSplit(lsbReleaseContents, '\n');
+      if(lsbReleaseContentsStrings != NULL) {
+        lsbReleaseItems = (CharString*)linkedListToArray(lsbReleaseContentsStrings);
+        for(int i = 0; i < linkedListLength(lsbReleaseContentsStrings); i++) {
+          if(!strcmp(lsbReleaseItems[i]->data, LSB_DISTRIBUTION)) {
+            distributionStringStart = strchr(lsbReleaseItems[i]->data, '"');
             if(distributionStringStart != NULL) {
               distributionStringEnd = strchr(distributionStringStart + 1, '"');
               if(distributionStringEnd != NULL) {
@@ -136,9 +140,12 @@ CharString getPlatformName(void) {
       distributionName->data, systemInfo.release, systemInfo.machine);
   }
 
-  fclose(lsbRelease);
   freeCharString(distributionName);
-  freeCharString(line);
+  freeCharString(lsbReleasePath);
+  freeCharString(lsbReleaseContents);
+  freeLinkedListAndItems(lsbReleaseContentsStrings, (LinkedListFreeItemFunc)freeCharString);
+  free(lsbReleaseItems);
+  freeFile(lsbRelease);
 #elif WINDOWS
   OSVERSIONINFOEX versionInformation;
   memset(&versionInformation, 0, sizeof(OSVERSIONINFOEX));
