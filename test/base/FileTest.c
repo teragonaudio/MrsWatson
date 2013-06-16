@@ -993,6 +993,7 @@ static int _testFileWrite(void) {
 
 static int _testFileWriteMultiple(void) {
   CharString p = newCharStringWithCString(TEST_FILENAME);
+  CharString p2 = newCharStringWithCString(p->data);
   File f = newFileWithPath(p);
   CharString result = NULL;
 
@@ -1003,11 +1004,12 @@ static int _testFileWriteMultiple(void) {
   assert(fileWrite(f, p));
   result = fileReadContents(f);
   assertNotNull(result);
-  charStringAppend(p, p);
+  charStringAppend(p, p2);
   assertCharStringEquals(result, p->data);
 
   freeCharString(result);
   freeCharString(p);
+  freeCharString(p2);
   freeFile(f);
   return 0;
 }
