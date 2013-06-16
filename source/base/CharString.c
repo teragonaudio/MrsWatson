@@ -135,6 +135,40 @@ boolByte charStringIsNumber(const CharString self, const size_t index) {
   return (ch >= '0' && ch <= '9');
 }
 
+LinkedList charStringSplit(const CharString self, const char delimiter) {
+  LinkedList result = NULL;
+  char *delimiterPtr = NULL;
+  char *selfIndex = self->data;
+  CharString item = NULL;
+  size_t charsToCopy = 0;
+  boolByte done = false;
+
+  if(delimiter == '\0') {
+    logError("Cannot split string with NULL delimiter");
+    return NULL;
+  }
+
+  result = newLinkedList();
+  while(!done) {
+    delimiterPtr = strchr(selfIndex, delimiter);
+    if(delimiterPtr == NULL) {
+      done = true;
+      charsToCopy = self->data + strlen(self->data) - selfIndex;
+    }
+    else {
+      charsToCopy = delimiterPtr - selfIndex;
+    }
+    if(charsToCopy > 0) {
+      item = newCharStringWithCapacity(charsToCopy + 1);
+      strncpy(item->data, selfIndex, charsToCopy);
+      linkedListAppend(result, item);
+    }
+    selfIndex = delimiterPtr + 1;
+  }
+
+  return result;
+}
+
 void _charStringWrap(const char* srcString, char* destString, int indentSize, int lineLength);
 void _charStringWrap(const char* srcString, char* destString, int indentSize, int lineLength) {
   char* lineBuffer = NULL;

@@ -29,6 +29,7 @@
 #define MrsWatson_CharString_h
 
 #include <stdlib.h>
+#include "base/LinkedList.h"
 #include "base/Types.h"
 
 static const size_t kCharStringLengthDefault = 256;
@@ -148,6 +149,16 @@ boolByte charStringIsLetter(const CharString self, const size_t index);
  * @return True is character is a number
  */
 boolByte charStringIsNumber(const CharString self, const size_t index);
+
+/**
+ * Break a string up into a list of strings based on a delimeter character. The
+ * list of strings do not include the delimiter character itself.
+ * @param self
+ * @param delimiter Delimiter character (cannot be NULL)
+ * @return List of strings (may be an empty list if the delimiter was not found),
+ * or NULL if invalid input given.
+ */
+LinkedList charStringSplit(const CharString self, const char delimiter);
 
 /**
  * Wrap a string to fix nicely within the width of a terminal window. This

@@ -1,5 +1,6 @@
 #include "unit/TestRunner.h"
 #include "base/CharString.h"
+#include "base/LinkedList.h"
 
 static char *const TEST_STRING = "test string";
 static char *const TEST_STRING_CAPS = "TEST STRING";
@@ -233,6 +234,58 @@ static int _testIsNotNumber(void) {
   return 0;
 }
 
+static int _testSplitString(void) {
+  CharString c = newCharStringWithCString("abc,def,ghi,");
+  LinkedList l = charStringSplit(c, ',');
+  CharString* items = NULL;
+
+  assertNotNull(l);
+  assertIntEquals(linkedListLength(l), 3);
+  items = (CharString*)linkedListToArray(l);
+  assertNotNull(items);
+  assertCharStringEquals(items[0], "abc");
+  assertCharStringEquals(items[1], "def");
+  assertCharStringEquals(items[2], "ghi");
+
+  freeLinkedListAndItems(l, (LinkedListFreeItemFunc)freeCharString);
+  freeCharString(c);
+  return 0;
+}
+
+static int _testSplitStringWithoutDelimiter(void) {
+  const char* expected = "abcdefg";
+  CharString c = newCharStringWithCString(expected);
+  CharString c2 = NULL;
+  LinkedList l = charStringSplit(c, ',');
+
+  assertNotNull(l);
+  assertIntEquals(linkedListLength(l), 1);
+  c2 = l->item;
+  assertCharStringEquals(c2, expected);
+
+  freeLinkedListAndItems(l, (LinkedListFreeItemFunc)freeCharString);
+  freeCharString(c);
+  return 0;
+}
+
+static int _testSplitStringNULLDelimiter(void) {
+  CharString c = newCharStringWithCString("abcdefh");
+  LinkedList l = charStringSplit(c, 0);
+  assertIsNull(l);
+  freeCharString(c);
+  return 0;
+}
+
+static int _testSplitStringEmptyString(void) {
+  CharString c = newCharString();
+  LinkedList l = charStringSplit(c, ',');
+  assertNotNull(l);
+  assertIntEquals(linkedListLength(l), 0);
+  freeCharString(c);
+  freeLinkedList(l);
+  return 0;
+}
+
 // This function is not technically public, but we test against it instead of
 // the public version in order to set a shorter line length. This makes test
 // cases much easier to construct.
@@ -317,6 +370,11 @@ TestSuite addCharStringTests(void) {
   addTest(testSuite, "IsNotLetter", _testIsNotLetter);
   addTest(testSuite, "IsNumber", _testIsNumber);
   addTest(testSuite, "IsNotNumber", _testIsNotNumber);
+
+  addTest(testSuite, "SplitString", _testSplitString);
+  addTest(testSuite, "SplitStringWithoutDelimiter", _testSplitStringWithoutDelimiter);
+  addTest(testSuite, "SplitStringNULLDelimiter", _testSplitStringNULLDelimiter);
+  addTest(testSuite, "SplitStringEmptyString", _testSplitStringEmptyString);
 
   addTest(testSuite, "WrapNullSourceString", _testWrapNullSourceString);
   addTest(testSuite, "WrapString", _testWrapString);
