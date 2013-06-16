@@ -22,18 +22,18 @@ static int _testFileExists(void) {
   FILE *fp = fopen(TEST_FILENAME, "w");
   assert(fp != NULL);
   fclose(fp);
-  assert(fileExists(TEST_FILENAME));
+  assert(_fileExists(TEST_FILENAME));
   unlink(TEST_FILENAME);
   return 0;
 }
 
 static int _testNullFileExists(void) {
-  assertFalse(fileExists(NULL));
+  assertFalse(_fileExists(NULL));
   return 0;
 }
 
 static int _testInvalidFileExists(void) {
-  assertFalse(fileExists("invalid"));
+  assertFalse(_fileExists("invalid"));
   return 0;
 }
 
@@ -158,9 +158,9 @@ static int _testListInvalidDirectory(void) {
 
 static int _testRemoveDirectory(void) {
   CharString tempDir = _fileUtilitiesMakeTempDir();
-  assert(fileExists(tempDir->data));
+  assert(_fileExists(tempDir->data));
   assert(removeDirectory(tempDir));
-  assertFalse(fileExists(tempDir->data));
+  assertFalse(_fileExists(tempDir->data));
   freeCharString(tempDir);
   return 0;
 }

@@ -46,7 +46,7 @@
 #include <mach-o/dyld.h>
 #endif
 
-boolByte fileExists(const char* path) {
+boolByte _fileExists(const char* path) {
 #if WINDOWS
   // Visual Studio's compiler is not C99 compliant, so variable declarations
   // need to be at the top.
@@ -166,7 +166,7 @@ boolByte removeDirectory(const CharString absolutePath) {
   boolByte result = false;
 
 #if UNIX
-  if(!fileExists(absolutePath->data)) {
+  if(!_fileExists(absolutePath->data)) {
     return false;
   }
 

@@ -39,9 +39,7 @@ static LinkedList _getTestSuites(void) {
   linkedListAppend(internalTestSuites, addAudioClockTests());
   linkedListAppend(internalTestSuites, addAudioSettingsTests());
   linkedListAppend(internalTestSuites, addCharStringTests());
-#if USE_NEW_FILE_API
   linkedListAppend(internalTestSuites, addFileTests());
-#endif
   linkedListAppend(internalTestSuites, addFileUtilitiesTests());
   linkedListAppend(internalTestSuites, addLinkedListTests());
   linkedListAppend(internalTestSuites, addMidiSequenceTests());

@@ -78,7 +78,7 @@ static CharString _getDefaultArguments(TestEnvironment testEnvironment, const ch
 }
 
 static void _removeOutputFile(const char* argument) {
-  if(fileExists(argument)) {
+  if(_fileExists(argument)) {
     unlink(argument);
   }
 }

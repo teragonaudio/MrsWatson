@@ -175,7 +175,7 @@ static boolByte _doesVst2xPluginExistAtLocation(const CharString pluginName, con
   }
 
   buildAbsolutePath(location, pluginName, pluginFileExtension, pluginSearchPath);
-  if(!charStringIsEmpty(location) && fileExists(pluginSearchPath->data)) {
+  if(!charStringIsEmpty(location) && _fileExists(pluginSearchPath->data)) {
     result = true;
   }
 
@@ -185,7 +185,7 @@ static boolByte _doesVst2xPluginExistAtLocation(const CharString pluginName, con
 
 static CharString _getVst2xPluginLocation(const CharString pluginName, const CharString pluginRoot) {
   // First see if an absolute path was given as the plugin name
-  if(isAbsolutePath(pluginName) && fileExists(pluginName->data)) {
+  if(isAbsolutePath(pluginName) && _fileExists(pluginName->data)) {
     return newCharStringWithCString(getFileBasename(pluginName->data));
   }
 

@@ -251,7 +251,7 @@ int main(int argc, char* argv[]) {
     }
     buildAbsolutePath(currentPath, mrsWatsonExeName, NULL, mrsWatsonPath);
   }
-  if(runApplicationTests && !fileExists(mrsWatsonPath->data)) {
+  if(runApplicationTests && !_fileExists(mrsWatsonPath->data)) {
     printf("Could not find mrswatson at '%s', skipping application tests\n", mrsWatsonPath->data);
     runApplicationTests = false;
   }
@@ -260,7 +260,7 @@ int main(int argc, char* argv[]) {
   if(programOptions->options[OPTION_TEST_RESOURCES_PATH]->enabled) {
     charStringCopy(resourcesPath, programOptions->options[OPTION_TEST_RESOURCES_PATH]->argument);
   }
-  if(runApplicationTests && !fileExists(resourcesPath->data)) {
+  if(runApplicationTests && !_fileExists(resourcesPath->data)) {
     printf("Could not find test resources, skipping application tests\n");
     runApplicationTests = false;
   }

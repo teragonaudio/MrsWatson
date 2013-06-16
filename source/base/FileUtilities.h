@@ -41,7 +41,7 @@
 #endif
 
 // File operations
-boolByte fileExists(const char* path);
+boolByte _fileExists(const char* path);
 boolByte copyFileToDirectory(const CharString fileAbsolutePath, const CharString directoryAbsolutePath);
 
 // Directory operations

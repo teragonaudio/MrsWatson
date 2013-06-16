@@ -257,7 +257,7 @@ boolByte programOptionsParseConfigFile(ProgramOptions self, const CharString fil
   if(filename == NULL || charStringIsEmpty(filename)) {
     logCritical("Cannot read options from empty filename");
   }
-  else if(!fileExists(filename->data)) {
+  else if(!_fileExists(filename->data)) {
     logCritical("Cannot read options from '%s', file does not exist", filename->data);
   }
   else {
