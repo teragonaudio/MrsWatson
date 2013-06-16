@@ -544,7 +544,7 @@ CharString fileReadContents(File self) {
 
   fileSize = (size_t)fileGetSize(self);
   if(fileSize > 0) {
-    result = newCharStringWithCapacity(fileSize);
+    result = newCharStringWithCapacity(fileSize + 1);
     itemsRead = fread(result->data, 1, fileSize, self->_fileHandle);
     if(itemsRead != fileSize) {
       logError("Expected to read %d items, read %d items instead", fileSize, itemsRead);
@@ -582,7 +582,8 @@ void* fileReadBytes(File self, size_t numBytes) {
 
   fileSize = (size_t)fileGetSize(self);
   if(fileSize > 0) {
-    result = malloc(fileSize);
+    result = malloc(fileSize + 1);
+    memset(result, 0, fileSize + 1);
     itemsRead = fread(result, 1, fileSize, self->_fileHandle);
     if(itemsRead != fileSize) {
       logError("Expected to read %d items, read %d items instead", fileSize, itemsRead);
