@@ -119,7 +119,7 @@ CharString getPlatformName(void) {
       if(lsbReleaseContentsStrings != NULL) {
         lsbReleaseItems = (CharString*)linkedListToArray(lsbReleaseContentsStrings);
         for(int i = 0; i < linkedListLength(lsbReleaseContentsStrings); i++) {
-          if(!strcmp(lsbReleaseItems[i]->data, LSB_DISTRIBUTION)) {
+          if(!strncmp(lsbReleaseItems[i]->data, LSB_DISTRIBUTION, sizeof(LSB_DISTRIBUTION - 1))) {
             distributionStringStart = strchr(lsbReleaseItems[i]->data, '"');
             if(distributionStringStart != NULL) {
               distributionStringEnd = strchr(distributionStringStart + 1, '"');
