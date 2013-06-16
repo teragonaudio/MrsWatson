@@ -1,5 +1,7 @@
 #include "unit/TestRunner.h"
 #include "app/ProgramOption.h"
+#include "base/File.h"
+#include "base/Types.h"
 
 #if UNIX
 #define TEST_CONFIG_FILE "/tmp/mrswatsontest-config.txt"
@@ -8,6 +10,16 @@
 #else
 #define TEST_CONFIG_FILE "mrswatsontest-config.txt"
 #endif
+
+static void _programOptionTeardown(void) {
+  CharString configFilePath = newCharStringWithCString(TEST_CONFIG_FILE);
+  File configFile = newFileWithPath(configFilePath);
+  if(fileExists(configFile)) {
+    fileRemove(configFile);
+  }
+  freeCharString(configFilePath);
+  freeFile(configFile);
+}
 
 static ProgramOption _getTestOption(void) {
   return newProgramOptionWithValues(0, "test", "test help", true, kProgramOptionArgumentTypeOptional, NO_DEFAULT_VALUE);
@@ -225,7 +237,7 @@ static int _testFindProgramOptionFromStringInvalid(void) {
 
 TestSuite addProgramOptionTests(void);
 TestSuite addProgramOptionTests(void) {
-  TestSuite testSuite = newTestSuite("ProgramOption", NULL, NULL);
+  TestSuite testSuite = newTestSuite("ProgramOption", NULL, _programOptionTeardown);
   addTest(testSuite, "NewObject", _testNewProgramOptions);
   addTest(testSuite, "AddNewProgramOption", _testAddNewProgramOption);
   addTest(testSuite, "AddNullProgramOption", _testAddNullProgramOption);
