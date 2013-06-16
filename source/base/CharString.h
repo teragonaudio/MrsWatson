@@ -73,14 +73,16 @@ CharString newCharStringWithCapacity(size_t length);
 CharString newCharStringWithCString(const char* string);
 
 /**
- * Append another CharString to this instance, truncating if necessary
+ * Append another CharString to this instance, truncating if necessary. Appending
+ * a string to itself will result in undefined behavior.
  * @param self
  * @param string String to append
  */
 void charStringAppend(CharString self, const CharString string);
 
 /**
- * Append a C-String to this CharString
+ * Append a C-String to this CharString. Appending a string to itself will result
+ * in undefined behavior.
  * @param self
  * @param string NULL-terminated string to append
  */
