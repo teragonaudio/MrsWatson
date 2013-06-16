@@ -109,7 +109,7 @@ CharString getPlatformName(void) {
   }
   charStringCopyCString(distributionName, "(Unknown distribution)");
 
-  if(fileExists("/etc/lsb-release")) {
+  if(_fileExists("/etc/lsb-release")) {
     lsbRelease = fopen("/etc/lsb-release", "r");
     if(lsbRelease != NULL) {
       while(fgets(line->data, line->capacity, lsbRelease) != NULL) {
