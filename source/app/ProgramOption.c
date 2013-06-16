@@ -31,6 +31,7 @@
 
 #include "app/ProgramOption.h"
 #include "audio/AudioSettings.h"
+#include "base/File.h"
 #include "base/FileUtilities.h"
 #include "base/LinkedList.h"
 #include "logging/EventLogger.h"
@@ -245,62 +246,61 @@ boolByte programOptionsParseArgs(ProgramOptions self, int argc, char** argv) {
 
 boolByte programOptionsParseConfigFile(ProgramOptions self, const CharString filename) {
   boolByte result = false;
-  FILE *configFileHandle = NULL;
+  File configFile = NULL;
+  CharString fileContents = NULL;
   LinkedList configFileLines = NULL;
-  CharString fileLine = NULL;
   CharString* argvCharStrings;
-  char* newline;
   int argc;
   char** argv;
   int i;
 
   if(filename == NULL || charStringIsEmpty(filename)) {
     logCritical("Cannot read options from empty filename");
+    return false;
   }
-  else if(!_fileExists(filename->data)) {
-    logCritical("Cannot read options from '%s', file does not exist", filename->data);
+
+  configFile = newFileWithPath(filename);
+  if(configFile == NULL || configFile->fileType != kFileTypeFile) {
+    logCritical("Cannot read options from non-existent file '%s'", filename->data);
+    freeFile(configFile);
+    return false;
+  }
+
+  fileContents = fileReadContents(configFile);
+  if(fileContents == NULL || charStringIsEmpty(fileContents)) {
+    logCritical("Config file '%s' is empty or could not be read", filename->data);
+    freeCharString(fileContents);
+    return false;
   }
   else {
-    configFileHandle = fopen(filename->data, "r");
-    if(configFileHandle == NULL) {
-      logCritical("Could not open config file '%s' for reading", filename->data);
-    }
-    else {
-      configFileLines = newLinkedList();
-
-      while(!feof(configFileHandle)) {
-        fileLine = newCharString();
-        fgets(fileLine->data, (int)fileLine->capacity, configFileHandle);
-        if(fileLine->data[0] == '\0') {
-          freeCharString(fileLine);
-          fclose(configFileHandle);
-          break;
-        }
-        else {
-          newline = strrchr(fileLine->data, '\n');
-          if(newline != NULL) {
-            *newline = '\0';
-          }
-          linkedListAppend(configFileLines, fileLine);
-        }
-      }
-
-      argvCharStrings = (CharString*)linkedListToArray(configFileLines);
-      argc = linkedListLength(configFileLines);
-      argv = (char**)malloc(sizeof(char*) * (argc + 1));
-      // Normally this would be the application name
-      argv[0] = NULL;
-      for(i = 0; i < argc; i++) {
-        argv[i + 1] = argvCharStrings[i]->data;
-      }
-      argc++;
-      result = programOptionsParseArgs(self, argc, argv);
-      freeLinkedListAndItems(configFileLines, (LinkedListFreeItemFunc)freeCharString);
-      free(argvCharStrings);
-      free(argv);
-    }
+    // Don't need the file anymore, it can be freed here
+    freeFile(configFile);
   }
 
+  configFileLines = charStringSplit(fileContents, '\n');
+  if(configFileLines == NULL) {
+    logInternalError("Could not split config file lines");
+    freeCharString(fileContents);
+    return false;
+  }
+  else {
+    freeCharString(fileContents);
+  }
+
+  argvCharStrings = (CharString*)linkedListToArray(configFileLines);
+  argc = linkedListLength(configFileLines);
+  argv = (char**)malloc(sizeof(char*) * (argc + 1));
+  // Normally this would be the application name, don't care about it here
+  argv[0] = NULL;
+  for(i = 0; i < argc; i++) {
+    argv[i + 1] = argvCharStrings[i]->data;
+  }
+  argc++;
+  result = programOptionsParseArgs(self, argc, argv);
+
+  freeLinkedListAndItems(configFileLines, (LinkedListFreeItemFunc)freeCharString);
+  free(argvCharStrings);
+  free(argv);
   return result;
 }
 
