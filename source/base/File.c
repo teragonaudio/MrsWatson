@@ -226,7 +226,10 @@ boolByte fileExists(File self) {
   unsigned long fileAttributes;
 #endif
 
-  if(self->absolutePath == NULL) {
+  // Normally, we don't do paranoid sanity checks for self != NULL, but in this
+  // case it's useful since the old file API had a different calling convention
+  // which supported calling fileExists() with NULL.
+  if(self == NULL || self->absolutePath == NULL) {
     return false;
   }
 
