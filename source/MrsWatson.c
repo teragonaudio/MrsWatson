@@ -614,7 +614,6 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   // These values must be converted using the QueryPerformanceFrequency() function
   audioClockStop(audioClock);
   taskTimerStop(totalTimer);
-  totalTimeString = newCharString();
 
   if(totalTimer->totalTaskTime > 0) {
     taskTimerList = newLinkedList();
@@ -635,6 +634,8 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
     logInfo("Total processing time <1ms. Either something went wrong, or your computer is smokin' fast!");
   }
   freeTaskTimer(initTimer);
+  freeTaskTimer(inputTimer);
+  freeTaskTimer(outputTimer);
   freeTaskTimer(totalTimer);
   freeLinkedList(taskTimerList);
   freeCharString(totalTimeString);
@@ -672,11 +673,12 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   freeAudioSettings();
   logInfo("Goodbye!");
   freeEventLogger();
+  freeAudioClock(getAudioClock());
 
   if(errorReporter->started) {
     errorReporterClose(errorReporter);
-    freeErrorReporter(errorReporter);
   }
+  freeErrorReporter(errorReporter);
 
   return RETURN_CODE_SUCCESS;
 }

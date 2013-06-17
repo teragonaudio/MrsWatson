@@ -96,7 +96,9 @@ AEffect* loadVst2xPlugin(LibraryHandle libraryHandle) {
 }
 
 void closeLibraryHandle(LibraryHandle libraryHandle) {
-  dlclose(libraryHandle);
+  if(dlclose(libraryHandle) != 0) {
+    logWarn("Could not safely close plugin, possible resource leak");
+  }
 }
 
 } // extern "C"

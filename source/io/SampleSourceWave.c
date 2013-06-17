@@ -398,6 +398,9 @@ void closeSampleSourceWave(void* sampleSourceDataPtr) {
     fclose(extraData->fileHandle);
     freeRiffChunk(chunk);
   }
+  else if(sampleSource->openedAs == SAMPLE_SOURCE_OPEN_READ && extraData->fileHandle != NULL) {
+    fclose(extraData->fileHandle);
+  }
 #endif
 }
 

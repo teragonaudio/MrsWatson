@@ -60,6 +60,8 @@ void audioClockStop(AudioClock self) {
 }
 
 void freeAudioClock(AudioClock self) {
-  free(self);
-  self = NULL;
+  if(self != NULL) {
+    free(self);
+    self = NULL;
+  }
 }
