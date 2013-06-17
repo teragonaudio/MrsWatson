@@ -247,7 +247,6 @@ boolByte programOptionsParseArgs(ProgramOptions self, int argc, char** argv) {
 boolByte programOptionsParseConfigFile(ProgramOptions self, const CharString filename) {
   boolByte result = false;
   File configFile = NULL;
-  CharString fileContents = NULL;
   LinkedList configFileLines = NULL;
   CharString* argvCharStrings;
   int argc;
@@ -266,25 +265,20 @@ boolByte programOptionsParseConfigFile(ProgramOptions self, const CharString fil
     return false;
   }
 
-  fileContents = fileReadContents(configFile);
-  if(fileContents == NULL || charStringIsEmpty(fileContents)) {
-    logCritical("Config file '%s' is empty or could not be read", filename->data);
-    freeCharString(fileContents);
+  configFileLines = fileReadLines(configFile);
+  if(configFileLines == NULL) {
+    logInternalError("Could not split config file lines");
     return false;
+  }
+  else if(linkedListLength(configFileLines) == 0) {
+    logInfo("Config file '%s' is empty", filename->data);
+    freeLinkedList(configFileLines);
+    freeFile(configFile);
+    return true;
   }
   else {
     // Don't need the file anymore, it can be freed here
     freeFile(configFile);
-  }
-
-  configFileLines = charStringSplit(fileContents, '\n');
-  if(configFileLines == NULL) {
-    logInternalError("Could not split config file lines");
-    freeCharString(fileContents);
-    return false;
-  }
-  else {
-    freeCharString(fileContents);
   }
 
   argvCharStrings = (CharString*)linkedListToArray(configFileLines);

@@ -99,8 +99,7 @@ CharString getPlatformName(void) {
   struct utsname systemInfo;
   File lsbRelease = NULL;
   CharString lsbReleasePath = newCharStringWithCString("/etc/lsb-release");
-  CharString lsbReleaseContents = NULL;
-  LinkedList lsbReleaseContentsStrings = NULL;
+  LinkedList lsbReleaseLines = NULL;
   CharString *lsbReleaseItems = NULL;
 
   if(uname(&systemInfo) != 0) {
@@ -113,21 +112,18 @@ CharString getPlatformName(void) {
 
   lsbRelease = newFileWithPath(lsbReleasePath);
   if(fileExists(lsbRelease)) {
-    lsbReleaseContents = fileReadContents(lsbRelease);
-    if(lsbReleaseContents != NULL) {
-      lsbReleaseContentsStrings = charStringSplit(lsbReleaseContents, '\n');
-      if(lsbReleaseContentsStrings != NULL) {
-        lsbReleaseItems = (CharString*)linkedListToArray(lsbReleaseContentsStrings);
-        for(int i = 0; i < linkedListLength(lsbReleaseContentsStrings); i++) {
-          if(!strncmp(lsbReleaseItems[i]->data, LSB_DISTRIBUTION, sizeof(LSB_DISTRIBUTION - 1))) {
-            distributionStringStart = strchr(lsbReleaseItems[i]->data, '"');
-            if(distributionStringStart != NULL) {
-              distributionStringEnd = strchr(distributionStringStart + 1, '"');
-              if(distributionStringEnd != NULL) {
-                charStringClear(distributionName);
-                strncpy(distributionName->data, distributionStringStart + 1,
-                  distributionStringEnd - distributionStringStart - 1);
-              }
+    lsbReleaseLines = fileReadLines(lsbRelease);
+    if(lsbReleaseLines != NULL && linkedListLength(lsbReleaseLines) > 0) {
+      lsbReleaseItems = (CharString*)linkedListToArray(lsbReleaseLines);
+      for(int i = 0; i < linkedListLength(lsbReleaseLines); i++) {
+        if(!strncmp(lsbReleaseItems[i]->data, LSB_DISTRIBUTION, sizeof(LSB_DISTRIBUTION - 1))) {
+          distributionStringStart = strchr(lsbReleaseItems[i]->data, '"');
+          if(distributionStringStart != NULL) {
+            distributionStringEnd = strchr(distributionStringStart + 1, '"');
+            if(distributionStringEnd != NULL) {
+              charStringClear(distributionName);
+              strncpy(distributionName->data, distributionStringStart + 1,
+                distributionStringEnd - distributionStringStart - 1);
             }
           }
         }
@@ -142,8 +138,7 @@ CharString getPlatformName(void) {
 
   freeCharString(distributionName);
   freeCharString(lsbReleasePath);
-  freeCharString(lsbReleaseContents);
-  freeLinkedListAndItems(lsbReleaseContentsStrings, (LinkedListFreeItemFunc)freeCharString);
+  freeLinkedListAndItems(lsbReleaseLines, (LinkedListFreeItemFunc)freeCharString);
   free(lsbReleaseItems);
   freeFile(lsbRelease);
 #elif WINDOWS
