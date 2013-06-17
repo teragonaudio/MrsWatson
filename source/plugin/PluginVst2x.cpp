@@ -37,6 +37,7 @@ extern "C" {
 
 #include "audio/AudioSettings.h"
 #include "base/CharString.h"
+#include "base/File.h"
 #include "base/FileUtilities.h"
 #include "base/PlatformUtilities.h"
 #include "logging/EventLogger.h"
@@ -149,44 +150,60 @@ void listAvailablePluginsVst2x(const CharString pluginRoot) {
   freeLinkedListAndItems(pluginLocations, (LinkedListFreeItemFunc)freeCharString);
 }
 
-static boolByte _doesVst2xPluginExistAtLocation(const CharString pluginName, const CharString location) {
+static boolByte _doesVst2xPluginExistAtLocation(const CharString pluginName, const CharString locationName) {
   boolByte result = false;
-  CharString pluginSearchPath = newCharString();
-  const char* pluginFileExtension = getFileExtension(pluginName->data);
-  const char* platformFileExtension = _getVst2xPlatformExtension();
-  const char* subpluginSeparator = strrchr(pluginName->data, kPluginVst2xSubpluginSeparator);
-  CharString pluginSearchName;
+  const char* subpluginSeparator = NULL;
+  CharString pluginSearchName = NULL;
+  File location = NULL;
+  File pluginSearchPath = NULL;
 
+  subpluginSeparator = strrchr(pluginName->data, kPluginVst2xSubpluginSeparator);
   if(subpluginSeparator != NULL) {
     pluginSearchName = newCharString();
     strncpy(pluginSearchName->data, pluginName->data, subpluginSeparator - pluginName->data);
-    result = _doesVst2xPluginExistAtLocation(pluginSearchName, location);
+    result = _doesVst2xPluginExistAtLocation(pluginSearchName, locationName);
     freeCharString(pluginSearchName);
     return result;
   }
 
-  logDebug("Looking for plugin '%s' in '%s'", pluginName->data, location->data);
-  if(pluginFileExtension == NULL || strncasecmp(platformFileExtension, pluginFileExtension, strlen(platformFileExtension))) {
-    pluginFileExtension = platformFileExtension;
+  logDebug("Looking for plugin '%s' in '%s'", pluginName->data, locationName->data);
+
+  location = newFileWithPath(locationName);
+  if(location == NULL || !fileExists(location) || location->fileType != kFileTypeDirectory) {
+    logWarn("Location '%s' is not a valid directory", locationName->data);
+    freeFile(location);
+    return result;
   }
-  else {
-    // Set to NULL to skip appending an extension in the below call to buildAbsolutePath()
-    pluginFileExtension = NULL;
+  pluginSearchName = newCharStringWithCString(pluginName->data);
+  pluginSearchPath = newFileWithParent(location, pluginSearchName);
+  if(fileGetExtension(pluginSearchPath) == NULL) {
+    freeFile(pluginSearchPath);
+    charStringAppendCString(pluginSearchName, ".");
+    charStringAppendCString(pluginSearchName, _getVst2xPlatformExtension());
+    pluginSearchPath = newFileWithParent(location, pluginSearchName);
   }
 
-  buildAbsolutePath(location, pluginName, pluginFileExtension, pluginSearchPath);
-  if(!charStringIsEmpty(location) && _fileExists(pluginSearchPath->data)) {
+  if(fileExists(pluginSearchPath)) {
     result = true;
   }
 
-  freeCharString(pluginSearchPath);
+  freeCharString(pluginSearchName);
+  freeFile(pluginSearchPath);
+  freeFile(location);
   return result;
 }
 
 static CharString _getVst2xPluginLocation(const CharString pluginName, const CharString pluginRoot) {
-  // First see if an absolute path was given as the plugin name
-  if(isAbsolutePath(pluginName) && _fileExists(pluginName->data)) {
-    return newCharStringWithCString(getFileBasename(pluginName->data));
+  File pluginAbsolutePath = newFileWithPath(pluginName);
+  if(fileExists(pluginAbsolutePath)) {
+    File pluginParentDir = fileGetParent(pluginAbsolutePath);
+    CharString result = newCharStringWithCString(pluginParentDir->absolutePath->data);
+    freeFile(pluginParentDir);
+    freeFile(pluginAbsolutePath);
+    return result;
+  }
+  else {
+    freeFile(pluginAbsolutePath);
   }
 
   // Then search the path given to --plugin-root, if given
