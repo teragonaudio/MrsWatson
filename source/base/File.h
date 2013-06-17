@@ -154,6 +154,16 @@ size_t fileGetSize(File self);
 CharString fileReadContents(File self);
 
 /**
+ * Read the contents of an entire file line-by-line. The lines are returned in
+ * a linked list, which the caller must free when finished (and should use the
+ * freeLinkedListAndItems() method with freeCharString as the second argument).
+ * @param self
+ * @return LinkedList containing a CharString for each line, or NULL if an
+ * error occurred.
+ */
+LinkedList fileReadLines(File self);
+
+/**
  * Read part of a binary file into a raw byte array. If end of file is reached,
  * then an array of numBytes is still delivered with the extra bytes initialized
  * to 0. This is most useful when reading raw PCM data from disk. If the file

@@ -566,6 +566,45 @@ CharString fileReadContents(File self) {
   return result;
 }
 
+LinkedList fileReadLines(File self) {
+  LinkedList result = NULL;
+  CharString line = NULL;
+  boolByte done = false;
+
+  if(self->fileType != kFileTypeFile) {
+    logError("Attempt to read contents from non-file object '%s'", self->absolutePath->data);
+    return NULL;
+  }
+
+  if(self->_openMode != kFileOpenModeRead && self->_fileHandle != NULL) {
+    fileClose(self);
+  }
+  if(self->_fileHandle == NULL) {
+    self->_fileHandle = fopen(self->absolutePath->data, "rb");
+    if(self->_fileHandle == NULL) {
+      logError("Could not open '%s' for reading", self->absolutePath->data);
+      return NULL;
+    }
+    else {
+      self->_openMode = kFileOpenModeRead;
+    }
+  }
+
+  result = newLinkedList();
+  while(!done) {
+    line = newCharString();
+    if(fgets(line->data, line->capacity, self->_fileHandle) == NULL) {
+      freeCharString(line);
+      done = true;
+    }
+    else {
+      linkedListAppend(result, line);
+    }
+  }
+
+  return result;
+}
+
 void* fileReadBytes(File self, size_t numBytes) {
   void* result = NULL;
   size_t fileSize = 0;

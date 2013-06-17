@@ -874,6 +874,82 @@ static int _testFileReadContentsDirectory(void) {
   return 0;
 }
 
+static int _testFileReadLines(void) {
+  CharString p = newCharStringWithCString(TEST_FILENAME);
+  File f = newFileWithPath(p);
+  LinkedList lines = NULL;
+  CharString* items = NULL;
+  int i;
+
+  assertFalse(fileExists(f));
+  assert(fileCreate(f, kFileTypeFile));
+  assert(fileExists(f));
+  charStringAppendCString(p, "\n");
+  assert(fileWrite(f, p));
+  assert(fileWrite(f, p));
+  lines = fileReadLines(f);
+  assertNotNull(lines);
+  assertIntEquals(linkedListLength(lines), 2);
+  items = (CharString*)linkedListToArray(lines);
+  assertNotNull(items);
+  for(i = 0; i < linkedListLength(lines); i++) {
+    assertCharStringEquals(items[i], p->data);
+  }
+
+  freeLinkedListAndItems(lines, (LinkedListFreeItemFunc)freeCharString);
+  freeCharString(p);
+  freeFile(f);
+  return 0;
+}
+
+static int _testFileReadLinesEmpty(void) {
+  CharString p = newCharStringWithCString(TEST_FILENAME);
+  File f = newFileWithPath(p);
+  LinkedList lines = NULL;
+
+  assertFalse(fileExists(f));
+  assert(fileCreate(f, kFileTypeFile));
+  assert(fileExists(f));
+  lines = fileReadLines(f);
+  assertNotNull(lines);
+  assertIntEquals(linkedListLength(lines), 0);
+
+  freeLinkedList(lines);
+  freeCharString(p);
+  freeFile(f);
+  return 0;
+}
+
+static int _testFileReadLinesNotExists(void) {
+  CharString p = newCharStringWithCString(TEST_FILENAME);
+  File f = newFileWithPath(p);
+  LinkedList result = NULL;
+
+  assertFalse(fileExists(f));
+  result = fileReadLines(f);
+  assertIsNull(result);
+
+  freeCharString(p);
+  freeFile(f);
+  return 0;
+}
+
+static int _testFileReadLinesDirectory(void) {
+  CharString p = newCharStringWithCString(TEST_DIRNAME);
+  File d = newFileWithPath(p);
+  LinkedList result = NULL;
+
+  assertFalse(fileExists(d));
+  assert(fileCreate(d, kFileTypeDirectory));
+  assert(fileExists(d));
+  result = fileReadLines(d);
+  assertIsNull(result);
+
+  freeCharString(p);
+  freeFile(d);
+  return 0;
+}
+
 static int _testFileReadBytes(void) {
   CharString p = newCharStringWithCString(TEST_FILENAME);
   File f = newFileWithPath(p);
@@ -1278,6 +1354,11 @@ TestSuite addFileTests(void) {
   addTest(testSuite, "FileReadContents", _testFileReadContents);
   addTest(testSuite, "FileReadContentsNotExists", _testFileReadContentsNotExists);
   addTest(testSuite, "FileReadContentsDirectory", _testFileReadContentsDirectory);
+
+  addTest(testSuite, "FileReadLines", _testFileReadLines);
+  addTest(testSuite, "FileReadLinesEmpty", _testFileReadLinesEmpty);
+  addTest(testSuite, "FileReadLinesNotExists", _testFileReadLinesNotExists);
+  addTest(testSuite, "FileReadLinesDirectory", _testFileReadLinesDirectory);
 
   addTest(testSuite, "FileReadBytes", _testFileReadBytes);
   addTest(testSuite, "FileReadBytesNotExists", _testFileReadBytesNotExists);
