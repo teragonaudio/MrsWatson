@@ -69,12 +69,11 @@ static int _testNewFileWithRelativePath(void) {
   CharString p = newCharString();
   CharString pAbs = newCharString();
   CharString pwd = getCurrentDirectory();
-  File f;
+  File f = NULL;
 
   sprintf(p->data, "%s%c%s", TEST_DIRNAME, PATH_DELIMITER, TEST_FILENAME);
   f = newFileWithPath(p);
   assertNotNull(f);
-  pAbs = newCharString();
   sprintf(pAbs->data, "%s%c%s", pwd->data, PATH_DELIMITER, p->data);
   assertCharStringEquals(f->absolutePath, pAbs->data);
   assertFalse(fileExists(f));
@@ -92,12 +91,11 @@ static int _testNewFileWithRelativePath(void) {
 static int _testNewFileWithAbsolutePath(void) {
   CharString p = newCharString();
   CharString pAbs = newCharString();
-  File f;
+  File f = NULL;
 
   sprintf(p->data, "%s%c%s%c%s", ROOT_DIRECTORY, PATH_DELIMITER, TEST_DIRNAME, PATH_DELIMITER, TEST_FILENAME);
   f = newFileWithPath(p);
   assertNotNull(f);
-  pAbs = newCharString();
   // Mostly just testing to make sure that absolute paths are not incorrectly
   // translated from relative ones
   sprintf(pAbs->data, "%s%c%s%c%s", ROOT_DIRECTORY, PATH_DELIMITER, TEST_DIRNAME, PATH_DELIMITER, TEST_FILENAME);
@@ -342,6 +340,7 @@ static int _testNewFileWithParentAbsolutePath(void) {
   f = newFileWithParent(dir, p);
   assertIsNull(f);
 
+  freeCharString(p);
   freeCharString(pdir);
   freeFile(f);
   freeFile(dir);
@@ -638,6 +637,8 @@ static int _testFileRemoveDirWithContents(void) {
   assertFalse(fileExists(subfile));
 
   freeFile(dir);
+  freeFile(subdir);
+  freeFile(subfile);
   freeCharString(pdest);
   freeCharString(psubdir);
   freeCharString(psubfile);
@@ -725,6 +726,8 @@ static int _testFileListDirectory(void) {
 
   freeLinkedListAndItems(list, (LinkedListFreeItemFunc)freeFile);
   freeFile(dir);
+  freeFile(subfile);
+  freeFile(subdir);
   freeCharString(pdest);
   freeCharString(psubdir);
   freeCharString(psubfile);
@@ -1170,12 +1173,13 @@ static int _testFileGetParentInvalid(void) {
 static int _testFileGetExtension(void) {
   CharString p = newCharStringWithCString(TEST_FILENAME);
   File f = newFileWithPath(p);
-  CharString result = fileGetExtension(f);
+  CharString extension = fileGetExtension(f);
 
-  assertNotNull(result);
-  assertCharStringEquals(result, "txt");
+  assertNotNull(extension);
+  assertCharStringEquals(extension, "txt");
 
   freeCharString(p);
+  freeCharString(extension);
   freeFile(f);
   return 0;
 }

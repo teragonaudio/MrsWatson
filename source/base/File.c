@@ -363,6 +363,7 @@ static File _copyDirectoryToDirectory(File self, const File destination) {
     if(result == NULL) {
       logError("Copied '%s' to '%s', but could not create a File object for the result",
         self->absolutePath->data, destination->absolutePath->data);
+      freeCharString(basename);
       return NULL;
     }
   }
@@ -379,6 +380,7 @@ static File _copyDirectoryToDirectory(File self, const File destination) {
 */
 #endif
 
+  freeCharString(basename);
   return result;
 }
 
@@ -432,6 +434,8 @@ boolByte fileRemove(File self) {
   if(fileExists(self)) {
     switch(self->fileType) {
       case kFileTypeFile:
+        // Yes, this seems a bit silly, but otherwise we threaten to leak resources
+        fileClose(self);
         result = (remove(self->absolutePath->data) == 0);
         break;
       case kFileTypeDirectory:

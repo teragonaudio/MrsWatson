@@ -249,6 +249,7 @@ static int _testSplitString(void) {
 
   freeLinkedListAndItems(l, (LinkedListFreeItemFunc)freeCharString);
   freeCharString(c);
+  free(items);
   return 0;
 }
 
