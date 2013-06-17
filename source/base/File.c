@@ -535,6 +535,11 @@ CharString fileReadContents(File self) {
   size_t fileSize = 0;
   size_t itemsRead = 0;
 
+  if(self->fileType != kFileTypeFile) {
+    logError("Attempt to read contents from non-file object '%s'", self->absolutePath->data);
+    return NULL;
+  }
+
   if(self->_openMode != kFileOpenModeRead && self->_fileHandle != NULL) {
     fileClose(self);
   }
@@ -573,6 +578,11 @@ void* fileReadBytes(File self, size_t numBytes) {
     logError("Attempt to read 0 bytes from file");
     return NULL;
   }
+  if(self->fileType != kFileTypeFile) {
+    logError("Attempt to read bytes from non-file object '%s'", self->absolutePath->data);
+    return NULL;
+  }
+
   if(self->_openMode != kFileOpenModeRead && self->_fileHandle != NULL) {
     fileClose(self);
   }
