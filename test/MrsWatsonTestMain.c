@@ -12,6 +12,7 @@
 #include <time.h>
 
 #include "app/ProgramOption.h"
+#include "base/File.h"
 #include "base/FileUtilities.h"
 #include "base/PlatformUtilities.h"
 #include "unit/ApplicationRunner.h"
@@ -111,6 +112,34 @@ void _printTestSummary(int testsRun, int testsPassed, int testsFailed, int tests
   freeCharString(numberBuffer);
 }
 
+File _findMrsWatsonExe(CharString mrsWatsonExeArg) {
+  CharString currentExecutableFilename = NULL;
+  CharString mrsWatsonExeName = NULL;
+  File currentExecutablePath = NULL;
+  File currentExecutableDir = NULL;
+  File mrsWatsonExe = NULL;
+
+  if(mrsWatsonExeArg != NULL && !charStringIsEmpty(mrsWatsonExeArg)) {
+    mrsWatsonExe = newFileWithPath(mrsWatsonExeArg);
+  }
+  else {
+    currentExecutableFilename = getExecutablePath();
+    currentExecutablePath = newFileWithPath(currentExecutableFilename);
+    currentExecutableDir = fileGetParent(currentExecutablePath);
+    mrsWatsonExeName = newCharStringWithCString(MRSWATSON_EXE_NAME);
+    if(isExecutable64Bit()) {
+      charStringAppendCString(mrsWatsonExeName, "64");
+    }
+    mrsWatsonExe = newFileWithParent(currentExecutableDir, mrsWatsonExeName);
+  }
+
+  freeCharString(currentExecutableFilename);
+  freeCharString(mrsWatsonExeName);
+  freeFile(currentExecutablePath);
+  freeFile(currentExecutableDir);
+  return mrsWatsonExe;
+}
+
 int main(int argc, char* argv[]) {
   ProgramOptions programOptions;
   int totalTestsRun = 0;
@@ -118,12 +147,11 @@ int main(int argc, char* argv[]) {
   int totalTestsFailed = 0;
   int totalTestsSkipped = 0;
   CharString testSuiteToRun = NULL;
-  CharString executablePath = NULL;
-  CharString currentPath = NULL;
   CharString mrsWatsonExeName = NULL;
-  CharString mrsWatsonPath = NULL;
-  CharString resourcesPath = NULL;
   CharString totalTimeString = NULL;
+  CharString executablePath = NULL;
+  File mrsWatsonExe = NULL;
+  File resourcesPath = NULL;
   boolByte runInternalTests = false;
   boolByte runApplicationTests = false;
   TestCase testCase = NULL;
@@ -235,39 +263,23 @@ int main(int argc, char* argv[]) {
     freeTestSuite(internalTestResults);
   }
 
-  // Find out where this program is being run from to find mrswatson and resources
-  executablePath = getExecutablePath();
-  currentPath = newCharString();
-  getFileDirname(executablePath, currentPath);
-
-  mrsWatsonPath = newCharString();
-  if(programOptions->options[OPTION_TEST_MRSWATSON_PATH]->enabled) {
-    charStringCopy(mrsWatsonPath, programOptions->options[OPTION_TEST_MRSWATSON_PATH]->argument);
-  }
-  else {
-    mrsWatsonExeName = newCharStringWithCString(MRSWATSON_EXE_NAME);
-    if(isExecutable64Bit()) {
-      charStringAppendCString(mrsWatsonExeName, "64");
-    }
-    buildAbsolutePath(currentPath, mrsWatsonExeName, NULL, mrsWatsonPath);
-  }
-  if(runApplicationTests && !_fileExists(mrsWatsonPath->data)) {
-    printf("Could not find mrswatson at '%s', skipping application tests\n", mrsWatsonPath->data);
+  mrsWatsonExe = _findMrsWatsonExe(programOptions->options[OPTION_TEST_MRSWATSON_PATH]->argument);
+  if(runApplicationTests && mrsWatsonExe == NULL) {
+    printf("Could not find mrswatson, skipping application tests\n");
     runApplicationTests = false;
   }
 
-  resourcesPath = newCharString();
   if(programOptions->options[OPTION_TEST_RESOURCES_PATH]->enabled) {
-    charStringCopy(resourcesPath, programOptions->options[OPTION_TEST_RESOURCES_PATH]->argument);
+    resourcesPath = newFileWithPath(programOptions->options[OPTION_TEST_RESOURCES_PATH]->argument);
   }
-  if(runApplicationTests && !_fileExists(resourcesPath->data)) {
+  if(runApplicationTests && !fileExists(resourcesPath)) {
     printf("Could not find test resources, skipping application tests\n");
     runApplicationTests = false;
   }
 
   if(runApplicationTests) {
     printf("\n=== Application tests ===\n");
-    testEnvironment = newTestEnvironment(mrsWatsonPath->data, resourcesPath->data);
+    testEnvironment = newTestEnvironment(mrsWatsonExe->absolutePath->data, resourcesPath->absolutePath->data);
     testEnvironment->results->onlyPrintFailing = programOptions->options[OPTION_TEST_PRINT_ONLY_FAILING]->enabled;
     testEnvironment->results->keepFiles = programOptions->options[OPTION_TEST_KEEP_FILES]->enabled;
     runApplicationTestSuite(testEnvironment);
@@ -289,11 +301,10 @@ int main(int argc, char* argv[]) {
   freeProgramOptions(programOptions);
   freeCharString(testSuiteToRun);
   freeCharString(executablePath);
-  freeCharString(currentPath);
-  freeCharString(mrsWatsonPath);
   freeCharString(mrsWatsonExeName);
-  freeCharString(resourcesPath);
   freeCharString(totalTimeString);
+  freeFile(mrsWatsonExe);
+  freeFile(resourcesPath);
   freeTaskTimer(timer);
   return totalTestsFailed;
 }

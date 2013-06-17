@@ -13,6 +13,7 @@
 #include "ApplicationRunner.h"
 #include "unit/TestRunner.h"
 #include "base/CharString.h"
+#include "base/File.h"
 #include "analysis/AnalyzeFile.h"
 #include "base/FileUtilities.h"
 
@@ -78,9 +79,13 @@ static CharString _getDefaultArguments(TestEnvironment testEnvironment, const ch
 }
 
 static void _removeOutputFile(const char* argument) {
-  if(_fileExists(argument)) {
-    unlink(argument);
+  CharString outputFilename = newCharStringWithCString(argument);
+  File outputFile = newFileWithPath(outputFilename);
+  if(fileExists(outputFile)) {
+    fileRemove(outputFile);
   }
+  freeCharString(outputFilename);
+  freeFile(outputFile);
 }
 
 static void _removeOutputFiles(const char* testName) {
