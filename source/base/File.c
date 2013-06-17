@@ -570,6 +570,7 @@ LinkedList fileReadLines(File self) {
   LinkedList result = NULL;
   CharString line = NULL;
   boolByte done = false;
+  char* newline = NULL;
 
   if(self->fileType != kFileTypeFile) {
     logError("Attempt to read contents from non-file object '%s'", self->absolutePath->data);
@@ -598,6 +599,10 @@ LinkedList fileReadLines(File self) {
       done = true;
     }
     else {
+      newline = strrchr(line->data, '\n');
+      if(newline != NULL) {
+        *newline = '\0';
+      }
       linkedListAppend(result, line);
     }
   }

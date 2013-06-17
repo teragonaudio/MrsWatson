@@ -159,7 +159,7 @@ CharString fileReadContents(File self);
  * freeLinkedListAndItems() method with freeCharString as the second argument).
  * @param self
  * @return LinkedList containing a CharString for each line, or NULL if an
- * error occurred.
+ * error occurred. Note that the newline character is removed from the lines.
  */
 LinkedList fileReadLines(File self);
 

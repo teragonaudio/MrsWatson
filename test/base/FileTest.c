@@ -884,8 +884,8 @@ static int _testFileReadLines(void) {
   assertFalse(fileExists(f));
   assert(fileCreate(f, kFileTypeFile));
   assert(fileExists(f));
-  charStringAppendCString(p, "\n");
   assert(fileWrite(f, p));
+  assert(fileWriteBytes(f, "\n", 1));
   assert(fileWrite(f, p));
   lines = fileReadLines(f);
   assertNotNull(lines);
@@ -899,6 +899,7 @@ static int _testFileReadLines(void) {
   freeLinkedListAndItems(lines, (LinkedListFreeItemFunc)freeCharString);
   freeCharString(p);
   freeFile(f);
+  free(items);
   return 0;
 }
 
