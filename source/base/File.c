@@ -176,6 +176,18 @@ File newFileWithPath(const CharString path) {
   return result;
 }
 
+File newFileWithPathCString(const char* path) {
+  File result = NULL;
+
+  if(path != NULL) {
+    CharString pathString = newCharStringWithCString(path);
+    result = newFileWithPath(pathString);
+    freeCharString(pathString);
+  }
+
+  return result;
+}
+
 File newFileWithParent(const File parent, const CharString path) {
   File result = NULL;
   CharString absolutePath = NULL;

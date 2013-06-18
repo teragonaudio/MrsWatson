@@ -82,6 +82,15 @@ File newFile(void);
 File newFileWithPath(const CharString path);
 
 /**
+ * Create a new file object which points to a given path. If something exists at
+ * the path, then this object will be initialized with the correct type.
+ * @param path Object path. If this is not an absolute path, it is assumed to
+ * be relative to the current directory.
+ * @return New file object
+ */
+File newFileWithPathCString(const char* path);
+
+/**
  * Create a new file object which points to a path under another directory. If
  * something exists at the path, then this object will be initialized with the
  * correct type.

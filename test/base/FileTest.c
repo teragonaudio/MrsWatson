@@ -200,6 +200,20 @@ static int _testNewFileWithNullPath(void) {
   return 0;
 }
 
+static int _testNewFileWithCStringPath(void) {
+  File f = newFileWithPathCString(TEST_FILENAME);
+  assertNotNull(f);
+  assertFalse(fileExists(f));
+  freeFile(f);
+  return 0;
+}
+
+static int _testNewFileWithCStringPathNull(void) {
+  File f = newFileWithPathCString(NULL);
+  assertIsNull(f);
+  return 0;
+}
+
 static int _testNewFileWithParent(void) {
   CharString pdir = newCharStringWithCString(TEST_DIRNAME);
   CharString pfile = newCharStringWithCString(TEST_FILENAME);
@@ -1314,6 +1328,9 @@ TestSuite addFileTests(void) {
   addTest(testSuite, "NewFileWithNetworkPath", _testNewFileWithNetworkPath);
   addTest(testSuite, "NewFileWithInvalidPath", _testNewFileWithInvalidPath);
   addTest(testSuite, "NewFileWithNullPath", _testNewFileWithNullPath);
+
+  addTest(testSuite, "NewFileWithCStringPath", _testNewFileWithCStringPath);
+  addTest(testSuite, "NewFileWithCStringPathNull", _testNewFileWithCStringPathNull);
 
   addTest(testSuite, "NewFileWithParent", _testNewFileWithParent);
   addTest(testSuite, "NewFileWithParentNullParent", _testNewFileWithParentNullParent);
