@@ -15,7 +15,6 @@
 #include "base/CharString.h"
 #include "base/File.h"
 #include "analysis/AnalyzeFile.h"
-#include "base/FileUtilities.h"
 
 const char* kDefaultTestOutputFileType = "pcm";
 static const char* kApplicationRunnerOutputFolder = "out";
@@ -135,6 +134,7 @@ void runApplicationTest(const TestEnvironment testEnvironment,
   CharString defaultArguments;
   CharString failedAnalysisFunctionName = newCharString();
   unsigned long failedAnalysisSample;
+  File outputFolder = NULL;
   CharString outputFilename = getTestOutputFilename(testName,
     outputFileType == NULL ? kDefaultTestOutputFileType : outputFileType);
 
@@ -144,8 +144,13 @@ void runApplicationTest(const TestEnvironment testEnvironment,
 #endif
 
   // Remove files from a previous test run
-  _removeOutputFiles(testName);
-  makeDirectory(newCharStringWithCString(kApplicationRunnerOutputFolder));
+  outputFolder = newFileWithPathCString(kApplicationRunnerOutputFolder);
+  if(fileExists(outputFolder)) {
+    _removeOutputFiles(testName);
+  }
+  else {
+    fileCreate(outputFolder, kFileTypeDirectory);
+  }
 
   // Create the command line argument
   charStringAppendCString(arguments, "\"");
