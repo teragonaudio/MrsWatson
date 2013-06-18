@@ -44,6 +44,7 @@
 #include <CoreServices/CoreServices.h>
 #include <mach-o/dyld.h>
 #elif LINUX
+#define LSB_FILE_PATH "/etc/lsb-release"
 #define LSB_DISTRIBUTION "DISTRIB_DESCRIPTION"
 #include <sys/utsname.h>
 #include <errno.h>
@@ -114,7 +115,6 @@ CharString getPlatformName(void) {
   CharString distributionName = newCharString();
   struct utsname systemInfo;
   File lsbRelease = NULL;
-  CharString lsbReleasePath = newCharStringWithCString("/etc/lsb-release");
   LinkedList lsbReleaseLines = NULL;
 
   if(uname(&systemInfo) != 0) {
@@ -125,7 +125,7 @@ CharString getPlatformName(void) {
   }
   charStringCopyCString(distributionName, "(Unknown distribution)");
 
-  lsbRelease = newFileWithPath(lsbReleasePath);
+  lsbRelease = newFileWithPathCString(LSB_FILE_PATH);
   if(fileExists(lsbRelease)) {
     lsbReleaseLines = fileReadLines(lsbRelease);
     if(lsbReleaseLines != NULL && linkedListLength(lsbReleaseLines) > 0) {
@@ -139,7 +139,6 @@ CharString getPlatformName(void) {
   }
 
   freeCharString(distributionName);
-  freeCharString(lsbReleasePath);
   freeLinkedListAndItems(lsbReleaseLines, (LinkedListFreeItemFunc)freeCharString);
   freeFile(lsbRelease);
 #elif WINDOWS
