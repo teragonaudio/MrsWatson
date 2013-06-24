@@ -54,6 +54,7 @@ If attached to a terminal device, color is used automatically unless 'none' is g
   programOptionsAdd(options, newProgramOptionWithValues(OPTION_COLOR_TEST, "color-test",
     "Run a test of all color output combinations.",
     false, kProgramOptionArgumentTypeNone, NO_DEFAULT_VALUE));
+  options->options[OPTION_COLOR_TEST]->hideInHelp = true;
 
   programOptionsAdd(options, newProgramOptionWithValues(OPTION_CONFIG_FILE, "config-file",
     "Load options from a configuration file. The file will be read *after* other \

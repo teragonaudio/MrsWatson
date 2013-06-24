@@ -46,6 +46,8 @@ typedef struct {
   CharString help;
   int helpDefaultValue;
   boolByte hasShortForm;
+  // For "hidden" options which should not be printed out in the help output
+  boolByte hideInHelp;
 
   ProgramOptionArgumentType argumentType;
   CharString argument;

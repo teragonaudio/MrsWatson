@@ -51,6 +51,7 @@ ProgramOption newProgramOptionWithValues(const int optionIndex, const char* name
   option->help = newCharStringWithCString(help);
   option->helpDefaultValue = defaultValue;
   option->hasShortForm = hasShortForm;
+  option->hideInHelp = false;
 
   option->argumentType = argumentType;
   option->argument = newCharString();
@@ -301,7 +302,9 @@ boolByte programOptionsParseConfigFile(ProgramOptions self, const CharString fil
 void programOptionsPrintHelp(const ProgramOptions self, boolByte withFullHelp, int indentSize) {
   int i;
   for(i = 0; i < self->numOptions; i++) {
-    programOptionPrintHelp(self->options[i], withFullHelp, indentSize, indentSize);
+    if(!self->options[i]->hideInHelp) {
+      programOptionPrintHelp(self->options[i], withFullHelp, indentSize, indentSize);
+    }
   }
 }
 
