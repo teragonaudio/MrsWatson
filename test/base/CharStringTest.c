@@ -291,7 +291,7 @@ static int _testSplitStringEmptyString(void) {
 // the public version in order to set a shorter line length. This makes test
 // cases much easier to construct.
 extern boolByte _charStringWrap(const char* srcString, char* destString,
-  int indentSize, int lineLength);
+  size_t destStringSize, int indentSize, int lineLength);
 
 static int _testWrapNullSourceString(void) {
   assertFalse(charStringWrap(NULL, 0));
@@ -302,7 +302,7 @@ static int _testWrapString(void) {
   CharString src = newCharStringWithCString("1234 6789 bcde 01");
   // Create dest string the same way as in wrapString(), cheap I know...
   CharString dest = newCharStringWithCapacity(src->capacity * 2);
-  _charStringWrap(src->data, dest->data, 0, 0x10);
+  _charStringWrap(src->data, dest->data, dest->capacity, 0, 0x10);
   assertCharStringEquals(dest, "1234 6789 bcde\n01");
   freeCharString(src);
   freeCharString(dest);
@@ -313,7 +313,7 @@ static int _testWrapStringWithIndent(void) {
   CharString src = newCharStringWithCString("1234 6789 bcde 01");
   // Create dest string the same way as in wrapString(), cheap I know...
   CharString dest = newCharStringWithCapacity(src->capacity * 2);
-  _charStringWrap(src->data, dest->data, 1, 0xe);
+  _charStringWrap(src->data, dest->data, dest->capacity, 1, 0xe);
   assertCharStringEquals(dest, " 1234 6789\n bcde 01");
   freeCharString(src);
   freeCharString(dest);
@@ -324,7 +324,7 @@ static int _testWrapStringLongerThanLine(void) {
   CharString src = newCharStringWithCString("123456789abcdef12");
   // Create dest string the same way as in wrapString(), cheap I know...
   CharString dest = newCharStringWithCapacity(src->capacity * 2);
-  _charStringWrap(src->data, dest->data, 0, 0xf);
+  _charStringWrap(src->data, dest->data, dest->capacity, 0, 0xf);
   assertCharStringEquals(dest, "123456789abcde-\nf12");
   freeCharString(src);
   freeCharString(dest);

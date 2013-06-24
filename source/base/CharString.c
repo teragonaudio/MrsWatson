@@ -169,8 +169,8 @@ LinkedList charStringSplit(const CharString self, const char delimiter) {
   return result;
 }
 
-void _charStringWrap(const char* srcString, char* destString, int indentSize, int lineLength);
-void _charStringWrap(const char* srcString, char* destString, int indentSize, int lineLength) {
+void _charStringWrap(const char* srcString, char* destString, size_t destStringSize, int indentSize, int lineLength);
+void _charStringWrap(const char* srcString, char* destString, size_t destStringSize, int indentSize, int lineLength) {
   char* lineBuffer = NULL;
   unsigned long destStringIndex = 0;
   unsigned long srcStringIndex = 0;
@@ -209,9 +209,9 @@ void _charStringWrap(const char* srcString, char* destString, int indentSize, in
     strncpy(lineBuffer, srcString + srcStringIndex, bufferLength);
 
     // Check to see if we have copied the last line of the source string. If so, append that to
-    // the destination string and return.
+    // the destination string and break.
     if(bufferLength + srcStringIndex >= strlen(srcString)) {
-      strncpy(destString + destStringIndex, lineBuffer, bufferLength);
+      strncpy(destString + destStringIndex, lineBuffer, destStringSize - destStringIndex - 1);
       break;
     }
 
@@ -219,7 +219,7 @@ void _charStringWrap(const char* srcString, char* destString, int indentSize, in
     newlinePosition = strchr(lineBuffer, '\n');
     if(newlinePosition != NULL) {
       bufferLength = newlinePosition - lineBuffer + 1;
-      strncpy(destString + destStringIndex, lineBuffer, bufferLength);
+      strncpy(destString + destStringIndex, lineBuffer, destStringSize - destStringIndex - 1);
       destStringIndex += bufferLength;
       srcStringIndex += bufferLength;
       lineIndex = 0;
@@ -265,7 +265,7 @@ CharString charStringWrap(const CharString srcString, unsigned int indentSize) {
   // a bit wasteful in the name of avoiding memory corruption. Therefore this
   // function should *not* used for regular logging or text output.
   destString = newCharStringWithCapacity(srcString->capacity * 2);
-  _charStringWrap(srcString->data, destString->data, indentSize, TERMINAL_LINE_LENGTH);
+  _charStringWrap(srcString->data, destString->data, destString->capacity, indentSize, TERMINAL_LINE_LENGTH);
   return destString;
 }
 
