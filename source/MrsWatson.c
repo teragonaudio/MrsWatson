@@ -230,7 +230,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   SampleBuffer outputSampleBufferResized = NULL;
   TaskTimer initTimer, totalTimer, inputTimer, outputTimer = NULL;
   LinkedList taskTimerList = NULL;
-  CharString totalTimeString;
+  CharString totalTimeString = NULL;
   boolByte finishedReading = false;
   SampleSource silentSampleInput;
   unsigned long stopFrame;

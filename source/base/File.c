@@ -606,7 +606,7 @@ LinkedList fileReadLines(File self) {
   result = newLinkedList();
   while(!done) {
     line = newCharString();
-    if(fgets(line->data, line->capacity, self->_fileHandle) == NULL) {
+    if(fgets(line->data, (int)line->capacity, self->_fileHandle) == NULL) {
       freeCharString(line);
       done = true;
     }
