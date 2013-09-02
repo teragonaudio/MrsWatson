@@ -35,7 +35,7 @@
 
 ProgramOptions newMrsWatsonOptions(void) {
   ProgramOptions options = newProgramOptions(NUM_OPTIONS);
-
+/*
   programOptionsAdd(options, newProgramOptionWithValues(OPTION_BLOCKSIZE, "blocksize",
     "Blocksize in frames to use for processing. If input source is not an even multiple of the blocksize, then \
 empty frames will be added to the last block.",
@@ -174,7 +174,7 @@ value will be used and added to <argument>.",
   programOptionsAdd(options, newProgramOptionWithValues(OPTION_ZEBRA_SIZE, "zebra-size",
     "Alternate logging output colors every <argument> frames.",
     false, kProgramOptionArgumentTypeRequired, (int)getSampleRate()));
-
+*/
   return options;
 }
 

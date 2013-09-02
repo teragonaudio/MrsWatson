@@ -59,12 +59,12 @@ static void _printTaskTime(void* item, void* userData) {
 static void _remapFileToErrorReport(ErrorReporter errorReporter, ProgramOption option, boolByte copyFile) {
   if(option->enabled) {
     if(copyFile) {
-      if(!errorReportCopyFileToReport(errorReporter, option->argument)) {
+      if(!errorReportCopyFileToReport(errorReporter, option->data.string)) {
         logWarn("Failed copying '%s' to error report directory, please include this file manually",
-          option->argument->data);
+          option->data.string->data);
       }
     }
-    errorReporterRemapPath(errorReporter, option->argument);
+    errorReporterRemapPath(errorReporter, option->data.string);
   }
 }
 
@@ -263,23 +263,23 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   }
   else if(programOptions->options[OPTION_HELP]->enabled) {
     printMrsWatsonQuickstart(argv[0]);
-    if(charStringIsEmpty(programOptions->options[OPTION_HELP]->argument)) {
+    if(charStringIsEmpty(programOptions->options[OPTION_HELP]->data.string)) {
       printf("All options, where <argument> is required and [argument] is optional:\n");
       programOptionsPrintHelp(programOptions, false, DEFAULT_INDENT_SIZE);
     }
     else {
-      if(!strcasecmp(programOptions->options[OPTION_HELP]->argument->data, "full")) {
+      if(charStringIsEqualToCString(programOptions->options[OPTION_HELP]->data.string, "full", true)) {
         programOptionsPrintHelp(programOptions, true, DEFAULT_INDENT_SIZE);
       }
       // Yeah this is a bit silly, but the performance obviously doesn't matter here and I don't feel
       // like cluttering up this already huge function with more variables.
-      else if(programOptionsFind(programOptions, programOptions->options[OPTION_HELP]->argument)) {
-        programOptionPrintHelp(programOptionsFind(programOptions, programOptions->options[OPTION_HELP]->argument),
+      else if(programOptionsFind(programOptions, programOptions->options[OPTION_HELP]->data.string)) {
+        programOptionPrintHelp(programOptionsFind(programOptions, programOptions->options[OPTION_HELP]->data.string),
           true, DEFAULT_INDENT_SIZE, 0);
       }
       else {
         printf("Invalid option '%s', try running --help full to see help for all options\n",
-          programOptions->options[OPTION_HELP]->argument->data);
+          programOptions->options[OPTION_HELP]->data.string->data);
       }
     }
     return RETURN_CODE_NOT_RUN;
@@ -300,7 +300,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
     programOptions->options[OPTION_VERBOSE]->enabled = true;
     programOptions->options[OPTION_LOG_FILE]->enabled = true;
     programOptions->options[OPTION_DISPLAY_INFO]->enabled = true;
-    charStringCopyCString(programOptions->options[OPTION_LOG_FILE]->argument, "log.txt");
+    charStringCopyCString(programOptions->options[OPTION_LOG_FILE]->data.string, "log.txt");
     // Shell script with original command line arguments
     errorReporterCreateLauncher(errorReporter, argc, argv);
     // Rewrite some paths before any input or output sources have been opened.
@@ -310,10 +310,10 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
     _remapFileToErrorReport(errorReporter, programOptions->options[OPTION_LOG_FILE], false);
   }
 
-  // Read in options from a config file, if given
+  // Read in options from a configuration file, if given
   if(programOptions->options[OPTION_CONFIG_FILE]->enabled) {
     if(!programOptionsParseConfigFile(programOptions,
-      programOptions->options[OPTION_CONFIG_FILE]->argument)) {
+      programOptions->options[OPTION_CONFIG_FILE]->data.string)) {
       return RETURN_CODE_INVALID_ARGUMENT;
     }
   }
@@ -327,18 +327,18 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
     setLogLevel(LOG_ERROR);
   }
   else if(programOptions->options[OPTION_LOG_LEVEL]->enabled) {
-    setLogLevelFromString(programOptions->options[OPTION_LOG_LEVEL]->argument);
+    setLogLevelFromString(programOptions->options[OPTION_LOG_LEVEL]->data.string);
   }
   if(programOptions->options[OPTION_COLOR_LOGGING]->enabled) {
     // If --color was given but with no string argument, then force color. Otherwise
     // colors will be provided automatically anyways.
-    if(charStringIsEmpty(programOptions->options[OPTION_COLOR_LOGGING]->argument)) {
-      charStringCopyCString(programOptions->options[OPTION_COLOR_LOGGING]->argument, "force");
+    if(charStringIsEmpty(programOptions->options[OPTION_COLOR_LOGGING]->data.string)) {
+      charStringCopyCString(programOptions->options[OPTION_COLOR_LOGGING]->data.string, "force");
     }
-    setLoggingColorEnabledWithString(programOptions->options[OPTION_COLOR_LOGGING]->argument);
+    setLoggingColorEnabledWithString(programOptions->options[OPTION_COLOR_LOGGING]->data.string);
   }
   if(programOptions->options[OPTION_LOG_FILE]->enabled) {
-    setLogFile(programOptions->options[OPTION_LOG_FILE]->argument);
+    setLogFile(programOptions->options[OPTION_LOG_FILE]->data.string);
   }
 
   // Parse other options and set up necessary objects
@@ -347,47 +347,47 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
     if(option->enabled) {
       switch(option->index) {
         case OPTION_BLOCKSIZE:
-          setBlocksize(strtol(option->argument->data, NULL, 10));
+          setBlocksize(option->data.number);
           break;
         case OPTION_CHANNELS:
-          setNumChannels((unsigned int)strtol(option->argument->data, NULL, 10));
+          setNumChannels((unsigned int)option->data.number);
           break;
         case OPTION_DISPLAY_INFO:
           shouldDisplayPluginInfo = true;
           break;
         case OPTION_INPUT_SOURCE:
           freeSampleSource(inputSource);
-          inputSource = sampleSourceFactory(option->argument);
+          inputSource = sampleSourceFactory(option->data.string);
           break;
         case OPTION_MAX_TIME:
-          maxTimeInMs = strtol(option->argument->data, NULL, 10);
+          maxTimeInMs = option->data.number;
           break;
         case OPTION_MIDI_SOURCE:
-          midiSource = newMidiSource(guessMidiSourceType(option->argument), option->argument);
+          midiSource = newMidiSource(guessMidiSourceType(option->data.string), option->data.string);
           break;
         case OPTION_OUTPUT_SOURCE:
-          outputSource = sampleSourceFactory(option->argument);
+          outputSource = sampleSourceFactory(option->data.string);
           break;
         case OPTION_PLUGIN_ROOT:
-          charStringCopy(pluginSearchRoot, option->argument);
+          charStringCopy(pluginSearchRoot, option->data.string);
           break;
         case OPTION_SAMPLE_RATE:
-          setSampleRate(strtod(option->argument->data, NULL));
+          setSampleRate(option->data.number);
           break;
         case OPTION_TAIL_TIME:
-          tailTimeInMs = strtol(option->argument->data, NULL, 10);
+          tailTimeInMs = option->data.number;
           break;
         case OPTION_TEMPO:
-          setTempo(strtod(option->argument->data, NULL));
+          setTempo(option->data.number);
           break;
         case OPTION_TIME_SIGNATURE_TOP:
-          setTimeSignatureBeatsPerMeasure((short)strtol(option->argument->data, NULL, 10));
+          setTimeSignatureBeatsPerMeasure((short)option->data.number);
           break;
         case OPTION_TIME_SIGNATURE_BOTTOM:
-          setTimeSignatureNoteValue((short)strtol(option->argument->data, NULL, 10));
+          setTimeSignatureNoteValue((short)option->data.number);
           break;
         case OPTION_ZEBRA_SIZE:
-          setLoggingZebraSize((int)strtol(option->argument->data, NULL, 10));
+          setLoggingZebraSize((int)option->data.number);
           break;
         default:
           // Ignore -- no special handling needs to be performed here
@@ -410,7 +410,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
     logError("Input source could not be opened, exiting");
     return result;
   }
-  if((result = buildPluginChain(pluginChain, programOptions->options[OPTION_PLUGIN]->argument,
+  if((result = buildPluginChain(pluginChain, programOptions->options[OPTION_PLUGIN]->data.string,
     pluginSearchRoot)) != RETURN_CODE_SUCCESS) {
     logError("Plugin chain could not be constructed, exiting");
     return result;

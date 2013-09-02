@@ -29,9 +29,21 @@
 #define MrsWatson_ProgramOption_h
 
 #include "base/CharString.h"
+#include "base/LinkedList.h"
 #include "base/Types.h"
 
-#define NO_DEFAULT_VALUE -1
+typedef enum {
+  kProgramOptionTypeString,
+  kProgramOptionTypeNumber,
+  kProgramOptionTypeList,
+  kProgramOptionTypeNumTypes
+} ProgramOptionType;
+
+typedef union {
+  CharString string;
+  float number;
+  LinkedList list;
+} ProgramOptionData;
 
 typedef enum {
   kProgramOptionArgumentTypeNone,
@@ -44,13 +56,13 @@ typedef struct {
   int index;
   CharString name;
   CharString help;
-  int helpDefaultValue;
   boolByte hasShortForm;
   // For "hidden" options which should not be printed out in the help output
   boolByte hideInHelp;
 
+  ProgramOptionType type;
+  ProgramOptionData data;
   ProgramOptionArgumentType argumentType;
-  CharString argument;
   boolByte enabled;
 } ProgramOptionMembers;
 typedef ProgramOptionMembers* ProgramOption;
@@ -75,12 +87,11 @@ ProgramOption newProgramOption(void);
  * @param help Full help string
  * @param hasShortForm True if the option should also be matched with the first letter
  * @param argumentType Expected argument type which can be passed to this option
- * @param defaultValue 
  * @return 
  */
-ProgramOption newProgramOptionWithValues(const int opnionIndex, const char* name,
-  const char* help, boolByte hasShortForm, ProgramOptionArgumentType argumentType,
-  int defaultValue);
+ProgramOption newProgramOptionWithValues(const int optionIndex, const char* name,
+  const char* help, boolByte hasShortForm, ProgramOptionType type,
+  ProgramOptionArgumentType argumentType);
 
 /**
  * Print out help for the option
@@ -89,7 +100,10 @@ ProgramOption newProgramOptionWithValues(const int opnionIndex, const char* name
  * @param indentSize Number of spaces to indent output
  * @param initialIndent Initial number of spaces to offset output
  */
-void programOptionPrintHelp(const ProgramOption self, boolByte withFullHelp, int indentSize, int initialIndent);
+void programOptionPrintHelp(const ProgramOption self, boolByte withFullHelp,
+  int indentSize, int initialIndent);
+
+void programOptionSetValue(ProgramOption self, ProgramOptionData data);
 
 /**
  * Free memory used by a ProgramOption instance

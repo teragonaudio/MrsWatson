@@ -37,24 +37,23 @@
 #include "logging/EventLogger.h"
 
 ProgramOption newProgramOption(void) {
-  return newProgramOptionWithValues(-1, EMPTY_STRING, EMPTY_STRING,
-    false, kProgramOptionArgumentTypeInvalid, -1);
+  return newProgramOptionWithValues(-1, EMPTY_STRING, EMPTY_STRING, false,
+    kProgramOptionTypeNumber, kProgramOptionArgumentTypeInvalid);
 }
 
 ProgramOption newProgramOptionWithValues(const int optionIndex, const char* name,
-  const char* help, boolByte hasShortForm, ProgramOptionArgumentType argumentType,
-  int defaultValue) {
+  const char* help, boolByte hasShortForm, ProgramOptionType type,
+  ProgramOptionArgumentType argumentType) {
   ProgramOption option = (ProgramOption)malloc(sizeof(ProgramOptionMembers));
 
   option->index = optionIndex;
   option->name = newCharStringWithCString(name);
   option->help = newCharStringWithCString(help);
-  option->helpDefaultValue = defaultValue;
   option->hasShortForm = hasShortForm;
   option->hideInHelp = false;
 
+  option->type = type;
   option->argumentType = argumentType;
-  option->argument = newCharString();
   option->enabled = false;
 
   return option;
@@ -93,9 +92,11 @@ void programOptionPrintHelp(const ProgramOption self, boolByte withFullHelp, int
       break;
   }
 
+  /* TODO: Print default value if assigned
   if(self->helpDefaultValue != NO_DEFAULT_VALUE) {
     printf(", default value: %d", self->helpDefaultValue);
   }
+  */
 
   if(withFullHelp) {
     // Newline and indentation before help
@@ -108,11 +109,14 @@ void programOptionPrintHelp(const ProgramOption self, boolByte withFullHelp, int
   }
 }
 
+void programOptionSetValue(ProgramOption self, ProgramOptionData data) {
+
+}
+
 void freeProgramOption(ProgramOption self) {
   if(self != NULL) {
     freeCharString(self->name);
     freeCharString(self->help);
-    freeCharString(self->argument);
     free(self);
   }
 }
@@ -188,7 +192,7 @@ static boolByte _fillOptionArgument(ProgramOption self, int* currentArgc, int ar
       char* potentialNextArg = argv[potentialNextArgc];
       // If the next string in the sequence is NOT an argument, we assume it is the optional argument
       if(!_isStringShortOption(potentialNextArg) && !_isStringLongOption(potentialNextArg)) {
-        charStringCopyCString(self->argument, potentialNextArg);
+        charStringCopyCString(self->data.string, potentialNextArg);
         (*currentArgc)++;
         return true;
       }
@@ -211,7 +215,7 @@ static boolByte _fillOptionArgument(ProgramOption self, int* currentArgc, int ar
         return false;
       }
       else {
-        charStringCopyCString(self->argument, nextArg);
+        charStringCopyCString(self->data.string, nextArg);
         (*currentArgc)++;
         return true;
       }
