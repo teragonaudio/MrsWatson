@@ -22,7 +22,8 @@ static void _programOptionTeardown(void) {
 }
 
 static ProgramOption _getTestOption(void) {
-  return newProgramOptionWithValues(0, "test", "test help", true, kProgramOptionArgumentTypeOptional, NO_DEFAULT_VALUE);
+  return newProgramOptionWithName(0, "test", "test help", true,
+    kProgramOptionTypeNumber, kProgramOptionArgumentTypeOptional);
 }
 
 static int _testNewProgramOptions(void) {
@@ -107,14 +108,14 @@ static int _testParseCommandLineRequiredOption(void) {
   char* argv[3];
   argv[0] = "exe";
   argv[1] = "--test";
-  argv[2] = "required";
+  argv[2] = "1.23";
   o->argumentType = kProgramOptionArgumentTypeRequired;
   assert(programOptionsAdd(p, o));
 
   assertFalse(p->options[0]->enabled);
-  assertCharStringEquals(p->options[0]->argument, "");
+  assertDoubleEquals(programOptionsGetNumber(p, 0), 0.0f, 0.0f);
   assert(programOptionsParseArgs(p, 3, argv));
-  assertCharStringEquals(p->options[0]->argument, "required");
+  assertDoubleEquals(programOptionsGetNumber(p, 0), 123.0f, 0.0f);
   assert(p->options[0]->enabled);
 
   freeProgramOptions(p);
@@ -131,7 +132,7 @@ static int _testParseCommandLineRequiredOptionMissing(void) {
   assert(programOptionsAdd(p, o));
 
   assertFalse(p->options[0]->enabled);
-  assertCharStringEquals(p->options[0]->argument, "");
+  assertDoubleEquals(programOptionsGetNumber(p, 0), 0.0f, 0.0f);
   assertFalse(programOptionsParseArgs(p, 2, argv));
   assertFalse(p->options[0]->enabled);
 
@@ -142,9 +143,9 @@ static int _testParseCommandLineRequiredOptionMissing(void) {
 static ProgramOptions _getTestProgramOptionsForConfigFile(void) {
   ProgramOptions p = newProgramOptions(2);
   ProgramOption o1, o2;
-  o1 = newProgramOptionWithValues(0, "test", "test help", true, kProgramOptionArgumentTypeNone, NO_DEFAULT_VALUE);
+  o1 = newProgramOptionWithName(0, "test", "test help", true, kProgramOptionTypeString, kProgramOptionArgumentTypeNone);
   programOptionsAdd(p, o1);
-  o2 = newProgramOptionWithValues(1, "stest", "test help", true, kProgramOptionArgumentTypeRequired, NO_DEFAULT_VALUE);
+  o2 = newProgramOptionWithName(1, "test2", "test help", true, kProgramOptionTypeString, kProgramOptionArgumentTypeRequired);
   programOptionsAdd(p, o2);
   return p;
 }
@@ -163,7 +164,7 @@ static int _testParseConfigFile(void) {
   assert(programOptionsParseConfigFile(p, filename));
   assert(p->options[0]->enabled);
   assert(p->options[1]->enabled);
-  assertCharStringEquals(p->options[1]->argument, "foo");
+  assertCharStringEquals(programOptionsGetString(p, 1), "foo");
 
   unlink(TEST_CONFIG_FILE);
   freeProgramOptions(p);

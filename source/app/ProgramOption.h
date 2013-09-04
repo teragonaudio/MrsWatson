@@ -33,17 +33,12 @@
 #include "base/Types.h"
 
 typedef enum {
+  kProgramOptionTypeEmpty,
   kProgramOptionTypeString,
   kProgramOptionTypeNumber,
   kProgramOptionTypeList,
   kProgramOptionTypeNumTypes
 } ProgramOptionType;
-
-typedef union {
-  CharString string;
-  float number;
-  LinkedList list;
-} ProgramOptionData;
 
 typedef enum {
   kProgramOptionArgumentTypeNone,
@@ -51,6 +46,12 @@ typedef enum {
   kProgramOptionArgumentTypeRequired,
   kProgramOptionArgumentTypeInvalid
 } ProgramOptionArgumentType;
+
+typedef union {
+  CharString string;
+  float number;
+  LinkedList list;
+} ProgramOptionData;
 
 typedef struct {
   int index;
@@ -89,7 +90,7 @@ ProgramOption newProgramOption(void);
  * @param argumentType Expected argument type which can be passed to this option
  * @return 
  */
-ProgramOption newProgramOptionWithValues(const int optionIndex, const char* name,
+ProgramOption newProgramOptionWithName(const int optionIndex, const char* name,
   const char* help, boolByte hasShortForm, ProgramOptionType type,
   ProgramOptionArgumentType argumentType);
 
@@ -102,8 +103,6 @@ ProgramOption newProgramOptionWithValues(const int optionIndex, const char* name
  */
 void programOptionPrintHelp(const ProgramOption self, boolByte withFullHelp,
   int indentSize, int initialIndent);
-
-void programOptionSetValue(ProgramOption self, ProgramOptionData data);
 
 /**
  * Free memory used by a ProgramOption instance
@@ -163,6 +162,17 @@ boolByte programOptionsParseConfigFile(ProgramOptions self, const CharString fil
  * @param indentSize Indent size to use for output
  */
 void programOptionsPrintHelp(const ProgramOptions self, boolByte withFullHelp, int indentSize);
+void programOptionsPrintHelpForOption(const ProgramOptions self, const CharString string,
+  boolByte withFullHelp, int indentSize);
+
+CharString programOptionsGetString(const ProgramOptions self, const unsigned int index);
+float programOptionsGetNumber(const ProgramOptions self, const unsigned int index);
+LinkedList programOptionsGetList(const ProgramOptions self, const unsigned int index);
+
+void programOptionsSetCString(ProgramOptions self, const unsigned int index, const char* value);
+void programOptionsSetString(ProgramOptions self, const unsigned int index, const CharString value);
+void programOptionsSetNumber(ProgramOptions self, const unsigned int index, const float value);
+void programOptionsSetList(ProgramOptions self, const unsigned int index, const LinkedList value);
 
 /**
  * Free memory used by a ProgramOptions array and all options in the collection

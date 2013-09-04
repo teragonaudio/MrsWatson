@@ -37,11 +37,11 @@
 #include "logging/EventLogger.h"
 
 ProgramOption newProgramOption(void) {
-  return newProgramOptionWithValues(-1, EMPTY_STRING, EMPTY_STRING, false,
+  return newProgramOptionWithName(-1, EMPTY_STRING, EMPTY_STRING, false,
     kProgramOptionTypeNumber, kProgramOptionArgumentTypeInvalid);
 }
 
-ProgramOption newProgramOptionWithValues(const int optionIndex, const char* name,
+ProgramOption newProgramOptionWithName(const int optionIndex, const char* name,
   const char* help, boolByte hasShortForm, ProgramOptionType type,
   ProgramOptionArgumentType argumentType) {
   ProgramOption option = (ProgramOption)malloc(sizeof(ProgramOptionMembers));
@@ -109,8 +109,28 @@ void programOptionPrintHelp(const ProgramOption self, boolByte withFullHelp, int
   }
 }
 
-void programOptionSetValue(ProgramOption self, ProgramOptionData data) {
+static CharString _programOptionGetString(const ProgramOption self) {
+  return NULL;
+}
 
+static float _programOptionGetNumber(const ProgramOption self) {
+  return 0.0f;
+}
+
+static LinkedList _programOptionGetList(const ProgramOption self) {
+  return NULL;
+}
+
+static boolByte _programOptionSetString(ProgramOption self, const CharString value) {
+  return false;
+}
+
+static boolByte _programOptionSetNumber(ProgramOption self, const float value) {
+  return false;
+}
+
+static boolByte _programOptionSetList(ProgramOption self, const LinkedList value) {
+  return false;
 }
 
 void freeProgramOption(ProgramOption self) {
@@ -322,6 +342,40 @@ ProgramOption programOptionsFind(const ProgramOptions self, const CharString str
   return NULL;
 }
 
+void programOptionsPrintHelpForOption(const ProgramOptions self, const CharString string,
+  boolByte withFullHelp, int indentSize) {
+  programOptionPrintHelp(programOptionsFind(self, string), withFullHelp, indentSize, 0);
+}
+
+CharString programOptionsGetString(const ProgramOptions self, const unsigned int index) {
+  return _programOptionGetString(self->options[index]);
+}
+
+float programOptionsGetNumber(const ProgramOptions self, const unsigned int index) {
+  return _programOptionGetNumber(self->options[index]);
+}
+
+LinkedList programOptionsGetList(const ProgramOptions self, const unsigned int index) {
+  return _programOptionGetList(self->options[index]);
+}
+
+void programOptionsSetCString(ProgramOptions self, const unsigned int index, const char* value) {
+  CharString valueString = newCharStringWithCString(value);
+  _programOptionSetString(self->options[index], valueString);
+  freeCharString(valueString);
+}
+
+void programOptionsSetString(ProgramOptions self, const unsigned int index, const CharString value) {
+  _programOptionSetString(self->options[index], value);
+}
+
+void programOptionsSetNumber(ProgramOptions self, const unsigned int index, const float value) {
+  _programOptionSetNumber(self->options[index], value);
+}
+
+void programOptionsSetList(ProgramOptions self, const unsigned int index, const LinkedList value) {
+  _programOptionSetList(self->options[index], value);
+}
 
 void freeProgramOptions(ProgramOptions self) {
   int i;
