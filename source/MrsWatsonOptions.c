@@ -135,7 +135,8 @@ for the OS. File extensions are added automatically to plugin names. Each plugin
 may be followed by a comma with a program to be loaded, which should be of the \
 corresponding file format for the respective plugin. For shell plugins (like \
 Waves), use --display-info to get a list of sub-plugin ID's and then use a colon \
-to indicate which plugin to load. Examples:\n\n\t--plugin LFX-1310\n\
+to indicate which plugin to load. Examples:\n\n\
+\t--plugin LFX-1310\n\
 \t--plugin 'AutoTune,KayneWest.fxp;Compressor,SoftKnee.fxp;Limiter'\n\
 \t--plugin 'WavesShell-VST' --display-info (list shell sub-plugins)\n\
 \t--plugin 'WavesShell-VST:IDFX' (load a shell plugins)",
