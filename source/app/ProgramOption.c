@@ -36,6 +36,9 @@
 #include "base/LinkedList.h"
 #include "logging/EventLogger.h"
 
+CharString _programOptionGetString(const ProgramOption self);
+float _programOptionGetNumber(const ProgramOption self);
+
 ProgramOption newProgramOption(void) {
   return newProgramOptionWithName(-1, EMPTY_STRING, EMPTY_STRING, false,
     kProgramOptionTypeNumber, kProgramOptionArgumentTypeInvalid);
@@ -76,6 +79,24 @@ ProgramOption newProgramOptionWithName(const int optionIndex, const char* name,
   return option;
 }
 
+void _programOptionPrintDefaultValue(const ProgramOption self) {
+  CharString stringValue;
+
+  switch(self->type) {
+    case kProgramOptionTypeString:
+      stringValue = _programOptionGetString(self);
+      if(stringValue != NULL && !charStringIsEmpty(stringValue)) {
+        printf(", default value '%s'", stringValue->data);
+      }
+      break;
+    case kProgramOptionTypeNumber:
+      printf(", default value: %.0f", _programOptionGetNumber(self));
+      break;
+    default:
+      break;
+  }
+}
+
 void programOptionPrintHelp(const ProgramOption self, boolByte withFullHelp, int indentSize, int initialIndent) {
   CharString wrappedHelpString;
   int i;
@@ -109,11 +130,7 @@ void programOptionPrintHelp(const ProgramOption self, boolByte withFullHelp, int
       break;
   }
 
-  /* TODO: Print default value if assigned
-  if(self->helpDefaultValue != NO_DEFAULT_VALUE) {
-    printf(", default value: %d", self->helpDefaultValue);
-  }
-  */
+  _programOptionPrintDefaultValue(self);
 
   if(withFullHelp) {
     // Newline and indentation before help
@@ -126,11 +143,11 @@ void programOptionPrintHelp(const ProgramOption self, boolByte withFullHelp, int
   }
 }
 
-static CharString _programOptionGetString(const ProgramOption self) {
+CharString _programOptionGetString(const ProgramOption self) {
   return self->type == kProgramOptionTypeString ? self->data.string : NULL;
 }
 
-static float _programOptionGetNumber(const ProgramOption self) {
+float _programOptionGetNumber(const ProgramOption self) {
   return self->type == kProgramOptionTypeNumber ? self->data.number : -1.0f;
 }
 
