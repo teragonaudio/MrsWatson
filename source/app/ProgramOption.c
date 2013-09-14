@@ -129,7 +129,7 @@ static boolByte _programOptionSetNumber(ProgramOption self, const float value) {
   return false;
 }
 
-static boolByte _programOptionSetList(ProgramOption self, const LinkedList value) {
+static boolByte _programOptionSetListItem(ProgramOption self, const void* value) {
   return false;
 }
 
@@ -347,7 +347,7 @@ void programOptionsPrintHelpForOption(const ProgramOptions self, const CharStrin
   programOptionPrintHelp(programOptionsFind(self, string), withFullHelp, indentSize, 0);
 }
 
-CharString programOptionsGetString(const ProgramOptions self, const unsigned int index) {
+const CharString programOptionsGetString(const ProgramOptions self, const unsigned int index) {
   return _programOptionGetString(self->options[index]);
 }
 
@@ -355,7 +355,7 @@ float programOptionsGetNumber(const ProgramOptions self, const unsigned int inde
   return _programOptionGetNumber(self->options[index]);
 }
 
-LinkedList programOptionsGetList(const ProgramOptions self, const unsigned int index) {
+const LinkedList programOptionsGetList(const ProgramOptions self, const unsigned int index) {
   return _programOptionGetList(self->options[index]);
 }
 
@@ -374,7 +374,7 @@ void programOptionsSetNumber(ProgramOptions self, const unsigned int index, cons
 }
 
 void programOptionsSetList(ProgramOptions self, const unsigned int index, const LinkedList value) {
-  _programOptionSetList(self->options[index], value);
+  _programOptionSetListItem(self->options[index], value);
 }
 
 void freeProgramOptions(ProgramOptions self) {
