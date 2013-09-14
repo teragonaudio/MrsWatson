@@ -61,13 +61,13 @@ ProgramOption newProgramOptionWithName(const int optionIndex, const char* name,
       // Nothing needed here
       break;
     case kProgramOptionTypeString:
-      option->data.string = newCharString();
+      option->_data.string = newCharString();
       break;
     case kProgramOptionTypeNumber:
-      option->data.number = 0.0f;
+      option->_data.number = 0.0f;
       break;
     case kProgramOptionTypeList:
-      option->data.list = newLinkedList();
+      option->_data.list = newLinkedList();
       break;
     default:
       logInternalError("ProgramOption with invalid type");
@@ -144,20 +144,20 @@ void programOptionPrintHelp(const ProgramOption self, boolByte withFullHelp, int
 }
 
 CharString _programOptionGetString(const ProgramOption self) {
-  return self->type == kProgramOptionTypeString ? self->data.string : NULL;
+  return self->type == kProgramOptionTypeString ? self->_data.string : NULL;
 }
 
 float _programOptionGetNumber(const ProgramOption self) {
-  return self->type == kProgramOptionTypeNumber ? self->data.number : -1.0f;
+  return self->type == kProgramOptionTypeNumber ? self->_data.number : -1.0f;
 }
 
 static LinkedList _programOptionGetList(const ProgramOption self) {
-  return self->type == kProgramOptionTypeList ? self->data.list : NULL;
+  return self->type == kProgramOptionTypeList ? self->_data.list : NULL;
 }
 
 static void _programOptionSetString(ProgramOption self, const CharString value) {
   if(self->type == kProgramOptionTypeString) {
-    charStringCopy(self->data.string, value);
+    charStringCopy(self->_data.string, value);
   }
 }
 
@@ -169,13 +169,13 @@ static void _programOptionSetCString(ProgramOption self, const char* value) {
 
 static void _programOptionSetNumber(ProgramOption self, const float value) {
   if(self->type == kProgramOptionTypeNumber) {
-    self->data.number = value;
+    self->_data.number = value;
   }
 }
 
 static void _programOptionSetListItem(ProgramOption self, void* value) {
   if(self->type == kProgramOptionTypeList) {
-    linkedListAppend(self->data.list, value);
+    linkedListAppend(self->_data.list, value);
   }
 }
 

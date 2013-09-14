@@ -59,12 +59,13 @@ static void _printTaskTime(void* item, void* userData) {
 static void _remapFileToErrorReport(ErrorReporter errorReporter, ProgramOption option, boolByte copyFile) {
   if(option->enabled) {
     if(copyFile) {
-      if(!errorReportCopyFileToReport(errorReporter, option->data.string)) {
+      // TODO: Slight abuse of private field, probably should avoid doing that...
+      if(!errorReportCopyFileToReport(errorReporter, option->_data.string)) {
         logWarn("Failed copying '%s' to error report directory, please include this file manually",
-          option->data.string->data);
+          option->_data.string->data);
       }
     }
-    errorReporterRemapPath(errorReporter, option->data.string);
+    errorReporterRemapPath(errorReporter, option->_data.string);
   }
 }
 
@@ -263,23 +264,24 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   }
   else if(programOptions->options[OPTION_HELP]->enabled) {
     printMrsWatsonQuickstart(argv[0]);
-    if(charStringIsEmpty(programOptions->options[OPTION_HELP]->data.string)) {
+    if(charStringIsEmpty(programOptionsGetString(programOptions, OPTION_HELP))) {
       printf("All options, where <argument> is required and [argument] is optional:\n");
       programOptionsPrintHelp(programOptions, false, DEFAULT_INDENT_SIZE);
     }
     else {
-      if(charStringIsEqualToCString(programOptions->options[OPTION_HELP]->data.string, "full", true)) {
+      if(charStringIsEqualToCString(programOptionsGetString(programOptions, OPTION_HELP), "full", true)) {
         programOptionsPrintHelp(programOptions, true, DEFAULT_INDENT_SIZE);
       }
-      // Yeah this is a bit silly, but the performance obviously doesn't matter here and I don't feel
-      // like cluttering up this already huge function with more variables.
-      else if(programOptionsFind(programOptions, programOptions->options[OPTION_HELP]->data.string)) {
-        programOptionPrintHelp(programOptionsFind(programOptions, programOptions->options[OPTION_HELP]->data.string),
+      // Yeah this is a bit silly, but the performance obviously doesn't matter
+      // here and I don't feel like cluttering up this already huge function
+      // with more variables.
+      else if(programOptionsFind(programOptions, programOptionsGetString(programOptions, OPTION_HELP))) {
+        programOptionPrintHelp(programOptionsFind(programOptions, programOptionsGetString(programOptions, OPTION_HELP)),
           true, DEFAULT_INDENT_SIZE, 0);
       }
       else {
         printf("Invalid option '%s', try running --help full to see help for all options\n",
-          programOptions->options[OPTION_HELP]->data.string->data);
+          programOptionsGetString(programOptions, OPTION_HELP)->data);
       }
     }
     return RETURN_CODE_NOT_RUN;
@@ -300,7 +302,6 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
     programOptions->options[OPTION_VERBOSE]->enabled = true;
     programOptions->options[OPTION_LOG_FILE]->enabled = true;
     programOptions->options[OPTION_DISPLAY_INFO]->enabled = true;
-    charStringCopyCString(programOptions->options[OPTION_LOG_FILE]->data.string, "log.txt");
     // Shell script with original command line arguments
     errorReporterCreateLauncher(errorReporter, argc, argv);
     // Rewrite some paths before any input or output sources have been opened.
@@ -312,8 +313,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
 
   // Read in options from a configuration file, if given
   if(programOptions->options[OPTION_CONFIG_FILE]->enabled) {
-    if(!programOptionsParseConfigFile(programOptions,
-      programOptions->options[OPTION_CONFIG_FILE]->data.string)) {
+    if(!programOptionsParseConfigFile(programOptions, programOptionsGetString(programOptions, OPTION_CONFIG_FILE))) {
       return RETURN_CODE_INVALID_ARGUMENT;
     }
   }
@@ -327,18 +327,18 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
     setLogLevel(LOG_ERROR);
   }
   else if(programOptions->options[OPTION_LOG_LEVEL]->enabled) {
-    setLogLevelFromString(programOptions->options[OPTION_LOG_LEVEL]->data.string);
+    setLogLevelFromString(programOptionsGetString(programOptions, OPTION_LOG_LEVEL));
   }
   if(programOptions->options[OPTION_COLOR_LOGGING]->enabled) {
     // If --color was given but with no string argument, then force color. Otherwise
     // colors will be provided automatically anyways.
-    if(charStringIsEmpty(programOptions->options[OPTION_COLOR_LOGGING]->data.string)) {
-      charStringCopyCString(programOptions->options[OPTION_COLOR_LOGGING]->data.string, "force");
+    if(charStringIsEmpty(programOptionsGetString(programOptions, OPTION_COLOR_LOGGING))) {
+      programOptionsSetCString(programOptions, OPTION_COLOR_LOGGING, "force");
     }
-    setLoggingColorEnabledWithString(programOptions->options[OPTION_COLOR_LOGGING]->data.string);
+    setLoggingColorEnabledWithString(programOptionsGetString(programOptions, OPTION_COLOR_LOGGING));
   }
   if(programOptions->options[OPTION_LOG_FILE]->enabled) {
-    setLogFile(programOptions->options[OPTION_LOG_FILE]->data.string);
+    setLogFile(programOptionsGetString(programOptions, OPTION_LOG_FILE));
   }
 
   // Parse other options and set up necessary objects
@@ -347,47 +347,49 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
     if(option->enabled) {
       switch(option->index) {
         case OPTION_BLOCKSIZE:
-          setBlocksize(option->data.number);
+          setBlocksize(programOptionsGetNumber(programOptions, OPTION_BLOCKSIZE));
           break;
         case OPTION_CHANNELS:
-          setNumChannels((unsigned int)option->data.number);
+          setNumChannels(programOptionsGetNumber(programOptions, OPTION_CHANNELS));
           break;
         case OPTION_DISPLAY_INFO:
           shouldDisplayPluginInfo = true;
           break;
         case OPTION_INPUT_SOURCE:
           freeSampleSource(inputSource);
-          inputSource = sampleSourceFactory(option->data.string);
+          inputSource = sampleSourceFactory(programOptionsGetString(programOptions, OPTION_INPUT_SOURCE));
           break;
         case OPTION_MAX_TIME:
-          maxTimeInMs = option->data.number;
+          maxTimeInMs = programOptionsGetNumber(programOptions, OPTION_MAX_TIME);
           break;
         case OPTION_MIDI_SOURCE:
-          midiSource = newMidiSource(guessMidiSourceType(option->data.string), option->data.string);
+          midiSource = newMidiSource(guessMidiSourceType(programOptionsGetString(
+            programOptions, OPTION_MIDI_SOURCE)),
+            programOptionsGetString(programOptions, OPTION_MIDI_SOURCE));
           break;
         case OPTION_OUTPUT_SOURCE:
-          outputSource = sampleSourceFactory(option->data.string);
+          outputSource = sampleSourceFactory(programOptionsGetString(programOptions, OPTION_OUTPUT_SOURCE));
           break;
         case OPTION_PLUGIN_ROOT:
-          charStringCopy(pluginSearchRoot, option->data.string);
+          charStringCopy(pluginSearchRoot, programOptionsGetString(programOptions, OPTION_PLUGIN_ROOT));
           break;
         case OPTION_SAMPLE_RATE:
-          setSampleRate(option->data.number);
+          setSampleRate(programOptionsGetNumber(programOptions, OPTION_SAMPLE_RATE));
           break;
         case OPTION_TAIL_TIME:
-          tailTimeInMs = option->data.number;
+          tailTimeInMs = programOptionsGetNumber(programOptions, OPTION_TAIL_TIME);
           break;
         case OPTION_TEMPO:
-          setTempo(option->data.number);
+          setTempo(programOptionsGetNumber(programOptions, OPTION_TEMPO));
           break;
         case OPTION_TIME_SIGNATURE_TOP:
-          setTimeSignatureBeatsPerMeasure((short)option->data.number);
+          setTimeSignatureBeatsPerMeasure((short)programOptionsGetNumber(programOptions, OPTION_TIME_SIGNATURE_TOP));
           break;
         case OPTION_TIME_SIGNATURE_BOTTOM:
-          setTimeSignatureNoteValue((short)option->data.number);
+          setTimeSignatureNoteValue((short)programOptionsGetNumber(programOptions, OPTION_TIME_SIGNATURE_BOTTOM));
           break;
         case OPTION_ZEBRA_SIZE:
-          setLoggingZebraSize((int)option->data.number);
+          setLoggingZebraSize((int)programOptionsGetNumber(programOptions, OPTION_ZEBRA_SIZE));
           break;
         default:
           // Ignore -- no special handling needs to be performed here
@@ -410,7 +412,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
     logError("Input source could not be opened, exiting");
     return result;
   }
-  if((result = buildPluginChain(pluginChain, programOptions->options[OPTION_PLUGIN]->data.string,
+  if((result = buildPluginChain(pluginChain, programOptionsGetString(programOptions, OPTION_PLUGIN),
     pluginSearchRoot)) != RETURN_CODE_SUCCESS) {
     logError("Plugin chain could not be constructed, exiting");
     return result;

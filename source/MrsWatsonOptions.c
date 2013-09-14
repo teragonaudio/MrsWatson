@@ -101,6 +101,7 @@ the extension. Run with --list-file-types to see a list of supported types. Use 
   programOptionsAdd(options, newProgramOptionWithName(OPTION_LOG_FILE, "log-file",
     "Save logging output to the given file instead of the terminal's standard error.",
     false, kProgramOptionTypeString, kProgramOptionArgumentTypeRequired));
+  programOptionsSetCString(options, OPTION_LOG_FILE, "log.txt");
 
   programOptionsAdd(options, newProgramOptionWithName(OPTION_LOG_LEVEL, "log-level",
     "Logging level to use. Options include: debug, info, warn, error. Critical \

@@ -62,7 +62,7 @@ typedef struct {
   boolByte hideInHelp;
 
   ProgramOptionType type;
-  ProgramOptionData data;
+  ProgramOptionData _data;
   ProgramOptionArgumentType argumentType;
   boolByte enabled;
 } ProgramOptionMembers;
