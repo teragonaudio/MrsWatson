@@ -236,6 +236,82 @@ static int _testFindProgramOptionFromStringInvalid(void) {
   return 0;
 }
 
+static int _testGetString(void) {
+  return 0;
+}
+
+static int _testGetStringForWrongType(void) {
+  return 0;
+}
+
+static int _testGetStringForInvalidOption(void) {
+  return 0;
+}
+
+static int _testGetNumeric(void) {
+  return 0;
+}
+
+static int _testGetNumericForWrongType(void) {
+  return 0;
+}
+
+static int _testGetNumericForInvalidOption(void) {
+  return 0;
+}
+
+static int _testGetList(void) {
+  return 0;
+}
+
+static int _testGetListForWrongType(void) {
+  return 0;
+}
+
+static int _testGetListForInvalidOption(void) {
+  return 0;
+}
+
+static int _testSetString(void) {
+  return 0;
+}
+
+static int _testSetStringForWrongType(void) {
+  return 0;
+}
+
+static int _testSetStringForInvalidOption(void) {
+  return 0;
+}
+
+static int _testSetStringWithNull(void) {
+  return 0;
+}
+
+static int _testSetNumeric(void) {
+  return 0;
+}
+
+static int _testSetNumericForWrongType(void) {
+  return 0;
+}
+
+static int _testSetNumericForInvalidOption(void) {
+  return 0;
+}
+
+static int _testSetListItem(void) {
+  return 0;
+}
+
+static int _testSetListItemForWrongType(void) {
+  return 0;
+}
+
+static int _testSetListItemForInvalidOption(void) {
+  return 0;
+}
+
 TestSuite addProgramOptionTests(void);
 TestSuite addProgramOptionTests(void) {
   TestSuite testSuite = newTestSuite("ProgramOption", NULL, _programOptionTeardown);
@@ -257,5 +333,26 @@ TestSuite addProgramOptionTests(void) {
 
   addTest(testSuite, "FindProgramOptionFromString", _testFindProgramOptionFromString);
   addTest(testSuite, "FindProgramOptionFromStringInvalid", _testFindProgramOptionFromStringInvalid);
+
+  addTest(testSuite, "GetString", _testGetString);
+  addTest(testSuite, "GetStringForWrongType", _testGetStringForWrongType);
+  addTest(testSuite, "GetStringForInvalidOption", _testGetStringForInvalidOption);
+  addTest(testSuite, "GetNumeric", _testGetNumeric);
+  addTest(testSuite, "GetNumericForWrongType", _testGetNumericForWrongType);
+  addTest(testSuite, "GetNumericForInvalidOption", _testGetNumericForInvalidOption);
+  addTest(testSuite, "GetList", _testGetList);
+  addTest(testSuite, "GetListForWrongType", _testGetListForWrongType);
+  addTest(testSuite, "GetListForInvalidOption", _testGetListForInvalidOption);
+  addTest(testSuite, "SetString", _testSetString);
+  addTest(testSuite, "SetStringForWrongType", _testSetStringForWrongType);
+  addTest(testSuite, "SetStringForInvalidOption", _testSetStringForInvalidOption);
+  addTest(testSuite, "SetStringWithNull", _testSetStringWithNull);
+  addTest(testSuite, "SetNumeric", _testSetNumeric);
+  addTest(testSuite, "SetNumericForWrongType", _testSetNumericForWrongType);
+  addTest(testSuite, "SetNumericForInvalidOption", _testSetNumericForInvalidOption);
+  addTest(testSuite, "SetListItem", _testSetListItem);
+  addTest(testSuite, "SetListItemForWrongType", _testSetListItemForWrongType);
+  addTest(testSuite, "SetListItemForInvalidOption", _testSetListItemForInvalidOption);
+
   return testSuite;
 }
