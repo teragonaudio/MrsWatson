@@ -53,6 +53,23 @@ ProgramOption newProgramOptionWithName(const int optionIndex, const char* name,
   option->hideInHelp = false;
 
   option->type = type;
+  switch(type) {
+    case kProgramOptionTypeEmpty:
+      // Nothing needed here
+      break;
+    case kProgramOptionTypeString:
+      option->data.string = newCharString();
+      break;
+    case kProgramOptionTypeNumber:
+      option->data.number = 0.0f;
+      break;
+    case kProgramOptionTypeList:
+      option->data.list = newLinkedList();
+      break;
+    default:
+      logInternalError("ProgramOption with invalid type");
+      break;
+  }
   option->argumentType = argumentType;
   option->enabled = false;
 
@@ -110,27 +127,60 @@ void programOptionPrintHelp(const ProgramOption self, boolByte withFullHelp, int
 }
 
 static CharString _programOptionGetString(const ProgramOption self) {
-  return NULL;
+  return self->type == kProgramOptionTypeString ? self->data.string : NULL;
 }
 
 static float _programOptionGetNumber(const ProgramOption self) {
-  return 0.0f;
+  return self->type == kProgramOptionTypeNumber ? self->data.number : -1.0f;
 }
 
 static LinkedList _programOptionGetList(const ProgramOption self) {
-  return NULL;
+  return self->type == kProgramOptionTypeList ? self->data.list : NULL;
 }
 
-static boolByte _programOptionSetString(ProgramOption self, const CharString value) {
-  return false;
+static void _programOptionSetString(ProgramOption self, const CharString value) {
+  if(self->type == kProgramOptionTypeString) {
+    charStringCopy(self->data.string, value);
+  }
 }
 
-static boolByte _programOptionSetNumber(ProgramOption self, const float value) {
-  return false;
+static void _programOptionSetCString(ProgramOption self, const char* value) {
+  CharString valueString = newCharStringWithCString(value);
+  _programOptionSetString(self, valueString);
+  freeCharString(valueString);
 }
 
-static boolByte _programOptionSetListItem(ProgramOption self, const void* value) {
-  return false;
+static void _programOptionSetNumber(ProgramOption self, const float value) {
+  if(self->type == kProgramOptionTypeNumber) {
+    self->data.number = value;
+  }
+}
+
+static void _programOptionSetListItem(ProgramOption self, void* value) {
+  if(self->type == kProgramOptionTypeList) {
+    linkedListAppend(self->data.list, value);
+  }
+}
+
+static void _programOptionSetData(ProgramOption self, const char* data) {
+  if(data == NULL) {
+    return;
+  }
+
+  switch(self->type) {
+    case kProgramOptionTypeString:
+      _programOptionSetCString(self, data);
+      break;
+    case kProgramOptionTypeNumber:
+      _programOptionSetNumber(self, strtof(data, NULL));
+      break;
+    case kProgramOptionTypeList:
+      _programOptionSetListItem(self, (void*)data);
+      break;
+    default:
+      logInternalError("Set ProgramOption with invalid type");
+      break;
+  }
 }
 
 void freeProgramOption(ProgramOption self) {
@@ -169,7 +219,7 @@ static boolByte _isStringLongOption(const char* testString) {
 static ProgramOption _findProgramOption(ProgramOptions self, const char* name) {
   ProgramOption potentialMatchOption, optionMatch;
   CharString optionStringWithoutDashes;
-  int i;
+  unsigned int i;
 
   if(_isStringShortOption(name)) {
     for(i = 0; i < self->numOptions; i++) {
@@ -212,7 +262,7 @@ static boolByte _fillOptionArgument(ProgramOption self, int* currentArgc, int ar
       char* potentialNextArg = argv[potentialNextArgc];
       // If the next string in the sequence is NOT an argument, we assume it is the optional argument
       if(!_isStringShortOption(potentialNextArg) && !_isStringLongOption(potentialNextArg)) {
-        charStringCopyCString(self->data.string, potentialNextArg);
+        _programOptionSetData(self, potentialNextArg);
         (*currentArgc)++;
         return true;
       }
@@ -235,7 +285,7 @@ static boolByte _fillOptionArgument(ProgramOption self, int* currentArgc, int ar
         return false;
       }
       else {
-        charStringCopyCString(self->data.string, nextArg);
+        _programOptionSetData(self, nextArg);
         (*currentArgc)++;
         return true;
       }
@@ -324,7 +374,7 @@ boolByte programOptionsParseConfigFile(ProgramOptions self, const CharString fil
 }
 
 void programOptionsPrintHelp(const ProgramOptions self, boolByte withFullHelp, int indentSize) {
-  int i;
+  unsigned int i;
   for(i = 0; i < self->numOptions; i++) {
     if(!self->options[i]->hideInHelp) {
       programOptionPrintHelp(self->options[i], withFullHelp, indentSize, indentSize);
@@ -333,7 +383,7 @@ void programOptionsPrintHelp(const ProgramOptions self, boolByte withFullHelp, i
 }
 
 ProgramOption programOptionsFind(const ProgramOptions self, const CharString string) {
-  int i;
+  unsigned int i;
   for(i = 0; i < self->numOptions; i++) {
     if(charStringIsEqualTo(string, self->options[i]->name, true)) {
       return self->options[i];
@@ -348,37 +398,43 @@ void programOptionsPrintHelpForOption(const ProgramOptions self, const CharStrin
 }
 
 const CharString programOptionsGetString(const ProgramOptions self, const unsigned int index) {
-  return _programOptionGetString(self->options[index]);
+  return index < self->numOptions ? _programOptionGetString(self->options[index]) : NULL;
 }
 
 float programOptionsGetNumber(const ProgramOptions self, const unsigned int index) {
-  return _programOptionGetNumber(self->options[index]);
+  return index < self->numOptions ? _programOptionGetNumber(self->options[index]) : -1.0f;
 }
 
 const LinkedList programOptionsGetList(const ProgramOptions self, const unsigned int index) {
-  return _programOptionGetList(self->options[index]);
+  return index < self->numOptions ? _programOptionGetList(self->options[index]) : NULL;
 }
 
 void programOptionsSetCString(ProgramOptions self, const unsigned int index, const char* value) {
-  CharString valueString = newCharStringWithCString(value);
-  _programOptionSetString(self->options[index], valueString);
-  freeCharString(valueString);
+  if(index < self->numOptions) {
+    _programOptionSetCString(self->options[index], value);
+  }
 }
 
 void programOptionsSetString(ProgramOptions self, const unsigned int index, const CharString value) {
-  _programOptionSetString(self->options[index], value);
+  if(index < self->numOptions) {
+    _programOptionSetString(self->options[index], value);
+  }
 }
 
 void programOptionsSetNumber(ProgramOptions self, const unsigned int index, const float value) {
-  _programOptionSetNumber(self->options[index], value);
+  if(index < self->numOptions) {
+    _programOptionSetNumber(self->options[index], value);
+  }
 }
 
-void programOptionsSetList(ProgramOptions self, const unsigned int index, const LinkedList value) {
-  _programOptionSetListItem(self->options[index], value);
+void programOptionsSetListItem(ProgramOptions self, const unsigned int index, void* value) {
+  if(index < self->numOptions) {
+    _programOptionSetListItem(self->options[index], value);
+  }
 }
 
 void freeProgramOptions(ProgramOptions self) {
-  int i;
+  unsigned int i;
 
   if(self == NULL) {
     return;

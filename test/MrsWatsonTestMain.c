@@ -22,7 +22,7 @@
 #include "MrsWatson.h"
 #include "logging/LogPrinter.h"
 
-extern TestSuite findTestSuite(char* testSuiteName);
+extern TestSuite findTestSuite(const CharString testSuiteName);
 extern TestCase findTestCase(TestSuite testSuite, char* testName);
 extern void printInternalTests(void);
 extern TestSuite runInternalTestSuite(boolByte onlyPrintFailing);
@@ -49,7 +49,7 @@ static ProgramOptions _newTestProgramOptions(void) {
 \t- All: run all tests (default)\n\
 \t- A suite name (use '--list' to see all suite names)",
     true, kProgramOptionTypeString, kProgramOptionArgumentTypeRequired));
-  programOptionsSetCString(programOptions, OPTION_TEST_SUITE, "all");
+  programOptionsSetCString(programOptions, OPTION_TEST_SUITE, DEFAULT_TEST_SUITE_NAME);
 
   programOptionsAdd(programOptions, newProgramOptionWithName(OPTION_TEST_NAME, "test",
     "Run a single test. Tests are named 'Suite:Name', for example:\n\
@@ -155,6 +155,7 @@ int main(int argc, char* argv[]) {
   int totalTestsFailed = 0;
   int totalTestsSkipped = 0;
   CharString testSuiteToRun = NULL;
+  CharString testSuiteName = NULL;
   CharString mrsWatsonExeName = NULL;
   CharString totalTimeString = NULL;
   CharString executablePath = NULL;
@@ -170,7 +171,6 @@ int main(int argc, char* argv[]) {
   char* testArgument;
   char* colon;
   char* testCaseName;
-  char* testSuiteName;
 
   timer = newTaskTimer(NULL, NULL);
   taskTimerStart(timer);
@@ -197,14 +197,7 @@ int main(int argc, char* argv[]) {
     return -1;
   }
 
-  testSuiteToRun = newCharString();
-  if(programOptions->options[OPTION_TEST_SUITE]->enabled) {
-    charStringCopy(testSuiteToRun, programOptionsGetString(programOptions, OPTION_TEST_SUITE));
-  }
-  if(charStringIsEmpty(testSuiteToRun)) {
-    charStringCopyCString(testSuiteToRun, DEFAULT_TEST_SUITE_NAME);
-  }
-
+  testSuiteToRun = programOptionsGetString(programOptions, OPTION_TEST_SUITE);
   if(programOptions->options[OPTION_TEST_NAME]->enabled) {
     runInternalTests = false;
     runApplicationTests = false;
@@ -218,10 +211,11 @@ int main(int argc, char* argv[]) {
     }
     testCaseName = strdup(colon + 1);
     *colon = '\0';
-    testSuiteName = strdup(programOptionsGetString(programOptions, OPTION_TEST_NAME)->data);
+
+    testSuiteName = programOptionsGetString(programOptions, OPTION_TEST_NAME);
     testSuite = findTestSuite(testSuiteName);
     if(testSuite == NULL) {
-      printf("ERROR: Could not find test suite '%s'\n", testSuiteName);
+      printf("ERROR: Could not find test suite '%s'\n", testSuiteName->data);
       return -1;
     }
     testCase = findTestCase(testSuite, testCaseName);
@@ -245,7 +239,7 @@ int main(int argc, char* argv[]) {
     runApplicationTests = true;
   }
   else {
-    testSuite = findTestSuite(testSuiteToRun->data);
+    testSuite = findTestSuite(testSuiteToRun);
     if(testSuite == NULL) {
       printf("ERROR: Invalid test suite '%s'\n", testSuiteToRun->data);
       printf("Run '%s --list' suite to show possible test suites\n", getFileBasename(argv[0]));
@@ -307,7 +301,6 @@ int main(int argc, char* argv[]) {
 
   freeTestEnvironment(testEnvironment);
   freeProgramOptions(programOptions);
-  freeCharString(testSuiteToRun);
   freeCharString(executablePath);
   freeCharString(mrsWatsonExeName);
   freeCharString(totalTimeString);

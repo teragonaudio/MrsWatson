@@ -54,7 +54,7 @@ typedef union {
 } ProgramOptionData;
 
 typedef struct {
-  int index;
+  unsigned int index;
   CharString name;
   CharString help;
   boolByte hasShortForm;
@@ -70,7 +70,7 @@ typedef ProgramOptionMembers* ProgramOption;
 
 typedef struct {
   ProgramOption* options;
-  int numOptions;
+  unsigned int numOptions;
 } ProgramOptionsMembers;
 typedef ProgramOptionsMembers* ProgramOptions;
 
@@ -232,7 +232,7 @@ void programOptionsSetNumber(ProgramOptions self, const unsigned int index, cons
  * @param index Option index
  * @param value Value to add
  */
-void programOptionsSetListItem(ProgramOptions self, const unsigned int index, const void* value);
+void programOptionsSetListItem(ProgramOptions self, const unsigned int index, void* value);
 
 /**
  * Free memory used by a ProgramOptions array and all options in the collection

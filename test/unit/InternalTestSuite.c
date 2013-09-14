@@ -104,17 +104,24 @@ TestCase findTestCase(TestSuite testSuite, char* testName) {
   return NULL;
 }
 
-TestSuite findTestSuite(char *testSuiteName);
-TestSuite findTestSuite(char *testSuiteName) {
+TestSuite findTestSuite(const CharString testSuiteName);
+TestSuite findTestSuite(const CharString testSuiteName) {
   LinkedList internalTestSuites = _getTestSuites();
   LinkedList iterator = internalTestSuites;
   TestSuite testSuite = NULL;
+
+  if(testSuiteName == NULL || charStringIsEmpty(testSuiteName)) {
+    return NULL;
+  }
 
   while(iterator != NULL) {
     if(iterator->item != NULL) {
       testSuite = (TestSuite)iterator->item;
       if(!strncasecmp(testSuite->name, testSuiteName, kCharStringLengthDefault)) {
         return testSuite;
+      }
+      else {
+        testSuite = NULL;
       }
     }
     iterator = iterator->nextItem;
