@@ -86,7 +86,7 @@ static int _testAddFromArgumentString(void) {
 static int _testAddFromArgumentStringMultiple(void) {
   PluginChain p = newPluginChain();
   CharString testArgs = newCharStringWithCString(kInternalPluginPassthruName);
-  int i;
+  unsigned int i;
 
   assert(pluginChainAddFromArgumentString(p, testArgs, NULL));
   assert(pluginChainAddFromArgumentString(p, testArgs, NULL));

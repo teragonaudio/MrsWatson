@@ -39,7 +39,7 @@
 #define CHAIN_STRING_PROGRAM_SEPARATOR ','
 
 typedef struct {
-  int numPlugins;
+  unsigned int numPlugins;
   Plugin* plugins;
   PluginPreset* presets;
   TaskTimer* audioTimers;

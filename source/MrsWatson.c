@@ -234,7 +234,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   boolByte finishedReading = false;
   SampleSource silentSampleInput;
   unsigned long stopFrame;
-  int i;
+  unsigned int i;
 
   initTimer = newTaskTimerWithCString(PROGRAM_NAME, "Initialization");
   totalTimer = newTaskTimerWithCString(PROGRAM_NAME, "Total Time");

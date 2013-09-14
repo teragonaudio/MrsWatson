@@ -156,7 +156,7 @@ static boolByte _loadPresetForPlugin(Plugin plugin, PluginPreset preset) {
 ReturnCodes pluginChainInitialize(PluginChain pluginChain) {
   Plugin plugin;
   PluginPreset preset;
-  int i;
+  unsigned int i;
 
   for(i = 0; i < pluginChain->numPlugins; i++) {
     plugin = pluginChain->plugins[i];
@@ -192,7 +192,7 @@ ReturnCodes pluginChainInitialize(PluginChain pluginChain) {
 
 void pluginChainInspect(PluginChain pluginChain) {
   Plugin plugin;
-  int i;
+  unsigned int i;
   for(i = 0; i < pluginChain->numPlugins; i++) {
     plugin = pluginChain->plugins[i];
     plugin->displayInfo(plugin);
@@ -201,7 +201,7 @@ void pluginChainInspect(PluginChain pluginChain) {
 
 void pluginChainPrepareForProcessing(PluginChain self) {
   Plugin plugin;
-  int i;
+  unsigned int i;
   for(i = 0; i < self->numPlugins; i++) {
     plugin = self->plugins[i];
     plugin->prepareForProcessing(plugin);
@@ -212,7 +212,7 @@ int pluginChainGetMaximumTailTimeInMs(PluginChain pluginChain) {
   Plugin plugin;
   int tailTime;
   int maxTailTime = 0;
-  int i;
+  unsigned int i;
   for(i = 0; i < pluginChain->numPlugins; i++) {
     plugin = pluginChain->plugins[i];
     tailTime = plugin->getSetting(plugin, PLUGIN_SETTING_TAIL_TIME_IN_MS);
@@ -226,7 +226,7 @@ int pluginChainGetMaximumTailTimeInMs(PluginChain pluginChain) {
 void pluginChainProcessAudio(PluginChain pluginChain, SampleBuffer inBuffer, SampleBuffer outBuffer) {
   Plugin plugin;
   unsigned int pluginInputs, pluginOutputs;
-  int i;
+  unsigned int i;
 
   for(i = 0; i < pluginChain->numPlugins; i++) {
     sampleBufferClear(outBuffer);
@@ -270,7 +270,7 @@ void pluginChainProcessMidi(PluginChain pluginChain, LinkedList midiEvents) {
 
 void pluginChainShutdown(PluginChain pluginChain) {
   Plugin plugin;
-  int i;
+  unsigned int i;
   for(i = 0; i < pluginChain->numPlugins; i++) {
     plugin = pluginChain->plugins[i];
     logInfo("Closing plugin '%s'", plugin->pluginName->data);
@@ -279,7 +279,7 @@ void pluginChainShutdown(PluginChain pluginChain) {
 }
 
 void freePluginChain(PluginChain pluginChain) {
-  int i;
+  unsigned int i;
 
   for(i = 0; i < pluginChain->numPlugins; i++) {
     freePluginPreset(pluginChain->presets[i]);

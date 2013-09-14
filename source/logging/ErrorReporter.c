@@ -209,7 +209,7 @@ boolByte errorReporterCopyPlugins(ErrorReporter self, PluginChain pluginChain) {
   CharString pluginAbsolutePath;
   Plugin currentPlugin;
   boolByte failed = false;
-  int i;
+  unsigned int i;
 
   pluginAbsolutePath = newCharString();
   for(i = 0; i < pluginChain->numPlugins; i++) {
