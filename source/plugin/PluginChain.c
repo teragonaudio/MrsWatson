@@ -223,6 +223,33 @@ int pluginChainGetMaximumTailTimeInMs(PluginChain pluginChain) {
   return maxTailTime;
 }
 
+void _pluginChainSetParameter(void* item, void* userData) {
+  // Expect that the linked list contains CharStrings, single that is what is
+  // being given from the command line.
+  char* parameterValue = (char*)item;
+  PluginChain self = (PluginChain)userData;
+  Plugin plugin = self->plugins[0];
+  char* comma = NULL;
+  int index;
+  float value;
+
+  comma = strchr(parameterValue, ',');
+  if(comma == NULL) {
+    logError("Malformed parameter string, see --help parameter for usage");
+    return;
+  }
+  *comma = '\0';
+  index = strtod(parameterValue, NULL);
+  value = strtof(comma + 1, NULL);
+  logDebug("Set parameter %d to %f", index, value);
+  plugin->setParameter(plugin, index, value);
+}
+
+void pluginChainSetParameters(PluginChain self, const LinkedList parameters) {
+  logDebug("Setting parameters on head plugin in chain");
+  linkedListForeach(parameters, _pluginChainSetParameter, self);
+}
+
 void pluginChainProcessAudio(PluginChain pluginChain, SampleBuffer inBuffer, SampleBuffer outBuffer) {
   Plugin plugin;
   unsigned int pluginInputs, pluginOutputs;

@@ -93,6 +93,8 @@ void pluginChainInspect(PluginChain self);
  */
 int pluginChainGetMaximumTailTimeInMs(PluginChain self);
 
+void pluginChainSetParameters(PluginChain self, const LinkedList parameters);
+
 /**
  * Prepare each plugin in the chain for processing. This should be called before
  * the first block of audio is sent to the chain.

@@ -126,6 +126,14 @@ Use '-' to write to stdout..",
     true, kProgramOptionTypeString, kProgramOptionArgumentTypeOptional));
   programOptionsSetCString(options, OPTION_OUTPUT_SOURCE, "out.wav");
 
+  programOptionsAdd(options, newProgramOptionWithName(OPTION_PARAMETER, "parameter",
+    "Set a parameter in a plugin. May be specified multiple times, but can only \
+set parameters for the first plugin in a chain. Parameter indexes for plugins \
+can be found with the --display-info option. Use comma-separated arguments for \
+index/value, for example:\n\n\
+\t--parameter 1,0.3 --parameter 0,0.75",
+    false, kProgramOptionTypeList, kProgramOptionArgumentTypeRequired));
+
   programOptionsAdd(options, newProgramOptionWithName(OPTION_PLUGIN, "plugin",
     "Plugin(s) to process. Multiple plugins can given in a semicolon-separated \
 list, in which case they will be placed into a chain in the order specified. \

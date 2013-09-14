@@ -446,6 +446,11 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
     pluginChainInspect(pluginChain);
   }
 
+  // Execute any parameter changes
+  if(programOptions->options[OPTION_PARAMETER]->enabled) {
+    pluginChainSetParameters(pluginChain, programOptionsGetList(programOptions, OPTION_PARAMETER));
+  }
+
   // Setup output source here. Having an invalid output source should not cause the program
   // to exit if the user only wants to list plugins or query info about a chain.
   if((result = setupOutputSource(outputSource)) != RETURN_CODE_SUCCESS) {
