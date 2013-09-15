@@ -117,7 +117,7 @@ TestSuite findTestSuite(const CharString testSuiteName) {
   while(iterator != NULL) {
     if(iterator->item != NULL) {
       testSuite = (TestSuite)iterator->item;
-      if(!strncasecmp(testSuite->name, testSuiteName, kCharStringLengthDefault)) {
+      if(charStringIsEqualToCString(testSuiteName, testSuite->name, true)) {
         return testSuite;
       }
       else {
