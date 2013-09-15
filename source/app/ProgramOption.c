@@ -204,6 +204,19 @@ void freeProgramOption(ProgramOption self) {
   if(self != NULL) {
     freeCharString(self->name);
     freeCharString(self->help);
+    switch(self->type) {
+      case kProgramOptionTypeString:
+        freeCharString(self->_data.string);
+        break;
+      case kProgramOptionTypeList:
+        // Note: This will not actually free the associated strings for this
+        // option. This is ok if the list items are parsed from argv/argc, but
+        // otherwise memory could be leaked here.
+        freeLinkedList(self->_data.list);
+        break;
+      default:
+        break;
+    }
     free(self);
   }
 }
