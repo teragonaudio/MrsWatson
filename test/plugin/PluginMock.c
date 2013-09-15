@@ -51,8 +51,8 @@ static void _pluginMockProcessMidiEvents(void* pluginPtr, LinkedList midiEvents)
   extraData->processMidiCalled = true;
 }
 
-static void _pluginMockSetParameter(void* pluginPtr, int i, float value) {
-  // Nothing to do here
+static boolByte _pluginMockSetParameter(void* pluginPtr, unsigned int i, float value) {
+  return false;
 }
 
 static void _pluginMockClose(void* pluginPtr) {

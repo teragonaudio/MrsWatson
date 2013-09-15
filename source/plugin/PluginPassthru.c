@@ -74,8 +74,8 @@ static void _pluginPassthruProcessMidiEvents(void* pluginPtr, LinkedList midiEve
   // Nothing to do here
 }
 
-static void _pluginPassthruSetParameter(void* pluginPtr, int i, float value) {
-  // Nothing to do here
+static boolByte _pluginPassthruSetParameter(void* pluginPtr, unsigned int i, float value) {
+  return false;
 }
 
 Plugin newPluginPassthru(const CharString pluginName) {

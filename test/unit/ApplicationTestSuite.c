@@ -56,6 +56,10 @@ void runApplicationTestSuite(TestEnvironment environment) {
     buildTestArgumentString("--plugin \"vstxsynth,%s\" --midi-file \"%s\"", again_test_fxp, c_scale_mid),
     RETURN_CODE_INVALID_ARGUMENT, NULL
   );
+  runApplicationTest(environment, "Set invalid parameter",
+    buildTestArgumentString("--plugin again --input \"%s\" --parameter 1,0.5", a440_stereo_pcm),
+    RETURN_CODE_INVALID_ARGUMENT, NULL
+  );
 
   // Audio file types
   runApplicationTest(environment, "Read WAV file",
@@ -82,6 +86,10 @@ void runApplicationTestSuite(TestEnvironment environment) {
   );
   runApplicationTest(environment, "Add tail-time",
     buildTestArgumentString("--plugin again --input \"%s\" --tail-time 10", a440_stereo_pcm),
+    RETURN_CODE_SUCCESS, kDefaultTestOutputFileType
+  );
+  runApplicationTest(environment, "Set parameter",
+    buildTestArgumentString("--plugin again --input \"%s\" --parameter 0,0.5", a440_stereo_pcm),
     RETURN_CODE_SUCCESS, kDefaultTestOutputFileType
   );
 

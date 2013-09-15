@@ -448,7 +448,9 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
 
   // Execute any parameter changes
   if(programOptions->options[OPTION_PARAMETER]->enabled) {
-    pluginChainSetParameters(pluginChain, programOptionsGetList(programOptions, OPTION_PARAMETER));
+    if(!pluginChainSetParameters(pluginChain, programOptionsGetList(programOptions, OPTION_PARAMETER))) {
+      return RETURN_CODE_INVALID_ARGUMENT;
+    }
   }
 
   // Setup output source here. Having an invalid output source should not cause the program

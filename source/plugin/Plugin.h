@@ -107,7 +107,7 @@ typedef void (*PluginProcessMidiEventsFunc)(void* pluginPtr, LinkedList midiEven
  * @param index Parameter index
  * @param value New value
  */
-typedef void (*PluginSetParameterFunc)(void* pluginPtr, int index, float value);
+typedef boolByte (*PluginSetParameterFunc)(void* pluginPtr, unsigned int index, float value);
 /**
  * Called once before audio processing begins. Some interfaces provide hooks for
  * a plugin to prepare itself before audio blocks are sent to it.

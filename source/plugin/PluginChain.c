@@ -223,16 +223,28 @@ int pluginChainGetMaximumTailTimeInMs(PluginChain pluginChain) {
   return maxTailTime;
 }
 
+typedef struct {
+  Plugin plugin;
+  boolByte success;
+} _PluginChainSetParameterPassData;
+
 void _pluginChainSetParameter(void* item, void* userData) {
   // Expect that the linked list contains CharStrings, single that is what is
   // being given from the command line.
   char* parameterValue = (char*)item;
-  PluginChain self = (PluginChain)userData;
-  Plugin plugin = self->plugins[0];
+  _PluginChainSetParameterPassData* passData = (_PluginChainSetParameterPassData*)userData;
+  Plugin plugin = passData->plugin;
   char* comma = NULL;
   int index;
   float value;
 
+  // If a previous attempt to set a parameter failed, then return right away
+  // since this method will return false anyways.
+  if(!passData->success) {
+    return;
+  }
+
+  // TODO: Need a "pair" type, this string parsing is done several times in the codebase
   comma = strchr(parameterValue, ',');
   if(comma == NULL) {
     logError("Malformed parameter string, see --help parameter for usage");
@@ -242,12 +254,16 @@ void _pluginChainSetParameter(void* item, void* userData) {
   index = strtod(parameterValue, NULL);
   value = strtof(comma + 1, NULL);
   logDebug("Set parameter %d to %f", index, value);
-  plugin->setParameter(plugin, index, value);
+  passData->success = plugin->setParameter(plugin, index, value);
 }
 
-void pluginChainSetParameters(PluginChain self, const LinkedList parameters) {
+boolByte pluginChainSetParameters(PluginChain self, const LinkedList parameters) {
+  _PluginChainSetParameterPassData passData;
+  passData.plugin = self->plugins[0];
+  passData.success = true;
   logDebug("Setting parameters on head plugin in chain");
-  linkedListForeach(parameters, _pluginChainSetParameter, self);
+  linkedListForeach(parameters, _pluginChainSetParameter, &passData);
+  return passData.success;
 }
 
 void pluginChainProcessAudio(PluginChain pluginChain, SampleBuffer inBuffer, SampleBuffer outBuffer) {

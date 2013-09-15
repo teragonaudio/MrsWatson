@@ -74,8 +74,8 @@ static void _pluginSilenceProcessMidiEvents(void* pluginPtr, LinkedList midiEven
   // Nothing to do here
 }
 
-static void _pluginSilenceSetParameter(void* pluginPtr, int i, float value) {
-  // Nothing to do here
+static boolByte _pluginSilenceSetParameter(void* pluginPtr, unsigned int i, float value) {
+  return false;
 }
 
 Plugin newPluginSilence(const CharString pluginName) {

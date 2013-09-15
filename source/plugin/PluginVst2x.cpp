@@ -640,10 +640,17 @@ boolByte pluginVst2xSetProgram(Plugin plugin, const int programNumber) {
   }
 }
 
-static void _setParameterVst2xPlugin(void *pluginPtr, int index, float value) {
+static boolByte _setParameterVst2xPlugin(void *pluginPtr, unsigned int index, float value) {
   Plugin plugin = (Plugin)pluginPtr;
   PluginVst2xData data = (PluginVst2xData)(plugin->extraData);
-  data->pluginHandle->setParameter(data->pluginHandle, index, value);
+  if(index < (unsigned int)data->pluginHandle->numParams) {
+    data->pluginHandle->setParameter(data->pluginHandle, index, value);
+    return true;
+  }
+  else {
+    logError("Cannot set parameter %d on plugin '%s', invalid index", index, plugin->pluginName->data);
+    return false;
+  }
 }
 
 static void _prepareForProcessingVst2xPlugin(void* pluginPtr) {
