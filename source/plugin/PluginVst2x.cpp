@@ -154,6 +154,7 @@ static boolByte _doesVst2xPluginExistAtLocation(const CharString pluginName, con
   boolByte result = false;
   const char* subpluginSeparator = NULL;
   CharString pluginSearchName = NULL;
+  CharString pluginSearchExtension = NULL;
   File location = NULL;
   File pluginSearchPath = NULL;
 
@@ -176,7 +177,8 @@ static boolByte _doesVst2xPluginExistAtLocation(const CharString pluginName, con
   }
   pluginSearchName = newCharStringWithCString(pluginName->data);
   pluginSearchPath = newFileWithParent(location, pluginSearchName);
-  if(fileGetExtension(pluginSearchPath) == NULL) {
+  pluginSearchExtension = fileGetExtension(pluginSearchPath);
+  if(pluginSearchExtension == NULL) {
     freeFile(pluginSearchPath);
     charStringAppendCString(pluginSearchName, ".");
     charStringAppendCString(pluginSearchName, _getVst2xPlatformExtension());
@@ -187,6 +189,7 @@ static boolByte _doesVst2xPluginExistAtLocation(const CharString pluginName, con
     result = true;
   }
 
+  freeCharString(pluginSearchExtension);
   freeCharString(pluginSearchName);
   freeFile(pluginSearchPath);
   freeFile(location);
