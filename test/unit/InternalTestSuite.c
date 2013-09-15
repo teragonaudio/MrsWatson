@@ -116,7 +116,7 @@ TestSuite findTestSuite(LinkedList testSuites, const CharString testSuiteName) {
     if(iterator->item != NULL) {
       testSuite = (TestSuite)iterator->item;
       if(charStringIsEqualToCString(testSuiteName, testSuite->name, true)) {
-        return testSuite;
+        break;
       }
       else {
         testSuite = NULL;
