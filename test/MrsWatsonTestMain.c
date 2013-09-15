@@ -256,12 +256,11 @@ int main(int argc, char* argv[]) {
     else {
       testSuite->onlyPrintFailing = programOptions->options[OPTION_TEST_PRINT_ONLY_FAILING]->enabled;
       runTestSuite(testSuite, NULL);
-      freeLinkedListAndItems(testSuites, (LinkedListFreeItemFunc)freeTestSuite);
-
       totalTestsRun = testSuite->numSuccess + testSuite->numFail;
       totalTestsPassed = testSuite->numSuccess;
       totalTestsFailed = testSuite->numFail;
       totalTestsSkipped = testSuite->numSkips;
+      freeLinkedListAndItems(testSuites, (LinkedListFreeItemFunc)freeTestSuite);
     }
   }
 
@@ -270,12 +269,13 @@ int main(int argc, char* argv[]) {
     testSuites = getTestSuites();
     internalTestResults = runInternalTestSuite(testSuites,
       programOptions->options[OPTION_TEST_PRINT_ONLY_FAILING]->enabled);
-    freeLinkedListAndItems(testSuites, (LinkedListFreeItemFunc)freeTestSuite);
 
     totalTestsRun += internalTestResults->numSuccess + internalTestResults->numFail;
     totalTestsPassed += internalTestResults->numSuccess;
     totalTestsFailed += internalTestResults->numFail;
     totalTestsSkipped += internalTestResults->numSkips;
+
+    freeLinkedListAndItems(testSuites, (LinkedListFreeItemFunc)freeTestSuite);
     freeTestSuite(internalTestResults);
   }
 
