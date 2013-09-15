@@ -34,7 +34,8 @@ static void _sumTestSuiteResults(void* item, void* extraData) {
   result->numSkips += testSuite->numSkips;
 }
 
-static LinkedList _getTestSuites(void) {
+LinkedList getTestSuites(void);
+LinkedList getTestSuites(void) {
   LinkedList internalTestSuites = newLinkedList();
   linkedListAppend(internalTestSuites, addAudioClockTests());
   linkedListAppend(internalTestSuites, addAudioSettingsTests());
@@ -66,23 +67,21 @@ static void _setTestSuiteOnlyPrintFailing(void* item, void* userData) {
   testSuite->onlyPrintFailing = true;
 }
 
-TestSuite runInternalTestSuite(boolByte onlyPrintFailing);
-TestSuite runInternalTestSuite(boolByte onlyPrintFailing) {
+TestSuite runInternalTestSuite(LinkedList testSuites, boolByte onlyPrintFailing);
+TestSuite runInternalTestSuite(LinkedList testSuites, boolByte onlyPrintFailing) {
   TestSuite suiteResults;
-  LinkedList internalTestSuites = _getTestSuites();
 
   if(onlyPrintFailing) {
-    linkedListForeach(internalTestSuites, _setTestSuiteOnlyPrintFailing, NULL);
+    linkedListForeach(testSuites, _setTestSuiteOnlyPrintFailing, NULL);
   }
-  linkedListForeach(internalTestSuites, runTestSuite, NULL);
+  linkedListForeach(testSuites, runTestSuite, NULL);
   // Create a new test suite to be used as the userData passed to the foreach loop
   suiteResults = newTestSuite("Suite results", NULL, NULL);
-  linkedListForeach(internalTestSuites, _sumTestSuiteResults, suiteResults);
+  linkedListForeach(testSuites, _sumTestSuiteResults, suiteResults);
 
   _printTestSummary(suiteResults->numSuccess + suiteResults->numFail + suiteResults->numSkips,
     suiteResults->numSuccess, suiteResults->numFail, suiteResults->numSkips);
 
-  freeLinkedListAndItems(internalTestSuites, (LinkedListFreeItemFunc)freeTestSuite);
   return suiteResults;
 }
 
@@ -104,10 +103,9 @@ TestCase findTestCase(TestSuite testSuite, char* testName) {
   return NULL;
 }
 
-TestSuite findTestSuite(const CharString testSuiteName);
-TestSuite findTestSuite(const CharString testSuiteName) {
-  LinkedList internalTestSuites = _getTestSuites();
-  LinkedList iterator = internalTestSuites;
+TestSuite findTestSuite(LinkedList testSuites, const CharString testSuiteName);
+TestSuite findTestSuite(LinkedList testSuites, const CharString testSuiteName) {
+  LinkedList iterator = testSuites;
   TestSuite testSuite = NULL;
 
   if(testSuiteName == NULL || charStringIsEmpty(testSuiteName)) {
@@ -127,7 +125,6 @@ TestSuite findTestSuite(const CharString testSuiteName) {
     iterator = iterator->nextItem;
   }
 
-  freeLinkedListAndItems(internalTestSuites, (LinkedListFreeItemFunc)freeTestSuite);
   return testSuite;
 }
 
@@ -144,7 +141,7 @@ static void _printTestsInSuite(void* item, void* userData) {
 
 void printInternalTests(void);
 void printInternalTests(void) {
-  LinkedList internalTestSuites = _getTestSuites();
+  LinkedList internalTestSuites = getTestSuites();
   linkedListForeach(internalTestSuites, _printTestsInSuite, NULL);
   freeLinkedListAndItems(internalTestSuites, (LinkedListFreeItemFunc)freeTestSuite);
 }

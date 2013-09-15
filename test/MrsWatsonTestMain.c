@@ -22,10 +22,11 @@
 #include "MrsWatson.h"
 #include "logging/LogPrinter.h"
 
-extern TestSuite findTestSuite(const CharString testSuiteName);
+extern LinkedList getTestSuites(void);
+extern TestSuite findTestSuite(LinkedList testSuites, const CharString testSuiteName);
 extern TestCase findTestCase(TestSuite testSuite, char* testName);
 extern void printInternalTests(void);
-extern TestSuite runInternalTestSuite(boolByte onlyPrintFailing);
+extern TestSuite runInternalTestSuite(LinkedList testSuites, boolByte onlyPrintFailing);
 extern TestSuite runApplicationTestSuite(TestEnvironment testEnvironment);
 
 static const char* DEFAULT_TEST_SUITE_NAME = "all";
@@ -165,6 +166,7 @@ int main(int argc, char* argv[]) {
   boolByte runApplicationTests = false;
   TestCase testCase = NULL;
   TestSuite testSuite = NULL;
+  LinkedList testSuites = NULL;
   TestSuite internalTestResults = NULL;
   TestEnvironment testEnvironment = NULL;
   TaskTimer timer;
@@ -213,19 +215,23 @@ int main(int argc, char* argv[]) {
     *colon = '\0';
 
     testSuiteName = programOptionsGetString(programOptions, OPTION_TEST_NAME);
-    testSuite = findTestSuite(testSuiteName);
+    testSuites = getTestSuites();
+    testSuite = findTestSuite(testSuites, testSuiteName);
     if(testSuite == NULL) {
       printf("ERROR: Could not find test suite '%s'\n", testSuiteName->data);
+      freeLinkedListAndItems(testSuites, (LinkedListFreeItemFunc)freeTestSuite);
       return -1;
     }
     testCase = findTestCase(testSuite, testCaseName);
     if(testCase == NULL) {
       printf("ERROR: Could not find test case '%s'\n", testCaseName);
+      freeLinkedListAndItems(testSuites, (LinkedListFreeItemFunc)freeTestSuite);
       return -1;
     }
     else {
       printf("Running test in %s:\n", testSuite->name);
       runTestCase(testCase, testSuite);
+      freeLinkedListAndItems(testSuites, (LinkedListFreeItemFunc)freeTestSuite);
     }
   }
   else if(charStringIsEqualToCString(testSuiteToRun, "all", true)) {
@@ -239,15 +245,19 @@ int main(int argc, char* argv[]) {
     runApplicationTests = true;
   }
   else {
-    testSuite = findTestSuite(testSuiteToRun);
+    testSuites = getTestSuites();
+    testSuite = findTestSuite(testSuites, testSuiteToRun);
     if(testSuite == NULL) {
       printf("ERROR: Invalid test suite '%s'\n", testSuiteToRun->data);
       printf("Run '%s --list' suite to show possible test suites\n", getFileBasename(argv[0]));
+      freeLinkedListAndItems(testSuites, (LinkedListFreeItemFunc)freeTestSuite);
       return -1;
     }
     else {
       testSuite->onlyPrintFailing = programOptions->options[OPTION_TEST_PRINT_ONLY_FAILING]->enabled;
       runTestSuite(testSuite, NULL);
+      freeLinkedListAndItems(testSuites, (LinkedListFreeItemFunc)freeTestSuite);
+
       totalTestsRun = testSuite->numSuccess + testSuite->numFail;
       totalTestsPassed = testSuite->numSuccess;
       totalTestsFailed = testSuite->numFail;
@@ -257,7 +267,11 @@ int main(int argc, char* argv[]) {
 
   if(runInternalTests) {
     printf("=== Internal tests ===\n");
-    internalTestResults = runInternalTestSuite(programOptions->options[OPTION_TEST_PRINT_ONLY_FAILING]->enabled);
+    testSuites = getTestSuites();
+    internalTestResults = runInternalTestSuite(testSuites,
+      programOptions->options[OPTION_TEST_PRINT_ONLY_FAILING]->enabled);
+    freeLinkedListAndItems(testSuites, (LinkedListFreeItemFunc)freeTestSuite);
+
     totalTestsRun += internalTestResults->numSuccess + internalTestResults->numFail;
     totalTestsPassed += internalTestResults->numSuccess;
     totalTestsFailed += internalTestResults->numFail;
