@@ -96,13 +96,13 @@ static int _testSetTempoWithMidiBytesNull(void) {
 }
 
 static int _testSetTimeSigBeatsPerMeasure(void) {
-  setTimeSignatureBeatsPerMeasure(8);
+  assert(setTimeSignatureBeatsPerMeasure(8));
   assertIntEquals(getTimeSignatureBeatsPerMeasure(), 8);
   return 0;
 }
 
 static int _testSetTimeSigNoteValue(void) {
-  setTimeSignatureNoteValue(2);
+  assert(setTimeSignatureNoteValue(2));
   assertIntEquals(getTimeSignatureNoteValue(), 2);
   return 0;
 }
@@ -112,18 +112,31 @@ static int _testSetTimeSignatureWithMidiBytes(void) {
   // Corresponds to a time signature of 3/8
   bytes[0] = 3;
   bytes[1] = 3;
-  setTimeSignatureFromMidiBytes(bytes);
+  assert(setTimeSignatureFromMidiBytes(bytes));
+  assertIntEquals(getTimeSignatureBeatsPerMeasure(), 3);
+  assertIntEquals(getTimeSignatureNoteValue(), 8);
+  return 0;
+}
+
+static int _testSetTimeSignatureWithMidiBytesInvalid(void) {
+  unsigned char b[2];
+  b[0] = '0';
+  b[1] = '0';
+  assert(setTimeSignatureBeatsPerMeasure(3));
+  assert(setTimeSignatureNoteValue(8));
+  assertIntEquals(getTimeSignatureBeatsPerMeasure(), 3);
+  assertIntEquals(getTimeSignatureNoteValue(), 8);
+  assertFalse(setTimeSignatureFromMidiBytes(NULL));
   assertIntEquals(getTimeSignatureBeatsPerMeasure(), 3);
   assertIntEquals(getTimeSignatureNoteValue(), 8);
   return 0;
 }
 
 static int _testSetTimeSignatureWithMidiBytesNull(void) {
-  setTimeSignatureBeatsPerMeasure(3);
-  setTimeSignatureNoteValue(8);
+  assert(setTimeSignatureBeatsPerMeasure(3));
+  assert(setTimeSignatureNoteValue(8));
   assertIntEquals(getTimeSignatureBeatsPerMeasure(), 3);
   assertIntEquals(getTimeSignatureNoteValue(), 8);
-  setTimeSignatureFromMidiBytes(NULL);
   assertIntEquals(getTimeSignatureBeatsPerMeasure(), 3);
   assertIntEquals(getTimeSignatureNoteValue(), 8);
   return 0;

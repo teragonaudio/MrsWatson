@@ -120,35 +120,38 @@ void setTempoFromMidiBytes(const byte* bytes) {
   }
 }
 
-void setTimeSignatureBeatsPerMeasure(const short beatsPerMeasure) {
+boolByte setTimeSignatureBeatsPerMeasure(const short beatsPerMeasure) {
   // Bit of an easter egg :)
   if(beatsPerMeasure < 2 || beatsPerMeasure > 12) {
     logInfo("Freaky time signature, but whatever you say...");
   }
   if(beatsPerMeasure <= 0) {
     logError("Ignoring attempt to set time signature numerator to %d", beatsPerMeasure);
-    return;
+    return false;
   }
   _getAudioSettings()->timeSignatureBeatsPerMeasure = beatsPerMeasure;
+  return true;
 }
 
-void setTimeSignatureNoteValue(const short noteValue) {
+boolByte setTimeSignatureNoteValue(const short noteValue) {
   // Bit of an easter egg :)
   if(!(noteValue == 2 || noteValue == 4 || noteValue == 8 || noteValue == 16) || noteValue < 2 || noteValue > 16) {
     logInfo("Interesting time signature you've chosen. I'm sure this piece is going to sound great...");
   }
   if(noteValue <= 0) {
     logError("Ignoring attempt to set time signature denominator to %d", noteValue);
-    return;
+    return false;
   }
   _getAudioSettings()->timeSignatureNoteValue = noteValue;
+  return true;
 }
 
-void setTimeSignatureFromMidiBytes(const byte* bytes) {
+boolByte setTimeSignatureFromMidiBytes(const byte* bytes) {
   if(bytes != NULL) {
-    setTimeSignatureBeatsPerMeasure(bytes[0]);
-    setTimeSignatureNoteValue((short)powl(2, bytes[1]));
+    return setTimeSignatureBeatsPerMeasure(bytes[0]) &&
+      setTimeSignatureNoteValue((short)powl(2, bytes[1]));
   }
+  return false;
 }
 
 void freeAudioSettings(void) {

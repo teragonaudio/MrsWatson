@@ -139,24 +139,28 @@ void setTempoFromMidiBytes(const byte* bytes);
  * checking, but it does require a non-zero value. However, many plugins may act
  * strangely with unusual time signatures.
  * @param beatsPerMeasure Time signature numerator
+ * @return True if successfully set, false otherwise
  */
-void setTimeSignatureBeatsPerMeasure(const short beatsPerMeasure);
+boolByte setTimeSignatureBeatsPerMeasure(const short beatsPerMeasure);
 
 /**
  * Set the time signature's denominator. This function does very little error
  * checking, but it does require a non-zero value. However, many plugins may act
  * strangely with unusual time signatures.
  * @param noteValue Time signature denominator
+ * @return True if successfully set, false otherwise
  */
-void setTimeSignatureNoteValue(const short noteValue);
+boolByte setTimeSignatureNoteValue(const short noteValue);
 
 /**
  * MIDI files represent musical time signature with a two-byte sequence. This
  * function takes two bytes, derives the corresponding time signature, and sets
  * it in the global instance.
  * @param bytes Two byte sequence as read from a MIDI file
+ * @return True if successfully set, false otherwise
  */
-void setTimeSignatureFromMidiBytes(const byte* bytes);
+boolByte setTimeSignatureFromMidiBytes(const byte* bytes);
+
 
 /**
  * Release memory of the global audio settings instance. Any attempt to use the
