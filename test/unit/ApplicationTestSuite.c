@@ -60,6 +60,10 @@ void runApplicationTestSuite(TestEnvironment environment) {
     buildTestArgumentString("--plugin again --input \"%s\" --parameter 1,0.5", a440_stereo_pcm),
     RETURN_CODE_INVALID_ARGUMENT, NULL
   );
+  runApplicationTest(environment, "Set invalid time signature",
+    buildTestArgumentString("--plugin again --input \"%s\" --time-signature invalid", a440_stereo_pcm),
+    RETURN_CODE_INVALID_ARGUMENT, NULL
+  );
 
   // Audio file types
   runApplicationTest(environment, "Read WAV file",
@@ -90,6 +94,10 @@ void runApplicationTestSuite(TestEnvironment environment) {
   );
   runApplicationTest(environment, "Set parameter",
     buildTestArgumentString("--plugin again --input \"%s\" --parameter 0,0.5", a440_stereo_pcm),
+    RETURN_CODE_SUCCESS, kDefaultTestOutputFileType
+  );
+  runApplicationTest(environment, "Set time signature",
+    buildTestArgumentString("--plugin again --input \"%s\" --time-signature 3/4", a440_stereo_pcm),
     RETURN_CODE_SUCCESS, kDefaultTestOutputFileType
   );
 

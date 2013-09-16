@@ -29,6 +29,7 @@
 #define MrsWatson_AudioSettings_h
 
 #include "base/Types.h"
+#include "base/CharString.h"
 
 #define DEFAULT_SAMPLE_RATE 44100.0f
 #define DEFAULT_NUM_CHANNELS 2
@@ -161,6 +162,12 @@ boolByte setTimeSignatureNoteValue(const short noteValue);
  */
 boolByte setTimeSignatureFromMidiBytes(const byte* bytes);
 
+/**
+ * Set the time signature from a string, should look like "3/4".
+ * @param signature Time signature to set
+ * @return True if successfully set, false otherwise
+ */
+boolByte setTimeSignatureFromString(const CharString signature);
 
 /**
  * Release memory of the global audio settings instance. Any attempt to use the

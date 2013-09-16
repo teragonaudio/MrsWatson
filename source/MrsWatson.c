@@ -195,7 +195,9 @@ static void _processMidiMetaEvent(void* item, void* userData) {
         setTempoFromMidiBytes(midiEvent->extraData);
         break;
       case MIDI_META_TYPE_TIME_SIGNATURE:
-        setTimeSignatureFromMidiBytes(midiEvent->extraData);
+        if(!setTimeSignatureFromMidiBytes(midiEvent->extraData)) {
+          logWarn("Could not set time signature from MIDI file");
+        }
         break;
       case MIDI_META_TYPE_TRACK_END:
         logInfo("Reached end of MIDI track");
@@ -382,11 +384,10 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
         case OPTION_TEMPO:
           setTempo(programOptionsGetNumber(programOptions, OPTION_TEMPO));
           break;
-        case OPTION_TIME_SIGNATURE_TOP:
-          setTimeSignatureBeatsPerMeasure((short)programOptionsGetNumber(programOptions, OPTION_TIME_SIGNATURE_TOP));
-          break;
-        case OPTION_TIME_SIGNATURE_BOTTOM:
-          setTimeSignatureNoteValue((short)programOptionsGetNumber(programOptions, OPTION_TIME_SIGNATURE_BOTTOM));
+        case OPTION_TIME_SIGNATURE:
+          if(!setTimeSignatureFromString(programOptionsGetString(programOptions, OPTION_TIME_SIGNATURE))) {
+            return RETURN_CODE_INVALID_ARGUMENT;
+          }
           break;
         case OPTION_ZEBRA_SIZE:
           setLoggingZebraSize((int)programOptionsGetNumber(programOptions, OPTION_ZEBRA_SIZE));

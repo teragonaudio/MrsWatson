@@ -27,6 +27,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <math.h>
 
 #include "audio/AudioSettings.h"
@@ -144,6 +145,27 @@ boolByte setTimeSignatureNoteValue(const short noteValue) {
   }
   _getAudioSettings()->timeSignatureNoteValue = noteValue;
   return true;
+}
+
+boolByte setTimeSignatureFromString(const CharString signature) {
+  char *slash = NULL;
+  int numerator = 0;
+  int denominator = 0;
+
+  if(!charStringIsEmpty(signature)) {
+    slash = strchr(signature->data, '/');
+    if(slash != NULL) {
+      *slash = '\0';
+      numerator = strtod(signature->data, NULL);
+      denominator = strtod(slash + 1, NULL);
+      if(numerator > 0 && denominator > 0) {
+        return setTimeSignatureBeatsPerMeasure(numerator) &&
+          setTimeSignatureNoteValue(denominator);
+      }
+    }
+  }
+
+  return false;
 }
 
 boolByte setTimeSignatureFromMidiBytes(const byte* bytes) {

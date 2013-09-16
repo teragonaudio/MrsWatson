@@ -177,17 +177,13 @@ used and added to <argument>.",
     false, kProgramOptionTypeNumber, kProgramOptionArgumentTypeRequired));
   programOptionsSetNumber(options, OPTION_TEMPO, (int)getTempo());
 
-  programOptionsAdd(options, newProgramOptionWithName(OPTION_TIME_SIGNATURE_TOP, "time-signature-top",
-    "Set the numerator of the time signature, which determines the number of \
-beats per measure.",
-    false, kProgramOptionTypeNumber, kProgramOptionArgumentTypeRequired));
-  programOptionsSetNumber(options, OPTION_TIME_SIGNATURE_TOP, getTimeSignatureBeatsPerMeasure());
-
-  programOptionsAdd(options, newProgramOptionWithName(OPTION_TIME_SIGNATURE_BOTTOM, "time-signature-bottom",
-    "Set the denominator of the time signature, which determines the value of a \
-quarter note.",
-    false, kProgramOptionTypeNumber, kProgramOptionArgumentTypeRequired));
-  programOptionsSetNumber(options, OPTION_TIME_SIGNATURE_BOTTOM, getTimeSignatureNoteValue());
+  programOptionsAdd(options, newProgramOptionWithName(OPTION_TIME_SIGNATURE, "time-signature",
+    "Set the global time signature. Should be a string formatted like \"3/4\".",
+    false, kProgramOptionTypeString, kProgramOptionArgumentTypeRequired));
+  // This is kind of cheating, because the default time signature could be
+  // anything. Realistically we know it will always be hardcoded to 4/4, so this
+  // hardcoded string is also relatively safe.
+  programOptionsSetCString(options, OPTION_TIME_SIGNATURE, "4/4");
 
   programOptionsAdd(options, newProgramOptionWithName(OPTION_VERBOSE, "verbose",
     "Verbose logging. Logging output is printed in the following form:\n\
