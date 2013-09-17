@@ -31,7 +31,6 @@
 
 #include "app/BuildInfo.h"
 #include "audio/AudioSettings.h"
-#include "base/FileUtilities.h"
 #include "base/PlatformUtilities.h"
 #include "io/SampleSource.h"
 #include "io/SampleSourcePcm.h"
@@ -252,8 +251,8 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   inputSource = sampleSourceFactory(NULL);
 
   if(!programOptionsParseArgs(programOptions, argc, argv)) {
-    printf("Run '%s --help' to see possible options\n", getFileBasename(argv[0]));
-    printf("Or run '%s --help full' to see extended help for all options\n", getFileBasename(argv[0]));
+    printf("Run with '--help' to see possible options\n");
+    printf("Or run with '--help full' to see extended help for all options\n");
     return RETURN_CODE_INVALID_ARGUMENT;
   }
 

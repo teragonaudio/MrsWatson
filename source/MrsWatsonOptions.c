@@ -29,7 +29,7 @@
 #include <stdio.h>
 
 #include "audio/AudioSettings.h"
-#include "base/FileUtilities.h"
+#include "base/File.h"
 
 #include "MrsWatsonOptions.h"
 
@@ -203,9 +203,11 @@ used and added to <argument>.",
 }
 
 void printMrsWatsonQuickstart(const char* argvName) {
-  const char *programBasename = getFileBasename(argvName);
+  File argvFile = newFileWithPathCString(argvName);
+  const char *programBasename = argvFile->absolutePath->data;
   printf("Run with '--help full' to see extended help for all options.\n");
   printf("Quickstart for effects: %s -p <plugin> -i <input file> -o <output>\n", programBasename);
   printf("Quickstart for instruments: %s -p <name> -m <midi file> -o <output>\n", programBasename);
   printf("\n");
+  freeFile(argvFile);
 }
