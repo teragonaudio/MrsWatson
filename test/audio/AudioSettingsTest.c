@@ -118,20 +118,6 @@ static int _testSetTimeSignatureWithMidiBytes(void) {
   return 0;
 }
 
-static int _testSetTimeSignatureWithMidiBytesInvalid(void) {
-  unsigned char b[2];
-  b[0] = '0';
-  b[1] = '0';
-  assert(setTimeSignatureBeatsPerMeasure(3));
-  assert(setTimeSignatureNoteValue(8));
-  assertIntEquals(getTimeSignatureBeatsPerMeasure(), 3);
-  assertIntEquals(getTimeSignatureNoteValue(), 8);
-  assertFalse(setTimeSignatureFromMidiBytes(NULL));
-  assertIntEquals(getTimeSignatureBeatsPerMeasure(), 3);
-  assertIntEquals(getTimeSignatureNoteValue(), 8);
-  return 0;
-}
-
 static int _testSetTimeSignatureWithMidiBytesNull(void) {
   assert(setTimeSignatureBeatsPerMeasure(3));
   assert(setTimeSignatureNoteValue(8));
@@ -198,7 +184,6 @@ TestSuite addAudioSettingsTests(void) {
   addTest(testSuite, "SetTimeSignatureBeatsPerMeasure", _testSetTimeSigBeatsPerMeasure);
   addTest(testSuite, "SetTimeSignatureNoteValue", _testSetTimeSigNoteValue);
   addTest(testSuite, "SetTimeSignatureWithMidiBytes", _testSetTimeSignatureWithMidiBytes);
-  addTest(testSuite, "SetTimeSignatureWithMidiBytesInvalid", _testSetTimeSignatureWithMidiBytesInvalid);
   addTest(testSuite, "SetTimeSignatureWithMidiBytesNull", _testSetTimeSignatureWithMidiBytesNull);
   addTest(testSuite, "SetTimeSignatureFromString", _testSetTimeSignatureFromString);
   addTest(testSuite, "SetTimeSignatureFromInvalidString", _testSetTimeSignatureFromInvalidString);
