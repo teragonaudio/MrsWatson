@@ -32,7 +32,6 @@
 #include "app/ProgramOption.h"
 #include "audio/AudioSettings.h"
 #include "base/File.h"
-#include "base/FileUtilities.h"
 #include "base/LinkedList.h"
 #include "logging/EventLogger.h"
 

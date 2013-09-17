@@ -31,7 +31,6 @@
 #include <sys/stat.h>
 
 #include "base/File.h"
-#include "base/FileUtilities.h"
 #include "base/PlatformUtilities.h"
 #include "logging/EventLogger.h"
 
