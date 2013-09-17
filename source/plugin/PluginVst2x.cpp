@@ -99,18 +99,22 @@ static const char* _getVst2xPlatformExtension(void) {
 }
 
 static void _logPluginVst2xInLocation(void* item, void* userData) {
-  CharString itemName = (CharString)item;
+  File itemFile = (File)item;
+  CharString itemPath = newCharStringWithCString(itemFile->absolutePath->data);
   boolByte* pluginsFound = (boolByte*)userData;
   char* dot;
 
-  dot = strrchr(itemName->data, '.');
+  logDebug("Checking item '%s'", itemPath->data);
+  dot = strrchr(itemPath->data, '.');
   if(dot != NULL) {
     if(!strncmp(dot + 1, _getVst2xPlatformExtension(), 3)) {
       *dot = '\0';
-      logInfo("  %s", itemName->data);
+      logInfo("  %s", itemPath->data);
       *pluginsFound = true;
     }
   }
+
+  freeCharString(itemPath);
 }
 
 static void _logPluginLocation(const CharString location) {
@@ -118,17 +122,20 @@ static void _logPluginLocation(const CharString location) {
 }
 
 static void _listPluginsVst2xInLocation(void* item, void* userData) {
-  CharString location;
+  CharString locationString;
+  File location = NULL;
   LinkedList locationItems;
   boolByte pluginsFound = false;
 
-  location = (CharString)item;
-  _logPluginLocation(location);
-  locationItems = listDirectory(location);
+  locationString = (CharString)item;
+  _logPluginLocation(locationString);
+  location = newFileWithPath(locationString);
+  locationItems = fileListDirectory(location);
   if(linkedListLength(locationItems) == 0) {
     // Empty or does not exist, return
     logInfo("  (Empty or non-existent directory)");
     freeLinkedList(locationItems);
+    freeFile(location);
     return;
   }
 
@@ -137,7 +144,8 @@ static void _listPluginsVst2xInLocation(void* item, void* userData) {
     logInfo("  (No plugins found)");
   }
 
-  freeLinkedListAndItems(locationItems, (LinkedListFreeItemFunc)freeCharString);
+  freeFile(location);
+  freeLinkedListAndItems(locationItems, (LinkedListFreeItemFunc)freeFile);
 }
 
 void listAvailablePluginsVst2x(const CharString pluginRoot) {
