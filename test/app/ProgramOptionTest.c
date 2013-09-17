@@ -115,7 +115,7 @@ static int _testParseCommandLineRequiredOption(void) {
   assertFalse(p->options[0]->enabled);
   assertDoubleEquals(programOptionsGetNumber(p, 0), 0.0f, 0.0f);
   assert(programOptionsParseArgs(p, 3, argv));
-  assertDoubleEquals(programOptionsGetNumber(p, 0), 1.23f, 0.0f);
+  assertDoubleEquals(programOptionsGetNumber(p, 0), 1.23f, 0.01f);
   assert(p->options[0]->enabled);
 
   freeProgramOptions(p);
