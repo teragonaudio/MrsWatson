@@ -455,7 +455,7 @@ boolByte fileRemove(File self) {
         result = (nftw(self->absolutePath->data, _removeCallback, kFileMaxRecursionDepth, FTW_DEPTH | FTW_PHYS) == 0);
 #elif WINDOWS
         fileOperation.wFunc = FO_DELETE;
-        fileOperation.pFrom = absolutePath->data;
+        fileOperation.pFrom = self->absolutePath->data;
         fileOperation.fFlags = FOF_NO_UI;
         result = (SHFileOperationA(&fileOperation) == 0);
 #endif
@@ -525,6 +525,8 @@ LinkedList fileListDirectory(File self) {
 
 size_t fileGetSize(File self) {
   size_t result = 0;
+
+#if UNIX
   struct stat fileStat;
 
   if(self->absolutePath == NULL) {
@@ -538,6 +540,10 @@ size_t fileGetSize(File self) {
       result = (size_t)fileStat.st_size;
     }
   }
+#elif WINDOWS
+#else
+  logUnsupportedFeature("Get file size");
+#endif
 
   return result;
 }

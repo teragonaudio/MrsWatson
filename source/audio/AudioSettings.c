@@ -156,8 +156,8 @@ boolByte setTimeSignatureFromString(const CharString signature) {
     slash = strchr(signature->data, '/');
     if(slash != NULL) {
       *slash = '\0';
-      numerator = strtod(signature->data, NULL);
-      denominator = strtod(slash + 1, NULL);
+      numerator = (int)strtod(signature->data, NULL);
+      denominator = (int)strtod(slash + 1, NULL);
       if(numerator > 0 && denominator > 0) {
         return setTimeSignatureBeatsPerMeasure(numerator) &&
           setTimeSignatureNoteValue(denominator);

@@ -188,7 +188,8 @@ static void _programOptionSetData(ProgramOption self, const char* data) {
       _programOptionSetCString(self, data);
       break;
     case kProgramOptionTypeNumber:
-      _programOptionSetNumber(self, strtof(data, NULL));
+      // Windows doesn't do strtof :(
+      _programOptionSetNumber(self, (float)strtod(data, NULL));
       break;
     case kProgramOptionTypeList:
       _programOptionSetListItem(self, (void*)data);

@@ -40,13 +40,13 @@ ProgramOptions newMrsWatsonOptions(void) {
     "Blocksize in frames to use for processing. If input source is not an even \
 multiple of the blocksize, then empty frames will be added to the last block.",
     true, kProgramOptionTypeNumber, kProgramOptionArgumentTypeRequired));
-  programOptionsSetNumber(options, OPTION_BLOCKSIZE, (int)getBlocksize());
+  programOptionsSetNumber(options, OPTION_BLOCKSIZE, (const float)getBlocksize());
 
   programOptionsAdd(options, newProgramOptionWithName(OPTION_CHANNELS, "channels",
     "Number of channels for output source. If the input source specifies a channel \
 count, then that value will be override the one set by this option.",
     true, kProgramOptionTypeNumber, kProgramOptionArgumentTypeRequired));
-  programOptionsSetNumber(options, OPTION_CHANNELS, getNumChannels());
+  programOptionsSetNumber(options, OPTION_CHANNELS, (const float)getNumChannels());
 
   programOptionsAdd(options, newProgramOptionWithName(OPTION_COLOR_LOGGING, "color",
     "Colored logging output. Argument can be 'auto', 'force', or 'none'. If no \
@@ -163,7 +163,7 @@ to indicate which plugin to load. Examples:\n\n\
     "Sample rate to use when processing. If the input source specifies its own \
 sample rate, that value will override the one set by this option.",
     true, kProgramOptionTypeNumber, kProgramOptionArgumentTypeRequired));
-  programOptionsSetNumber(options, OPTION_SAMPLE_RATE, (int)getSampleRate());
+  programOptionsSetNumber(options, OPTION_SAMPLE_RATE, (const float)getSampleRate());
 
   programOptionsAdd(options, newProgramOptionWithName(OPTION_TAIL_TIME, "tail-time",
     "Continue processing for up to <argument> extra milliseconds after input \
@@ -175,7 +175,7 @@ used and added to <argument>.",
   programOptionsAdd(options, newProgramOptionWithName(OPTION_TEMPO, "tempo",
     "Tempo to use when processing.",
     false, kProgramOptionTypeNumber, kProgramOptionArgumentTypeRequired));
-  programOptionsSetNumber(options, OPTION_TEMPO, (int)getTempo());
+  programOptionsSetNumber(options, OPTION_TEMPO, (const float)getTempo());
 
   programOptionsAdd(options, newProgramOptionWithName(OPTION_TIME_SIGNATURE, "time-signature",
     "Set the global time signature. Should be a string formatted like \"3/4\".",
@@ -197,7 +197,7 @@ used and added to <argument>.",
   programOptionsAdd(options, newProgramOptionWithName(OPTION_ZEBRA_SIZE, "zebra-size",
     "Alternate logging output colors every <argument> frames.",
     false, kProgramOptionTypeNumber, kProgramOptionArgumentTypeRequired));
-  programOptionsSetNumber(options, OPTION_ZEBRA_SIZE, (int)getSampleRate());
+  programOptionsSetNumber(options, OPTION_ZEBRA_SIZE, (const float)getSampleRate());
 
   return options;
 }

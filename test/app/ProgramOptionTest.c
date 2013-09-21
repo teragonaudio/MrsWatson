@@ -321,8 +321,9 @@ static int _testGetListForInvalidOption(void) {
 
 static int _testSetString(void) {
   ProgramOptions p = _getTestOptionMultipleTypes();
+  CharString s;
   programOptionsSetCString(p, 0, "test");
-  CharString s = programOptionsGetString(p, 0);
+  s = programOptionsGetString(p, 0);
   assertNotNull(s);
   assertCharStringEquals(s, "test");
   freeProgramOptions(p);
@@ -338,8 +339,9 @@ static int _testSetStringForWrongType(void) {
 
 static int _testSetStringForInvalidOption(void) {
   ProgramOptions p = _getTestOptionMultipleTypes();
+  CharString s;
   programOptionsSetCString(p, 4, "test");
-  CharString s = programOptionsGetString(p, 0);
+  s = programOptionsGetString(p, 0);
   assertNotNull(s);
   assertCharStringEquals(s, "");
   freeProgramOptions(p);
@@ -348,8 +350,9 @@ static int _testSetStringForInvalidOption(void) {
 
 static int _testSetStringWithNull(void) {
   ProgramOptions p = _getTestOptionMultipleTypes();
+  CharString s;
   programOptionsSetCString(p, 0, NULL);
-  CharString s = programOptionsGetString(p, 0);
+  s = programOptionsGetString(p, 0);
   assertNotNull(s);
   assertCharStringEquals(s, "");
   freeProgramOptions(p);
@@ -358,8 +361,9 @@ static int _testSetStringWithNull(void) {
 
 static int _testSetNumeric(void) {
   ProgramOptions p = _getTestOptionMultipleTypes();
+  float f;
   programOptionsSetNumber(p, 1, 1.23f);
-  float f = programOptionsGetNumber(p, 1);
+  f = programOptionsGetNumber(p, 1);
   assertDoubleEquals(f, 1.23f, 0.01f);
   freeProgramOptions(p);
   return 0;
@@ -381,11 +385,15 @@ static int _testSetNumericForInvalidOption(void) {
 
 static int _testSetListItem(void) {
   ProgramOptions p = _getTestOptionMultipleTypes();
-  CharString s = newCharStringWithCString("test");
+  CharString s;
+  LinkedList l;
+  CharString r;
+
+  s = newCharStringWithCString("test");
   programOptionsSetListItem(p, 2, s);
-  LinkedList l = programOptionsGetList(p, 2);
+  l = programOptionsGetList(p, 2);
   assertIntEquals(linkedListLength(l), 1);
-  CharString r = l->item;
+  r = l->item;
   assertCharStringEquals(r, "test");
   freeCharString(s);
   freeProgramOptions(p);

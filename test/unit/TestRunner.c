@@ -13,17 +13,17 @@ void addTestToTestSuite(TestSuite testSuite, TestCase testCase) {
 const LogColor getLogColor(TestLogEventType eventType) {
   switch(eventType) {
     case kTestLogEventSection:
-      return isatty(1) ? COLOR_FG_CYAN : NULL;
+      return isatty(1) ? COLOR_FG_CYAN : COLOR_NONE;
     case kTestLogEventPass:
-      return isatty(1) ? COLOR_FG_GREEN : NULL;
+      return isatty(1) ? COLOR_FG_GREEN : COLOR_NONE;
     case kTestLogEventFail:
-      return isatty(1) ? COLOR_BG_MAROON : NULL;
+      return isatty(1) ? COLOR_BG_MAROON : COLOR_NONE;
     case kTestLogEventSkip:
-      return isatty(1) ? COLOR_FG_YELLOW : NULL;
+      return isatty(1) ? COLOR_FG_YELLOW : COLOR_NONE;
     case kTestLogEventReset:
-      return isatty(1) ? COLOR_RESET : NULL;
+      return isatty(1) ? COLOR_RESET : COLOR_NONE;
     default:
-      return NULL;
+      return COLOR_NONE;
   }
 }
 

@@ -251,8 +251,8 @@ void _pluginChainSetParameter(void* item, void* userData) {
     return;
   }
   *comma = '\0';
-  index = strtod(parameterValue, NULL);
-  value = strtof(comma + 1, NULL);
+  index = (int)strtod(parameterValue, NULL);
+  value = (float)strtod(comma + 1, NULL);
   logDebug("Set parameter %d to %f", index, value);
   passData->success = plugin->setParameter(plugin, index, value);
 }

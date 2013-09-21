@@ -220,9 +220,9 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   boolByte shouldDisplayPluginInfo = false;
   MidiSequence midiSequence = NULL;
   MidiSource midiSource = NULL;
-  long maxTimeInMs = 0;
+  unsigned long maxTimeInMs = 0;
   unsigned long maxTimeInFrames = 0;
-  long tailTimeInMs = 0;
+  unsigned long tailTimeInMs = 0;
   unsigned long tailTimeInFrames = 0;
   ProgramOptions programOptions;
   ProgramOption option;
@@ -348,10 +348,10 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
     if(option->enabled) {
       switch(option->index) {
         case OPTION_BLOCKSIZE:
-          setBlocksize(programOptionsGetNumber(programOptions, OPTION_BLOCKSIZE));
+          setBlocksize((const unsigned long)programOptionsGetNumber(programOptions, OPTION_BLOCKSIZE));
           break;
         case OPTION_CHANNELS:
-          setNumChannels(programOptionsGetNumber(programOptions, OPTION_CHANNELS));
+          setNumChannels((const unsigned long)programOptionsGetNumber(programOptions, OPTION_CHANNELS));
           break;
         case OPTION_DISPLAY_INFO:
           shouldDisplayPluginInfo = true;
@@ -361,7 +361,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
           inputSource = sampleSourceFactory(programOptionsGetString(programOptions, OPTION_INPUT_SOURCE));
           break;
         case OPTION_MAX_TIME:
-          maxTimeInMs = programOptionsGetNumber(programOptions, OPTION_MAX_TIME);
+          maxTimeInMs = (const unsigned long)programOptionsGetNumber(programOptions, OPTION_MAX_TIME);
           break;
         case OPTION_MIDI_SOURCE:
           midiSource = newMidiSource(guessMidiSourceType(programOptionsGetString(
@@ -378,7 +378,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
           setSampleRate(programOptionsGetNumber(programOptions, OPTION_SAMPLE_RATE));
           break;
         case OPTION_TAIL_TIME:
-          tailTimeInMs = programOptionsGetNumber(programOptions, OPTION_TAIL_TIME);
+          tailTimeInMs = (long)programOptionsGetNumber(programOptions, OPTION_TAIL_TIME);
           break;
         case OPTION_TEMPO:
           setTempo(programOptionsGetNumber(programOptions, OPTION_TEMPO));

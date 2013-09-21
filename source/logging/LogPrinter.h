@@ -34,7 +34,8 @@
 #if UNIX
 typedef const char* LogColor;
 
-#define COLOR_RESET   "\x1b[0m"
+#define COLOR_RESET      "\x1b[0m"
+#define COLOR_NONE       NULL
 
 #define COLOR_FG_BLACK   "\x1b[30m"
 #define COLOR_FG_MAROON  "\x1b[31m"
@@ -67,29 +68,32 @@ typedef const char* LogColor;
 #define COLOR_BG_FUCHSIA "\x1b[105m\x1b[30m"
 #define COLOR_BG_CYAN    "\x1b[46m\x1b[30m"
 #define COLOR_BG_WHITE   "\x1b[47m\x1b[30m"
-#else
+
+#elif WINDOWS
 typedef WORD LogColor;
 
-#define COLOR_RESET   0
+#define COLOR_RESET 0
+#define COLOR_NONE  0
 
 #if 0
-#define BLACK 0
-#define BLUE 1
-#define GREEN 2
-#define CYAN 3
-#define RED 4
-#define MAGENTA 5
-#define BROWN 6
-#define LIGHTGREY 7
-#define DARKGREY 8
-#define LIGHTBLUE 9
-#define LIGHTGREEN 10
-#define LIGHTCYAN 11
-#define LIGHTRED 12
+#define BLACK         0
+#define BLUE          1
+#define GREEN         2
+#define CYAN          3
+#define RED           4
+#define MAGENTA       5
+#define BROWN         6
+#define LIGHTGREY     7
+#define DARKGREY      8
+#define LIGHTBLUE     9
+#define LIGHTGREEN   10
+#define LIGHTCYAN    11
+#define LIGHTRED     12
 #define LIGHTMAGENTA 13
-#define YELLOW 14
-#define WHITE 15
+#define YELLOW       14
+#define WHITE        15
 #endif
+
 #define COLOR_FG_BLACK   0
 #define COLOR_FG_MAROON  0x05
 #define COLOR_FG_GREEN   FOREGROUND_GREEN | FOREGROUND_INTENSITY
