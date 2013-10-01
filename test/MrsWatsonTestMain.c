@@ -85,6 +85,10 @@ etc.). Normally these files are automatically removed if a test succeeds.",
     "Print full program help (this screen), or just the help for a single argument.",
     true, kProgramOptionTypeString, kProgramOptionArgumentTypeOptional));
 
+  programOptionsAdd(programOptions, newProgramOptionWithName(OPTION_TEST_VERBOSE, "verbose",
+    "Show logging output from tests",
+    true, kProgramOptionTypeEmpty, kProgramOptionArgumentTypeNone));
+
   return programOptions;
 }
 
@@ -197,6 +201,11 @@ int main(int argc, char* argv[]) {
   else if(programOptions->options[OPTION_TEST_PRINT_TESTS]->enabled) {
     printInternalTests();
     return -1;
+  }
+
+  if(programOptions->options[OPTION_TEST_VERBOSE]->enabled) {
+    initEventLogger();
+    setLogLevel(LOG_DEBUG);
   }
 
   testSuiteToRun = programOptionsGetString(programOptions, OPTION_TEST_SUITE);
