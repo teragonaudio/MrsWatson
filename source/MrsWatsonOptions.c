@@ -161,7 +161,9 @@ to indicate which plugin to load. Examples:\n\n\
 
   programOptionsAdd(options, newProgramOptionWithName(OPTION_SAMPLE_RATE, "sample-rate",
     "Sample rate to use when processing. If the input source specifies its own \
-sample rate, that value will override the one set by this option.",
+sample rate, that value will override the one set by this option. No error checking \
+is done for sample rates (other than requiring it to be greater than 0), however \
+using unusual sample rates will probably result in weird behavior from plugins.",
     true, kProgramOptionTypeNumber, kProgramOptionArgumentTypeRequired));
   programOptionsSetNumber(options, OPTION_SAMPLE_RATE, (const float)getSampleRate());
 
