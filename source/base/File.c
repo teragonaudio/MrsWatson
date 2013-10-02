@@ -749,20 +749,20 @@ File fileGetParent(File self) {
 }
 
 CharString fileGetExtension(File self) {
+  CharString basename = fileGetBasename(self);
   CharString result = NULL;
   char *dot = NULL;
 
-  if(self->absolutePath == NULL || charStringIsEmpty(self->absolutePath)) {
+  if(basename == NULL || charStringIsEmpty(basename)) {
+    freeCharString(basename);
     return NULL;
   }
-  dot = strrchr(self->absolutePath->data, '.');
-  if(dot == NULL) {
-    return NULL;
-  }
-  else {
+  dot = strrchr(basename->data, '.');
+  if(dot != NULL) {
     result = newCharStringWithCString(dot + 1);
   }
 
+  freeCharString(basename);
   return result;
 }
 

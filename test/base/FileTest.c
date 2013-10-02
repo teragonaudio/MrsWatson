@@ -2,6 +2,7 @@
 #include "base/File.h"
 
 #define TEST_DIRNAME "test_dir"
+#define TEST_DIRNAME_WITH_DOT "test.dir"
 #define TEST_DIRNAME_COPY_DEST "test_dir_dest"
 #define TEST_FILENAME "test_file.txt"
 
@@ -10,6 +11,8 @@ static void _fileTestTeardown(void) {
   File testFile = newFileWithPath(testFilePath);
   CharString testDirPath = newCharStringWithCString(TEST_DIRNAME);
   File testDir = newFileWithPath(testDirPath);
+  CharString testDirWithDotPath = newCharStringWithCString(TEST_DIRNAME_WITH_DOT);
+  File testDirWithDot = newFileWithPath(testDirWithDotPath);
   CharString testDirCopyPath = newCharStringWithCString(TEST_DIRNAME_COPY_DEST);
   File testDirCopy = newFileWithPath(testDirCopyPath);
 
@@ -19,15 +22,20 @@ static void _fileTestTeardown(void) {
   if(fileExists(testDir)) {
     fileRemove(testDir);
   }
+  if(fileExists(testDirWithDot)) {
+    fileRemove(testDirWithDot);
+  }
   if(fileExists(testDirCopy)) {
     fileRemove(testDirCopy);
   }
 
   freeFile(testFile);
   freeFile(testDir);
+  freeFile(testDirWithDot);
   freeFile(testDirCopy);
   freeCharString(testFilePath);
   freeCharString(testDirPath);
+  freeCharString(testDirWithDotPath);
   freeCharString(testDirCopyPath);
 }
 
@@ -1312,6 +1320,30 @@ static int _testFileGetExtensionNone(void) {
   return 0;
 }
 
+static int _testFileGetExtensionWithDotInPath(void) {
+  CharString p = newCharStringWithCString(TEST_DIRNAME_WITH_DOT);
+  File d = newFileWithPath(p);
+  CharString pfile = newCharStringWithCString(TEST_DIRNAME_COPY_DEST);
+  File f = NULL;
+  CharString result = NULL;
+
+  assertFalse(fileExists(d));
+  assert(fileCreate(d, kFileTypeDirectory));
+
+  f = newFileWithParent(d, pfile);
+  assertNotNull(f);
+  result = fileGetExtension(f);
+  // The parent directory has a dot, but the file doesn't so this call
+  // should return null.
+  assertIsNull(result);
+
+  freeCharString(p);
+  freeCharString(pfile);
+  freeFile(f);
+  freeFile(d);
+  return 0;
+}
+
 static int _testFileFreeNull(void) {
   freeFile(NULL);
   return 0;
@@ -1404,6 +1436,7 @@ TestSuite addFileTests(void) {
   addTest(testSuite, "FileGetExtensionDirectory", _testFileGetExtensionDirectory);
   addTest(testSuite, "FileGetExtensionInvalid", _testFileGetExtensionInvalid);
   addTest(testSuite, "FileGetExtensionNone", _testFileGetExtensionNone);
+  addTest(testSuite, "FileGetExtensionWithDotInPath", _testFileGetExtensionWithDotInPath);
 
   addTest(testSuite, "FileFreeNull", _testFileFreeNull);
 
