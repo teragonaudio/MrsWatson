@@ -3,6 +3,10 @@ language: cpp
 compiler:
   - gcc
 
+before_install:
+  - sudo apt-get update -qq
+  - sudo apt-get install -qq gcc-multilib g++-multilib ia32-libs libstdc++
+
 before_script:
   - mkdir build
   - cd build
