@@ -31,6 +31,7 @@
 
 #include "logging/EventLogger.h"
 #include "plugin/PluginChain.h"
+#include "audio/AudioSettings.h"
 
 PluginChain newPluginChain(void) {
   PluginChain pluginChain = (PluginChain)malloc(sizeof(PluginChainMembers));
@@ -270,6 +271,8 @@ void pluginChainProcessAudio(PluginChain pluginChain, SampleBuffer inBuffer, Sam
   Plugin plugin;
   unsigned int pluginInputs, pluginOutputs;
   unsigned int i;
+  double processingTimeInMs;
+  const double maxProcessingTimeInMs = inBuffer->blocksize * 1000.0 / getSampleRate();
 
   for(i = 0; i < pluginChain->numPlugins; i++) {
     sampleBufferClear(outBuffer);
@@ -288,7 +291,16 @@ void pluginChainProcessAudio(PluginChain pluginChain, SampleBuffer inBuffer, Sam
     }
     taskTimerStart(pluginChain->audioTimers[i]);
     plugin->processAudio(plugin, inBuffer, outBuffer);
-    taskTimerStop(pluginChain->audioTimers[i]);
+    processingTimeInMs = taskTimerStop(pluginChain->audioTimers[i]);
+    if(processingTimeInMs > maxProcessingTimeInMs) {
+      logWarn("Possible dropout! Plugin '%s' spent %dms processing time (%dms max)",
+        plugin->pluginName->data, (int)processingTimeInMs, (int)maxProcessingTimeInMs);
+    }
+    else {
+      logDebug("Plugin '%s' spent %dms processing (%d%% effective CPU usage)",
+        plugin->pluginName->data, (int)processingTimeInMs,
+        (int)(processingTimeInMs / maxProcessingTimeInMs));
+    }
     
     // If this is not the last plugin in the chain, then copy the output of this plugin
     // back to the input for the next one in the chain.
