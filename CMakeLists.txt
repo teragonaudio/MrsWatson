@@ -84,7 +84,7 @@ if(UNIX)
     set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g")
     set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
-    set(CMAKE_EXE_LINKER_FLAGS "-framework Carbon -framework CoreFoundation")
+    set(CMAKE_EXE_LINKER_FLAGS "-framework Carbon -framework CoreFoundation -mmacosx-version-min=10.5")
 
     # TODO: How many of these are common to unix GCC?
     add_definitions("${common_gcc_flags} -DMACOSX=1 -fpascal-strings -Wnewline-eof -Wshorten-64-to-32 -fasm-blocks -mmacosx-version-min=10.5")
