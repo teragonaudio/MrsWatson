@@ -210,7 +210,7 @@ static void _printMessage(const LogLevel logLevel, const long elapsedTimeInMs, c
   }
   else {
     snprintf(logString, kCharStringLengthLong, "%c %08ld %06ld %s", _logLevelStatusChar(logLevel), numFramesProcessed, elapsedTimeInMs, message);
-    printToLog(COLOR_RESET, eventLogger->logFile, logString);
+    printToLog(COLOR_NONE, eventLogger->logFile, logString);
   }
   flushLog(eventLogger->logFile);
   free(logString);
