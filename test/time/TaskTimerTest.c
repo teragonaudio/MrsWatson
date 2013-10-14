@@ -131,20 +131,25 @@ static void _testSleep(void) {
 }
 
 static int _testTaskTimerDuration(void) {
+  double elapsedTime = 0.0;
   taskTimerStart(_testTaskTimer);
   _testSleep();
-  taskTimerStop(_testTaskTimer);
+  elapsedTime = taskTimerStop(_testTaskTimer);
   assertDoubleEquals(_testTaskTimer->totalTaskTime, SLEEP_DURATION_MS, MAX_TIMER_TOLERANCE_MS);
+  assertDoubleEquals(elapsedTime, SLEEP_DURATION_MS, MAX_TIMER_TOLERANCE_MS);
   return 0;
 }
 
 static int _testTaskTimerDurationMultipleTimes(void) {
+  double elapsedTime = 0.0;
   int i;
 
   for(i = 0; i < 5; i++) {
     taskTimerStart(_testTaskTimer);
     _testSleep();
-    taskTimerStop(_testTaskTimer);
+    elapsedTime = taskTimerStop(_testTaskTimer);
+    assertDoubleEquals(elapsedTime, SLEEP_DURATION_MS, MAX_TIMER_TOLERANCE_MS);
+    elapsedTime = 0.0;
   }
   assertDoubleEquals(_testTaskTimer->totalTaskTime, 5.0 * SLEEP_DURATION_MS, MAX_TIMER_TOLERANCE_MS * 5.0);
 
@@ -234,12 +239,15 @@ TestSuite addTaskTimerTests(void) {
   addTest(testSuite, "NewObjectWithNullComponentCString", _testNewObjectWithNullComponentCString);
   addTest(testSuite, "NewObjectWithNullSubcomponent", _testNewObjectWithNullSubcomponent);
   addTest(testSuite, "NewObjectWithCStrings", _testNewObjectWithCStrings);
+
   addTest(testSuite, "TaskDuration", _testTaskTimerDuration);
   addTest(testSuite, "TaskDurationMultipleTimes", _testTaskTimerDurationMultipleTimes);
+
   addTest(testSuite, "CallStartTwice", _testTaskTimerCallStartTwice);
   addTest(testSuite, "CallStopTwice", _testTaskTimerCallStopTwice);
   addTest(testSuite, "CallStartTwice", _testTaskTimerCallStartTwice);
   addTest(testSuite, "CallStopBeforeStart", _testCallStopBeforeStart);
+
   addTest(testSuite, "HumanReadableTimeMs", _testHumanReadableTimeMs);
   addTest(testSuite, "HumanReadableTimeSec", _testHumanReadableTimeSec);
   addTest(testSuite, "HumanReadableTimeMinSec", _testHumanReadableTimeMinSec);

@@ -80,8 +80,9 @@ void taskTimerStart(TaskTimer self);
 /**
  * Stop the timer. Timers may be stopped and started multiple times.
  * @param self
+ * @return Time used since last call to taskTimerStart()
  */
-void taskTimerStop(TaskTimer self);
+double taskTimerStop(TaskTimer self);
 
 /**
  * Get the string representation of the total accumulated time for this timer.

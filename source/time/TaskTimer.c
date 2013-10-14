@@ -68,9 +68,9 @@ void taskTimerStart(TaskTimer self) {
   self->_running = true;
 }
 
-void taskTimerStop(TaskTimer self) {
-#if UNIX
+double taskTimerStop(TaskTimer self) {
   double elapsedTimeInMs;
+#if UNIX
   double elapsedFullSeconds;
   double elapsedMicroseconds;
   struct timeval currentTime;
@@ -80,7 +80,7 @@ void taskTimerStop(TaskTimer self) {
 #endif
 
   if(!self->_running) {
-    return;
+    return 0.0;
   }
 
 #if UNIX
@@ -98,10 +98,12 @@ void taskTimerStop(TaskTimer self) {
 #elif WINDOWS
   QueryPerformanceCounter(&stopTime);
   elapsedTimeInClocks = stopTime.QuadPart - self->startTime.QuadPart;
-  self->totalTaskTime += (double)(elapsedTimeInClocks) / self->counterFrequency;
+  elapsedTimeInMs = (double)(elapsedTimeInClocks) / self->counterFrequency;
+  self->totalTaskTime += elapsedTimeInMs;
 #endif
 
   self->_running = false;
+  return elapsedTimeInMs;
 }
 
 CharString taskTimerHumanReadbleString(TaskTimer self) {
