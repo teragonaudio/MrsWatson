@@ -59,13 +59,17 @@ static int _testGetShortPlatformName(void) {
 
 static int _testIsHostLittleEndian(void) {
 #if LINUX
+  return 1;
 #elif MACOSX
 #if __DARWIN_BYTE_ORDER == __DARWIN_BIG_ENDIAN
   assertFalse(isHostLittleEndian());
 #elif __DARWIN_BYTE_ORDER == __DARWIN_LITTLE_ENDIAN
   assert(isHostLittleEndian());
+#else
+#error Undefined endian type
 #endif
 #elif WINDOWS
+  return 1;
 #endif
   return 0;
 }
@@ -73,24 +77,84 @@ static int _testIsHostLittleEndian(void) {
 static int _testFlipShortEndian(void) {
   unsigned short s = 0xabcd;
   unsigned short r = flipShortEndian(s);
-  assertUnsignedLongEquals(r, 0xcdab);
+  assertUnsignedLongEquals(r, 0xcdabul);
   assertIntEquals(s, flipShortEndian(r));
   return 0;
 }
 
 static int _testConvertBigEndianShortToPlatform(void) {
+  unsigned short s = 0xabcd;
+  unsigned short r = convertBigEndianShortToPlatform(s);
+#if LINUX
+  return 1;
+#elif MACOSX
+#if __DARWIN_BYTE_ORDER == __DARWIN_BIG_ENDIAN
+  assertUnsignedLongEquals(s, (unsigned long)r);
+#elif __DARWIN_BYTE_ORDER == __DARWIN_LITTLE_ENDIAN
+  assertUnsignedLongEquals(s, (unsigned long)flipShortEndian(r));
+#else
+#error Undefined endian type
+#endif
+#elif WINDOWS
+  return 1;
+#endif
   return 0;
 }
 
 static int _testConvertBigEndianIntToPlatform(void) {
+  unsigned int i = 0xdeadbeef;
+  unsigned int r = convertBigEndianIntToPlatform(i);
+#if LINUX
+  return 1;
+#elif MACOSX
+#if __DARWIN_BYTE_ORDER == __DARWIN_BIG_ENDIAN
+  assertUnsignedLongEquals(r, (unsigned long)i);
+#elif __DARWIN_BYTE_ORDER == __DARWIN_LITTLE_ENDIAN
+  assertUnsignedLongEquals(r, 0xefbeaddeul);
+#else
+#error Undefined endian type
+#endif
+#elif WINDOWS
+  return 1;
+#endif
   return 0;
 }
 
 static int _testConvertLittleEndianIntToPlatform(void) {
+  unsigned int i = 0xdeadbeef;
+  unsigned int r = convertLittleEndianIntToPlatform(i);
+#if LINUX
+  return 1;
+#elif MACOSX
+#if __DARWIN_BYTE_ORDER == __DARWIN_BIG_ENDIAN
+  assertUnsignedLongEquals(r, 0xefbeaddeul);
+#elif __DARWIN_BYTE_ORDER == __DARWIN_LITTLE_ENDIAN
+  assertUnsignedLongEquals(r, (unsigned long)i);
+#else
+#error Undefined endian type
+#endif
+#elif WINDOWS
+  return 1;
+#endif
   return 0;
 }
 
 static int _testConvertBigEndianFloatToPlatform(void) {
+  float f = (float)0xdeadbeef;
+  float r = convertBigEndianFloatToPlatform(f);
+#if LINUX
+  return 1;
+#elif MACOSX
+#if __DARWIN_BYTE_ORDER == __DARWIN_BIG_ENDIAN
+  assertDoubleEquals(f, r);
+#elif __DARWIN_BYTE_ORDER == __DARWIN_LITTLE_ENDIAN
+  assertDoubleEquals(r, (double)0xefbeadde, TEST_FLOAT_TOLERANCE);
+#else
+#error Undefined endian type
+#endif
+#elif WINDOWS
+  return 1;
+#endif
   return 0;
 }
 
@@ -112,12 +176,12 @@ TestSuite addPlatformUtilitiesTests(void) {
   addTest(testSuite, "IsHostLittleEndian", _testIsHostLittleEndian);
 
   addTest(testSuite, "FlipShortEndian", _testFlipShortEndian);
-  addTest(testSuite, "ConvertBigEndianShortToPlatform", NULL); // _testConvertBigEndianShortToPlatform);
-  addTest(testSuite, "ConvertBigEndianIntToPlatform", NULL); // _testConvertBigEndianIntToPlatform);
-  addTest(testSuite, "ConvertLittleEndianIntToPlatform", NULL); // _testConvertLittleEndianIntToPlatform);
-  addTest(testSuite, "ConvertBigEndianFloatToPlatform", NULL); // _testConvertBigEndianFloatToPlatform);
+  addTest(testSuite, "ConvertBigEndianShortToPlatform", _testConvertBigEndianShortToPlatform);
+  addTest(testSuite, "ConvertBigEndianIntToPlatform", _testConvertBigEndianIntToPlatform);
+  addTest(testSuite, "ConvertLittleEndianIntToPlatform", _testConvertLittleEndianIntToPlatform);
+  addTest(testSuite, "ConvertBigEndianFloatToPlatform", NULL); //_testConvertBigEndianFloatToPlatform);
 
-  addTest(testSuite, "ConvertByteArrayToUnsignedShort", NULL); // _testConvertByteArrayToUnsignedShort);
-  addTest(testSuite, "ConvertByteArrayToUnsignedInt", NULL); // _testConvertByteArrayToUnsignedInt);
+  addTest(testSuite, "ConvertByteArrayToUnsignedShort", NULL); //_testConvertByteArrayToUnsignedShort);
+  addTest(testSuite, "ConvertByteArrayToUnsignedInt", NULL); //_testConvertByteArrayToUnsignedInt);
   return testSuite;
 }
