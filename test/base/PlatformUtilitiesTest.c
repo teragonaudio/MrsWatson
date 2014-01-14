@@ -1,5 +1,8 @@
 #include "unit/TestRunner.h"
 #include "base/PlatformUtilities.h"
+#if MACOSX
+#include <machine/endian.h>
+#endif
 
 static int _testGetPlatformType(void) {
 #if LINUX
@@ -55,10 +58,23 @@ static int _testGetShortPlatformName(void) {
 }
 
 static int _testIsHostLittleEndian(void) {
+#if LINUX
+#elif MACOSX
+#if __DARWIN_BYTE_ORDER == __DARWIN_BIG_ENDIAN
+  assertFalse(isHostLittleEndian());
+#elif __DARWIN_BYTE_ORDER == __DARWIN_LITTLE_ENDIAN
+  assert(isHostLittleEndian());
+#endif
+#elif WINDOWS
+#endif
   return 0;
 }
 
 static int _testFlipShortEndian(void) {
+  unsigned short s = 0xabcd;
+  unsigned short r = flipShortEndian(s);
+  assertUnsignedLongEquals(r, 0xcdab);
+  assertIntEquals(s, flipShortEndian(r));
   return 0;
 }
 
@@ -93,9 +109,9 @@ TestSuite addPlatformUtilitiesTests(void) {
   addTest(testSuite, "GetPlatformName", _testGetPlatformName);
   addTest(testSuite, "GetShortPlatformName", _testGetShortPlatformName);
 
-  addTest(testSuite, "IsHostLittleEndian", NULL); // _testIsHostLittleEndian);
+  addTest(testSuite, "IsHostLittleEndian", _testIsHostLittleEndian);
 
-  addTest(testSuite, "FlipShortEndian", NULL); // _testFlipShortEndian);
+  addTest(testSuite, "FlipShortEndian", _testFlipShortEndian);
   addTest(testSuite, "ConvertBigEndianShortToPlatform", NULL); // _testConvertBigEndianShortToPlatform);
   addTest(testSuite, "ConvertBigEndianIntToPlatform", NULL); // _testConvertBigEndianIntToPlatform);
   addTest(testSuite, "ConvertLittleEndianIntToPlatform", NULL); // _testConvertLittleEndianIntToPlatform);
