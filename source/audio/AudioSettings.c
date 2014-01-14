@@ -36,6 +36,9 @@
 AudioSettings audioSettingsInstance = NULL;
 
 void initAudioSettings(void) {
+  if(audioSettingsInstance != NULL) {
+    freeAudioSettings();
+  }
   audioSettingsInstance = malloc(sizeof(AudioSettingsMembers));
   audioSettingsInstance->sampleRate = DEFAULT_SAMPLE_RATE;
   audioSettingsInstance->numChannels = DEFAULT_NUM_CHANNELS;
@@ -46,6 +49,9 @@ void initAudioSettings(void) {
 }
 
 static AudioSettings _getAudioSettings(void) {
+  if(audioSettingsInstance == NULL) {
+    initAudioSettings();
+  }
   return audioSettingsInstance;
 }
 
