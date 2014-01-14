@@ -162,6 +162,11 @@ File newFileWithPath(const CharString path) {
     }
     else {
       currentDirectory = getCurrentDirectory();
+      if(currentDirectory == NULL) {
+        logWarn("Could not create file relative to current directory");
+        freeFile(result);
+        return NULL;
+      }
       absolutePath = _buildAbsolutePath(currentDirectory, path);
       charStringCopy(result->absolutePath, absolutePath);
       freeCharString(currentDirectory);
