@@ -204,7 +204,11 @@ CharString getExecutablePath(void) {
 CharString getCurrentDirectory(void) {
   CharString currentDirectory = newCharString();
 #if UNIX
-  charStringCopyCString(currentDirectory, getenv("PWD"));
+  if(getcwd(currentDirectory->data, currentDirectory->capacity) == NULL) {
+    logError("Could not get current working directory");
+    freeCharString(currentDirectory);
+    return NULL;
+  }
 #elif WINDOWS
   GetCurrentDirectoryA((DWORD)currentDirectory->capacity, currentDirectory->data);
 #endif
