@@ -46,6 +46,7 @@
 #include <mach-o/dyld.h>
 #endif
 
+/** DEPRECATED */
 boolByte _fileExists(const char* path) {
 #if WINDOWS
   // Visual Studio's compiler is not C99 compliant, so variable declarations
@@ -73,6 +74,7 @@ boolByte _fileExists(const char* path) {
 #endif
 }
 
+/** DEPRECATED */
 boolByte copyFileToDirectory(const CharString fileAbsolutePath, const CharString directoryAbsolutePath) {
   boolByte result = false;
   CharString fileOutPath = newCharStringWithCapacity(kCharStringLengthLong);
@@ -105,6 +107,7 @@ boolByte copyFileToDirectory(const CharString fileAbsolutePath, const CharString
   return result;
 }
 
+/** DEPRECATED */
 boolByte makeDirectory(const CharString absolutePath) {
 #if UNIX
   return mkdir(absolutePath->data, 0755) == 0;
@@ -114,6 +117,7 @@ boolByte makeDirectory(const CharString absolutePath) {
 }
 
 // Note that this method skips hidden files
+/** DEPRECATED */
 LinkedList listDirectory(const CharString directory) {
   LinkedList items = newLinkedList();
   CharString filename;
@@ -162,6 +166,7 @@ LinkedList listDirectory(const CharString directory) {
   return items;
 }
 
+/** DEPRECATED */
 boolByte removeDirectory(const CharString absolutePath) {
   boolByte result = false;
 
@@ -188,6 +193,7 @@ boolByte removeDirectory(const CharString absolutePath) {
 #endif
 }
 
+/** DEPRECATED */
 void buildAbsolutePath(const CharString directory, const CharString file, const char* fileExtension, CharString outString) {
   const char* extension;
   CharString absoluteDirectory;
@@ -228,12 +234,14 @@ void buildAbsolutePath(const CharString directory, const CharString file, const 
   freeCharString(absoluteDirectory);
 }
 
+/** DEPRECATED */
 void convertRelativePathToAbsolute(const CharString file, CharString outString) {
   CharString currentDirectory = getCurrentDirectory();
   snprintf(outString->data, outString->capacity, "%s%c%s", currentDirectory->data, PATH_DELIMITER, file->data);
   freeCharString(currentDirectory);
 }
 
+/** DEPRECATED */
 boolByte isAbsolutePath(const CharString path) {
 #if WINDOWS
   if(path->capacity > 3) {
@@ -254,6 +262,7 @@ boolByte isAbsolutePath(const CharString path) {
   return false;
 }
 
+/** DEPRECATED */
 const char* getFileBasename(const char* filename) {
   const char *lastDelimiter;
   if(filename == NULL) {
@@ -268,6 +277,7 @@ const char* getFileBasename(const char* filename) {
   }
 }
 
+/** DEPRECATED */
 const char* getFileExtension(const char* filename) {
   const char *dot;
   if(filename == NULL) {
@@ -282,6 +292,7 @@ const char* getFileExtension(const char* filename) {
   }
 }
 
+/** DEPRECATED */
 void getFileDirname(const CharString filename, CharString outString) {
   const char *lastDelimiter;
   if(filename == NULL) {
