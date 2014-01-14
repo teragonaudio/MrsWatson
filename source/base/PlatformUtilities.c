@@ -257,7 +257,7 @@ boolByte isHostLittleEndian(void) {
   return result;
 }
 
-short flipShortEndian(const short value) {
+unsigned short flipShortEndian(const unsigned short value) {
   return (value << 8) | (value >> 8);
 }
 

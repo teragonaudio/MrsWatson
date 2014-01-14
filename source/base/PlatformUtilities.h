@@ -131,7 +131,7 @@ boolByte isHostLittleEndian(void);
  * @param value Short integer
  * @return Flipped version of short integer
  */
-short flipShortEndian(const short value);
+unsigned short flipShortEndian(const unsigned short value);
 
 /**
  * Convert a big endian short integer to the platform's native endian-ness.
