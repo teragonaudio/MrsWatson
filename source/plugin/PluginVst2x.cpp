@@ -667,7 +667,12 @@ static boolByte _setParameterVst2xPlugin(void *pluginPtr, unsigned int index, fl
   Plugin plugin = (Plugin)pluginPtr;
   PluginVst2xData data = (PluginVst2xData)(plugin->extraData);
   if(index < (unsigned int)data->pluginHandle->numParams) {
+    CharString valueBuffer = newCharStringWithCapacity(kCharStringLengthShort);
     data->pluginHandle->setParameter(data->pluginHandle, index, value);
+    data->dispatcher(data->pluginHandle, effGetParamDisplay, index, 0, valueBuffer->data, 0.0f);
+    logInfo("Set parameter %d on plugin '%s' to %0.2f (%s)",
+      index, plugin->pluginName->data, value, valueBuffer->data);
+    freeCharString(valueBuffer);
     return true;
   }
   else {
