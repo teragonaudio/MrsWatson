@@ -494,7 +494,7 @@ static void _displayVst2xPluginInfo(void* pluginPtr) {
           data->pluginHandle->setParameter(data->pluginHandle, i, midiValue);
           charStringClear(nameBuffer);
           data->dispatcher(data->pluginHandle, effGetParamDisplay, i, 0, nameBuffer->data, 0.0f);
-          logDebug("    %0.2f: %s", midiValue, nameBuffer->data);
+          logDebug("    %0.3f/MIDI value %d (0x%02x): %s", midiValue, j, j, nameBuffer->data);
         }
       }
     }
@@ -670,7 +670,7 @@ static boolByte _setParameterVst2xPlugin(void *pluginPtr, unsigned int index, fl
     CharString valueBuffer = newCharStringWithCapacity(kCharStringLengthShort);
     data->pluginHandle->setParameter(data->pluginHandle, index, value);
     data->dispatcher(data->pluginHandle, effGetParamDisplay, index, 0, valueBuffer->data, 0.0f);
-    logInfo("Set parameter %d on plugin '%s' to %0.2f (%s)",
+    logInfo("Set parameter %d on plugin '%s' to %f (%s)",
       index, plugin->pluginName->data, value, valueBuffer->data);
     freeCharString(valueBuffer);
     return true;
