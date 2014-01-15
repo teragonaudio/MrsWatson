@@ -480,11 +480,23 @@ static void _displayVst2xPluginInfo(void* pluginPtr) {
   else {
     nameBuffer = newCharStringWithCapacity(kCharStringLengthShort);
     logInfo("Parameters (%d total):", data->pluginHandle->numParams);
-    for(int i = 0; i < data->pluginHandle->numParams; i++) {
+    for(unsigned int i = 0; i < data->pluginHandle->numParams; i++) {
       float value = data->pluginHandle->getParameter(data->pluginHandle, i);
       charStringClear(nameBuffer);
       data->dispatcher(data->pluginHandle, effGetParamName, i, 0, nameBuffer->data, 0.0f);
       logInfo("  %d: '%s' (%f)", i, nameBuffer->data, value);
+      if(isLogLevelAtLeast(LOG_DEBUG)) {
+        logDebug("    Displaying common values for parameter:");
+        for(unsigned int j = 0; j < 128; j++) {
+          const float midiValue = (float)j / 127.0f;
+          // Don't use the other setParameter function, or else that will log like crazy to
+          // a different log level.
+          data->pluginHandle->setParameter(data->pluginHandle, i, midiValue);
+          charStringClear(nameBuffer);
+          data->dispatcher(data->pluginHandle, effGetParamDisplay, i, 0, nameBuffer->data, 0.0f);
+          logDebug("    %0.2f: %s", midiValue, nameBuffer->data);
+        }
+      }
     }
 
     logInfo("Programs (%d total):", data->pluginHandle->numPrograms);
