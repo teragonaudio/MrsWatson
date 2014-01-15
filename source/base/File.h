@@ -32,7 +32,6 @@
 #include <stdlib.h>
 #include "base/CharString.h"
 #include "base/LinkedList.h"
-#include "base/PlatformUtilities.h"
 #include "base/Types.h"
 
 #if UNIX
