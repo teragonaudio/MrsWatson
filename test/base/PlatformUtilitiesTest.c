@@ -140,15 +140,25 @@ static int _testConvertLittleEndianIntToPlatform(void) {
 }
 
 static int _testConvertBigEndianFloatToPlatform(void) {
-  float f = (float)0xdeadbeef;
-  float r = convertBigEndianFloatToPlatform(f);
+  // Generate an integer with a known value and convert it to a float using pointer trickery
+  int i = 0xdeadbeef;
+  int i2 = 0xefbeadbe;
+  float *f = (float*)&i;
+  float *f2 = (float*)&i2;
+  float r = convertBigEndianFloatToPlatform(*f);
+  // Unfortunately, the above pointer trickery will result in a really huge number, so the
+  // standard comparison tolerance is *way* too low. This number is the lowest possible
+  // result that we should accept for this test.
+  const double bigFloatTolerance = 3.02231e+24;
+  const long long sanityCheck = 9223372036854775808ul;
 #if LINUX
   return 1;
 #elif MACOSX
 #if __DARWIN_BYTE_ORDER == __DARWIN_BIG_ENDIAN
-  assertDoubleEquals(f, r);
+  assertDoubleEquals(*f, r);
 #elif __DARWIN_BYTE_ORDER == __DARWIN_LITTLE_ENDIAN
-  assertDoubleEquals(r, (double)0xefbeadde, TEST_FLOAT_TOLERANCE);
+  assertLongEquals((long)*f2, (unsigned long)sanityCheck);
+  assertDoubleEquals(r, *f2, bigFloatTolerance);
 #else
 #error Undefined endian type
 #endif
@@ -159,10 +169,50 @@ static int _testConvertBigEndianFloatToPlatform(void) {
 }
 
 static int _testConvertByteArrayToUnsignedShort(void) {
+  byte* b = (byte*)malloc(sizeof(byte) * 2);
+  int i;
+  unsigned short s;
+  for(i = 0; i < 2; i++) {
+    b[i] = (byte)(0xaa + i);
+  }
+  s = convertByteArrayToUnsignedShort(b);
+#if LINUX
+  return 1;
+#elif MACOSX
+#if __DARWIN_BYTE_ORDER == __DARWIN_BIG_ENDIAN
+  assertUnsignedLongEquals(s, 0xaaabul);
+#elif __DARWIN_BYTE_ORDER == __DARWIN_LITTLE_ENDIAN
+  assertUnsignedLongEquals(s, 0xabaaul);
+#else
+#error Undefined endian type
+#endif
+#elif WINDOWS
+  return 1;
+#endif
   return 0;
 }
 
 static int _testConvertByteArrayToUnsignedInt(void) {
+  byte* b = (byte*)malloc(sizeof(byte) * 2);
+  int i;
+  unsigned int s;
+  for(i = 0; i < 4; i++) {
+    b[i] = (byte)(0xaa + i);
+  }
+  s = convertByteArrayToUnsignedInt(b);
+#if LINUX
+  return 1;
+#elif MACOSX
+#if __DARWIN_BYTE_ORDER == __DARWIN_BIG_ENDIAN
+  assertUnsignedLongEquals(s, 0xaaabacadul);
+#elif __DARWIN_BYTE_ORDER == __DARWIN_LITTLE_ENDIAN
+  assertUnsignedLongEquals(s, 0xadacabaaul);
+#else
+#error Undefined endian type
+#endif
+#elif WINDOWS
+  return 1;
+#endif
   return 0;
 }
 
@@ -179,9 +229,9 @@ TestSuite addPlatformUtilitiesTests(void) {
   addTest(testSuite, "ConvertBigEndianShortToPlatform", _testConvertBigEndianShortToPlatform);
   addTest(testSuite, "ConvertBigEndianIntToPlatform", _testConvertBigEndianIntToPlatform);
   addTest(testSuite, "ConvertLittleEndianIntToPlatform", _testConvertLittleEndianIntToPlatform);
-  addTest(testSuite, "ConvertBigEndianFloatToPlatform", NULL); //_testConvertBigEndianFloatToPlatform);
+  addTest(testSuite, "ConvertBigEndianFloatToPlatform", _testConvertBigEndianFloatToPlatform);
 
-  addTest(testSuite, "ConvertByteArrayToUnsignedShort", NULL); //_testConvertByteArrayToUnsignedShort);
-  addTest(testSuite, "ConvertByteArrayToUnsignedInt", NULL); //_testConvertByteArrayToUnsignedInt);
+  addTest(testSuite, "ConvertByteArrayToUnsignedShort", _testConvertByteArrayToUnsignedShort);
+  addTest(testSuite, "ConvertByteArrayToUnsignedInt", _testConvertByteArrayToUnsignedInt);
   return testSuite;
 }
