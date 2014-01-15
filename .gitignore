@@ -17,6 +17,7 @@ out.wav
 
 # Stuff from various IDE's
 .idea/*
+*.xcodeproj
 nbproject/*
 *.perspectivev3
 *.pbxuser
@@ -43,6 +44,8 @@ cscope.out
 
 # CMake
 CMakeCache.txt
+CMakeScripts/*
+**/CMakeScripts/*
 CMakeFiles
 Makefile
 Makefile.in
