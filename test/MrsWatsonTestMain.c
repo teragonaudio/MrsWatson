@@ -138,12 +138,16 @@ File _findMrsWatsonExe(CharString mrsWatsonExeArg) {
   else {
     currentExecutableFilename = getExecutablePath();
     currentExecutablePath = newFileWithPath(currentExecutableFilename);
-    currentExecutableDir = fileGetParent(currentExecutablePath);
-    mrsWatsonExeName = newCharStringWithCString(MRSWATSON_EXE_NAME);
-    if(isExecutable64Bit()) {
-      charStringAppendCString(mrsWatsonExeName, "64");
+    if(currentExecutablePath != NULL) {
+      currentExecutableDir = fileGetParent(currentExecutablePath);
+      if(currentExecutableDir != NULL) {
+        mrsWatsonExeName = newCharStringWithCString(MRSWATSON_EXE_NAME);
+        if(isExecutable64Bit()) {
+          charStringAppendCString(mrsWatsonExeName, "64");
+        }
+        mrsWatsonExe = newFileWithParent(currentExecutableDir, mrsWatsonExeName);
+      }
     }
-    mrsWatsonExe = newFileWithParent(currentExecutableDir, mrsWatsonExeName);
   }
 
   freeCharString(currentExecutableFilename);
