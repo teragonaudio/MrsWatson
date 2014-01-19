@@ -658,6 +658,11 @@ LinkedList fileReadLines(File self) {
       if(newline != NULL) {
         *newline = '\0';
       }
+      // Also trim these characters, in case the file has Windows-style newlines
+      newline = strrchr(line->data, '\r');
+      if(newline != NULL) {
+        *newline = '\0';
+      }
       linkedListAppend(result, line);
     }
   }
