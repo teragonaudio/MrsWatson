@@ -4,6 +4,21 @@
 #include <machine/endian.h>
 #endif
 
+#if LINUX
+// TODO: Need to define big/little endian macros
+#elif MACOSX
+#define BIG_ENDIAN (__DARWIN_BYTE_ORDER == __DARWIN_BIG_ENDIAN)
+#define LITTLE_ENDIAN (__DARWIN_BYTE_ORDER == __DARWIN_LITTLE_ENDIAN)
+#elif WINDOWS
+// Windows is always little-endian, see: http://support.microsoft.com/kb/102025
+#define BIG_ENDIAN 0
+#define LITTLE_ENDIAN 1
+#endif
+
+#if !defined(BIG_ENDIAN) || !defined(LITTLE_ENDIAN)
+#error BIG_ENDIAN and LITTLE_ENDIAN are not defined for this platform
+#endif
+
 static int _testGetPlatformType(void) {
 #if LINUX
   assertIntEquals(getPlatformType(), PLATFORM_LINUX);
@@ -58,18 +73,10 @@ static int _testGetShortPlatformName(void) {
 }
 
 static int _testIsHostLittleEndian(void) {
-#if LINUX
-  return 1;
-#elif MACOSX
-#if __DARWIN_BYTE_ORDER == __DARWIN_BIG_ENDIAN
+#if BIG_ENDIAN
   assertFalse(isHostLittleEndian());
-#elif __DARWIN_BYTE_ORDER == __DARWIN_LITTLE_ENDIAN
+#elif LITTLE_ENDIAN
   assert(isHostLittleEndian());
-#else
-#error Undefined endian type
-#endif
-#elif WINDOWS
-  return 1;
 #endif
   return 0;
 }
@@ -85,18 +92,10 @@ static int _testFlipShortEndian(void) {
 static int _testConvertBigEndianShortToPlatform(void) {
   unsigned short s = 0xabcd;
   unsigned short r = convertBigEndianShortToPlatform(s);
-#if LINUX
-  return 1;
-#elif MACOSX
-#if __DARWIN_BYTE_ORDER == __DARWIN_BIG_ENDIAN
+#if BIG_ENDIAN
   assertUnsignedLongEquals(s, (unsigned long)r);
-#elif __DARWIN_BYTE_ORDER == __DARWIN_LITTLE_ENDIAN
+#elif LITTLE_ENDIAN
   assertUnsignedLongEquals(s, (unsigned long)flipShortEndian(r));
-#else
-#error Undefined endian type
-#endif
-#elif WINDOWS
-  return 1;
 #endif
   return 0;
 }
@@ -104,18 +103,10 @@ static int _testConvertBigEndianShortToPlatform(void) {
 static int _testConvertBigEndianIntToPlatform(void) {
   unsigned int i = 0xdeadbeef;
   unsigned int r = convertBigEndianIntToPlatform(i);
-#if LINUX
-  return 1;
-#elif MACOSX
-#if __DARWIN_BYTE_ORDER == __DARWIN_BIG_ENDIAN
+#if BIG_ENDIAN
   assertUnsignedLongEquals(r, (unsigned long)i);
-#elif __DARWIN_BYTE_ORDER == __DARWIN_LITTLE_ENDIAN
+#elif LITTLE_ENDIAN
   assertUnsignedLongEquals(r, 0xefbeaddeul);
-#else
-#error Undefined endian type
-#endif
-#elif WINDOWS
-  return 1;
 #endif
   return 0;
 }
@@ -123,18 +114,10 @@ static int _testConvertBigEndianIntToPlatform(void) {
 static int _testConvertLittleEndianIntToPlatform(void) {
   unsigned int i = 0xdeadbeef;
   unsigned int r = convertLittleEndianIntToPlatform(i);
-#if LINUX
-  return 1;
-#elif MACOSX
-#if __DARWIN_BYTE_ORDER == __DARWIN_BIG_ENDIAN
+#if BIG_ENDIAN
   assertUnsignedLongEquals(r, 0xefbeaddeul);
-#elif __DARWIN_BYTE_ORDER == __DARWIN_LITTLE_ENDIAN
+#elif LITTLE_ENDIAN
   assertUnsignedLongEquals(r, (unsigned long)i);
-#else
-#error Undefined endian type
-#endif
-#elif WINDOWS
-  return 1;
 #endif
   return 0;
 }
@@ -150,20 +133,14 @@ static int _testConvertBigEndianFloatToPlatform(void) {
   // standard comparison tolerance is *way* too low. This number is the lowest possible
   // result that we should accept for this test.
   const double bigFloatTolerance = 3.02231e+24;
-  const long long sanityCheck = 9223372036854775808ul;
-#if LINUX
-  return 1;
-#elif MACOSX
-#if __DARWIN_BYTE_ORDER == __DARWIN_BIG_ENDIAN
+
+#if BIG_ENDIAN
   assertDoubleEquals(*f, r);
-#elif __DARWIN_BYTE_ORDER == __DARWIN_LITTLE_ENDIAN
-  assertLongEquals((long)*f2, (unsigned long)sanityCheck);
+#elif LITTLE_ENDIAN
+  // Sanity check to make sure that the actual result is the really huge number which we
+  // are expecting.
+  assert(fabs(r) > bigFloatTolerance);
   assertDoubleEquals(r, *f2, bigFloatTolerance);
-#else
-#error Undefined endian type
-#endif
-#elif WINDOWS
-  return 1;
 #endif
   return 0;
 }
@@ -176,18 +153,11 @@ static int _testConvertByteArrayToUnsignedShort(void) {
     b[i] = (byte)(0xaa + i);
   }
   s = convertByteArrayToUnsignedShort(b);
-#if LINUX
-  return 1;
-#elif MACOSX
-#if __DARWIN_BYTE_ORDER == __DARWIN_BIG_ENDIAN
+
+#if BIG_ENDIAN
   assertUnsignedLongEquals(s, 0xaaabul);
-#elif __DARWIN_BYTE_ORDER == __DARWIN_LITTLE_ENDIAN
+#elif LITTLE_ENDIAN
   assertUnsignedLongEquals(s, 0xabaaul);
-#else
-#error Undefined endian type
-#endif
-#elif WINDOWS
-  return 1;
 #endif
   return 0;
 }
@@ -200,18 +170,11 @@ static int _testConvertByteArrayToUnsignedInt(void) {
     b[i] = (byte)(0xaa + i);
   }
   s = convertByteArrayToUnsignedInt(b);
-#if LINUX
-  return 1;
-#elif MACOSX
-#if __DARWIN_BYTE_ORDER == __DARWIN_BIG_ENDIAN
+
+#if BIG_ENDIAN
   assertUnsignedLongEquals(s, 0xaaabacadul);
-#elif __DARWIN_BYTE_ORDER == __DARWIN_LITTLE_ENDIAN
+#elif LITTLE_ENDIAN
   assertUnsignedLongEquals(s, 0xadacabaaul);
-#else
-#error Undefined endian type
-#endif
-#elif WINDOWS
-  return 1;
 #endif
   return 0;
 }
