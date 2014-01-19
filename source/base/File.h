@@ -130,6 +130,8 @@ File fileCopyTo(File self, const File destination);
 /**
  * Remove the file from disk. If this object is a directory, then it will be
  * removed recursively.
+ * Note: On Windows, you must make sure that all files inside of this directory
+ * are closed, otherwise the operation will fail.
  * @param self
  * @return True if the object could be removed
  */
