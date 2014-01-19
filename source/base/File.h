@@ -60,7 +60,7 @@ typedef struct {
   FileType fileType;
 
   /** Private */
-  FILE* _fileHandle;
+  FILE *_fileHandle;
   /** Private */
   FileOpenMode _openMode;
 } FileMembers;

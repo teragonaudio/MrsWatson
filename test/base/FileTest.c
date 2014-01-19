@@ -651,6 +651,9 @@ static int _testFileRemoveDirWithContents(void) {
   assertFalse(fileExists(subfile));
   assert(fileCreate(subfile, kFileTypeFile));
   assert(fileExists(subfile));
+  // Windows will not be able to delete this directory unless all files in it are
+  // closed and unlocked.
+  fileClose(subfile);
 
   // Remove the parent directory and assert that all children are gone
   assert(fileRemove(dir));

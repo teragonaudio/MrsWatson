@@ -120,13 +120,27 @@ static boolByte _isDirectory(const CharString path) {
   if(stat(path->data, &buffer) == 0) {
     result = S_ISDIR(buffer.st_mode);
   }
+#elif WINDOWS
+  DWORD fileAttributes = GetFileAttributesA((LPCSTR)path->data);
+  if(fileAttributes != INVALID_FILE_ATTRIBUTES) {
+    result = (boolByte)(fileAttributes & FILE_ATTRIBUTE_DIRECTORY);
+  }
 #endif
 
   return result;
 }
 
 static boolByte _pathContainsInvalidChars(const CharString path) {
-  size_t i;
+  size_t i = 0;
+#if WINDOWS
+  // The colon is not allowed in pathnames (even on Windows), however it is
+  // present in absolute pathnames for the drive letter. Thus we must skip
+  // the first 3 characters of the path when dealing with absolute paths on
+  // this platform.
+  if(_isAbsolutePath(path)) {
+    i = 3;
+  }
+#endif
   if(path != NULL) {
     for(i = 0; i < strlen(kFileNameInvalidCharacters); ++i) {
       if(strchr(path->data, kFileNameInvalidCharacters[i]) != NULL) {
@@ -152,13 +166,13 @@ File newFileWithPath(const CharString path) {
   CharString absolutePath = NULL;
 
   if(path != NULL && !charStringIsEmpty(path)) {
-    if(_pathContainsInvalidChars(path)) {
+    if(_isAbsolutePath(path)) {
+      charStringCopy(result->absolutePath, path);
+    }
+    else if(_pathContainsInvalidChars(path)) {
       logWarn("Could not create file/directory with name '%s'", path->data);
       freeFile(result);
       return NULL;
-    }
-    else if(_isAbsolutePath(path)) {
-      charStringCopy(result->absolutePath, path);
     }
     else {
       currentDirectory = getCurrentDirectory();
@@ -359,6 +373,10 @@ static File _copyDirectoryToDirectory(File self, const File destination) {
   // Get the basename first, because if it fails then there's no point in doing
   // the actual copy.
   CharString basename = fileGetBasename(self);
+#if WINDOWS
+  SHFILEOPSTRUCT fileOperation;
+#endif
+
   if(basename == NULL) {
     logError("Could not get basename from directory during copy");
     return NULL;
@@ -389,12 +407,14 @@ static File _copyDirectoryToDirectory(File self, const File destination) {
       self->absolutePath->data, destination->absolutePath->data);
   }
 #elif WINDOWS
-/*
-  fileOperation.wFunc = FO_DELETE;
-  fileOperation.pFrom = absolutePath->data;
+  memset(&fileOperation, 0, sizeof(fileOperation));
+  fileOperation.wFunc = FO_COPY;
+  fileOperation.pFrom = self->absolutePath->data;
+  fileOperation.pTo = destination->absolutePath->data;
   fileOperation.fFlags = FOF_NO_UI;
-  result = (SHFileOperationA(&fileOperation) == 0);
-*/
+  if(SHFileOperationA(&fileOperation) == 0) {
+    result = newFileWithParent(destination, basename);
+  }
 #endif
 
   freeCharString(basename);
@@ -459,9 +479,11 @@ boolByte fileRemove(File self) {
 #if UNIX
         result = (nftw(self->absolutePath->data, _removeCallback, kFileMaxRecursionDepth, FTW_DEPTH | FTW_PHYS) == 0);
 #elif WINDOWS
+        memset(&fileOperation, 0, sizeof(fileOperation));
         fileOperation.wFunc = FO_DELETE;
         fileOperation.pFrom = self->absolutePath->data;
-        fileOperation.fFlags = FOF_NO_UI;
+        fileOperation.pTo = NULL;
+        fileOperation.fFlags = FOF_NO_UI | FOF_NOCONFIRMATION | FOF_SILENT;
         result = (SHFileOperationA(&fileOperation) == 0);
 #endif
         break;
@@ -473,6 +495,7 @@ boolByte fileRemove(File self) {
   if(result) {
     self->fileType = kFileTypeInvalid;
   }
+
   return result;
 }
 
@@ -546,6 +569,12 @@ size_t fileGetSize(File self) {
     }
   }
 #elif WINDOWS
+  HANDLE handle = CreateFileA(self->absolutePath->data, GENERIC_READ, 0, NULL,
+                              OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+  if(handle != INVALID_HANDLE_VALUE) {
+    result = GetFileSize(handle, NULL);
+    CloseHandle(handle);
+  }
 #else
   logUnsupportedFeature("Get file size");
 #endif
@@ -563,9 +592,13 @@ CharString fileReadContents(File self) {
     return NULL;
   }
 
-  if(self->_openMode != kFileOpenModeRead && self->_fileHandle != NULL) {
-    fileClose(self);
-  }
+  // Windows has problems opening files multiple times (which is done internally in
+  // fileGetSize() via CreateFile), so we must close the file first, calculate size,
+  // and then reopen it for reading.
+  fileClose(self);
+  fileSize = (size_t)fileGetSize(self);
+  fileClose(self);
+
   if(self->_fileHandle == NULL) {
     self->_fileHandle = fopen(self->absolutePath->data, "rb");
     if(self->_fileHandle == NULL) {
@@ -577,7 +610,6 @@ CharString fileReadContents(File self) {
     }
   }
 
-  fileSize = (size_t)fileGetSize(self);
   if(fileSize > 0) {
     result = newCharStringWithCapacity(fileSize + 1);
     itemsRead = fread(result->data, 1, fileSize, self->_fileHandle);
@@ -635,7 +667,6 @@ LinkedList fileReadLines(File self) {
 
 void* fileReadBytes(File self, size_t numBytes) {
   void* result = NULL;
-  size_t fileSize = 0;
   size_t itemsRead = 0;
 
   if(numBytes == 0) {
@@ -664,13 +695,12 @@ void* fileReadBytes(File self, size_t numBytes) {
     }
   }
 
-  fileSize = (size_t)fileGetSize(self);
-  if(fileSize > 0) {
-    result = malloc(fileSize + 1);
-    memset(result, 0, fileSize + 1);
-    itemsRead = fread(result, 1, fileSize, self->_fileHandle);
-    if(itemsRead != fileSize) {
-      logError("Expected to read %d items, read %d items instead", fileSize, itemsRead);
+  if(numBytes > 0) {
+    result = malloc(numBytes + 1);
+    memset(result, 0, numBytes + 1);
+    itemsRead = fread(result, 1, numBytes, self->_fileHandle);
+    if(itemsRead != numBytes) {
+      logError("Expected to read %d items, read %d items instead", numBytes, itemsRead);
     }
   }
 
@@ -773,6 +803,7 @@ CharString fileGetExtension(File self) {
 
 void fileClose(File self) {
   if(self->_fileHandle != NULL && self->fileType == kFileTypeFile) {
+    fflush(self->_fileHandle);
     fclose(self->_fileHandle);
     self->_fileHandle = NULL;
     self->_openMode = kFileOpenModeClosed;
