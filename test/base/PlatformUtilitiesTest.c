@@ -5,7 +5,10 @@
 #endif
 
 #if LINUX
-// TODO: Need to define big/little endian macros
+#if defined(__BYTE_ORDER__)
+#define BIG_ENDIAN (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)
+#define LITTLE_ENDIAN (__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__)
+#endif
 #elif MACOSX
 #define BIG_ENDIAN (__DARWIN_BYTE_ORDER == __DARWIN_BIG_ENDIAN)
 #define LITTLE_ENDIAN (__DARWIN_BYTE_ORDER == __DARWIN_LITTLE_ENDIAN)
