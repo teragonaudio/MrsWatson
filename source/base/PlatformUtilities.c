@@ -233,15 +233,24 @@ boolByte isHost64Bit(void) {
 #elif MACOSX
 #elif WINDOWS
   typedef BOOL (WINAPI *IsWow64ProcessFuncPtr)(HANDLE, PBOOL);
-  BOOL isWindows64 = false;
+  BOOL isProcessRunningInWow64 = false;
   IsWow64ProcessFuncPtr isWow64ProcessFunc = NULL;
 
   // The IsWow64Process() function is not available on all versions of Windows,
   // so it must be looked up first and called only if it exists.
   isWow64ProcessFunc = (IsWow64ProcessFuncPtr)GetProcAddress(GetModuleHandle(TEXT("kernel32")), "IsWow64Process");
   if(isWow64ProcessFunc != NULL) {
-    if(isWow64ProcessFunc(GetCurrentProcess(), &isWindows64)) {
-      result = isWindows64;
+    if(isWow64ProcessFunc(GetCurrentProcess(), &isProcessRunningInWow64)) {
+      // IsWow64Process will only return true if the current process is a 32-bit
+      // application running on 64-bit Windows.
+      if(isProcessRunningInWow64) {
+        result = true;
+      }
+      else {
+        // If false, then we can assume that the host has the same bitness as
+        // the executable.
+        result = isExecutable64Bit();
+      }
     }
   }
 #else
