@@ -12,4 +12,5 @@ for x in doc/* ; do
 done
 
 zip -r MrsWatson.zip $OUTDIR
+cp MrsWatson.zip MrsWatson-$VERSION.zip
 rm -rf $OUTDIR
