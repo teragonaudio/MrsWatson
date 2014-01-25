@@ -30,6 +30,7 @@
 #include <string.h>
 
 #include "audio/SampleBuffer.h"
+#include "base/PlatformUtilities.h"
 #include "logging/EventLogger.h"
 
 SampleBuffer newSampleBuffer(unsigned int numChannels, unsigned long blocksize) {
@@ -65,6 +66,40 @@ void sampleBufferClear(SampleBuffer self) {
   }
 }
 
+boolByte sampleBufferResize(SampleBuffer self, const unsigned int numChannels, boolByte copy) {
+  unsigned int i;
+
+  if(numChannels == self->numChannels || numChannels == 0) {
+    return false;
+  }
+  else if(numChannels < self->numChannels) {
+    for(i = self->numChannels - 1; i >= numChannels; i--) {
+      free(self->samples[i]);
+    }
+    self->numChannels = numChannels;
+    return true;
+  }
+  else if(numChannels > self->numChannels) {
+    self->samples = (Samples*)realloc(self->samples, sizeof(Samples) * numChannels);
+    for(i = self->numChannels; i < numChannels; i++) {
+      self->samples[i] = (Samples)malloc(sizeof(Sample) * self->blocksize);
+      if(copy) {
+        memcpy(self->samples[i], self->samples[0], sizeof(Sample) * self->blocksize);
+      }
+      else {
+        memset(self->samples[i], 0, sizeof(Sample) * self->blocksize);
+      }
+    }
+    self->numChannels = numChannels;
+    return true;
+  }
+  else {
+    // Invalid state, probably shouldn't happen...
+  }
+
+  return false;
+}
+
 boolByte sampleBufferCopy(SampleBuffer self, const SampleBuffer buffer) {
   unsigned int i;
 
@@ -94,38 +129,43 @@ boolByte sampleBufferCopy(SampleBuffer self, const SampleBuffer buffer) {
   return true;
 }
 
-boolByte sampleBufferResize(SampleBuffer self, const unsigned int numChannels, boolByte copy) {
-  unsigned int i;
+void sampleBufferCopyPcmSamples(SampleBuffer self, const short* inPcmSamples) {
+  const unsigned int numChannels = self->numChannels;
+  const unsigned long numInterlacedSamples = numChannels * self->blocksize;
+  unsigned int currentInterlacedSample = 0;
+  unsigned int currentDeinterlacedSample = 0;
+  unsigned int currentChannel;
 
-  if(numChannels == self->numChannels || numChannels == 0) {
-    return false;
-  }
-  else if(numChannels < self->numChannels) {
-    for(i = self->numChannels - 1; i >= numChannels; i--) {
-      free(self->samples[i]);
+  while(currentInterlacedSample < numInterlacedSamples) {
+    for(currentChannel = 0; currentChannel < numChannels; ++currentChannel) {
+      Sample convertedSample = (Sample)inPcmSamples[currentInterlacedSample++] / 32767.0f;
+      self->samples[currentChannel][currentDeinterlacedSample] = convertedSample;
     }
-    self->numChannels = numChannels;
-    return true;
+    ++currentDeinterlacedSample;
   }
-  else if(numChannels > self->numChannels) {
-    self->samples = realloc(self->samples, sizeof(Samples) * numChannels);
-    for(i = self->numChannels; i < numChannels; i++) {
-      self->samples[i] = (Samples)malloc(sizeof(Sample) * self->blocksize);
-      if(copy) {
-        memcpy(self->samples[i], self->samples[0], sizeof(Sample) * self->blocksize);
+}
+
+void sampleBufferGetPcmSamples(const SampleBuffer self, short* outPcmSamples, boolByte flipEndian) {
+  const unsigned long blocksize = self->blocksize;
+  const unsigned int numChannels = self->numChannels;
+  unsigned int currentInterlacedSample = 0;
+  unsigned int currentSample = 0;
+  unsigned int currentChannel = 0;
+  short shortValue;
+  Sample sample;
+
+  for(currentSample = 0; currentSample < blocksize; ++currentSample) {
+    for(currentChannel = 0; currentChannel < numChannels; ++currentChannel) {
+      sample = self->samples[currentChannel][currentSample];
+      shortValue = (short)(sample * 32767.0f);
+      if(flipEndian) {
+        outPcmSamples[currentInterlacedSample++] = flipShortEndian(shortValue);
       }
       else {
-        memset(self->samples[i], 0, sizeof(Sample) * self->blocksize);
+        outPcmSamples[currentInterlacedSample++] = shortValue;
       }
     }
-    self->numChannels = numChannels;
-    return true;
   }
-  else {
-    // Invalid state, probably shouldn't happen...
-  }
-
-  return false;
 }
 
 void freeSampleBuffer(SampleBuffer sampleBuffer) {

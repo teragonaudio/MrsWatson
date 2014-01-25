@@ -17,6 +17,7 @@ out.wav
 
 # Stuff from various IDE's
 .idea/*
+*.xcodeproj
 nbproject/*
 *.perspectivev3
 *.pbxuser
@@ -32,6 +33,7 @@ nbproject/*
 *.vcxproj
 *.vcxproj.filters
 *.lastbuildstate
+*.cbp
 
 # Non-redistributable third-party
 vendor/vstsdk2.4/*
@@ -42,6 +44,8 @@ cscope.out
 
 # CMake
 CMakeCache.txt
+CMakeScripts/*
+**/CMakeScripts/*
 CMakeFiles
 Makefile
 Makefile.in

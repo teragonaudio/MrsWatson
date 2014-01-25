@@ -31,6 +31,7 @@
 
 #include "app/BuildInfo.h"
 #include "base/CharString.h"
+#include "base/PlatformUtilities.h"
 #include "logging/EventLogger.h"
 
 unsigned long buildInfoGetYear(void) {
@@ -75,5 +76,12 @@ unsigned long buildInfoGetDatestamp(void) {
   result += strtol(buffer->data, NULL, 10);
 
   freeCharString(buffer);
+  return result;
+}
+
+CharString buildInfoGetVersionString(void) {
+  CharString result = newCharStringWithCapacity(kCharStringLengthShort);
+  snprintf(result->data, result->capacity, "%s version %d.%d.%d",
+    PROGRAM_NAME, VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
   return result;
 }

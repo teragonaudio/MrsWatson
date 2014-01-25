@@ -67,7 +67,7 @@ if(MSVC)
 endif()
 
 if(UNIX)
-  set(common_gcc_flags "-fmessage-length=0 -pipe -Wno-trigraphs -Wno-trigraphs -Wmissing-field-initializers -Wall -Wreturn-type -Wunused-variable -Wshadow -Wsign-compare")
+  set(common_gcc_flags "-fmessage-length=0 -pipe -Wno-trigraphs -Wno-trigraphs -Wmissing-field-initializers -Wall -Wreturn-type -Wunused-variable -Wshadow -Wsign-compare -Wswitch -Wswitch-default -Wuninitialized")
 
   if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     set(CMAKE_C_FLAGS_DEBUG "-std=c99 -D_POSIX_C_SOURCE=200809L -O0 -g")
@@ -79,15 +79,15 @@ if(UNIX)
   endif()
 
   if(APPLE)
-    set(CMAKE_C_FLAGS_DEBUG "-std=c99 -O0 -g")
+    set(CMAKE_C_FLAGS_DEBUG "-std=c99 -O0 -g -ferror-limit=100")
     set(CMAKE_C_FLAGS_RELEASE "-std=c99 -O3")
     set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g")
     set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
-    set(CMAKE_EXE_LINKER_FLAGS "-framework Carbon -framework CoreFoundation")
+    set(CMAKE_EXE_LINKER_FLAGS "-framework Carbon -framework CoreFoundation -mmacosx-version-min=10.5")
 
     # TODO: How many of these are common to unix GCC?
-    add_definitions("${common_gcc_flags} -DMACOSX=1 -fpascal-strings -Wmissing-prototypes -Wnewline-eof -Wshorten-64-to-32 -fasm-blocks -mmacosx-version-min=10.5")
+    add_definitions("${common_gcc_flags} -DMACOSX=1 -fpascal-strings -Wnewline-eof -Wshorten-64-to-32 -fasm-blocks -mmacosx-version-min=10.5")
   endif()
 endif()
 

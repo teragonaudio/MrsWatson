@@ -46,13 +46,13 @@ LinkedList getVst2xPluginLocations(CharString currentDirectory) {
   linkedListAppend(locations, currentDirectory);
 
   locationBuffer = newCharString();
-  snprintf(locationBuffer->data, (size_t)(locationBuffer->length), "%s/.vst", getenv("HOME"));
+  snprintf(locationBuffer->data, (size_t)(locationBuffer->capacity), "%s/.vst", getenv("HOME"));
   linkedListAppend(locations, locationBuffer);
 
   locationBuffer = newCharString();
   vstPathEnv = getenv("VST_PATH");
   if(vstPathEnv != NULL) {
-    snprintf(locationBuffer->data, (size_t)(locationBuffer->length), "%s", vstPathEnv);
+    snprintf(locationBuffer->data, (size_t)(locationBuffer->capacity), "%s", vstPathEnv);
     linkedListAppend(locations, locationBuffer);
   }
   else {
@@ -96,7 +96,9 @@ AEffect* loadVst2xPlugin(LibraryHandle libraryHandle) {
 }
 
 void closeLibraryHandle(LibraryHandle libraryHandle) {
-  dlclose(libraryHandle);
+  if(dlclose(libraryHandle) != 0) {
+    logWarn("Could not safely close plugin, possible resource leak");
+  }
 }
 
 } // extern "C"

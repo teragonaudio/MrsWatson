@@ -43,7 +43,6 @@ typedef struct {
   FILE* fileHandle;
   MidiFileTimeDivisionType divisionType;
 } MidiSourceFileDataMembers;
-
 typedef MidiSourceFileDataMembers* MidiSourceFileData;
 
 MidiSource newMidiSourceFile(const CharString midiSourceName);

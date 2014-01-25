@@ -37,12 +37,13 @@ extern "C" {
 
 #include "audio/AudioSettings.h"
 #include "base/CharString.h"
+#include "base/File.h"
 #include "base/FileUtilities.h"
 #include "base/PlatformUtilities.h"
-#include "base/StringUtilities.h"
 #include "logging/EventLogger.h"
 #include "midi/MidiEvent.h"
 #include "plugin/PluginVst2x.h"
+#include "plugin/PluginVst2xId.h"
 
 extern LinkedList getVst2xPluginLocations(CharString currentDirectory);
 extern LibraryHandle getLibraryHandleForPlugin(const CharString pluginAbsolutePath);
@@ -54,10 +55,11 @@ extern void closeLibraryHandle(LibraryHandle libraryHandle);
 // other files in this project must be compiled as C++ code. =/
 typedef struct {
   AEffect *pluginHandle;
+  PluginVst2xId pluginId;
   Vst2xPluginDispatcherFunc dispatcher;
   LibraryHandle libraryHandle;
   boolByte isPluginShell;
-  unsigned long shellPluginId;
+  VstInt32 shellPluginId;
   // Must be retained until processReplacing() is called, so best to keep a
   // reference in the plugin's data storage.
   struct VstEvents *vstEvents;
@@ -97,32 +99,43 @@ static const char* _getVst2xPlatformExtension(void) {
 }
 
 static void _logPluginVst2xInLocation(void* item, void* userData) {
-  CharString itemName = (CharString)item;
+  File itemFile = (File)item;
+  CharString itemPath = newCharStringWithCString(itemFile->absolutePath->data);
   boolByte* pluginsFound = (boolByte*)userData;
   char* dot;
 
-  dot = strrchr(itemName->data, '.');
+  logDebug("Checking item '%s'", itemPath->data);
+  dot = strrchr(itemPath->data, '.');
   if(dot != NULL) {
     if(!strncmp(dot + 1, _getVst2xPlatformExtension(), 3)) {
       *dot = '\0';
-      logInfo("  %s", itemName->data);
+      logInfo("  %s", itemPath->data);
       *pluginsFound = true;
     }
   }
+
+  freeCharString(itemPath);
+}
+
+static void _logPluginLocation(const CharString location) {
+  logInfo("Location '%s', type VST 2.x:", location->data);
 }
 
 static void _listPluginsVst2xInLocation(void* item, void* userData) {
-  CharString location;
+  CharString locationString;
+  File location = NULL;
   LinkedList locationItems;
   boolByte pluginsFound = false;
 
-  location = (CharString)item;
-  _logPluginLocation(location, PLUGIN_TYPE_VST_2X);
-  locationItems = listDirectory(location);
+  locationString = (CharString)item;
+  _logPluginLocation(locationString);
+  location = newFileWithPath(locationString);
+  locationItems = fileListDirectory(location);
   if(linkedListLength(locationItems) == 0) {
     // Empty or does not exist, return
     logInfo("  (Empty or non-existent directory)");
     freeLinkedList(locationItems);
+    freeFile(location);
     return;
   }
 
@@ -131,7 +144,8 @@ static void _listPluginsVst2xInLocation(void* item, void* userData) {
     logInfo("  (No plugins found)");
   }
 
-  freeLinkedListAndItems(locationItems, (LinkedListFreeItemFunc)freeCharString);
+  freeFile(location);
+  freeLinkedListAndItems(locationItems, (LinkedListFreeItemFunc)freeFile);
 }
 
 void listAvailablePluginsVst2x(const CharString pluginRoot) {
@@ -144,54 +158,69 @@ void listAvailablePluginsVst2x(const CharString pluginRoot) {
   freeLinkedListAndItems(pluginLocations, (LinkedListFreeItemFunc)freeCharString);
 }
 
-static boolByte _doesVst2xPluginExistAtLocation(const CharString pluginName, const CharString location) {
+static boolByte _doesVst2xPluginExistAtLocation(const CharString pluginName, const CharString locationName) {
   boolByte result = false;
-  CharString pluginSearchPath = newCharString();
-  const char* pluginFileExtension = getFileExtension(pluginName->data);
-  const char* platformFileExtension = _getVst2xPlatformExtension();
-  const char* subpluginSeparator = strrchr(pluginName->data, kPluginVst2xSubpluginSeparator);
-  CharString pluginSearchName;
+  const char* subpluginSeparator = NULL;
+  CharString pluginSearchName = NULL;
+  CharString pluginSearchExtension = NULL;
+  File location = NULL;
+  File pluginSearchPath = NULL;
 
+  subpluginSeparator = strrchr(pluginName->data, kPluginVst2xSubpluginSeparator);
   if(subpluginSeparator != NULL) {
     pluginSearchName = newCharString();
     strncpy(pluginSearchName->data, pluginName->data, subpluginSeparator - pluginName->data);
-    result = _doesVst2xPluginExistAtLocation(pluginSearchName, location);
+    result = _doesVst2xPluginExistAtLocation(pluginSearchName, locationName);
     freeCharString(pluginSearchName);
     return result;
   }
 
-  logDebug("Looking for plugin '%s' in '%s'", pluginName->data, location->data);
-  if(pluginFileExtension == NULL || strncasecmp(platformFileExtension, pluginFileExtension, strlen(platformFileExtension))) {
-    pluginFileExtension = platformFileExtension;
+  logDebug("Looking for plugin '%s' in '%s'", pluginName->data, locationName->data);
+
+  location = newFileWithPath(locationName);
+  if(location == NULL || !fileExists(location) || location->fileType != kFileTypeDirectory) {
+    logWarn("Location '%s' is not a valid directory", locationName->data);
+    freeFile(location);
+    return result;
   }
-  else {
-    // Set to NULL to skip appending an extension in the below call to buildAbsolutePath()
-    pluginFileExtension = NULL;
+  pluginSearchName = newCharStringWithCString(pluginName->data);
+  pluginSearchPath = newFileWithParent(location, pluginSearchName);
+  pluginSearchExtension = fileGetExtension(pluginSearchPath);
+  if(pluginSearchExtension == NULL) {
+    freeFile(pluginSearchPath);
+    charStringAppendCString(pluginSearchName, ".");
+    charStringAppendCString(pluginSearchName, _getVst2xPlatformExtension());
+    pluginSearchPath = newFileWithParent(location, pluginSearchName);
   }
 
-  buildAbsolutePath(location, pluginName, pluginFileExtension, pluginSearchPath);
-  if(!charStringIsEmpty(location) && fileExists(pluginSearchPath->data)) {
+  if(fileExists(pluginSearchPath)) {
     result = true;
   }
 
-  freeCharString(pluginSearchPath);
+  freeCharString(pluginSearchExtension);
+  freeCharString(pluginSearchName);
+  freeFile(pluginSearchPath);
+  freeFile(location);
   return result;
 }
 
-static boolByte _fillVst2xPluginAbsolutePath(const CharString pluginName, const CharString pluginRoot, CharString outLocation) {
-  boolByte result = false;
-
-  // First see if an absolute path was given as the plugin name
-  if(isAbsolutePath(pluginName) && fileExists(pluginName->data)) {
-    charStringCopy(outLocation, pluginName);
-    return true;
+static CharString _getVst2xPluginLocation(const CharString pluginName, const CharString pluginRoot) {
+  File pluginAbsolutePath = newFileWithPath(pluginName);
+  if(fileExists(pluginAbsolutePath)) {
+    File pluginParentDir = fileGetParent(pluginAbsolutePath);
+    CharString result = newCharStringWithCString(pluginParentDir->absolutePath->data);
+    freeFile(pluginParentDir);
+    freeFile(pluginAbsolutePath);
+    return result;
+  }
+  else {
+    freeFile(pluginAbsolutePath);
   }
 
   // Then search the path given to --plugin-root, if given
   if(!charStringIsEmpty(pluginRoot)) {
     if(_doesVst2xPluginExistAtLocation(pluginName, pluginRoot)) {
-      charStringCopy(outLocation, pluginRoot);
-      return true;
+      return newCharStringWithCString(pluginRoot->data);
     }
   }
 
@@ -200,26 +229,28 @@ static boolByte _fillVst2xPluginAbsolutePath(const CharString pluginName, const 
   LinkedList pluginLocations = getVst2xPluginLocations(getCurrentDirectory());
   if(pluginLocations->item == NULL) {
     freeLinkedListAndItems(pluginLocations, (LinkedListFreeItemFunc)freeCharString);
-    return false;
+    return NULL;
   }
 
   LinkedListIterator iterator = pluginLocations;
   while(iterator != NULL) {
     CharString searchLocation = (CharString)(iterator->item);
     if(_doesVst2xPluginExistAtLocation(pluginName, searchLocation)) {
-      charStringCopy(outLocation, searchLocation);
-      result = true;
+      return newCharStringWithCString(searchLocation->data);
       break;
     }
     iterator = (LinkedListIterator)iterator->nextItem;
   }
 
   freeLinkedListAndItems(pluginLocations, (LinkedListFreeItemFunc)freeCharString);
-  return result;
+  return NULL;
 }
 
-boolByte vst2xPluginExists(const CharString pluginName, const CharString pluginRoot, CharString outLocation) {
-  return _fillVst2xPluginAbsolutePath(pluginName, pluginRoot, outLocation);
+boolByte pluginVst2xExists(const CharString pluginName, const CharString pluginRoot) {
+  CharString pluginLocation = _getVst2xPluginLocation(pluginName, pluginRoot);
+  boolByte result = (pluginLocation != NULL) && !charStringIsEmpty(pluginLocation);
+  freeCharString(pluginLocation);
+  return result;
 }
 
 static short _canPluginDo(Plugin plugin, const char* canDoString) {
@@ -247,11 +278,9 @@ static void _suspendPlugin(Plugin plugin) {
 
 static boolByte _initVst2xPlugin(Plugin plugin) {
   PluginVst2xData data = (PluginVst2xData)plugin->extraData;
-  CharString uniqueIdString = convertIntIdToString(data->pluginHandle->uniqueID);
+  PluginVst2xId subpluginId;
 
-  logDebug("Initializing VST2.x plugin '%s' (%s)", plugin->pluginName->data, uniqueIdString->data);
-  freeCharString(uniqueIdString);
-
+  logDebug("Initializing VST2.x plugin '%s'", plugin->pluginName->data);
   if(data->pluginHandle->flags & effFlagsIsSynth) {
     plugin->pluginType = PLUGIN_TYPE_INSTRUMENT;
   }
@@ -259,13 +288,10 @@ static boolByte _initVst2xPlugin(Plugin plugin) {
     plugin->pluginType = PLUGIN_TYPE_EFFECT;
   }
 
-  plugin->numInputs = data->pluginHandle->numInputs;
-  plugin->numOutputs = data->pluginHandle->numOutputs;
-
   if(data->pluginHandle->dispatcher(data->pluginHandle, effGetPlugCategory, 0, 0, NULL, 0.0f) == kPlugCategShell) {
-    uniqueIdString = convertIntIdToString(data->shellPluginId);
-    logDebug("VST is a shell plugin, sub-plugin ID '%s'", uniqueIdString->data);
-    freeCharString(uniqueIdString);
+    subpluginId = newPluginVst2xIdWithId(data->shellPluginId);
+    logDebug("VST is a shell plugin, sub-plugin ID '%s'", subpluginId->idString->data);
+    freePluginVst2xId(subpluginId);
     data->isPluginShell = true;
   }
 
@@ -291,9 +317,9 @@ static boolByte _initVst2xPlugin(Plugin plugin) {
   return true;
 }
 
-unsigned long getVst2xPluginUniqueId(const Plugin plugin) {
-  if(plugin->interfaceType == PLUGIN_TYPE_VST_2X) {
-    PluginVst2xData data = (PluginVst2xData)plugin->extraData;
+unsigned long pluginVst2xGetUniqueId(const Plugin self) {
+  if(self->interfaceType == PLUGIN_TYPE_VST_2X) {
+    PluginVst2xData data = (PluginVst2xData)self->extraData;
     return data->pluginHandle->uniqueID;
   }
   return 0;
@@ -306,14 +332,16 @@ static boolByte _openVst2xPlugin(void* pluginPtr) {
   PluginVst2xData data = (PluginVst2xData)plugin->extraData;
   const char* pluginBasename = getFileBasename(plugin->pluginName->data);
   char* subpluginSeparator = strrchr((char*)pluginBasename, kPluginVst2xSubpluginSeparator);
-  CharString subpluginId = NULL;
+  CharString subpluginIdString = NULL;
 
   if(subpluginSeparator != NULL) {
     *subpluginSeparator = '\0';
-    subpluginId = newCharStringWithCapacity(kCharStringLengthShort);
-    strncpy(subpluginId->data, subpluginSeparator + 1, 4);
-    data->shellPluginId = convertStringIdToInt(subpluginId);
+    subpluginIdString = newCharStringWithCapacity(kCharStringLengthShort);
+    strncpy(subpluginIdString->data, subpluginSeparator + 1, 4);
+    PluginVst2xId subpluginId = newPluginVst2xIdWithStringId(subpluginIdString);
+    data->shellPluginId = (VstInt32)subpluginId->id;
     currentPluginUniqueId = data->shellPluginId;
+    freePluginVst2xId(subpluginId);
   }
 
   logInfo("Opening VST2.x plugin '%s'", plugin->pluginName->data);
@@ -343,9 +371,9 @@ static boolByte _openVst2xPlugin(void* pluginPtr) {
   plugin->pluginName = newCharStringWithCString(pluginBasename);
   freeCharString(temp);
 
-  if(data->shellPluginId) {
+  if(data->shellPluginId && subpluginIdString != NULL) {
     charStringAppendCString(plugin->pluginName, " (");
-    charStringAppend(plugin->pluginName, subpluginId);
+    charStringAppend(plugin->pluginName, subpluginIdString);
     charStringAppendCString(plugin->pluginName, ")");
   }
 
@@ -358,10 +386,13 @@ static boolByte _openVst2xPlugin(void* pluginPtr) {
     data->dispatcher = (Vst2xPluginDispatcherFunc)(pluginHandle->dispatcher);
     data->pluginHandle = pluginHandle;
     result = _initVst2xPlugin(plugin);
+    if(result) {
+      data->pluginId = newPluginVst2xIdWithId(data->pluginHandle->uniqueID);
+    }
   }
 
   freeCharString(pluginAbsolutePath);
-  freeCharString(subpluginId);
+  freeCharString(subpluginIdString);
   return result;
 }
 
@@ -407,15 +438,14 @@ static void _displayVst2xPluginInfo(void* pluginPtr) {
   logInfo("Information for VST2.x plugin '%s'", plugin->pluginName->data);
   data->dispatcher(data->pluginHandle, effGetVendorString, 0, 0, nameBuffer->data, 0.0f);
   logInfo("Vendor: %s", nameBuffer->data);
-  int vendorVersion = data->dispatcher(data->pluginHandle, effGetVendorVersion, 0, 0, NULL, 0.0f);
+  VstInt32 vendorVersion = (VstInt32)data->dispatcher(data->pluginHandle, effGetVendorVersion, 0, 0, NULL, 0.0f);
   logInfo("Version: %d", vendorVersion);
   charStringClear(nameBuffer);
 
-  nameBuffer = convertIntIdToString(data->pluginHandle->uniqueID);
-  logInfo("Unique ID: %s", nameBuffer->data);
+  logInfo("Unique ID: %s", data->pluginId->idString->data);
   freeCharString(nameBuffer);
 
-  VstInt32 pluginCategory = data->dispatcher(data->pluginHandle, effGetPlugCategory, 0, 0, NULL, 0.0f);
+  VstInt32 pluginCategory = (VstInt32)data->dispatcher(data->pluginHandle, effGetPlugCategory, 0, 0, NULL, 0.0f);
   switch(plugin->pluginType) {
     case PLUGIN_TYPE_EFFECT:
       logInfo("Plugin type: effect, category %d", pluginCategory);
@@ -435,14 +465,14 @@ static void _displayVst2xPluginInfo(void* pluginPtr) {
     nameBuffer = newCharStringWithCapacity(kCharStringLengthShort);
     while(true) {
       charStringClear(nameBuffer);
-      VstInt32 shellPluginId = data->dispatcher(data->pluginHandle, effShellGetNextPlugin, 0, 0, nameBuffer->data, 0.0f);
+      VstInt32 shellPluginId = (VstInt32)data->dispatcher(data->pluginHandle, effShellGetNextPlugin, 0, 0, nameBuffer->data, 0.0f);
       if(shellPluginId == 0 || charStringIsEmpty(nameBuffer)) {
         break;
       }
       else {
-        CharString shellPluginIdString = convertIntIdToString(shellPluginId);
-        logInfo("  '%s' (%s)", shellPluginIdString->data, nameBuffer->data);
-        freeCharString(shellPluginIdString);
+        PluginVst2xId subpluginId = newPluginVst2xIdWithId(shellPluginId);
+        logInfo("  '%s' (%s)", subpluginId->idString->data, nameBuffer->data);
+        freePluginVst2xId(subpluginId);
       }
     }
     freeCharString(nameBuffer);
@@ -450,11 +480,23 @@ static void _displayVst2xPluginInfo(void* pluginPtr) {
   else {
     nameBuffer = newCharStringWithCapacity(kCharStringLengthShort);
     logInfo("Parameters (%d total):", data->pluginHandle->numParams);
-    for(int i = 0; i < data->pluginHandle->numParams; i++) {
+    for(unsigned int i = 0; i < data->pluginHandle->numParams; i++) {
       float value = data->pluginHandle->getParameter(data->pluginHandle, i);
       charStringClear(nameBuffer);
       data->dispatcher(data->pluginHandle, effGetParamName, i, 0, nameBuffer->data, 0.0f);
       logInfo("  %d: '%s' (%f)", i, nameBuffer->data, value);
+      if(isLogLevelAtLeast(LOG_DEBUG)) {
+        logDebug("    Displaying common values for parameter:");
+        for(unsigned int j = 0; j < 128; j++) {
+          const float midiValue = (float)j / 127.0f;
+          // Don't use the other setParameter function, or else that will log like crazy to
+          // a different log level.
+          data->pluginHandle->setParameter(data->pluginHandle, i, midiValue);
+          charStringClear(nameBuffer);
+          data->dispatcher(data->pluginHandle, effGetParamDisplay, i, 0, nameBuffer->data, 0.0f);
+          logDebug("    %0.3f/MIDI value %d (0x%02x): %s", midiValue, j, j, nameBuffer->data);
+        }
+      }
     }
 
     logInfo("Programs (%d total):", data->pluginHandle->numPrograms);
@@ -485,7 +527,7 @@ static int _getVst2xPluginSetting(void* pluginPtr, PluginSetting pluginSetting) 
   PluginVst2xData data = (PluginVst2xData)plugin->extraData;
   switch(pluginSetting) {
     case PLUGIN_SETTING_TAIL_TIME_IN_MS: {
-      int tailSize = data->dispatcher(data->pluginHandle, effGetTailSize, 0, 0, NULL, 0.0f);
+      VstInt32 tailSize = (VstInt32)data->dispatcher(data->pluginHandle, effGetTailSize, 0, 0, NULL, 0.0f);
       // For some reason, the VST SDK says that plugins return a 1 here for no tail.
       if(tailSize == 1 || tailSize == 0) {
         return 0;
@@ -495,13 +537,17 @@ static int _getVst2xPluginSetting(void* pluginPtr, PluginSetting pluginSetting) 
         return (int)((double)tailSize * getSampleRate() / 1000.0f);
       }
     }
+    case PLUGIN_NUM_INPUTS:
+      return data->pluginHandle->numInputs;
+    case PLUGIN_NUM_OUTPUTS:
+      return data->pluginHandle->numOutputs;
     default:
       logUnsupportedFeature("Plugin setting for VST2.x");
       return 0;
   }
 }
 
-void setVst2xPluginChunk(Plugin plugin, char* chunk, int chunkSize) {
+void pluginVst2xSetProgramChunk(Plugin plugin, char* chunk, size_t chunkSize) {
   PluginVst2xData data = (PluginVst2xData)plugin->extraData;
   data->dispatcher(data->pluginHandle, effSetChunk, 1, chunkSize, chunk, 0.0f);
 }
@@ -509,7 +555,7 @@ void setVst2xPluginChunk(Plugin plugin, char* chunk, int chunkSize) {
 static void _processAudioVst2xPlugin(void* pluginPtr, SampleBuffer inputs, SampleBuffer outputs) {
   Plugin plugin = (Plugin)pluginPtr;
   PluginVst2xData data = (PluginVst2xData)plugin->extraData;
-  data->pluginHandle->processReplacing(data->pluginHandle, inputs->samples, outputs->samples, outputs->blocksize);
+  data->pluginHandle->processReplacing(data->pluginHandle, inputs->samples, outputs->samples, (VstInt32)outputs->blocksize);
 }
 
 static void _fillVstMidiEvent(const MidiEvent midiEvent, VstMidiEvent* vstMidiEvent) {
@@ -517,7 +563,7 @@ static void _fillVstMidiEvent(const MidiEvent midiEvent, VstMidiEvent* vstMidiEv
     case MIDI_TYPE_REGULAR:
       vstMidiEvent->type = kVstMidiType;
       vstMidiEvent->byteSize = sizeof(VstMidiEvent);
-      vstMidiEvent->deltaFrames = midiEvent->deltaFrames;
+      vstMidiEvent->deltaFrames = (VstInt32)midiEvent->deltaFrames;
       vstMidiEvent->midiData[0] = midiEvent->status;
       vstMidiEvent->midiData[1] = midiEvent->data1;
       vstMidiEvent->midiData[2] = midiEvent->data2;
@@ -583,24 +629,29 @@ static void _processMidiEventsVst2xPlugin(void *pluginPtr, LinkedList midiEvents
   data->dispatcher(data->pluginHandle, effProcessEvents, 0, 0, data->vstEvents, 0.0f);
 }
 
-boolByte setVst2xProgram(Plugin plugin, const int programNumber) {
+boolByte pluginVst2xSetProgram(Plugin plugin, const int programNumber) {
   PluginVst2xData data = (PluginVst2xData)plugin->extraData;
+  CharString currentProgram;
   VstInt32 result;
 
   if(programNumber < data->pluginHandle->numPrograms) {
-    result = data->pluginHandle->dispatcher(data->pluginHandle, effSetProgram, 0, programNumber, NULL, 0.0f);
+    result = (VstInt32)data->pluginHandle->dispatcher(data->pluginHandle, effSetProgram, 0, programNumber, NULL, 0.0f);
     if(result != 0) {
       logError("Plugin '%s' failed to load program number %d", plugin->pluginName->data, programNumber);
       return false;
     }
     else {
-      result = data->pluginHandle->dispatcher(data->pluginHandle, effGetProgram, 0, 0, NULL, 0.0f);
+      result = (VstInt32)data->pluginHandle->dispatcher(data->pluginHandle, effGetProgram, 0, 0, NULL, 0.0f);
       if(result != programNumber) {
         logError("Plugin '%s' claimed to load program %d successfully, but current program is %d",
           plugin->pluginName->data, programNumber, result);
         return false;
       }
       else {
+        currentProgram = newCharStringWithCapacity(kVstMaxProgNameLen + 1);
+        data->dispatcher(data->pluginHandle, effGetProgramName, 0, 0, currentProgram->data, 0.0f);
+        logDebug("Current program is now '%s'", currentProgram->data);
+        freeCharString(currentProgram);
         return true;
       }
     }
@@ -612,10 +663,22 @@ boolByte setVst2xProgram(Plugin plugin, const int programNumber) {
   }
 }
 
-static void _setParameterVst2xPlugin(void *pluginPtr, int index, float value) {
+static boolByte _setParameterVst2xPlugin(void *pluginPtr, unsigned int index, float value) {
   Plugin plugin = (Plugin)pluginPtr;
   PluginVst2xData data = (PluginVst2xData)(plugin->extraData);
-  data->pluginHandle->setParameter(data->pluginHandle, index, value);
+  if(index < (unsigned int)data->pluginHandle->numParams) {
+    CharString valueBuffer = newCharStringWithCapacity(kCharStringLengthShort);
+    data->pluginHandle->setParameter(data->pluginHandle, index, value);
+    data->dispatcher(data->pluginHandle, effGetParamDisplay, index, 0, valueBuffer->data, 0.0f);
+    logInfo("Set parameter %d on plugin '%s' to %f (%s)",
+      index, plugin->pluginName->data, value, valueBuffer->data);
+    freeCharString(valueBuffer);
+    return true;
+  }
+  else {
+    logError("Cannot set parameter %d on plugin '%s', invalid index", index, plugin->pluginName->data);
+    return false;
+  }
 }
 
 static void _prepareForProcessingVst2xPlugin(void* pluginPtr) {
@@ -634,6 +697,7 @@ static void _freeVst2xPluginData(void* pluginDataPtr) {
   data->dispatcher(data->pluginHandle, effClose, 0, 0, NULL, 0.0f);
   data->dispatcher = NULL;
   data->pluginHandle = NULL;
+  freePluginVst2xId(data->pluginId);
   closeLibraryHandle(data->libraryHandle);
   if(data->vstEvents != NULL) {
     for(int i = 0; i < data->vstEvents->numEvents; i++) {
@@ -641,23 +705,18 @@ static void _freeVst2xPluginData(void* pluginDataPtr) {
     }
     free(data->vstEvents);
   }
-
-  free(data);
 }
 
-Plugin newPluginVst2x(const CharString pluginName, const CharString pluginLocation) {
+Plugin newPluginVst2x(const CharString pluginName, const CharString pluginRoot) {
   Plugin plugin = (Plugin)malloc(sizeof(PluginMembers));
 
   plugin->interfaceType = PLUGIN_TYPE_VST_2X;
   plugin->pluginType = PLUGIN_TYPE_UNKNOWN;
   plugin->pluginName = newCharString();
   charStringCopy(plugin->pluginName, pluginName);
-  plugin->pluginLocation = newCharString();
-  charStringCopy(plugin->pluginLocation, pluginLocation);
-  plugin->numInputs = 0;
-  plugin->numOutputs = 0;
+  plugin->pluginLocation = _getVst2xPluginLocation(pluginName, pluginRoot);
 
-  plugin->open = _openVst2xPlugin;
+  plugin->openPlugin = _openVst2xPlugin;
   plugin->displayInfo = _displayVst2xPluginInfo;
   plugin->getAbsolutePath = _getVst2xAbsolutePath;
   plugin->getSetting = _getVst2xPluginSetting;
@@ -670,6 +729,7 @@ Plugin newPluginVst2x(const CharString pluginName, const CharString pluginLocati
 
   PluginVst2xData extraData = (PluginVst2xData)malloc(sizeof(PluginVst2xDataMembers));
   extraData->pluginHandle = NULL;
+  extraData->pluginId = NULL;
   extraData->dispatcher = NULL;
   extraData->libraryHandle = NULL;
   extraData->isPluginShell = false;

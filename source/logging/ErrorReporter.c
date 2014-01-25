@@ -34,7 +34,6 @@
 #include "app/BuildInfo.h"
 #include "base/FileUtilities.h"
 #include "base/PlatformUtilities.h"
-#include "base/StringUtilities.h"
 #include "logging/ErrorReporter.h"
 #include "logging/EventLogger.h"
 #include "MrsWatson.h"
@@ -86,18 +85,18 @@ void errorReporterInitialize(ErrorReporter self) {
   CharString infoText = newCharStringWithCString(kErrorReportInfoText);
   CharString wrappedInfoText;
   time_t now;
-  int length;
-  int i;
+  size_t length;
+  size_t i;
 
   printf("=== Starting error report ===\n");
-  wrappedInfoText = wrapString(infoText, 0);
+  wrappedInfoText = charStringWrap(infoText, 0);
   // The second newline here is intentional
   printf("%s\n", wrappedInfoText->data);
 
   time(&now);
   self->started = true;
 
-  snprintf(self->reportName->data, self->reportName->length,
+  snprintf(self->reportName->data, self->reportName->capacity,
     "MrsWatson Report %s", ctime(&now));
   // Trim the final newline character from this string if it exists
   length = strlen(self->reportName->data);
@@ -106,19 +105,19 @@ void errorReporterInitialize(ErrorReporter self) {
     length--;
   }
   for(i = 0; i < length; i++) {
-    if(!(isLetter(self->reportName->data[i]) ||
-         isNumber(self->reportName->data[i]))) {
+    if(!charStringIsLetter(self->reportName, i) ||
+        charStringIsNumber(self->reportName, i)) {
       self->reportName->data[i] = '-';
     }
   }
 
  #if UNIX
-  snprintf(self->desktopPath->data, self->desktopPath->length,
+  snprintf(self->desktopPath->data, self->desktopPath->capacity,
     "%s/Desktop", getenv("HOME"));
 #elif WINDOWS
   SHGetFolderPathA(NULL, CSIDL_DESKTOPDIRECTORY, NULL, 0, self->desktopPath->data);
 #endif
-  snprintf(self->reportDirPath->data, self->reportDirPath->length,
+  snprintf(self->reportDirPath->data, self->reportDirPath->capacity,
     "%s%c%s", self->desktopPath->data, PATH_DELIMITER, self->reportName->data);
   makeDirectory(self->reportDirPath);
 
@@ -148,7 +147,7 @@ void errorReporterCreateLauncher(ErrorReporter self, int argc, char* argv[]) {
 
 void errorReporterRemapPath(ErrorReporter self, CharString path) {
   CharString basename = newCharString();
-  CharString outString = newCharStringWithCapacity(path->length);
+  CharString outString = newCharStringWithCapacity(path->capacity);
 
   charStringCopyCString(basename, getFileBasename(path->data));
   buildAbsolutePath(self->reportDirPath, basename, NULL, outString);
@@ -178,7 +177,7 @@ static boolByte _copyDirectoryToErrorReportDir(ErrorReporter self, CharString pa
   int result;
   CharString copyCommand = newCharString();
   // TODO: This is the lazy way of doing this...
-  snprintf(copyCommand->data, copyCommand->length, "/bin/cp -r \"%s\" \"%s\"",
+  snprintf(copyCommand->data, copyCommand->capacity, "/bin/cp -r \"%s\" \"%s\"",
     path->data, self->reportDirPath->data);
   result = system(copyCommand->data);
   success = (WEXITSTATUS(result) == 0);
@@ -197,7 +196,7 @@ boolByte errorReporterShouldCopyPlugins(void) {
   CharString wrappedPromptText;
   char response;
 
-  wrappedPromptText = wrapString(promptText, 0);
+  wrappedPromptText = charStringWrap(promptText, 0);
   printf("%s", wrappedPromptText->data);
   freeCharString(wrappedPromptText);
   freeCharString(promptText);
@@ -210,7 +209,7 @@ boolByte errorReporterCopyPlugins(ErrorReporter self, PluginChain pluginChain) {
   CharString pluginAbsolutePath;
   Plugin currentPlugin;
   boolByte failed = false;
-  int i;
+  unsigned int i;
 
   pluginAbsolutePath = newCharString();
   for(i = 0; i < pluginChain->numPlugins; i++) {

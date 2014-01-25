@@ -29,9 +29,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "base/FileUtilities.h"
+#include "base/File.h"
 #include "base/PlatformUtilities.h"
-#include "base/StringUtilities.h"
 #include "io/SampleSourceAiff.h"
 #include "io/SampleSourceFlac.h"
 #include "io/SampleSource.h"
@@ -68,64 +67,71 @@ void sampleSourcePrintSupportedTypes(void) {
 #endif
 }
 
-SampleSourceType sampleSourceGuess(const CharString sampleSourceTypeString) {
-  if(!charStringIsEmpty(sampleSourceTypeString)) {
+static SampleSourceType _sampleSourceGuess(const CharString sampleSourceName) {
+  File sourceFile = NULL;
+  CharString sourceFileExtension = NULL;
+  SampleSourceType result = SAMPLE_SOURCE_TYPE_PCM;
+
+  if(sampleSourceName == NULL || charStringIsEmpty(sampleSourceName)) {
+    result = SAMPLE_SOURCE_TYPE_SILENCE;
+  }
+  else {
     // Look for stdin/stdout
-    if(strlen(sampleSourceTypeString->data) == 1 && sampleSourceTypeString->data[0] == '-') {
-      return SAMPLE_SOURCE_TYPE_PCM;
+    if(strlen(sampleSourceName->data) == 1 && sampleSourceName->data[0] == '-') {
+      result = SAMPLE_SOURCE_TYPE_PCM;
     }
     else {
-      const char* fileExtension = getFileExtension(sampleSourceTypeString->data);
+      sourceFile = newFileWithPath(sampleSourceName);
+      sourceFileExtension = fileGetExtension(sourceFile);
+      freeFile(sourceFile);
+
       // If there is no file extension, then automatically assume raw PCM data. Deal with it!
-      if(fileExtension == NULL) {
-        return SAMPLE_SOURCE_TYPE_PCM;
+      if(charStringIsEmpty(sourceFileExtension)) {
+        result = SAMPLE_SOURCE_TYPE_PCM;
       }
       // Possible file extensions for raw PCM data
-      else if(!strcasecmp(fileExtension, "pcm") || !strcasecmp(fileExtension, "raw") || !strcasecmp(fileExtension, "dat")) {
-        return SAMPLE_SOURCE_TYPE_PCM;
+      else if(charStringIsEqualToCString(sourceFileExtension, "pcm", true) ||
+        charStringIsEqualToCString(sourceFileExtension, "raw", true) ||
+        charStringIsEqualToCString(sourceFileExtension, "dat", true)) {
+        result = SAMPLE_SOURCE_TYPE_PCM;
       }
-      else if(!strcasecmp(fileExtension, "aif") || !strcasecmp(fileExtension, "aiff")) {
-        return SAMPLE_SOURCE_TYPE_AIFF;
+      else if(charStringIsEqualToCString(sourceFileExtension, "aif", true) ||
+        charStringIsEqualToCString(sourceFileExtension, "aiff", true)) {
+        result = SAMPLE_SOURCE_TYPE_AIFF;
       }
 #if HAVE_LIBFLAC
-      else if(!strcasecmp(fileExtension, "flac")) {
-        return SAMPLE_SOURCE_TYPE_FLAC;
+      else if(charStringIsEqualToCString(sourceFileExtension, "flac", true)) {
+        result = SAMPLE_SOURCE_TYPE_FLAC;
       }
 #endif
 #if HAVE_LIBLAME
-      else if(!strcasecmp(fileExtension, "mp3")) {
-        return SAMPLE_SOURCE_TYPE_MP3;
+      else if(charStringIsEqualToCString(sourceFileExtension, "mp3", true)) {
+        result = SAMPLE_SOURCE_TYPE_MP3;
       }
 #endif
 #if HAVE_LIBVORBIS
-      else if(!strcasecmp(fileExtension, "ogg")) {
-        return SAMPLE_SOURCE_TYPE_OGG;
+      else if(charStringIsEqualToCString(sourceFileExtension, "ogg", true)) {
+        freeCharString(sourceFileExtension);
+        result = SAMPLE_SOURCE_TYPE_OGG;
       }
 #endif
-      else if(!strcasecmp(fileExtension, "wav") || !strcasecmp(fileExtension, "wave")) {
-        return SAMPLE_SOURCE_TYPE_WAVE;
+      else if(charStringIsEqualToCString(sourceFileExtension, "wav", true) ||
+        charStringIsEqualToCString(sourceFileExtension, "wave", true)) {
+        result = SAMPLE_SOURCE_TYPE_WAVE;
       }
       else {
-        logCritical("Sample source '%s' does not match any supported type", sampleSourceTypeString->data);
-        return SAMPLE_SOURCE_TYPE_INVALID;
+        logCritical("Sample source '%s' does not match any supported type", sampleSourceName->data);
+        result = SAMPLE_SOURCE_TYPE_INVALID;
       }
     }
   }
-  else {
-    return SAMPLE_SOURCE_TYPE_INVALID;
-  }
+
+  freeCharString(sourceFileExtension);
+  return result;
 }
 
-boolByte sampleSourceIsStreaming(SampleSource sampleSource) {
-  if(sampleSource == NULL) {
-    return false;
-  }
-  else {
-    return (strcmp(sampleSource->sourceName->data, "-") == 0);
-  }
-}
-
-SampleSource newSampleSource(SampleSourceType sampleSourceType, const CharString sampleSourceName) {
+SampleSource sampleSourceFactory(const CharString sampleSourceName) {
+  SampleSourceType sampleSourceType = _sampleSourceGuess(sampleSourceName);
   switch(sampleSourceType) {
     case SAMPLE_SOURCE_TYPE_SILENCE:
       return newSampleSourceSilence();
@@ -152,8 +158,8 @@ SampleSource newSampleSource(SampleSourceType sampleSourceType, const CharString
   }
 }
 
-void freeSampleSource(SampleSource sampleSource) {
-  sampleSource->freeSampleSourceData(sampleSource->extraData);
-  freeCharString(sampleSource->sourceName);
-  free(sampleSource);
+void freeSampleSource(SampleSource self) {
+  self->freeSampleSourceData(self->extraData);
+  freeCharString(self->sourceName);
+  free(self);
 }

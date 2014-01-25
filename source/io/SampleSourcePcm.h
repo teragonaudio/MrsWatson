@@ -45,16 +45,43 @@ typedef struct {
 } SampleSourcePcmDataMembers;
 typedef SampleSourcePcmDataMembers *SampleSourcePcmData;
 
+// TODO: Make private
 SampleSource newSampleSourcePcm(const CharString sampleSourceName);
 
-size_t sampleSourcePcmRead(SampleSourcePcmData pcmData, SampleBuffer sampleBuffer);
-size_t sampleSourcePcmWrite(SampleSourcePcmData pcmData, const SampleBuffer sampleBuffer);
-// TODO: Move to SampleBuffer class
-void convertSampleBufferToPcmData(const SampleBuffer sampleBuffer, short* outPcmSamples, boolByte isDataLittleEndian);
+/**
+ * Read raw PCM data to a floating-point sample buffer
+ * @param self
+ * @param sampleBuffer
+ * @return Number of samples read
+ */
+size_t sampleSourcePcmRead(SampleSourcePcmData self, SampleBuffer sampleBuffer);
 
+/**
+ * Writes data from a sample buffer to a PCM output
+ * @param self
+ * @param sampleBuffer
+ * @return Number of samples written
+ */
+size_t sampleSourcePcmWrite(SampleSourcePcmData self, const SampleBuffer sampleBuffer);
+
+/**
+ * Set the sample rate to be used for raw PCM file operations. This is most
+ * relevant when writing a WAVE or a AIFF file, as the sample rate must be given
+ * in the file header.
+ * @param sampleSourcePtr
+ * @param sampleRate Sample rate, in Hertz
+ */
 void sampleSourcePcmSetSampleRate(void* sampleSourcePtr, double sampleRate);
+
+/**
+ * Set the number of channels to be used for raw PCM file operations. Like the
+ * sample, this is most relevant when writing a WAVE or a AIFF file.
+ * @param sampleSourcePtr
+ * @param numChannels Number of channels
+ */
 void sampleSourcePcmSetNumChannels(void* sampleSourcePtr, int numChannels);
 
+// TODO: Make private
 void freeSampleSourceDataPcm(void* sampleSourceDataPtr);
 
 #endif

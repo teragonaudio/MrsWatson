@@ -8,6 +8,7 @@
 #include "base/PlatformUtilities.h"
 #include "base/CharString.h"
 #include "base/FileUtilities.h"
+#include "logging/LogPrinter.h"
 
 #if UNIX
 #include <unistd.h>
@@ -16,6 +17,16 @@
 #ifndef __func__
 #define __func__ __FUNCTION__
 #endif
+
+typedef enum {
+  kTestLogEventSection,
+  kTestLogEventPass,
+  kTestLogEventFail,
+  kTestLogEventSkip,
+  kTestLogEventReset,
+  kTestLogEventInvalid
+} TestLogEventType;
+const LogColor getLogColor(TestLogEventType eventType);
 
 typedef int (*TestCaseExecFunc)(void);
 typedef void (*TestCaseSetupFunc)(void);
@@ -71,40 +82,58 @@ void freeTestSuite(TestSuite self);
 #define assertNotNull(condition) assert((condition) != NULL)
 
 #define assertIntEquals(condition, expected) { \
-  int result = condition; \
-  if(result != expected) { \
-    fprintf(stderr, "Assertion failed at %s:%d. Expected %d, got %d. ", getFileBasename(__FILE__), __LINE__, expected, result); \
+  int _result = condition; \
+  if(_result != expected) { \
+    fprintf(stderr, "Assertion failed at %s:%d. Expected %d, got %d. ", getFileBasename(__FILE__), __LINE__, expected, _result); \
+    return 1; \
+  } \
+}
+
+#define assertLongEquals(condition, expected) { \
+  long _result = condition; \
+  if(_result != expected) { \
+    fprintf(stderr, "Assertion failed at %s:%d. Expected %lu, got %lu. ", getFileBasename(__FILE__), __LINE__, expected, _result); \
     return 1; \
   } \
 }
 
 #define assertUnsignedLongEquals(condition, expected) { \
-  unsigned long result = condition; \
-  if(result != expected) { \
-    fprintf(stderr, "Assertion failed at %s:%d. Expected %ld, got %ld. ", getFileBasename(__FILE__), __LINE__, expected, result); \
+  unsigned long _result = condition; \
+  if(_result != expected) { \
+    fprintf(stderr, "Assertion failed at %s:%d. Expected %ld, got %ld. ", getFileBasename(__FILE__), __LINE__, expected, _result); \
+    return 1; \
+  } \
+}
+
+#define assertSizeEquals(condition, expected) { \
+  size_t _result = condition; \
+  if(_result != expected) { \
+    fprintf(stderr, "Assertion failed at %s:%d. Expected %zu, got %zu. ", getFileBasename(__FILE__), __LINE__, expected, _result); \
     return 1; \
   } \
 }
 
 #define TEST_FLOAT_TOLERANCE 0.01
 #define assertDoubleEquals(condition, expected, tolerance) { \
-  double result = fabs(condition - expected); \
-  if(result > tolerance) { \
-    fprintf(stderr, "Assertion failed at %s:%d. Expected %g, got %g. ", getFileBasename(__FILE__), __LINE__, expected, condition); \
+  double conditionRounded = floor(condition * 100.0) / 100.0; \
+  double expectedRounded = floor(expected * 100.0) / 100.0; \
+  double _result = fabs(conditionRounded - expectedRounded); \
+  if(_result > tolerance) { \
+    fprintf(stderr, "Assertion failed at %s:%d. Expected %g, got %g. ", getFileBasename(__FILE__), __LINE__, expectedRounded, conditionRounded); \
     return 1; \
   } \
 }
 
-#define assertCharStringEquals(result, expected) { \
-  if(!charStringIsEqualToCString(result, expected, false)) { \
-    fprintf(stderr, "Assertion failed at %s:%d. Expected '%s', got '%s'. ", getFileBasename(__FILE__), __LINE__, expected, result->data); \
+#define assertCharStringEquals(_result, expected) { \
+  if(!charStringIsEqualToCString(_result, expected, false)) { \
+    fprintf(stderr, "Assertion failed at %s:%d. Expected '%s', got '%s'. ", getFileBasename(__FILE__), __LINE__, expected, _result->data); \
     return 1; \
   } \
 }
 
-#define assertCharStringContains(result, match) { \
-  if(strstr(result->data, match) == NULL) { \
-    fprintf(stderr, "Assertion failed at %s:%d. Expected '%s' to contain '%s'. ", getFileBasename(__FILE__), __LINE__, result->data, match); \
+#define assertCharStringContains(_result, match) { \
+  if(strstr(_result->data, match) == NULL) { \
+    fprintf(stderr, "Assertion failed at %s:%d. Expected '%s' to contain '%s'. ", getFileBasename(__FILE__), __LINE__, _result->data, match); \
     return 1; \
   } \
 }

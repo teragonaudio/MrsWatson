@@ -31,6 +31,7 @@
 
 #include "logging/EventLogger.h"
 #include "plugin/PluginChain.h"
+#include "audio/AudioSettings.h"
 
 PluginChain newPluginChain(void) {
   PluginChain pluginChain = (PluginChain)malloc(sizeof(PluginChainMembers));
@@ -38,6 +39,8 @@ PluginChain newPluginChain(void) {
   pluginChain->numPlugins = 0;
   pluginChain->plugins = (Plugin*)malloc(sizeof(Plugin) * MAX_PLUGINS);
   pluginChain->presets = (PluginPreset*)malloc(sizeof(PluginPreset) * MAX_PLUGINS);
+  pluginChain->audioTimers = (TaskTimer*)malloc(sizeof(TaskTimer) * MAX_PLUGINS);
+  pluginChain->midiTimers = (TaskTimer*)malloc(sizeof(TaskTimer) * MAX_PLUGINS);
 
   return pluginChain;
 }
@@ -53,6 +56,8 @@ boolByte pluginChainAppend(PluginChain self, Plugin plugin, PluginPreset preset)
   else {
     self->plugins[self->numPlugins] = plugin;
     self->presets[self->numPlugins] = preset;
+    self->audioTimers[self->numPlugins] = newTaskTimer(plugin->pluginName, "Audio Processing");
+    self->midiTimers[self->numPlugins] = newTaskTimer(plugin->pluginName, "MIDI Processing");
     self->numPlugins++;
     return true;
   }
@@ -68,11 +73,8 @@ boolByte pluginChainAddFromArgumentString(PluginChain pluginChain, const CharStr
   CharString presetNameBuffer = NULL;
   char* presetSeparator;
   PluginPreset preset;
-  PluginPresetType presetType;
   Plugin plugin;
   size_t substringLength;
-  CharString pluginLocationBuffer;
-  PluginInterfaceType pluginType;
 
   if(charStringIsEmpty(argumentString)) {
     logWarn("Plugin chain string is empty");
@@ -105,23 +107,19 @@ boolByte pluginChainAddFromArgumentString(PluginChain pluginChain, const CharStr
     preset = NULL;
     if(strlen(presetNameBuffer->data) > 0) {
       logInfo("Opening preset '%s' for plugin", presetNameBuffer->data);
-      presetType = pluginPresetGuessType(presetNameBuffer);
-      if(presetType != PRESET_TYPE_INVALID) {
-        preset = newPluginPreset(presetType, presetNameBuffer);
-      }
+      preset = pluginPresetFactory(presetNameBuffer);
     }
 
     // Guess the plugin type from the file extension, search root, etc.
-    pluginLocationBuffer = newCharString();
-    pluginType = guessPluginInterfaceType(pluginNameBuffer, userSearchPath, pluginLocationBuffer);
-    if(pluginType != PLUGIN_TYPE_INVALID) {
-      plugin = newPlugin(pluginType, pluginNameBuffer, pluginLocationBuffer);
+    plugin = pluginFactory(pluginNameBuffer, userSearchPath);
+    if(plugin != NULL) {
       if(!pluginChainAppend(pluginChain, plugin, preset)) {
         logError("Plugin '%s' could not be added to the chain", pluginNameBuffer->data);
+        free(pluginNameBuffer);
+        free(presetNameBuffer);
         return false;
       }
     }
-    freeCharString(pluginLocationBuffer);
 
     if(pluginSeparator == NULL) {
       break;
@@ -159,11 +157,11 @@ static boolByte _loadPresetForPlugin(Plugin plugin, PluginPreset preset) {
 ReturnCodes pluginChainInitialize(PluginChain pluginChain) {
   Plugin plugin;
   PluginPreset preset;
-  int i;
+  unsigned int i;
 
   for(i = 0; i < pluginChain->numPlugins; i++) {
     plugin = pluginChain->plugins[i];
-    if(!plugin->open(plugin)) {
+    if(!plugin->openPlugin(plugin)) {
       logError("Plugin '%s' could not be opened", plugin->pluginName->data);
       return RETURN_CODE_PLUGIN_ERROR;
     }
@@ -195,7 +193,7 @@ ReturnCodes pluginChainInitialize(PluginChain pluginChain) {
 
 void pluginChainInspect(PluginChain pluginChain) {
   Plugin plugin;
-  int i;
+  unsigned int i;
   for(i = 0; i < pluginChain->numPlugins; i++) {
     plugin = pluginChain->plugins[i];
     plugin->displayInfo(plugin);
@@ -204,7 +202,7 @@ void pluginChainInspect(PluginChain pluginChain) {
 
 void pluginChainPrepareForProcessing(PluginChain self) {
   Plugin plugin;
-  int i;
+  unsigned int i;
   for(i = 0; i < self->numPlugins; i++) {
     plugin = self->plugins[i];
     plugin->prepareForProcessing(plugin);
@@ -215,7 +213,7 @@ int pluginChainGetMaximumTailTimeInMs(PluginChain pluginChain) {
   Plugin plugin;
   int tailTime;
   int maxTailTime = 0;
-  int i;
+  unsigned int i;
   for(i = 0; i < pluginChain->numPlugins; i++) {
     plugin = pluginChain->plugins[i];
     tailTime = plugin->getSetting(plugin, PLUGIN_SETTING_TAIL_TIME_IN_MS);
@@ -226,28 +224,84 @@ int pluginChainGetMaximumTailTimeInMs(PluginChain pluginChain) {
   return maxTailTime;
 }
 
-void pluginChainProcessAudio(PluginChain pluginChain, SampleBuffer inBuffer, SampleBuffer outBuffer, TaskTimer taskTimer) {
+typedef struct {
   Plugin plugin;
-  int i;
+  boolByte success;
+} _PluginChainSetParameterPassData;
+
+void _pluginChainSetParameter(void* item, void* userData) {
+  // Expect that the linked list contains CharStrings, single that is what is
+  // being given from the command line.
+  char* parameterValue = (char*)item;
+  _PluginChainSetParameterPassData* passData = (_PluginChainSetParameterPassData*)userData;
+  Plugin plugin = passData->plugin;
+  char* comma = NULL;
+  int index;
+  float value;
+
+  // If a previous attempt to set a parameter failed, then return right away
+  // since this method will return false anyways.
+  if(!passData->success) {
+    return;
+  }
+
+  // TODO: Need a "pair" type, this string parsing is done several times in the codebase
+  comma = strchr(parameterValue, ',');
+  if(comma == NULL) {
+    logError("Malformed parameter string, see --help parameter for usage");
+    return;
+  }
+  *comma = '\0';
+  index = (int)strtod(parameterValue, NULL);
+  value = (float)strtod(comma + 1, NULL);
+  logDebug("Set parameter %d to %f", index, value);
+  passData->success = plugin->setParameter(plugin, index, value);
+}
+
+boolByte pluginChainSetParameters(PluginChain self, const LinkedList parameters) {
+  _PluginChainSetParameterPassData passData;
+  passData.plugin = self->plugins[0];
+  passData.success = true;
+  logDebug("Setting parameters on head plugin in chain");
+  linkedListForeach(parameters, _pluginChainSetParameter, &passData);
+  return passData.success;
+}
+
+void pluginChainProcessAudio(PluginChain pluginChain, SampleBuffer inBuffer, SampleBuffer outBuffer) {
+  Plugin plugin;
+  unsigned int pluginInputs, pluginOutputs;
+  unsigned int i;
+  double processingTimeInMs;
+  const double maxProcessingTimeInMs = inBuffer->blocksize * 1000.0 / getSampleRate();
 
   for(i = 0; i < pluginChain->numPlugins; i++) {
     sampleBufferClear(outBuffer);
 
     plugin = pluginChain->plugins[i];
     logDebug("Processing audio with plugin '%s'", plugin->pluginName->data);
-    if(inBuffer->numChannels < plugin->numInputs) {
-      logDebug("Expanding input source from %d -> %d channels", inBuffer->numChannels, plugin->numInputs);
-      sampleBufferResize(inBuffer, plugin->numInputs, true);
+    pluginInputs = plugin->getSetting(plugin, PLUGIN_NUM_INPUTS);
+    if(inBuffer->numChannels < pluginInputs) {
+      logDebug("Expanding input source from %d -> %d channels", inBuffer->numChannels, pluginInputs);
+      sampleBufferResize(inBuffer, pluginInputs, true);
     }
-    if(outBuffer->numChannels < plugin->numOutputs) {
-      logDebug("Expanding output source from %d -> %d channels", outBuffer->numChannels, plugin->numOutputs);
-      sampleBufferResize(outBuffer, plugin->numOutputs, false);
+    pluginOutputs = plugin->getSetting(plugin, PLUGIN_NUM_OUTPUTS);
+    if(outBuffer->numChannels < pluginOutputs) {
+      logDebug("Expanding output source from %d -> %d channels", outBuffer->numChannels, pluginOutputs);
+      sampleBufferResize(outBuffer, pluginOutputs, false);
     }
-    startTimingTask(taskTimer, i);
+    taskTimerStart(pluginChain->audioTimers[i]);
     plugin->processAudio(plugin, inBuffer, outBuffer);
-    // TODO: Last task ID is the host, but this is a bit hacky
-    startTimingTask(taskTimer, taskTimer->numTasks - 1);
-
+    processingTimeInMs = taskTimerStop(pluginChain->audioTimers[i]);
+    if(processingTimeInMs > maxProcessingTimeInMs) {
+      logWarn("Possible dropout! Plugin '%s' spent %dms processing time (%dms max)",
+        plugin->pluginName->data, (int)processingTimeInMs, (int)maxProcessingTimeInMs);
+    }
+    else {
+      logDebug("Plugin '%s' spent %dms processing (%d%% effective CPU usage)",
+        plugin->pluginName->data, (int)processingTimeInMs,
+        (int)(processingTimeInMs / maxProcessingTimeInMs));
+    }
+    
     // If this is not the last plugin in the chain, then copy the output of this plugin
     // back to the input for the next one in the chain.
     if(i + 1 < pluginChain->numPlugins) {
@@ -256,21 +310,22 @@ void pluginChainProcessAudio(PluginChain pluginChain, SampleBuffer inBuffer, Sam
   }
 }
 
-void pluginChainProcessMidi(PluginChain pluginChain, LinkedList midiEvents, TaskTimer taskTimer) {
+void pluginChainProcessMidi(PluginChain pluginChain, LinkedList midiEvents) {
   Plugin plugin;
   if(midiEvents->item != NULL) {
     logDebug("Processing plugin chain MIDI events");
     // Right now, we only process MIDI in the first plugin in the chain
     // TODO: Is this really the correct behavior? How do other sequencers do it?
     plugin = pluginChain->plugins[0];
-    startTimingTask(taskTimer, 0);
+    taskTimerStart(pluginChain->midiTimers[0]);
     plugin->processMidiEvents(plugin, midiEvents);
+    taskTimerStop(pluginChain->midiTimers[0]);
   }
 }
 
 void pluginChainShutdown(PluginChain pluginChain) {
   Plugin plugin;
-  int i;
+  unsigned int i;
   for(i = 0; i < pluginChain->numPlugins; i++) {
     plugin = pluginChain->plugins[i];
     logInfo("Closing plugin '%s'", plugin->pluginName->data);
@@ -279,23 +334,18 @@ void pluginChainShutdown(PluginChain pluginChain) {
 }
 
 void freePluginChain(PluginChain pluginChain) {
-  Plugin plugin;
-  PluginPreset preset;
-  int i;
+  unsigned int i;
 
   for(i = 0; i < pluginChain->numPlugins; i++) {
-    plugin = pluginChain->plugins[i];
-    freePlugin(plugin);
+    freePluginPreset(pluginChain->presets[i]);
+    freePlugin(pluginChain->plugins[i]);
+    freeTaskTimer(pluginChain->audioTimers[i]);
+    freeTaskTimer(pluginChain->midiTimers[i]);
   }
-  free(pluginChain->plugins);
 
-  for(i = 0; i < pluginChain->numPlugins; i++) {
-    preset = pluginChain->presets[i];
-    if(preset != NULL) {
-      freePluginPreset(preset);
-    }
-  }
   free(pluginChain->presets);
-
+  free(pluginChain->plugins);
+  free(pluginChain->audioTimers);
+  free(pluginChain->midiTimers);
   free(pluginChain);
 }

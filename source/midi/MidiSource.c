@@ -31,7 +31,6 @@
 
 #include "base/FileUtilities.h"
 #include "base/PlatformUtilities.h"
-#include "base/StringUtilities.h"
 #include "logging/EventLogger.h"
 #include "midi/MidiSourceFile.h"
 #include "midi/MidiSource.h"
@@ -65,8 +64,8 @@ MidiSource newMidiSource(MidiSourceType midiSourceType, const CharString midiSou
   }
 }
 
-void freeMidiSource(MidiSource midiSource) {
-  midiSource->freeMidiSourceData(midiSource->extraData);
-  freeCharString(midiSource->sourceName);
-  free(midiSource);
+void freeMidiSource(MidiSource self) {
+  self->freeMidiSourceData(self->extraData);
+  freeCharString(self->sourceName);
+  free(self);
 }

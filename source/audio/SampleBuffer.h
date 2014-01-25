@@ -55,14 +55,6 @@ SampleBuffer newSampleBuffer(unsigned int numChannels, unsigned long blocksize);
 void sampleBufferClear(SampleBuffer self);
 
 /**
- * Copy all samples from another buffer to this one
- * @param self
- * @param buffer Other buffer to copy from
- * @return True on success, false on failure
- */
-boolByte sampleBufferCopy(SampleBuffer self, const SampleBuffer buffer);
-
-/**
  * Expand or shrink the channel count of a sample buffer. Useful for copying
  * between stereo/mono and such.
  * @param self
@@ -71,6 +63,38 @@ boolByte sampleBufferCopy(SampleBuffer self, const SampleBuffer buffer);
  * @return True on success, false on failure
  */
 boolByte sampleBufferResize(SampleBuffer self, const unsigned int numChannels, boolByte copy);
+
+/**
+ * Copy all samples from another buffer to this one
+ * @param self
+ * @param buffer Other buffer to copy from
+ * @return True on success, false on failure
+ */
+boolByte sampleBufferCopy(SampleBuffer self, const SampleBuffer buffer);
+
+/**
+ * Copy a buffer of interlaced short integer samples to a sample buffer. This
+ * function also converts the samples from integers to floating-point numbers.
+ * Mostly useful for reading raw PCM data into a format usable by plugins.
+ * @param self
+ * @param inPcmSamples Array of interlaced samples. Note that the size of the
+ * length of this array must match the SampleBuffer's blocksize * channel count,
+ * or else undefined behavior will occur.
+ */
+void sampleBufferCopyPcmSamples(SampleBuffer self, const short* inPcmSamples);
+
+/**
+ * Get an array of interlaced short integer samples from the SampleBuffer. This
+ * function will also convert the samples from floating-point numbers to short
+ * integers. Mostly useful for writing raw PCM data.
+ * @param self
+ * @param outPcmSamples A pre-allocated array large enough to hold the result of
+ * the conversion. This means that at least blocksize * channel count samples
+ * must be allocated
+ * @param flipEndian True if the output data should have the samples flipped
+ * from the native endianness.
+ */
+void sampleBufferGetPcmSamples(const SampleBuffer self, short* outPcmSamples, boolByte flipEndian);
 
 /**
  * Free all memory used by a SampleBuffer instance

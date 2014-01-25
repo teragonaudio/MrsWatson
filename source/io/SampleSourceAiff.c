@@ -96,7 +96,7 @@ static boolByte _openSampleSourceAiff(void *sampleSourcePtr, const SampleSourceO
 static boolByte _readBlockFromAiffFile(void* sampleSourcePtr, SampleBuffer sampleBuffer) {
   SampleSource sampleSource = (SampleSource)sampleSourcePtr;
   SampleSourcePcmData extraData = (SampleSourcePcmData)(sampleSource->extraData);
-  int originalBlocksize = sampleBuffer->blocksize;
+  unsigned long originalBlocksize = sampleBuffer->blocksize;
   size_t samplesRead = sampleSourcePcmRead(extraData, sampleBuffer);
   sampleSource->numSamplesProcessed += samplesRead;
   return (originalBlocksize == sampleBuffer->blocksize);
@@ -105,7 +105,7 @@ static boolByte _readBlockFromAiffFile(void* sampleSourcePtr, SampleBuffer sampl
 static boolByte _writeBlockToAiffFile(void* sampleSourcePtr, const SampleBuffer sampleBuffer) {
   SampleSource sampleSource = (SampleSource)sampleSourcePtr;
   SampleSourcePcmData extraData = (SampleSourcePcmData)(sampleSource->extraData);
-  int samplesWritten = (int)sampleSourcePcmWrite(extraData, sampleBuffer);
+  unsigned int samplesWritten = (int)sampleSourcePcmWrite(extraData, sampleBuffer);
   sampleSource->numSamplesProcessed += samplesWritten;
   return (samplesWritten == sampleBuffer->blocksize);
 }

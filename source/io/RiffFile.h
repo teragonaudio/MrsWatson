@@ -40,11 +40,36 @@ typedef struct {
 } RiffChunkMembers;
 typedef RiffChunkMembers* RiffChunk;
 
+/**
+ * Create a new RIFF chunk object
+ * @return RiffChunk object
+ */
 RiffChunk newRiffChunk(void);
 
-boolByte riffChunkReadNext(FILE* fileHandle, RiffChunk outChunk, boolByte readData);
-boolByte riffChunkIsIdEqualTo(const RiffChunk chunk, const char* id);
+/**
+ * Read the contents of the next chunk of a RIFF file into this object
+ * @param self
+ * @param fileHandle RIFF file, which should be opened for reading
+ * @param readData If true, save the contents of the chunk in the RiffChunk's
+ * data field. This is not always appropriate, for instance in the case of a
+ * PCM file body. In this case, one usually wants to know the size of the data
+ * chunk, but then to read bites from it in smaller blocks.
+ * @return True if the chunk was successfully read
+ */
+boolByte riffChunkReadNext(RiffChunk self, FILE* fileHandle, boolByte readData);
 
-void freeRiffChunk(RiffChunk chunk);
+/**
+ * Test to see if this chunk's ID is equal to the given four character sequence
+ * @param self
+ * @param id String to compare to, should be exactly 4 characters
+ * @return True if the ID's are equal, false otherwise
+ */
+boolByte riffChunkIsIdEqualTo(const RiffChunk self, const char* id);
+
+/**
+ * Free a RiffChunk object and its associated memory.
+ * @param self
+ */
+void freeRiffChunk(RiffChunk self);
 
 #endif

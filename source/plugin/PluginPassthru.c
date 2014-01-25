@@ -54,7 +54,16 @@ static void _pluginPassthruDisplayInfo(void* pluginPtr) {
 }
 
 static int _pluginPassthruGetSetting(void* pluginPtr, PluginSetting pluginSetting) {
-  return 0;
+  switch(pluginSetting) {
+    case PLUGIN_SETTING_TAIL_TIME_IN_MS:
+      return 0;
+    case PLUGIN_NUM_INPUTS:
+      return 2;
+    case PLUGIN_NUM_OUTPUTS:
+      return 2;
+    default:
+      return 0;
+  }
 }
 
 static void _pluginPassthruProcessAudio(void* pluginPtr, SampleBuffer inputs, SampleBuffer outputs) {
@@ -65,8 +74,8 @@ static void _pluginPassthruProcessMidiEvents(void* pluginPtr, LinkedList midiEve
   // Nothing to do here
 }
 
-static void _pluginPassthruSetParameter(void* pluginPtr, int i, float value) {
-  // Nothing to do here
+static boolByte _pluginPassthruSetParameter(void* pluginPtr, unsigned int i, float value) {
+  return false;
 }
 
 Plugin newPluginPassthru(const CharString pluginName) {
@@ -78,10 +87,8 @@ Plugin newPluginPassthru(const CharString pluginName) {
   charStringCopy(plugin->pluginName, pluginName);
   plugin->pluginLocation = newCharString();
   charStringCopyCString(plugin->pluginLocation, "Internal");
-  plugin->numInputs = 2;
-  plugin->numOutputs = 2;
 
-  plugin->open = _pluginPassthruOpen;
+  plugin->openPlugin = _pluginPassthruOpen;
   plugin->displayInfo = _pluginPassthruDisplayInfo;
   plugin->getAbsolutePath = _pluginPassthruGetAbsolutePath;
   plugin->getSetting = _pluginPassthruGetSetting;

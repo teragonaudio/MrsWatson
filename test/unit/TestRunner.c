@@ -10,33 +10,35 @@ void addTestToTestSuite(TestSuite testSuite, TestCase testCase) {
   linkedListAppend(testSuite->testCases, testCase);
 }
 
+const LogColor getLogColor(TestLogEventType eventType) {
+  switch(eventType) {
+    case kTestLogEventSection:
+      return isatty(1) ? COLOR_FG_CYAN : COLOR_NONE;
+    case kTestLogEventPass:
+      return isatty(1) ? COLOR_FG_GREEN : COLOR_NONE;
+    case kTestLogEventFail:
+      return isatty(1) ? COLOR_BG_MAROON : COLOR_NONE;
+    case kTestLogEventSkip:
+      return isatty(1) ? COLOR_FG_YELLOW : COLOR_NONE;
+    case kTestLogEventReset:
+      return isatty(1) ? COLOR_RESET : COLOR_NONE;
+    default:
+      return COLOR_NONE;
+  }
+}
+
 void printTestSuccess(void) {
-  if(isatty(1)) {
-    printToLog(COLOR_FG_GREEN, NULL, "OK");
-  }
-  else {
-    printToLog(COLOR_RESET, NULL, "OK");
-  }
+  printToLog(getLogColor(kTestLogEventPass), NULL, "OK");
   flushLog(NULL);
 }
 
 void printTestFail(void) {
-  if(isatty(1)) {
-    printToLog(COLOR_BG_MAROON, NULL, "FAIL");
-  }
-  else {
-    printToLog(COLOR_RESET, NULL, "FAIL");
-  }
+  printToLog(getLogColor(kTestLogEventFail), NULL, "FAIL");
   flushLog(NULL);
 }
 
 static void _printTestSkipped(void) {
-  if(isatty(1)) {
-    printToLog(COLOR_FG_YELLOW, NULL, "Skipped");
-  }
-  else {
-    printToLog(COLOR_RESET, NULL, "Skipped");
-  }
+  printToLog(getLogColor(kTestLogEventSkip), NULL, "Skipped");
   flushLog(NULL);
 }
 
@@ -86,13 +88,8 @@ void runTestCase(void* item, void* extraData) {
 void runTestSuite(void* testSuitePtr, void* extraData) {
   TestSuite testSuite = (TestSuite)testSuitePtr;
 
-  printToLog(COLOR_RESET, NULL, "Running tests in ");
-  if(isatty(1)) {
-    printToLog(COLOR_FG_CYAN, NULL, testSuite->name);
-  }
-  else {
-    printToLog(COLOR_RESET, NULL, testSuite->name);
-  }
+  printToLog(getLogColor(kTestLogEventReset), NULL, "Running tests in ");
+  printToLog(getLogColor(kTestLogEventSection), NULL, testSuite->name);
   flushLog(NULL);
 
   linkedListForeach(testSuite->testCases, runTestCase, testSuite);

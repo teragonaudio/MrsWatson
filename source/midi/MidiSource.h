@@ -30,7 +30,7 @@
 
 #include "base/CharString.h"
 #include "base/Types.h"
-#include "sequencer/MidiSequence.h"
+#include "midi/MidiSequence.h"
 
 typedef enum {
   MIDI_SOURCE_TYPE_INVALID,
@@ -53,10 +53,31 @@ typedef struct {
   void* extraData;
 } MidiSourceMembers;
 
+/**
+ * A class which acts as a source for MIDI data.
+ */
 typedef MidiSourceMembers* MidiSource;
 
-MidiSourceType guessMidiSourceType(const CharString midiSourceTypeString);
+/**
+ * Factory method to create a new MIDI source
+ * @param midiSourceType Source type, which should be the result of a call to
+ * guessMidiSourceType()
+ * @param midiSourceName MIDI source name
+ * @return MidiSource object, or NULL if no object could be created
+ */
 MidiSource newMidiSource(MidiSourceType midiSourceType, const CharString midiSourceName);
-void freeMidiSource(MidiSource midiSource);
+
+/**
+ * Determine an appropriate source type based on a file name.
+ * @param midiSourceTypeString Source name
+ * @return Source type
+ */
+MidiSourceType guessMidiSourceType(const CharString midiSourceTypeString);
+
+/**
+ * Free a MidiSource and its associated resources
+ * @param self
+ */
+void freeMidiSource(MidiSource self);
 
 #endif

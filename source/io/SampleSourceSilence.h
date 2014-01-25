@@ -30,6 +30,7 @@
 
 #include "SampleSource.h"
 
+// TODO: Make private
 SampleSource newSampleSourceSilence(void);
 
 #endif

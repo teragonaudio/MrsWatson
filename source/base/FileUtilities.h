@@ -40,27 +40,32 @@
 #define ROOT_DIRECTORY "C:\\"
 #endif
 
-// File operations
-boolByte fileExists(const char* path);
+/** DEPRECATED */
+boolByte _fileExists(const char* path);
+/** DEPRECATED */
 boolByte copyFileToDirectory(const CharString fileAbsolutePath, const CharString directoryAbsolutePath);
 
-// Directory operations
+/** DEPRECATED */
 boolByte makeDirectory(const CharString absolutePath);
-/**
- * Returns a list of CharStrings for all items in a directory
- * @param directory Directory to search
- */
+/** DEPRECATED */
 LinkedList listDirectory(const CharString directory);
+/** DEPRECATED */
 boolByte removeDirectory(const CharString absolutePath);
 
 // const char* is used here as it is assumed that the extensions will be defined by the preprocessor
 // for given platforms, not kept in stack memory.
+/** DEPRECATED */
 void buildAbsolutePath(const CharString directory, const CharString file, const char* fileExtension, CharString outString);
+/** DEPRECATED */
 void convertRelativePathToAbsolute(const CharString file, CharString outString);
+/** DEPRECATED */
 boolByte isAbsolutePath(const CharString path);
 
+/** DEPRECATED */
 const char* getFileBasename(const char* filename);
+/** DEPRECATED */
 const char* getFileExtension(const char* filename);
+/** DEPRECATED */
 void getFileDirname(const CharString filename, CharString outString);
 
 #endif

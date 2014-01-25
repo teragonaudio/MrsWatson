@@ -30,7 +30,7 @@
 #include <string.h>
 #include <sys/stat.h>
 
-#include "base/FileUtilities.h"
+#include "base/File.h"
 #include "base/PlatformUtilities.h"
 #include "logging/EventLogger.h"
 
@@ -43,6 +43,7 @@
 #include <CoreServices/CoreServices.h>
 #include <mach-o/dyld.h>
 #elif LINUX
+#define LSB_FILE_PATH "/etc/lsb-release"
 #define LSB_DISTRIBUTION "DISTRIB_DESCRIPTION"
 #include <sys/utsname.h>
 #include <errno.h>
@@ -83,6 +84,24 @@ const char* getShortPlatformName(void) {
 #endif
 }
 
+#if LINUX
+void _findLsbDistribution(void* item, void* userData) {
+  CharString line = (CharString)item;
+  CharString distributionName = (CharString)userData;
+  LinkedList tokens = charStringSplit(line, '=');
+  if(tokens != NULL && linkedListLength(tokens) == 2) {
+    CharString* tokensArray = (CharString*)linkedListToArray(tokens);
+    CharString key = tokensArray[0];
+    CharString value = tokensArray[1];
+    if(!strcmp(key->data, LSB_DISTRIBUTION)) {
+      charStringCopy(distributionName, value);
+    }
+    free(tokensArray);
+  }
+  freeLinkedListAndItems(tokens, (LinkedListFreeItemFunc)freeCharString);
+}
+#endif
+
 CharString getPlatformName(void) {
   CharString result = newCharString();
 #if MACOSX
@@ -90,62 +109,44 @@ CharString getPlatformName(void) {
   Gestalt(gestaltSystemVersionMajor, &major);
   Gestalt(gestaltSystemVersionMinor, &minor);
   Gestalt(gestaltSystemVersionBugFix, &bugfix);
-  snprintf(result->data, result->length, "Mac OS X %d.%d.%d", (int)major, (int)minor, (int)bugfix);
+  snprintf(result->data, result->capacity, "Mac OS X %d.%d.%d", (int)major, (int)minor, (int)bugfix);
 #elif LINUX
-  CharString line = newCharString();
-  char *lineDelimiter = NULL;
-  char *distributionStringStart = NULL;
-  char *distributionStringEnd = NULL;
   CharString distributionName = newCharString();
   struct utsname systemInfo;
-  FILE *lsbRelease = NULL;
+  File lsbRelease = NULL;
+  LinkedList lsbReleaseLines = NULL;
 
   if(uname(&systemInfo) != 0) {
     logWarn("Could not get system information from uname");
     charStringCopyCString(result, "Linux (Unknown platform)");
     freeCharString(distributionName);
-    freeCharString(line);
     return result;
   }
   charStringCopyCString(distributionName, "(Unknown distribution)");
 
-  if(fileExists("/etc/lsb-release")) {
-    lsbRelease = fopen("/etc/lsb-release", "r");
-    if(lsbRelease != NULL) {
-      while(fgets(line->data, line->length, lsbRelease) != NULL) {
-        lineDelimiter = strchr(line->data, '=');
-        if(lineDelimiter != NULL) {
-          if(!strncmp(line->data, LSB_DISTRIBUTION, strlen(LSB_DISTRIBUTION))) {
-            distributionStringStart = strchr(lineDelimiter + 1, '"');
-            if(distributionStringStart != NULL) {
-              distributionStringEnd = strchr(distributionStringStart + 1, '"');
-              if(distributionStringEnd != NULL) {
-                charStringClear(distributionName);
-                strncpy(distributionName->data, distributionStringStart + 1,
-                  distributionStringEnd - distributionStringStart - 1);
-              }
-            }
-          }
-        }
-      }
+  lsbRelease = newFileWithPathCString(LSB_FILE_PATH);
+  if(fileExists(lsbRelease)) {
+    lsbReleaseLines = fileReadLines(lsbRelease);
+    if(lsbReleaseLines != NULL && linkedListLength(lsbReleaseLines) > 0) {
+      linkedListForeach(lsbReleaseLines, _findLsbDistribution, distributionName);
     }
   }
 
   if(charStringIsEmpty(result)) {
-    snprintf(result->data, result->length, "Linux %s, kernel %s %s",
+    snprintf(result->data, result->capacity, "Linux %s, kernel %s %s",
       distributionName->data, systemInfo.release, systemInfo.machine);
   }
 
-  fclose(lsbRelease);
   freeCharString(distributionName);
-  freeCharString(line);
+  freeLinkedListAndItems(lsbReleaseLines, (LinkedListFreeItemFunc)freeCharString);
+  freeFile(lsbRelease);
 #elif WINDOWS
   OSVERSIONINFOEX versionInformation;
   memset(&versionInformation, 0, sizeof(OSVERSIONINFOEX));
   versionInformation.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
   GetVersionEx((OSVERSIONINFO*)&versionInformation);
   // Generic string which will also work with newer versions of windows
-  snprintf(result->data, result->length, "Windows %d.%d",
+  snprintf(result->data, result->capacity, "Windows %d.%d",
     versionInformation.dwMajorVersion, versionInformation.dwMinorVersion);
 
   // This is a bit lame, but it seems that this is the standard way of getting
@@ -187,15 +188,15 @@ CharString getPlatformName(void) {
 CharString getExecutablePath(void) {
   CharString executablePath = newCharString();
 #if LINUX
-  ssize_t result = readlink("/proc/self/exe", executablePath->data, executablePath->length);
+  ssize_t result = readlink("/proc/self/exe", executablePath->data, executablePath->capacity);
   if(result < 0) {
     logWarn("Could not find executable path, %s", stringForLastError(errno));
     return NULL;
   }
 #elif MACOSX
-  _NSGetExecutablePath(executablePath->data, (uint32_t*)&executablePath->length);
+  _NSGetExecutablePath(executablePath->data, (uint32_t*)&executablePath->capacity);
 #elif WINDOWS
-  GetModuleFileNameA(NULL, executablePath->data, (DWORD)executablePath->length);
+  GetModuleFileNameA(NULL, executablePath->data, (DWORD)executablePath->capacity);
 #endif
   return executablePath;
 }
@@ -203,9 +204,13 @@ CharString getExecutablePath(void) {
 CharString getCurrentDirectory(void) {
   CharString currentDirectory = newCharString();
 #if UNIX
-  charStringCopyCString(currentDirectory, getenv("PWD"));
+  if(getcwd(currentDirectory->data, currentDirectory->capacity) == NULL) {
+    logError("Could not get current working directory");
+    freeCharString(currentDirectory);
+    return NULL;
+  }
 #elif WINDOWS
-  GetCurrentDirectoryA((DWORD)currentDirectory->length, currentDirectory->data);
+  GetCurrentDirectoryA((DWORD)currentDirectory->capacity, currentDirectory->data);
 #endif
   return currentDirectory;
 }
@@ -228,15 +233,24 @@ boolByte isHost64Bit(void) {
 #elif MACOSX
 #elif WINDOWS
   typedef BOOL (WINAPI *IsWow64ProcessFuncPtr)(HANDLE, PBOOL);
-  BOOL isWindows64 = false;
+  BOOL isProcessRunningInWow64 = false;
   IsWow64ProcessFuncPtr isWow64ProcessFunc = NULL;
 
   // The IsWow64Process() function is not available on all versions of Windows,
   // so it must be looked up first and called only if it exists.
   isWow64ProcessFunc = (IsWow64ProcessFuncPtr)GetProcAddress(GetModuleHandle(TEXT("kernel32")), "IsWow64Process");
   if(isWow64ProcessFunc != NULL) {
-    if(isWow64ProcessFunc(GetCurrentProcess(), &isWindows64)) {
-      result = isWindows64;
+    if(isWow64ProcessFunc(GetCurrentProcess(), &isProcessRunningInWow64)) {
+      // IsWow64Process will only return true if the current process is a 32-bit
+      // application running on 64-bit Windows.
+      if(isProcessRunningInWow64) {
+        result = true;
+      }
+      else {
+        // If false, then we can assume that the host has the same bitness as
+        // the executable.
+        result = isExecutable64Bit();
+      }
     }
   }
 #else
@@ -252,7 +266,7 @@ boolByte isHostLittleEndian(void) {
   return result;
 }
 
-short flipShortEndian(const short value) {
+unsigned short flipShortEndian(const unsigned short value) {
   return (value << 8) | (value >> 8);
 }
 

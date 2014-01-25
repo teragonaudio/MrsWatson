@@ -52,18 +52,77 @@ typedef enum {
 
 typedef enum {
   PLUGIN_SETTING_TAIL_TIME_IN_MS,
+  PLUGIN_NUM_INPUTS,
+  PLUGIN_NUM_OUTPUTS,
   NUM_PLUGIN_SETTINGS
 } PluginSetting;
 
-typedef boolByte (*OpenPluginFunc)(void* pluginPtr);
+/**
+ * Called when a plugin is to be opened. This includes loading any dynamic
+ * libraries into memory initializing the plugin.
+ * @param pluginPtr self
+ */
+typedef boolByte (*PluginOpenFunc)(void* pluginPtr);
+/**
+ * Called when the plugin should display some generic info about itself. This
+ * may be a list of supported parameters or programs, or any other information
+ * relevant to the user. See the implementation in the PluginVST2x class for an
+ * example.
+ * @param pluginPtr self
+ */
 typedef void (*PluginDisplayInfoFunc)(void* pluginPtr);
+/**
+ * Called to retrieve the absolute path of the plugin's location.
+ * TODO: This function should be removed and replaced with an internal file field
+ * @param pluginPtr self
+ * @param outPath Initialized string which the absolute path is written to
+ */
 typedef void (*PluginGetAbsolutePathFunc)(void* pluginPtr, CharString outPath);
-typedef int (*PluginGetSettingFunc)(void*, PluginSetting pluginSetting);
+/**
+ * Used to gather information about the plugin, such as the number of inputs and
+ * outputs. See the PluginSetting enum for examples of information which may be
+ * requested.
+ * @param pluginPtr self
+ * @param pluginSetting Setting to query
+ */
+typedef int (*PluginGetSettingFunc)(void* pluginPtr, PluginSetting pluginSetting);
+/**
+ * Called with the host wants to process a block of audio samples.
+ * @param pluginPtr self
+ * @param inputs Block of input samples to process
+ * @param outputs Block where output samples shall be written
+ */
 typedef void (*PluginProcessAudioFunc)(void* pluginPtr, SampleBuffer inputs, SampleBuffer outputs);
+/**
+ * Called the host wants to process MIDI events. This will be called directly
+ * before the call to process audio.
+ * @param pluginPtr self
+ * @param midiEvents List of events to process. This should be non-empty, as
+ * this function is not called when there are no events to process.
+ */
 typedef void (*PluginProcessMidiEventsFunc)(void* pluginPtr, LinkedList midiEvents);
-typedef void (*PluginSetParameterFunc)(void* pluginPtr, int index, float value);
+/**
+ * Set a parameter within a plugin
+ * @param pluginPtr self
+ * @param index Parameter index
+ * @param value New value
+ */
+typedef boolByte (*PluginSetParameterFunc)(void* pluginPtr, unsigned int index, float value);
+/**
+ * Called once before audio processing begins. Some interfaces provide hooks for
+ * a plugin to prepare itself before audio blocks are sent to it.
+ * @param pluginPtr self
+ */
 typedef void (*PluginPrepareForProcessingFunc)(void* pluginPtr);
-typedef void (*ClosePluginFunc)(void* pluginPtr);
+/**
+ * Called when the plugin is to be uninitialized and closed.
+ * @param pluginPtr self
+ */
+typedef void (*PluginCloseFunc)(void* pluginPtr);
+/**
+ * Pointer to the free routine for the plugin interface
+ * @param pluginPtr self
+ */
 typedef void (*FreePluginDataFunc)(void* pluginDataPtr);
 
 typedef struct {
@@ -71,10 +130,8 @@ typedef struct {
   PluginType pluginType;
   CharString pluginName;
   CharString pluginLocation;
-  unsigned int numInputs;
-  unsigned int numOutputs;
 
-  OpenPluginFunc open;
+  PluginOpenFunc openPlugin;
   PluginDisplayInfoFunc displayInfo;
   PluginGetAbsolutePathFunc getAbsolutePath;
   PluginGetSettingFunc getSetting;
@@ -82,17 +139,39 @@ typedef struct {
   PluginProcessMidiEventsFunc processMidiEvents;
   PluginSetParameterFunc setParameter;
   PluginPrepareForProcessingFunc prepareForProcessing;
-  ClosePluginFunc closePlugin;
+  PluginCloseFunc closePlugin;
   FreePluginDataFunc freePluginData;
 
   void* extraData;
 } PluginMembers;
+
+/**
+ * One of the base classes of the API, this represents a plugin. Currently only
+ * instrument and effect plugins are supported.
+ */
 typedef PluginMembers* Plugin;
 
-PluginInterfaceType guessPluginInterfaceType(const CharString pluginName, const CharString pluginRoot, CharString outLocation);
+/**
+ * Create a plugin instance. The plugin interface type will be automatically
+ * determined.
+ * @param pluginName Plugin name. For plugins which supports loading directly
+ * from the filesystem, this argument may also be an absolute path.
+ * @param pluginRoot User-provided search root path. May be NULL or empty.
+ * @return Initialized object, or NULL if no matching plugin was found
+ */
+Plugin pluginFactory(const CharString pluginName, const CharString pluginRoot);
+
+/**
+ * List all known plugins of all known types on the system.
+ * @param pluginRoot User-provided search root path
+ */
 void listAvailablePlugins(const CharString pluginRoot);
-void _logPluginLocation(const CharString location, PluginInterfaceType interfaceType);
-Plugin newPlugin(PluginInterfaceType pluginInterfaceType, const CharString pluginName, const CharString pluginLocation);
-void freePlugin(Plugin plugin);
+
+/**
+ * Release a plugin and all of its associated resources. Note that the plugin
+ * must be closed before this is called, or else resources will be leaked.
+ * @param self
+ */
+void freePlugin(Plugin self);
 
 #endif

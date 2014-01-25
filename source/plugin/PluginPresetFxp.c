@@ -52,9 +52,9 @@ static boolByte _loadPluginPresetFxp(void* pluginPresetPtr, Plugin plugin) {
   PluginPresetFxpProgramType programType;
 
   char* chunk;
-  unsigned int chunkSize;
+  size_t chunkSize;
   unsigned int valueBuffer;
-  unsigned int numObjectsRead;
+  size_t numObjectsRead;
   float parameterValue;
   unsigned int i;
 
@@ -109,7 +109,7 @@ static boolByte _loadPluginPresetFxp(void* pluginPresetPtr, Plugin plugin) {
   }
   inProgram->fxID = convertBigEndianIntToPlatform(valueBuffer);
   logDebug("Preset's fxID is %d", inProgram->fxID);
-  if(inProgram->fxID != getVst2xPluginUniqueId(plugin)) {
+  if(inProgram->fxID != pluginVst2xGetUniqueId(plugin)) {
     logError("Preset '%s' is not compatible with plugin '%s'", pluginPreset->presetName->data, plugin->pluginName->data);
     return false;
   }
@@ -178,12 +178,13 @@ static boolByte _loadPluginPresetFxp(void* pluginPresetPtr, Plugin plugin) {
 
     // The chunk has been read, set it to the actual plugin
     if(plugin->interfaceType == PLUGIN_TYPE_VST_2X) {
-      setVst2xPluginChunk(plugin, chunk, chunkSize);
+      pluginVst2xSetProgramChunk(plugin, chunk, chunkSize);
       free(chunk);
       return true;
     }
     else {
       logInternalError("Load FXP preset to wrong plugin type");
+      free(chunk);
       return false;
     }
   }
@@ -204,7 +205,6 @@ static void _freePluginPresetDataFxp(void* extraDataPtr) {
   if(extraData->chunk != NULL) {
     free(extraData->chunk);
   }
-  free(extraData);
 }
 
 PluginPreset newPluginPresetFxp(const CharString presetName) {
@@ -215,7 +215,7 @@ PluginPreset newPluginPresetFxp(const CharString presetName) {
   pluginPreset->presetName = newCharString();
   charStringCopy(pluginPreset->presetName, presetName);
   pluginPreset->compatiblePluginTypes = 0;
-  _pluginPresetSetCompatibleWith(pluginPreset, PLUGIN_TYPE_VST_2X);
+  pluginPresetSetCompatibleWith(pluginPreset, PLUGIN_TYPE_VST_2X);
 
   pluginPreset->openPreset = _openPluginPresetFxp;
   pluginPreset->loadPreset = _loadPluginPresetFxp;

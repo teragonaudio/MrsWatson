@@ -11,7 +11,7 @@ typedef struct {
   void* functionPtr;
   int consecutiveFailCounter;
   Sample lastSample;
-  int failedSample;
+  unsigned long failedSample;
   int failTolerance;
 } AnalysisFunctionDataMembers;
 typedef AnalysisFunctionDataMembers* AnalysisFunctionData;

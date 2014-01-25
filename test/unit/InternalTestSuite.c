@@ -14,16 +14,17 @@ extern TestSuite addPlatformUtilitiesTests(void);
 extern TestSuite addPluginTests(void);
 extern TestSuite addPluginChainTests(void);
 extern TestSuite addPluginPresetTests(void);
+extern TestSuite addPluginVst2xIdTests(void);
 extern TestSuite addProgramOptionTests(void);
 extern TestSuite addSampleBufferTests(void);
 extern TestSuite addSampleSourceTests(void);
-extern TestSuite addStringUtilitiesTests(void);
 extern TestSuite addTaskTimerTests(void);
 
 extern TestSuite addAnalysisClippingTests(void);
 extern TestSuite addAnalysisDistortionTests(void);
 extern TestSuite addAnalysisSilenceTests(void);
 
+extern void _printTestSummary(int testsRun, int testsPassed, int testsFailed, int testsSkipped);
 
 static void _sumTestSuiteResults(void* item, void* extraData) {
   TestSuite testSuite = (TestSuite)item;
@@ -33,14 +34,13 @@ static void _sumTestSuiteResults(void* item, void* extraData) {
   result->numSkips += testSuite->numSkips;
 }
 
-static LinkedList _getTestSuites(void) {
+LinkedList getTestSuites(void);
+LinkedList getTestSuites(void) {
   LinkedList internalTestSuites = newLinkedList();
   linkedListAppend(internalTestSuites, addAudioClockTests());
   linkedListAppend(internalTestSuites, addAudioSettingsTests());
   linkedListAppend(internalTestSuites, addCharStringTests());
-#if USE_NEW_FILE_API
   linkedListAppend(internalTestSuites, addFileTests());
-#endif
   linkedListAppend(internalTestSuites, addFileUtilitiesTests());
   linkedListAppend(internalTestSuites, addLinkedListTests());
   linkedListAppend(internalTestSuites, addMidiSequenceTests());
@@ -49,10 +49,10 @@ static LinkedList _getTestSuites(void) {
   linkedListAppend(internalTestSuites, addPluginTests());
   linkedListAppend(internalTestSuites, addPluginChainTests());
   linkedListAppend(internalTestSuites, addPluginPresetTests());
+  linkedListAppend(internalTestSuites, addPluginVst2xIdTests());
   linkedListAppend(internalTestSuites, addProgramOptionTests());
   linkedListAppend(internalTestSuites, addSampleBufferTests());
   linkedListAppend(internalTestSuites, addSampleSourceTests());
-  linkedListAppend(internalTestSuites, addStringUtilitiesTests());
   linkedListAppend(internalTestSuites, addTaskTimerTests());
 
   linkedListAppend(internalTestSuites, addAnalysisClippingTests());
@@ -67,25 +67,22 @@ static void _setTestSuiteOnlyPrintFailing(void* item, void* userData) {
   testSuite->onlyPrintFailing = true;
 }
 
-void runInternalTestSuite(boolByte onlyPrintFailing);
-void runInternalTestSuite(boolByte onlyPrintFailing) {
+TestSuite runInternalTestSuite(LinkedList testSuites, boolByte onlyPrintFailing);
+TestSuite runInternalTestSuite(LinkedList testSuites, boolByte onlyPrintFailing) {
   TestSuite suiteResults;
-  LinkedList internalTestSuites = _getTestSuites();
 
   if(onlyPrintFailing) {
-    linkedListForeach(internalTestSuites, _setTestSuiteOnlyPrintFailing, NULL);
+    linkedListForeach(testSuites, _setTestSuiteOnlyPrintFailing, NULL);
   }
-  linkedListForeach(internalTestSuites, runTestSuite, NULL);
+  linkedListForeach(testSuites, runTestSuite, NULL);
   // Create a new test suite to be used as the userData passed to the foreach loop
   suiteResults = newTestSuite("Suite results", NULL, NULL);
-  linkedListForeach(internalTestSuites, _sumTestSuiteResults, suiteResults);
+  linkedListForeach(testSuites, _sumTestSuiteResults, suiteResults);
 
-  fprintf(stderr, "\n== Ran %d function tests: %d passed, %d failed, %d skipped ==\n",
-    suiteResults->numSuccess + suiteResults->numFail + suiteResults->numSkips,
+  _printTestSummary(suiteResults->numSuccess + suiteResults->numFail + suiteResults->numSkips,
     suiteResults->numSuccess, suiteResults->numFail, suiteResults->numSkips);
 
-  freeLinkedListAndItems(internalTestSuites, (LinkedListFreeItemFunc)freeTestSuite);
-  freeTestSuite(suiteResults);
+  return suiteResults;
 }
 
 TestCase findTestCase(TestSuite testSuite, char* testName);
@@ -106,23 +103,29 @@ TestCase findTestCase(TestSuite testSuite, char* testName) {
   return NULL;
 }
 
-TestSuite findTestSuite(char *testSuiteName);
-TestSuite findTestSuite(char *testSuiteName) {
-  LinkedList internalTestSuites = _getTestSuites();
-  LinkedList iterator = internalTestSuites;
+TestSuite findTestSuite(LinkedList testSuites, const CharString testSuiteName);
+TestSuite findTestSuite(LinkedList testSuites, const CharString testSuiteName) {
+  LinkedList iterator = testSuites;
   TestSuite testSuite = NULL;
+
+  if(testSuiteName == NULL || charStringIsEmpty(testSuiteName)) {
+    return NULL;
+  }
 
   while(iterator != NULL) {
     if(iterator->item != NULL) {
       testSuite = (TestSuite)iterator->item;
-      if(!strncasecmp(testSuite->name, testSuiteName, kCharStringLengthDefault)) {
-        return testSuite;
+      if(charStringIsEqualToCString(testSuiteName, testSuite->name, true)) {
+        break;
+      }
+      else {
+        testSuite = NULL;
       }
     }
     iterator = iterator->nextItem;
   }
 
-  return NULL;
+  return testSuite;
 }
 
 static void _printTestCases(void* item, void* userData) {
@@ -138,6 +141,7 @@ static void _printTestsInSuite(void* item, void* userData) {
 
 void printInternalTests(void);
 void printInternalTests(void) {
-  LinkedList internalTestSuites = _getTestSuites();
+  LinkedList internalTestSuites = getTestSuites();
   linkedListForeach(internalTestSuites, _printTestsInSuite, NULL);
+  freeLinkedListAndItems(internalTestSuites, (LinkedListFreeItemFunc)freeTestSuite);
 }

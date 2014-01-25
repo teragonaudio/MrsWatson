@@ -47,7 +47,7 @@ typedef struct {
   byte data2;
   byte* extraData;
 } MidiEventMembers;
-
+typedef MidiEventMembers* MidiEvent;
 
 // MIDI Meta Event types
 #define MIDI_META_TYPE_TEXT 0x01
@@ -61,11 +61,20 @@ typedef struct {
 #define MIDI_META_TYPE_DEVICE_NAME 0x09
 #define MIDI_META_TYPE_TEMPO 0x51
 #define MIDI_META_TYPE_TIME_SIGNATURE 0x58
+#define MIDI_META_TYPE_KEY_SIGNATURE 0x59
+#define MIDI_META_TYPE_PROPRIETARY 0x7f
 #define MIDI_META_TYPE_TRACK_END 0x2f
 
-typedef MidiEventMembers* MidiEvent;
-
+/**
+ * Create a new MIDI event
+ * @return MidiEvent object
+ */
 MidiEvent newMidiEvent(void);
-void freeMidiEvent(MidiEvent midiEvent);
+
+/**
+ * Free a MIDI event object and its associated resources
+ * @param self
+ */
+void freeMidiEvent(MidiEvent self);
 
 #endif

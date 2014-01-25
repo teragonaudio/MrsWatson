@@ -31,13 +31,12 @@
 
 #include "base/FileUtilities.h"
 #include "base/PlatformUtilities.h"
-#include "base/StringUtilities.h"
 #include "logging/EventLogger.h"
 #include "plugin/PluginPreset.h"
 #include "plugin/PluginPresetFxp.h"
 #include "plugin/PluginPresetInternalProgram.h"
 
-PluginPresetType pluginPresetGuessType(const CharString presetName) {
+static PluginPresetType _pluginPresetGuessType(const CharString presetName) {
   const char* fileExtension;
   size_t i;
 
@@ -48,7 +47,7 @@ PluginPresetType pluginPresetGuessType(const CharString presetName) {
   fileExtension = getFileExtension(presetName->data);
   if(fileExtension == NULL) {
     for(i = 0; i < strlen(presetName->data); i++) {
-      if(!isNumber(presetName->data[i])) {
+      if(!charStringIsNumber(presetName, i)) {
         return PRESET_TYPE_INVALID;
       }
     }
@@ -64,7 +63,8 @@ PluginPresetType pluginPresetGuessType(const CharString presetName) {
   }
 }
 
-PluginPreset newPluginPreset(PluginPresetType presetType, const CharString presetName) {
+PluginPreset pluginPresetFactory(const CharString presetName) {
+  PluginPresetType presetType = _pluginPresetGuessType(presetName);
   switch(presetType) {
     case PRESET_TYPE_FXP:
       return newPluginPresetFxp(presetName);
@@ -75,7 +75,7 @@ PluginPreset newPluginPreset(PluginPresetType presetType, const CharString prese
   }
 }
 
-void _pluginPresetSetCompatibleWith(PluginPreset pluginPreset, PluginInterfaceType interfaceType) {
+void pluginPresetSetCompatibleWith(PluginPreset pluginPreset, PluginInterfaceType interfaceType) {
   pluginPreset->compatiblePluginTypes |= (1 << interfaceType);
 }
 
@@ -84,7 +84,12 @@ boolByte pluginPresetIsCompatibleWith(const PluginPreset pluginPreset, const Plu
 }
 
 void freePluginPreset(PluginPreset pluginPreset) {
-  pluginPreset->freePresetData(pluginPreset->extraData);
-  freeCharString(pluginPreset->presetName);
-  free(pluginPreset);
+  if(pluginPreset != NULL) {
+    if(pluginPreset->extraData != NULL) {
+      pluginPreset->freePresetData(pluginPreset->extraData);
+      free(pluginPreset->extraData);
+    }
+    freeCharString(pluginPreset->presetName);
+    free(pluginPreset);
+  }
 }

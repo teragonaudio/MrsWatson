@@ -31,63 +31,53 @@
 
 #include "app/BuildInfo.h"
 #include "audio/AudioSettings.h"
-#include "base/FileUtilities.h"
 #include "base/PlatformUtilities.h"
-#include "base/StringUtilities.h"
 #include "io/SampleSource.h"
 #include "io/SampleSourcePcm.h"
 #include "io/SampleSourceSilence.h"
 #include "io/SampleSourceWave.h"
 #include "logging/EventLogger.h"
 #include "logging/LogPrinter.h"
+#include "midi/MidiSequence.h"
 #include "midi/MidiSource.h"
 #include "plugin/PluginChain.h"
-#include "sequencer/AudioClock.h"
-#include "sequencer/MidiSequence.h"
+#include "time/AudioClock.h"
 
 #include "MrsWatsonOptions.h"
 #include "MrsWatson.h"
 
-static void prettyPrintTime(CharString outString, double milliseconds) {
-  int minutes;
-  double seconds;
-
-  charStringClear(outString);
-  if(milliseconds < 1000) {
-    snprintf(outString->data, outString->length, "%.2fms", milliseconds);
-  }
-  else if(milliseconds < 60 * 1000) {
-    seconds = milliseconds / 1000.0;
-    snprintf(outString->data, outString->length, "%.2fsec", seconds);
-  }
-  else {
-    seconds = milliseconds / 1000.0;
-    minutes = (int)seconds % 60;
-    snprintf(outString->data, outString->length, "%d:%.2gsec", minutes, seconds);
-  }
+static void _printTaskTime(void* item, void* userData) {
+  TaskTimer taskTimer = (TaskTimer)item;
+  TaskTimer totalTimer = (TaskTimer)userData;
+  CharString prettyTimeString = taskTimerHumanReadbleString(taskTimer);
+  double timePercentage = 100.0f * taskTimer->totalTaskTime / totalTimer->totalTaskTime;
+  logInfo("  %s %s: %s (%2.1f%%)", taskTimer->component->data, taskTimer->subcomponent->data, prettyTimeString->data, timePercentage);
+  freeCharString(prettyTimeString);
 }
 
 static void _remapFileToErrorReport(ErrorReporter errorReporter, ProgramOption option, boolByte copyFile) {
   if(option->enabled) {
     if(copyFile) {
-      if(!errorReportCopyFileToReport(errorReporter, option->argument)) {
+      // TODO: Slight abuse of private field, probably should avoid doing that...
+      if(!errorReportCopyFileToReport(errorReporter, option->_data.string)) {
         logWarn("Failed copying '%s' to error report directory, please include this file manually",
-          option->argument->data);
+          option->_data.string->data);
       }
     }
-    errorReporterRemapPath(errorReporter, option->argument);
+    errorReporterRemapPath(errorReporter, option->_data.string);
   }
 }
 
 static void printWelcomeMessage(int argc, char** argv) {
   CharString stringBuffer = newCharString();
+  CharString versionString = buildInfoGetVersionString();
   char* space;
   int i;
 
-  fillVersionString(stringBuffer);
-  logInfo("%s initialized, build %ld", stringBuffer->data, buildInfoGetDatestamp());
+  logInfo("%s initialized, build %ld", versionString->data, buildInfoGetDatestamp());
   // Recycle to use for the platform name
   freeCharString(stringBuffer);
+  freeCharString(versionString);
 
   if(isExecutable64Bit()) {
     logWarn("Running in 64-bit mode, this is experimental. Hold on to your hats!");
@@ -118,16 +108,16 @@ static void printWelcomeMessage(int argc, char** argv) {
 }
 
 static void printVersion(void) {
-  CharString versionString = newCharString();
+  CharString versionString = buildInfoGetVersionString();
   CharString wrappedLicenseInfo;
+  CharString licenseString = newCharStringWithCString(LICENSE_STRING);
 
-  fillVersionString(versionString);
   printf("%s, build %ld\nCopyright (c) %ld, %s. All rights reserved.\n\n",
     versionString->data, buildInfoGetDatestamp(), buildInfoGetYear(), VENDOR_NAME);
-
-  wrappedLicenseInfo = wrapString(newCharStringWithCString(LICENSE_STRING), 0);
+  wrappedLicenseInfo = charStringWrap(licenseString, 0);
   printf("%s\n\n", wrappedLicenseInfo->data);
 
+  freeCharString(licenseString);
   freeCharString(wrappedLicenseInfo);
   freeCharString(versionString);
 }
@@ -204,7 +194,9 @@ static void _processMidiMetaEvent(void* item, void* userData) {
         setTempoFromMidiBytes(midiEvent->extraData);
         break;
       case MIDI_META_TYPE_TIME_SIGNATURE:
-        setTimeSignatureFromMidiBytes(midiEvent->extraData);
+        if(!setTimeSignatureFromMidiBytes(midiEvent->extraData)) {
+          logWarn("Could not set time signature from MIDI file");
+        }
         break;
       case MIDI_META_TYPE_TRACK_END:
         logInfo("Reached end of MIDI track");
@@ -228,9 +220,9 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   boolByte shouldDisplayPluginInfo = false;
   MidiSequence midiSequence = NULL;
   MidiSource midiSource = NULL;
-  long maxTimeInMs = 0;
+  unsigned long maxTimeInMs = 0;
   unsigned long maxTimeInFrames = 0;
-  long tailTimeInMs = 0;
+  unsigned long tailTimeInMs = 0;
   unsigned long tailTimeInFrames = 0;
   ProgramOptions programOptions;
   ProgramOption option;
@@ -238,26 +230,29 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   SampleBuffer inputSampleBuffer = NULL;
   SampleBuffer outputSampleBuffer = NULL;
   SampleBuffer outputSampleBufferResized = NULL;
-  TaskTimer taskTimer;
-  CharString totalTimeString;
+  TaskTimer initTimer, totalTimer, inputTimer, outputTimer = NULL;
+  LinkedList taskTimerList = NULL;
+  CharString totalTimeString = NULL;
   boolByte finishedReading = false;
-  int hostTaskId;
   SampleSource silentSampleInput;
-  double totalProcessingTime = 0.0;
   unsigned long stopFrame;
-  double timePercentage;
-  int i;
+  unsigned int i;
+
+  initTimer = newTaskTimerWithCString(PROGRAM_NAME, "Initialization");
+  totalTimer = newTaskTimerWithCString(PROGRAM_NAME, "Total Time");
+  taskTimerStart(initTimer);
+  taskTimerStart(totalTimer);
 
   initEventLogger();
   initAudioSettings();
   initAudioClock();
   audioClock = getAudioClock();
   programOptions = newMrsWatsonOptions();
-  inputSource = newSampleSource(SAMPLE_SOURCE_TYPE_SILENCE, NULL);
+  inputSource = sampleSourceFactory(NULL);
 
   if(!programOptionsParseArgs(programOptions, argc, argv)) {
-    printf("Run '%s --help' to see possible options\n", getFileBasename(argv[0]));
-    printf("Or run '%s --help full' to see extended help for all options\n", getFileBasename(argv[0]));
+    printf("Run with '--help' to see possible options\n");
+    printf("Or run with '--help full' to see extended help for all options\n");
     return RETURN_CODE_INVALID_ARGUMENT;
   }
 
@@ -270,23 +265,24 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   }
   else if(programOptions->options[OPTION_HELP]->enabled) {
     printMrsWatsonQuickstart(argv[0]);
-    if(charStringIsEmpty(programOptions->options[OPTION_HELP]->argument)) {
+    if(charStringIsEmpty(programOptionsGetString(programOptions, OPTION_HELP))) {
       printf("All options, where <argument> is required and [argument] is optional:\n");
       programOptionsPrintHelp(programOptions, false, DEFAULT_INDENT_SIZE);
     }
     else {
-      if(!strcasecmp(programOptions->options[OPTION_HELP]->argument->data, "full")) {
+      if(charStringIsEqualToCString(programOptionsGetString(programOptions, OPTION_HELP), "full", true)) {
         programOptionsPrintHelp(programOptions, true, DEFAULT_INDENT_SIZE);
       }
-      // Yeah this is a bit silly, but the performance obviously doesn't matter here and I don't feel
-      // like cluttering up this already huge function with more variables.
-      else if(programOptionsFind(programOptions, programOptions->options[OPTION_HELP]->argument)) {
-        programOptionPrintHelp(programOptionsFind(programOptions, programOptions->options[OPTION_HELP]->argument),
+      // Yeah this is a bit silly, but the performance obviously doesn't matter
+      // here and I don't feel like cluttering up this already huge function
+      // with more variables.
+      else if(programOptionsFind(programOptions, programOptionsGetString(programOptions, OPTION_HELP))) {
+        programOptionPrintHelp(programOptionsFind(programOptions, programOptionsGetString(programOptions, OPTION_HELP)),
           true, DEFAULT_INDENT_SIZE, 0);
       }
       else {
         printf("Invalid option '%s', try running --help full to see help for all options\n",
-          programOptions->options[OPTION_HELP]->argument->data);
+          programOptionsGetString(programOptions, OPTION_HELP)->data);
       }
     }
     return RETURN_CODE_NOT_RUN;
@@ -307,7 +303,6 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
     programOptions->options[OPTION_VERBOSE]->enabled = true;
     programOptions->options[OPTION_LOG_FILE]->enabled = true;
     programOptions->options[OPTION_DISPLAY_INFO]->enabled = true;
-    charStringCopyCString(programOptions->options[OPTION_LOG_FILE]->argument, "log.txt");
     // Shell script with original command line arguments
     errorReporterCreateLauncher(errorReporter, argc, argv);
     // Rewrite some paths before any input or output sources have been opened.
@@ -317,10 +312,9 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
     _remapFileToErrorReport(errorReporter, programOptions->options[OPTION_LOG_FILE], false);
   }
 
-  // Read in options from a config file, if given
+  // Read in options from a configuration file, if given
   if(programOptions->options[OPTION_CONFIG_FILE]->enabled) {
-    if(!programOptionsParseConfigFile(programOptions,
-      programOptions->options[OPTION_CONFIG_FILE]->argument)) {
+    if(!programOptionsParseConfigFile(programOptions, programOptionsGetString(programOptions, OPTION_CONFIG_FILE))) {
       return RETURN_CODE_INVALID_ARGUMENT;
     }
   }
@@ -334,18 +328,18 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
     setLogLevel(LOG_ERROR);
   }
   else if(programOptions->options[OPTION_LOG_LEVEL]->enabled) {
-    setLogLevelFromString(programOptions->options[OPTION_LOG_LEVEL]->argument);
+    setLogLevelFromString(programOptionsGetString(programOptions, OPTION_LOG_LEVEL));
   }
   if(programOptions->options[OPTION_COLOR_LOGGING]->enabled) {
     // If --color was given but with no string argument, then force color. Otherwise
     // colors will be provided automatically anyways.
-    if(charStringIsEmpty(programOptions->options[OPTION_COLOR_LOGGING]->argument)) {
-      charStringCopyCString(programOptions->options[OPTION_COLOR_LOGGING]->argument, "force");
+    if(charStringIsEmpty(programOptionsGetString(programOptions, OPTION_COLOR_LOGGING))) {
+      programOptionsSetCString(programOptions, OPTION_COLOR_LOGGING, "force");
     }
-    setLoggingColorEnabledWithString(programOptions->options[OPTION_COLOR_LOGGING]->argument);
+    setLoggingColorEnabledWithString(programOptionsGetString(programOptions, OPTION_COLOR_LOGGING));
   }
   if(programOptions->options[OPTION_LOG_FILE]->enabled) {
-    setLogFile(programOptions->options[OPTION_LOG_FILE]->argument);
+    setLogFile(programOptionsGetString(programOptions, OPTION_LOG_FILE));
   }
 
   // Parse other options and set up necessary objects
@@ -354,50 +348,48 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
     if(option->enabled) {
       switch(option->index) {
         case OPTION_BLOCKSIZE:
-          setBlocksize(strtol(option->argument->data, NULL, 10));
+          setBlocksize((const unsigned long)programOptionsGetNumber(programOptions, OPTION_BLOCKSIZE));
           break;
         case OPTION_CHANNELS:
-          setNumChannels((unsigned int)strtol(option->argument->data, NULL, 10));
+          setNumChannels((const unsigned long)programOptionsGetNumber(programOptions, OPTION_CHANNELS));
           break;
         case OPTION_DISPLAY_INFO:
           shouldDisplayPluginInfo = true;
           break;
         case OPTION_INPUT_SOURCE:
           freeSampleSource(inputSource);
-          inputSource = newSampleSource(sampleSourceGuess(option->argument), option->argument);
+          inputSource = sampleSourceFactory(programOptionsGetString(programOptions, OPTION_INPUT_SOURCE));
           break;
         case OPTION_MAX_TIME:
-          maxTimeInMs = strtol(option->argument->data, NULL, 10);
+          maxTimeInMs = (const unsigned long)programOptionsGetNumber(programOptions, OPTION_MAX_TIME);
           break;
         case OPTION_MIDI_SOURCE:
-          midiSource = newMidiSource(guessMidiSourceType(option->argument), option->argument);
+          midiSource = newMidiSource(guessMidiSourceType(programOptionsGetString(
+            programOptions, OPTION_MIDI_SOURCE)),
+            programOptionsGetString(programOptions, OPTION_MIDI_SOURCE));
           break;
         case OPTION_OUTPUT_SOURCE:
-          outputSource = newSampleSource(sampleSourceGuess(option->argument), option->argument);
+          outputSource = sampleSourceFactory(programOptionsGetString(programOptions, OPTION_OUTPUT_SOURCE));
           break;
         case OPTION_PLUGIN_ROOT:
-          charStringCopy(pluginSearchRoot, option->argument);
+          charStringCopy(pluginSearchRoot, programOptionsGetString(programOptions, OPTION_PLUGIN_ROOT));
           break;
         case OPTION_SAMPLE_RATE:
-          setSampleRate(strtod(option->argument->data, NULL));
+          setSampleRate(programOptionsGetNumber(programOptions, OPTION_SAMPLE_RATE));
           break;
         case OPTION_TAIL_TIME:
-          tailTimeInMs = strtol(option->argument->data, NULL, 10);
+          tailTimeInMs = (long)programOptionsGetNumber(programOptions, OPTION_TAIL_TIME);
           break;
         case OPTION_TEMPO:
-          setTempo(strtod(option->argument->data, NULL));
+          setTempo(programOptionsGetNumber(programOptions, OPTION_TEMPO));
           break;
-        case OPTION_TIME_DIVISION:
-          setTimeDivision(strtod(option->argument->data, NULL));
-          break;
-        case OPTION_TIME_SIGNATURE_TOP:
-          setTimeSignatureBeatsPerMeasure((short)strtol(option->argument->data, NULL, 10));
-          break;
-        case OPTION_TIME_SIGNATURE_BOTTOM:
-          setTimeSignatureNoteValue((short)strtol(option->argument->data, NULL, 10));
+        case OPTION_TIME_SIGNATURE:
+          if(!setTimeSignatureFromString(programOptionsGetString(programOptions, OPTION_TIME_SIGNATURE))) {
+            return RETURN_CODE_INVALID_ARGUMENT;
+          }
           break;
         case OPTION_ZEBRA_SIZE:
-          setLoggingZebraSize((int)strtol(option->argument->data, NULL, 10));
+          setLoggingZebraSize((int)programOptionsGetNumber(programOptions, OPTION_ZEBRA_SIZE));
           break;
         default:
           // Ignore -- no special handling needs to be performed here
@@ -420,7 +412,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
     logError("Input source could not be opened, exiting");
     return result;
   }
-  if((result = buildPluginChain(pluginChain, programOptions->options[OPTION_PLUGIN]->argument,
+  if((result = buildPluginChain(pluginChain, programOptionsGetString(programOptions, OPTION_PLUGIN),
     pluginSearchRoot)) != RETURN_CODE_SUCCESS) {
     logError("Plugin chain could not be constructed, exiting");
     return result;
@@ -454,6 +446,13 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
     pluginChainInspect(pluginChain);
   }
 
+  // Execute any parameter changes
+  if(programOptions->options[OPTION_PARAMETER]->enabled) {
+    if(!pluginChainSetParameters(pluginChain, programOptionsGetList(programOptions, OPTION_PARAMETER))) {
+      return RETURN_CODE_INVALID_ARGUMENT;
+    }
+  }
+
   // Setup output source here. Having an invalid output source should not cause the program
   // to exit if the user only wants to list plugins or query info about a chain.
   if((result = setupOutputSource(outputSource)) != RETURN_CODE_SUCCESS) {
@@ -465,7 +464,8 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   // otherwise the head plugin type is not known, which influences whether we must abort
   // processing.
   if(programOptions->options[OPTION_ERROR_REPORT]->enabled) {
-    if(sampleSourceIsStreaming(inputSource) || sampleSourceIsStreaming(outputSource)) {
+    if(charStringIsEqualToCString(inputSource->sourceName, "-", false) ||
+       charStringIsEqualToCString(outputSource->sourceName, "-", false)) {
       printf("ERROR: Using stdin/stdout is incompatible with --error-report\n");
       return RETURN_CODE_NOT_RUN;
     }
@@ -507,14 +507,11 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   }
 
   inputSampleBuffer = newSampleBuffer(getNumChannels(), getBlocksize());
+  inputTimer = newTaskTimerWithCString(PROGRAM_NAME, "Input Source");
   // By default, the output buffer has the same channel count as the input buffer,
   // but if a plugin requests a larger I/O configuration this buffer will be resized.
   outputSampleBuffer = newSampleBuffer(getNumChannels(), getBlocksize());
-
-  // Initialize task timer to record how much time was used by each plugin (and us). The
-  // last index in the task timer will be reserved for the host.
-  taskTimer = newTaskTimer(pluginChain->numPlugins + 1);
-  hostTaskId = taskTimer->numTasks - 1;
+  outputTimer = newTaskTimerWithCString(PROGRAM_NAME, "Output Source");
 
   // Initialization is finished, we should be able to free this memory now
   freeProgramOptions(programOptions);
@@ -537,10 +534,11 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   logDebug("Channels: %d", getNumChannels());
   logDebug("Tempo: %.2f", getTempo());
   logDebug("Time signature: %d/%d", getTimeSignatureBeatsPerMeasure(), getTimeSignatureNoteValue());
+  taskTimerStop(initTimer);
 
   // Main processing loop
   while(!finishedReading) {
-    startTimingTask(taskTimer, hostTaskId);
+    taskTimerStart(inputTimer);
     finishedReading = !inputSource->readSampleBlock(inputSource, inputSampleBuffer);
 
     // TODO: For streaming MIDI, we would need to read in events from source here
@@ -549,19 +547,19 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
       // MIDI source overrides the value set to finishedReading by the input source
       finishedReading = !fillMidiEventsFromRange(midiSequence, audioClock->currentFrame, getBlocksize(), midiEventsForBlock);
       linkedListForeach(midiEventsForBlock, _processMidiMetaEvent, &finishedReading);
-      pluginChainProcessMidi(pluginChain, midiEventsForBlock, taskTimer);
-      startTimingTask(taskTimer, hostTaskId);
+      pluginChainProcessMidi(pluginChain, midiEventsForBlock);
       freeLinkedList(midiEventsForBlock);
     }
+    taskTimerStop(inputTimer);
 
     if(maxTimeInFrames > 0 && audioClock->currentFrame >= maxTimeInFrames) {
       logInfo("Maximum time reached, stopping processing after this block");
       finishedReading = true;
     }
 
-    pluginChainProcessAudio(pluginChain, inputSampleBuffer, outputSampleBuffer, taskTimer);
-    startTimingTask(taskTimer, hostTaskId);
-
+    pluginChainProcessAudio(pluginChain, inputSampleBuffer, outputSampleBuffer);
+ 
+    taskTimerStart(outputTimer);
     if(finishedReading) {
       logInfo("Finished processing input source");
       // Tail time is given to process, but it will fill up this entire block.
@@ -593,6 +591,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
     else {
       outputSource->writeSampleBlock(outputSource, outputSampleBuffer);
     }
+    taskTimerStop(outputTimer);
     advanceAudioClock(audioClock, getBlocksize());
   }
 
@@ -600,15 +599,17 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   if(tailTimeInMs > 0) {
     stopFrame = audioClock->currentFrame + tailTimeInFrames;
     logInfo("Adding %d extra frames", stopFrame - audioClock->currentFrame);
-    silentSampleInput = newSampleSource(SAMPLE_SOURCE_TYPE_SILENCE, NULL);
+    silentSampleInput = sampleSourceFactory(NULL);
     while(audioClock->currentFrame < stopFrame) {
-      startTimingTask(taskTimer, hostTaskId);
+      taskTimerStart(inputTimer);
       silentSampleInput->readSampleBlock(silentSampleInput, inputSampleBuffer);
+      taskTimerStop(inputTimer);
 
-      pluginChainProcessAudio(pluginChain, inputSampleBuffer, outputSampleBuffer, taskTimer);
+      pluginChainProcessAudio(pluginChain, inputSampleBuffer, outputSampleBuffer);
 
-      startTimingTask(taskTimer, hostTaskId);
+      taskTimerStart(outputTimer);
       outputSource->writeSampleBlock(outputSource, outputSampleBuffer);
+      taskTimerStop(outputTimer);
       advanceAudioClock(audioClock, getBlocksize());
     }
   }
@@ -621,28 +622,31 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   // TODO: On windows, the total processing time is stored in clocks and not milliseconds
   // These values must be converted using the QueryPerformanceFrequency() function
   audioClockStop(audioClock);
-  stopTiming(taskTimer);
-  for(i = 0; i < taskTimer->numTasks; i++) {
-    totalProcessingTime += taskTimer->totalTaskTimes[i];
-  }
+  taskTimerStop(totalTimer);
 
-  totalTimeString = newCharString();
-  if(totalProcessingTime > 0) {
-    prettyPrintTime(totalTimeString, totalProcessingTime);
-    logInfo("Total processing time %s, breakdown by component:", totalTimeString->data);
+  if(totalTimer->totalTaskTime > 0) {
+    taskTimerList = newLinkedList();
+    linkedListAppend(taskTimerList, initTimer);
+    linkedListAppend(taskTimerList, inputTimer);
+    linkedListAppend(taskTimerList, outputTimer);
     for(i = 0; i < pluginChain->numPlugins; i++) {
-      timePercentage = 100.0f * taskTimer->totalTaskTimes[i] / totalProcessingTime;
-      prettyPrintTime(totalTimeString, taskTimer->totalTaskTimes[i]); 
-      logInfo("%s: %s, %2.1f%%", pluginChain->plugins[i]->pluginName->data, totalTimeString->data, timePercentage);
+      linkedListAppend(taskTimerList, pluginChain->audioTimers[i]);
+      linkedListAppend(taskTimerList, pluginChain->midiTimers[i]);
     }
-    timePercentage = 100.0f * taskTimer->totalTaskTimes[hostTaskId] / totalProcessingTime;
-    prettyPrintTime(totalTimeString, taskTimer->totalTaskTimes[hostTaskId]);
-    logInfo("%s: %s, %2.1f%%", PROGRAM_NAME, totalTimeString->data, timePercentage);
+
+    totalTimeString = taskTimerHumanReadbleString(totalTimer);
+    logInfo("Total processing time %s, approximate breakdown:", totalTimeString->data);
+    linkedListForeach(taskTimerList, _printTaskTime, totalTimer);
   }
   else {
+    // Woo-hoo!
     logInfo("Total processing time <1ms. Either something went wrong, or your computer is smokin' fast!");
   }
-  freeTaskTimer(taskTimer);
+  freeTaskTimer(initTimer);
+  freeTaskTimer(inputTimer);
+  freeTaskTimer(outputTimer);
+  freeTaskTimer(totalTimer);
+  freeLinkedList(taskTimerList);
   freeCharString(totalTimeString);
 
   if(midiSequence != NULL) {
@@ -678,11 +682,12 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   freeAudioSettings();
   logInfo("Goodbye!");
   freeEventLogger();
+  freeAudioClock(getAudioClock());
 
   if(errorReporter->started) {
     errorReporterClose(errorReporter);
-    freeErrorReporter(errorReporter);
   }
+  freeErrorReporter(errorReporter);
 
   return RETURN_CODE_SUCCESS;
 }

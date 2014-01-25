@@ -77,3 +77,9 @@ printf "//\n\
 #include \"${fileBasename}.h\"\n\
 \n" "$fileBasename" "$fullDate" "$year" > source/$filePackage/$fileBasename.c
 printf "Created source/$filePackage/$fileBasename.c\n"
+
+printf "#include \"unit/TestRunner.h\"\n\
+#include \"$filePackage/$fileBasename.h\"\n\
+\n\
+\n" > test/$filePackage/${fileBasename}Test.c
+printf "Created test/$filePackage/${fileBasename}Test.c\n"

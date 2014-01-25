@@ -96,13 +96,13 @@ static int _testSetTempoWithMidiBytesNull(void) {
 }
 
 static int _testSetTimeSigBeatsPerMeasure(void) {
-  setTimeSignatureBeatsPerMeasure(8);
+  assert(setTimeSignatureBeatsPerMeasure(8));
   assertIntEquals(getTimeSignatureBeatsPerMeasure(), 8);
   return 0;
 }
 
 static int _testSetTimeSigNoteValue(void) {
-  setTimeSignatureNoteValue(2);
+  assert(setTimeSignatureNoteValue(2));
   assertIntEquals(getTimeSignatureNoteValue(), 2);
   return 0;
 }
@@ -112,18 +112,55 @@ static int _testSetTimeSignatureWithMidiBytes(void) {
   // Corresponds to a time signature of 3/8
   bytes[0] = 3;
   bytes[1] = 3;
-  setTimeSignatureFromMidiBytes(bytes);
+  assert(setTimeSignatureFromMidiBytes(bytes));
   assertIntEquals(getTimeSignatureBeatsPerMeasure(), 3);
   assertIntEquals(getTimeSignatureNoteValue(), 8);
   return 0;
 }
 
 static int _testSetTimeSignatureWithMidiBytesNull(void) {
-  setTimeSignatureBeatsPerMeasure(3);
-  setTimeSignatureNoteValue(8);
+  assert(setTimeSignatureBeatsPerMeasure(3));
+  assert(setTimeSignatureNoteValue(8));
   assertIntEquals(getTimeSignatureBeatsPerMeasure(), 3);
   assertIntEquals(getTimeSignatureNoteValue(), 8);
-  setTimeSignatureFromMidiBytes(NULL);
+  assertFalse(setTimeSignatureFromMidiBytes(NULL));
+  assertIntEquals(getTimeSignatureBeatsPerMeasure(), 3);
+  assertIntEquals(getTimeSignatureNoteValue(), 8);
+  return 0;
+}
+
+static int _testSetTimeSignatureFromString(void) {
+  CharString s = newCharStringWithCString("2/16");
+  assert(setTimeSignatureBeatsPerMeasure(3));
+  assert(setTimeSignatureNoteValue(8));
+  assertIntEquals(getTimeSignatureBeatsPerMeasure(), 3);
+  assertIntEquals(getTimeSignatureNoteValue(), 8);
+  assert(setTimeSignatureFromString(s));
+  assertIntEquals(getTimeSignatureBeatsPerMeasure(), 2);
+  assertIntEquals(getTimeSignatureNoteValue(), 16);
+  freeCharString(s);
+  return 0;
+}
+
+static int _testSetTimeSignatureFromInvalidString(void) {
+  CharString s = newCharStringWithCString("invalid/none");
+  assert(setTimeSignatureBeatsPerMeasure(3));
+  assert(setTimeSignatureNoteValue(8));
+  assertIntEquals(getTimeSignatureBeatsPerMeasure(), 3);
+  assertIntEquals(getTimeSignatureNoteValue(), 8);
+  assertFalse(setTimeSignatureFromString(s));
+  assertIntEquals(getTimeSignatureBeatsPerMeasure(), 3);
+  assertIntEquals(getTimeSignatureNoteValue(), 8);
+  freeCharString(s);
+  return 0;
+}
+
+static int _testSetTimeSignatureFromNullString(void) {
+  assert(setTimeSignatureBeatsPerMeasure(3));
+  assert(setTimeSignatureNoteValue(8));
+  assertIntEquals(getTimeSignatureBeatsPerMeasure(), 3);
+  assertIntEquals(getTimeSignatureNoteValue(), 8);
+  assertFalse(setTimeSignatureFromString(NULL));
   assertIntEquals(getTimeSignatureBeatsPerMeasure(), 3);
   assertIntEquals(getTimeSignatureNoteValue(), 8);
   return 0;
@@ -143,9 +180,13 @@ TestSuite addAudioSettingsTests(void) {
   addTest(testSuite, "SetInvalidTempo", _testSetInvalidTempo);
   addTest(testSuite, "SetTempoWithMidiBytes", _testSetTempoWithMidiBytes);
   addTest(testSuite, "SetTempoWithMidiBytesNull", _testSetTempoWithMidiBytesNull);
+
   addTest(testSuite, "SetTimeSignatureBeatsPerMeasure", _testSetTimeSigBeatsPerMeasure);
   addTest(testSuite, "SetTimeSignatureNoteValue", _testSetTimeSigNoteValue);
   addTest(testSuite, "SetTimeSignatureWithMidiBytes", _testSetTimeSignatureWithMidiBytes);
   addTest(testSuite, "SetTimeSignatureWithMidiBytesNull", _testSetTimeSignatureWithMidiBytesNull);
+  addTest(testSuite, "SetTimeSignatureFromString", _testSetTimeSignatureFromString);
+  addTest(testSuite, "SetTimeSignatureFromInvalidString", _testSetTimeSignatureFromInvalidString);
+  addTest(testSuite, "SetTimeSignatureFromNullString", _testSetTimeSignatureFromNullString);
   return testSuite;
 }

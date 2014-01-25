@@ -28,7 +28,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "sequencer/AudioClock.h"
+#include "time/AudioClock.h"
 
 AudioClock audioClockInstance = NULL;
 
@@ -60,6 +60,8 @@ void audioClockStop(AudioClock self) {
 }
 
 void freeAudioClock(AudioClock self) {
-  free(self);
-  self = NULL;
+  if(self != NULL) {
+    free(self);
+    self = NULL;
+  }
 }

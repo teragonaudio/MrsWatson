@@ -29,9 +29,16 @@
 #define MrsWatson_ProgramOption_h
 
 #include "base/CharString.h"
+#include "base/LinkedList.h"
 #include "base/Types.h"
 
-#define NO_DEFAULT_VALUE -1
+typedef enum {
+  kProgramOptionTypeEmpty,
+  kProgramOptionTypeString,
+  kProgramOptionTypeNumber,
+  kProgramOptionTypeList,
+  kProgramOptionTypeNumTypes
+} ProgramOptionType;
 
 typedef enum {
   kProgramOptionArgumentTypeNone,
@@ -40,22 +47,30 @@ typedef enum {
   kProgramOptionArgumentTypeInvalid
 } ProgramOptionArgumentType;
 
+typedef union {
+  CharString string;
+  float number;
+  LinkedList list;
+} ProgramOptionData;
+
 typedef struct {
-  int index;
+  unsigned int index;
   CharString name;
   CharString help;
-  int helpDefaultValue;
   boolByte hasShortForm;
+  // For "hidden" options which should not be printed out in the help output
+  boolByte hideInHelp;
 
+  ProgramOptionType type;
+  ProgramOptionData _data;
   ProgramOptionArgumentType argumentType;
-  CharString argument;
   boolByte enabled;
 } ProgramOptionMembers;
 typedef ProgramOptionMembers* ProgramOption;
 
 typedef struct {
   ProgramOption* options;
-  int numOptions;
+  unsigned int numOptions;
 } ProgramOptionsMembers;
 typedef ProgramOptionsMembers* ProgramOptions;
 
@@ -73,12 +88,11 @@ ProgramOption newProgramOption(void);
  * @param help Full help string
  * @param hasShortForm True if the option should also be matched with the first letter
  * @param argumentType Expected argument type which can be passed to this option
- * @param defaultValue 
  * @return 
  */
-ProgramOption newProgramOptionWithValues(const int opnionIndex, const char* name,
-  const char* help, boolByte hasShortForm, ProgramOptionArgumentType argumentType,
-  int defaultValue);
+ProgramOption newProgramOptionWithName(const int optionIndex, const char* name,
+  const char* help, boolByte hasShortForm, ProgramOptionType type,
+  ProgramOptionArgumentType argumentType);
 
 /**
  * Print out help for the option
@@ -87,7 +101,8 @@ ProgramOption newProgramOptionWithValues(const int opnionIndex, const char* name
  * @param indentSize Number of spaces to indent output
  * @param initialIndent Initial number of spaces to offset output
  */
-void programOptionPrintHelp(const ProgramOption self, boolByte withFullHelp, int indentSize, int initialIndent);
+void programOptionPrintHelp(const ProgramOption self, boolByte withFullHelp,
+  int indentSize, int initialIndent);
 
 /**
  * Free memory used by a ProgramOption instance
@@ -147,6 +162,77 @@ boolByte programOptionsParseConfigFile(ProgramOptions self, const CharString fil
  * @param indentSize Indent size to use for output
  */
 void programOptionsPrintHelp(const ProgramOptions self, boolByte withFullHelp, int indentSize);
+
+/**
+ * Find an option and print out its help
+ * @param self
+ * @param string Option name to find
+ * @param withFullHelp True if full help should be shown, otherwise just the
+ * summary string.
+ * @param indentSize Indent size to use for output
+ */
+void programOptionsPrintHelpForOption(const ProgramOptions self, const CharString string,
+  boolByte withFullHelp, int indentSize);
+
+/**
+ * Get string value for an option
+ * @param self
+ * @param index Option index
+ * @return Option value string, or NULL if this option is of a different type
+ */
+const CharString programOptionsGetString(const ProgramOptions self, const unsigned int index);
+
+/**
+ * Get numeric value for an option
+ * @param self
+ * @param index Option index
+ * @return Option value string, or -1 if this option is of a different type
+ */
+float programOptionsGetNumber(const ProgramOptions self, const unsigned int index);
+
+/**
+ * Get linked list values for an option
+ * @param self
+ * @param index Option index
+ * @return Option value string, or NULL if this option is of a different type
+ */
+const LinkedList programOptionsGetList(const ProgramOptions self, const unsigned int index);
+
+/**
+ * Set an option's string value. If setting the wrong type to the option, this
+ * call does nothing.
+ * @param self
+ * @param index Option index
+ * @param value Value to set
+ */
+void programOptionsSetCString(ProgramOptions self, const unsigned int index, const char* value);
+
+/**
+ * Set an option's string value. If setting the wrong type to the option, this
+ * call does nothing.
+ * @param self
+ * @param index Option index
+ * @param value Value to set
+ */
+void programOptionsSetString(ProgramOptions self, const unsigned int index, const CharString value);
+
+/**
+ * Set an option's numeric value. If setting the wrong type to the option, this
+ * call does nothing.
+ * @param self
+ * @param index Option index
+ * @param value Value to set
+ */
+void programOptionsSetNumber(ProgramOptions self, const unsigned int index, const float value);
+
+/**
+ * Add an item to an option's linked list. If this option has the wrong type,
+ * then this call does nothing.
+ * @param self
+ * @param index Option index
+ * @param value Value to add
+ */
+void programOptionsSetListItem(ProgramOptions self, const unsigned int index, void* value);
 
 /**
  * Free memory used by a ProgramOptions array and all options in the collection

@@ -40,6 +40,10 @@
 #define WIN32_LEAN_AND_MEAN 1
 #include <Windows.h>
 
+// Even redefining most of the functions below doesn't stop the compiler
+// from nagging about them.
+#pragma warning(disable: 4996)
+
 // Substitutes for POSIX functions not found on Windows
 #define strcasecmp _stricmp
 #define strdup _strdup
@@ -70,24 +74,111 @@ typedef enum {
   NUM_PLATFORMS
 } PlatformType;
 
+/**
+ * Get the current platform type, i.e. Linux, Mac, Windows.
+ * @return Platform type enum constant
+ */
 PlatformType getPlatformType(void);
+
+/**
+ * Get the full platform name and version, i.e. "Mac OS X 10.8.3"
+ * @return Platform name string. The caller must free this memory.
+ */
 CharString getPlatformName(void);
+
+/**
+ * Get the short version of the platform name, i.e. "Windows". This is used when
+ * the platform and name is being compared to something.
+ * @return Platform name string. Guaranteed to be non-null.
+ */
 const char* getShortPlatformName(void);
 
+/**
+ * Return the path to the current running executable.
+ * @return Absolute path of the current executable
+ */
 CharString getExecutablePath(void);
+
+/**
+ * Get the current working directory.
+ * @return Current working directory
+ */
 CharString getCurrentDirectory(void);
 
+/**
+ * See if this program has been compiled as a 64-bit executable
+ * @return True if this executable is 64-bit, otherwise
+ */
 boolByte isExecutable64Bit(void);
+
+/**
+ * See if the host is a 64-bit operating system. This is mostly used in Windows,
+ * where the "Program Files" directory changes name depending on the host's
+ * bitness.
+ * @return True if the host operating system is 64-bit, false otherwise
+ */
 boolByte isHost64Bit(void);
+
+/**
+ * See if the host operating system is running on little endian hardware.
+ * @return True if the host's CPU is little endian
+ */
 boolByte isHostLittleEndian(void);
 
-short flipShortEndian(const short value);
+/**
+ * Flip bytes for a short value. This does not take into account the host's
+ * endian-ness.
+ * @param value Short integer
+ * @return Flipped version of short integer
+ */
+unsigned short flipShortEndian(const unsigned short value);
+
+/**
+ * Convert a big endian short integer to the platform's native endian-ness.
+ * @param value Short integer
+ * @return Flipped version of short integer. If the host is big endian, the same
+ * value will be returned.
+ */
 unsigned short convertBigEndianShortToPlatform(const unsigned short value);
+
+/**
+ * Convert a big endian integer to the platform's native endian-ness.
+ * @param value Integer
+ * @return Flipped version of integer. If the host is big endian, the same value
+ * will be returned.
+ */
 unsigned int convertBigEndianIntToPlatform(const unsigned int value);
+
+/**
+ * Convert a little endian short integer to the platform's native endian-ness.
+ * @param value Short integer
+ * @return Flipped version of short integer. If the host is little endian, the
+ * same value will be returned.
+ */
 unsigned int convertLittleEndianIntToPlatform(const unsigned int value);
+
+/**
+ * Convert a big endian floating-point value to the platform's native endian-ness.
+ * @param value Floating-point number
+ * @return Flipped version of float. If the host is big endian, the same value
+ * will be returned.
+ */
 float convertBigEndianFloatToPlatform(const float value);
 
+/**
+ * Convert raw bytes to an unsigned short value, taking into account the host's
+ * endian-ness.
+ * @param value A buffer which holds at least two bytes
+ * @return Unsigned short integer
+ */
 unsigned short convertByteArrayToUnsignedShort(const byte* value);
+
+/**
+ * Convert raw bytes to an unsigned int value, taking into account the host's
+ * endian-ness.
+ * @param value A buffer which holds at least four bytes
+ * @return Unsigned short integer
+ */
 unsigned int convertByteArrayToUnsignedInt(const byte* value);
 
 #endif

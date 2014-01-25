@@ -27,6 +27,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <math.h>
 
 #include "audio/AudioSettings.h"
@@ -35,17 +36,22 @@
 AudioSettings audioSettingsInstance = NULL;
 
 void initAudioSettings(void) {
+  if(audioSettingsInstance != NULL) {
+    freeAudioSettings();
+  }
   audioSettingsInstance = malloc(sizeof(AudioSettingsMembers));
   audioSettingsInstance->sampleRate = DEFAULT_SAMPLE_RATE;
   audioSettingsInstance->numChannels = DEFAULT_NUM_CHANNELS;
   audioSettingsInstance->blocksize = DEFAULT_BLOCKSIZE;
-  audioSettingsInstance->timeDivision = DEFAULT_TIME_DIVISION;
   audioSettingsInstance->tempo = DEFAULT_TEMPO;
   audioSettingsInstance->timeSignatureBeatsPerMeasure = DEFAULT_TIMESIG_BEATS_PER_MEASURE;
   audioSettingsInstance->timeSignatureNoteValue = DEFAULT_TIMESIG_NOTE_VALUE;
 }
 
 static AudioSettings _getAudioSettings(void) {
+  if(audioSettingsInstance == NULL) {
+    initAudioSettings();
+  }
   return audioSettingsInstance;
 }
 
@@ -59,10 +65,6 @@ unsigned int getNumChannels(void) {
 
 unsigned long getBlocksize(void) {
   return _getAudioSettings()->blocksize;
-}
-
-double getTimeDivision(void) {
-  return _getAudioSettings()->timeDivision;
 }
 
 double getTempo(void) {
@@ -105,14 +107,6 @@ void setBlocksize(const unsigned long blocksize) {
   _getAudioSettings()->blocksize = blocksize;
 }
 
-void setTimeDivision(const double division) {
-  if(division <= 0) {
-    logError("Ignoring attempt to set division to %f", division);
-    return;
-  }
-  _getAudioSettings()->timeDivision = division;
-}
-
 void setTempo(const double tempo) {
   if(tempo <= 0.0f) {
     logError("Ignoring attempt to set tempo to %f", tempo);
@@ -133,35 +127,59 @@ void setTempoFromMidiBytes(const byte* bytes) {
   }
 }
 
-void setTimeSignatureBeatsPerMeasure(const short beatsPerMeasure) {
+boolByte setTimeSignatureBeatsPerMeasure(const short beatsPerMeasure) {
   // Bit of an easter egg :)
   if(beatsPerMeasure < 2 || beatsPerMeasure > 12) {
     logInfo("Freaky time signature, but whatever you say...");
   }
   if(beatsPerMeasure <= 0) {
     logError("Ignoring attempt to set time signature numerator to %d", beatsPerMeasure);
-    return;
+    return false;
   }
   _getAudioSettings()->timeSignatureBeatsPerMeasure = beatsPerMeasure;
+  return true;
 }
 
-void setTimeSignatureNoteValue(const short noteValue) {
+boolByte setTimeSignatureNoteValue(const short noteValue) {
   // Bit of an easter egg :)
   if(!(noteValue == 2 || noteValue == 4 || noteValue == 8 || noteValue == 16) || noteValue < 2 || noteValue > 16) {
     logInfo("Interesting time signature you've chosen. I'm sure this piece is going to sound great...");
   }
   if(noteValue <= 0) {
     logError("Ignoring attempt to set time signature denominator to %d", noteValue);
-    return;
+    return false;
   }
   _getAudioSettings()->timeSignatureNoteValue = noteValue;
+  return true;
 }
 
-void setTimeSignatureFromMidiBytes(const byte* bytes) {
-  if(bytes != NULL) {
-    setTimeSignatureBeatsPerMeasure(bytes[0]);
-    setTimeSignatureNoteValue((short)powl(2, bytes[1]));
+boolByte setTimeSignatureFromString(const CharString signature) {
+  char *slash = NULL;
+  int numerator = 0;
+  int denominator = 0;
+
+  if(!charStringIsEmpty(signature)) {
+    slash = strchr(signature->data, '/');
+    if(slash != NULL) {
+      *slash = '\0';
+      numerator = (int)strtod(signature->data, NULL);
+      denominator = (int)strtod(slash + 1, NULL);
+      if(numerator > 0 && denominator > 0) {
+        return setTimeSignatureBeatsPerMeasure(numerator) &&
+          setTimeSignatureNoteValue(denominator);
+      }
+    }
   }
+
+  return false;
+}
+
+boolByte setTimeSignatureFromMidiBytes(const byte* bytes) {
+  if(bytes != NULL) {
+    return setTimeSignatureBeatsPerMeasure(bytes[0]) &&
+      setTimeSignatureNoteValue((short)powl(2, bytes[1]));
+  }
+  return false;
 }
 
 void freeAudioSettings(void) {

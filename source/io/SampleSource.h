@@ -32,10 +32,6 @@
 #include "base/CharString.h"
 #include "base/Types.h"
 
-// Force all samples to be within {1.0, -1.0} range. This uses a bit of extra
-// CPU, and I'm not sure it's even necessary, so it is disabled at present.
-#define USE_BRICKWALL_LIMITER 0
-
 typedef enum {
   SAMPLE_SOURCE_TYPE_INVALID,
   SAMPLE_SOURCE_TYPE_SILENCE,
@@ -78,12 +74,22 @@ typedef struct {
 } SampleSourceMembers;
 typedef SampleSourceMembers* SampleSource;
 
-SampleSource newSampleSource(SampleSourceType sampleSourceType, const CharString sampleSourceName);
+/**
+ * Factory method to create a new sample source
+ * @param sampleSourceName Source name. Used mostly for display purposes.
+ * @return Initialized sample source, or NULL if none could be created
+ */
+SampleSource sampleSourceFactory(const CharString sampleSourceName);
 
+/**
+ * Print a list of all supported sample source pipes to the log
+ */
 void sampleSourcePrintSupportedTypes(void);
-SampleSourceType sampleSourceGuess(const CharString sampleSourceTypeString);
-boolByte sampleSourceIsStreaming(SampleSource sampleSource);
 
-void freeSampleSource(SampleSource sampleSource);
+/**
+ * Release a sample source and associated resources
+ * @param self
+ */
+void freeSampleSource(SampleSource self);
 
 #endif

@@ -74,117 +74,62 @@ static boolByte openSampleSourcePcm(void* sampleSourcePtr, const SampleSourceOpe
   return true;
 }
 
-static void _convertPcmDataToSampleBuffer(const short* inPcmSamples, SampleBuffer sampleBuffer) {
-  const unsigned int numChannels = sampleBuffer->numChannels;
-  const unsigned long numInterlacedSamples = numChannels * sampleBuffer->blocksize;
-  unsigned int currentInterlacedSample = 0;
-  unsigned int currentDeinterlacedSample = 0;
-  unsigned int currentChannel;
-
-  while(currentInterlacedSample < numInterlacedSamples) {
-    for(currentChannel = 0; currentChannel < numChannels; ++currentChannel) {
-      Sample convertedSample = (Sample)inPcmSamples[currentInterlacedSample++] / 32767.0f;
-#if USE_BRICKWALL_LIMITER
-      if(convertedSample > 1.0f) {
-        convertedSample = 1.0f;
-      }
-      else if(convertedSample < -1.0f) {
-        convertedSample = -1.0f;
-      }
-#endif
-      sampleBuffer->samples[currentChannel][currentDeinterlacedSample] = convertedSample;
-    }
-    ++currentDeinterlacedSample;
-  }
-}
-
-size_t sampleSourcePcmRead(SampleSourcePcmData pcmData, SampleBuffer sampleBuffer) {
+size_t sampleSourcePcmRead(SampleSourcePcmData self, SampleBuffer sampleBuffer) {
   size_t pcmSamplesRead = 0;
 
-  if(pcmData == NULL || pcmData->fileHandle == NULL) {
+  if(self == NULL || self->fileHandle == NULL) {
     logCritical("Corrupt PCM data structure");
     return 0;
   }
 
-  if(pcmData->dataBufferNumItems == 0) {
-    pcmData->dataBufferNumItems = (size_t)(sampleBuffer->numChannels * sampleBuffer->blocksize);
-    pcmData->interlacedPcmDataBuffer = (short*)malloc(sizeof(short) * pcmData->dataBufferNumItems);
+  if(self->dataBufferNumItems == 0) {
+    self->dataBufferNumItems = (size_t)(sampleBuffer->numChannels * sampleBuffer->blocksize);
+    self->interlacedPcmDataBuffer = (short*)malloc(sizeof(short) * self->dataBufferNumItems);
   }
 
   // Clear the PCM data buffer, or else the last block will have dirty samples in the end
-  memset(pcmData->interlacedPcmDataBuffer, 0, sizeof(short) * pcmData->dataBufferNumItems);
+  memset(self->interlacedPcmDataBuffer, 0, sizeof(short) * self->dataBufferNumItems);
 
-  pcmSamplesRead = fread(pcmData->interlacedPcmDataBuffer, sizeof(short), pcmData->dataBufferNumItems, pcmData->fileHandle);
-  if(pcmSamplesRead < pcmData->dataBufferNumItems) {
+  pcmSamplesRead = fread(self->interlacedPcmDataBuffer, sizeof(short), self->dataBufferNumItems, self->fileHandle);
+  if(pcmSamplesRead < self->dataBufferNumItems) {
     logDebug("End of PCM file reached");
     // Set the blocksize of the sample buffer to be the number of frames read
     sampleBuffer->blocksize = pcmSamplesRead / sampleBuffer->numChannels;
   }
   logDebug("Read %d samples from PCM file", pcmSamplesRead);
 
-  _convertPcmDataToSampleBuffer(pcmData->interlacedPcmDataBuffer, sampleBuffer);
+  sampleBufferCopyPcmSamples(sampleBuffer, self->interlacedPcmDataBuffer);
   return pcmSamplesRead;
 }
 
 static boolByte readBlockFromPcmFile(void* sampleSourcePtr, SampleBuffer sampleBuffer) {
   SampleSource sampleSource = (SampleSource)sampleSourcePtr;
   SampleSourcePcmData extraData = (SampleSourcePcmData)(sampleSource->extraData);
-  int originalBlocksize = sampleBuffer->blocksize;
+  unsigned long originalBlocksize = sampleBuffer->blocksize;
   size_t samplesRead = sampleSourcePcmRead(extraData, sampleBuffer);
   sampleSource->numSamplesProcessed += samplesRead;
   return (originalBlocksize == sampleBuffer->blocksize);
 }
 
-void convertSampleBufferToPcmData(const SampleBuffer sampleBuffer, short* outPcmSamples, boolByte flipEndian) {
-  const unsigned long blocksize = sampleBuffer->blocksize;
-  const unsigned int numChannels = sampleBuffer->numChannels;
-  unsigned int currentInterlacedSample = 0;
-  unsigned int currentSample = 0;
-  unsigned int currentChannel = 0;
-  short shortValue;
-  Sample sample;
-
-  for(currentSample = 0; currentSample < blocksize; ++currentSample) {
-    for(currentChannel = 0; currentChannel < numChannels; ++currentChannel) {
-      sample = sampleBuffer->samples[currentChannel][currentSample];
-#if USE_BRICKWALL_LIMITER
-      if(sample > 1.0f) {
-        sample = 1.0f;
-      }
-      else if(sample < -1.0f) {
-        sample = -1.0f;
-      }
-#endif
-      shortValue = (short)(sample * 32767.0f);
-      if(flipEndian) {
-        outPcmSamples[currentInterlacedSample++] = flipShortEndian(shortValue);
-      }
-      else {
-        outPcmSamples[currentInterlacedSample++] = shortValue;
-      }
-    }
-  }
-}
-
-size_t sampleSourcePcmWrite(SampleSourcePcmData pcmData, const SampleBuffer sampleBuffer) {
+size_t sampleSourcePcmWrite(SampleSourcePcmData self, const SampleBuffer sampleBuffer) {
   size_t pcmSamplesWritten = 0;
   size_t numSamplesToWrite = (size_t)(sampleBuffer->numChannels * sampleBuffer->blocksize);
 
-  if(pcmData == NULL || pcmData->fileHandle == NULL) {
+  if(self == NULL || self->fileHandle == NULL) {
     logCritical("Corrupt PCM data structure");
     return false;
   }
 
-  if(pcmData->dataBufferNumItems == 0) {
-    pcmData->dataBufferNumItems = (size_t)(sampleBuffer->numChannels * sampleBuffer->blocksize);
-    pcmData->interlacedPcmDataBuffer = (short*)malloc(sizeof(short) * pcmData->dataBufferNumItems);
+  if(self->dataBufferNumItems == 0) {
+    self->dataBufferNumItems = (size_t)(sampleBuffer->numChannels * sampleBuffer->blocksize);
+    self->interlacedPcmDataBuffer = (short*)malloc(sizeof(short) * self->dataBufferNumItems);
   }
 
   // Clear the PCM data buffer just to be safe
-  memset(pcmData->interlacedPcmDataBuffer, 0, sizeof(short) * pcmData->dataBufferNumItems);
+  memset(self->interlacedPcmDataBuffer, 0, sizeof(short) * self->dataBufferNumItems);
 
-  convertSampleBufferToPcmData(sampleBuffer, pcmData->interlacedPcmDataBuffer, pcmData->isLittleEndian != isHostLittleEndian());
-  pcmSamplesWritten = fwrite(pcmData->interlacedPcmDataBuffer, sizeof(short), numSamplesToWrite, pcmData->fileHandle);
+  sampleBufferGetPcmSamples(sampleBuffer, self->interlacedPcmDataBuffer, self->isLittleEndian != isHostLittleEndian());
+  pcmSamplesWritten = fwrite(self->interlacedPcmDataBuffer, sizeof(short), numSamplesToWrite, self->fileHandle);
   if(pcmSamplesWritten < numSamplesToWrite) {
     logWarn("Short write to PCM file");
     return pcmSamplesWritten;
@@ -197,7 +142,7 @@ size_t sampleSourcePcmWrite(SampleSourcePcmData pcmData, const SampleBuffer samp
 static boolByte writeBlockToPcmFile(void* sampleSourcePtr, const SampleBuffer sampleBuffer) {
   SampleSource sampleSource = (SampleSource)sampleSourcePtr;
   SampleSourcePcmData extraData = (SampleSourcePcmData)(sampleSource->extraData);
-  int samplesWritten = (int)sampleSourcePcmWrite(extraData, sampleBuffer);
+  unsigned int samplesWritten = (int)sampleSourcePcmWrite(extraData, sampleBuffer);
   sampleSource->numSamplesProcessed += samplesWritten;
   return (samplesWritten == sampleBuffer->blocksize);
 }
@@ -213,7 +158,7 @@ static void _closeSampleSourcePcm(void* sampleSourcePtr) {
 void sampleSourcePcmSetSampleRate(void* sampleSourcePtr, double sampleRate) {
   SampleSource sampleSource = (SampleSource)sampleSourcePtr;
   SampleSourcePcmData extraData = (SampleSourcePcmData)sampleSource->extraData;
-  extraData->sampleRate = (long)sampleRate;
+  extraData->sampleRate = (unsigned int)sampleRate;
 }
 
 void sampleSourcePcmSetNumChannels(void* sampleSourcePtr, int numChannels) {

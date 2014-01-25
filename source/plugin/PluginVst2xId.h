@@ -1,7 +1,7 @@
 //
-// StringUtilities.h - MrsWatson
-// Created by Nik Reiman on 1/4/12.
-// Copyright (c) 2012 Teragon Audio. All rights reserved.
+// PluginVst2xId.h - MrsWatson
+// Created by Nik Reiman on 07 Jun 13.
+// Copyright (c) 2013 Teragon Audio. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are met:
@@ -25,23 +25,21 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef MrsWatson_StringUtilities_h
-#define MrsWatson_StringUtilities_h
+#ifndef MrsWatson_PluginVst2xId_h
+#define MrsWatson_PluginVst2xId_h
 
-#include "base/CharString.h"
-#include "base/Types.h"
+#define PLUGIN_VST2X_ID_UNKNOWN "????"
 
-#define DEFAULT_INDENT_SIZE 2
-#ifndef TERMINAL_LINE_LENGTH
-#define TERMINAL_LINE_LENGTH 80
-#endif
+typedef struct {
+  unsigned long id;
+  CharString idString;
+} PluginVst2xIdMembers;
+typedef PluginVst2xIdMembers* PluginVst2xId;
 
-boolByte isLetter(char ch);
-boolByte isNumber(char ch);
+PluginVst2xId newPluginVst2xId(void);
+PluginVst2xId newPluginVst2xIdWithId(unsigned long id);
+PluginVst2xId newPluginVst2xIdWithStringId(const CharString stringId);
 
-CharString convertIntIdToString(const unsigned long id);
-unsigned long convertStringIdToInt(const CharString id);
-
-CharString wrapString(const CharString srcString, unsigned int indentSize);
+void freePluginVst2xId(PluginVst2xId self);
 
 #endif

@@ -31,24 +31,70 @@
 #include "base/CharString.h"
 #include "base/PlatformUtilities.h"
 
+#if UNIX
+#include <sys/time.h>
+#endif
+
 typedef struct {
-  int numTasks;
-  int currentTask;
-  double* totalTaskTimes;
+  CharString component;
+  CharString subcomponent;
+  boolByte enabled;
+  boolByte _running;
+  double totalTaskTime;
+
 #if WINDOWS
   LARGE_INTEGER startTime;
   double counterFrequency;
 #elif UNIX
-  struct timeval* startTime;
+  struct timeval startTime;
 #endif
 } TaskTimerMembers;
 typedef TaskTimerMembers* TaskTimer;
 
-TaskTimer newTaskTimer(const int maxTasks);
+/**
+ * Create a new task timer.
+ * @param component Component name which this timer belongs to. NULL or empty
+ * string may be passed for this argument.
+ * @param subcomponent Subcomponent which this timer is measured. NULL or empty
+ * string may be passed for this argument.
+ * @return Initialized instance
+ */
+TaskTimer newTaskTimer(const CharString component, const char* subcomponent);
 
-void startTimingTask(TaskTimer taskTimer, const int taskId);
-void stopTiming(TaskTimer taskTimer);
+/**
+ * Create a new task timer.
+ * @param component Component name which this timer belongs to. NULL or empty
+ * string may be passed for this argument.
+ * @param subcomponent Subcomponent which this timer is measured. NULL or empty
+ * string may be passed for this argument.
+ * @return Initialized instance
+ */
+TaskTimer newTaskTimerWithCString(const char* component, const char* subcomponent);
 
-void freeTaskTimer(TaskTimer taskTimer);
+/**
+ * Start the timer. Timers may be stopped and started multiple times.
+ * @param self
+ */
+void taskTimerStart(TaskTimer self);
+
+/**
+ * Stop the timer. Timers may be stopped and started multiple times.
+ * @param self
+ * @return Time used since last call to taskTimerStart()
+ */
+double taskTimerStop(TaskTimer self);
+
+/**
+ * Get the string representation of the total accumulated time for this timer.
+ * @param self
+ * @return Formatted string, which the caller must free themselves when finished
+ */
+CharString taskTimerHumanReadbleString(TaskTimer self);
+
+/**
+ * Free a task timer and its associated resources
+ * @param self
+ */
+void freeTaskTimer(TaskTimer self);
 
 #endif

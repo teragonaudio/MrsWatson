@@ -47,19 +47,19 @@ LinkedList getVst2xPluginLocations(CharString currentDirectory) {
   linkedListAppend(locations, currentDirectory);
 
   locationBuffer = newCharString();
-  snprintf(locationBuffer->data, (size_t)(locationBuffer->length), "C:\\VstPlugins");
+  snprintf(locationBuffer->data, (size_t)(locationBuffer->capacity), "C:\\VstPlugins");
   linkedListAppend(locations, locationBuffer);
 
   locationBuffer = newCharString();
-  snprintf(locationBuffer->data, (size_t)(locationBuffer->length), "%s\\VstPlugIns", programFiles);
+  snprintf(locationBuffer->data, (size_t)(locationBuffer->capacity), "%s\\VstPlugIns", programFiles);
   linkedListAppend(locations, locationBuffer);
 
   locationBuffer = newCharString();
-  snprintf(locationBuffer->data, (size_t)(locationBuffer->length), "%s\\Common Files\\VstPlugIns", programFiles);
+  snprintf(locationBuffer->data, (size_t)(locationBuffer->capacity), "%s\\Common Files\\VstPlugIns", programFiles);
   linkedListAppend(locations, locationBuffer);
 
   locationBuffer = newCharString();
-  snprintf(locationBuffer->data, (size_t)(locationBuffer->length), "%s\\Steinberg\\VstPlugIns", programFiles);
+  snprintf(locationBuffer->data, (size_t)(locationBuffer->capacity), "%s\\Steinberg\\VstPlugIns", programFiles);
   linkedListAppend(locations, locationBuffer);
 
   return locations;

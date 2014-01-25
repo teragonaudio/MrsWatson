@@ -22,31 +22,31 @@ static int _testFileExists(void) {
   FILE *fp = fopen(TEST_FILENAME, "w");
   assert(fp != NULL);
   fclose(fp);
-  assert(fileExists(TEST_FILENAME));
+  assert(_fileExists(TEST_FILENAME));
   unlink(TEST_FILENAME);
   return 0;
 }
 
 static int _testNullFileExists(void) {
-  assertFalse(fileExists(NULL));
+  assertFalse(_fileExists(NULL));
   return 0;
 }
 
 static int _testInvalidFileExists(void) {
-  assertFalse(fileExists("invalid"));
+  assertFalse(_fileExists("invalid"));
   return 0;
 }
 
 static CharString _fileUtilitiesMakeTempDir(void) {
   CharString tempDirName = newCharString();
 #if UNIX
-  snprintf(tempDirName->data, tempDirName->length, "/tmp/mrswatsontest-XXXXXX");
+  snprintf(tempDirName->data, tempDirName->capacity, "/tmp/mrswatsontest-XXXXXX");
   mktemp(tempDirName->data);
 #elif WINDOWS
   CharString systemTempDir = newCharString();
   CharString randomDirName = newCharString();
-  snprintf(randomDirName->data, randomDirName->length, "mrswatsontest-%d", rand());
-  GetTempPathA(systemTempDir->length, systemTempDir->data);
+  snprintf(randomDirName->data, randomDirName->capacity, "mrswatsontest-%d", rand());
+  GetTempPathA(systemTempDir->capacity, systemTempDir->data);
   buildAbsolutePath(systemTempDir, randomDirName, NULL, tempDirName);
   freeCharString(systemTempDir);
   freeCharString(randomDirName);
@@ -124,7 +124,7 @@ static int _testListDirectory(void) {
   fclose(f);
   l = listDirectory(tempDir);
   assertIntEquals(linkedListLength(l), 1);
-  filename = l->item;
+  filename = (CharString)l->item;
   assertCharStringEquals(filename, TEST_FILENAME);
 
   removeDirectory(tempDir);
@@ -158,9 +158,9 @@ static int _testListInvalidDirectory(void) {
 
 static int _testRemoveDirectory(void) {
   CharString tempDir = _fileUtilitiesMakeTempDir();
-  assert(fileExists(tempDir->data));
+  assert(_fileExists(tempDir->data));
   assert(removeDirectory(tempDir));
-  assertFalse(fileExists(tempDir->data));
+  assertFalse(_fileExists(tempDir->data));
   freeCharString(tempDir);
   return 0;
 }
@@ -169,14 +169,6 @@ static int _testRemoveInvalidDirectory(void) {
   CharString c = newCharStringWithCString("invalid");
   assertFalse(removeDirectory(c));
   freeCharString(c);
-  return 0;
-}
-
-static int _testBuildAbsolutePath(void) {
-  return 0;
-}
-
-static int _testBuildAbsolutePathWithFileExtension(void) {
   return 0;
 }
 
@@ -238,7 +230,7 @@ static int _testBuildAbsolutePathWithFileExtensionTwice(void) {
   CharString f = newCharStringWithCString(TEST_FILENAME);
   CharString expected = newCharString();
 
-  snprintf(expected->data, expected->length, "%s%c%s", ROOT_DIRECTORY, PATH_DELIMITER, TEST_FILENAME);
+  snprintf(expected->data, expected->capacity, "%s%c%s", ROOT_DIRECTORY, PATH_DELIMITER, TEST_FILENAME);
   buildAbsolutePath(d, f, "txt", out);
   assertCharStringEquals(out, expected->data);
 
@@ -246,18 +238,6 @@ static int _testBuildAbsolutePathWithFileExtensionTwice(void) {
   freeCharString(out);
   freeCharString(f);
   freeCharString(expected);
-  return 0;
-}
-
-static int _testConvertRelativePathToAbsolute(void) {
-  return 0;
-}
-
-static int _testConvertRelativePathToAbsoluteAlreadyAbsolute(void) {
-  return 0;
-}
-
-static int _testConvertRelativePathToAbsoluteEmpty(void) {
   return 0;
 }
 
@@ -353,16 +333,11 @@ TestSuite addFileUtilitiesTests(void) {
   addTest(testSuite, "RemoveDirectory", _testRemoveDirectory);
   addTest(testSuite, "RemoveInvalidDirectory", _testRemoveInvalidDirectory);
 
-  addTest(testSuite, "BuildAbsolutePath", NULL); // _testBuildAbsolutePath);
-  addTest(testSuite, "BuildAbsolutePathWithFileExtension", NULL); // _testBuildAbsolutePathWithFileExtension);
   addTest(testSuite, "BuildAbsolutePathEmptyPath", _testBuildAbsolutePathEmptyPath);
   addTest(testSuite, "BuildAbsolutePathEmptyFile", _testBuildAbsolutePathEmptyFile);
   addTest(testSuite, "BuildAbsolutePathNullPath", _testBuildAbsolutePathNullPath);
   addTest(testSuite, "BuildAbsolutePathNullFile", _testBuildAbsolutePathNullFile);
   addTest(testSuite, "BuildAbsolutePathWithFileExtensionTwice", _testBuildAbsolutePathWithFileExtensionTwice);
-  addTest(testSuite, "ConvertRelativePathToAbsolute", NULL); // _testConvertRelativePathToAbsolute);
-  addTest(testSuite, "ConvertRelativePathToAbsoluteAlreadyAbsolute", NULL); // _testConvertRelativePathToAbsoluteAlreadyAbsolute);
-  addTest(testSuite, "ConvertRelativePathToAbsoluteEmpty", NULL); // _testConvertRelativePathToAbsoluteEmpty);
   addTest(testSuite, "IsAbsolutePath", _testIsAbsolutePath);
   addTest(testSuite, "IsAbsolutePathUNCWindows", _testIsAbsolutePathUNCWindows);
   addTest(testSuite, "IsInvalidFileAbsolutePath", _testIsInvalidFileAbsolutePath);

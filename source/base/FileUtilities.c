@@ -46,7 +46,8 @@
 #include <mach-o/dyld.h>
 #endif
 
-boolByte fileExists(const char* path) {
+/** DEPRECATED */
+boolByte _fileExists(const char* path) {
 #if WINDOWS
   // Visual Studio's compiler is not C99 compliant, so variable declarations
   // need to be at the top.
@@ -73,6 +74,7 @@ boolByte fileExists(const char* path) {
 #endif
 }
 
+/** DEPRECATED */
 boolByte copyFileToDirectory(const CharString fileAbsolutePath, const CharString directoryAbsolutePath) {
   boolByte result = false;
   CharString fileOutPath = newCharStringWithCapacity(kCharStringLengthLong);
@@ -105,6 +107,7 @@ boolByte copyFileToDirectory(const CharString fileAbsolutePath, const CharString
   return result;
 }
 
+/** DEPRECATED */
 boolByte makeDirectory(const CharString absolutePath) {
 #if UNIX
   return mkdir(absolutePath->data, 0755) == 0;
@@ -114,6 +117,7 @@ boolByte makeDirectory(const CharString absolutePath) {
 }
 
 // Note that this method skips hidden files
+/** DEPRECATED */
 LinkedList listDirectory(const CharString directory) {
   LinkedList items = newLinkedList();
   CharString filename;
@@ -138,7 +142,7 @@ LinkedList listDirectory(const CharString directory) {
   HANDLE findHandle;
   CharString searchString = newCharString();
 
-  snprintf(searchString->data, searchString->length, "%s\\*", directory->data);
+  snprintf(searchString->data, searchString->capacity, "%s\\*", directory->data);
   findHandle = FindFirstFileA((LPCSTR)(searchString->data), &findData);
   freeCharString(searchString);
   if(findHandle == INVALID_HANDLE_VALUE) {
@@ -148,7 +152,7 @@ LinkedList listDirectory(const CharString directory) {
   do {
     if(findData.cFileName[0] != '.') {
       filename = newCharString();
-      strncpy(filename->data, findData.cFileName, filename->length);
+      strncpy(filename->data, findData.cFileName, filename->capacity);
       linkedListAppend(items, filename);
     }
   } while(FindNextFileA(findHandle, &findData) != 0);
@@ -162,17 +166,18 @@ LinkedList listDirectory(const CharString directory) {
   return items;
 }
 
+/** DEPRECATED */
 boolByte removeDirectory(const CharString absolutePath) {
   boolByte result = false;
 
 #if UNIX
-  if(!fileExists(absolutePath->data)) {
+  if(!_fileExists(absolutePath->data)) {
     return false;
   }
 
   // This is a bit lazy, perhaps...
   CharString removeCommand = newCharString();
-  snprintf(removeCommand->data, removeCommand->length, "/bin/rm -rf \"%s\"", absolutePath->data);
+  snprintf(removeCommand->data, removeCommand->capacity, "/bin/rm -rf \"%s\"", absolutePath->data);
   result = system(removeCommand->data);
   freeCharString(removeCommand);
   return (result == 0);
@@ -188,6 +193,7 @@ boolByte removeDirectory(const CharString absolutePath) {
 #endif
 }
 
+/** DEPRECATED */
 void buildAbsolutePath(const CharString directory, const CharString file, const char* fileExtension, CharString outString) {
   const char* extension;
   CharString absoluteDirectory;
@@ -216,27 +222,29 @@ void buildAbsolutePath(const CharString directory, const CharString file, const 
       buildAbsolutePath(absoluteDirectory, file, NULL, outString);
     }
     else {
-      snprintf(outString->data, outString->length, "%s%c%s.%s",
+      snprintf(outString->data, outString->capacity, "%s%c%s.%s",
         absoluteDirectory->data, PATH_DELIMITER, file->data, fileExtension);
     }
   }
   else {
-    snprintf(outString->data, outString->length, "%s%c%s",
+    snprintf(outString->data, outString->capacity, "%s%c%s",
       absoluteDirectory->data, PATH_DELIMITER, file->data);
   }
 
   freeCharString(absoluteDirectory);
 }
 
+/** DEPRECATED */
 void convertRelativePathToAbsolute(const CharString file, CharString outString) {
   CharString currentDirectory = getCurrentDirectory();
-  snprintf(outString->data, outString->length, "%s%c%s", currentDirectory->data, PATH_DELIMITER, file->data);
+  snprintf(outString->data, outString->capacity, "%s%c%s", currentDirectory->data, PATH_DELIMITER, file->data);
   freeCharString(currentDirectory);
 }
 
+/** DEPRECATED */
 boolByte isAbsolutePath(const CharString path) {
 #if WINDOWS
-  if(path->length > 3) {
+  if(path->capacity > 3) {
     // Check for strings which start with a drive letter, ie C:\file
     if(path->data[1] == ':' && path->data[2] == PATH_DELIMITER) {
       return true;
@@ -247,13 +255,14 @@ boolByte isAbsolutePath(const CharString path) {
     }
   }
 #else
-  if(path->length > 1 && path->data[0] == PATH_DELIMITER) {
+  if(path->capacity > 1 && path->data[0] == PATH_DELIMITER) {
     return true;
   }
 #endif
   return false;
 }
 
+/** DEPRECATED */
 const char* getFileBasename(const char* filename) {
   const char *lastDelimiter;
   if(filename == NULL) {
@@ -268,6 +277,7 @@ const char* getFileBasename(const char* filename) {
   }
 }
 
+/** DEPRECATED */
 const char* getFileExtension(const char* filename) {
   const char *dot;
   if(filename == NULL) {
@@ -282,6 +292,7 @@ const char* getFileExtension(const char* filename) {
   }
 }
 
+/** DEPRECATED */
 void getFileDirname(const CharString filename, CharString outString) {
   const char *lastDelimiter;
   if(filename == NULL) {

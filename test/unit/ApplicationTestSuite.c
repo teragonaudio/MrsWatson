@@ -1,7 +1,9 @@
 #include "ApplicationRunner.h"
 
-int runApplicationTestSuite(TestEnvironment environment);
-int runApplicationTestSuite(TestEnvironment environment) {
+extern void _printTestSummary(int testsRun, int testsPassed, int testsFailed, int testsSkipped);
+
+void runApplicationTestSuite(TestEnvironment environment);
+void runApplicationTestSuite(TestEnvironment environment) {
   // Test resource paths
   const char* resourcesPath = environment->resourcesPath;
   CharString _a440_mono_pcm = getTestResourceFilename(resourcesPath, "audio", "a440-mono.pcm");
@@ -54,6 +56,14 @@ int runApplicationTestSuite(TestEnvironment environment) {
     buildTestArgumentString("--plugin \"vstxsynth,%s\" --midi-file \"%s\"", again_test_fxp, c_scale_mid),
     RETURN_CODE_INVALID_ARGUMENT, NULL
   );
+  runApplicationTest(environment, "Set invalid parameter",
+    buildTestArgumentString("--plugin again --input \"%s\" --parameter 1,0.5", a440_stereo_pcm),
+    RETURN_CODE_INVALID_ARGUMENT, NULL
+  );
+  runApplicationTest(environment, "Set invalid time signature",
+    buildTestArgumentString("--plugin again --input \"%s\" --time-signature invalid", a440_stereo_pcm),
+    RETURN_CODE_INVALID_ARGUMENT, NULL
+  );
 
   // Audio file types
   runApplicationTest(environment, "Read WAV file",
@@ -80,6 +90,14 @@ int runApplicationTestSuite(TestEnvironment environment) {
   );
   runApplicationTest(environment, "Add tail-time",
     buildTestArgumentString("--plugin again --input \"%s\" --tail-time 10", a440_stereo_pcm),
+    RETURN_CODE_SUCCESS, kDefaultTestOutputFileType
+  );
+  runApplicationTest(environment, "Set parameter",
+    buildTestArgumentString("--plugin again --input \"%s\" --parameter 0,0.5", a440_stereo_pcm),
+    RETURN_CODE_SUCCESS, kDefaultTestOutputFileType
+  );
+  runApplicationTest(environment, "Set time signature",
+    buildTestArgumentString("--plugin again --input \"%s\" --time-signature 3/4", a440_stereo_pcm),
     RETURN_CODE_SUCCESS, kDefaultTestOutputFileType
   );
 
@@ -120,18 +138,12 @@ int runApplicationTestSuite(TestEnvironment environment) {
     RETURN_CODE_SUCCESS, kDefaultTestOutputFileType
   );
 
-  fprintf(stderr, "\n== Ran %d application tests: %d passed, %d failed, %d skipped ==\n",
-    environment->results->numSuccess +
-    environment->results->numFail +
-    environment->results->numSkips,
-    environment->results->numSuccess,
-    environment->results->numFail,
-    environment->results->numSkips);
+  _printTestSummary(environment->results->numSuccess + environment->results->numFail + environment->results->numSkips,
+    environment->results->numSuccess, environment->results->numFail, environment->results->numSkips);
 
   freeCharString(_a440_mono_pcm);
   freeCharString(_a440_stereo_pcm);
   freeCharString(_a440_stereo_wav);
   freeCharString(_c_scale_mid);
   freeCharString(_again_test_fxp);
-  return environment->results->numFail;
 }

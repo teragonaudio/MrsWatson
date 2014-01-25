@@ -33,10 +33,9 @@
 #include "audio/AudioSettings.h"
 #include "base/CharString.h"
 #include "base/PlatformUtilities.h"
-#include "base/StringUtilities.h"
 #include "logging/EventLogger.h"
 #include "logging/LogPrinter.h"
-#include "sequencer/AudioClock.h"
+#include "time/AudioClock.h"
 
 #include "MrsWatson.h"
 
@@ -84,10 +83,6 @@ static EventLogger _getEventLoggerInstance(void) {
   return eventLoggerInstance;
 }
 
-void fillVersionString(CharString outString) {
-  snprintf(outString->data, outString->length, "%s version %d.%d.%d", PROGRAM_NAME, VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
-}
-
 char* stringForLastError(int errorNumber) {
   EventLogger eventLogger = _getEventLoggerInstance();
   if(eventLogger->systemErrorMessage == NULL) {
@@ -98,17 +93,15 @@ char* stringForLastError(int errorNumber) {
   return strerror(errorNumber);
 #elif WINDOWS
   FormatMessageA(FORMAT_MESSAGE_FROM_SYSTEM, 0, errorNumber, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-    eventLogger->systemErrorMessage->data, eventLogger->systemErrorMessage->length - 1, NULL);
-#else
-  charStringCopyCString(eventLogger->systemErrorMessage, "Unknown error");
+    eventLogger->systemErrorMessage->data, eventLogger->systemErrorMessage->capacity - 1, NULL);
+  return eventLogger->systemErrorMessage->data;
 #endif
 
-  return eventLogger->systemErrorMessage->data;
 }
 
 boolByte isLogLevelAtLeast(LogLevel logLevel) {
   EventLogger eventLogger = _getEventLoggerInstance();
-  return (eventLogger->logLevel >= logLevel);
+  return (logLevel >= eventLogger->logLevel);
 }
 
 void setLogLevel(LogLevel logLevel) {
@@ -198,7 +191,7 @@ static LogColor _logTimeColor(void) {
   return COLOR_FG_CYAN;
 }
 
-static LogColor _logTimeZebraStripeColor(const long elapsedTime, const int zebraSizeInMs) {
+static LogColor _logTimeZebraStripeColor(const long elapsedTime, const unsigned long zebraSizeInMs) {
   boolByte zebraState = (boolByte)((elapsedTime / zebraSizeInMs) % 2);
   return zebraState ? COLOR_FG_OLIVE : COLOR_FG_GREEN;
 }
@@ -217,7 +210,7 @@ static void _printMessage(const LogLevel logLevel, const long elapsedTimeInMs, c
   }
   else {
     snprintf(logString, kCharStringLengthLong, "%c %08ld %06ld %s", _logLevelStatusChar(logLevel), numFramesProcessed, elapsedTimeInMs, message);
-    printToLog(COLOR_RESET, eventLogger->logFile, logString);
+    printToLog(COLOR_NONE, eventLogger->logFile, logString);
   }
   flushLog(eventLogger->logFile);
   free(logString);
@@ -234,7 +227,7 @@ static void _logMessage(const LogLevel logLevel, const char* message, va_list ar
 
   if(eventLogger != NULL && logLevel >= eventLogger->logLevel) {
     CharString formattedMessage = newCharString();
-    vsnprintf(formattedMessage->data, formattedMessage->length, message, arguments);
+    vsnprintf(formattedMessage->data, formattedMessage->capacity, message, arguments);
 #if WINDOWS
     currentTime = GetTickCount();
     elapsedTimeInMs = (unsigned long)(currentTime - eventLogger->startTimeInMs);
@@ -284,8 +277,8 @@ void logCritical(const char* message, ...) {
   va_start(arguments, message);
   // Instead of going through the common logging method, we always dump critical
   // messages to stderr
-  vsnprintf(formattedMessage->data, formattedMessage->length, message, arguments);
-  wrappedMessage = wrapString(formattedMessage, 0);
+  vsnprintf(formattedMessage->data, formattedMessage->capacity, message, arguments);
+  wrappedMessage = charStringWrap(formattedMessage, 0);
   fprintf(stderr, "ERROR: %s\n", wrappedMessage->data);
   if(eventLoggerInstance != NULL && eventLoggerInstance->logFile != NULL) {
     fprintf(eventLoggerInstance->logFile, "ERROR: %s\n", wrappedMessage->data);
@@ -302,7 +295,7 @@ void logInternalError(const char* message, ...) {
 
   va_start(arguments, message);
   // Instead of going through the common logging method, we always dump critical messages to stderr
-  vsnprintf(formattedMessage->data, formattedMessage->length, message, arguments);
+  vsnprintf(formattedMessage->data, formattedMessage->capacity, message, arguments);
   fprintf(stderr, "INTERNAL ERROR: %s\n", formattedMessage->data);
   if(eventLoggerInstance != NULL && eventLoggerInstance->logFile != NULL) {
   fprintf(eventLoggerInstance->logFile, "INTERNAL ERROR: %s\n", formattedMessage->data);
@@ -339,8 +332,8 @@ generate a diagnostic report to send to support.");
   CharString wrappedCause;
   CharString wrappedExtraText;
 
-  wrappedCause = wrapString(newCharStringWithCString(cause), 0);
-  wrappedExtraText = wrapString(extraText, 0);
+  wrappedCause = charStringWrap(newCharStringWithCString(cause), 0);
+  wrappedExtraText = charStringWrap(extraText, 0);
   fprintf(stderr, "%s\n", wrappedCause->data);
   fprintf(stderr, "%s\n", wrappedExtraText->data);
 

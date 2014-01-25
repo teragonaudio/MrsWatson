@@ -36,11 +36,17 @@
 #include "plugin/PluginVst2x.h"
 #include "plugin/PluginSilence.h"
 
-PluginInterfaceType guessPluginInterfaceType(const CharString pluginName, const CharString pluginSearchRoot, CharString outLocation) {
+static PluginInterfaceType _guessPluginInterfaceType(const CharString pluginName, const CharString pluginSearchRoot) {
   PluginInterfaceType pluginType = PLUGIN_TYPE_INVALID;
+
+  if(pluginName == NULL || charStringIsEmpty(pluginName)) {
+    logError("Attempt to guess plugin with empty name");
+    return pluginType;
+  }
+
   logDebug("Trying to find plugin '%s'", pluginName->data);
 
-  if(vst2xPluginExists(pluginName, pluginSearchRoot, outLocation)) {
+  if(pluginVst2xExists(pluginName, pluginSearchRoot)) {
     logInfo("Plugin '%s' is of type VST2.x", pluginName->data);
     pluginType = PLUGIN_TYPE_VST_2X;
   }
@@ -55,24 +61,13 @@ PluginInterfaceType guessPluginInterfaceType(const CharString pluginName, const 
   return pluginType;
 }
 
-static const char* _getNameForInterfaceType(PluginInterfaceType interfaceType) {
-  switch(interfaceType) {
-    case PLUGIN_TYPE_VST_2X:
-      return "VST 2.x";
-    case PLUGIN_TYPE_INTERNAL:
-      return "Internal";
-    default:
-      return "Unknown";
-  }
-}
-
-void _logPluginLocation(const CharString location, PluginInterfaceType interfaceType) {
-  logInfo("Location '%s', type %s:", location->data, _getNameForInterfaceType(interfaceType));
+static void _logPluginLocation(const CharString location) {
+  logInfo("Location (internal):", location->data);
 }
 
 static void _listAvailablePluginsInternal(void) {
   CharString internalLocation = newCharStringWithCString("(Internal)");
-  _logPluginLocation(internalLocation, PLUGIN_TYPE_INTERNAL);
+  _logPluginLocation(internalLocation);
   logInfo("  %s", kInternalPluginPassthruName);
   logInfo("  %s", kInternalPluginSilenceName);
   freeCharString(internalLocation);
@@ -96,10 +91,16 @@ static boolByte _internalPluginNameMatches(const CharString pluginName, const ch
   return strncmp(pluginName->data, internalName, strlen(internalName)) == 0;
 }
 
-Plugin newPlugin(PluginInterfaceType interfaceType, const CharString pluginName, const CharString pluginLocation) {
+// Plugin newPlugin(PluginInterfaceType interfaceType, const CharString pluginName, const CharString pluginLocation) {
+Plugin pluginFactory(const CharString pluginName, const CharString pluginRoot) {
+  PluginInterfaceType interfaceType = _guessPluginInterfaceType(pluginName, pluginRoot);
+  if(interfaceType == PLUGIN_TYPE_INVALID) {
+    return NULL;
+  }
+
   switch(interfaceType) {
     case PLUGIN_TYPE_VST_2X:
-      return newPluginVst2x(pluginName, pluginLocation);
+      return newPluginVst2x(pluginName, pluginRoot);
     case PLUGIN_TYPE_INTERNAL:
       if(_internalPluginNameMatches(pluginName, kInternalPluginPassthruName)) {
         return newPluginPassthru(pluginName);
@@ -118,16 +119,20 @@ in your MrsWatson so you can run plugins in your plugins!");
         logError("'%s' is not a recognized internal plugin", pluginName->data);
         return NULL;
       }
-    case PLUGIN_TYPE_INVALID:
     default:
-      logError("Plugin type not supported");
+      logError("Could not find plugin type for '%s'", pluginName->data);
       return NULL;
   }
 }
 
-void freePlugin(Plugin plugin) {
-  plugin->freePluginData(plugin->extraData);
-  freeCharString(plugin->pluginLocation);
-  freeCharString(plugin->pluginName);
-  free(plugin);
+void freePlugin(Plugin self) {
+  if(self != NULL) {
+    if(self->extraData != NULL) {
+      self->freePluginData(self->extraData);
+      free(self->extraData);
+    }
+    freeCharString(self->pluginLocation);
+    freeCharString(self->pluginName);
+    free(self);
+  }
 }

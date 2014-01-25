@@ -31,7 +31,9 @@
 #include "io/SampleSource.h"
 #include "io/SampleSourcePcm.h"
 
+// TODO: Make private
 SampleSource newSampleSourceWave(const CharString sampleSourceName);
+// TODO: Make private
 void closeSampleSourceWave(void* pcmData);
 
 #endif

@@ -28,12 +28,14 @@
 #ifndef MrsWatson_BuildInfo_h
 #define MrsWatson_BuildInfo_h
 
+#include "base/CharString.h"
+
 #define PROGRAM_NAME "MrsWatson"
 #define VENDOR_NAME "Teragon Audio"
 
 #define VERSION_MAJOR 0
 #define VERSION_MINOR 9
-#define VERSION_PATCH 6
+#define VERSION_PATCH 7
 
 #define OFFICIAL_WEBSITE "http://www.teragonaudio.com"
 #define PROJECT_WEBSITE "https://github.com/teragonaudio/mrswatson"
@@ -66,5 +68,12 @@ unsigned long buildInfoGetYear(void);
  * @return Build timestamp in the form YYYYMMDD
  */
 unsigned long buildInfoGetDatestamp(void);
+
+/**
+ * Get the full application name and version
+ * @return String with the application's name and version. The caller must free
+ * this memory when finished with it.
+ */
+CharString buildInfoGetVersionString(void);
 
 #endif
