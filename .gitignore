@@ -1,6 +1,6 @@
 # Build products
 build/*
-MrsWatson.zip
+MrsWatson*.zip
 **/Debug/*
 **/Release/*
 
