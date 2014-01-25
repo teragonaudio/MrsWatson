@@ -35,7 +35,7 @@
 
 #define VERSION_MAJOR 0
 #define VERSION_MINOR 9
-#define VERSION_PATCH 6
+#define VERSION_PATCH 7
 
 #define OFFICIAL_WEBSITE "http://www.teragonaudio.com"
 #define PROJECT_WEBSITE "https://github.com/teragonaudio/mrswatson"
