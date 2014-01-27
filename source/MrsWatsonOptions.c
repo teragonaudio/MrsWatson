@@ -159,6 +159,12 @@ to indicate which plugin to load. Examples:\n\n\
     "Only log critical errors.",
     true, kProgramOptionTypeEmpty, kProgramOptionArgumentTypeNone));
 
+  programOptionsAdd(options, newProgramOptionWithName(OPTION_REALTIME, "realtime",
+    "Simulate running in realtime by sleeping for any remaining time needed to process \
+the given block. Some plugins which are unable to do offline rendering may require this \
+option in order to function properly.",
+    false, kProgramOptionTypeEmpty, kProgramOptionArgumentTypeNone));
+
   programOptionsAdd(options, newProgramOptionWithName(OPTION_SAMPLE_RATE, "sample-rate",
     "Sample rate to use when processing. If the input source specifies its own \
 sample rate, that value will override the one set by this option. No error checking \

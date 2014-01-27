@@ -47,6 +47,9 @@ void initPluginChain(void) {
   pluginChainInstance->presets = (PluginPreset*)malloc(sizeof(PluginPreset) * MAX_PLUGINS);
   pluginChainInstance->audioTimers = (TaskTimer*)malloc(sizeof(TaskTimer) * MAX_PLUGINS);
   pluginChainInstance->midiTimers = (TaskTimer*)malloc(sizeof(TaskTimer) * MAX_PLUGINS);
+
+  pluginChainInstance->_realtime = false;
+  pluginChainInstance->_realtimeTimer = NULL;
 }
 
 boolByte pluginChainAppend(PluginChain self, Plugin plugin, PluginPreset preset) {
@@ -282,14 +285,30 @@ boolByte pluginChainSetParameters(PluginChain self, const LinkedList parameters)
   return passData.success;
 }
 
+void pluginChainSetRealtime(PluginChain self, boolByte realtime) {
+  self->_realtime = realtime;
+  if(realtime) {
+    self->_realtimeTimer = newTaskTimerWithCString("PluginChain", "Realtime");
+  }
+  else if(self->_realtimeTimer) {
+    freeTaskTimer(self->_realtimeTimer);
+  }
+}
+
 void pluginChainProcessAudio(PluginChain pluginChain, SampleBuffer inBuffer, SampleBuffer outBuffer) {
   Plugin plugin;
   unsigned int i;
   double processingTimeInMs;
+  double totalProcessingTimeInMs;
   const double maxProcessingTimeInMs = inBuffer->blocksize * 1000.0 / getSampleRate();
+
+  if(pluginChain->_realtime) {
+    taskTimerStart(pluginChain->_realtimeTimer);
+  }
 
   SampleBuffer formerOutputBuffer = inBuffer;
   SampleBuffer nextInputBuffer = NULL;
+
   for(i = 0; i < pluginChain->numPlugins; i++) {
     plugin = pluginChain->plugins[i];
     logDebug("Processing audio with plugin '%s'", plugin->pluginName->data);
@@ -315,6 +334,13 @@ void pluginChainProcessAudio(PluginChain pluginChain, SampleBuffer inBuffer, Sam
   nextInputBuffer = outBuffer;
   nextInputBuffer->blocksize = formerOutputBuffer->blocksize;
   sampleBufferCopyAndMapChannels(nextInputBuffer, formerOutputBuffer);
+
+  if(pluginChain->_realtime) {
+    totalProcessingTimeInMs = taskTimerStop(pluginChain->_realtimeTimer);
+    if(totalProcessingTimeInMs < maxProcessingTimeInMs) {
+      sleepMilliseconds(maxProcessingTimeInMs - totalProcessingTimeInMs);
+    }
+  }
 }
 
 void pluginChainProcessMidi(PluginChain pluginChain, LinkedList midiEvents) {
@@ -354,5 +380,10 @@ void freePluginChain(PluginChain pluginChain) {
   free(pluginChain->plugins);
   free(pluginChain->audioTimers);
   free(pluginChain->midiTimers);
+
+  if(pluginChain->_realtime) {
+    freeTaskTimer(pluginChain->_realtimeTimer);
+  }
+
   free(pluginChain);
 }

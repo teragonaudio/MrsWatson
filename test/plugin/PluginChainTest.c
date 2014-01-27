@@ -6,6 +6,7 @@
 
 #include "audio/AudioSettings.h"
 #include "midi/MidiEvent.h"
+#include "time/TaskTimer.h"
 
 static void _pluginChainTestSetup(void) {
   initPluginChain();
@@ -213,6 +214,27 @@ static int _testProcessPluginChainAudio(void) {
   return 0;
 }
 
+static int _testProcessPluginChainAudioRealtime(void) {
+  Plugin mock = newPluginMock();
+  PluginChain p = newPluginChain();
+  SampleBuffer inBuffer = newSampleBuffer(DEFAULT_NUM_CHANNELS, DEFAULT_BLOCKSIZE);
+  SampleBuffer outBuffer = newSampleBuffer(DEFAULT_NUM_CHANNELS, DEFAULT_BLOCKSIZE);
+  TaskTimer t = newTaskTimerWithCString("test", "test");
+
+  assert(pluginChainAppend(p, mock, NULL));
+  pluginChainSetRealtime(p, true);
+  taskTimerStart(t);
+  pluginChainProcessAudio(p, inBuffer, outBuffer);
+  assertDoubleEquals(taskTimerStop(t), 1000 * DEFAULT_BLOCKSIZE / getSampleRate(), 0.1);
+  assert(((PluginMockData)mock->extraData)->processAudioCalled);
+
+  freeTaskTimer(t);
+  freePluginChain(p);
+  freeSampleBuffer(inBuffer);
+  freeSampleBuffer(outBuffer);
+  return 0;
+}
+
 static int _testProcessPluginChainMidiEvents(void) {
   Plugin mock = newPluginMock();
   PluginChain p = getPluginChain();
@@ -265,6 +287,7 @@ TestSuite addPluginChainTests(void) {
 
   addTest(testSuite, "PrepareForProcessing", _testPrepareForProcessing);
   addTest(testSuite, "ProcessPluginChainAudio", _testProcessPluginChainAudio);
+  addTest(testSuite, "ProcessPluginChainAudioRealtime", _testProcessPluginChainAudioRealtime);
   addTest(testSuite, "ProcessPluginChainMidiEvents", _testProcessPluginChainMidiEvents);
 
   addTest(testSuite, "Shutdown", _testShutdown);

@@ -455,6 +455,9 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
         case OPTION_PLUGIN_ROOT:
           charStringCopy(pluginSearchRoot, programOptionsGetString(programOptions, OPTION_PLUGIN_ROOT));
           break;
+        case OPTION_REALTIME:
+          pluginChainSetRealtime(pluginChain, true);
+          break;
         case OPTION_SAMPLE_RATE:
           setSampleRate(programOptionsGetNumber(programOptions, OPTION_SAMPLE_RATE));
           break;
