@@ -44,6 +44,10 @@ typedef struct {
   PluginPreset* presets;
   TaskTimer* audioTimers;
   TaskTimer* midiTimers;
+
+  // Private fields
+  boolByte _realtime;
+  TaskTimer _realtimeTimer;
 } PluginChainMembers;
 
 /**
@@ -93,7 +97,21 @@ void pluginChainInspect(PluginChain self);
  */
 int pluginChainGetMaximumTailTimeInMs(PluginChain self);
 
+/**
+ * Set parameters on the first plugin in a chain.
+ * @param self
+ * @param parameters List of parameters to be applied
+ * @return True if all parameters were set, false otherwise
+ */
 boolByte pluginChainSetParameters(PluginChain self, const LinkedList parameters);
+
+/**
+ * Set realtime mode for the plugin chain. When set, calls to pluginChainProcessAudio()
+ * will sleep for the additional time required to process the block in realtime.
+ * @param realtime True to enable realtime mode, false to disable (default)
+ * @param self
+ */
+void pluginChainSetRealtime(PluginChain self, boolByte realtime);
 
 /**
  * Prepare each plugin in the chain for processing. This should be called before

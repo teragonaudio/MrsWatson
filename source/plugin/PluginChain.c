@@ -42,6 +42,9 @@ PluginChain newPluginChain(void) {
   pluginChain->audioTimers = (TaskTimer*)malloc(sizeof(TaskTimer) * MAX_PLUGINS);
   pluginChain->midiTimers = (TaskTimer*)malloc(sizeof(TaskTimer) * MAX_PLUGINS);
 
+  pluginChain->_realtime = false;
+  pluginChain->_realtimeTimer = NULL;
+
   return pluginChain;
 }
 
@@ -267,12 +270,27 @@ boolByte pluginChainSetParameters(PluginChain self, const LinkedList parameters)
   return passData.success;
 }
 
+void pluginChainSetRealtime(PluginChain self, boolByte realtime) {
+  self->_realtime = realtime;
+  if(realtime) {
+    self->_realtimeTimer = newTaskTimerWithCString("PluginChain", "Realtime");
+  }
+  else if(self->_realtimeTimer) {
+    freeTaskTimer(self->_realtimeTimer);
+  }
+}
+
 void pluginChainProcessAudio(PluginChain pluginChain, SampleBuffer inBuffer, SampleBuffer outBuffer) {
   Plugin plugin;
   unsigned int pluginInputs, pluginOutputs;
   unsigned int i;
   double processingTimeInMs;
+  double totalProcessingTimeInMs;
   const double maxProcessingTimeInMs = inBuffer->blocksize * 1000.0 / getSampleRate();
+
+  if(pluginChain->_realtime) {
+    taskTimerStart(pluginChain->_realtimeTimer);
+  }
 
   for(i = 0; i < pluginChain->numPlugins; i++) {
     sampleBufferClear(outBuffer);
@@ -306,6 +324,13 @@ void pluginChainProcessAudio(PluginChain pluginChain, SampleBuffer inBuffer, Sam
     // back to the input for the next one in the chain.
     if(i + 1 < pluginChain->numPlugins) {
       sampleBufferCopy(inBuffer, outBuffer);
+    }
+  }
+
+  if(pluginChain->_realtime) {
+    totalProcessingTimeInMs = taskTimerStop(pluginChain->_realtimeTimer);
+    if(totalProcessingTimeInMs < maxProcessingTimeInMs) {
+      sleepMilliseconds(maxProcessingTimeInMs - totalProcessingTimeInMs);
     }
   }
 }
@@ -347,5 +372,10 @@ void freePluginChain(PluginChain pluginChain) {
   free(pluginChain->plugins);
   free(pluginChain->audioTimers);
   free(pluginChain->midiTimers);
+
+  if(pluginChain->_realtime) {
+    freeTaskTimer(pluginChain->_realtimeTimer);
+  }
+
   free(pluginChain);
 }
