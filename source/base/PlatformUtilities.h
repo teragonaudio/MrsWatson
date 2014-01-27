@@ -181,4 +181,12 @@ unsigned short convertByteArrayToUnsignedShort(const byte* value);
  */
 unsigned int convertByteArrayToUnsignedInt(const byte* value);
 
+/**
+ * Suspend execution for a given amount of milliseconds. Depending on the host
+ * operating system, the amount of time actually slept may differ slightly from
+ * the requested amount.
+ * @param milliseconds Number of milliseconds to sleep
+ */
+void sleepMilliseconds(const double milliseconds);
+
 #endif

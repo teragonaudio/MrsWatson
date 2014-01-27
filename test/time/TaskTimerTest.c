@@ -120,14 +120,7 @@ static int _testNewObjectWithCStrings(void) {
 }
 
 static void _testSleep(void) {
-#if UNIX
-  struct timespec sleepTime;
-  sleepTime.tv_sec = 0;
-  sleepTime.tv_nsec = 1000000 * SLEEP_DURATION_MS;
-  nanosleep(&sleepTime, NULL);
-#elif WINDOWS
-  Sleep((DWORD)SLEEP_DURATION_MS);
-#endif
+  sleepMilliseconds(SLEEP_DURATION_MS);
 }
 
 static int _testTaskTimerDuration(void) {

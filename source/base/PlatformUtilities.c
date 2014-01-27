@@ -29,6 +29,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
+#include <time.h>
 
 #include "base/File.h"
 #include "base/PlatformUtilities.h"
@@ -326,4 +327,15 @@ float convertBigEndianFloatToPlatform(const float value) {
   floatResult[2] = floatToConvert[1];
   floatResult[3] = floatToConvert[0];
   return result;
+}
+
+void sleepMilliseconds(const double milliseconds) {
+#if UNIX
+  struct timespec sleepTime;
+  sleepTime.tv_sec = 0;
+  sleepTime.tv_nsec = (long)(1000000.0 * milliseconds);
+  nanosleep(&sleepTime, NULL);
+#elif WINDOWS
+  Sleep((DWORD)milliseconds);
+#endif
 }

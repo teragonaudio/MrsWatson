@@ -1,5 +1,6 @@
 #include "unit/TestRunner.h"
 #include "base/PlatformUtilities.h"
+#include "time/TaskTimer.h"
 #if MACOSX
 #include <machine/endian.h>
 #endif
@@ -182,6 +183,17 @@ static int _testConvertByteArrayToUnsignedInt(void) {
   return 0;
 }
 
+static int _testSleepMilliseconds(void) {
+  double elapsedTime;
+  TaskTimer t = newTaskTimerWithCString("test", "test");
+  taskTimerStart(t);
+  sleepMilliseconds(12);
+  elapsedTime = taskTimerStop(t);
+  assertDoubleEquals(elapsedTime, 12, 0.1);
+  freeTaskTimer(t);
+  return 0;
+}
+
 TestSuite addPlatformUtilitiesTests(void);
 TestSuite addPlatformUtilitiesTests(void) {
   TestSuite testSuite = newTestSuite("PlatformUtilities", NULL, NULL);
@@ -199,5 +211,7 @@ TestSuite addPlatformUtilitiesTests(void) {
 
   addTest(testSuite, "ConvertByteArrayToUnsignedShort", _testConvertByteArrayToUnsignedShort);
   addTest(testSuite, "ConvertByteArrayToUnsignedInt", _testConvertByteArrayToUnsignedInt);
+
+  addTest(testSuite, "SleepMilliseconds", _testSleepMilliseconds);
   return testSuite;
 }
