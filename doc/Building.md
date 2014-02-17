@@ -131,5 +131,5 @@ submodule of MrsWatson), and the location of MrsWatson itself. For more
 information, run `mrswatsontest --help full` from the command line.
 
 
-[1]: http://www.steinberg.net/en/company/3rd_party_developer.html
+[1]: http://www.steinberg.net/en/company/developer.html
 [2]: http://mxcl.github.io/homebrew/
