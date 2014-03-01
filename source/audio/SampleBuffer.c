@@ -131,7 +131,7 @@ boolByte sampleBufferCopy(SampleBuffer self, const SampleBuffer buffer) {
 
 void sampleBufferCopyPcmSamples(SampleBuffer self, const short* inPcmSamples) {
   const unsigned int numChannels = self->numChannels;
-  const unsigned long numInterlacedSamples = numChannels * self->blocksize;
+  const unsigned long numInterlacedSamples = (unsigned long)(numChannels * self->blocksize);
   unsigned int currentInterlacedSample = 0;
   unsigned int currentDeinterlacedSample = 0;
   unsigned int currentChannel;
@@ -146,7 +146,7 @@ void sampleBufferCopyPcmSamples(SampleBuffer self, const short* inPcmSamples) {
 }
 
 void sampleBufferGetPcmSamples(const SampleBuffer self, short* outPcmSamples, boolByte flipEndian) {
-  const unsigned long blocksize = self->blocksize;
+  const size_t blocksize = self->blocksize;
   const unsigned int numChannels = self->numChannels;
   unsigned int currentInterlacedSample = 0;
   unsigned int currentSample = 0;

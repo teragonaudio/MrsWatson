@@ -569,7 +569,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
       // In this case, we re-extend the input buffer to the end of the block,
       // and subtract that length from the total amount of tail time to process.
       if(inputSampleBuffer->blocksize + (long)tailTimeInFrames > outputSampleBuffer->blocksize) {
-        tailTimeInFrames -= inputSampleBuffer->blocksize;
+        tailTimeInFrames -= (unsigned long)(inputSampleBuffer->blocksize);
         inputSampleBuffer->blocksize = outputSampleBuffer->blocksize;
       }
       // Otherwise re-adjust the blocksize of the output sample buffer to match

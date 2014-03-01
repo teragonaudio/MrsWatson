@@ -96,9 +96,9 @@ static boolByte _openSampleSourceAiff(void *sampleSourcePtr, const SampleSourceO
 static boolByte _readBlockFromAiffFile(void* sampleSourcePtr, SampleBuffer sampleBuffer) {
   SampleSource sampleSource = (SampleSource)sampleSourcePtr;
   SampleSourcePcmData extraData = (SampleSourcePcmData)(sampleSource->extraData);
-  unsigned long originalBlocksize = sampleBuffer->blocksize;
+  size_t originalBlocksize = sampleBuffer->blocksize;
   size_t samplesRead = sampleSourcePcmRead(extraData, sampleBuffer);
-  sampleSource->numSamplesProcessed += samplesRead;
+  sampleSource->numSamplesProcessed += (unsigned long)samplesRead;
   return (originalBlocksize == sampleBuffer->blocksize);
 }
 

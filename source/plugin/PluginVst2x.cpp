@@ -255,8 +255,7 @@ boolByte pluginVst2xExists(const CharString pluginName, const CharString pluginR
 
 static short _canPluginDo(Plugin plugin, const char* canDoString) {
   PluginVst2xData data = (PluginVst2xData)plugin->extraData;
-  VstIntPtr result = data->dispatcher(data->pluginHandle, effCanDo, 0, 0, (void*)canDoString, 0.0f);
-  return result;
+  return (short)(data->dispatcher(data->pluginHandle, effCanDo, 0, 0, (void*)canDoString, 0.0f));
 }
 
 static void _resumePlugin(Plugin plugin) {
@@ -409,7 +408,7 @@ static LinkedList _getCommonCanDos(void) {
   return result;
 }
 
-static const char* _prettyTextForCanDoResult(int result) {
+static const char* _prettyTextForCanDoResult(short result) {
   if(result == -1) {
     return "No";
   }
@@ -480,7 +479,7 @@ static void _displayVst2xPluginInfo(void* pluginPtr) {
   else {
     nameBuffer = newCharStringWithCapacity(kCharStringLengthShort);
     logInfo("Parameters (%d total):", data->pluginHandle->numParams);
-    for(unsigned int i = 0; i < data->pluginHandle->numParams; i++) {
+    for(unsigned int i = 0; i < (unsigned int)data->pluginHandle->numParams; i++) {
       float value = data->pluginHandle->getParameter(data->pluginHandle, i);
       charStringClear(nameBuffer);
       data->dispatcher(data->pluginHandle, effGetParamName, i, 0, nameBuffer->data, 0.0f);

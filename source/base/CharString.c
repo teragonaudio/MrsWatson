@@ -172,10 +172,10 @@ LinkedList charStringSplit(const CharString self, const char delimiter) {
 void _charStringWrap(const char* srcString, char* destString, size_t destStringSize, int indentSize, int lineLength);
 void _charStringWrap(const char* srcString, char* destString, size_t destStringSize, int indentSize, int lineLength) {
   char* lineBuffer = NULL;
-  unsigned long destStringIndex = 0;
-  unsigned long srcStringIndex = 0;
+  size_t destStringIndex = 0;
+  size_t srcStringIndex = 0;
   size_t lineIndex = 0;
-  int indentIndex = 0;
+  size_t indentIndex = 0;
   size_t bufferLength;
   char* newlinePosition;
   char* lastSpacePosition;

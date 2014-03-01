@@ -46,7 +46,7 @@ static CharString _fileUtilitiesMakeTempDir(void) {
   CharString systemTempDir = newCharString();
   CharString randomDirName = newCharString();
   snprintf(randomDirName->data, randomDirName->capacity, "mrswatsontest-%d", rand());
-  GetTempPathA(systemTempDir->capacity, systemTempDir->data);
+  GetTempPathA((DWORD)(systemTempDir->capacity), systemTempDir->data);
   buildAbsolutePath(systemTempDir, randomDirName, NULL, tempDirName);
   freeCharString(systemTempDir);
   freeCharString(randomDirName);
