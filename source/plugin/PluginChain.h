@@ -41,6 +41,8 @@
 typedef struct {
   unsigned int numPlugins;
   Plugin* plugins;
+  SampleBuffer* inputBuffers;//one input buffer for each plugin.
+  SampleBuffer* outputBuffers;//one output buffer for each plugin.
   PluginPreset* presets;
   TaskTimer* audioTimers;
   TaskTimer* midiTimers;

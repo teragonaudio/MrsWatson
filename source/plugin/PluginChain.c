@@ -40,6 +40,8 @@ PluginChain newPluginChain(void) {
 
   pluginChain->numPlugins = 0;
   pluginChain->plugins = (Plugin*)malloc(sizeof(Plugin) * MAX_PLUGINS);
+  pluginChain->inputBuffers = (SampleBuffer*)malloc(sizeof(SampleBuffer) * MAX_PLUGINS);
+  pluginChain->outputBuffers = (SampleBuffer*)malloc(sizeof(SampleBuffer) * MAX_PLUGINS);
   pluginChain->presets = (PluginPreset*)malloc(sizeof(PluginPreset) * MAX_PLUGINS);
   pluginChain->audioTimers = (TaskTimer*)malloc(sizeof(TaskTimer) * MAX_PLUGINS);
   pluginChain->midiTimers = (TaskTimer*)malloc(sizeof(TaskTimer) * MAX_PLUGINS);
@@ -63,6 +65,8 @@ boolByte pluginChainAppend(PluginChain self, Plugin plugin, PluginPreset preset)
     self->plugins[self->numPlugins] = plugin;
     self->presets[self->numPlugins] = preset;
     pluginInitialize(plugin, preset);
+    self->inputBuffers[self->numPlugins] = newSampleBuffer(plugin->getSetting(plugin, PLUGIN_NUM_INPUTS), getBlocksize());
+    self->outputBuffers[self->numPlugins] = newSampleBuffer(plugin->getSetting(plugin, PLUGIN_NUM_OUTPUTS), getBlocksize());
     self->audioTimers[self->numPlugins] = newTaskTimer(plugin->pluginName, "Audio Processing");
     self->midiTimers[self->numPlugins] = newTaskTimer(plugin->pluginName, "MIDI Processing");
     self->numPlugins++;
@@ -264,28 +268,22 @@ boolByte pluginChainSetParameters(PluginChain self, const LinkedList parameters)
 
 void pluginChainProcessAudio(PluginChain pluginChain, SampleBuffer inBuffer, SampleBuffer outBuffer) {
   Plugin plugin;
-  unsigned int pluginInputs, pluginOutputs;
   unsigned int i;
   double processingTimeInMs;
   const double maxProcessingTimeInMs = inBuffer->blocksize * 1000.0 / getSampleRate();
 
+  SampleBuffer formerOutputBuffer = inBuffer;
+  SampleBuffer nextInputBuffer = NULL;
   for(i = 0; i < pluginChain->numPlugins; i++) {
-    sampleBufferClear(outBuffer);
+    nextInputBuffer = pluginChain->inputBuffers[i];
+    nextInputBuffer->blocksize = formerOutputBuffer->blocksize;
 
     plugin = pluginChain->plugins[i];
     logDebug("Processing audio with plugin '%s'", plugin->pluginName->data);
-    pluginInputs = plugin->getSetting(plugin, PLUGIN_NUM_INPUTS);
-    if(inBuffer->numChannels < pluginInputs) {
-      logDebug("Expanding input source from %d -> %d channels", inBuffer->numChannels, pluginInputs);
-      sampleBufferResize(inBuffer, pluginInputs, true);
-    }
-    pluginOutputs = plugin->getSetting(plugin, PLUGIN_NUM_OUTPUTS);
-    if(outBuffer->numChannels < pluginOutputs) {
-      logDebug("Expanding output source from %d -> %d channels", outBuffer->numChannels, pluginOutputs);
-      sampleBufferResize(outBuffer, pluginOutputs, false);
-    }
+    sampleBufferCopyAndMapChannels(nextInputBuffer, formerOutputBuffer);
+    pluginChain->outputBuffers[i]->blocksize = pluginChain->inputBuffers[i]->blocksize;
     taskTimerStart(pluginChain->audioTimers[i]);
-    plugin->processAudio(plugin, inBuffer, outBuffer);
+    plugin->processAudio(plugin, pluginChain->inputBuffers[i], pluginChain->outputBuffers[i]);
     processingTimeInMs = taskTimerStop(pluginChain->audioTimers[i]);
     if(processingTimeInMs > maxProcessingTimeInMs) {
       logWarn("Possible dropout! Plugin '%s' spent %dms processing time (%dms max)",
@@ -297,12 +295,11 @@ void pluginChainProcessAudio(PluginChain pluginChain, SampleBuffer inBuffer, Sam
         (int)(processingTimeInMs / maxProcessingTimeInMs));
     }
     
-    // If this is not the last plugin in the chain, then copy the output of this plugin
-    // back to the input for the next one in the chain.
-    if(i + 1 < pluginChain->numPlugins) {
-      sampleBufferCopyAndMapChannels(inBuffer, outBuffer);
-    }
+    formerOutputBuffer = pluginChain->outputBuffers[i];
   }
+  nextInputBuffer = outBuffer;
+  nextInputBuffer->blocksize = formerOutputBuffer->blocksize;
+  sampleBufferCopyAndMapChannels(nextInputBuffer, formerOutputBuffer);
 }
 
 void pluginChainProcessMidi(PluginChain pluginChain, LinkedList midiEvents) {
@@ -334,12 +331,16 @@ void freePluginChain(PluginChain pluginChain) {
   for(i = 0; i < pluginChain->numPlugins; i++) {
     freePluginPreset(pluginChain->presets[i]);
     freePlugin(pluginChain->plugins[i]);
+    freeSampleBuffer(pluginChain->inputBuffers[i]);
+    freeSampleBuffer(pluginChain->outputBuffers[i]);
     freeTaskTimer(pluginChain->audioTimers[i]);
     freeTaskTimer(pluginChain->midiTimers[i]);
   }
 
   free(pluginChain->presets);
   free(pluginChain->plugins);
+  free(pluginChain->inputBuffers);
+  free(pluginChain->outputBuffers);
   free(pluginChain->audioTimers);
   free(pluginChain->midiTimers);
   free(pluginChain);
