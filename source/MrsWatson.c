@@ -434,13 +434,6 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
     }
   }
 
-  // Initialize the plugin chain after the global sample rate has been set
-  result = pluginChainInitialize(pluginChain);
-  if(result != RETURN_CODE_SUCCESS) {
-    logError("Could not initialize plugin chain");
-    return result;
-  }
-
   // Display info for plugins in the chain before checking for valid input/output sources
   if(shouldDisplayPluginInfo) {
     pluginChainInspect(pluginChain);

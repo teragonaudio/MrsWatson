@@ -33,6 +33,8 @@
 #include "plugin/PluginChain.h"
 #include "audio/AudioSettings.h"
 
+ReturnCodes pluginInitialize(Plugin, PluginPreset);
+
 PluginChain newPluginChain(void) {
   PluginChain pluginChain = (PluginChain)malloc(sizeof(PluginChainMembers));
 
@@ -53,9 +55,14 @@ boolByte pluginChainAppend(PluginChain self, Plugin plugin, PluginPreset preset)
     logError("Could not add plugin '%s', maximum number reached", plugin->pluginName->data);
     return false;
   }
+  else if(self->numPlugins > 0 && plugin->pluginType == PLUGIN_TYPE_INSTRUMENT) {
+    logError("Instrument plugin '%s' must be first in the chain", plugin->pluginName->data);
+    return false;
+  }
   else {
     self->plugins[self->numPlugins] = plugin;
     self->presets[self->numPlugins] = preset;
+    pluginInitialize(plugin, preset);
     self->audioTimers[self->numPlugins] = newTaskTimer(plugin->pluginName, "Audio Processing");
     self->midiTimers[self->numPlugins] = newTaskTimer(plugin->pluginName, "MIDI Processing");
     self->numPlugins++;
@@ -154,36 +161,24 @@ static boolByte _loadPresetForPlugin(Plugin plugin, PluginPreset preset) {
   }
 }
 
-ReturnCodes pluginChainInitialize(PluginChain pluginChain) {
-  Plugin plugin;
-  PluginPreset preset;
-  unsigned int i;
-
-  for(i = 0; i < pluginChain->numPlugins; i++) {
-    plugin = pluginChain->plugins[i];
-    if(!plugin->openPlugin(plugin)) {
-      logError("Plugin '%s' could not be opened", plugin->pluginName->data);
+ReturnCodes pluginInitialize(Plugin plugin, PluginPreset preset) {
+  if(!plugin->openPlugin(plugin)) {
+    logError("Plugin '%s' could not be opened", plugin->pluginName->data);
+    return RETURN_CODE_PLUGIN_ERROR;
+  }
+  else {
+    if(plugin->pluginType == PLUGIN_TYPE_UNKNOWN) {
+      logError("Plugin '%s' has unknown type; It was probably not loaded correctly", plugin->pluginName->data);
       return RETURN_CODE_PLUGIN_ERROR;
     }
-    else {
-      if(i > 0 && plugin->pluginType == PLUGIN_TYPE_INSTRUMENT) {
-        logError("Instrument plugin '%s' must be first in the chain", plugin->pluginName->data);
-        return RETURN_CODE_INVALID_PLUGIN_CHAIN;
-      }
-      else if(plugin->pluginType == PLUGIN_TYPE_UNKNOWN) {
-        logError("Plugin '%s' has unknown type; It was probably not loaded correctly", plugin->pluginName->data);
-        return RETURN_CODE_PLUGIN_ERROR;
-      }
-      else if(plugin->pluginType == PLUGIN_TYPE_UNSUPPORTED) {
-        logError("Plugin '%s' is of unsupported type", plugin->pluginName->data);
-        return RETURN_CODE_PLUGIN_ERROR;
-      }
+    else if(plugin->pluginType == PLUGIN_TYPE_UNSUPPORTED) {
+      logError("Plugin '%s' is of unsupported type", plugin->pluginName->data);
+      return RETURN_CODE_PLUGIN_ERROR;
+    }
 
-      preset = pluginChain->presets[i];
-      if(preset != NULL) {
-        if(!_loadPresetForPlugin(plugin, preset)) {
-          return RETURN_CODE_INVALID_ARGUMENT;
-        }
+    if(preset != NULL) {
+      if(!_loadPresetForPlugin(plugin, preset)) {
+        return RETURN_CODE_INVALID_ARGUMENT;
       }
     }
   }

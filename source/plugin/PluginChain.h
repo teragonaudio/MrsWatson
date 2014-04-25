@@ -72,13 +72,6 @@ boolByte pluginChainAppend(PluginChain self, Plugin plugin, PluginPreset preset)
 boolByte pluginChainAddFromArgumentString(PluginChain self, const CharString argumentString, const CharString userSearchPath);
 
 /**
- * Open and initialize all plugins in the chain.
- * @param self
- * @return RETURN_CODE_SUCCESS on success, other code on failure
- */
-ReturnCodes pluginChainInitialize(PluginChain self);
-
-/**
  * Inspect each plugin in the chain
  * @param self
  */
