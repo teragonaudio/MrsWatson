@@ -70,7 +70,7 @@ boolByte sampleBufferResize(SampleBuffer self, const unsigned int numChannels, b
  * @param buffer Other buffer to copy from
  * @return True on success, false on failure
  */
-boolByte sampleBufferCopy(SampleBuffer self, const SampleBuffer buffer);
+boolByte sampleBufferCopyAndMapChannels(SampleBuffer self, const SampleBuffer buffer);
 
 /**
  * Copy a buffer of interlaced short integer samples to a sample buffer. This

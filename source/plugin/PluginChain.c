@@ -305,7 +305,7 @@ void pluginChainProcessAudio(PluginChain pluginChain, SampleBuffer inBuffer, Sam
     // If this is not the last plugin in the chain, then copy the output of this plugin
     // back to the input for the next one in the chain.
     if(i + 1 < pluginChain->numPlugins) {
-      sampleBufferCopy(inBuffer, outBuffer);
+      sampleBufferCopyAndMapChannels(inBuffer, outBuffer);
     }
   }
 }

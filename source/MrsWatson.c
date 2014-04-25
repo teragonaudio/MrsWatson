@@ -585,7 +585,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
       if(outputSampleBufferResized == NULL) {
         outputSampleBufferResized = newSampleBuffer(getNumChannels(), getBlocksize());
       }
-      sampleBufferCopy(outputSampleBufferResized, outputSampleBuffer);
+      sampleBufferCopyAndMapChannels(outputSampleBufferResized, outputSampleBuffer);
       //outputSource->writeSampleBlock(outputSource, outputSampleBufferResized);
     }
     else {
