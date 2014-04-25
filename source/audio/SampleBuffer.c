@@ -100,7 +100,7 @@ boolByte sampleBufferResize(SampleBuffer self, const unsigned int numChannels, b
   return false;
 }
 
-boolByte sampleBufferCopy(SampleBuffer self, const SampleBuffer buffer) {
+boolByte sampleBufferCopyAndMapChannels(SampleBuffer self, const SampleBuffer buffer) {
   unsigned int i;
 
   // Definitely not supported, otherwise it would be hard to deal with partial
