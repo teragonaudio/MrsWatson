@@ -41,6 +41,8 @@
 typedef struct {
   unsigned int numPlugins;
   Plugin* plugins;
+  SampleBuffer* inputBuffers;//one input buffer for each plugin.
+  SampleBuffer* outputBuffers;//one output buffer for each plugin.
   PluginPreset* presets;
   TaskTimer* audioTimers;
   TaskTimer* midiTimers;
@@ -70,13 +72,6 @@ boolByte pluginChainAppend(PluginChain self, Plugin plugin, PluginPreset preset)
 
 // TODO: Deprecate and remove this function
 boolByte pluginChainAddFromArgumentString(PluginChain self, const CharString argumentString, const CharString userSearchPath);
-
-/**
- * Open and initialize all plugins in the chain.
- * @param self
- * @return RETURN_CODE_SUCCESS on success, other code on failure
- */
-ReturnCodes pluginChainInitialize(PluginChain self);
 
 /**
  * Inspect each plugin in the chain

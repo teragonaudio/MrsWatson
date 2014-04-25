@@ -32,6 +32,7 @@
 #include "audio/SampleBuffer.h"
 #include "base/PlatformUtilities.h"
 #include "logging/EventLogger.h"
+#include "app/ReturnCodes.h"
 
 SampleBuffer newSampleBuffer(unsigned int numChannels, unsigned long blocksize) {
   SampleBuffer sampleBuffer = NULL;
@@ -66,47 +67,18 @@ void sampleBufferClear(SampleBuffer self) {
   }
 }
 
-boolByte sampleBufferResize(SampleBuffer self, const unsigned int numChannels, boolByte copy) {
-  unsigned int i;
-
-  if(numChannels == self->numChannels || numChannels == 0) {
-    return false;
-  }
-  else if(numChannels < self->numChannels) {
-    for(i = self->numChannels - 1; i >= numChannels; i--) {
-      free(self->samples[i]);
-    }
-    self->numChannels = numChannels;
-    return true;
-  }
-  else if(numChannels > self->numChannels) {
-    self->samples = (Samples*)realloc(self->samples, sizeof(Samples) * numChannels);
-    for(i = self->numChannels; i < numChannels; i++) {
-      self->samples[i] = (Samples)malloc(sizeof(Sample) * self->blocksize);
-      if(copy) {
-        memcpy(self->samples[i], self->samples[0], sizeof(Sample) * self->blocksize);
-      }
-      else {
-        memset(self->samples[i], 0, sizeof(Sample) * self->blocksize);
-      }
-    }
-    self->numChannels = numChannels;
-    return true;
-  }
-  else {
-    // Invalid state, probably shouldn't happen...
-  }
-
-  return false;
-}
-
-boolByte sampleBufferCopy(SampleBuffer self, const SampleBuffer buffer) {
+boolByte sampleBufferCopyAndMapChannels(SampleBuffer self, const SampleBuffer buffer) {
   unsigned int i;
 
   // Definitely not supported, otherwise it would be hard to deal with partial
   // copies and so forth.
   if(self->blocksize != buffer->blocksize) {
-    return false;
+    logInternalError("Source and destination buffer are not the same size");
+    exit(RETURN_CODE_INTERNAL_ERROR);
+  }
+
+  if(buffer->numChannels != self->numChannels) {
+    logDebug("Mapping channels from %d -> %d", buffer->numChannels, self->numChannels);
   }
 
   // If the other buffer is bigger (or the same size) as this buffer, then only

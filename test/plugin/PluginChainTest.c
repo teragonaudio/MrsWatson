@@ -170,7 +170,6 @@ static int _testInitializePluginChain(void) {
   PluginPreset mockPreset = newPluginPresetMock();
 
   assert(pluginChainAppend(p, mock, mockPreset));
-  pluginChainInitialize(p);
   assert(((PluginMockData)mock->extraData)->isOpen);
   assert(((PluginPresetMockData)mockPreset->extraData)->isOpen);
   assert(((PluginPresetMockData)mockPreset->extraData)->isLoaded);
@@ -197,7 +196,6 @@ static int _testPrepareForProcessing(void) {
   PluginChain p = newPluginChain();
 
   assert(pluginChainAppend(p, mock, NULL));
-  assertIntEquals(pluginChainInitialize(p), RETURN_CODE_SUCCESS);
   pluginChainPrepareForProcessing(p);
   assert(((PluginMockData)mock->extraData)->isPrepared);
 
