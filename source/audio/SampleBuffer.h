@@ -29,6 +29,7 @@
 #define MrsWatson_SampleBuffer_h
 
 #include "base/Types.h"
+#include <stdio.h>
 
 typedef float Sample;
 typedef Sample* Samples;
