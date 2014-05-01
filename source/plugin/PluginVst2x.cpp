@@ -244,8 +244,8 @@ static CharString _getVst2xPluginLocation(const CharString pluginName, const Cha
   while(iterator != NULL) {
     CharString searchLocation = (CharString)(iterator->item);
     if(_doesVst2xPluginExistAtLocation(pluginName, searchLocation)) {
+      freeLinkedListAndItems(pluginLocations, (LinkedListFreeItemFunc)freeCharString);
       return newCharStringWithCString(searchLocation->data);
-      break;
     }
     iterator = (LinkedListIterator)iterator->nextItem;
   }
