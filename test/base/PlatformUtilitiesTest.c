@@ -189,7 +189,7 @@ static int _testSleepMilliseconds(void) {
   taskTimerStart(t);
   sleepMilliseconds(12);
   elapsedTime = taskTimerStop(t);
-  assertDoubleEquals(elapsedTime, 12, 0.1);
+  assertTimeEquals(elapsedTime, 12, 0.1);
   freeTaskTimer(t);
   return 0;
 }

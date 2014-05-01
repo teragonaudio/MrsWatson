@@ -124,6 +124,16 @@ void freeTestSuite(TestSuite self);
   } \
 }
 
+#define assertTimeEquals(condition, expected, tolerance) { \
+  double conditionRounded = floor(condition * 100.0) / 100.0; \
+  double expectedRounded = floor(expected * 100.0) / 100.0; \
+  double _result = fabs(conditionRounded - expectedRounded); \
+  if(_result > tolerance) { \
+    fprintf(stderr, "Warning: timing assertion failed at %s:%d. Expected %g, got %g. ", getFileBasename(__FILE__), __LINE__, expectedRounded, conditionRounded); \
+    return 0; \
+  } \
+}
+
 #define assertCharStringEquals(_result, expected) { \
   if(!charStringIsEqualToCString(_result, expected, false)) { \
     fprintf(stderr, "Assertion failed at %s:%d. Expected '%s', got '%s'. ", getFileBasename(__FILE__), __LINE__, expected, _result->data); \
