@@ -450,6 +450,8 @@ File fileCopyTo(File self, const File destination) {
 }
 
 #if UNIX
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-parameter"
 static int _removeCallback(const char *path, const struct stat *fileState, int typeflag, struct FTW *ftwBuffer) {
   int result = remove(path);
   if(result != 0) {
@@ -457,6 +459,7 @@ static int _removeCallback(const char *path, const struct stat *fileState, int t
   }
   return result;
 }
+#pragma clang diagnostic pop
 #endif
 
 boolByte fileRemove(File self) {

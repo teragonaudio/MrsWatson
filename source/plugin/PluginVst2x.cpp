@@ -30,6 +30,9 @@
 #include "aeffectx.h"
 #include "plugin/PluginVst2xHostCallback.h"
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "UnusedImportStatement"
+
 // C includes
 extern "C" {
 #include <stdio.h>
@@ -50,6 +53,8 @@ extern LibraryHandle getLibraryHandleForPlugin(const CharString pluginAbsolutePa
 extern AEffect* loadVst2xPlugin(LibraryHandle libraryHandle);
 extern void closeLibraryHandle(LibraryHandle libraryHandle);
 }
+
+#pragma clang diagnostic pop
 
 // Opaque struct must be declared here rather than in the header, otherwise many
 // other files in this project must be compiled as C++ code. =/
@@ -121,7 +126,10 @@ static void _logPluginLocation(const CharString location) {
   logInfo("Location '%s', type VST 2.x:", location->data);
 }
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-parameter"
 static void _listPluginsVst2xInLocation(void* item, void* userData) {
+#pragma clang diagnostic pop
   CharString locationString;
   File location = NULL;
   LinkedList locationItems;

@@ -18,6 +18,9 @@
 #define __func__ __FUNCTION__
 #endif
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCUnusedMacroInspection"
+
 typedef enum {
   kTestLogEventSection,
   kTestLogEventPass,
@@ -138,4 +141,5 @@ void freeTestSuite(TestSuite self);
   } \
 }
 
+#pragma clang diagnostic pop
 #endif

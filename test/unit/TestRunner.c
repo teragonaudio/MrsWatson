@@ -84,6 +84,8 @@ void runTestCase(void* item, void* extraData) {
   }
 }
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-parameter"
 void runTestSuite(void* testSuitePtr, void* extraData) {
   TestSuite testSuite = (TestSuite)testSuitePtr;
 
@@ -93,6 +95,7 @@ void runTestSuite(void* testSuitePtr, void* extraData) {
 
   linkedListForeach(testSuite->testCases, runTestCase, testSuite);
 }
+#pragma clang diagnostic pop
 
 // In both the TestSuite and TestCase objects we assume that we do not need ownership of
 // the strings passed in, since they should be allocated on the heap and live for the

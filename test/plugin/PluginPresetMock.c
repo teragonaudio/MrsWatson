@@ -7,6 +7,8 @@ static boolByte _openPluginPresetMock(void* pluginPresetPtr) {
   return true;
 }
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-parameter"
 static boolByte _loadPluginPresetMock(void* pluginPresetPtr, Plugin plugin) {
   PluginPreset pluginPreset = (PluginPreset)pluginPresetPtr;
   PluginPresetMockData extraData = (PluginPresetMockData)pluginPreset->extraData;
@@ -16,6 +18,7 @@ static boolByte _loadPluginPresetMock(void* pluginPresetPtr, Plugin plugin) {
 
 static void _freePluginPresetMock(void* extraDataPtr) {
 }
+#pragma clang diagnostic pop
 
 PluginPreset newPluginPresetMock(void) {
   PluginPreset pluginPreset = (PluginPreset)malloc(sizeof(PluginPresetMembers));

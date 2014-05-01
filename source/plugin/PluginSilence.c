@@ -30,6 +30,9 @@
 #include "logging/EventLogger.h"
 #include "plugin/PluginSilence.h"
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-parameter"
+
 const char* kInternalPluginSilenceName = INTERNAL_PLUGIN_PREFIX "silence";
 
 static void _pluginSilenceEmpty(void* pluginPtr) {
@@ -102,3 +105,5 @@ Plugin newPluginSilence(const CharString pluginName) {
   plugin->extraData = NULL;
   return plugin;
 }
+
+#pragma clang diagnostic pop

@@ -31,6 +31,9 @@
 #include "audio/AudioSettings.h"
 #include "io/SampleSourceSilence.h"
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-parameter"
+
 static boolByte _openSampleSourceSilence(void* sampleSourcePtr, const SampleSourceOpenAs openAs) {
   SampleSource sampleSource = sampleSourcePtr;
   sampleSource->openedAs = openAs;
@@ -69,3 +72,5 @@ SampleSource newSampleSourceSilence(void) {
 
   return sampleSource;
 }
+
+#pragma clang diagnostic pop

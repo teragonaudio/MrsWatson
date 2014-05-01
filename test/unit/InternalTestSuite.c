@@ -62,10 +62,13 @@ LinkedList getTestSuites(void) {
   return internalTestSuites;
 }
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-parameter"
 static void _setTestSuiteOnlyPrintFailing(void* item, void* userData) {
   TestSuite testSuite = (TestSuite)item;
   testSuite->onlyPrintFailing = true;
 }
+#pragma clang diagnostic pop
 
 TestSuite runInternalTestSuite(LinkedList testSuites, boolByte onlyPrintFailing);
 TestSuite runInternalTestSuite(LinkedList testSuites, boolByte onlyPrintFailing) {
@@ -134,10 +137,13 @@ static void _printTestCases(void* item, void* userData) {
   printf("%s:%s\n", testSuiteName, testCase->name);
 }
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-parameter"
 static void _printTestsInSuite(void* item, void* userData) {
   TestSuite testSuite = (TestSuite)item;
   linkedListForeach(testSuite->testCases, _printTestCases, testSuite->name);
 }
+#pragma clang diagnostic pop
 
 void printInternalTests(void);
 void printInternalTests(void) {

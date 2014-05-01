@@ -131,9 +131,12 @@ static int _testLinkedListWithEmptyList(void) {
   return 0;
 }
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-parameter"
 static void _linkedListEmptyCallback(void* item, void* userData) {
   _gNumForeachCallbacksMade++;
 }
+#pragma clang diagnostic pop
 
 static int _testForeachOverNullList(void) {
   linkedListForeach(NULL, _linkedListEmptyCallback, NULL);
@@ -149,11 +152,14 @@ static int _testForeachOverEmptyList(void) {
   return 0;
 }
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-parameter"
 static void _linkedListTestStringCallback(void* item, void* userData) {
   CharString charString = (CharString)item;
   _gForeachCallbackOk = charStringIsEqualToCString(charString, TEST_ITEM_STRING, false);
   _gNumForeachCallbacksMade++;
 }
+#pragma clang diagnostic pop
 
 static int _testForeachOverList(void) {
   LinkedList l = newLinkedList();
@@ -169,11 +175,14 @@ static int _testForeachOverList(void) {
   return 0;
 }
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-parameter"
 static void _linkedListUserDataCallback(void* item, void* userData) {
   CharString charString = (CharString)userData;
   _gForeachCallbackOk = charStringIsEqualToCString(charString, TEST_ITEM_STRING, false);
   _gNumForeachCallbacksMade++;
 }
+#pragma clang diagnostic pop
 
 static int _testForeachOverUserData(void) {
   LinkedList l = newLinkedList();

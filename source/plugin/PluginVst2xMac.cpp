@@ -29,6 +29,9 @@
 #define VST_FORCE_DEPRECATED 0
 #include "aeffectx.h"
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "UnusedImportStatement"
+
 extern "C" {
 #include <stdlib.h>
 #include <CoreFoundation/CFBundle.h>

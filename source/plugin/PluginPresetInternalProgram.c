@@ -44,9 +44,12 @@ static boolByte _loadPluginPresetInternalProgram(void* pluginPresetPtr, Plugin p
   return pluginVst2xSetProgram(plugin, extraData->programNumber);
 }
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-parameter"
 static void _freePluginPresetInternalProgram(void* extraDataPtr) {
   // Nothing needed here
 }
+#pragma clang diagnostic pop
 
 PluginPreset newPluginPresetInternalProgram(const CharString presetName) {
   PluginPreset pluginPreset = (PluginPreset)malloc(sizeof(PluginPresetMembers));

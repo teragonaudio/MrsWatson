@@ -1,5 +1,7 @@
 #include "PluginMock.h"
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-parameter"
 
 static void _pluginMockEmpty(void* pluginPtr) {
   // Nothing to do here
@@ -90,3 +92,5 @@ Plugin newPluginMock(void) {
 
   return plugin;
 }
+
+#pragma clang diagnostic pop

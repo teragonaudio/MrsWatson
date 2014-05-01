@@ -30,6 +30,9 @@
 #include "logging/EventLogger.h"
 #include "plugin/PluginPassthru.h"
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-parameter"
+
 const char* kInternalPluginPassthruName = INTERNAL_PLUGIN_PREFIX "passthru";
 
 static void _pluginPassthruEmpty(void* pluginPtr) {
@@ -102,3 +105,5 @@ Plugin newPluginPassthru(const CharString pluginName) {
   plugin->extraData = NULL;
   return plugin;
 }
+
+#pragma clang diagnostic pop
