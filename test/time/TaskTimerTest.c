@@ -123,8 +123,8 @@ static int _testTaskTimerDuration(void) {
   taskTimerStart(_testTaskTimer);
   _testSleep();
   elapsedTime = taskTimerStop(_testTaskTimer);
-  assertDoubleEquals(_testTaskTimer->totalTaskTime, SLEEP_DURATION_MS, MAX_TIMER_TOLERANCE_MS);
-  assertDoubleEquals(elapsedTime, SLEEP_DURATION_MS, MAX_TIMER_TOLERANCE_MS);
+  assertTimeEquals(_testTaskTimer->totalTaskTime, SLEEP_DURATION_MS, MAX_TIMER_TOLERANCE_MS);
+  assertTimeEquals(elapsedTime, SLEEP_DURATION_MS, MAX_TIMER_TOLERANCE_MS);
   return 0;
 }
 
@@ -136,10 +136,10 @@ static int _testTaskTimerDurationMultipleTimes(void) {
     taskTimerStart(_testTaskTimer);
     _testSleep();
     elapsedTime = taskTimerStop(_testTaskTimer);
-    assertDoubleEquals(elapsedTime, SLEEP_DURATION_MS, MAX_TIMER_TOLERANCE_MS);
+    assertTimeEquals(elapsedTime, SLEEP_DURATION_MS, MAX_TIMER_TOLERANCE_MS);
     elapsedTime = 0.0;
   }
-  assertDoubleEquals(_testTaskTimer->totalTaskTime, 5.0 * SLEEP_DURATION_MS, MAX_TIMER_TOLERANCE_MS * 5.0);
+  assertTimeEquals(_testTaskTimer->totalTaskTime, 5.0 * SLEEP_DURATION_MS, MAX_TIMER_TOLERANCE_MS * 5.0);
 
   return 0;
 }
@@ -149,7 +149,7 @@ static int _testTaskTimerCallStartTwice(void) {
   taskTimerStart(_testTaskTimer);
   _testSleep();
   taskTimerStop(_testTaskTimer);
-  assertDoubleEquals(_testTaskTimer->totalTaskTime, SLEEP_DURATION_MS, MAX_TIMER_TOLERANCE_MS);
+  assertTimeEquals(_testTaskTimer->totalTaskTime, SLEEP_DURATION_MS, MAX_TIMER_TOLERANCE_MS);
   return 0;
 }
 
@@ -158,7 +158,7 @@ static int _testTaskTimerCallStopTwice(void) {
   _testSleep();
   taskTimerStop(_testTaskTimer);
   taskTimerStop(_testTaskTimer);
-  assertDoubleEquals(_testTaskTimer->totalTaskTime, SLEEP_DURATION_MS, MAX_TIMER_TOLERANCE_MS);
+  assertTimeEquals(_testTaskTimer->totalTaskTime, SLEEP_DURATION_MS, MAX_TIMER_TOLERANCE_MS);
   return 0;
 }
 
@@ -167,7 +167,7 @@ static int _testCallStopBeforeStart(void) {
   taskTimerStart(_testTaskTimer);
   _testSleep();
   taskTimerStop(_testTaskTimer);
-  assertDoubleEquals(_testTaskTimer->totalTaskTime, SLEEP_DURATION_MS, MAX_TIMER_TOLERANCE_MS);
+  assertTimeEquals(_testTaskTimer->totalTaskTime, SLEEP_DURATION_MS, MAX_TIMER_TOLERANCE_MS);
   return 0;
 }
 

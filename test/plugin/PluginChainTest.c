@@ -232,7 +232,7 @@ static int _testProcessPluginChainAudioRealtime(void) {
   pluginChainSetRealtime(p, true);
   taskTimerStart(t);
   pluginChainProcessAudio(p, inBuffer, outBuffer);
-  assertDoubleEquals(taskTimerStop(t), 1000 * DEFAULT_BLOCKSIZE / getSampleRate(), 0.1);
+  assertTimeEquals(taskTimerStop(t), 1000 * DEFAULT_BLOCKSIZE / getSampleRate(), 0.1);
   assert(((PluginMockData)mock->extraData)->processAudioCalled);
 
   freeTaskTimer(t);
