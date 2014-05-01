@@ -1,6 +1,5 @@
 #include "unit/TestRunner.h"
 #include "midi/MidiSequence.h"
-#include "base/LinkedList.h"
 
 static int _testNewMidiSequence(void) {
   MidiSequence m = newMidiSequence();

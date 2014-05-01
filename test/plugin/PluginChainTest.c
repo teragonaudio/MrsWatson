@@ -1,12 +1,11 @@
 #include "unit/TestRunner.h"
-#include "plugin/PluginChain.h"
-#include "plugin/PluginPassthru.h"
-#include "PluginMock.h"
-#include "PluginPresetMock.h"
-
 #include "audio/AudioSettings.h"
 #include "midi/MidiEvent.h"
-#include "time/TaskTimer.h"
+#include "plugin/PluginChain.h"
+#include "plugin/PluginPassthru.h"
+
+#include "PluginMock.h"
+#include "PluginPresetMock.h"
 
 static int _testNewPluginChain(void) {
   PluginChain p = newPluginChain();

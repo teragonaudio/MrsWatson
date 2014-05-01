@@ -25,6 +25,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
+#if HAVE_LIBAUDIOFILE
+
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
@@ -34,8 +36,6 @@
 #include "io/SampleSourceAudiofile.h"
 #include "io/SampleSourcePcm.h"
 #include "logging/EventLogger.h"
-
-#if HAVE_LIBAUDIOFILE
 
 boolByte readBlockFromAudiofile(void* sampleSourcePtr, SampleBuffer sampleBuffer) {
   SampleSource sampleSource = (SampleSource)sampleSourcePtr;

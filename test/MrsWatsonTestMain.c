@@ -14,13 +14,9 @@
 #include "app/ProgramOption.h"
 #include "base/File.h"
 #include "base/FileUtilities.h"
-#include "base/PlatformUtilities.h"
 #include "unit/ApplicationRunner.h"
-#include "unit/TestRunner.h"
 
 #include "MrsWatsonTestMain.h"
-#include "MrsWatson.h"
-#include "logging/LogPrinter.h"
 
 extern LinkedList getTestSuites(void);
 extern TestSuite findTestSuite(LinkedList testSuites, const CharString testSuiteName);

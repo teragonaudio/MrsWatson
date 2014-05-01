@@ -30,7 +30,6 @@
 #include <string.h>
 
 #include "base/FileUtilities.h"
-#include "base/PlatformUtilities.h"
 #include "logging/EventLogger.h"
 #include "plugin/PluginPreset.h"
 #include "plugin/PluginPresetFxp.h"

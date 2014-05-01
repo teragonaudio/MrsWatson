@@ -31,7 +31,6 @@
 
 #include "app/BuildInfo.h"
 #include "audio/AudioSettings.h"
-#include "base/CharString.h"
 #include "base/PlatformUtilities.h"
 #include "logging/EventLogger.h"
 #include "logging/LogPrinter.h"
@@ -44,7 +43,6 @@
 #include <io.h>
 #elif UNIX
 #include <string.h>
-#include <sys/time.h>
 #include <unistd.h>
 #endif
 

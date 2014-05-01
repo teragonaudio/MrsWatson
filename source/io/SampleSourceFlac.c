@@ -25,12 +25,12 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
+#if HAVE_LIBFLAC
+
 #include <stdlib.h>
 
 #include "io/SampleSourceFlac.h"
 #include "logging/EventLogger.h"
-
-#if HAVE_LIBFLAC
 
 static boolByte _openSampleSourceFlac(void* sampleSourcePtr, const SampleSourceOpenAs openAs) {
   logUnsupportedFeature("Flac file I/O");

@@ -1,11 +1,6 @@
 #include "base/PlatformUtilities.h"
 
-#include <stdlib.h>
 #include <math.h>
-#if UNIX
-#include <unistd.h>
-#include <time.h>
-#endif
 
 #include "unit/TestRunner.h"
 #include "time/TaskTimer.h"

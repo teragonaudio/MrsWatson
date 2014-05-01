@@ -29,11 +29,10 @@
 #define _XOPEN_SOURCE 700
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/stat.h>
 
 #include "base/File.h"
-#include "base/CharString.h"
-#include "base/Types.h"
 #include "base/PlatformUtilities.h"
 #include "logging/EventLogger.h"
 #include "FileUtilities.h"
@@ -44,8 +43,6 @@
 #elif UNIX
 #include <dirent.h>
 #include <ftw.h>
-#include <string.h>
-#include <unistd.h>
 #endif
 
 static const int kFileNameStringLength = 1024;

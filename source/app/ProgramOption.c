@@ -30,9 +30,7 @@
 #include <string.h>
 
 #include "app/ProgramOption.h"
-#include "audio/AudioSettings.h"
 #include "base/File.h"
-#include "base/LinkedList.h"
 #include "logging/EventLogger.h"
 
 CharString _programOptionGetString(const ProgramOption self);

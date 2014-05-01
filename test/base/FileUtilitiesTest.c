@@ -1,13 +1,4 @@
 #include "unit/TestRunner.h"
-#include "base/FileUtilities.h"
-
-#include <stdio.h>
-#include <stdlib.h>
-#if UNIX
-#include <unistd.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#endif
 
 static const char* TEST_FILENAME = "fileUtilitiesTest.txt";
 #if UNIX

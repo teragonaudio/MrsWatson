@@ -26,7 +26,6 @@
 //
 
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 
 #include "app/BuildInfo.h"
@@ -35,7 +34,6 @@
 #include "io/SampleSource.h"
 #include "io/SampleSourcePcm.h"
 #include "io/SampleSourceSilence.h"
-#include "io/SampleSourceWave.h"
 #include "logging/EventLogger.h"
 #include "logging/LogPrinter.h"
 #include "midi/MidiSequence.h"

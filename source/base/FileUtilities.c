@@ -25,12 +25,12 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <sys/stat.h>
 
 #include "base/FileUtilities.h"
-#include "base/PlatformUtilities.h"
 #include "logging/EventLogger.h"
 
 #if WINDOWS
@@ -38,12 +38,6 @@
 #include <Shellapi.h>
 #elif UNIX
 #include <dirent.h>
-#include <string.h>
-#include <unistd.h>
-#endif
-
-#if MACOSX
-#include <mach-o/dyld.h>
 #endif
 
 /** DEPRECATED */

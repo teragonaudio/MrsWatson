@@ -29,20 +29,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#include <sys/stat.h>
 
 #include "app/BuildInfo.h"
 #include "base/FileUtilities.h"
-#include "base/PlatformUtilities.h"
 #include "logging/ErrorReporter.h"
 #include "logging/EventLogger.h"
-#include "MrsWatson.h"
 
-#if UNIX
-#include <sys/socket.h>
-#include <fcntl.h>
-#include <unistd.h>
-#elif WINDOWS
+#if WINDOWS
 #include <Shlobj.h>
 #endif
 
@@ -52,6 +45,11 @@
 #define HAVE_LIBARCHIVE 0
 
 #if HAVE_LIBARCHIVE
+#if UNIX
+#include <sys/socket.h>
+#include <fcntl.h>
+#include <unistd.h>
+#endif
 #include <archive.h>
 #include <archive_entry.h>
 #endif
