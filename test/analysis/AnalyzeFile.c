@@ -60,10 +60,14 @@ boolByte analyzeFile(const char* filename, CharString failedAnalysisFunctionName
   analysisFilename = newCharStringWithCString(filename);
   sampleSource = sampleSourceFactory(analysisFilename);
   if(sampleSource == NULL) {
+    freeCharString(analysisFilename);
+    free(analysisData);
+    freeAudioSettings();
     return false;
   }
   result = sampleSource->openSampleSource(sampleSource, SAMPLE_SOURCE_OPEN_READ);
   if(!result) {
+    free(analysisData);
     return result;
   }
 
