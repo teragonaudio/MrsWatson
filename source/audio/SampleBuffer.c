@@ -159,7 +159,7 @@ void sampleBufferGetPcmSamples(const SampleBuffer self, short* outPcmSamples, bo
       sample = self->samples[currentChannel][currentSample];
       shortValue = (short)(sample * 32767.0f);
       if(flipEndian) {
-        outPcmSamples[currentInterlacedSample++] = flipShortEndian(shortValue);
+        outPcmSamples[currentInterlacedSample++] = flipShortEndian((unsigned short const)shortValue);
       }
       else {
         outPcmSamples[currentInterlacedSample++] = shortValue;

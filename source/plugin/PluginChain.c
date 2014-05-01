@@ -239,7 +239,7 @@ void _pluginChainSetParameter(void* item, void* userData) {
   _PluginChainSetParameterPassData* passData = (_PluginChainSetParameterPassData*)userData;
   Plugin plugin = passData->plugin;
   char* comma = NULL;
-  int index;
+  unsigned int index;
   float value;
 
   // If a previous attempt to set a parameter failed, then return right away
@@ -255,7 +255,7 @@ void _pluginChainSetParameter(void* item, void* userData) {
     return;
   }
   *comma = '\0';
-  index = (int)strtod(parameterValue, NULL);
+  index = (unsigned int)strtod(parameterValue, NULL);
   value = (float)strtod(comma + 1, NULL);
   logDebug("Set parameter %d to %f", index, value);
   passData->success = plugin->setParameter(plugin, index, value);
@@ -297,12 +297,12 @@ void pluginChainProcessAudio(PluginChain pluginChain, SampleBuffer inBuffer, Sam
 
     plugin = pluginChain->plugins[i];
     logDebug("Processing audio with plugin '%s'", plugin->pluginName->data);
-    pluginInputs = plugin->getSetting(plugin, PLUGIN_NUM_INPUTS);
+    pluginInputs = (unsigned int)plugin->getSetting(plugin, PLUGIN_NUM_INPUTS);
     if(inBuffer->numChannels < pluginInputs) {
       logDebug("Expanding input source from %d -> %d channels", inBuffer->numChannels, pluginInputs);
       sampleBufferResize(inBuffer, pluginInputs, true);
     }
-    pluginOutputs = plugin->getSetting(plugin, PLUGIN_NUM_OUTPUTS);
+    pluginOutputs = (unsigned int)plugin->getSetting(plugin, PLUGIN_NUM_OUTPUTS);
     if(outBuffer->numChannels < pluginOutputs) {
       logDebug("Expanding output source from %d -> %d channels", outBuffer->numChannels, pluginOutputs);
       sampleBufferResize(outBuffer, pluginOutputs, false);

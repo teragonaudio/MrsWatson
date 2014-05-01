@@ -178,7 +178,7 @@ static boolByte _copyDirectoryToErrorReportDir(ErrorReporter self, CharString pa
   snprintf(copyCommand->data, copyCommand->capacity, "/bin/cp -r \"%s\" \"%s\"",
     path->data, self->reportDirPath->data);
   result = system(copyCommand->data);
-  success = (WEXITSTATUS(result) == 0);
+  success = (boolByte)(WEXITSTATUS(result) == 0);
   if(!success) {
     logError("Could not copy '%s' to '%s'\n", path->data, self->reportDirPath->data);
   }
@@ -192,7 +192,7 @@ static boolByte _copyDirectoryToErrorReportDir(ErrorReporter self, CharString pa
 boolByte errorReporterShouldCopyPlugins(void) {
   CharString promptText = newCharStringWithCString(kErrorReportCopyPluginsPromptText);
   CharString wrappedPromptText;
-  char response;
+  int response;
 
   wrappedPromptText = charStringWrap(promptText, 0);
   printf("%s", wrappedPromptText->data);
@@ -200,7 +200,7 @@ boolByte errorReporterShouldCopyPlugins(void) {
   freeCharString(promptText);
 
   response = getchar();
-  return (response == 'y' || response == 'Y');
+  return (boolByte)(response == 'y' || response == 'Y');
 }
 
 boolByte errorReporterCopyPlugins(ErrorReporter self, PluginChain pluginChain) {
@@ -222,7 +222,7 @@ boolByte errorReporterCopyPlugins(ErrorReporter self, PluginChain pluginChain) {
   }
 
   freeCharString(pluginAbsolutePath);
-  return !failed;
+  return (boolByte)!failed;
 }
 
 #if HAVE_LIBARCHIVE

@@ -23,7 +23,7 @@ extern TestSuite findTestSuite(LinkedList testSuites, const CharString testSuite
 extern TestCase findTestCase(TestSuite testSuite, char* testName);
 extern void printInternalTests(void);
 extern TestSuite runInternalTestSuite(LinkedList testSuites, boolByte onlyPrintFailing);
-extern TestSuite runApplicationTestSuite(TestEnvironment testEnvironment);
+extern void runApplicationTestSuite(TestEnvironment testEnvironment);
 
 static const char* DEFAULT_TEST_SUITE_NAME = "all";
 

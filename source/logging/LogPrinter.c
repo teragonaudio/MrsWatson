@@ -30,7 +30,7 @@
 #include "logging/LogPrinter.h"
 
 #if UNIX
-void printToLog(const char* color, FILE* logFile, const char* message) {
+void printToLog(const LogColor color, FILE* logFile, const char* message) {
   if(logFile == NULL) {
     if(color == NULL) {
       fprintf(stderr, "%s", message);

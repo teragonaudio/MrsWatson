@@ -79,7 +79,7 @@ void pluginPresetSetCompatibleWith(PluginPreset pluginPreset, PluginInterfaceTyp
 }
 
 boolByte pluginPresetIsCompatibleWith(const PluginPreset pluginPreset, const Plugin plugin) {
-  return (pluginPreset->compatiblePluginTypes & (1 << plugin->interfaceType));
+  return (boolByte)(pluginPreset->compatiblePluginTypes & (1 << plugin->interfaceType));
 }
 
 void freePluginPreset(PluginPreset pluginPreset) {

@@ -288,7 +288,7 @@ static int _testSplitStringEmptyString(void) {
 // This function is not technically public, but we test against it instead of
 // the public version in order to set a shorter line length. This makes test
 // cases much easier to construct.
-extern boolByte _charStringWrap(const char* srcString, char* destString,
+extern void _charStringWrap(const char* srcString, char* destString,
   size_t destStringSize, int indentSize, int lineLength);
 
 static int _testWrapNullSourceString(void) {

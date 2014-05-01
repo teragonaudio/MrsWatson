@@ -93,7 +93,7 @@ void charStringCopy(CharString self, const CharString string) {
 }
 
 boolByte charStringIsEmpty(const CharString self) {
-  return (self == NULL || self->data == NULL || self->data[0] == '\0');
+  return (boolByte)(self == NULL || self->data == NULL || self->data[0] == '\0');
 }
 
 boolByte charStringIsEqualTo(const CharString self, const CharString string, boolByte caseInsensitive) {
@@ -105,10 +105,10 @@ boolByte charStringIsEqualTo(const CharString self, const CharString string, boo
   // Only compare to the length of the smaller of the two strings
   comparisonSize = self->capacity < string->capacity ? self->capacity : string->capacity;
   if(caseInsensitive) {
-    return strncasecmp(self->data, string->data, comparisonSize) == 0;
+    return (boolByte)(strncasecmp(self->data, string->data, comparisonSize) == 0);
   }
   else {
-    return strncmp(self->data, string->data, comparisonSize) == 0;
+    return (boolByte)(strncmp(self->data, string->data, comparisonSize) == 0);
   }
 }
 
@@ -117,21 +117,21 @@ boolByte charStringIsEqualToCString(const CharString self, const char* string, b
     return false;
   }
   else if(caseInsensitive) {
-    return strncasecmp(self->data, string, self->capacity) == 0;
+    return (boolByte)(strncasecmp(self->data, string, self->capacity) == 0);
   }
   else {
-    return strncmp(self->data, string, self->capacity) == 0;
+    return (boolByte)(strncmp(self->data, string, self->capacity) == 0);
   }
 }
 
 boolByte charStringIsLetter(const CharString self, const size_t index) {
   const char ch = self->data[index];
-  return ((ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z'));
+  return (boolByte)((ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z'));
 }
 
 boolByte charStringIsNumber(const CharString self, const size_t index) {
   const char ch = self->data[index];
-  return (ch >= '0' && ch <= '9');
+  return (boolByte)(ch >= '0' && ch <= '9');
 }
 
 LinkedList charStringSplit(const CharString self, const char delimiter) {
@@ -193,15 +193,15 @@ void _charStringWrap(const char* srcString, char* destString, size_t destStringS
   lineBuffer = (char*)malloc(sizeof(char) * lineLength);
   while(srcStringIndex < strlen(srcString)) {
     if(lineIndex == 0) {
-      for(indentIndex = 0; indentIndex < indentSize; indentIndex++) {
+      for(indentIndex = 0; indentIndex < (size_t)indentSize; indentIndex++) {
         destString[destStringIndex++] = ' ';
         lineIndex++;
       }
     }
 
     // Clear out the line buffer, and copy a full line into it
-    memset(lineBuffer, 0, lineLength);
-    bufferLength = lineLength - lineIndex - 1; // don't forget the null!
+    memset(lineBuffer, 0, (size_t)lineLength);
+    bufferLength = (size_t)(lineLength - lineIndex - 1); // don't forget the null!
     if(bufferLength <= 0) {
       break;
     }
@@ -231,7 +231,7 @@ void _charStringWrap(const char* srcString, char* destString, size_t destStringS
       // If NULL is returned here, then there are no spaces in this line. In this case, insert
       // a hyphen at the end of the line and start a new line. Also, we need to leave room
       // for the newline, so subtract 2 from the total buffer length.
-      bufferLength = lineLength - lineIndex - 1;
+      bufferLength = (size_t)(lineLength - lineIndex - 1);
       strncpy(destString + destStringIndex, lineBuffer, bufferLength);
       destString[lineLength - 1] = '-';
       // Move the destination string index ahead 1 to account for the hyphen, and the source

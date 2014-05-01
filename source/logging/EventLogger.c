@@ -59,7 +59,7 @@ void initEventLogger(void) {
   eventLoggerInstance->logLevel = LOG_INFO;
   eventLoggerInstance->logFile = NULL;
   eventLoggerInstance->useColor = false;
-  eventLoggerInstance->zebraStripeSize = (long)DEFAULT_SAMPLE_RATE;
+  eventLoggerInstance->zebraStripeSize = (unsigned long)DEFAULT_SAMPLE_RATE;
   eventLoggerInstance->systemErrorMessage = NULL;
 
 #if WINDOWS
@@ -99,7 +99,7 @@ char* stringForLastError(int errorNumber) {
 
 boolByte isLogLevelAtLeast(LogLevel logLevel) {
   EventLogger eventLogger = _getEventLoggerInstance();
-  return (logLevel >= eventLogger->logLevel);
+  return (boolByte)(logLevel >= eventLogger->logLevel);
 }
 
 void setLogLevel(LogLevel logLevel) {
@@ -149,7 +149,7 @@ void setLoggingColorEnabledWithString(const CharString colorSchemeName) {
     setLoggingColorEnabled(false);
   }
   else if(charStringIsEqualToCString(colorSchemeName, "auto", false)) {
-    setLoggingColorEnabled(isatty(1));
+    setLoggingColorEnabled((boolByte)isatty(1));
   }
   else if(charStringIsEqualToCString(colorSchemeName, "force", false)) {
     setLoggingColorEnabled(true);

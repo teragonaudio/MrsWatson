@@ -38,7 +38,7 @@ unsigned long buildInfoGetYear(void) {
   const char* compilerDate = __DATE__;
   size_t startingIndex = strlen(compilerDate) - 4;
   strncpy(buildDate->data, compilerDate + startingIndex, 4);
-  result = strtol(buildDate->data, NULL, 10);
+  result = (unsigned long)strtol(buildDate->data, NULL, 10);
   freeCharString(buildDate);
   return result;
 }

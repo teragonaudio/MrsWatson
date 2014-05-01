@@ -37,11 +37,11 @@ CharString _programOptionGetString(const ProgramOption self);
 float _programOptionGetNumber(const ProgramOption self);
 
 ProgramOption newProgramOption(void) {
-  return newProgramOptionWithName(-1, EMPTY_STRING, EMPTY_STRING, false,
+  return newProgramOptionWithName(INT_MAX, EMPTY_STRING, EMPTY_STRING, false,
     kProgramOptionTypeNumber, kProgramOptionArgumentTypeInvalid);
 }
 
-ProgramOption newProgramOptionWithName(const int optionIndex, const char* name,
+ProgramOption newProgramOptionWithName(const unsigned int optionIndex, const char* name,
   const char* help, boolByte hasShortForm, ProgramOptionType type,
   ProgramOptionArgumentType argumentType) {
   ProgramOption option = (ProgramOption)malloc(sizeof(ProgramOptionMembers));
@@ -94,9 +94,9 @@ void _programOptionPrintDefaultValue(const ProgramOption self) {
   }
 }
 
-void programOptionPrintHelp(const ProgramOption self, boolByte withFullHelp, int indentSize, int initialIndent) {
+void programOptionPrintHelp(const ProgramOption self, boolByte withFullHelp, unsigned int indentSize, unsigned int initialIndent) {
   CharString wrappedHelpString;
-  int i;
+  unsigned int i;
 
   if(self == NULL) {
     logError("Can't find help for that option. Try running with --help to see all options\n");
@@ -220,7 +220,7 @@ void freeProgramOption(ProgramOption self) {
 }
 
 
-ProgramOptions newProgramOptions(int numOptions) {
+ProgramOptions newProgramOptions(unsigned int numOptions) {
   ProgramOptions options = (ProgramOptions)malloc(sizeof(ProgramOptionsMembers));
   options->numOptions = numOptions;
   options->options = (ProgramOption*)malloc(sizeof(ProgramOption) * numOptions);
@@ -401,7 +401,7 @@ boolByte programOptionsParseConfigFile(ProgramOptions self, const CharString fil
   return result;
 }
 
-void programOptionsPrintHelp(const ProgramOptions self, boolByte withFullHelp, int indentSize) {
+void programOptionsPrintHelp(const ProgramOptions self, boolByte withFullHelp, unsigned int indentSize) {
   unsigned int i;
   for(i = 0; i < self->numOptions; i++) {
     if(!self->options[i]->hideInHelp) {
@@ -421,7 +421,7 @@ ProgramOption programOptionsFind(const ProgramOptions self, const CharString str
 }
 
 void programOptionsPrintHelpForOption(const ProgramOptions self, const CharString string,
-  boolByte withFullHelp, int indentSize) {
+  boolByte withFullHelp, unsigned int indentSize) {
   programOptionPrintHelp(programOptionsFind(self, string), withFullHelp, indentSize, 0);
 }
 

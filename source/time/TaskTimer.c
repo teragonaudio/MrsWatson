@@ -69,7 +69,7 @@ void taskTimerStart(TaskTimer self) {
 }
 
 double taskTimerStop(TaskTimer self) {
-  double elapsedTimeInMs;
+  double elapsedTimeInMs = 0.0;
 #if UNIX
   double elapsedFullSeconds;
   double elapsedMicroseconds;
@@ -115,7 +115,7 @@ CharString taskTimerHumanReadbleString(TaskTimer self) {
   }
   else if(self->totalTaskTime < 60 * 1000) {
     seconds = (int)(self->totalTaskTime / 1000.0);
-    snprintf(outString->data, outString->capacity, "%dsec", (int)seconds);
+    snprintf(outString->data, outString->capacity, "%dsec", seconds);
   }
   else {
     seconds = (int)(self->totalTaskTime / 1000.0) % 60;

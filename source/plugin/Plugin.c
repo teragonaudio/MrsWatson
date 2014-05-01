@@ -88,7 +88,7 @@ void listAvailablePlugins(const CharString pluginRoot) {
  * @return True if the plugin is a match
  */
 static boolByte _internalPluginNameMatches(const CharString pluginName, const char* internalName) {
-  return strncmp(pluginName->data, internalName, strlen(internalName)) == 0;
+  return (boolByte)(strncmp(pluginName->data, internalName, strlen(internalName)) == 0);
 }
 
 // Plugin newPlugin(PluginInterfaceType interfaceType, const CharString pluginName, const CharString pluginLocation) {

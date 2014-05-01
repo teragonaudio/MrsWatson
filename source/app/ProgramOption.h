@@ -90,7 +90,7 @@ ProgramOption newProgramOption(void);
  * @param argumentType Expected argument type which can be passed to this option
  * @return 
  */
-ProgramOption newProgramOptionWithName(const int optionIndex, const char* name,
+ProgramOption newProgramOptionWithName(const unsigned int optionIndex, const char* name,
   const char* help, boolByte hasShortForm, ProgramOptionType type,
   ProgramOptionArgumentType argumentType);
 
@@ -102,7 +102,7 @@ ProgramOption newProgramOptionWithName(const int optionIndex, const char* name,
  * @param initialIndent Initial number of spaces to offset output
  */
 void programOptionPrintHelp(const ProgramOption self, boolByte withFullHelp,
-  int indentSize, int initialIndent);
+  unsigned int indentSize, unsigned int initialIndent);
 
 /**
  * Free memory used by a ProgramOption instance
@@ -116,7 +116,7 @@ void freeProgramOption(ProgramOption self);
  * @param numOptions Number of options to hold
  * @return An initialized ProgramOptions
  */
-ProgramOptions newProgramOptions(int numOptions);
+ProgramOptions newProgramOptions(unsigned int numOptions);
 
 /**
  * Add a ProgramOption instance to the collection
@@ -161,7 +161,7 @@ boolByte programOptionsParseConfigFile(ProgramOptions self, const CharString fil
  * @param withFullHelp Include full help text, or just option summaries
  * @param indentSize Indent size to use for output
  */
-void programOptionsPrintHelp(const ProgramOptions self, boolByte withFullHelp, int indentSize);
+void programOptionsPrintHelp(const ProgramOptions self, boolByte withFullHelp, unsigned int indentSize);
 
 /**
  * Find an option and print out its help
@@ -172,7 +172,7 @@ void programOptionsPrintHelp(const ProgramOptions self, boolByte withFullHelp, i
  * @param indentSize Indent size to use for output
  */
 void programOptionsPrintHelpForOption(const ProgramOptions self, const CharString string,
-  boolByte withFullHelp, int indentSize);
+  boolByte withFullHelp, unsigned int indentSize);
 
 /**
  * Get string value for an option

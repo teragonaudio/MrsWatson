@@ -79,7 +79,7 @@ void sampleSourcePcmSetSampleRate(void* sampleSourcePtr, double sampleRate);
  * @param sampleSourcePtr
  * @param numChannels Number of channels
  */
-void sampleSourcePcmSetNumChannels(void* sampleSourcePtr, int numChannels);
+void sampleSourcePcmSetNumChannels(void* sampleSourcePtr, unsigned short numChannels);
 
 // TODO: Make private
 void freeSampleSourceDataPcm(void* sampleSourceDataPtr);

@@ -97,15 +97,15 @@ static boolByte _readBlockFromAiffFile(void* sampleSourcePtr, SampleBuffer sampl
   size_t originalBlocksize = sampleBuffer->blocksize;
   size_t samplesRead = sampleSourcePcmRead(extraData, sampleBuffer);
   sampleSource->numSamplesProcessed += (unsigned long)samplesRead;
-  return (originalBlocksize == sampleBuffer->blocksize);
+  return (boolByte)(originalBlocksize == sampleBuffer->blocksize);
 }
 
 static boolByte _writeBlockToAiffFile(void* sampleSourcePtr, const SampleBuffer sampleBuffer) {
   SampleSource sampleSource = (SampleSource)sampleSourcePtr;
   SampleSourcePcmData extraData = (SampleSourcePcmData)(sampleSource->extraData);
-  unsigned int samplesWritten = (int)sampleSourcePcmWrite(extraData, sampleBuffer);
+  size_t samplesWritten = sampleSourcePcmWrite(extraData, sampleBuffer);
   sampleSource->numSamplesProcessed += samplesWritten;
-  return (samplesWritten == sampleBuffer->blocksize);
+  return (boolByte)(samplesWritten == sampleBuffer->blocksize);
 }
 
 SampleSource newSampleSourceAiff(const CharString sampleSourceName) {
@@ -147,7 +147,7 @@ SampleSource newSampleSourceAiff(const CharString sampleSourceName) {
   extraData->dataBufferNumItems = 0;
   extraData->interlacedPcmDataBuffer = NULL;
 
-  extraData->numChannels = (unsigned short)getNumChannels();
+  extraData->numChannels = getNumChannels();
   extraData->sampleRate = (unsigned int)getSampleRate();
   extraData->bitsPerSample = 16;
 #endif

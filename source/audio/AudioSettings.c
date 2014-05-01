@@ -59,7 +59,7 @@ double getSampleRate(void) {
   return _getAudioSettings()->sampleRate;
 }
 
-unsigned int getNumChannels(void) {
+unsigned short getNumChannels(void) {
   return _getAudioSettings()->numChannels;
 }
 
@@ -89,7 +89,7 @@ void setSampleRate(const double sampleRate) {
   _getAudioSettings()->sampleRate = sampleRate;
 }
 
-void setNumChannels(const unsigned int numChannels) {
+void setNumChannels(const unsigned short numChannels) {
   if(numChannels <= 0) {
     logError("Ignoring attempt to set num channels to %d", numChannels);
     return;
@@ -119,8 +119,9 @@ void setTempo(const double tempo) {
 void setTempoFromMidiBytes(const byte* bytes) {
   double tempo = 0.0;
   unsigned long beatLengthInMicroseconds = 0;
+
   if(bytes != NULL) {
-    beatLengthInMicroseconds = 0x00000000 | (bytes[0] << 16) | (bytes[1] << 8) | (bytes[2]);
+    beatLengthInMicroseconds = (unsigned long)(0x00000000 | (bytes[0] << 16) | (bytes[1] << 8) | (bytes[2]));
     // Convert beats / microseconds -> beats / minutes
     tempo = (1000000.0 / (double)beatLengthInMicroseconds) * 60.0;
     setTempo(tempo);
@@ -155,18 +156,18 @@ boolByte setTimeSignatureNoteValue(const short noteValue) {
 
 boolByte setTimeSignatureFromString(const CharString signature) {
   char *slash = NULL;
-  int numerator = 0;
-  int denominator = 0;
+  short numerator = 0;
+  short denominator = 0;
 
   if(!charStringIsEmpty(signature)) {
     slash = strchr(signature->data, '/');
     if(slash != NULL) {
       *slash = '\0';
-      numerator = (int)strtod(signature->data, NULL);
-      denominator = (int)strtod(slash + 1, NULL);
+      numerator = (short)strtod(signature->data, NULL);
+      denominator = (short)strtod(slash + 1, NULL);
       if(numerator > 0 && denominator > 0) {
-        return setTimeSignatureBeatsPerMeasure(numerator) &&
-          setTimeSignatureNoteValue(denominator);
+        return (boolByte)(setTimeSignatureBeatsPerMeasure(numerator) &&
+          setTimeSignatureNoteValue(denominator));
       }
     }
   }
@@ -176,8 +177,8 @@ boolByte setTimeSignatureFromString(const CharString signature) {
 
 boolByte setTimeSignatureFromMidiBytes(const byte* bytes) {
   if(bytes != NULL) {
-    return setTimeSignatureBeatsPerMeasure(bytes[0]) &&
-      setTimeSignatureNoteValue((short)powl(2, bytes[1]));
+    return (boolByte)(setTimeSignatureBeatsPerMeasure(bytes[0]) &&
+      setTimeSignatureNoteValue((short)powl(2, bytes[1])));
   }
   return false;
 }

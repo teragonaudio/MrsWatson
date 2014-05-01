@@ -42,7 +42,7 @@
 
 typedef struct {
   double sampleRate;
-  unsigned int numChannels;
+  unsigned short numChannels;
   unsigned long blocksize;
   double tempo;
   short timeSignatureBeatsPerMeasure;
@@ -69,7 +69,7 @@ double getSampleRate(void);
  * Get the number of output channels.
  * @return Number of channels
  */
-unsigned int getNumChannels(void);
+unsigned short getNumChannels(void);
 
 /**
  * Give the current block size, which is the number of sample frames sent to the
@@ -112,7 +112,7 @@ void setSampleRate(const double sampleRate);
  * input source defines a channel called, it may override this value.
  * @param numChannels Number of channels
  */
-void setNumChannels(const unsigned int numChannels);
+void setNumChannels(const unsigned short numChannels);
 
 /**
  * Set the blocksize to be used during processing. Again this should be called

@@ -214,7 +214,7 @@ CharString getCurrentDirectory(void) {
 }
 
 boolByte isExecutable64Bit(void) {
-  return (sizeof(void*) == 8);
+  return (boolByte)(sizeof(void*) == 8);
 }
 
 boolByte isHost64Bit(void) {
@@ -260,7 +260,7 @@ boolByte isHost64Bit(void) {
 
 boolByte isHostLittleEndian(void) {
   int num = 1;
-  boolByte result = (*(char*)&num == 1);
+  boolByte result = (boolByte)(*(char*)&num == 1);
   return result;
 }
 
@@ -306,11 +306,11 @@ unsigned short convertByteArrayToUnsignedShort(const byte* value) {
 
 unsigned int convertByteArrayToUnsignedInt(const byte* value) {
   if(isHostLittleEndian()) {
-    return ((value[3] << 24) | ((value[2] << 16) & 0x00ff0000) |
+    return (unsigned int)((value[3] << 24) | ((value[2] << 16) & 0x00ff0000) |
       ((value[1] << 8) & 0x0000ff00) | value[0]);
   }
   else {
-    return ((value[0] << 24) | ((value[1] << 16) & 0x00ff0000) |
+    return (unsigned int)((value[0] << 24) | ((value[1] << 16) & 0x00ff0000) |
       ((value[2] << 8) & 0x0000ff00) | value[0]);
   }
 }

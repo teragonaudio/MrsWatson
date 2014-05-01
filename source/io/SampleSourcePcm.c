@@ -108,7 +108,7 @@ static boolByte readBlockFromPcmFile(void* sampleSourcePtr, SampleBuffer sampleB
   size_t originalBlocksize = sampleBuffer->blocksize;
   size_t samplesRead = sampleSourcePcmRead(extraData, sampleBuffer);
   sampleSource->numSamplesProcessed += (unsigned long)samplesRead;
-  return (originalBlocksize == sampleBuffer->blocksize);
+  return (boolByte)(originalBlocksize == sampleBuffer->blocksize);
 }
 
 size_t sampleSourcePcmWrite(SampleSourcePcmData self, const SampleBuffer sampleBuffer) {
@@ -128,7 +128,7 @@ size_t sampleSourcePcmWrite(SampleSourcePcmData self, const SampleBuffer sampleB
   // Clear the PCM data buffer just to be safe
   memset(self->interlacedPcmDataBuffer, 0, sizeof(short) * self->dataBufferNumItems);
 
-  sampleBufferGetPcmSamples(sampleBuffer, self->interlacedPcmDataBuffer, self->isLittleEndian != isHostLittleEndian());
+  sampleBufferGetPcmSamples(sampleBuffer, self->interlacedPcmDataBuffer, (boolByte)(self->isLittleEndian != isHostLittleEndian()));
   pcmSamplesWritten = fwrite(self->interlacedPcmDataBuffer, sizeof(short), numSamplesToWrite, self->fileHandle);
   if(pcmSamplesWritten < numSamplesToWrite) {
     logWarn("Short write to PCM file");
@@ -142,9 +142,9 @@ size_t sampleSourcePcmWrite(SampleSourcePcmData self, const SampleBuffer sampleB
 static boolByte writeBlockToPcmFile(void* sampleSourcePtr, const SampleBuffer sampleBuffer) {
   SampleSource sampleSource = (SampleSource)sampleSourcePtr;
   SampleSourcePcmData extraData = (SampleSourcePcmData)(sampleSource->extraData);
-  unsigned int samplesWritten = (int)sampleSourcePcmWrite(extraData, sampleBuffer);
+  size_t samplesWritten = sampleSourcePcmWrite(extraData, sampleBuffer);
   sampleSource->numSamplesProcessed += samplesWritten;
-  return (samplesWritten == sampleBuffer->blocksize);
+  return (boolByte)(samplesWritten == sampleBuffer->blocksize);
 }
 
 static void _closeSampleSourcePcm(void* sampleSourcePtr) {
@@ -161,7 +161,7 @@ void sampleSourcePcmSetSampleRate(void* sampleSourcePtr, double sampleRate) {
   extraData->sampleRate = (unsigned int)sampleRate;
 }
 
-void sampleSourcePcmSetNumChannels(void* sampleSourcePtr, int numChannels) {
+void sampleSourcePcmSetNumChannels(void* sampleSourcePtr, unsigned short numChannels) {
   SampleSource sampleSource = (SampleSource)sampleSourcePtr;
   SampleSourcePcmData extraData = (SampleSourcePcmData)sampleSource->extraData;
   extraData->numChannels = numChannels;
@@ -195,7 +195,7 @@ SampleSource newSampleSourcePcm(const CharString sampleSourceName) {
   extraData->dataBufferNumItems = 0;
   extraData->interlacedPcmDataBuffer = NULL;
 
-  extraData->numChannels = (unsigned short)getNumChannels();
+  extraData->numChannels = getNumChannels();
   extraData->sampleRate = (unsigned int)getSampleRate();
   extraData->bitsPerSample = 16;
   sampleSource->extraData = extraData;

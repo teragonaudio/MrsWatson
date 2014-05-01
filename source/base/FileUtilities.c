@@ -53,7 +53,7 @@ boolByte _fileExists(const char* path) {
 
 #if MACOSX || LINUX
   struct stat* buffer = malloc(sizeof(struct stat));
-  boolByte result = (stat(path, buffer) == 0);
+  boolByte result = (boolByte)(stat(path, buffer) == 0);
   free(buffer);
   return result;
 
@@ -104,7 +104,7 @@ boolByte copyFileToDirectory(const CharString fileAbsolutePath, const CharString
 /** DEPRECATED */
 boolByte makeDirectory(const CharString absolutePath) {
 #if UNIX
-  return mkdir(absolutePath->data, 0755) == 0;
+  return (boolByte)(mkdir(absolutePath->data, 0755) == 0);
 #elif WINDOWS
   return CreateDirectoryA(absolutePath->data, NULL);
 #endif
@@ -172,9 +172,9 @@ boolByte removeDirectory(const CharString absolutePath) {
   // This is a bit lazy, perhaps...
   CharString removeCommand = newCharString();
   snprintf(removeCommand->data, removeCommand->capacity, "/bin/rm -rf \"%s\"", absolutePath->data);
-  result = system(removeCommand->data);
+  result = (boolByte)system(removeCommand->data);
   freeCharString(removeCommand);
-  return (result == 0);
+  return (boolByte)(result == 0);
 #elif WINDOWS
   SHFILEOPSTRUCTA fileOperation = {0};
   fileOperation.wFunc = FO_DELETE;

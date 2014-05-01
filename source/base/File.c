@@ -115,7 +115,7 @@ static boolByte _isDirectory(const CharString path) {
 #if UNIX
   struct stat buffer;
   if(stat(path->data, &buffer) == 0) {
-    result = S_ISDIR(buffer.st_mode);
+    result = (boolByte)S_ISDIR(buffer.st_mode);
   }
 #elif WINDOWS
   DWORD fileAttributes = GetFileAttributesA((LPCSTR)path->data);
@@ -263,7 +263,7 @@ boolByte fileExists(File self) {
 
 #if UNIX
   struct stat fileStat;
-  boolByte result = (stat(self->absolutePath->data, &fileStat) == 0);
+  boolByte result = (boolByte)(stat(self->absolutePath->data, &fileStat) == 0);
   return result;
 
 #elif WINDOWS
@@ -470,11 +470,11 @@ boolByte fileRemove(File self) {
       case kFileTypeFile:
         // Yes, this seems a bit silly, but otherwise we threaten to leak resources
         fileClose(self);
-        result = (remove(self->absolutePath->data) == 0);
+        result = (boolByte)(remove(self->absolutePath->data) == 0);
         break;
       case kFileTypeDirectory:
 #if UNIX
-        result = (nftw(self->absolutePath->data, _removeCallback, kFileMaxRecursionDepth, FTW_DEPTH | FTW_PHYS) == 0);
+        result = (boolByte)(nftw(self->absolutePath->data, _removeCallback, kFileMaxRecursionDepth, FTW_DEPTH | FTW_PHYS) == 0);
 #elif WINDOWS
         memset(&fileOperation, 0, sizeof(fileOperation));
         fileOperation.wFunc = FO_DELETE;
@@ -741,7 +741,7 @@ boolByte fileWriteBytes(File self, const void* data, size_t numBytes) {
   }
 
   itemsWritten = fwrite(data, 1, numBytes, self->_fileHandle);
-  return (itemsWritten == numBytes);
+  return (boolByte)(itemsWritten == numBytes);
 }
 
 CharString fileGetBasename(File self) {
