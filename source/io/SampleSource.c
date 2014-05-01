@@ -30,10 +30,7 @@
 #include <string.h>
 
 #include "base/File.h"
-#include "base/PlatformUtilities.h"
 #include "io/SampleSourceAiff.h"
-#include "io/SampleSourceFlac.h"
-#include "io/SampleSource.h"
 #include "io/SampleSourcePcm.h"
 #include "io/SampleSourceSilence.h"
 #include "io/SampleSourceWave.h"

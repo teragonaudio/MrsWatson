@@ -4,7 +4,6 @@
 #endif
 
 #include "unit/TestRunner.h"
-#include "logging/LogPrinter.h"
 
 void addTestToTestSuite(TestSuite testSuite, TestCase testCase) {
   linkedListAppend(testSuite->testCases, testCase);

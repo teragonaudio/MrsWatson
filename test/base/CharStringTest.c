@@ -1,6 +1,4 @@
 #include "unit/TestRunner.h"
-#include "base/CharString.h"
-#include "base/LinkedList.h"
 
 static char *const TEST_STRING = "test string";
 static char *const TEST_STRING_CAPS = "TEST STRING";

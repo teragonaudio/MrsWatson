@@ -1,18 +1,8 @@
 #include "base/PlatformUtilities.h"
 
 #include <stdio.h>
-#include <stdlib.h>
-#include <stdarg.h>
-
-#if UNIX
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <sys/wait.h>
-#endif
 
 #include "ApplicationRunner.h"
-#include "unit/TestRunner.h"
-#include "base/CharString.h"
 #include "base/File.h"
 #include "analysis/AnalyzeFile.h"
 

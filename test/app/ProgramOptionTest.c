@@ -1,7 +1,6 @@
 #include "unit/TestRunner.h"
 #include "app/ProgramOption.h"
 #include "base/File.h"
-#include "base/Types.h"
 
 #if UNIX
 #define TEST_CONFIG_FILE "/tmp/mrswatsontest-config.txt"

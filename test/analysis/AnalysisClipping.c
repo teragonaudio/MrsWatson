@@ -1,7 +1,6 @@
 #include <stdlib.h>
 #include <math.h>
 #include "AnalysisClipping.h"
-#include "AnalyzeFile.h"
 
 boolByte analysisClipping(const SampleBuffer sampleBuffer, AnalysisFunctionData data) {
   unsigned int i;

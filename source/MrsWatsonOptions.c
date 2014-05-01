@@ -25,7 +25,6 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include <stdlib.h>
 #include <stdio.h>
 
 #include "audio/AudioSettings.h"

@@ -1,7 +1,5 @@
 #include <stdlib.h>
-#include <math.h>
 #include "AnalysisDistortion.h"
-#include "AnalyzeFile.h"
 
 // If two samples differ by more than this amount, then we call it distortion
 static const Sample kAnalysisDistortionTolerance = 0.5f;

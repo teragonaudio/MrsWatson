@@ -1,11 +1,9 @@
 #include <stdlib.h>
 #include "audio/AudioSettings.h"
-#include "base/LinkedList.h"
 #include "io/SampleSource.h"
 #include "AnalysisClipping.h"
 #include "AnalysisDistortion.h"
 #include "AnalysisSilence.h"
-#include "AnalyzeFile.h"
 
 // Number of consecutive samples which need to fail in order for the test to fail
 static const int kAnalysisDefaultFailTolerance = 16;

@@ -30,7 +30,6 @@
 #include <string.h>
 
 #include "audio/AudioSettings.h"
-#include "base/CharString.h"
 #include "base/PlatformUtilities.h"
 #include "io/RiffFile.h"
 #include "io/SampleSource.h"

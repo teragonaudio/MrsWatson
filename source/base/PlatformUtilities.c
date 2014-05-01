@@ -26,8 +26,6 @@
 //
 
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include <sys/stat.h>
 #include <time.h>
 
@@ -38,7 +36,6 @@
 #if WINDOWS
 #include <Windows.h>
 #elif UNIX
-#include <dirent.h>
 #include <unistd.h>
 #if MACOSX
 #include <CoreServices/CoreServices.h>

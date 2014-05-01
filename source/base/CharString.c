@@ -30,7 +30,6 @@
 #include <string.h>
 
 #include "logging/EventLogger.h"
-#include "base/CharString.h"
 
 CharString newCharString(void) {
   return newCharStringWithCapacity(kCharStringLengthDefault);

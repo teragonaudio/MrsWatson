@@ -30,10 +30,8 @@
 #include <string.h>
 
 #include "base/FileUtilities.h"
-#include "base/PlatformUtilities.h"
 #include "logging/EventLogger.h"
 #include "midi/MidiSourceFile.h"
-#include "midi/MidiSource.h"
 
 MidiSourceType guessMidiSourceType(const CharString midiSourceTypeString) {
   if(!charStringIsEmpty(midiSourceTypeString)) {
