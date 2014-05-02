@@ -75,11 +75,7 @@ static void printWelcomeMessage(int argc, char** argv) {
   freeCharString(stringBuffer);
   freeCharString(versionString);
 
-  if(isExecutable64Bit()) {
-    logWarn("Running in 64-bit mode, this is experimental. Hold on to your hats!");
-  }
-
-  // Prevent a bunch of silly work in case the log level isn't debug
+  // Don't bother doing a bunch of silly work in case the log level isn't debug
   if(isLogLevelAtLeast(LOG_DEBUG)) {
     stringBuffer = getPlatformName();
     logDebug("Host platform is %s (%s)", getShortPlatformName(), stringBuffer->data);
