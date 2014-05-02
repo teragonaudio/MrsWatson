@@ -578,7 +578,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
         }
         else {
           // If maximum time was given and there is no other input source, then use silence
-          inputSource = newSampleSourceSilence();
+          inputSource = sampleSourceFactory(NULL);
         }
       }
     }

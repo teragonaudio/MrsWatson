@@ -45,9 +45,6 @@ typedef struct {
 } SampleSourcePcmDataMembers;
 typedef SampleSourcePcmDataMembers *SampleSourcePcmData;
 
-// TODO: Make private
-SampleSource newSampleSourcePcm(const CharString sampleSourceName);
-
 /**
  * Read raw PCM data to a floating-point sample buffer
  * @param self
@@ -81,7 +78,10 @@ void sampleSourcePcmSetSampleRate(void* sampleSourcePtr, double sampleRate);
  */
 void sampleSourcePcmSetNumChannels(void* sampleSourcePtr, int numChannels);
 
-// TODO: Make private
+/**
+ * Free a PCM sample source and all associated data
+ * @param sampleSourceDataPtr Pointer to sample source data
+ */
 void freeSampleSourceDataPcm(void* sampleSourceDataPtr);
 
 #endif

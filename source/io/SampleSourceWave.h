@@ -28,12 +28,6 @@
 #ifndef MrsWatson_SampleSourceWave_h
 #define MrsWatson_SampleSourceWave_h
 
-#include "io/SampleSource.h"
-#include "io/SampleSourcePcm.h"
-
-// TODO: Make private
-SampleSource newSampleSourceWave(const CharString sampleSourceName);
-// TODO: Make private
-void closeSampleSourceWave(void* pcmData);
+// SampleSourceWave has only private functions
 
 #endif

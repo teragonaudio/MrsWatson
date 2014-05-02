@@ -29,6 +29,7 @@
 #include <stdlib.h>
 
 #include "audio/AudioSettings.h"
+#include "io/SampleSource.h"
 #include "io/SampleSourceSilence.h"
 #include "logging/EventLogger.h"
 
@@ -59,7 +60,7 @@ static boolByte _writeBlockToSilence(void* sampleSourcePtr, const SampleBuffer s
 static void _freeInputSourceDataSilence(void* sampleSourceDataPtr) {
 }
 
-SampleSource newSampleSourceSilence(void) {
+SampleSource _newSampleSourceSilence(void) {
   SampleSource sampleSource = (SampleSource)malloc(sizeof(SampleSourceMembers));
 
   sampleSource->sampleSourceType = SAMPLE_SOURCE_TYPE_SILENCE;

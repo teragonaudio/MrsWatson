@@ -30,10 +30,7 @@
 #include <string.h>
 
 #include "base/File.h"
-#include "io/SampleSourceAiff.h"
-#include "io/SampleSourcePcm.h"
-#include "io/SampleSourceSilence.h"
-#include "io/SampleSourceWave.h"
+#include "io/SampleSource.h"
 #include "logging/EventLogger.h"
 
 void sampleSourcePrintSupportedTypes(void) {
@@ -127,15 +124,20 @@ static SampleSourceType _sampleSourceGuess(const CharString sampleSourceName) {
   return result;
 }
 
+extern SampleSource _newSampleSourcePcm(const CharString sampleSourceName);
+extern SampleSource _newSampleSourceSilence();
+extern SampleSource _newSampleSourceAiff(const CharString sampleSourceName);
+extern SampleSource _newSampleSourceWave(const CharString sampleSourceName);
+
 SampleSource sampleSourceFactory(const CharString sampleSourceName) {
   SampleSourceType sampleSourceType = _sampleSourceGuess(sampleSourceName);
   switch(sampleSourceType) {
     case SAMPLE_SOURCE_TYPE_SILENCE:
-      return newSampleSourceSilence();
+      return _newSampleSourceSilence();
     case SAMPLE_SOURCE_TYPE_PCM:
-      return newSampleSourcePcm(sampleSourceName);
+      return _newSampleSourcePcm(sampleSourceName);
     case SAMPLE_SOURCE_TYPE_AIFF:
-      return newSampleSourceAiff(sampleSourceName);
+      return _newSampleSourceAiff(sampleSourceName);
 #if HAVE_LIBFLAC
     case SAMPLE_SOURCE_TYPE_FLAC:
       return newSampleSourceFlac(sampleSourceName);
@@ -149,7 +151,7 @@ SampleSource sampleSourceFactory(const CharString sampleSourceName) {
       return newSampleSourceOgg(sampleSourceName);
 #endif
     case SAMPLE_SOURCE_TYPE_WAVE:
-      return newSampleSourceWave(sampleSourceName);
+      return _newSampleSourceWave(sampleSourceName);
     default:
       return NULL;
   }

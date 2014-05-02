@@ -29,9 +29,7 @@
 #include <stdlib.h>
 
 #include "audio/AudioSettings.h"
-#include "io/SampleSourceAiff.h"
 #include "io/SampleSourcePcm.h"
-#include "io/SampleSourceWave.h"
 #include "logging/EventLogger.h"
 
 #if HAVE_LIBAUDIOFILE
@@ -108,7 +106,9 @@ static boolByte _writeBlockToAiffFile(void* sampleSourcePtr, const SampleBuffer 
   return (samplesWritten == sampleBuffer->blocksize);
 }
 
-SampleSource newSampleSourceAiff(const CharString sampleSourceName) {
+extern void _closeSampleSourceWave(void *pcmData);
+
+SampleSource _newSampleSourceAiff(const CharString sampleSourceName) {
   SampleSource sampleSource = (SampleSource)malloc(sizeof(SampleSourceMembers));
 #if HAVE_LIBAUDIOFILE
   SampleSourceAudiofileData extraData = (SampleSourceAudiofileData)malloc(sizeof(SampleSourceAudiofileDataMembers));
@@ -132,7 +132,7 @@ SampleSource newSampleSourceAiff(const CharString sampleSourceName) {
   sampleSource->readSampleBlock = _readBlockFromAiffFile;
   sampleSource->writeSampleBlock = _writeBlockToAiffFile;
   // The same function can be shared for both AIFF & WAVE here
-  sampleSource->closeSampleSource = closeSampleSourceWave;
+  sampleSource->closeSampleSource = _closeSampleSourceWave;
   sampleSource->freeSampleSourceData = freeSampleSourceDataPcm;
 #endif
 

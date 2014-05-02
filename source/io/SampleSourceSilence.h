@@ -28,9 +28,6 @@
 #ifndef MrsWatson_SampleSourceSilence_h
 #define MrsWatson_SampleSourceSilence_h
 
-#include "SampleSource.h"
-
-// TODO: Make private
-SampleSource newSampleSourceSilence(void);
+// SampleSourceSilent contains only private functions
 
 #endif

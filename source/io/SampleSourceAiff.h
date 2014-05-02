@@ -25,11 +25,9 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include "SampleSource.h"
-
 #ifndef MrsWatson_SampleSourceAiff_h
 #define MrsWatson_SampleSourceAiff_h
 
-SampleSource newSampleSourceAiff(const CharString sampleSourceName);
+// SampleSourceAiff only contains private functions
 
 #endif

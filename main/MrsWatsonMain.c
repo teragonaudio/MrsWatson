@@ -6,9 +6,8 @@
 #include "logging/ErrorReporter.h"
 #include "logging/EventLogger.h"
 
-// This is global so that in case of a crash or signal, we can still generate
+// This must be global so that in case of a crash or signal, we can still generate
 // a complete error report with a reference
-// TODO: Actually I don't think this is necessary...
 static ErrorReporter gErrorReporter = NULL;
 
 static void handleSignal(int signum) {

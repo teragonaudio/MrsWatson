@@ -176,7 +176,7 @@ void freeSampleSourceDataPcm(void* sampleSourceDataPtr) {
   free(extraData);
 }
 
-SampleSource newSampleSourcePcm(const CharString sampleSourceName) {
+SampleSource _newSampleSourcePcm(const CharString sampleSourceName) {
   SampleSource sampleSource = (SampleSource)malloc(sizeof(SampleSourceMembers));
   SampleSourcePcmData extraData = (SampleSourcePcmData)malloc(sizeof(SampleSourcePcmDataMembers));
 
