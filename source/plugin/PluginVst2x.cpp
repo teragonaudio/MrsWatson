@@ -530,11 +530,6 @@ static void _displayVst2xPluginInfo(void* pluginPtr) {
   }
 }
 
-static void _getVst2xAbsolutePath(void* pluginPtr, CharString outPath) {
-  Plugin plugin = (Plugin)pluginPtr;
-  buildAbsolutePath(plugin->pluginLocation, plugin->pluginName, _getVst2xPlatformExtension(), outPath);
-}
-
 static int _getVst2xPluginSetting(void* pluginPtr, PluginSetting pluginSetting) {
   Plugin plugin = (Plugin)pluginPtr;
   PluginVst2xData data = (PluginVst2xData)plugin->extraData;
