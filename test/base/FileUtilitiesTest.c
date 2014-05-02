@@ -32,7 +32,10 @@ static CharString _fileUtilitiesMakeTempDir(void) {
   CharString tempDirName = newCharString();
 #if UNIX
   snprintf(tempDirName->data, tempDirName->capacity, "/tmp/mrswatsontest-XXXXXX");
-  mktemp(tempDirName->data);
+  if(mkdtemp(tempDirName->data) == NULL) {
+    fprintf(stderr, "WARNING: Could not make temporary directory\n");
+    return NULL;
+  }
 #elif WINDOWS
   CharString systemTempDir = newCharString();
   CharString randomDirName = newCharString();
@@ -41,11 +44,12 @@ static CharString _fileUtilitiesMakeTempDir(void) {
   buildAbsolutePath(systemTempDir, randomDirName, NULL, tempDirName);
   freeCharString(systemTempDir);
   freeCharString(randomDirName);
-#endif
   if(!makeDirectory(tempDirName)) {
     fprintf(stderr, "WARNING: Could not make temporary directory\n");
     return NULL;
   }
+#endif
+
   return tempDirName;
 }
 
