@@ -1,6 +1,7 @@
 #include "base/PlatformUtilities.h"
 
 #include <stdio.h>
+#include <stdarg.h>
 
 #include "ApplicationRunner.h"
 #include "base/File.h"

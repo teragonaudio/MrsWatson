@@ -45,6 +45,7 @@
 #define LSB_DISTRIBUTION "DISTRIB_DESCRIPTION"
 #include <sys/utsname.h>
 #include <errno.h>
+#include <string.h>
 #endif
 #endif
 

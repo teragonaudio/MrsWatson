@@ -32,7 +32,7 @@ static CharString _fileUtilitiesMakeTempDir(void) {
   CharString tempDirName = newCharString();
 #if UNIX
   snprintf(tempDirName->data, tempDirName->capacity, "/tmp/mrswatsontest-XXXXXX");
-  mktemp(tempDirName->data);
+  mkstemp(tempDirName->data);
 #elif WINDOWS
   CharString systemTempDir = newCharString();
   CharString randomDirName = newCharString();
