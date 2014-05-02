@@ -109,7 +109,6 @@ static boolByte _loadPluginPresetFxp(void* pluginPresetPtr, Plugin plugin) {
   }
   inProgram->version = convertBigEndianIntToPlatform(valueBuffer);
 
-  // TODO: Need to check to make sure this matches the ID of the plugin
   numObjectsRead = fread(&valueBuffer, sizeof(unsigned int), 1, extraData->fileHandle);
   if(numObjectsRead != 1) {
     logError("Short read of FXP preset file at fxID");
@@ -124,7 +123,6 @@ static boolByte _loadPluginPresetFxp(void* pluginPresetPtr, Plugin plugin) {
     return false;
   }
 
-  // TODO: Need to check to make sure this matches the version of the plugin
   numObjectsRead = fread(&valueBuffer, sizeof(unsigned int), 1, extraData->fileHandle);
   if(numObjectsRead != 1) {
     logError("Short read of FXP preset file at fxVersion");
@@ -132,7 +130,13 @@ static boolByte _loadPluginPresetFxp(void* pluginPresetPtr, Plugin plugin) {
     return false;
   }
   inProgram->fxVersion = convertBigEndianIntToPlatform(valueBuffer);
-  logDebug("Preset's fxVersion is %d", inProgram->fxVersion);
+  if(inProgram->fxVersion != pluginVst2xGetVersion(plugin)) {
+    logWarn("Plugin has version %ld, but preset has version %d. Loading this preset may result in unexpected behavior!",
+      pluginVst2xGetVersion(plugin), inProgram->fxVersion);
+  }
+  else {
+    logDebug("Preset's version is %d", inProgram->fxVersion);
+  }
 
   numObjectsRead = fread(&valueBuffer, sizeof(unsigned int), 1, extraData->fileHandle);
   if(numObjectsRead != 1) {

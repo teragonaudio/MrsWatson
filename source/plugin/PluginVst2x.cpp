@@ -367,6 +367,14 @@ unsigned long pluginVst2xGetUniqueId(const Plugin self) {
   return 0;
 }
 
+unsigned long pluginVst2xGetVersion(const Plugin self) {
+  if(self->interfaceType == PLUGIN_TYPE_VST_2X) {
+    PluginVst2xData data = (PluginVst2xData)self->extraData;
+    return (unsigned long)data->pluginHandle->version;
+  }
+  return 0;
+}
+
 void pluginVst2xAudioMasterIOChanged(const Plugin self, AEffect const * const newValues) {
   PluginVst2xData data = (PluginVst2xData)(self->extraData);
   data->pluginHandle->initialDelay = newValues->initialDelay;
