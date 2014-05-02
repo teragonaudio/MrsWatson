@@ -103,8 +103,8 @@ void errorReporterInitialize(ErrorReporter self) {
     length--;
   }
   for(i = 0; i < length; i++) {
-    if(!charStringIsLetter(self->reportName, i) ||
-        charStringIsNumber(self->reportName, i)) {
+    if(!(charStringIsLetter(self->reportName, i) ||
+         charStringIsNumber(self->reportName, i))) {
       self->reportName->data[i] = '-';
     }
   }
