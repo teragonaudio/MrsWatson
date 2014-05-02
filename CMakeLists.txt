@@ -73,7 +73,6 @@ if(UNIX)
 
     "-Wno-trigraphs"
     "-Wmissing-field-initializers"
-    "-Wno-pragmas"
     "-Wreturn-type"
     "-Wunused-variable"
     "-Wshadow"
@@ -86,7 +85,6 @@ if(UNIX)
     "-Wchar-subscripts"
     "-Wcomment"
     "-Wformat"
-    "-Wmaybe-uninitialized"
     "-Wnonnull"
     "-Wparentheses"
     "-Wreturn-type"
@@ -128,7 +126,7 @@ if(UNIX)
     set(CMAKE_CXX_FLAGS_DEBUG "${SHARED_GCC_CPPFLAGS} -O0 -g")
     set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
-    add_definitions("${SHARED_GCC_FLAGS} -DLINUX=1 -D__cdecl=\"\"")
+    add_definitions("${SHARED_GCC_FLAGS} -Wmaybe-uninitialized -DLINUX=1 -D__cdecl=\"\"")
   endif()
 
   if(APPLE)
