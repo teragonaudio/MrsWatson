@@ -73,13 +73,6 @@ typedef boolByte (*PluginOpenFunc)(void* pluginPtr);
  */
 typedef void (*PluginDisplayInfoFunc)(void* pluginPtr);
 /**
- * Called to retrieve the absolute path of the plugin's location.
- * TODO: This function should be removed and replaced with an internal file field
- * @param pluginPtr self
- * @param outPath Initialized string which the absolute path is written to
- */
-typedef void (*PluginGetAbsolutePathFunc)(void* pluginPtr, CharString outPath);
-/**
  * Used to gather information about the plugin, such as the number of inputs and
  * outputs. See the PluginSetting enum for examples of information which may be
  * requested.
@@ -131,10 +124,10 @@ typedef struct {
   PluginType pluginType;
   CharString pluginName;
   CharString pluginLocation;
+  CharString pluginAbsolutePath;
 
   PluginOpenFunc openPlugin;
   PluginDisplayInfoFunc displayInfo;
-  PluginGetAbsolutePathFunc getAbsolutePath;
   PluginGetSettingFunc getSetting;
   PluginProcessAudioFunc processAudio;
   PluginProcessMidiEventsFunc processMidiEvents;

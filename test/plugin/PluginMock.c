@@ -12,13 +12,6 @@ static boolByte _pluginMockOpen(void* pluginPtr) {
   return true;
 }
 
-static void _pluginMockGetAbsolutePath(void* pluginPtr, CharString outPath) {
-  // Internal plugins don't have a path, and thus can't be copied. So just copy
-  // an empty string here and let any callers needing the absolute path to check
-  // for this value before doing anything important.
-  charStringClear(outPath);
-}
-
 static int _pluginMockGetSetting(void* pluginPtr, PluginSetting pluginSetting) {
   switch(pluginSetting) {
     case PLUGIN_SETTING_TAIL_TIME_IN_MS:
@@ -72,10 +65,10 @@ Plugin newPluginMock(void) {
   plugin->pluginName = newCharStringWithCString("Mock");
   plugin->pluginLocation = newCharString();
   charStringCopyCString(plugin->pluginLocation, "Internal");
+  plugin->pluginAbsolutePath = NULL;
 
   plugin->openPlugin = _pluginMockOpen;
   plugin->displayInfo = _pluginMockEmpty;
-  plugin->getAbsolutePath = _pluginMockGetAbsolutePath;
   plugin->getSetting = _pluginMockGetSetting;
   plugin->prepareForProcessing = _pluginMockPrepareForProcessing;
   plugin->processAudio = _pluginMockProcessAudio;

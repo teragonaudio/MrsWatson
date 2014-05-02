@@ -40,13 +40,6 @@ static boolByte _pluginSilenceOpen(void* pluginPtr) {
   return true;
 }
 
-static void _pluginSilenceGetAbsolutePath(void* pluginPtr, CharString outPath) {
-  // Internal plugins don't have a path, and thus can't be copied. So just copy
-  // an empty string here and let any callers needing the absolute path to check
-  // for this value before doing anything important.
-  charStringClear(outPath);
-}
-
 static void _pluginSilenceDisplayInfo(void* pluginPtr) {
   logInfo("Information for Internal plugin '%s'", kInternalPluginSilenceName);
   logInfo("Type: instrument, parameters: none");
@@ -89,10 +82,10 @@ Plugin newPluginSilence(const CharString pluginName) {
   charStringCopy(plugin->pluginName, pluginName);
   plugin->pluginLocation = newCharString();
   charStringCopyCString(plugin->pluginLocation, "Internal");
+  plugin->pluginAbsolutePath = NULL;
 
   plugin->openPlugin = _pluginSilenceOpen;
   plugin->displayInfo = _pluginSilenceDisplayInfo;
-  plugin->getAbsolutePath = _pluginSilenceGetAbsolutePath;
   plugin->getSetting = _pluginSilenceGetSetting;
   plugin->prepareForProcessing = _pluginSilenceEmpty;
   plugin->processAudio = _pluginSilenceProcessAudio;

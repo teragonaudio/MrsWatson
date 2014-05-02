@@ -204,16 +204,18 @@ boolByte errorReporterShouldCopyPlugins(void) {
 }
 
 boolByte errorReporterCopyPlugins(ErrorReporter self, PluginChain pluginChain) {
-  CharString pluginAbsolutePath;
-  Plugin currentPlugin;
+  CharString pluginAbsolutePath = NULL;
+  Plugin currentPlugin = NULL;
   boolByte failed = false;
   unsigned int i;
 
-  pluginAbsolutePath = newCharString();
   for(i = 0; i < pluginChain->numPlugins; i++) {
     currentPlugin = pluginChain->plugins[i];
-    currentPlugin->getAbsolutePath(currentPlugin, pluginAbsolutePath);
-    if(getPlatformType() == PLATFORM_MACOSX) {
+    pluginAbsolutePath = currentPlugin->pluginAbsolutePath;
+    if(pluginAbsolutePath == NULL) {
+      logInfo("Plugin '%s' does not have an absolute path and could not be copied", currentPlugin->pluginName->data);
+    }
+    else if(getPlatformType() == PLATFORM_MACOSX) {
       failed |= !_copyDirectoryToErrorReportDir(self, pluginAbsolutePath);
     }
     else {
@@ -221,8 +223,7 @@ boolByte errorReporterCopyPlugins(ErrorReporter self, PluginChain pluginChain) {
     }
   }
 
-  freeCharString(pluginAbsolutePath);
-  return !failed;
+  return (boolByte)!failed;
 }
 
 #if HAVE_LIBARCHIVE

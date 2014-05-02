@@ -158,8 +158,9 @@ void freePlugin(Plugin self) {
       self->freePluginData(self->extraData);
       free(self->extraData);
     }
-    freeCharString(self->pluginLocation);
     freeCharString(self->pluginName);
+    freeCharString(self->pluginLocation);
+    freeCharString(self->pluginAbsolutePath);
     free(self);
   }
 }
