@@ -29,7 +29,7 @@
 #include <stdlib.h>
 
 #include "audio/AudioSettings.h"
-#include "io/SampleSourceSilence.h"
+#include "io/SampleSource.h"
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunused-parameter"
@@ -55,7 +55,7 @@ static boolByte _writeBlockToSilence(void* sampleSourcePtr, const SampleBuffer s
 static void _freeInputSourceDataSilence(void* sampleSourceDataPtr) {
 }
 
-SampleSource newSampleSourceSilence(void) {
+SampleSource _newSampleSourceSilence(void) {
   SampleSource sampleSource = malloc(sizeof(SampleSourceMembers));
 
   sampleSource->sampleSourceType = SAMPLE_SOURCE_TYPE_SILENCE;

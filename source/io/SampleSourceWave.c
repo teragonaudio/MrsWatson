@@ -34,7 +34,6 @@
 #include "io/RiffFile.h"
 #include "io/SampleSource.h"
 #include "io/SampleSourcePcm.h"
-#include "io/SampleSourceWave.h"
 #include "logging/EventLogger.h"
 
 #if HAVE_LIBAUDIOFILE
@@ -193,7 +192,7 @@ static boolByte _writeWaveFileInfo(SampleSourcePcmData extraData) {
     return false;
   }
 
-  // TODO: These calls will not work on big-endian platforms
+  // NOTE: These calls will not work on big-endian platforms
 
   if(fwrite(&audioFormat, sizeof(unsigned short), 1, extraData->fileHandle) != 1) {
     logError("Could not write audio format");
@@ -330,7 +329,7 @@ static boolByte _writeBlockToWaveFile(void* sampleSourcePtr, const SampleBuffer 
   return (boolByte)(samplesWritten == sampleBuffer->blocksize);
 }
 
-void closeSampleSourceWave(void* sampleSourceDataPtr) {
+void _closeSampleSourceWave(void *sampleSourceDataPtr) {
 #if ! HAVE_LIBAUDIOFILE
   SampleSource sampleSource = (SampleSource)sampleSourceDataPtr;
   SampleSourcePcmData extraData = (SampleSourcePcmData)sampleSource->extraData;
@@ -403,7 +402,7 @@ void closeSampleSourceWave(void* sampleSourceDataPtr) {
 #endif
 }
 
-SampleSource newSampleSourceWave(const CharString sampleSourceName) {
+SampleSource _newSampleSourceWave(const CharString sampleSourceName) {
   SampleSource sampleSource = (SampleSource)malloc(sizeof(SampleSourceMembers));
 #if HAVE_LIBAUDIOFILE
   SampleSourceAudiofileData extraData = (SampleSourceAudiofileData)malloc(sizeof(SampleSourceAudiofileDataMembers));
@@ -426,7 +425,7 @@ SampleSource newSampleSourceWave(const CharString sampleSourceName) {
 #else
   sampleSource->readSampleBlock = _readBlockFromWaveFile;
   sampleSource->writeSampleBlock = _writeBlockToWaveFile;
-  sampleSource->closeSampleSource = closeSampleSourceWave;
+  sampleSource->closeSampleSource = _closeSampleSourceWave;
   sampleSource->freeSampleSourceData = freeSampleSourceDataPcm;
 #endif
 

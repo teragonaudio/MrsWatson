@@ -75,7 +75,7 @@ typedef SampleSourceMembers* SampleSource;
 
 /**
  * Factory method to create a new sample source
- * @param sampleSourceName Source name. Used mostly for display purposes.
+ * @param sampleSourceName Source name. If NULL, then a silent sample source is created.
  * @return Initialized sample source, or NULL if none could be created
  */
 SampleSource sampleSourceFactory(const CharString sampleSourceName);
