@@ -360,23 +360,22 @@ static boolByte _openVst2xPlugin(void* pluginPtr) {
   }
 
   logInfo("Opening VST2.x plugin '%s'", plugin->pluginName->data);
-  CharString pluginAbsolutePath = newCharString();
   if(isAbsolutePath(plugin->pluginName)) {
-    charStringCopy(pluginAbsolutePath, plugin->pluginName);
+    charStringCopy(plugin->pluginAbsolutePath, plugin->pluginName);
   }
   else {
-    buildAbsolutePath(plugin->pluginLocation, plugin->pluginName, _getVst2xPlatformExtension(), pluginAbsolutePath);
+    buildAbsolutePath(plugin->pluginLocation, plugin->pluginName, _getVst2xPlatformExtension(), plugin->pluginAbsolutePath);
   }
   logDebug("Plugin location is '%s'", plugin->pluginLocation->data);
 
-  data->libraryHandle = getLibraryHandleForPlugin(pluginAbsolutePath);
+  data->libraryHandle = getLibraryHandleForPlugin(plugin->pluginAbsolutePath);
   if(data->libraryHandle == NULL) {
     return false;
   }
   pluginHandle = loadVst2xPlugin(data->libraryHandle);
 
   if(pluginHandle == NULL) {
-    logError("Could not load VST2.x plugin '%s'", pluginAbsolutePath->data);
+    logError("Could not load VST2.x plugin '%s'", plugin->pluginAbsolutePath->data);
     return false;
   }
 
@@ -406,7 +405,6 @@ static boolByte _openVst2xPlugin(void* pluginPtr) {
     }
   }
 
-  freeCharString(pluginAbsolutePath);
   freeCharString(subpluginIdString);
   return result;
 }
@@ -730,10 +728,10 @@ Plugin newPluginVst2x(const CharString pluginName, const CharString pluginRoot) 
   plugin->pluginName = newCharString();
   charStringCopy(plugin->pluginName, pluginName);
   plugin->pluginLocation = _getVst2xPluginLocation(pluginName, pluginRoot);
+  plugin->pluginAbsolutePath = newCharString();
 
   plugin->openPlugin = _openVst2xPlugin;
   plugin->displayInfo = _displayVst2xPluginInfo;
-  plugin->getAbsolutePath = _getVst2xAbsolutePath;
   plugin->getSetting = _getVst2xPluginSetting;
   plugin->processAudio = _processAudioVst2xPlugin;
   plugin->processMidiEvents = _processMidiEventsVst2xPlugin;
