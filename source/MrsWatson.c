@@ -33,7 +33,6 @@
 #include "base/PlatformUtilities.h"
 #include "io/SampleSource.h"
 #include "io/SampleSourcePcm.h"
-#include "io/SampleSourceSilence.h"
 #include "logging/EventLogger.h"
 #include "logging/LogPrinter.h"
 #include "midi/MidiSequence.h"
@@ -53,16 +52,15 @@ static void _printTaskTime(void* item, void* userData) {
   freeCharString(prettyTimeString);
 }
 
-static void _remapFileToErrorReport(ErrorReporter errorReporter, ProgramOption option, boolByte copyFile) {
-  if(option->enabled) {
+static void _remapFileToErrorReport(ErrorReporter errorReporter, ProgramOptions options, unsigned int index, boolByte copyFile) {
+  if(options->options[index]->enabled) {
+    CharString optionString = programOptionsGetString(options, index);
     if(copyFile) {
-      // TODO: Slight abuse of private field, probably should avoid doing that...
-      if(!errorReportCopyFileToReport(errorReporter, option->_data.string)) {
-        logWarn("Failed copying '%s' to error report directory, please include this file manually",
-          option->_data.string->data);
+      if(!errorReportCopyFileToReport(errorReporter, optionString)) {
+        logWarn("Failed copying '%s' to error report directory, please include this file manually", optionString);
       }
     }
-    errorReporterRemapPath(errorReporter, option->_data.string);
+    errorReporterRemapPath(errorReporter, optionString);
   }
 }
 
@@ -385,10 +383,10 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
     // Shell script with original command line arguments
     errorReporterCreateLauncher(errorReporter, argc, argv);
     // Rewrite some paths before any input or output sources have been opened.
-    _remapFileToErrorReport(errorReporter, programOptions->options[OPTION_INPUT_SOURCE], true);
-    _remapFileToErrorReport(errorReporter, programOptions->options[OPTION_OUTPUT_SOURCE], false);
-    _remapFileToErrorReport(errorReporter, programOptions->options[OPTION_MIDI_SOURCE], true);
-    _remapFileToErrorReport(errorReporter, programOptions->options[OPTION_LOG_FILE], false);
+    _remapFileToErrorReport(errorReporter, programOptions, OPTION_INPUT_SOURCE, true);
+    _remapFileToErrorReport(errorReporter, programOptions, OPTION_OUTPUT_SOURCE, false);
+    _remapFileToErrorReport(errorReporter, programOptions, OPTION_MIDI_SOURCE, true);
+    _remapFileToErrorReport(errorReporter, programOptions, OPTION_LOG_FILE, false);
   }
 
   // Read in options from a configuration file, if given
