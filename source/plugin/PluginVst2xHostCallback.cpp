@@ -30,6 +30,7 @@
 #include "aeffectx.h"
 #include "plugin/PluginVst2xHostCallback.h"
 
+// Clang thinks all the (necessary) imports in the extern "C" block below are unused
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "UnusedImportStatement"
 
@@ -47,10 +48,6 @@ extern "C" {
 #include "plugin/PluginVst2xId.h"
 #include "time/AudioClock.h"
 }
-
-// Global variables (sigh, yes)
-// TODO: This doesn't necessarily have to be global, actually
-static VstTimeInfo vstTimeInfo;
 
 extern "C" {
 // Current plugin ID, which is mostly used by shell plugins during initialization.
@@ -158,6 +155,7 @@ VstIntPtr VSTCALLBACK pluginVst2xHostCallback(AEffect *effect, VstInt32 opcode, 
       break;
     case audioMasterGetTime: {
       AudioClock audioClock = getAudioClock();
+      VstTimeInfo vstTimeInfo;
 
       // These values are always valid
       vstTimeInfo.samplePos = audioClock->currentFrame;
