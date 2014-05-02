@@ -67,27 +67,79 @@ if(MSVC)
 endif()
 
 if(UNIX)
-  set(common_gcc_flags "-fmessage-length=0 -pipe -Wno-trigraphs -Wno-trigraphs -Wmissing-field-initializers -Wall -Wreturn-type -Wunused-variable -Wshadow -Wsign-compare -Wswitch -Wswitch-default -Wuninitialized")
+  set(SHARED_GCC_FLAGS_LIST
+    "-fmessage-length=0"
+    "-pipe"
+
+    "-Wno-trigraphs"
+    "-Wmissing-field-initializers"
+    "-Wno-pragmas"
+    "-Wreturn-type"
+    "-Wunused-variable"
+    "-Wshadow"
+    "-Wsign-compare"
+    "-Wswitch"
+    "-Wswitch-default"
+    "-Wuninitialized"
+
+    "-Waddress"
+    "-Wchar-subscripts"
+    "-Wcomment"
+    "-Wformat"
+    "-Wmaybe-uninitialized"
+    "-Wnonnull"
+    "-Wparentheses"
+    "-Wreturn-type"
+    "-Wsequence-point"
+    "-Wstrict-aliasing"
+    "-Wstrict-overflow=1"
+    "-Wswitch"
+    "-Wtrigraphs"
+    "-Wuninitialized"
+    "-Wunused-function"
+    "-Wunused-label"
+    "-Wunused-value"
+    "-Wunused-variable"
+    "-Wvolatile-register-var"
+  )
+  set(SHARED_GCC_CFLAGS_LIST
+    "-std=c99"
+    "-Wmain"
+    "-Wenum-compare"
+    "-Wmissing-braces"
+    "-Wimplicit-int"
+    "-Wimplicit-function-declaration"
+    "-Wpointer-sign"
+  )
+  set(SHARED_GCC_CPPFLAGS_LIST
+    "-Wsign-compare"
+    "-Weffc++"
+    "-Wc++11-compat"
+    "-Wreorder"
+  )
+
+  string(REPLACE ";" " " SHARED_GCC_FLAGS "${SHARED_GCC_FLAGS_LIST}")
+  string(REPLACE ";" " " SHARED_GCC_CFLAGS "${SHARED_GCC_CFLAGS_LIST}")
+  string(REPLACE ";" " " SHARED_GCC_CPPFLAGS "${SHARED_GCC_CPPFLAGS_LIST}")
 
   if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-    set(CMAKE_C_FLAGS_DEBUG "-std=c99 -D_POSIX_C_SOURCE=200809L -O0 -g")
-    set(CMAKE_C_FLAGS_RELEASE "-std=c99 -D_POSIX_C_SOURCE=200809L -O3")
-    set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g")
+    set(CMAKE_C_FLAGS_DEBUG "${SHARED_GCC_CFLAGS} -D_POSIX_C_SOURCE=200809L -O0 -g")
+    set(CMAKE_C_FLAGS_RELEASE "${SHARED_GCC_CFLAGS} -D_POSIX_C_SOURCE=200809L -O3")
+    set(CMAKE_CXX_FLAGS_DEBUG "${SHARED_GCC_CPPFLAGS} -O0 -g")
     set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
-    add_definitions("${common_gcc_flags} -DLINUX=1 -D__cdecl=\"\"")
+    add_definitions("${SHARED_GCC_FLAGS} -DLINUX=1 -D__cdecl=\"\"")
   endif()
 
   if(APPLE)
-    set(CMAKE_C_FLAGS_DEBUG "-std=c99 -O0 -g -ferror-limit=100")
-    set(CMAKE_C_FLAGS_RELEASE "-std=c99 -O3")
-    set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g")
-    set(CMAKE_CXX_FLAGS_RELEASE "-O3")
+    set(CMAKE_C_FLAGS_DEBUG "${SHARED_GCC_CFLAGS} -O0 -g -ferror-limit=100")
+    set(CMAKE_C_FLAGS_RELEASE "${SHARED_GCC_CFLAGS} -O3")
+    set(CMAKE_CXX_FLAGS_DEBUG "${SHARED_GCC_CPPFLAGS} -O0 -g")
+    set(CMAKE_CXX_FLAGS_RELEASE "${SHARED_GCC_CPPFLAGS} -O3")
 
     set(CMAKE_EXE_LINKER_FLAGS "-framework Carbon -framework CoreFoundation -mmacosx-version-min=10.5")
 
-    # TODO: How many of these are common to unix GCC?
-    add_definitions("${common_gcc_flags} -DMACOSX=1 -fpascal-strings -Wnewline-eof -Wshorten-64-to-32 -fasm-blocks -mmacosx-version-min=10.5")
+    add_definitions("${SHARED_GCC_FLAGS} -DMACOSX=1 -fpascal-strings -Wnewline-eof -Wshorten-64-to-32 -fasm-blocks -mmacosx-version-min=10.5")
   endif()
 endif()
 
@@ -96,4 +148,3 @@ endif()
 add_subdirectory(source)
 add_subdirectory(main)
 add_subdirectory(test)
-
