@@ -19,6 +19,8 @@
 #if !defined(HOST_BIG_ENDIAN) || !defined(HOST_LITTLE_ENDIAN)
 #error Host platform endian-ness not known
 #error Please define either HOST_BIG_ENDIAN or HOST_LITTLE_ENDIAN
+#elif HOST_BIG_ENDIAN && HOST_LITTLE_ENDIAN
+#error Both HOST_BIG_ENDIAN and HOST_LITTLE_ENDIAN cannot be defined to 1!
 #endif
 
 static int _testGetPlatformType(void) {
