@@ -39,10 +39,16 @@ typedef enum {
   RETURN_CODE_INVALID_PLUGIN_CHAIN,
   RETURN_CODE_UNSUPPORTED_FEATURE,
   RETURN_CODE_INTERNAL_ERROR,
-  // This return code should always be right before the last one. It is not
+  // This return code should always be last in this enum list. It is not
   // actually used, but instead we add the signal number to it and exit with
   // that code instead.
   RETURN_CODE_SIGNAL,
+
+  // Failure codes when forking processes (at present only used by test suite)
+  RETURN_CODE_FORK_FAILED = -1,
+  RETURN_CODE_SHELL_FAILED = 127,
+  RETURN_CODE_LAUNCH_FAILED_OTHER = 255,
+
   NUM_RETURN_CODES
 } ReturnCodes;
 

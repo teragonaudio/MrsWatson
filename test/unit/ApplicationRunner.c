@@ -181,7 +181,9 @@ void runApplicationTest(const TestEnvironment testEnvironment,
   resultCode = (ReturnCodes)WEXITSTATUS(result);
 #endif
 
-  if(resultCode == 255 || (int)resultCode == -1 || resultCode == 127) {
+  if(resultCode == RETURN_CODE_FORK_FAILED ||
+     resultCode == RETURN_CODE_SHELL_FAILED ||
+     resultCode == RETURN_CODE_LAUNCH_FAILED_OTHER) {
     if(testEnvironment->results->onlyPrintFailing) {
       printTestName(testName);
     }
