@@ -1,6 +1,12 @@
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "UnusedImportStatement"
+// Clang thinks that this is unused on MacOSX, however it is definitely
+// needed on other platforms.
+#include <signal.h>
+#pragma clang diagnostic pop
+
 #include <stdio.h>
 #include <stdlib.h>
-#include <signal.h>
 #include "base/PlatformUtilities.h"
 #include "MrsWatson.h"
 #include "logging/ErrorReporter.h"

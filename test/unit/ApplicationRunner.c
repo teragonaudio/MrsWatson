@@ -1,7 +1,13 @@
 #include "base/PlatformUtilities.h"
 
-#include <stdio.h>
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "UnusedImportStatement"
+// Clang seems to believe that this import is unused, I'm not sure how it arrived
+// at that conclusion, but it definitely is used and removing it will break the
+// build on Linux if this is taken out.
 #include <stdarg.h>
+#pragma clang diagnostic pop
+#include <stdio.h>
 
 #include "ApplicationRunner.h"
 #include "base/File.h"

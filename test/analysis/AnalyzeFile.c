@@ -74,8 +74,17 @@ boolByte analyzeFile(const char* filename, CharString failedAnalysisFunctionName
   analysisData->failedAnalysisFunctionName = failedAnalysisFunctionName;
   analysisData->failedAnalysisSample = failedAnalysisSample;
   analysisData->sampleBuffer = newSampleBuffer(DEFAULT_NUM_CHANNELS, kAnalysisBlocksize);
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wreturn-stack-address"
+  // Clang seems to believe that these pointer values can escape the local scope,
+  // however I don't think this is true at all. The analysisData struct is also
+  // only valid for this scope, and it is not returned by this function so I fail
+  // to see how these two pointers would be invalidated when we exit scope here.
+  // My guess is that Clang gets confused by the function pointers.
   analysisData->currentBlockSample = &currentBlockSample;
   analysisData->result = &result;
+#pragma clang diagnostic pop
 
   while(sampleSource->readSampleBlock(sampleSource, analysisData->sampleBuffer) && result) {
     linkedListForeach(analysisFunctions, _runAnalysisFunction, analysisData);
