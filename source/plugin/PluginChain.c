@@ -282,21 +282,34 @@ void pluginChainSetRealtime(PluginChain self, boolByte realtime) {
 
 void pluginChainProcessAudio(PluginChain pluginChain, SampleBuffer inBuffer, SampleBuffer outBuffer) {
   Plugin plugin;
-  unsigned int pluginInputs, pluginOutputs;
   unsigned int i;
+  unsigned int pluginInputs, pluginOutputs;
   double processingTimeInMs;
   double totalProcessingTimeInMs;
   const double maxProcessingTimeInMs = inBuffer->blocksize * 1000.0 / getSampleRate();
+  SampleBuffer inBufferPtr = inBuffer;
+  SampleBuffer outBufferPtr = NULL;
 
   if(pluginChain->_realtime) {
     taskTimerStart(pluginChain->_realtimeTimer);
   }
 
-  for(i = 0; i < pluginChain->numPlugins; i++) {
-    sampleBufferClear(outBuffer);
+  inBufferPtr = inBuffer;
+  sampleBufferClear(outBuffer);
 
+  for(i = 0; i < pluginChain->numPlugins; i++) {
     plugin = pluginChain->plugins[i];
     logDebug("Processing audio with plugin '%s'", plugin->pluginName->data);
+
+    // First set our scratch output buffer to be the processing buffer of the current plugin
+    outBufferPtr = plugin->processingBuffer;
+    // Clear it to make sure there's no junk data in there from the last process call
+    sampleBufferClear(outBufferPtr);
+    // Now copy data from the input buffer to this buffer. If the buffers are different sizes,
+    // then SampleBuffer should handle this correctly by copying a mono source to both channels
+    // of a stereo buffer, or by taking the only left channel when copying from stereo to a mono.
+    sampleBufferCopy(outBufferPtr, inBufferPtr);
+
     pluginInputs = (unsigned int)plugin->getSetting(plugin, PLUGIN_NUM_INPUTS);
     if(inBuffer->numChannels < pluginInputs) {
       logDebug("Expanding input source from %d -> %d channels", inBuffer->numChannels, pluginInputs);
@@ -307,8 +320,9 @@ void pluginChainProcessAudio(PluginChain pluginChain, SampleBuffer inBuffer, Sam
       logDebug("Expanding output source from %d -> %d channels", outBuffer->numChannels, pluginOutputs);
       sampleBufferResize(outBuffer, pluginOutputs, false);
     }
+
     taskTimerStart(pluginChain->audioTimers[i]);
-    plugin->processAudio(plugin, inBuffer, outBuffer);
+    plugin->processAudio(plugin, inBufferPtr, outBufferPtr);
     processingTimeInMs = taskTimerStop(pluginChain->audioTimers[i]);
     if(processingTimeInMs > maxProcessingTimeInMs) {
       logWarn("Possible dropout! Plugin '%s' spent %dms processing time (%dms max)",
@@ -319,13 +333,14 @@ void pluginChainProcessAudio(PluginChain pluginChain, SampleBuffer inBuffer, Sam
         plugin->pluginName->data, (int)processingTimeInMs,
         (int)(processingTimeInMs / maxProcessingTimeInMs));
     }
-    
-    // If this is not the last plugin in the chain, then copy the output of this plugin
-    // back to the input for the next one in the chain.
-    if(i + 1 < pluginChain->numPlugins) {
-      sampleBufferCopy(inBuffer, outBuffer);
-    }
+
+    // Swap inputs & outputs, so the output buffer of this plugin becomes the input for
+    // the next plugin in the chain.
+    inBufferPtr = outBufferPtr;
   }
+
+  // Copy the output from the last plugin to the real output buffer
+  sampleBufferCopy(outBuffer, outBufferPtr);
 
   if(pluginChain->_realtime) {
     totalProcessingTimeInMs = taskTimerStop(pluginChain->_realtimeTimer);

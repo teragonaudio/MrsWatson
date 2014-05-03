@@ -133,6 +133,10 @@ Plugin _newPlugin(PluginInterfaceType interfaceType, PluginType pluginType) {
   plugin->pluginName = newCharString();
   plugin->pluginLocation = newCharString();
   plugin->pluginAbsolutePath = newCharString();
+  // Initialize processing buffer with the currently known channel count, this
+  // may be expanded to the maximum number of needed channels when the plugin
+  // is opened and its I/O configuration is known.
+  plugin->processingBuffer = newSampleBuffer(getNumChannels(), getBlocksize());
 
   return plugin;
 }
@@ -146,6 +150,7 @@ void freePlugin(Plugin self) {
     freeCharString(self->pluginName);
     freeCharString(self->pluginLocation);
     freeCharString(self->pluginAbsolutePath);
+    freeSampleBuffer(self->processingBuffer);
     free(self);
   }
 }
