@@ -8,9 +8,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "base/PlatformUtilities.h"
-#include "MrsWatson.h"
 #include "logging/ErrorReporter.h"
 #include "logging/EventLogger.h"
+#include "MrsWatson.h"
 
 // This must be global so that in case of a crash or signal, we can still generate
 // a complete error report with a reference
