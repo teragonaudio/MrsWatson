@@ -27,6 +27,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <stdarg.h>
 
 #include "app/BuildInfo.h"
@@ -42,7 +43,6 @@
 #include <Windows.h>
 #include <io.h>
 #elif UNIX
-#include <string.h>
 #include <unistd.h>
 #endif
 
@@ -224,7 +224,7 @@ static void _logMessage(const LogLevel logLevel, const char* message, va_list ar
 #endif
 
   if(eventLogger != NULL && logLevel >= eventLogger->logLevel) {
-    CharString formattedMessage = newCharString();
+    CharString formattedMessage = newCharStringWithCapacity(kCharStringLengthDefault * 2);
     vsnprintf(formattedMessage->data, formattedMessage->capacity, message, arguments);
 #if WINDOWS
     currentTime = GetTickCount();

@@ -82,7 +82,7 @@ static void printWelcomeMessage(int argc, char** argv) {
     logDebug("Application is %d-bit", isExecutable64Bit() ? 64 : 32);
     freeCharString(stringBuffer);
 
-    stringBuffer = newCharString();
+    stringBuffer = newCharStringWithCapacity(kCharStringLengthLong);
     for(i = 1; i < argc; i++) {
       space = strchr(argv[i], ' ');
       if(space != NULL) {
