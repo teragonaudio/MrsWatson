@@ -161,6 +161,15 @@ Plugin pluginFactory(const CharString pluginName, const CharString pluginRoot);
 void listAvailablePlugins(const CharString pluginRoot);
 
 /**
+ * Create a new plugin. Considered "protected", only subclasses of Plugin should
+ * directly call this.
+ * @param interfaceType Plugin interface type
+ * @param pluginType Plugin type
+ * @return Plugin initialized base Plugin struct
+ */
+Plugin _newPlugin(PluginInterfaceType interfaceType, PluginType pluginType);
+
+/**
  * Release a plugin and all of its associated resources. Note that the plugin
  * must be closed before this is called, or else resources will be leaked.
  * @param self

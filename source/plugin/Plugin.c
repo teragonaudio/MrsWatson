@@ -29,7 +29,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "base/FileUtilities.h"
+#include "audio/AudioSettings.h"
 #include "logging/EventLogger.h"
 #include "plugin/Plugin.h"
 #include "plugin/PluginPassthru.h"
@@ -123,6 +123,18 @@ in your MrsWatson so you can run plugins in your plugins!");
       logError("Could not find plugin type for '%s'", pluginName->data);
       return NULL;
   }
+}
+
+Plugin _newPlugin(PluginInterfaceType interfaceType, PluginType pluginType) {
+  Plugin plugin = (Plugin)malloc(sizeof(PluginMembers));
+
+  plugin->interfaceType = interfaceType;
+  plugin->pluginType = pluginType;
+  plugin->pluginName = newCharString();
+  plugin->pluginLocation = newCharString();
+  plugin->pluginAbsolutePath = newCharString();
+
+  return plugin;
 }
 
 void freePlugin(Plugin self) {

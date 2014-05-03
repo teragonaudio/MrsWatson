@@ -75,15 +75,9 @@ static boolByte _pluginPassthruSetParameter(void* pluginPtr, unsigned int i, flo
 }
 
 Plugin newPluginPassthru(const CharString pluginName) {
-  Plugin plugin = (Plugin)malloc(sizeof(PluginMembers));
-
-  plugin->interfaceType = PLUGIN_TYPE_INTERNAL;
-  plugin->pluginType = PLUGIN_TYPE_EFFECT;
-  plugin->pluginName = newCharString();
+  Plugin plugin = _newPlugin(PLUGIN_TYPE_INTERNAL, PLUGIN_TYPE_EFFECT);
   charStringCopy(plugin->pluginName, pluginName);
-  plugin->pluginLocation = newCharString();
   charStringCopyCString(plugin->pluginLocation, "Internal");
-  plugin->pluginAbsolutePath = NULL;
 
   plugin->openPlugin = _pluginPassthruOpen;
   plugin->displayInfo = _pluginPassthruDisplayInfo;
