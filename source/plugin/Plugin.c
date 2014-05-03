@@ -29,7 +29,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "base/FileUtilities.h"
+#include "audio/AudioSettings.h"
 #include "logging/EventLogger.h"
 #include "audio/AudioSettings.h"
 #include "plugin/Plugin.h"
@@ -150,6 +150,18 @@ boolByte closePlugin(Plugin self){
   freeSampleBuffer(self->inputBuffer);
   freeSampleBuffer(self->outputBuffer);
   return true;
+}
+
+Plugin _newPlugin(PluginInterfaceType interfaceType, PluginType pluginType) {
+  Plugin plugin = (Plugin)malloc(sizeof(PluginMembers));
+
+  plugin->interfaceType = interfaceType;
+  plugin->pluginType = pluginType;
+  plugin->pluginName = newCharString();
+  plugin->pluginLocation = newCharString();
+  plugin->pluginAbsolutePath = newCharString();
+
+  return plugin;
 }
 
 void freePlugin(Plugin self) {

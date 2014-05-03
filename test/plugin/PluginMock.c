@@ -57,15 +57,9 @@ static void _pluginMockClose(void* pluginPtr) {
 }
 
 Plugin newPluginMock(void) {
-  Plugin plugin = (Plugin)malloc(sizeof(PluginMembers));
-  PluginMockData extraData = (PluginMockData)malloc(sizeof(PluginMockDataMembers));
-
-  plugin->interfaceType = PLUGIN_TYPE_INTERNAL;
-  plugin->pluginType = PLUGIN_TYPE_INSTRUMENT;
+  Plugin plugin = _newPlugin(PLUGIN_TYPE_INTERNAL, PLUGIN_TYPE_INSTRUMENT);
   plugin->pluginName = newCharStringWithCString("Mock");
-  plugin->pluginLocation = newCharString();
   charStringCopyCString(plugin->pluginLocation, "Internal");
-  plugin->pluginAbsolutePath = NULL;
 
   plugin->openPlugin = _pluginMockOpen;
   plugin->displayInfo = _pluginMockEmpty;
@@ -77,6 +71,7 @@ Plugin newPluginMock(void) {
   plugin->closePlugin = _pluginMockClose;
   plugin->freePluginData = _pluginMockEmpty;
 
+  PluginMockData extraData = (PluginMockData)malloc(sizeof(PluginMockDataMembers));
   extraData->isOpen = false;
   extraData->isPrepared = false;
   extraData->processAudioCalled = false;

@@ -74,15 +74,9 @@ static boolByte _pluginSilenceSetParameter(void* pluginPtr, unsigned int i, floa
 }
 
 Plugin newPluginSilence(const CharString pluginName) {
-  Plugin plugin = (Plugin)malloc(sizeof(PluginMembers));
-
-  plugin->interfaceType = PLUGIN_TYPE_INTERNAL;
-  plugin->pluginType = PLUGIN_TYPE_INSTRUMENT;
-  plugin->pluginName = newCharString();
+  Plugin plugin = _newPlugin(PLUGIN_TYPE_INTERNAL, PLUGIN_TYPE_INSTRUMENT);
   charStringCopy(plugin->pluginName, pluginName);
-  plugin->pluginLocation = newCharString();
   charStringCopyCString(plugin->pluginLocation, "Internal");
-  plugin->pluginAbsolutePath = NULL;
 
   plugin->openPlugin = _pluginSilenceOpen;
   plugin->displayInfo = _pluginSilenceDisplayInfo;
