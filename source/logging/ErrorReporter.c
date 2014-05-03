@@ -212,7 +212,7 @@ boolByte errorReporterCopyPlugins(ErrorReporter self, PluginChain pluginChain) {
   for(i = 0; i < pluginChain->numPlugins; i++) {
     currentPlugin = pluginChain->plugins[i];
     pluginAbsolutePath = currentPlugin->pluginAbsolutePath;
-    if(pluginAbsolutePath == NULL) {
+    if(charStringIsEmpty(pluginAbsolutePath)) {
       logInfo("Plugin '%s' does not have an absolute path and could not be copied", currentPlugin->pluginName->data);
     }
     else if(getPlatformType() == PLATFORM_MACOSX) {
