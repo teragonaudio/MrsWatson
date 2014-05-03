@@ -1,26 +1,24 @@
 #include "unit/TestRunner.h"
 #include "time/TaskTimer.h"
 
-#if MACOSX
-#include <machine/endian.h>
-#endif
-
 #if LINUX
 #if defined(__BYTE_ORDER__)
-#define BIG_ENDIAN (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)
-#define LITTLE_ENDIAN (__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__)
+#define HOST_BIG_ENDIAN (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)
+#define HOST_LITTLE_ENDIAN (__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__)
 #endif
 #elif MACOSX
-#define BIG_ENDIAN (__DARWIN_BYTE_ORDER == __DARWIN_BIG_ENDIAN)
-#define LITTLE_ENDIAN (__DARWIN_BYTE_ORDER == __DARWIN_LITTLE_ENDIAN)
+#include <machine/endian.h>
+#define HOST_BIG_ENDIAN (__DARWIN_BYTE_ORDER == __DARWIN_BIG_ENDIAN)
+#define HOST_LITTLE_ENDIAN (__DARWIN_BYTE_ORDER == __DARWIN_LITTLE_ENDIAN)
 #elif WINDOWS
 // Windows is always little-endian, see: http://support.microsoft.com/kb/102025
-#define BIG_ENDIAN 0
-#define LITTLE_ENDIAN 1
+#define HOST_BIG_ENDIAN 0
+#define HOST_LITTLE_ENDIAN 1
 #endif
 
-#if !defined(BIG_ENDIAN) || !defined(LITTLE_ENDIAN)
-#error BIG_ENDIAN and LITTLE_ENDIAN are not defined for this platform
+#if !defined(HOST_BIG_ENDIAN) || !defined(HOST_LITTLE_ENDIAN)
+#error Host platform endian-ness not known
+#error Please define either HOST_BIG_ENDIAN or HOST_LITTLE_ENDIAN
 #endif
 
 static int _testGetPlatformType(void) {
@@ -77,9 +75,9 @@ static int _testGetShortPlatformName(void) {
 }
 
 static int _testIsHostLittleEndian(void) {
-#if BIG_ENDIAN
+#if HOST_BIG_ENDIAN
   assertFalse(isHostLittleEndian());
-#elif LITTLE_ENDIAN
+#elif HOST_LITTLE_ENDIAN
   assert(isHostLittleEndian());
 #endif
   return 0;
@@ -96,9 +94,9 @@ static int _testFlipShortEndian(void) {
 static int _testConvertBigEndianShortToPlatform(void) {
   unsigned short s = 0xabcd;
   unsigned short r = convertBigEndianShortToPlatform(s);
-#if BIG_ENDIAN
+#if HOST_BIG_ENDIAN
   assertUnsignedLongEquals(s, (unsigned long)r);
-#elif LITTLE_ENDIAN
+#elif HOST_LITTLE_ENDIAN
   assertUnsignedLongEquals(s, (unsigned long)flipShortEndian(r));
 #endif
   return 0;
@@ -107,9 +105,9 @@ static int _testConvertBigEndianShortToPlatform(void) {
 static int _testConvertBigEndianIntToPlatform(void) {
   unsigned int i = 0xdeadbeef;
   unsigned int r = convertBigEndianIntToPlatform(i);
-#if BIG_ENDIAN
+#if HOST_BIG_ENDIAN
   assertUnsignedLongEquals(r, (unsigned long)i);
-#elif LITTLE_ENDIAN
+#elif HOST_LITTLE_ENDIAN
   assertUnsignedLongEquals(r, 0xefbeaddeul);
 #endif
   return 0;
@@ -118,9 +116,9 @@ static int _testConvertBigEndianIntToPlatform(void) {
 static int _testConvertLittleEndianIntToPlatform(void) {
   unsigned int i = 0xdeadbeef;
   unsigned int r = convertLittleEndianIntToPlatform(i);
-#if BIG_ENDIAN
+#if HOST_BIG_ENDIAN
   assertUnsignedLongEquals(r, 0xefbeaddeul);
-#elif LITTLE_ENDIAN
+#elif HOST_LITTLE_ENDIAN
   assertUnsignedLongEquals(r, (unsigned long)i);
 #endif
   return 0;
@@ -138,9 +136,9 @@ static int _testConvertBigEndianFloatToPlatform(void) {
   // result that we should accept for this test.
   const double bigFloatTolerance = 3.02231e+24;
 
-#if BIG_ENDIAN
+#if HOST_BIG_ENDIAN
   assertDoubleEquals(*f, r);
-#elif LITTLE_ENDIAN
+#elif HOST_LITTLE_ENDIAN
   // Sanity check to make sure that the actual result is the really huge number which we
   // are expecting.
   assert(fabs(r) > bigFloatTolerance);
@@ -158,9 +156,9 @@ static int _testConvertByteArrayToUnsignedShort(void) {
   }
   s = convertByteArrayToUnsignedShort(b);
 
-#if BIG_ENDIAN
+#if HOST_BIG_ENDIAN
   assertUnsignedLongEquals(s, 0xaaabul);
-#elif LITTLE_ENDIAN
+#elif HOST_LITTLE_ENDIAN
   assertUnsignedLongEquals(s, 0xabaaul);
 #endif
   return 0;
@@ -175,9 +173,9 @@ static int _testConvertByteArrayToUnsignedInt(void) {
   }
   s = convertByteArrayToUnsignedInt(b);
 
-#if BIG_ENDIAN
+#if HOST_BIG_ENDIAN
   assertUnsignedLongEquals(s, 0xaaabacadul);
-#elif LITTLE_ENDIAN
+#elif HOST_LITTLE_ENDIAN
   assertUnsignedLongEquals(s, 0xadacabaaul);
 #endif
   return 0;
