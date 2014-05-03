@@ -30,7 +30,6 @@
 #include "aeffectx.h"
 #include "plugin/PluginVst2xHostCallback.h"
 
-// Clang thinks all the (necessary) imports in the extern "C" block below are unused
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "UnusedImportStatement"
 
@@ -51,6 +50,17 @@ extern "C" {
 
 void pluginVst2xAudioMasterIOChanged(const Plugin self, AEffect const * const newValues);
 }
+
+// Global variables (sigh, unfortunately yes). When plugins ask for the time, they
+// expect that the host will pass them a pointer to a VstTimeInfo struct, a pointer
+// to which they are not the owner of and are not expected to free afterwards...
+// which is actually the correct thing to do, given that if this were the case, a
+// huge number of plugins would probably fail to do this and leak memory all over
+// the place.
+// Anyways, since we cannot scope this variable intelligently, we instead keep one
+// instance of it as a static variable, so it is always avaible to plugins when they
+// ask for the time.
+static VstTimeInfo vstTimeInfo;
 
 extern "C" {
 // Current plugin ID, which is mostly used by shell plugins during initialization.
@@ -158,7 +168,6 @@ VstIntPtr VSTCALLBACK pluginVst2xHostCallback(AEffect *effect, VstInt32 opcode, 
       break;
     case audioMasterGetTime: {
       AudioClock audioClock = getAudioClock();
-      VstTimeInfo vstTimeInfo;
 
       // These values are always valid
       vstTimeInfo.samplePos = audioClock->currentFrame;
