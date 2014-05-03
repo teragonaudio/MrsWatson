@@ -9,7 +9,9 @@
 
 const char* kDefaultTestOutputFileType = "pcm";
 static const char* kApplicationRunnerOutputFolder = "out";
+#if WINDOWS
 static const int kApplicationRunnerWaitTimeoutInMs = 1000;
+#endif
 
 CharString buildTestArgumentString(const char* arguments, ...) {
   CharString formattedArguments;
