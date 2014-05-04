@@ -67,7 +67,7 @@ unsigned long getBlocksize(void) {
   return _getAudioSettings()->blocksize;
 }
 
-double getTempo(void) {
+float getTempo(void) {
   return _getAudioSettings()->tempo;
 }
 
@@ -107,7 +107,7 @@ void setBlocksize(const unsigned long blocksize) {
   _getAudioSettings()->blocksize = blocksize;
 }
 
-void setTempo(const double tempo) {
+void setTempo(const float tempo) {
   if(tempo <= 0.0f) {
     logError("Ignoring attempt to set tempo to %f", tempo);
     return;
