@@ -43,7 +43,7 @@ typedef struct {
   double sampleRate;
   unsigned short numChannels;
   unsigned long blocksize;
-  double tempo;
+  float tempo;
   unsigned short timeSignatureBeatsPerMeasure;
   unsigned short timeSignatureNoteValue;
 } AudioSettingsMembers;
@@ -84,7 +84,7 @@ unsigned long getBlocksize(void);
  * Get the current tempo, in beats per minute
  * @return Temo in BPM
  */
-double getTempo(void);
+float getTempo(void);
 
 /**
  * Get the current time signature's numerator, the number of beats per measure.
@@ -124,7 +124,7 @@ void setBlocksize(const unsigned long blocksize);
  * Set tempo to be used during processing.
  * @param tempo Tempo in beats per minute
  */
-void setTempo(const double tempo);
+void setTempo(const float tempo);
 
 /**
  * MIDI files represent tempo in meta events with a three-byte payload. This
