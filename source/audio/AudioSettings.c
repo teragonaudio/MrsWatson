@@ -71,11 +71,11 @@ double getTempo(void) {
   return _getAudioSettings()->tempo;
 }
 
-short getTimeSignatureBeatsPerMeasure(void) {
+unsigned short getTimeSignatureBeatsPerMeasure(void) {
   return _getAudioSettings()->timeSignatureBeatsPerMeasure;
 }
 
-short getTimeSignatureNoteValue(void) {
+unsigned short getTimeSignatureNoteValue(void) {
   return _getAudioSettings()->timeSignatureNoteValue;
 }
 
@@ -127,7 +127,7 @@ void setTempoFromMidiBytes(const byte* bytes) {
   }
 }
 
-boolByte setTimeSignatureBeatsPerMeasure(const short beatsPerMeasure) {
+boolByte setTimeSignatureBeatsPerMeasure(const unsigned short beatsPerMeasure) {
   // Bit of an easter egg :)
   if(beatsPerMeasure < 2 || beatsPerMeasure > 12) {
     logInfo("Freaky time signature, but whatever you say...");
@@ -140,7 +140,7 @@ boolByte setTimeSignatureBeatsPerMeasure(const short beatsPerMeasure) {
   return true;
 }
 
-boolByte setTimeSignatureNoteValue(const short noteValue) {
+boolByte setTimeSignatureNoteValue(const unsigned short noteValue) {
   // Bit of an easter egg :)
   if(!(noteValue == 2 || noteValue == 4 || noteValue == 8 || noteValue == 16) || noteValue < 2 || noteValue > 16) {
     logInfo("Interesting time signature you've chosen. I'm sure this piece is going to sound great...");
