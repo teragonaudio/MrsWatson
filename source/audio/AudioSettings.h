@@ -44,8 +44,8 @@ typedef struct {
   unsigned short numChannels;
   unsigned long blocksize;
   double tempo;
-  short timeSignatureBeatsPerMeasure;
-  short timeSignatureNoteValue;
+  unsigned short timeSignatureBeatsPerMeasure;
+  unsigned short timeSignatureNoteValue;
 } AudioSettingsMembers;
 
 typedef AudioSettingsMembers* AudioSettings;
@@ -90,13 +90,13 @@ double getTempo(void);
  * Get the current time signature's numerator, the number of beats per measure.
  * @return Time signature numerator
  */
-short getTimeSignatureBeatsPerMeasure(void);
+unsigned short getTimeSignatureBeatsPerMeasure(void);
 
 /**
  * Get the current time signatures denominator, the value of one beat unit.
  * @return Time signature denominator
  */
-short getTimeSignatureNoteValue(void);
+unsigned short getTimeSignatureNoteValue(void);
 
 /**
  * Set the sample rate to be used during processing. This must be set before the
@@ -141,7 +141,7 @@ void setTempoFromMidiBytes(const byte* bytes);
  * @param beatsPerMeasure Time signature numerator
  * @return True if successfully set, false otherwise
  */
-boolByte setTimeSignatureBeatsPerMeasure(const short beatsPerMeasure);
+boolByte setTimeSignatureBeatsPerMeasure(const unsigned short beatsPerMeasure);
 
 /**
  * Set the time signature's denominator. This function does very little error
@@ -150,7 +150,7 @@ boolByte setTimeSignatureBeatsPerMeasure(const short beatsPerMeasure);
  * @param noteValue Time signature denominator
  * @return True if successfully set, false otherwise
  */
-boolByte setTimeSignatureNoteValue(const short noteValue);
+boolByte setTimeSignatureNoteValue(const unsigned short noteValue);
 
 /**
  * MIDI files represent musical time signature with a two-byte sequence. This
