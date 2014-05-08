@@ -136,6 +136,8 @@ index/value, for example:\n\n\
   programOptionsAdd(options, newProgramOptionWithName(OPTION_PLUGIN, "plugin",
     "Plugin(s) to process. Multiple plugins can given in a semicolon-separated \
 list, in which case they will be placed into a chain in the order specified. \
+Note that if you specify multiple plugins, you will have to put the argument \
+in quotes or else the shell may mis-interpret it as multiple commands. \
 Instrument plugins must appear first in any chains. Plugins are searched for in \
 the --plugin-root directory, the current directory, and the standard locations \
 for the OS. File extensions are added automatically to plugin names. Each plugin \
