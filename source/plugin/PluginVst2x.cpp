@@ -305,6 +305,9 @@ static boolByte _initVst2xPlugin(Plugin plugin) {
   data->dispatcher(data->pluginHandle, effOpen, 0, 0, NULL, 0.0f);
   data->dispatcher(data->pluginHandle, effSetSampleRate, 0, 0, NULL, (float)getSampleRate());
   data->dispatcher(data->pluginHandle, effSetBlockSize, 0, getBlocksize(), NULL, 0.0f);
+
+  // Set a speaker arrangement for the plugin for our desired channel count. Not all plugins respect this, but
+  // those that do will let us avoid extra processing if the input source's channel count differs from the plugin's.
   struct VstSpeakerArrangement inSpeakers;
   memset(&inSpeakers, 0, sizeof(inSpeakers));
   inSpeakers.type = (getNumChannels() == 1) ? kSpeakerArrMono : kSpeakerArrStereo;
@@ -320,8 +323,15 @@ static boolByte _initVst2xPlugin(Plugin plugin) {
   struct VstSpeakerArrangement outSpeakers;
   memcpy(&outSpeakers, &inSpeakers, sizeof(VstSpeakerArrangement));
   data->dispatcher(data->pluginHandle, effSetSpeakerArrangement, 0, (VstIntPtr)&inSpeakers, &outSpeakers, 0.0f);
+  pluginVst2xSetIOConfig(plugin, (const unsigned int)data->pluginHandle->numInputs,
+    (const unsigned int)data->pluginHandle->numOutputs);
 
   return true;
+}
+
+void pluginVst2xSetIOConfig(Plugin self, const unsigned int numInputs, const unsigned int numOutputs) {
+  const unsigned int numChannels = (numOutputs > numInputs) ? numOutputs : numInputs;
+  sampleBufferResize(self->processingBuffer, numChannels, false);
 }
 
 unsigned long pluginVst2xGetUniqueId(const Plugin self) {

@@ -49,6 +49,18 @@ void listAvailablePluginsVst2x(const CharString pluginRoot);
 Plugin newPluginVst2x(const CharString pluginName, const CharString pluginRoot);
 
 /**
+ * Set the I/O configuration of a VST 2.x plugin. Most plugins should know this
+ * value when they are opened, however some plugins may make a callback to the
+ * host dispatcher informing them that their I/O configuration has changed. If
+ * that should happen, then this function can be called to resize the plugin's
+ * internal processing buffer to reflect the new channel count.
+ * @param self
+ * @param numInputs Number of input channels
+ * @param numOutputs Number of output channels
+ */
+void pluginVst2xSetIOConfig(Plugin self, const unsigned int numInputs, const unsigned int numOutputs);
+
+/**
  * Get the VST2.x unique ID
  * @param self
  * @return Unique ID, or 0 if not known (yes, this can happen)

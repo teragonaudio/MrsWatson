@@ -124,6 +124,7 @@ typedef struct {
   CharString pluginName;
   CharString pluginLocation;
   CharString pluginAbsolutePath;
+  SampleBuffer processingBuffer;
 
   PluginOpenFunc openPlugin;
   PluginDisplayInfoFunc displayInfo;
