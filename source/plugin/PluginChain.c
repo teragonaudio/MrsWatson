@@ -53,7 +53,9 @@ boolByte pluginChainAppend(PluginChain self, Plugin plugin, PluginPreset preset)
     logError("Could not add plugin '%s', maximum number reached", plugin->pluginName->data);
     return false;
   }
-  else {
+  else if(!openPlugin(plugin)) {
+      return false;
+  } else {
     self->plugins[self->numPlugins] = plugin;
     self->presets[self->numPlugins] = preset;
     self->audioTimers[self->numPlugins] = newTaskTimer(plugin->pluginName, "Audio Processing");
@@ -161,8 +163,7 @@ ReturnCodes pluginChainInitialize(PluginChain pluginChain) {
 
   for(i = 0; i < pluginChain->numPlugins; i++) {
     plugin = pluginChain->plugins[i];
-    if(!plugin->openPlugin(plugin)) {
-      logError("Plugin '%s' could not be opened", plugin->pluginName->data);
+    if(!openPlugin(plugin)) {
       return RETURN_CODE_PLUGIN_ERROR;
     }
     else {
@@ -269,28 +270,21 @@ boolByte pluginChainSetParameters(PluginChain self, const LinkedList parameters)
 
 void pluginChainProcessAudio(PluginChain pluginChain, SampleBuffer inBuffer, SampleBuffer outBuffer) {
   Plugin plugin;
-  unsigned int pluginInputs, pluginOutputs;
   unsigned int i;
   double processingTimeInMs;
   const double maxProcessingTimeInMs = inBuffer->blocksize * 1000.0 / getSampleRate();
 
+  SampleBuffer formerOutputBuffer = inBuffer;
+  SampleBuffer nextInputBuffer = NULL;
   for(i = 0; i < pluginChain->numPlugins; i++) {
-    sampleBufferClear(outBuffer);
-
     plugin = pluginChain->plugins[i];
     logDebug("Processing audio with plugin '%s'", plugin->pluginName->data);
-    pluginInputs = plugin->getSetting(plugin, PLUGIN_NUM_INPUTS);
-    if(inBuffer->numChannels < pluginInputs) {
-      logDebug("Expanding input source from %d -> %d channels", inBuffer->numChannels, pluginInputs);
-      sampleBufferResize(inBuffer, pluginInputs, true);
-    }
-    pluginOutputs = plugin->getSetting(plugin, PLUGIN_NUM_OUTPUTS);
-    if(outBuffer->numChannels < pluginOutputs) {
-      logDebug("Expanding output source from %d -> %d channels", outBuffer->numChannels, pluginOutputs);
-      sampleBufferResize(outBuffer, pluginOutputs, false);
-    }
+    nextInputBuffer = plugin->inputBuffer;
+    nextInputBuffer->blocksize = formerOutputBuffer->blocksize;
+    sampleBufferCopyAndMapChannels(nextInputBuffer, formerOutputBuffer);
+    plugin->outputBuffer->blocksize = plugin->inputBuffer->blocksize;
     taskTimerStart(pluginChain->audioTimers[i]);
-    plugin->processAudio(plugin, inBuffer, outBuffer);
+    plugin->processAudio(plugin, plugin->inputBuffer, plugin->outputBuffer);
     processingTimeInMs = taskTimerStop(pluginChain->audioTimers[i]);
     if(processingTimeInMs > maxProcessingTimeInMs) {
       logWarn("Possible dropout! Plugin '%s' spent %dms processing time (%dms max)",
@@ -302,12 +296,11 @@ void pluginChainProcessAudio(PluginChain pluginChain, SampleBuffer inBuffer, Sam
         (int)(processingTimeInMs / maxProcessingTimeInMs));
     }
     
-    // If this is not the last plugin in the chain, then copy the output of this plugin
-    // back to the input for the next one in the chain.
-    if(i + 1 < pluginChain->numPlugins) {
-      sampleBufferCopyAndMapChannels(inBuffer, outBuffer);
-    }
+    formerOutputBuffer = plugin->outputBuffer;
   }
+  nextInputBuffer = outBuffer;
+  nextInputBuffer->blocksize = formerOutputBuffer->blocksize;
+  sampleBufferCopyAndMapChannels(nextInputBuffer, formerOutputBuffer);
 }
 
 void pluginChainProcessMidi(PluginChain pluginChain, LinkedList midiEvents) {

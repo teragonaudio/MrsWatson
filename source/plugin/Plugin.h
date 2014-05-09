@@ -141,6 +141,8 @@ typedef struct {
   PluginPrepareForProcessingFunc prepareForProcessing;
   PluginCloseFunc closePlugin;
   FreePluginDataFunc freePluginData;
+  SampleBuffer inputBuffer;
+  SampleBuffer outputBuffer;
 
   void* extraData;
 } PluginMembers;
@@ -168,6 +170,18 @@ Plugin pluginFactory(const CharString pluginName, const CharString pluginRoot);
 void listAvailablePlugins(const CharString pluginRoot);
 
 /**
+ * Open a plugin.
+ * @param self
+ */
+boolByte openPlugin(Plugin self);
+
+/**
+ * Close a plugin.
+ * @param self
+ */
+boolByte closePlugin(Plugin self);
+
+  /**
  * Release a plugin and all of its associated resources. Note that the plugin
  * must be closed before this is called, or else resources will be leaked.
  * @param self

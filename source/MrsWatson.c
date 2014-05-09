@@ -229,7 +229,6 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   Plugin headPlugin;
   SampleBuffer inputSampleBuffer = NULL;
   SampleBuffer outputSampleBuffer = NULL;
-  SampleBuffer outputSampleBufferResized = NULL;
   TaskTimer initTimer, totalTimer, inputTimer, outputTimer = NULL;
   LinkedList taskTimerList = NULL;
   CharString totalTimeString = NULL;
@@ -508,8 +507,6 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
 
   inputSampleBuffer = newSampleBuffer(getNumChannels(), getBlocksize());
   inputTimer = newTaskTimerWithCString(PROGRAM_NAME, "Input Source");
-  // By default, the output buffer has the same channel count as the input buffer,
-  // but if a plugin requests a larger I/O configuration this buffer will be resized.
   outputSampleBuffer = newSampleBuffer(getNumChannels(), getBlocksize());
   outputTimer = newTaskTimerWithCString(PROGRAM_NAME, "Output Source");
 
@@ -577,20 +574,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
       }
       logDebug("Using buffer size of %d for final block", outputSampleBuffer->blocksize);
     }
-
-    // Before writing the output source, see if one of the plugins in the chain
-    // has expanded the channel count. If so, we need to allocate a new buffer
-    // which will hold only the channels needed.
-    if(outputSampleBuffer->numChannels > getNumChannels()) {
-      if(outputSampleBufferResized == NULL) {
-        outputSampleBufferResized = newSampleBuffer(getNumChannels(), getBlocksize());
-      }
-      sampleBufferCopyAndMapChannels(outputSampleBufferResized, outputSampleBuffer);
-      //outputSource->writeSampleBlock(outputSource, outputSampleBufferResized);
-    }
-    else {
-      outputSource->writeSampleBlock(outputSource, outputSampleBuffer);
-    }
+    outputSource->writeSampleBlock(outputSource, outputSampleBuffer);
     taskTimerStop(outputTimer);
     advanceAudioClock(audioClock, getBlocksize());
   }

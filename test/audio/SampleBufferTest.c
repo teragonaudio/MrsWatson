@@ -115,52 +115,6 @@ static int _testCopyAndMapChannelsSampleBuffersDifferentChannelsSmaller(void) {
   return 0;
 }
 
-static int _testResizeSampleBufferExpand(void) {
-  SampleBuffer s = _newMockSampleBuffer();
-  s->samples[0][0] = 1.0;
-  assert(sampleBufferResize(s, 2, false));
-  assertIntEquals(s->numChannels, 2);
-  assertDoubleEquals(s->samples[0][0], 1.0, TEST_FLOAT_TOLERANCE);
-  assertDoubleEquals(s->samples[1][0], 0.0, TEST_FLOAT_TOLERANCE);
-  freeSampleBuffer(s);
-  return 0;
-}
-
-static int _testResizeSampleBufferExpandCopy(void) {
-  SampleBuffer s = _newMockSampleBuffer();
-  s->samples[0][0] = 1.0;
-  assert(sampleBufferResize(s, 2, true));
-  assertIntEquals(s->numChannels, 2);
-  assertDoubleEquals(s->samples[0][0], 1.0, TEST_FLOAT_TOLERANCE);
-  assertDoubleEquals(s->samples[1][0], 1.0, TEST_FLOAT_TOLERANCE);
-  freeSampleBuffer(s);
-  return 0;
-}
-
-static int _testResizeSampleBufferShrink(void) {
-  SampleBuffer s = newSampleBuffer(2, 1);
-  s->samples[0][0] = 1.0;
-  assert(sampleBufferResize(s, 1, false));
-  assertIntEquals(s->numChannels, 1);
-  assertDoubleEquals(s->samples[0][0], 1.0, TEST_FLOAT_TOLERANCE);
-  freeSampleBuffer(s);
-  return 0;
-}
-
-static int _testResizeSampleBufferInvalidSize(void) {
-  SampleBuffer s = _newMockSampleBuffer();
-  assertFalse(sampleBufferResize(s, 0, true));
-  freeSampleBuffer(s);
-  return 0;  
-}
-
-static int _testResizeSampleBufferSameSize(void) {
-  SampleBuffer s = _newMockSampleBuffer();
-  assertFalse(sampleBufferResize(s, s->numChannels, true));
-  freeSampleBuffer(s);
-  return 0;  
-}
-
 static int _testFreeNullSampleBuffer(void) {
   freeSampleBuffer(NULL);
   return 0;
@@ -178,11 +132,6 @@ TestSuite addSampleBufferTests(void) {
   addTest(testSuite, "CopyAndMapChannelsSampleBuffersDifferentSizes",  _testCopyAndMapChannelsSampleBuffersDifferentBlocksizes);
   addTest(testSuite, "CopyAndMapChannelsSampleBuffersDifferentChannelsBigger",  _testCopyAndMapChannelsSampleBuffersDifferentChannelsBigger);
   addTest(testSuite, "CopyAndMapChannelsSampleBuffersDifferentChannelsSmaller",  _testCopyAndMapChannelsSampleBuffersDifferentChannelsSmaller);
-  addTest(testSuite, "ResizeSampleBufferExpand", _testResizeSampleBufferExpand);
-  addTest(testSuite, "ResizeSampleBufferExpandCopy", _testResizeSampleBufferExpandCopy);
-  addTest(testSuite, "ResizeSampleBufferShrink", _testResizeSampleBufferShrink);
-  addTest(testSuite, "ResizeSampleBufferInvalidSize", _testResizeSampleBufferInvalidSize);
-  addTest(testSuite, "ResizeSampleBufferSameSize", _testResizeSampleBufferSameSize);
   addTest(testSuite, "FreeNullSampleBuffer", _testFreeNullSampleBuffer);
   return testSuite;
 }
