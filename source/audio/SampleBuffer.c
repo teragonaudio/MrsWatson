@@ -37,10 +37,6 @@ SampleBuffer newSampleBuffer(unsigned int numChannels, unsigned long blocksize) 
   SampleBuffer sampleBuffer = NULL;
   unsigned int i;
 
-  if(numChannels <= 0) {
-    logError("Cannot create sample buffer with channel count %d", numChannels);
-    return NULL;
-  }
   if(blocksize <= 0) {
     logError("Cannot create sample buffer with blocksize %d", blocksize);
     return NULL;

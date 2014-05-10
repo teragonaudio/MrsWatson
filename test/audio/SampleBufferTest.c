@@ -14,13 +14,6 @@ static int _testNewSampleBuffer(void) {
   return 0;
 }
 
-static int _testNewSampleBufferInvalidNumChannels(void) {
-  SampleBuffer s = newSampleBuffer(0, 1);
-  assertIsNull(s);
-  freeSampleBuffer(s);
-  return 0;
-}
-
 static int _testNewSampleBufferInvalidSampleRate(void) {
   SampleBuffer s = newSampleBuffer(1, 0);
   assertIsNull(s);
@@ -124,7 +117,6 @@ TestSuite addSampleBufferTests(void);
 TestSuite addSampleBufferTests(void) {
   TestSuite testSuite = newTestSuite("SampleBuffer", NULL, NULL);
   addTest(testSuite, "NewObject", _testNewSampleBuffer);
-  addTest(testSuite, "NewSampleBufferInvalidNumChannels", _testNewSampleBufferInvalidNumChannels);
   addTest(testSuite, "NewSampleBufferSampleRate", _testNewSampleBufferInvalidSampleRate);
   addTest(testSuite, "NewSampleBufferMultichannel", _testNewSampleBufferMultichannel);
   addTest(testSuite, "ClearSampleBuffer", _testClearSampleBuffer);
