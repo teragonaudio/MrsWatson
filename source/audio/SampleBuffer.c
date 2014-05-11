@@ -89,7 +89,11 @@ boolByte sampleBufferCopyAndMapChannels(SampleBuffer self, const SampleBuffer bu
   // is 2 channels, then we copy the stereo pair to this channel (L R L R).
   else {
     for(i = 0; i < self->numChannels; i++) {
-      memcpy(self->samples[i], buffer->samples[i % buffer->numChannels], sizeof(Sample) * self->blocksize);
+      if(buffer->numChannels > 0) {
+        memcpy(self->samples[i], buffer->samples[i % buffer->numChannels], sizeof(Sample) * self->blocksize);
+      } else { // If the other buffer has zero channels just clear this buffer.
+        memset(self->samples[i], 0, sizeof(Sample) * self->blocksize);
+      }
     }
   }
 
