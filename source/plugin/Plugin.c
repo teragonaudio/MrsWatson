@@ -31,6 +31,7 @@
 
 #include "base/FileUtilities.h"
 #include "logging/EventLogger.h"
+#include "audio/AudioSettings.h"
 #include "plugin/Plugin.h"
 #include "plugin/PluginPassthru.h"
 #include "plugin/PluginVst2x.h"
@@ -123,6 +124,32 @@ in your MrsWatson so you can run plugins in your plugins!");
       logError("Could not find plugin type for '%s'", pluginName->data);
       return NULL;
   }
+}
+
+boolByte openPlugin(Plugin self) {
+  if(self == NULL) {
+    logError("There is no plugin to open");
+    return false;
+  }
+  if(!self->openPlugin(self)){
+    logError("Plugin '%s' could not be opened", self->pluginName->data);
+    return false;
+  }else{
+    self->inputBuffer = newSampleBuffer(self->getSetting(self, PLUGIN_NUM_INPUTS), getBlocksize());
+    self->outputBuffer = newSampleBuffer(self->getSetting(self, PLUGIN_NUM_OUTPUTS), getBlocksize());
+  }
+  return true;
+}
+
+boolByte closePlugin(Plugin self){
+  if(self == NULL) {
+    logError("There is no plugin to open");
+    return false;
+  }
+  self->closePlugin(self);
+  freeSampleBuffer(self->inputBuffer);
+  freeSampleBuffer(self->outputBuffer);
+  return true;
 }
 
 void freePlugin(Plugin self) {

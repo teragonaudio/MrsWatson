@@ -48,7 +48,7 @@ static int _testAppendMultipleItemsToList(void) {
   assertNotNull(l->item);
   assertCharStringEquals(((CharString)l->item), TEST_ITEM_STRING);
   assertNotNull(l->nextItem);
-  i = l->nextItem;
+  i = (LinkedListIterator)(l->nextItem);
   assertNotNull(i->item);
   assertCharStringEquals(((CharString)i->item), OTHER_TEST_ITEM_STRING);
   assertIsNull(i->nextItem);
@@ -131,35 +131,6 @@ static int _testLinkedListWithEmptyList(void) {
   return 0;
 }
 
-static int _testLinkedListToArray(void) {
-  LinkedList l = newLinkedList();
-  CharString* arr;
-
-  appendItemToList(l, newCharStringWithCString("one"));
-  appendItemToList(l, newCharStringWithCString("two"));
-  arr = (CharString*)linkedListToArray(l);
-  assertNotNull(arr);
-  assertCharStringEquals((CharString)arr[0], "one");
-  assertCharStringEquals((CharString)arr[1], "two");
-  assertIsNull(arr[2]);
-
-  return 0;
-}
-
-static int _testLinkedListToArrayWithNull(void) {
-  CharString** arr;
-  arr = (CharString**)linkedListToArray(NULL);
-  assertIsNull(arr);
-  return 0;
-}
-
-static int _testLinkedListWithEmptyList(void) {
-  CharString** arr;
-  LinkedList l = newLinkedList();
-  arr = (CharString**)linkedListToArray(l);
-  assertIsNull(arr);
-  return 0;
-}
 
 static void _linkedListEmptyCallback(void* item, void* userData) {
   _gNumForeachCallbacksMade++;
@@ -216,11 +187,6 @@ static int _testForeachOverUserData(void) {
   assert(_gForeachCallbackOk);
 
   freeLinkedListAndItems(l, (LinkedListFreeItemFunc)freeCharString);
-  return 0;
-}
-
-static int _testFreeNullLinkedList(void) {
-  freeLinkedList(NULL);
   return 0;
 }
 

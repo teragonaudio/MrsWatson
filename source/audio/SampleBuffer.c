@@ -37,10 +37,6 @@ SampleBuffer newSampleBuffer(unsigned int numChannels, unsigned long blocksize) 
   SampleBuffer sampleBuffer = NULL;
   unsigned int i;
 
-  if(numChannels <= 0) {
-    logError("Cannot create sample buffer with channel count %d", numChannels);
-    return NULL;
-  }
   if(blocksize <= 0) {
     logError("Cannot create sample buffer with blocksize %d", blocksize);
     return NULL;
@@ -66,47 +62,18 @@ void sampleBufferClear(SampleBuffer self) {
   }
 }
 
-boolByte sampleBufferResize(SampleBuffer self, const unsigned int numChannels, boolByte copy) {
-  unsigned int i;
-
-  if(numChannels == self->numChannels || numChannels == 0) {
-    return false;
-  }
-  else if(numChannels < self->numChannels) {
-    for(i = self->numChannels - 1; i >= numChannels; i--) {
-      free(self->samples[i]);
-    }
-    self->numChannels = numChannels;
-    return true;
-  }
-  else if(numChannels > self->numChannels) {
-    self->samples = (Samples*)realloc(self->samples, sizeof(Samples) * numChannels);
-    for(i = self->numChannels; i < numChannels; i++) {
-      self->samples[i] = (Samples)malloc(sizeof(Sample) * self->blocksize);
-      if(copy) {
-        memcpy(self->samples[i], self->samples[0], sizeof(Sample) * self->blocksize);
-      }
-      else {
-        memset(self->samples[i], 0, sizeof(Sample) * self->blocksize);
-      }
-    }
-    self->numChannels = numChannels;
-    return true;
-  }
-  else {
-    // Invalid state, probably shouldn't happen...
-  }
-
-  return false;
-}
-
-boolByte sampleBufferCopy(SampleBuffer self, const SampleBuffer buffer) {
+boolByte sampleBufferCopyAndMapChannels(SampleBuffer self, const SampleBuffer buffer) {
   unsigned int i;
 
   // Definitely not supported, otherwise it would be hard to deal with partial
   // copies and so forth.
   if(self->blocksize != buffer->blocksize) {
+    logInternalError("Source and destination buffer are not the same size");
     return false;
+  }
+
+  if(buffer->numChannels != self->numChannels) {
+    logDebug("Mapping channels from %d -> %d", buffer->numChannels, self->numChannels);
   }
 
   // If the other buffer is bigger (or the same size) as this buffer, then only
@@ -122,7 +89,11 @@ boolByte sampleBufferCopy(SampleBuffer self, const SampleBuffer buffer) {
   // is 2 channels, then we copy the stereo pair to this channel (L R L R).
   else {
     for(i = 0; i < self->numChannels; i++) {
-      memcpy(self->samples[i], buffer->samples[i % buffer->numChannels], sizeof(Sample) * self->blocksize);
+      if(buffer->numChannels > 0) {
+        memcpy(self->samples[i], buffer->samples[i % buffer->numChannels], sizeof(Sample) * self->blocksize);
+      } else { // If the other buffer has zero channels just clear this buffer.
+        memset(self->samples[i], 0, sizeof(Sample) * self->blocksize);
+      }
     }
   }
 

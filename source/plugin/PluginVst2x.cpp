@@ -276,6 +276,46 @@ static void _suspendPlugin(Plugin plugin) {
   data->dispatcher(data->pluginHandle, effStopProcess, 0, 0, NULL, 0.0f);
 }
 
+static void _setSpeakers(struct VstSpeakerArrangement * speakerArrangement, int channels){
+  memset(speakerArrangement, 0, sizeof(speakerArrangement));
+  speakerArrangement->numChannels = channels;
+  switch (speakerArrangement->numChannels)
+  {
+  case 1:
+    speakerArrangement->type = kSpeakerArrMono;
+    break;
+  case 2:
+    speakerArrangement->type = kSpeakerArrStereo;
+    break;
+  case 3:
+    speakerArrangement->type = kSpeakerArr30Music;
+    break;
+  case 4:
+    speakerArrangement->type = kSpeakerArr40Music;
+    break;
+  case 5:
+    speakerArrangement->type = kSpeakerArr50;
+    break;
+  case 6:
+    speakerArrangement->type = kSpeakerArr60Music;
+    break;
+  case 7:
+    speakerArrangement->type = kSpeakerArr70Music;
+    break;
+  case 8:
+    speakerArrangement->type = kSpeakerArr80Music;
+    break;
+  }
+  for(int i = 0; i < speakerArrangement->numChannels; i++) {
+    speakerArrangement->speakers[i].azimuth = 0.0f;
+    speakerArrangement->speakers[i].elevation = 0.0f;
+    speakerArrangement->speakers[i].radius = 0.0f;
+    speakerArrangement->speakers[i].reserved = 0.0f;
+    speakerArrangement->speakers[i].name[0] = '\0';
+    speakerArrangement->speakers[i].type = kSpeakerUndefined;
+  }
+}
+
 static boolByte _initVst2xPlugin(Plugin plugin) {
   PluginVst2xData data = (PluginVst2xData)plugin->extraData;
   PluginVst2xId subpluginId;
@@ -299,19 +339,9 @@ static boolByte _initVst2xPlugin(Plugin plugin) {
   data->dispatcher(data->pluginHandle, effSetSampleRate, 0, 0, NULL, (float)getSampleRate());
   data->dispatcher(data->pluginHandle, effSetBlockSize, 0, getBlocksize(), NULL, 0.0f);
   struct VstSpeakerArrangement inSpeakers;
-  memset(&inSpeakers, 0, sizeof(inSpeakers));
-  inSpeakers.type = (getNumChannels() == 1) ? kSpeakerArrMono : kSpeakerArrStereo;
-  inSpeakers.numChannels = getNumChannels();
-  for(int i = 0; i < inSpeakers.numChannels; i++) {
-    inSpeakers.speakers[i].azimuth = 0.0f;
-    inSpeakers.speakers[i].elevation = 0.0f;
-    inSpeakers.speakers[i].radius = 0.0f;
-    inSpeakers.speakers[i].reserved = 0.0f;
-    inSpeakers.speakers[i].name[0] = '\0';
-    inSpeakers.speakers[i].type = kSpeakerUndefined;
-  }
+  _setSpeakers(&inSpeakers, data->pluginHandle->numInputs);
   struct VstSpeakerArrangement outSpeakers;
-  memcpy(&outSpeakers, &inSpeakers, sizeof(VstSpeakerArrangement));
+  _setSpeakers(&outSpeakers, data->pluginHandle->numOutputs);
   data->dispatcher(data->pluginHandle, effSetSpeakerArrangement, 0, (VstIntPtr)&inSpeakers, &outSpeakers, 0.0f);
 
   return true;
