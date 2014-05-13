@@ -100,6 +100,13 @@ void pluginChainInspect(PluginChain self);
  */
 int pluginChainGetMaximumTailTimeInMs(PluginChain self);
 
+/**
+ * Get the total processing delay in frames.
+ * @param self
+ * @return Total processing delay, in frames.
+ */
+unsigned long pluginChainGetProcessingDelay(PluginChain self);
+
 boolByte pluginChainSetParameters(PluginChain self, const LinkedList parameters);
 
 /**

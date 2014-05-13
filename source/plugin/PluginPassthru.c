@@ -61,6 +61,8 @@ static int _pluginPassthruGetSetting(void* pluginPtr, PluginSetting pluginSettin
       return 2;
     case PLUGIN_NUM_OUTPUTS:
       return 2;
+    case PLUGIN_INITIAL_DELAY:
+      return 0;
     default:
       return 0;
   }
