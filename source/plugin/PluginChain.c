@@ -33,16 +33,20 @@
 #include "plugin/PluginChain.h"
 #include "audio/AudioSettings.h"
 
-PluginChain newPluginChain(void) {
-  PluginChain pluginChain = (PluginChain)malloc(sizeof(PluginChainMembers));
+PluginChain pluginChainInstance = NULL;
 
-  pluginChain->numPlugins = 0;
-  pluginChain->plugins = (Plugin*)malloc(sizeof(Plugin) * MAX_PLUGINS);
-  pluginChain->presets = (PluginPreset*)malloc(sizeof(PluginPreset) * MAX_PLUGINS);
-  pluginChain->audioTimers = (TaskTimer*)malloc(sizeof(TaskTimer) * MAX_PLUGINS);
-  pluginChain->midiTimers = (TaskTimer*)malloc(sizeof(TaskTimer) * MAX_PLUGINS);
+PluginChain getPluginChain(void) {
+  return pluginChainInstance;
+}
 
-  return pluginChain;
+void initPluginChain(void) {
+  pluginChainInstance = (PluginChain)malloc(sizeof(PluginChainMembers));
+
+  pluginChainInstance->numPlugins = 0;
+  pluginChainInstance->plugins = (Plugin*)malloc(sizeof(Plugin) * MAX_PLUGINS);
+  pluginChainInstance->presets = (PluginPreset*)malloc(sizeof(PluginPreset) * MAX_PLUGINS);
+  pluginChainInstance->audioTimers = (TaskTimer*)malloc(sizeof(TaskTimer) * MAX_PLUGINS);
+  pluginChainInstance->midiTimers = (TaskTimer*)malloc(sizeof(TaskTimer) * MAX_PLUGINS);
 }
 
 boolByte pluginChainAppend(PluginChain self, Plugin plugin, PluginPreset preset) {

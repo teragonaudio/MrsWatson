@@ -215,7 +215,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   SampleSource inputSource = NULL;
   SampleSource outputSource = NULL;
   AudioClock audioClock;
-  PluginChain pluginChain = newPluginChain();
+  PluginChain pluginChain;
   CharString pluginSearchRoot = newCharString();
   boolByte shouldDisplayPluginInfo = false;
   MidiSequence midiSequence = NULL;
@@ -246,6 +246,8 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   initAudioSettings();
   initAudioClock();
   audioClock = getAudioClock();
+  initPluginChain();
+  pluginChain = getPluginChain();
   programOptions = newMrsWatsonOptions();
   inputSource = sampleSourceFactory(NULL);
 

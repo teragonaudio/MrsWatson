@@ -7,69 +7,72 @@
 #include "audio/AudioSettings.h"
 #include "midi/MidiEvent.h"
 
-static int _testNewPluginChain(void) {
-  PluginChain p = newPluginChain();
+static void _pluginChainTestSetup(void) {
+  initPluginChain();
+}
+
+static void _pluginChainTestTeardown(void) {
+  freePluginChain(getPluginChain());
+}
+
+static int _testInitPluginChain(void) {
+  PluginChain p = getPluginChain();
   assertIntEquals(p->numPlugins, 0);
   assertNotNull(p->plugins);
   assertNotNull(p->presets);
-  freePluginChain(p);
   return 0;
 }
 
 static int _testAddFromArgumentStringNull(void) {
-  PluginChain p = newPluginChain();
+  PluginChain p = getPluginChain();
   CharString c = newCharStringWithCString("/");
 
   assertFalse(pluginChainAddFromArgumentString(p, NULL, c));
   assertIntEquals(p->numPlugins, 0);
 
-  freePluginChain(p);
   freeCharString(c);
   return 0;
 }
 
 static int _testAddFromArgumentStringEmpty(void) {
-  PluginChain p = newPluginChain();
+  PluginChain p = getPluginChain();
   CharString c = newCharStringWithCString("/");
   CharString empty = newCharString();
 
   assertFalse(pluginChainAddFromArgumentString(p, empty, c));
   assertIntEquals(p->numPlugins, 0);
 
-  freePluginChain(p);
   freeCharString(c);
   freeCharString(empty);
   return 0;
 }
 
 static int _testAddFromArgumentStringEmptyLocation(void) {
-  PluginChain p = newPluginChain();
+  PluginChain p = getPluginChain();
   CharString c = newCharStringWithCString(kInternalPluginPassthruName);
   CharString empty = newCharString();
 
   assert(pluginChainAddFromArgumentString(p, c, empty));
   assertIntEquals(p->numPlugins, 1);
 
-  freePluginChain(p);
   freeCharString(c);
   freeCharString(empty);
   return 0;
 }
 
 static int _testAddFromArgumentStringNullLocation(void) {
-  PluginChain p = newPluginChain();
+  PluginChain p = getPluginChain();
   CharString c = newCharStringWithCString(kInternalPluginPassthruName);
 
   assert(pluginChainAddFromArgumentString(p, c, NULL));
   assertIntEquals(p->numPlugins, 1);
 
-  freePluginChain(p);
   freeCharString(c);
   return 0;
 }
 
 static int _testAddFromArgumentString(void) {
-  PluginChain p = newPluginChain();
+  PluginChain p = getPluginChain();
   CharString testArgs = newCharStringWithCString(kInternalPluginPassthruName);
 
   assert(pluginChainAddFromArgumentString(p, testArgs, NULL));
@@ -78,13 +81,12 @@ static int _testAddFromArgumentString(void) {
   assertIntEquals(p->plugins[0]->pluginType, PLUGIN_TYPE_INTERNAL);
   assertCharStringEquals(p->plugins[0]->pluginName, kInternalPluginPassthruName);
 
-  freePluginChain(p);
   freeCharString(testArgs);
   return 0;
 }
 
 static int _testAddFromArgumentStringMultiple(void) {
-  PluginChain p = newPluginChain();
+  PluginChain p = getPluginChain();
   CharString testArgs = newCharStringWithCString(kInternalPluginPassthruName);
   unsigned int i;
 
@@ -97,13 +99,12 @@ static int _testAddFromArgumentStringMultiple(void) {
     assertCharStringEquals(p->plugins[i]->pluginName, kInternalPluginPassthruName);
   }
 
-  freePluginChain(p);
   freeCharString(testArgs);
   return 0;
 }
 
 static int _testAddPluginWithPresetFromArgumentString(void) {
-  PluginChain p = newPluginChain();
+  PluginChain p = getPluginChain();
   CharString testArgs = newCharStringWithCString("mrs_passthru,testPreset.fxp");
 
   assert(pluginChainAddFromArgumentString(p, testArgs, NULL));
@@ -113,13 +114,12 @@ static int _testAddPluginWithPresetFromArgumentString(void) {
   assertNotNull(p->presets[0]);
   assertCharStringEquals(p->presets[0]->presetName, "testPreset.fxp");
 
-  freePluginChain(p);
   freeCharString(testArgs);
   return 0;
 }
 
 static int _testAddFromArgumentStringWithPresetSpaces(void) {
-  PluginChain p = newPluginChain();
+  PluginChain p = getPluginChain();
   CharString testArgs = newCharStringWithCString("mrs_passthru,test preset.fxp");
 
   assert(pluginChainAddFromArgumentString(p, testArgs, NULL));
@@ -129,44 +129,40 @@ static int _testAddFromArgumentStringWithPresetSpaces(void) {
   assertNotNull(p->presets[0]);
   assertCharStringEquals(p->presets[0]->presetName, "test preset.fxp");
 
-  freePluginChain(p);
   freeCharString(testArgs);
   return 0;
 }
 
 static int _testAppendPlugin(void) {
   Plugin mock = newPluginMock();
-  PluginChain p = newPluginChain();
+  PluginChain p = getPluginChain();
 
   assert(pluginChainAppend(p, mock, NULL));
 
-  freePluginChain(p);
   return 0;
 }
 
 static int _testAppendWithNullPlugin(void) {
-  PluginChain p = newPluginChain();
+  PluginChain p = getPluginChain();
 
   assertFalse(pluginChainAppend(p, NULL, NULL));
 
-  freePluginChain(p);
   return 0;  
 }
 
 static int _testAppendWithPreset(void) {
   Plugin mock = newPluginMock();
-  PluginChain p = newPluginChain();
+  PluginChain p = getPluginChain();
   PluginPreset mockPreset = newPluginPresetMock();
 
   assert(pluginChainAppend(p, mock, mockPreset));
 
-  freePluginChain(p);
   return 0;  
 }
 
 static int _testInitializePluginChain(void) {
   Plugin mock = newPluginMock();
-  PluginChain p = newPluginChain();
+  PluginChain p = getPluginChain();
   PluginPreset mockPreset = newPluginPresetMock();
 
   assert(pluginChainAppend(p, mock, mockPreset));
@@ -175,39 +171,36 @@ static int _testInitializePluginChain(void) {
   assert(((PluginPresetMockData)mockPreset->extraData)->isOpen);
   assert(((PluginPresetMockData)mockPreset->extraData)->isLoaded);
 
-  freePluginChain(p);
   return 0;
 }
 
 static int _testGetMaximumTailTime(void) {
   Plugin mock = newPluginMock();
-  PluginChain p = newPluginChain();
+  PluginChain p = getPluginChain();
   int maxTailTime = 0;
 
   assert(pluginChainAppend(p, mock, NULL));
   maxTailTime = pluginChainGetMaximumTailTimeInMs(p);
   assertIntEquals(maxTailTime, kPluginMockTailTime);
 
-  freePluginChain(p);
   return 0;
 }
 
 static int _testPrepareForProcessing(void) {
   Plugin mock = newPluginMock();
-  PluginChain p = newPluginChain();
+  PluginChain p = getPluginChain();
 
   assert(pluginChainAppend(p, mock, NULL));
   assertIntEquals(pluginChainInitialize(p), RETURN_CODE_SUCCESS);
   pluginChainPrepareForProcessing(p);
   assert(((PluginMockData)mock->extraData)->isPrepared);
 
-  freePluginChain(p);
   return 0;  
 }
 
 static int _testProcessPluginChainAudio(void) {
   Plugin mock = newPluginMock();
-  PluginChain p = newPluginChain();
+  PluginChain p = getPluginChain();
   SampleBuffer inBuffer = newSampleBuffer(DEFAULT_NUM_CHANNELS, DEFAULT_BLOCKSIZE);
   SampleBuffer outBuffer = newSampleBuffer(DEFAULT_NUM_CHANNELS, DEFAULT_BLOCKSIZE);
 
@@ -215,7 +208,6 @@ static int _testProcessPluginChainAudio(void) {
   pluginChainProcessAudio(p, inBuffer, outBuffer);
   assert(((PluginMockData)mock->extraData)->processAudioCalled);
 
-  freePluginChain(p);
   freeSampleBuffer(inBuffer);
   freeSampleBuffer(outBuffer);
   return 0;
@@ -223,7 +215,7 @@ static int _testProcessPluginChainAudio(void) {
 
 static int _testProcessPluginChainMidiEvents(void) {
   Plugin mock = newPluginMock();
-  PluginChain p = newPluginChain();
+  PluginChain p = getPluginChain();
   SampleBuffer inBuffer = newSampleBuffer(DEFAULT_NUM_CHANNELS, DEFAULT_BLOCKSIZE);
   SampleBuffer outBuffer = newSampleBuffer(DEFAULT_NUM_CHANNELS, DEFAULT_BLOCKSIZE);
   LinkedList list = newLinkedList();
@@ -236,7 +228,6 @@ static int _testProcessPluginChainMidiEvents(void) {
 
   freeMidiEvent(midi);
   freeLinkedList(list);
-  freePluginChain(p);
   freeSampleBuffer(inBuffer);
   freeSampleBuffer(outBuffer);
   return 0;
@@ -244,21 +235,19 @@ static int _testProcessPluginChainMidiEvents(void) {
 
 static int _testShutdown(void) {
   Plugin mock = newPluginMock();
-  PluginChain p = newPluginChain();
+  PluginChain p = getPluginChain();
 
   assert(pluginChainAppend(p, mock, NULL));
   pluginChainShutdown(p);
   assertFalse(((PluginMockData)mock->extraData)->isOpen);
 
-  freePluginChain(p);
   return 0;
 }
 
 TestSuite addPluginChainTests(void);
 TestSuite addPluginChainTests(void) {
-  TestSuite testSuite = newTestSuite("PluginChain", NULL, NULL);
-  addTest(testSuite, "NewObject", _testNewPluginChain);
-
+  TestSuite testSuite = newTestSuite("PluginChain", _pluginChainTestSetup, _pluginChainTestTeardown);
+  addTest(testSuite, "Initialization", _testInitPluginChain);
   addTest(testSuite, "AddFromArgumentStringNull", _testAddFromArgumentStringNull);
   addTest(testSuite, "AddFromArgumentStringEmpty", _testAddFromArgumentStringEmpty);
   addTest(testSuite, "AddFromArgumentStringEmptyLocation", _testAddFromArgumentStringEmptyLocation);
