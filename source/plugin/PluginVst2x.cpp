@@ -510,7 +510,7 @@ static void _displayVst2xPluginInfo(void* pluginPtr) {
   else {
     nameBuffer = newCharStringWithCapacity(kCharStringLengthShort);
     logInfo("Parameters (%d total):", data->pluginHandle->numParams);
-    for(unsigned int i = 0; i < data->pluginHandle->numParams; i++) {
+    for(VstInt32 i = 0; i < data->pluginHandle->numParams; i++) {
       float value = data->pluginHandle->getParameter(data->pluginHandle, i);
       charStringClear(nameBuffer);
       data->dispatcher(data->pluginHandle, effGetParamName, i, 0, nameBuffer->data, 0.0f);
