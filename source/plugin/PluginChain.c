@@ -229,6 +229,16 @@ int pluginChainGetMaximumTailTimeInMs(PluginChain pluginChain) {
   return maxTailTime;
 }
 
+unsigned long pluginChainGetProcessingDelay(PluginChain self) {
+  unsigned long processingDelay = 0;
+  unsigned int i;
+  for(i = 0; i < self->numPlugins; i++) {
+    Plugin plugin = self->plugins[i];
+    processingDelay += plugin->getSetting(plugin, PLUGIN_INITIAL_DELAY);
+  }
+  return processingDelay;
+}
+
 typedef struct {
   Plugin plugin;
   boolByte success;

@@ -224,6 +224,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   unsigned long maxTimeInFrames = 0;
   unsigned long tailTimeInMs = 0;
   unsigned long tailTimeInFrames = 0;
+  unsigned long processingDelayInFrames;
   ProgramOptions programOptions;
   ProgramOption option;
   Plugin headPlugin;
@@ -520,6 +521,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
     maxTimeInFrames = (unsigned long)(maxTimeInMs * getSampleRate()) / 1000l;
   }
 
+  processingDelayInFrames = pluginChainGetProcessingDelay(pluginChain);
   // Get largest tail time requested by any plugin in the chain
   tailTimeInMs += pluginChainGetMaximumTailTimeInMs(pluginChain);
   tailTimeInFrames = (unsigned long)(tailTimeInMs * getSampleRate()) / 1000l;
@@ -532,6 +534,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   logDebug("Blocksize: %d", getBlocksize());
   logDebug("Channels: %d", getNumChannels());
   logDebug("Tempo: %.2f", getTempo());
+  logDebug("Processing delay frames: %lu", processingDelayInFrames);
   logDebug("Time signature: %d/%d", getTimeSignatureBeatsPerMeasure(), getTimeSignatureNoteValue());
   taskTimerStop(initTimer);
 
@@ -557,7 +560,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
     }
 
     pluginChainProcessAudio(pluginChain, inputSampleBuffer, outputSampleBuffer);
- 
+
     taskTimerStart(outputTimer);
     if(finishedReading) {
       logInfo("Finished processing input source");
