@@ -53,10 +53,17 @@ typedef struct {
 typedef PluginChainMembers* PluginChain;
 
 /**
- * Create a new PluginChain instance
- * @return PluginChain instance
+ * Get a reference to the global plugin chain instance.
+ * @return Reference to global plugin chain, or NULL if the global instance has
+ * not yet been initialized.
  */
-PluginChain newPluginChain(void);
+PluginChain getPluginChain(void);
+
+/**
+ * Initialize the global plugin chain instance. Should be called fairly
+ * early in the program initialization.
+ */
+void initPluginChain(void);
 
 /**
  * Append a plugin to the end of the chain
