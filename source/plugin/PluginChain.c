@@ -322,7 +322,7 @@ void pluginChainShutdown(PluginChain pluginChain) {
   for(i = 0; i < pluginChain->numPlugins; i++) {
     plugin = pluginChain->plugins[i];
     logInfo("Closing plugin '%s'", plugin->pluginName->data);
-    plugin->closePlugin(plugin);
+    closePlugin(plugin);
   }
 }
 
