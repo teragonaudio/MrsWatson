@@ -277,10 +277,19 @@ static void _suspendPlugin(Plugin plugin) {
 }
 
 static void _setSpeakers(struct VstSpeakerArrangement * speakerArrangement, int channels){
-  memset(speakerArrangement, 0, sizeof(speakerArrangement));
+  memset(speakerArrangement, 0, sizeof(struct VstSpeakerArrangement));
   speakerArrangement->numChannels = channels;
+  if(channels <= 8){
+    speakerArrangement->numChannels = channels;
+  }else{
+    logInfo("Number of channels = %d. Will only arrange 8 speakers.", channels);
+    speakerArrangement->numChannels = 8;
+  }
   switch (speakerArrangement->numChannels)
   {
+  case 0:
+    speakerArrangement->type = kSpeakerArrEmpty;
+    break;
   case 1:
     speakerArrangement->type = kSpeakerArrMono;
     break;
@@ -304,6 +313,9 @@ static void _setSpeakers(struct VstSpeakerArrangement * speakerArrangement, int 
     break;
   case 8:
     speakerArrangement->type = kSpeakerArr80Music;
+    break;
+  default:
+    logInternalError("Cannot arrange more than 8 speakers.");//The datastructure does not allow.
     break;
   }
   for(int i = 0; i < speakerArrangement->numChannels; i++) {
