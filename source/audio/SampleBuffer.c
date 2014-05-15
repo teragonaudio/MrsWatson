@@ -37,11 +37,6 @@ SampleBuffer newSampleBuffer(unsigned int numChannels, unsigned long blocksize) 
   SampleBuffer sampleBuffer = NULL;
   unsigned int i;
 
-  if(blocksize <= 0) {
-    logError("Cannot create sample buffer with blocksize %d", blocksize);
-    return NULL;
-  }
-
   sampleBuffer = (SampleBuffer)malloc(sizeof(SampleBufferMembers));
   sampleBuffer->numChannels = numChannels;
   sampleBuffer->blocksize = blocksize;
