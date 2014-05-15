@@ -314,7 +314,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   CharString totalTimeString = NULL;
   boolByte finishedReading = false;
   SampleSource silentSampleInput;
-  unsigned long stopFrame;
+  SampleSource silentSampleOutput;
   unsigned int i;
 
   initTimer = newTaskTimerWithCString(PROGRAM_NAME, "Initialization");
@@ -603,7 +603,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   processingDelayInFrames = pluginChainGetProcessingDelay(pluginChain);
   // Get largest tail time requested by any plugin in the chain
   tailTimeInMs += pluginChainGetMaximumTailTimeInMs(pluginChain);
-  tailTimeInFrames = (unsigned long)(tailTimeInMs * getSampleRate()) / 1000l;
+  tailTimeInFrames = (unsigned long)(tailTimeInMs * getSampleRate()) / 1000l + processingDelayInFrames;
   pluginChainPrepareForProcessing(pluginChain);
 
   // Update sample rate on the event logger
@@ -617,10 +617,12 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   logDebug("Time signature: %d/%d", getTimeSignatureBeatsPerMeasure(), getTimeSignatureNoteValue());
   taskTimerStop(initTimer);
 
+  silentSampleInput = sampleSourceFactory(NULL);
+  silentSampleOutput = sampleSourceFactory(NULL);
   // Main processing loop
   while(!finishedReading) {
     taskTimerStart(inputTimer);
-    finishedReading = !inputSource->readSampleBlock(inputSource, inputSampleBuffer);
+    finishedReading = !readInput(inputSource, silentSampleInput, inputSampleBuffer, tailTimeInFrames);
 
     // TODO: For streaming MIDI, we would need to read in events from source here
     if(midiSequence != NULL) {
@@ -642,47 +644,17 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
 
     taskTimerStart(outputTimer);
     if(finishedReading) {
-      logInfo("Finished processing input source");
-      // Tail time is given to process, but it will fill up this entire block.
-      // In this case, we re-extend the input buffer to the end of the block,
-      // and subtract that length from the total amount of tail time to process.
-      if(inputSampleBuffer->blocksize + (long)tailTimeInFrames > outputSampleBuffer->blocksize) {
-        tailTimeInFrames -= inputSampleBuffer->blocksize;
-        inputSampleBuffer->blocksize = outputSampleBuffer->blocksize;
-      }
-      // Otherwise re-adjust the blocksize of the output sample buffer to match
-      // the input's size and the tail time (if given).
-      else {
-        outputSampleBuffer->blocksize = inputSampleBuffer->blocksize + tailTimeInFrames;
-        inputSampleBuffer->blocksize += tailTimeInFrames;
-      }
+      outputSampleBuffer->blocksize = inputSampleBuffer->blocksize;//The input buffer size has been adjusted.
       logDebug("Using buffer size of %d for final block", outputSampleBuffer->blocksize);
     }
-    outputSource->writeSampleBlock(outputSource, outputSampleBuffer);
+    writeOutput(outputSource, silentSampleOutput, outputSampleBuffer, processingDelayInFrames);
     taskTimerStop(outputTimer);
-    advanceAudioClock(audioClock, getBlocksize());
-  }
-
-  // Process tail time
-  if(tailTimeInMs > 0) {
-    stopFrame = audioClock->currentFrame + tailTimeInFrames;
-    logInfo("Adding %d extra frames", stopFrame - audioClock->currentFrame);
-    silentSampleInput = sampleSourceFactory(NULL);
-    while(audioClock->currentFrame < stopFrame) {
-      taskTimerStart(inputTimer);
-      silentSampleInput->readSampleBlock(silentSampleInput, inputSampleBuffer);
-      taskTimerStop(inputTimer);
-
-      pluginChainProcessAudio(pluginChain, inputSampleBuffer, outputSampleBuffer);
-
-      taskTimerStart(outputTimer);
-      outputSource->writeSampleBlock(outputSource, outputSampleBuffer);
-      taskTimerStop(outputTimer);
-      advanceAudioClock(audioClock, getBlocksize());
-    }
+    advanceAudioClock(audioClock, outputSampleBuffer->blocksize);
   }
 
   // Close file handles for input/output sources
+  silentSampleInput->closeSampleSource(silentSampleInput);
+  silentSampleOutput->closeSampleSource(silentSampleOutput);
   inputSource->closeSampleSource(inputSource);
   outputSource->closeSampleSource(outputSource);
 
