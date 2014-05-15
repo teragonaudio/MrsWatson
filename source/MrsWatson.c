@@ -209,6 +209,85 @@ static void _processMidiMetaEvent(void* item, void* userData) {
   }
 }
 
+/**
+ *  Reads from inputSource.
+ *
+ * @param inputSource The SampleSource to read from.
+ * @param silenceSource The source from where to read silentTailFrames silent tail frames.
+ * @param buffer The SampleBuffer to which the samples will be written.
+ * @param silentTailFrames Number of silent samples that will be provided at the end of inputSource.
+ * @return True if there is more input to read.
+ */
+boolByte readInput(SampleSource inputSource, SampleSource silenceSource, SampleBuffer buffer, unsigned long silentTailFrames) {
+  unsigned long framesRead;
+  unsigned long bufferSize = buffer->blocksize;
+
+  inputSource->readSampleBlock(inputSource, buffer);
+  framesRead = buffer->blocksize; //buffer->blocksize tells how man bytes have been read from inputSource, during tail period it will be 0
+
+  //We are not done until framesRead < bufferSize and silenceSource->numSamplesProcessed/buffer->numChannels == silentTailFrames
+  if(framesRead == bufferSize) {
+    return true; // more input
+  } else if(framesRead < bufferSize) {
+    unsigned long remainingSilence = silentTailFrames - silenceSource->numSamplesProcessed/buffer->numChannels; // 0 < remainingSilence <= silentTailFrames
+    unsigned long numberOfFrames = remainingSilence < (bufferSize - framesRead) ? remainingSilence : (bufferSize - framesRead); // 0 < numberOfFrames <= bufferSize
+    SampleBuffer silenceBuffer = newSampleBuffer(buffer->numChannels, numberOfFrames);
+    if(!silenceSource->readSampleBlock(silenceSource, silenceBuffer)) {
+      logInternalError("SilentSource does not behave correct.");
+    }
+    buffer->blocksize = framesRead + numberOfFrames; // 0 < buffer->blocksize <= bufferSize.
+    sampleBufferCopyAndMapChannelsAdvanced(buffer, framesRead, silenceBuffer, 0, numberOfFrames);
+    freeSampleBuffer(silenceBuffer);
+    return silenceSource->numSamplesProcessed/buffer->numChannels != silentTailFrames;
+  } else {
+    logInternalError("framesRead > bufferSize");
+    return false; //stop here.
+  }
+}
+
+/**
+ *  Writes to outputSource.
+ *
+ * @param outputSource The SampleSource to write to.
+ * @param silenceSource The source from where to write skipHeadFrames frames.
+ * @param buffer The SampleBuffer with the samples to be written.
+ * @param skipHeadFrames Number of frames to ignore before writing to outputSource.
+ */
+void writeOutput(SampleSource outputSource, SampleSource silenceSource, SampleBuffer buffer, unsigned long skipHeadFrames) {
+  unsigned long framesSkiped = silenceSource->numSamplesProcessed / buffer->numChannels;
+  unsigned long framesProcessed = framesSkiped + outputSource->numSamplesProcessed / buffer->numChannels;
+  unsigned long nextBlockStart = framesProcessed + buffer->blocksize;
+
+  if(framesProcessed != getAudioClock()->currentFrame) {
+    logInternalError("framesProcessed (%lu) != getAudioClock()->currentFrame (%lu)", framesProcessed, getAudioClock()->currentFrame);
+  }
+  //Cut the delay at the start
+  if(        nextBlockStart <= skipHeadFrames ) {
+    // Cutting away the whole block. nothing is written to the outputSource
+    silenceSource->writeSampleBlock(silenceSource, buffer);
+  } else if(framesProcessed <  skipHeadFrames
+         &&                    skipHeadFrames < nextBlockStart) {
+    SampleBuffer sourceBuffer = newSampleBuffer(buffer->numChannels, buffer->blocksize);//blocksize < skipHeadFrames
+    unsigned long skippedFrames = skipHeadFrames - framesProcessed;
+    unsigned long soundFrames = nextBlockStart - skipHeadFrames;
+
+    // Cutting away start part of the block.
+    sourceBuffer->blocksize = skippedFrames;
+    sampleBufferCopyAndMapChannelsAdvanced(sourceBuffer, 0, buffer, 0, sourceBuffer->blocksize);
+    silenceSource->writeSampleBlock(silenceSource, sourceBuffer);
+
+    // Writing remaining end part of the block.
+    sourceBuffer->blocksize = soundFrames;
+    sampleBufferCopyAndMapChannelsAdvanced(sourceBuffer, 0, buffer, skippedFrames, sourceBuffer->blocksize);
+    outputSource->writeSampleBlock(outputSource, sourceBuffer);
+
+    freeSampleBuffer(sourceBuffer);
+  } else { //                  skipHeadFrames <=  framesProcessed
+    // Normal case: Nothing more to cut. The whole block shall be written.
+    outputSource->writeSampleBlock(outputSource, buffer);
+  }
+}
+
 int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   ReturnCodes result;
   // Input/Output sources, plugin chain, and other required objects
