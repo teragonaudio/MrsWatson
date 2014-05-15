@@ -82,9 +82,9 @@ size_t sampleSourcePcmRead(SampleSourcePcmData self, SampleBuffer sampleBuffer) 
     return 0;
   }
 
-  if(self->dataBufferNumItems == 0) {
+  if(self->dataBufferNumItems < (size_t)(sampleBuffer->numChannels * sampleBuffer->blocksize)) {
     self->dataBufferNumItems = (size_t)(sampleBuffer->numChannels * sampleBuffer->blocksize);
-    self->interlacedPcmDataBuffer = (short*)malloc(sizeof(short) * self->dataBufferNumItems);
+    self->interlacedPcmDataBuffer = (short*)realloc(self->interlacedPcmDataBuffer, sizeof(short) * self->dataBufferNumItems);
   }
 
   // Clear the PCM data buffer, or else the last block will have dirty samples in the end
@@ -120,9 +120,9 @@ size_t sampleSourcePcmWrite(SampleSourcePcmData self, const SampleBuffer sampleB
     return false;
   }
 
-  if(self->dataBufferNumItems == 0) {
+  if(self->dataBufferNumItems < (size_t)(sampleBuffer->numChannels * sampleBuffer->blocksize)) {
     self->dataBufferNumItems = (size_t)(sampleBuffer->numChannels * sampleBuffer->blocksize);
-    self->interlacedPcmDataBuffer = (short*)malloc(sizeof(short) * self->dataBufferNumItems);
+    self->interlacedPcmDataBuffer = (short*)realloc(self->interlacedPcmDataBuffer, sizeof(short) * self->dataBufferNumItems);
   }
 
   // Clear the PCM data buffer just to be safe
@@ -169,7 +169,10 @@ void sampleSourcePcmSetNumChannels(void* sampleSourcePtr, int numChannels) {
 
 void freeSampleSourceDataPcm(void* sampleSourceDataPtr) {
   SampleSourcePcmData extraData = (SampleSourcePcmData)sampleSourceDataPtr;
-  free(extraData->interlacedPcmDataBuffer);
+  if(extraData->interlacedPcmDataBuffer != NULL) {
+    free(extraData->interlacedPcmDataBuffer);
+    extraData->interlacedPcmDataBuffer = NULL;
+  }
   free(extraData);
 }
 
