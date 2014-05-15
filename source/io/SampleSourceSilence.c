@@ -30,9 +30,10 @@
 
 #include "audio/AudioSettings.h"
 #include "io/SampleSourceSilence.h"
+#include "logging/EventLogger.h"
 
 static boolByte _openSampleSourceSilence(void* sampleSourcePtr, const SampleSourceOpenAs openAs) {
-  SampleSource sampleSource = sampleSourcePtr;
+  SampleSource sampleSource = (SampleSource)sampleSourcePtr;
   sampleSource->openedAs = openAs;
   return true;
 }
@@ -41,11 +42,17 @@ static void _closeSampleSourceSilence(void* sampleSourcePtr) {
 }
 
 static boolByte _readBlockFromSilence(void* sampleSourcePtr, SampleBuffer sampleBuffer) {
+  unsigned long samplesRead = sampleBuffer->blocksize * sampleBuffer->numChannels;
   sampleBufferClear(sampleBuffer);
+  ((SampleSource)sampleSourcePtr)->numSamplesProcessed += sampleBuffer->blocksize * sampleBuffer->numChannels;
+  logDebug("Read %d samples from silence source", samplesRead);
   return true;
 }
 
 static boolByte _writeBlockToSilence(void* sampleSourcePtr, const SampleBuffer sampleBuffer) {
+  unsigned long samplesWritten = sampleBuffer->blocksize * sampleBuffer->numChannels;
+  ((SampleSource)sampleSourcePtr)->numSamplesProcessed += samplesWritten;
+  logDebug("Wrote %d samples to silence source", samplesWritten);
   return true;
 }
 
@@ -53,7 +60,7 @@ static void _freeInputSourceDataSilence(void* sampleSourceDataPtr) {
 }
 
 SampleSource newSampleSourceSilence(void) {
-  SampleSource sampleSource = malloc(sizeof(SampleSourceMembers));
+  SampleSource sampleSource = (SampleSource)malloc(sizeof(SampleSourceMembers));
 
   sampleSource->sampleSourceType = SAMPLE_SOURCE_TYPE_SILENCE;
   sampleSource->openedAs = SAMPLE_SOURCE_OPEN_NOT_OPENED;
