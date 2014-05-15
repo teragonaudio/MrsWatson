@@ -55,6 +55,17 @@ SampleBuffer newSampleBuffer(unsigned int numChannels, unsigned long blocksize);
 void sampleBufferClear(SampleBuffer self);
 
 /**
+ * Copy some samples from another buffer to this one
+ * @param destinationBuffer
+ * @param destinationOffset zero-based index of where to start in destinationBuffer.
+ * @param sourceBuffer Other buffer to copy from
+ * @param sourceOffset zero-based index of where to start in buffer.
+ * @param numberOfSamples number of samples to copy.
+ * @return True on success, false on failure
+ */
+boolByte sampleBufferCopyAndMapChannelsAdvanced(SampleBuffer destinationBuffer, unsigned long destinationOffset, const SampleBuffer sourceBuffer, unsigned long sourceOffset, unsigned long numberOfSamples);
+
+  /**
  * Copy all samples from another buffer to this one
  * @param self
  * @param buffer Other buffer to copy from
