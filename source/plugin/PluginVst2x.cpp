@@ -277,7 +277,7 @@ static void _suspendPlugin(Plugin plugin) {
 }
 
 static void _setSpeakers(struct VstSpeakerArrangement * speakerArrangement, int channels){
-  memset(speakerArrangement, 0, sizeof(speakerArrangement));
+  memset(speakerArrangement, 0, sizeof(struct VstSpeakerArrangement));
   speakerArrangement->numChannels = channels;
   switch (speakerArrangement->numChannels)
   {
@@ -304,6 +304,9 @@ static void _setSpeakers(struct VstSpeakerArrangement * speakerArrangement, int 
     break;
   case 8:
     speakerArrangement->type = kSpeakerArr80Music;
+    break;
+  default:
+    logInternalError("Cannot handle more than 8 speaker channels");
     break;
   }
   for(int i = 0; i < speakerArrangement->numChannels; i++) {
