@@ -37,11 +37,6 @@ SampleBuffer newSampleBuffer(unsigned int numChannels, unsigned long blocksize) 
   SampleBuffer sampleBuffer = NULL;
   unsigned int i;
 
-  if(blocksize <= 0) {
-    logError("Cannot create sample buffer with blocksize %d", blocksize);
-    return NULL;
-  }
-
   sampleBuffer = (SampleBuffer)malloc(sizeof(SampleBufferMembers));
   sampleBuffer->numChannels = numChannels;
   sampleBuffer->blocksize = blocksize;
@@ -62,42 +57,56 @@ void sampleBufferClear(SampleBuffer self) {
   }
 }
 
-boolByte sampleBufferCopyAndMapChannels(SampleBuffer self, const SampleBuffer buffer) {
+boolByte sampleBufferCopyAndMapChannelsWithOffset(SampleBuffer destinationBuffer, unsigned long destinationOffset, const SampleBuffer sourceBuffer, unsigned long sourceOffset, unsigned long numberOfFrames) {
   unsigned int i;
 
-  // Definitely not supported, otherwise it would be hard to deal with partial
-  // copies and so forth.
-  if(self->blocksize != buffer->blocksize) {
-    logInternalError("Source and destination buffer are not the same size");
+  // Definitely not supported.
+  if(destinationBuffer->blocksize < destinationOffset + numberOfFrames) {
+    logInternalError("Destination buffer size %d < %d", destinationBuffer->blocksize, destinationOffset + numberOfFrames);
+    return false;
+  }
+  // Definitely not supported.
+  if(sourceBuffer->blocksize < sourceOffset + numberOfFrames) {
+    logInternalError("Source buffer size %d < %d", sourceBuffer->blocksize, sourceOffset + numberOfFrames);
     return false;
   }
 
-  if(buffer->numChannels != self->numChannels) {
-    logDebug("Mapping channels from %d -> %d", buffer->numChannels, self->numChannels);
+  if(sourceBuffer->numChannels != destinationBuffer->numChannels) {
+    logDebug("Mapping channels from %d -> %d", sourceBuffer->numChannels, destinationBuffer->numChannels);
   }
 
   // If the other buffer is bigger (or the same size) as this buffer, then only
   // copy up to the channel count of this buffer. Any other data will be lost,
   // sorry about that!
-  if(buffer->numChannels >= self->numChannels) {
-    for(i = 0; i < self->numChannels; i++) {
-      memcpy(self->samples[i], buffer->samples[i], sizeof(Sample) * self->blocksize);
+  if(sourceBuffer->numChannels >= destinationBuffer->numChannels) {
+    for(i = 0; i < destinationBuffer->numChannels; i++) {
+      memcpy(destinationBuffer->samples[i] + destinationOffset, sourceBuffer->samples[i] + sourceOffset, sizeof(Sample) * numberOfFrames);
     }
   }
   // But if this buffer is bigger than the other buffer, then copy all channels
   // to this one. For example, if this buffer is 4 channels and the other buffer
   // is 2 channels, then we copy the stereo pair to this channel (L R L R).
   else {
-    for(i = 0; i < self->numChannels; i++) {
-      if(buffer->numChannels > 0) {
-        memcpy(self->samples[i], buffer->samples[i % buffer->numChannels], sizeof(Sample) * self->blocksize);
+    for(i = 0; i < destinationBuffer->numChannels; i++) {
+      if(sourceBuffer->numChannels > 0) {
+        memcpy(destinationBuffer->samples[i] + destinationOffset, sourceBuffer->samples[i % sourceBuffer->numChannels] + sourceOffset, sizeof(Sample) * numberOfFrames);
       } else { // If the other buffer has zero channels just clear this buffer.
-        memset(self->samples[i], 0, sizeof(Sample) * self->blocksize);
+        memset(destinationBuffer->samples[i] + destinationOffset, 0, sizeof(Sample) * numberOfFrames);
       }
     }
   }
 
   return true;
+}
+
+boolByte sampleBufferCopyAndMapChannels(SampleBuffer self, const SampleBuffer buffer) {
+  // Definitely not supported, otherwise it would be hard to deal with partial
+  // copies and so forth.
+  if(self->blocksize != buffer->blocksize) {
+    logInternalError("Source and destination buffer are not the same size");
+    return false;
+  }
+  return sampleBufferCopyAndMapChannelsWithOffset(self, 0, buffer, 0, self->blocksize);
 }
 
 void sampleBufferCopyPcmSamples(SampleBuffer self, const short* inPcmSamples) {

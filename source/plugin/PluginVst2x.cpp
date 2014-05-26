@@ -224,7 +224,7 @@ static CharString _getVst2xPluginLocation(const CharString pluginName, const Cha
     }
   }
 
-  // If the plugin wasn't found in the user's plugin root, then try searching 
+  // If the plugin wasn't found in the user's plugin root, then try searching
   // the default locations for the platform, starting with the current directory.
   LinkedList pluginLocations = getVst2xPluginLocations(getCurrentDirectory());
   if(pluginLocations->item == NULL) {
@@ -277,10 +277,19 @@ static void _suspendPlugin(Plugin plugin) {
 }
 
 static void _setSpeakers(struct VstSpeakerArrangement * speakerArrangement, int channels){
-  memset(speakerArrangement, 0, sizeof(speakerArrangement));
+  memset(speakerArrangement, 0, sizeof(struct VstSpeakerArrangement));
   speakerArrangement->numChannels = channels;
+  if(channels <= 8){
+    speakerArrangement->numChannels = channels;
+  }else{
+    logInfo("Number of channels = %d. Will only arrange 8 speakers.", channels);
+    speakerArrangement->numChannels = 8;
+  }
   switch (speakerArrangement->numChannels)
   {
+  case 0:
+    speakerArrangement->type = kSpeakerArrEmpty;
+    break;
   case 1:
     speakerArrangement->type = kSpeakerArrMono;
     break;
@@ -304,6 +313,9 @@ static void _setSpeakers(struct VstSpeakerArrangement * speakerArrangement, int 
     break;
   case 8:
     speakerArrangement->type = kSpeakerArr80Music;
+    break;
+  default:
+    logInternalError("Cannot arrange more than 8 speakers.");//The datastructure does not allow.
     break;
   }
   for(int i = 0; i < speakerArrangement->numChannels; i++) {
@@ -353,6 +365,20 @@ unsigned long pluginVst2xGetUniqueId(const Plugin self) {
     return data->pluginHandle->uniqueID;
   }
   return 0;
+}
+
+void pluginVst2xAudioMasterIOChanged(const Plugin self, AEffect const * const newValues) {
+  PluginVst2xData data = (PluginVst2xData)(self->extraData);
+  data->pluginHandle->initialDelay = newValues->initialDelay;
+  if(newValues->numInputs != data->pluginHandle->numInputs || newValues->numOutputs != data->pluginHandle->numOutputs) {
+    data->pluginHandle->numInputs = newValues->numInputs;
+    struct VstSpeakerArrangement inSpeakers;
+    _setSpeakers(&inSpeakers, data->pluginHandle->numInputs);
+    data->pluginHandle->numOutputs = newValues->numOutputs;
+    struct VstSpeakerArrangement outSpeakers;
+    _setSpeakers(&outSpeakers, data->pluginHandle->numOutputs);
+    data->dispatcher(data->pluginHandle, effSetSpeakerArrangement, 0, (VstIntPtr)&inSpeakers, &outSpeakers, 0.0f);
+  }
 }
 
 static boolByte _openVst2xPlugin(void* pluginPtr) {
@@ -489,6 +515,7 @@ static void _displayVst2xPluginInfo(void* pluginPtr) {
   }
   logInfo("Version: %d", data->pluginHandle->version);
   logInfo("I/O: %d/%d", data->pluginHandle->numInputs, data->pluginHandle->numOutputs);
+  logInfo("InitialDelay: %d frames", data->pluginHandle->initialDelay);
 
   if(data->isPluginShell && data->shellPluginId == 0) {
     logInfo("Sub-plugins:");
@@ -510,7 +537,7 @@ static void _displayVst2xPluginInfo(void* pluginPtr) {
   else {
     nameBuffer = newCharStringWithCapacity(kCharStringLengthShort);
     logInfo("Parameters (%d total):", data->pluginHandle->numParams);
-    for(unsigned int i = 0; i < data->pluginHandle->numParams; i++) {
+    for(VstInt32 i = 0; i < data->pluginHandle->numParams; i++) {
       float value = data->pluginHandle->getParameter(data->pluginHandle, i);
       charStringClear(nameBuffer);
       data->dispatcher(data->pluginHandle, effGetParamName, i, 0, nameBuffer->data, 0.0f);
@@ -571,6 +598,8 @@ static int _getVst2xPluginSetting(void* pluginPtr, PluginSetting pluginSetting) 
       return data->pluginHandle->numInputs;
     case PLUGIN_NUM_OUTPUTS:
       return data->pluginHandle->numOutputs;
+    case PLUGIN_INITIAL_DELAY:
+      return data->pluginHandle->initialDelay;
     default:
       logUnsupportedFeature("Plugin setting for VST2.x");
       return 0;

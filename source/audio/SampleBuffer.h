@@ -55,16 +55,17 @@ SampleBuffer newSampleBuffer(unsigned int numChannels, unsigned long blocksize);
 void sampleBufferClear(SampleBuffer self);
 
 /**
- * Expand or shrink the channel count of a sample buffer. Useful for copying
- * between stereo/mono and such.
- * @param self
- * @param numChannels New channel count
- * @param copy Clone data from channel 0 to new channels if expanding the SampleBuffer
+ * Copy some samples from another buffer to this one
+ * @param destinationBuffer
+ * @param destinationOffset zero-based index of where to start in destinationBuffer.
+ * @param sourceBuffer Other buffer to copy from
+ * @param sourceOffset zero-based index of where to start in buffer.
+ * @param numberOfFrames number of frames to copy.
  * @return True on success, false on failure
  */
-boolByte sampleBufferResize(SampleBuffer self, const unsigned int numChannels, boolByte copy);
+boolByte sampleBufferCopyAndMapChannelsWithOffset(SampleBuffer destinationBuffer, unsigned long destinationOffset, const SampleBuffer sourceBuffer, unsigned long sourceOffset, unsigned long numberOfFrames);
 
-/**
+  /**
  * Copy all samples from another buffer to this one
  * @param self
  * @param buffer Other buffer to copy from

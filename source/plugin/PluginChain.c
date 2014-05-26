@@ -33,16 +33,20 @@
 #include "plugin/PluginChain.h"
 #include "audio/AudioSettings.h"
 
-PluginChain newPluginChain(void) {
-  PluginChain pluginChain = (PluginChain)malloc(sizeof(PluginChainMembers));
+PluginChain pluginChainInstance = NULL;
 
-  pluginChain->numPlugins = 0;
-  pluginChain->plugins = (Plugin*)malloc(sizeof(Plugin) * MAX_PLUGINS);
-  pluginChain->presets = (PluginPreset*)malloc(sizeof(PluginPreset) * MAX_PLUGINS);
-  pluginChain->audioTimers = (TaskTimer*)malloc(sizeof(TaskTimer) * MAX_PLUGINS);
-  pluginChain->midiTimers = (TaskTimer*)malloc(sizeof(TaskTimer) * MAX_PLUGINS);
+PluginChain getPluginChain(void) {
+  return pluginChainInstance;
+}
 
-  return pluginChain;
+void initPluginChain(void) {
+  pluginChainInstance = (PluginChain)malloc(sizeof(PluginChainMembers));
+
+  pluginChainInstance->numPlugins = 0;
+  pluginChainInstance->plugins = (Plugin*)malloc(sizeof(Plugin) * MAX_PLUGINS);
+  pluginChainInstance->presets = (PluginPreset*)malloc(sizeof(PluginPreset) * MAX_PLUGINS);
+  pluginChainInstance->audioTimers = (TaskTimer*)malloc(sizeof(TaskTimer) * MAX_PLUGINS);
+  pluginChainInstance->midiTimers = (TaskTimer*)malloc(sizeof(TaskTimer) * MAX_PLUGINS);
 }
 
 boolByte pluginChainAppend(PluginChain self, Plugin plugin, PluginPreset preset) {
@@ -225,6 +229,16 @@ int pluginChainGetMaximumTailTimeInMs(PluginChain pluginChain) {
   return maxTailTime;
 }
 
+unsigned long pluginChainGetProcessingDelay(PluginChain self) {
+  unsigned long processingDelay = 0;
+  unsigned int i;
+  for(i = 0; i < self->numPlugins; i++) {
+    Plugin plugin = self->plugins[i];
+    processingDelay += plugin->getSetting(plugin, PLUGIN_INITIAL_DELAY);
+  }
+  return processingDelay;
+}
+
 typedef struct {
   Plugin plugin;
   boolByte success;
@@ -322,7 +336,7 @@ void pluginChainShutdown(PluginChain pluginChain) {
   for(i = 0; i < pluginChain->numPlugins; i++) {
     plugin = pluginChain->plugins[i];
     logInfo("Closing plugin '%s'", plugin->pluginName->data);
-    plugin->closePlugin(plugin);
+    closePlugin(plugin);
   }
 }
 

@@ -40,9 +40,12 @@ extern "C" {
 #include "audio/AudioSettings.h"
 #include "base/CharString.h"
 #include "logging/EventLogger.h"
+#include "plugin/PluginChain.h"
 #include "plugin/PluginVst2x.h"
 #include "plugin/PluginVst2xId.h"
 #include "time/AudioClock.h"
+
+void pluginVst2xAudioMasterIOChanged(const Plugin self, AEffect const * const newValues);
 }
 
 // Global variables (sigh, yes)
@@ -228,9 +231,22 @@ VstIntPtr VSTCALLBACK pluginVst2xHostCallback(AEffect *effect, VstInt32 opcode, 
     case audioMasterGetParameterQuantization:
       logDeprecated("audioMasterGetParameterQuantization", pluginIdString);
       break;
-    case audioMasterIOChanged:
-      logUnsupportedFeature("VST master opcode audioMasterIOChanged");
+    case audioMasterIOChanged: {
+      PluginChain pluginChain = getPluginChain();
+      logDebug("Number of inputs: %d", effect->numInputs);
+      logDebug("Number of outputs: %d", effect->numOutputs);
+      logDebug("Number of parameters: %d", effect->numParams);
+      logDebug("Initial Delay: %d", effect->initialDelay);
+      result = -1;
+      for(unsigned int i = 0; i < pluginChain->numPlugins; ++i){
+        if((unsigned long)effect->uniqueID == pluginVst2xGetUniqueId(pluginChain->plugins[i])){
+          logDebug("Updating plugin");
+          pluginVst2xAudioMasterIOChanged(pluginChain->plugins[i], effect);
+          result = 0;
+        }
+      }
       break;
+    }
     case audioMasterNeedIdle:
       logDeprecated("audioMasterNeedIdle", pluginIdString);
       break;

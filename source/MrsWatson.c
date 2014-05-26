@@ -209,13 +209,92 @@ static void _processMidiMetaEvent(void* item, void* userData) {
   }
 }
 
+/**
+ *  Reads from inputSource.
+ *
+ * @param inputSource The SampleSource to read from.
+ * @param silenceSource The source from where to read silentTailFrames silent tail frames.
+ * @param buffer The SampleBuffer to which the samples will be written.
+ * @param silentTailFrames Number of silent samples that will be provided at the end of inputSource.
+ * @return True if there is more input to read.
+ */
+boolByte readInput(SampleSource inputSource, SampleSource silenceSource, SampleBuffer buffer, unsigned long silentTailFrames) {
+  unsigned long framesRead;
+  unsigned long bufferSize = buffer->blocksize;
+
+  inputSource->readSampleBlock(inputSource, buffer);
+  framesRead = buffer->blocksize; //buffer->blocksize tells how man frames have been read from inputSource, during tail period it will be 0.
+
+  //We are not done until framesRead < bufferSize and silenceSource->numSamplesProcessed/buffer->numChannels == silentTailFrames
+  if(framesRead == bufferSize) {
+    return true; // more input
+  } else if(framesRead < bufferSize) {
+    unsigned long remainingSilence = silentTailFrames - silenceSource->numSamplesProcessed/buffer->numChannels; // 0 < remainingSilence <= silentTailFrames
+    unsigned long numberOfFrames = remainingSilence < (bufferSize - framesRead) ? remainingSilence : (bufferSize - framesRead); // 0 < numberOfFrames <= bufferSize
+    SampleBuffer silenceBuffer = newSampleBuffer(buffer->numChannels, numberOfFrames);
+    if(!silenceSource->readSampleBlock(silenceSource, silenceBuffer)) {
+      logInternalError("SilentSource does not behave correct.");
+    }
+    buffer->blocksize = framesRead + numberOfFrames; // 0 < buffer->blocksize <= bufferSize.
+    sampleBufferCopyAndMapChannelsWithOffset(buffer, framesRead, silenceBuffer, 0, numberOfFrames);
+    freeSampleBuffer(silenceBuffer);
+    return silenceSource->numSamplesProcessed/buffer->numChannels != silentTailFrames;
+  } else {
+    logInternalError("framesRead > bufferSize");
+    return false; //stop here.
+  }
+}
+
+/**
+ *  Writes to outputSource.
+ *
+ * @param outputSource The SampleSource to write to.
+ * @param silenceSource The source from where to write skipHeadFrames frames.
+ * @param buffer The SampleBuffer with the samples to be written.
+ * @param skipHeadFrames Number of frames to ignore before writing to outputSource.
+ */
+void writeOutput(SampleSource outputSource, SampleSource silenceSource, SampleBuffer buffer, unsigned long skipHeadFrames) {
+  unsigned long framesSkiped = silenceSource->numSamplesProcessed / buffer->numChannels;
+  unsigned long framesProcessed = framesSkiped + outputSource->numSamplesProcessed / buffer->numChannels;
+  unsigned long nextBlockStart = framesProcessed + buffer->blocksize;
+
+  if(framesProcessed != getAudioClock()->currentFrame) {
+    logInternalError("framesProcessed (%lu) != getAudioClock()->currentFrame (%lu)", framesProcessed, getAudioClock()->currentFrame);
+  }
+  //Cut the delay at the start
+  if(        nextBlockStart <= skipHeadFrames ) {
+    // Cutting away the whole block. nothing is written to the outputSource
+    silenceSource->writeSampleBlock(silenceSource, buffer);
+  } else if(framesProcessed <  skipHeadFrames
+         &&                    skipHeadFrames < nextBlockStart) {
+    SampleBuffer sourceBuffer = newSampleBuffer(buffer->numChannels, buffer->blocksize);//blocksize < skipHeadFrames
+    unsigned long skippedFrames = skipHeadFrames - framesProcessed;
+    unsigned long soundFrames = nextBlockStart - skipHeadFrames;
+
+    // Cutting away start part of the block.
+    sourceBuffer->blocksize = skippedFrames;
+    sampleBufferCopyAndMapChannelsWithOffset(sourceBuffer, 0, buffer, 0, sourceBuffer->blocksize);
+    silenceSource->writeSampleBlock(silenceSource, sourceBuffer);
+
+    // Writing remaining end part of the block.
+    sourceBuffer->blocksize = soundFrames;
+    sampleBufferCopyAndMapChannelsWithOffset(sourceBuffer, 0, buffer, skippedFrames, sourceBuffer->blocksize);
+    outputSource->writeSampleBlock(outputSource, sourceBuffer);
+
+    freeSampleBuffer(sourceBuffer);
+  } else { //                  skipHeadFrames <=  framesProcessed
+    // Normal case: Nothing more to cut. The whole block shall be written.
+    outputSource->writeSampleBlock(outputSource, buffer);
+  }
+}
+
 int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   ReturnCodes result;
   // Input/Output sources, plugin chain, and other required objects
   SampleSource inputSource = NULL;
   SampleSource outputSource = NULL;
   AudioClock audioClock;
-  PluginChain pluginChain = newPluginChain();
+  PluginChain pluginChain;
   CharString pluginSearchRoot = newCharString();
   boolByte shouldDisplayPluginInfo = false;
   MidiSequence midiSequence = NULL;
@@ -224,6 +303,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   unsigned long maxTimeInFrames = 0;
   unsigned long tailTimeInMs = 0;
   unsigned long tailTimeInFrames = 0;
+  unsigned long processingDelayInFrames;
   ProgramOptions programOptions;
   ProgramOption option;
   Plugin headPlugin;
@@ -234,7 +314,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   CharString totalTimeString = NULL;
   boolByte finishedReading = false;
   SampleSource silentSampleInput;
-  unsigned long stopFrame;
+  SampleSource silentSampleOutput;
   unsigned int i;
 
   initTimer = newTaskTimerWithCString(PROGRAM_NAME, "Initialization");
@@ -246,6 +326,8 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   initAudioSettings();
   initAudioClock();
   audioClock = getAudioClock();
+  initPluginChain();
+  pluginChain = getPluginChain();
   programOptions = newMrsWatsonOptions();
   inputSource = sampleSourceFactory(NULL);
 
@@ -518,9 +600,10 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
     maxTimeInFrames = (unsigned long)(maxTimeInMs * getSampleRate()) / 1000l;
   }
 
+  processingDelayInFrames = pluginChainGetProcessingDelay(pluginChain);
   // Get largest tail time requested by any plugin in the chain
   tailTimeInMs += pluginChainGetMaximumTailTimeInMs(pluginChain);
-  tailTimeInFrames = (unsigned long)(tailTimeInMs * getSampleRate()) / 1000l;
+  tailTimeInFrames = (unsigned long)(tailTimeInMs * getSampleRate()) / 1000l + processingDelayInFrames;
   pluginChainPrepareForProcessing(pluginChain);
 
   // Update sample rate on the event logger
@@ -530,13 +613,16 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   logDebug("Blocksize: %d", getBlocksize());
   logDebug("Channels: %d", getNumChannels());
   logDebug("Tempo: %.2f", getTempo());
+  logDebug("Processing delay frames: %lu", processingDelayInFrames);
   logDebug("Time signature: %d/%d", getTimeSignatureBeatsPerMeasure(), getTimeSignatureNoteValue());
   taskTimerStop(initTimer);
 
+  silentSampleInput = sampleSourceFactory(NULL);
+  silentSampleOutput = sampleSourceFactory(NULL);
   // Main processing loop
   while(!finishedReading) {
     taskTimerStart(inputTimer);
-    finishedReading = !inputSource->readSampleBlock(inputSource, inputSampleBuffer);
+    finishedReading = !readInput(inputSource, silentSampleInput, inputSampleBuffer, tailTimeInFrames);
 
     // TODO: For streaming MIDI, we would need to read in events from source here
     if(midiSequence != NULL) {
@@ -555,50 +641,20 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
     }
 
     pluginChainProcessAudio(pluginChain, inputSampleBuffer, outputSampleBuffer);
- 
+
     taskTimerStart(outputTimer);
     if(finishedReading) {
-      logInfo("Finished processing input source");
-      // Tail time is given to process, but it will fill up this entire block.
-      // In this case, we re-extend the input buffer to the end of the block,
-      // and subtract that length from the total amount of tail time to process.
-      if(inputSampleBuffer->blocksize + (long)tailTimeInFrames > outputSampleBuffer->blocksize) {
-        tailTimeInFrames -= inputSampleBuffer->blocksize;
-        inputSampleBuffer->blocksize = outputSampleBuffer->blocksize;
-      }
-      // Otherwise re-adjust the blocksize of the output sample buffer to match
-      // the input's size and the tail time (if given).
-      else {
-        outputSampleBuffer->blocksize = inputSampleBuffer->blocksize + tailTimeInFrames;
-        inputSampleBuffer->blocksize += tailTimeInFrames;
-      }
+      outputSampleBuffer->blocksize = inputSampleBuffer->blocksize;//The input buffer size has been adjusted.
       logDebug("Using buffer size of %d for final block", outputSampleBuffer->blocksize);
     }
-    outputSource->writeSampleBlock(outputSource, outputSampleBuffer);
+    writeOutput(outputSource, silentSampleOutput, outputSampleBuffer, processingDelayInFrames);
     taskTimerStop(outputTimer);
-    advanceAudioClock(audioClock, getBlocksize());
-  }
-
-  // Process tail time
-  if(tailTimeInMs > 0) {
-    stopFrame = audioClock->currentFrame + tailTimeInFrames;
-    logInfo("Adding %d extra frames", stopFrame - audioClock->currentFrame);
-    silentSampleInput = sampleSourceFactory(NULL);
-    while(audioClock->currentFrame < stopFrame) {
-      taskTimerStart(inputTimer);
-      silentSampleInput->readSampleBlock(silentSampleInput, inputSampleBuffer);
-      taskTimerStop(inputTimer);
-
-      pluginChainProcessAudio(pluginChain, inputSampleBuffer, outputSampleBuffer);
-
-      taskTimerStart(outputTimer);
-      outputSource->writeSampleBlock(outputSource, outputSampleBuffer);
-      taskTimerStop(outputTimer);
-      advanceAudioClock(audioClock, getBlocksize());
-    }
+    advanceAudioClock(audioClock, outputSampleBuffer->blocksize);
   }
 
   // Close file handles for input/output sources
+  silentSampleInput->closeSampleSource(silentSampleInput);
+  silentSampleOutput->closeSampleSource(silentSampleOutput);
   inputSource->closeSampleSource(inputSource);
   outputSource->closeSampleSource(outputSource);
 
