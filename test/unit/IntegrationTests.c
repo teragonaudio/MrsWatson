@@ -102,7 +102,14 @@ void runIntegrationTests(TestEnvironment environment)
     runIntegrationTest(environment, "Process with internal limiter",
                        buildTestArgumentString("--plugin mrs_limiter --input \"%s\"", a440_stereo_pcm),
                        RETURN_CODE_SUCCESS, kDefaultTestOutputFileType);
-
+    runIntegrationTest(environment, "Process with internal gain plugin",
+                       buildTestArgumentString("--plugin mrs_gain --parameter 0,0.5 --input \"%s\"", a440_stereo_pcm),
+                       RETURN_CODE_SUCCESS, kDefaultTestOutputFileType
+    );
+    runIntegrationTest(environment, "Process with internal gain plugin and invalid parameter",
+                       buildTestArgumentString("--plugin mrs_gain --parameter 1,0.5 --input \"%s\"", a440_stereo_pcm),
+                       RETURN_CODE_INVALID_ARGUMENT, NULL
+    );
     runIntegrationTest(environment, "Process with internal passthru plugin",
                        buildTestArgumentString("--plugin mrs_passthru --input \"%s\"", a440_stereo_pcm),
                        RETURN_CODE_SUCCESS, kDefaultTestOutputFileType
