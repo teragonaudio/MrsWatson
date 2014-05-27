@@ -243,6 +243,7 @@ VstIntPtr VSTCALLBACK pluginVst2xHostCallback(AEffect *effect, VstInt32 opcode, 
           logDebug("Updating plugin");
           pluginVst2xAudioMasterIOChanged(pluginChain->plugins[i], effect);
           result = 0;
+          break;//Only one plugin will match anyway.
         }
       }
       break;
