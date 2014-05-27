@@ -154,7 +154,7 @@ static boolByte _readWaveFileInfo(const char* filename, SampleSourcePcmData extr
 static boolByte _writeWaveFileInfo(SampleSourcePcmData extraData) {
   RiffChunk chunk = newRiffChunk();
   unsigned short audioFormat = 1;
-  unsigned short byteRate = (unsigned short)(extraData->sampleRate * extraData->numChannels * extraData->bitsPerSample / 8);
+  unsigned int byteRate = (unsigned int)(extraData->sampleRate * extraData->numChannels * extraData->bitsPerSample / 8);
   unsigned short blockAlign = extraData->numChannels * extraData->bitsPerSample / 8;
   unsigned int extraParams = 0;
 
