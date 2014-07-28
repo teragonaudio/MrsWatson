@@ -242,21 +242,23 @@ VstIntPtr VSTCALLBACK pluginVst2xHostCallback(AEffect *effect, VstInt32 opcode, 
       logDeprecated("audioMasterGetParameterQuantization", pluginIdString);
       break;
     case audioMasterIOChanged: {
-      PluginChain pluginChain = getPluginChain();
-      logDebug("Number of inputs: %d", effect->numInputs);
-      logDebug("Number of outputs: %d", effect->numOutputs);
-      logDebug("Number of parameters: %d", effect->numParams);
-      logDebug("Initial Delay: %d", effect->initialDelay);
-      result = -1;
-      for(unsigned int i = 0; i < pluginChain->numPlugins; ++i){
-        if((unsigned long)effect->uniqueID == pluginVst2xGetUniqueId(pluginChain->plugins[i])){
-          logDebug("Updating plugin");
-          pluginVst2xAudioMasterIOChanged(pluginChain->plugins[i], effect);
-          result = 0;
-          break;//Only one plugin will match anyway.
+      if(effect != NULL) {
+        PluginChain pluginChain = getPluginChain();
+        logDebug("Number of inputs: %d", effect->numInputs);
+        logDebug("Number of outputs: %d", effect->numOutputs);
+        logDebug("Number of parameters: %d", effect->numParams);
+        logDebug("Initial Delay: %d", effect->initialDelay);
+        result = -1;
+        for(unsigned int i = 0; i < pluginChain->numPlugins; ++i){
+          if((unsigned long)effect->uniqueID == pluginVst2xGetUniqueId(pluginChain->plugins[i])){
+            logDebug("Updating plugin");
+            pluginVst2xAudioMasterIOChanged(pluginChain->plugins[i], effect);
+            result = 0;
+            break;//Only one plugin will match anyway.
+          }
         }
+        break;
       }
-      break;
     }
     case audioMasterNeedIdle:
       logDeprecated("audioMasterNeedIdle", pluginIdString);
