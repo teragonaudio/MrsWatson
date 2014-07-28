@@ -30,7 +30,6 @@
 
 #include "audio/AudioSettings.h"
 #include "io/SampleSource.h"
-#include "io/SampleSourceSilence.h"
 #include "logging/EventLogger.h"
 
 static boolByte _openSampleSourceSilence(void* sampleSourcePtr, const SampleSourceOpenAs openAs) {

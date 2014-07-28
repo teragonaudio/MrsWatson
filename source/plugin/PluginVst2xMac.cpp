@@ -33,7 +33,6 @@ extern "C" {
 #include <stdlib.h>
 #include <CoreFoundation/CFBundle.h>
 #include "base/CharString.h"
-#include "base/LinkedList.h"
 #include "base/PlatformUtilities.h"
 #include "logging/EventLogger.h"
 #include "plugin/PluginVst2xHostCallback.h"

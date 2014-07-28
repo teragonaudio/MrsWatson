@@ -32,14 +32,11 @@
 
 // C includes
 extern "C" {
-#include <stdio.h>
 #include <stdlib.h>
 
 #include "audio/AudioSettings.h"
-#include "base/CharString.h"
 #include "base/File.h"
 #include "base/FileUtilities.h"
-#include "base/PlatformUtilities.h"
 #include "logging/EventLogger.h"
 #include "midi/MidiEvent.h"
 #include "plugin/PluginVst2x.h"

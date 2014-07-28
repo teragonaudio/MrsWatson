@@ -31,7 +31,6 @@
 
 #include "audio/AudioSettings.h"
 #include "logging/EventLogger.h"
-#include "audio/AudioSettings.h"
 #include "plugin/Plugin.h"
 #include "plugin/PluginPassthru.h"
 #include "plugin/PluginVst2x.h"
