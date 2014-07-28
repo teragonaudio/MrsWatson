@@ -70,14 +70,12 @@ if(UNIX)
 
     "-Wno-trigraphs"
     "-Wmissing-field-initializers"
-    "-Wno-pragmas"
     "-Wreturn-type"
     "-Wunused-variable"
     "-Wshadow"
     "-Wsign-compare"
     "-Wswitch"
     "-Wswitch-default"
-    "-Wuninitialized"
 
     "-Waddress"
     "-Wchar-subscripts"
@@ -99,6 +97,7 @@ if(UNIX)
     "-Wunused-variable"
     "-Wvolatile-register-var"
   )
+
   set(SHARED_GCC_CFLAGS_LIST
     "-std=c99"
     "-Wmain"
@@ -108,6 +107,7 @@ if(UNIX)
     "-Wimplicit-function-declaration"
     "-Wpointer-sign"
   )
+
   set(SHARED_GCC_CPPFLAGS_LIST
     "-Wsign-compare"
     "-Weffc++"
@@ -120,23 +120,37 @@ if(UNIX)
   string(REPLACE ";" " " SHARED_GCC_CPPFLAGS "${SHARED_GCC_CPPFLAGS_LIST}")
 
   if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-    set(CMAKE_C_FLAGS_DEBUG "${SHARED_GCC_CFLAGS} -D_POSIX_C_SOURCE=200809L -O0 -g")
-    set(CMAKE_C_FLAGS_RELEASE "${SHARED_GCC_CFLAGS} -D_POSIX_C_SOURCE=200809L -O3")
-    set(CMAKE_CXX_FLAGS_DEBUG "${SHARED_GCC_CPPFLAGS} -O0 -g")
-    set(CMAKE_CXX_FLAGS_RELEASE "-O3")
+    set(LINUX_GCC_FLAGS_LIST
+      "-Wuninitialized"
+    )
+    string(REPLACE ";" " " LINUX_GCC_FLAGS "${LINUX_GCC_FLAGS_LIST}")
 
-    add_definitions("${SHARED_GCC_FLAGS} -DLINUX=1 -D__cdecl=\"\"")
+    set(CMAKE_C_FLAGS_DEBUG "${SHARED_GCC_CFLAGS} ${LINUX_GCC_FLAGS} -O0 -g")
+    set(CMAKE_C_FLAGS_RELEASE "${SHARED_GCC_CFLAGS} ${LINUX_GCC_FLAGS} -O3")
+    set(CMAKE_CXX_FLAGS_DEBUG "${SHARED_GCC_CPPFLAGS} ${LINUX_GCC_FLAGS} -O0 -g")
+    set(CMAKE_CXX_FLAGS_RELEASE "${SHARED_GCC_CPPFLAGS} ${LINUX_GCC_FLAGS} -O3")
+
+    add_definitions("-DLINUX=1 -D_POSIX_C_SOURCE=200809L -D__cdecl=\"\"")
   endif()
 
   if(APPLE)
-    set(CMAKE_C_FLAGS_DEBUG "${SHARED_GCC_CFLAGS} -O0 -g -ferror-limit=100")
+    set(MAC_GCC_FLAGS_LIST
+      "-fpascal-strings"
+      "-Wnewline-eof"
+      "-Wshorten-64-to-32"
+      "-fasm-blocks"
+      "-mmacosx-version-min=10.5"
+    )
+    string(REPLACE ";" " " MAC_GCC_FLAGS "${MAC_GCC_FLAGS_LIST}")
+
+    set(CMAKE_C_FLAGS_DEBUG "${SHARED_GCC_CFLAGS} -O0 -g")
     set(CMAKE_C_FLAGS_RELEASE "${SHARED_GCC_CFLAGS} -O3")
     set(CMAKE_CXX_FLAGS_DEBUG "${SHARED_GCC_CPPFLAGS} -O0 -g")
     set(CMAKE_CXX_FLAGS_RELEASE "${SHARED_GCC_CPPFLAGS} -O3")
 
-    set(CMAKE_EXE_LINKER_FLAGS "-framework Carbon -framework CoreFoundation -mmacosx-version-min=10.5")
+    set(CMAKE_EXE_LINKER_FLAGS "-framework Carbon -framework CoreFoundation")
 
-    add_definitions("${SHARED_GCC_FLAGS} -DMACOSX=1 -fpascal-strings -Wnewline-eof -Wshorten-64-to-32 -fasm-blocks -mmacosx-version-min=10.5")
+    add_definitions("-DMACOSX=1")
   endif()
 endif()
 
