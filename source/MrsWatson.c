@@ -26,7 +26,6 @@
 //
 
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 
 #include "app/BuildInfo.h"
@@ -35,7 +34,6 @@
 #include "io/SampleSource.h"
 #include "io/SampleSourcePcm.h"
 #include "io/SampleSourceSilence.h"
-#include "io/SampleSourceWave.h"
 #include "logging/EventLogger.h"
 #include "logging/LogPrinter.h"
 #include "midi/MidiSequence.h"
@@ -238,7 +236,7 @@ boolByte readInput(SampleSource inputSource, SampleSource silenceSource, SampleB
     buffer->blocksize = framesRead + numberOfFrames; // 0 < buffer->blocksize <= bufferSize.
     sampleBufferCopyAndMapChannelsWithOffset(buffer, framesRead, silenceBuffer, 0, numberOfFrames);
     freeSampleBuffer(silenceBuffer);
-    return silenceSource->numSamplesProcessed/buffer->numChannels != silentTailFrames;
+    return (boolByte)(silenceSource->numSamplesProcessed/buffer->numChannels != silentTailFrames);
   } else {
     logInternalError("framesRead > bufferSize");
     return false; //stop here.
@@ -462,7 +460,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
           setSampleRate(programOptionsGetNumber(programOptions, OPTION_SAMPLE_RATE));
           break;
         case OPTION_TAIL_TIME:
-          tailTimeInMs = (long)programOptionsGetNumber(programOptions, OPTION_TAIL_TIME);
+          tailTimeInMs = (unsigned long)programOptionsGetNumber(programOptions, OPTION_TAIL_TIME);
           break;
         case OPTION_TEMPO:
           setTempo(programOptionsGetNumber(programOptions, OPTION_TEMPO));
@@ -473,7 +471,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
           }
           break;
         case OPTION_ZEBRA_SIZE:
-          setLoggingZebraSize((int)programOptionsGetNumber(programOptions, OPTION_ZEBRA_SIZE));
+          setLoggingZebraSize((const unsigned long)programOptionsGetNumber(programOptions, OPTION_ZEBRA_SIZE));
           break;
         default:
           // Ignore -- no special handling needs to be performed here
@@ -610,7 +608,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   pluginChainPrepareForProcessing(pluginChain);
 
   // Update sample rate on the event logger
-  setLoggingZebraSize((long)getSampleRate());
+  setLoggingZebraSize((const unsigned long)getSampleRate());
   logInfo("Starting processing input source");
   logDebug("Sample rate: %.0f", getSampleRate());
   logDebug("Blocksize: %d", getBlocksize());
@@ -625,13 +623,13 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char** argv) {
   // Main processing loop
   while(!finishedReading) {
     taskTimerStart(inputTimer);
-    finishedReading = !readInput(inputSource, silentSampleInput, inputSampleBuffer, tailTimeInFrames);
+    finishedReading = (boolByte)!readInput(inputSource, silentSampleInput, inputSampleBuffer, tailTimeInFrames);
 
     // TODO: For streaming MIDI, we would need to read in events from source here
     if(midiSequence != NULL) {
       LinkedList midiEventsForBlock = newLinkedList();
       // MIDI source overrides the value set to finishedReading by the input source
-      finishedReading = !fillMidiEventsFromRange(midiSequence, audioClock->currentFrame, getBlocksize(), midiEventsForBlock);
+      finishedReading = (boolByte)!fillMidiEventsFromRange(midiSequence, audioClock->currentFrame, getBlocksize(), midiEventsForBlock);
       linkedListForeach(midiEventsForBlock, _processMidiMetaEvent, &finishedReading);
       pluginChainProcessMidi(pluginChain, midiEventsForBlock);
       freeLinkedList(midiEventsForBlock);
