@@ -89,7 +89,7 @@ void listAvailablePlugins(const CharString pluginRoot) {
  * @return True if the plugin is a match
  */
 static boolByte _internalPluginNameMatches(const CharString pluginName, const char* internalName) {
-  return strncmp(pluginName->data, internalName, strlen(internalName)) == 0;
+  return (boolByte)(strncmp(pluginName->data, internalName, strlen(internalName)) == 0);
 }
 
 // Plugin newPlugin(PluginInterfaceType interfaceType, const CharString pluginName, const CharString pluginLocation) {
@@ -135,8 +135,8 @@ boolByte openPlugin(Plugin self) {
     logError("Plugin '%s' could not be opened", self->pluginName->data);
     return false;
   }else{
-    self->inputBuffer = newSampleBuffer(self->getSetting(self, PLUGIN_NUM_INPUTS), getBlocksize());
-    self->outputBuffer = newSampleBuffer(self->getSetting(self, PLUGIN_NUM_OUTPUTS), getBlocksize());
+    self->inputBuffer = newSampleBuffer((unsigned int)self->getSetting(self, PLUGIN_NUM_INPUTS), getBlocksize());
+    self->outputBuffer = newSampleBuffer((unsigned int)self->getSetting(self, PLUGIN_NUM_OUTPUTS), getBlocksize());
   }
   return true;
 }

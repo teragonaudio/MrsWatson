@@ -184,7 +184,7 @@ used and added to <argument>.",
   programOptionsAdd(options, newProgramOptionWithName(OPTION_TEMPO, "tempo",
     "Tempo to use when processing.",
     false, kProgramOptionTypeNumber, kProgramOptionArgumentTypeRequired));
-  programOptionsSetNumber(options, OPTION_TEMPO, (const float)getTempo());
+  programOptionsSetNumber(options, OPTION_TEMPO, getTempo());
 
   programOptionsAdd(options, newProgramOptionWithName(OPTION_TIME_SIGNATURE, "time-signature",
     "Set the global time signature. Should be a string formatted like \"3/4\".",

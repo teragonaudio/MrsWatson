@@ -46,7 +46,7 @@ ProgramOption newProgramOptionWithName(const int optionIndex, const char* name,
   ProgramOptionArgumentType argumentType) {
   ProgramOption option = (ProgramOption)malloc(sizeof(ProgramOptionMembers));
 
-  option->index = optionIndex;
+  option->index = (unsigned int)optionIndex;
   option->name = newCharStringWithCString(name);
   option->help = newCharStringWithCString(help);
   option->hasShortForm = hasShortForm;
@@ -131,7 +131,7 @@ void programOptionPrintHelp(const ProgramOption self, boolByte withFullHelp, int
 
   if(withFullHelp) {
     // Newline and indentation before help
-    wrappedHelpString = charStringWrap(self->help, initialIndent + indentSize);
+    wrappedHelpString = charStringWrap(self->help, (unsigned int)(initialIndent + indentSize));
     printf("\n%s\n\n", wrappedHelpString->data);
     freeCharString(wrappedHelpString);
   }
@@ -222,7 +222,7 @@ void freeProgramOption(ProgramOption self) {
 
 ProgramOptions newProgramOptions(int numOptions) {
   ProgramOptions options = (ProgramOptions)malloc(sizeof(ProgramOptionsMembers));
-  options->numOptions = numOptions;
+  options->numOptions = (unsigned int)numOptions;
   options->options = (ProgramOption*)malloc(sizeof(ProgramOption) * numOptions);
   memset(options->options, 0, sizeof(ProgramOption) * numOptions);
   return options;

@@ -108,7 +108,7 @@ static boolByte readBlockFromPcmFile(void* sampleSourcePtr, SampleBuffer sampleB
   unsigned long originalBlocksize = sampleBuffer->blocksize;
   size_t samplesRead = sampleSourcePcmRead(extraData, sampleBuffer);
   sampleSource->numSamplesProcessed += samplesRead;
-  return (originalBlocksize == sampleBuffer->blocksize);
+  return (boolByte)(originalBlocksize == sampleBuffer->blocksize);
 }
 
 size_t sampleSourcePcmWrite(SampleSourcePcmData self, const SampleBuffer sampleBuffer) {
@@ -128,7 +128,7 @@ size_t sampleSourcePcmWrite(SampleSourcePcmData self, const SampleBuffer sampleB
   // Clear the PCM data buffer just to be safe
   memset(self->interlacedPcmDataBuffer, 0, sizeof(short) * self->dataBufferNumItems);
 
-  sampleBufferGetPcmSamples(sampleBuffer, self->interlacedPcmDataBuffer, self->isLittleEndian != isHostLittleEndian());
+  sampleBufferGetPcmSamples(sampleBuffer, self->interlacedPcmDataBuffer, (boolByte)(self->isLittleEndian != isHostLittleEndian()));
   pcmSamplesWritten = fwrite(self->interlacedPcmDataBuffer, sizeof(short), numSamplesToWrite, self->fileHandle);
   if(pcmSamplesWritten < numSamplesToWrite) {
     logWarn("Short write to PCM file");
@@ -144,7 +144,7 @@ static boolByte writeBlockToPcmFile(void* sampleSourcePtr, const SampleBuffer sa
   SampleSourcePcmData extraData = (SampleSourcePcmData)(sampleSource->extraData);
   unsigned int samplesWritten = (int)sampleSourcePcmWrite(extraData, sampleBuffer);
   sampleSource->numSamplesProcessed += samplesWritten;
-  return (samplesWritten == sampleBuffer->blocksize);
+  return (boolByte)(samplesWritten == sampleBuffer->blocksize);
 }
 
 static void _closeSampleSourcePcm(void* sampleSourcePtr) {
@@ -164,7 +164,7 @@ void sampleSourcePcmSetSampleRate(void* sampleSourcePtr, double sampleRate) {
 void sampleSourcePcmSetNumChannels(void* sampleSourcePtr, int numChannels) {
   SampleSource sampleSource = (SampleSource)sampleSourcePtr;
   SampleSourcePcmData extraData = (SampleSourcePcmData)sampleSource->extraData;
-  extraData->numChannels = numChannels;
+  extraData->numChannels = (unsigned short)numChannels;
 }
 
 void freeSampleSourceDataPcm(void* sampleSourceDataPtr) {

@@ -273,7 +273,7 @@ void _pluginChainSetParameter(void* item, void* userData) {
   index = (int)strtod(parameterValue, NULL);
   value = (float)strtod(comma + 1, NULL);
   logDebug("Set parameter %d to %f", index, value);
-  passData->success = plugin->setParameter(plugin, index, value);
+  passData->success = plugin->setParameter(plugin, (unsigned int)index, value);
 }
 
 boolByte pluginChainSetParameters(PluginChain self, const LinkedList parameters) {

@@ -214,7 +214,7 @@ CharString getCurrentDirectory(void) {
 }
 
 boolByte isExecutable64Bit(void) {
-  return (sizeof(void*) == 8);
+  return (boolByte)(sizeof(void*) == 8);
 }
 
 boolByte isHost64Bit(void) {
@@ -260,8 +260,7 @@ boolByte isHost64Bit(void) {
 
 boolByte isHostLittleEndian(void) {
   int num = 1;
-  boolByte result = (*(char*)&num == 1);
-  return result;
+  return (boolByte)(*(char*)&num == 1);
 }
 
 unsigned short flipShortEndian(const unsigned short value) {

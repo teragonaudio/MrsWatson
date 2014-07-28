@@ -68,11 +68,11 @@ boolByte riffChunkReadNext(RiffChunk self, FILE* fileHandle, boolByte readData) 
     }
   }
 
-  return !feof(fileHandle);
+  return (boolByte)!feof(fileHandle);
 }
 
 boolByte riffChunkIsIdEqualTo(const RiffChunk self, const char*id) {
-  return strncmp(self->id, id, 4) == 0;
+  return (boolByte)(strncmp(self->id, id, 4) == 0);
 }
 
 void freeRiffChunk(RiffChunk self) {

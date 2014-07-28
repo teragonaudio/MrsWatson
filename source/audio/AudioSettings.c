@@ -117,13 +117,13 @@ void setTempo(const float tempo) {
 }
 
 void setTempoFromMidiBytes(const byte* bytes) {
-  double tempo = 0.0;
+  double tempo;
   unsigned long beatLengthInMicroseconds = 0;
   if(bytes != NULL) {
-    beatLengthInMicroseconds = 0x00000000 | (bytes[0] << 16) | (bytes[1] << 8) | (bytes[2]);
+    beatLengthInMicroseconds = (unsigned long)(0x00000000 | (bytes[0] << 16) | (bytes[1] << 8) | (bytes[2]));
     // Convert beats / microseconds -> beats / minutes
     tempo = (1000000.0 / (double)beatLengthInMicroseconds) * 60.0;
-    setTempo(tempo);
+    setTempo((float)tempo);
   }
 }
 
@@ -155,18 +155,18 @@ boolByte setTimeSignatureNoteValue(const unsigned short noteValue) {
 
 boolByte setTimeSignatureFromString(const CharString signature) {
   char *slash = NULL;
-  int numerator = 0;
-  int denominator = 0;
+  unsigned short numerator = 0;
+  unsigned short denominator = 0;
 
   if(!charStringIsEmpty(signature)) {
     slash = strchr(signature->data, '/');
     if(slash != NULL) {
       *slash = '\0';
-      numerator = (int)strtod(signature->data, NULL);
-      denominator = (int)strtod(slash + 1, NULL);
+      numerator = (unsigned short)strtod(signature->data, NULL);
+      denominator = (unsigned short)strtod(slash + 1, NULL);
       if(numerator > 0 && denominator > 0) {
-        return setTimeSignatureBeatsPerMeasure(numerator) &&
-          setTimeSignatureNoteValue(denominator);
+        return (boolByte)(setTimeSignatureBeatsPerMeasure(numerator) &&
+                  setTimeSignatureNoteValue(denominator));
       }
     }
   }
@@ -176,8 +176,8 @@ boolByte setTimeSignatureFromString(const CharString signature) {
 
 boolByte setTimeSignatureFromMidiBytes(const byte* bytes) {
   if(bytes != NULL) {
-    return setTimeSignatureBeatsPerMeasure(bytes[0]) &&
-      setTimeSignatureNoteValue((short)powl(2, bytes[1]));
+    return (boolByte)(setTimeSignatureBeatsPerMeasure(bytes[0]) &&
+          setTimeSignatureNoteValue((unsigned const short)powl(2, bytes[1])));
   }
   return false;
 }

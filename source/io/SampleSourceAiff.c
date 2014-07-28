@@ -95,7 +95,7 @@ static boolByte _readBlockFromAiffFile(void* sampleSourcePtr, SampleBuffer sampl
   unsigned long originalBlocksize = sampleBuffer->blocksize;
   size_t samplesRead = sampleSourcePcmRead(extraData, sampleBuffer);
   sampleSource->numSamplesProcessed += samplesRead;
-  return (originalBlocksize == sampleBuffer->blocksize);
+  return (boolByte)(originalBlocksize == sampleBuffer->blocksize);
 }
 
 static boolByte _writeBlockToAiffFile(void* sampleSourcePtr, const SampleBuffer sampleBuffer) {
@@ -103,7 +103,7 @@ static boolByte _writeBlockToAiffFile(void* sampleSourcePtr, const SampleBuffer 
   SampleSourcePcmData extraData = (SampleSourcePcmData)(sampleSource->extraData);
   unsigned int samplesWritten = (int)sampleSourcePcmWrite(extraData, sampleBuffer);
   sampleSource->numSamplesProcessed += samplesWritten;
-  return (samplesWritten == sampleBuffer->blocksize);
+  return (boolByte)(samplesWritten == sampleBuffer->blocksize);
 }
 
 extern void _closeSampleSourceWave(void *pcmData);

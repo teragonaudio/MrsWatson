@@ -156,7 +156,7 @@ void errorReporterRemapPath(ErrorReporter self, CharString path) {
 }
 
 boolByte errorReportCopyFileToReport(ErrorReporter self, CharString path) {
-  boolByte success = false;
+  boolByte success;
   CharString destination = newCharString();
 
   charStringCopy(destination, path);
@@ -169,7 +169,7 @@ boolByte errorReportCopyFileToReport(ErrorReporter self, CharString path) {
 
 // TODO: Refactor this into FileUtilities
 static boolByte _copyDirectoryToErrorReportDir(ErrorReporter self, CharString path) {
-  boolByte success = false;
+  boolByte success;
 
 #if UNIX
   int result;
@@ -178,12 +178,13 @@ static boolByte _copyDirectoryToErrorReportDir(ErrorReporter self, CharString pa
   snprintf(copyCommand->data, copyCommand->capacity, "/bin/cp -r \"%s\" \"%s\"",
     path->data, self->reportDirPath->data);
   result = system(copyCommand->data);
-  success = (WEXITSTATUS(result) == 0);
+  success = (boolByte)(WEXITSTATUS(result) == 0);
   if(!success) {
     logError("Could not copy '%s' to '%s'\n", path->data, self->reportDirPath->data);
   }
 #else
   logUnsupportedFeature("Copy directory recursively");
+  success = false;
 #endif
 
   return success;
@@ -199,8 +200,8 @@ boolByte errorReporterShouldCopyPlugins(void) {
   freeCharString(wrappedPromptText);
   freeCharString(promptText);
 
-  response = getchar();
-  return (response == 'y' || response == 'Y');
+  response = (char)getchar();
+  return (boolByte)(response == 'y' || response == 'Y');
 }
 
 boolByte errorReporterCopyPlugins(ErrorReporter self, PluginChain pluginChain) {

@@ -120,7 +120,7 @@ static boolByte _readWaveFileInfo(const char* filename, SampleSourcePcmData extr
       logWarn("Possibly invalid bitrate %d, expected %d", byteRate, expectedByteRate);
     }
 
-    expectedBlockAlign = extraData->numChannels * extraData->bitsPerSample / 8;
+    expectedBlockAlign = (unsigned int)(extraData->numChannels * extraData->bitsPerSample / 8);
     if(expectedBlockAlign != blockAlign) {
       logWarn("Possibly invalid block align %d, expected %d", blockAlign, expectedBlockAlign);
     }
@@ -152,8 +152,8 @@ static boolByte _readWaveFileInfo(const char* filename, SampleSourcePcmData extr
 static boolByte _writeWaveFileInfo(SampleSourcePcmData extraData) {
   RiffChunk chunk = newRiffChunk();
   unsigned short audioFormat = 1;
-  unsigned int byteRate = (unsigned int)(extraData->sampleRate * extraData->numChannels * extraData->bitsPerSample / 8);
-  unsigned short blockAlign = extraData->numChannels * extraData->bitsPerSample / 8;
+  unsigned int byteRate = extraData->sampleRate * extraData->numChannels * extraData->bitsPerSample / 8;
+  unsigned short blockAlign = (unsigned short)(extraData->numChannels * extraData->bitsPerSample / 8);
   unsigned int extraParams = 0;
 
   memcpy(chunk->id, "RIFF", 4);
@@ -318,7 +318,7 @@ static boolByte _readBlockFromWaveFile(void* sampleSourcePtr, SampleBuffer sampl
   unsigned long originalBlocksize = sampleBuffer->blocksize;
   size_t samplesRead = sampleSourcePcmRead(extraData, sampleBuffer);
   sampleSource->numSamplesProcessed += samplesRead;
-  return (originalBlocksize == sampleBuffer->blocksize);
+  return (boolByte)(originalBlocksize == sampleBuffer->blocksize);
 }
 
 static boolByte _writeBlockToWaveFile(void* sampleSourcePtr, const SampleBuffer sampleBuffer) {
@@ -326,7 +326,7 @@ static boolByte _writeBlockToWaveFile(void* sampleSourcePtr, const SampleBuffer 
   SampleSourcePcmData extraData = (SampleSourcePcmData)sampleSource->extraData;
   unsigned int samplesWritten = (int)sampleSourcePcmWrite(extraData, sampleBuffer);
   sampleSource->numSamplesProcessed += samplesWritten;
-  return (samplesWritten == sampleBuffer->blocksize);
+  return (boolByte)(samplesWritten == sampleBuffer->blocksize);
 }
 
 void _closeSampleSourceWave(void *sampleSourceDataPtr) {
@@ -364,7 +364,7 @@ void _closeSampleSourceWave(void *sampleSourceDataPtr) {
     }
 
     // Go to the next chunk, and then skip the type and write the new length
-    if(fseek(extraData->fileHandle, chunk->size + 4, SEEK_CUR) != 0) {
+    if(fseek(extraData->fileHandle, (long)(chunk->size + 4), SEEK_CUR) != 0) {
       logError("Could not seek to next chunk during WAVE file finalization");
       fclose(extraData->fileHandle);
       freeRiffChunk(chunk);

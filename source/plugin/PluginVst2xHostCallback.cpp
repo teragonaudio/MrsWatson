@@ -128,7 +128,7 @@ VstIntPtr VSTCALLBACK pluginVst2xHostCallback(AEffect *effect, VstInt32 opcode, 
   // This string is used in a bunch of logging calls below
   PluginVst2xId pluginId;
   if(effect != NULL) {
-    pluginId = newPluginVst2xIdWithId(effect->uniqueID);
+    pluginId = newPluginVst2xIdWithId((unsigned long)effect->uniqueID);
   }
   else {
     // During plugin initialization, the dispatcher can be called without a
@@ -268,7 +268,7 @@ VstIntPtr VSTCALLBACK pluginVst2xHostCallback(AEffect *effect, VstInt32 opcode, 
       result = (int)getSampleRate();
       break;
     case audioMasterGetBlockSize:
-      result = getBlocksize();
+      result = (VstIntPtr)getBlocksize();
       break;
     case audioMasterGetInputLatency:
       // Input latency is not used, and is always 0

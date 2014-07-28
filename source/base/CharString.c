@@ -93,7 +93,7 @@ void charStringCopy(CharString self, const CharString string) {
 }
 
 boolByte charStringIsEmpty(const CharString self) {
-  return (self == NULL || self->data == NULL || self->data[0] == '\0');
+  return (boolByte)(self == NULL || self->data == NULL || self->data[0] == '\0');
 }
 
 boolByte charStringIsEqualTo(const CharString self, const CharString string, boolByte caseInsensitive) {
@@ -105,10 +105,10 @@ boolByte charStringIsEqualTo(const CharString self, const CharString string, boo
   // Only compare to the length of the smaller of the two strings
   comparisonSize = self->capacity < string->capacity ? self->capacity : string->capacity;
   if(caseInsensitive) {
-    return strncasecmp(self->data, string->data, comparisonSize) == 0;
+    return (boolByte)(strncasecmp(self->data, string->data, comparisonSize) == 0);
   }
   else {
-    return strncmp(self->data, string->data, comparisonSize) == 0;
+    return (boolByte)(strncmp(self->data, string->data, comparisonSize) == 0);
   }
 }
 
@@ -117,21 +117,21 @@ boolByte charStringIsEqualToCString(const CharString self, const char* string, b
     return false;
   }
   else if(caseInsensitive) {
-    return strncasecmp(self->data, string, self->capacity) == 0;
+    return (boolByte)(strncasecmp(self->data, string, self->capacity) == 0);
   }
   else {
-    return strncmp(self->data, string, self->capacity) == 0;
+    return (boolByte)(strncmp(self->data, string, self->capacity) == 0);
   }
 }
 
 boolByte charStringIsLetter(const CharString self, const size_t index) {
   const char ch = self->data[index];
-  return ((ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z'));
+  return (boolByte)((ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z'));
 }
 
 boolByte charStringIsNumber(const CharString self, const size_t index) {
   const char ch = self->data[index];
-  return (ch >= '0' && ch <= '9');
+  return (boolByte)(ch >= '0' && ch <= '9');
 }
 
 LinkedList charStringSplit(const CharString self, const char delimiter) {
