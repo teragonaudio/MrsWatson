@@ -228,7 +228,6 @@ static int _testProcessPluginChainAudioRealtime(void) {
   assert(((PluginMockData)mock->extraData)->processAudioCalled);
 
   freeTaskTimer(t);
-  freePluginChain(p);
   freeSampleBuffer(inBuffer);
   freeSampleBuffer(outBuffer);
   return 0;
