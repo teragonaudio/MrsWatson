@@ -215,7 +215,7 @@ static int _testProcessPluginChainAudio(void) {
 
 static int _testProcessPluginChainAudioRealtime(void) {
   Plugin mock = newPluginMock();
-  PluginChain p = newPluginChain();
+  PluginChain p = getPluginChain();
   SampleBuffer inBuffer = newSampleBuffer(DEFAULT_NUM_CHANNELS, DEFAULT_BLOCKSIZE);
   SampleBuffer outBuffer = newSampleBuffer(DEFAULT_NUM_CHANNELS, DEFAULT_BLOCKSIZE);
   TaskTimer t = newTaskTimerWithCString("test", "test");
