@@ -130,7 +130,9 @@ if(UNIX)
     set(CMAKE_CXX_FLAGS_DEBUG "${SHARED_GCC_CPPFLAGS} ${LINUX_GCC_FLAGS} -O0 -g")
     set(CMAKE_CXX_FLAGS_RELEASE "${SHARED_GCC_CPPFLAGS} ${LINUX_GCC_FLAGS} -O3")
 
-    add_definitions("-DLINUX=1 -D_POSIX_C_SOURCE=200809L -D__cdecl=\"\"")
+    add_definitions("-DLINUX=1")
+    add_definitions("-D_POSIX_C_SOURCE=200809L")
+    add_definitions("-D__cdecl=")
   endif()
 
   if(APPLE)
