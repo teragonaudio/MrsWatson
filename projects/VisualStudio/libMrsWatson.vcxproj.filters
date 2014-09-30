@@ -31,9 +31,6 @@
     <ClInclude Include="..\..\source\base\PlatformUtilities.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\base\StringUtilities.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\source\base\Types.h">
       <Filter>Source Files</Filter>
     </ClInclude>
@@ -103,15 +100,6 @@
     <ClInclude Include="..\..\source\plugin\PluginChain.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\sequencer\AudioSettings.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\sequencer\MidiSequence.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\sequencer\AudioClock.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\source\time\TaskTimer.h">
       <Filter>Source Files</Filter>
     </ClInclude>
@@ -122,6 +110,18 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\plugin\PluginSilence.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\audio\AudioSettings.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\midi\MidiSequence.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\time\AudioClock.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\plugin\PluginVst2xId.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -148,9 +148,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\base\PlatformUtilities.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\base\StringUtilities.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\base\CharString.c">
@@ -219,15 +216,6 @@
     <ClCompile Include="..\..\source\plugin\PluginPassthru.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\sequencer\MidiSequence.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\sequencer\AudioClock.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\sequencer\AudioSettings.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\source\time\TaskTimer.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -241,6 +229,18 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\plugin\PluginSilence.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\audio\AudioSettings.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\midi\MidiSequence.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\time\AudioClock.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\plugin\PluginVst2xId.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
