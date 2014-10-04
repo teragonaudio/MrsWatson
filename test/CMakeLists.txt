@@ -27,11 +27,11 @@ elseif(MSVC)
   # Visual Studio we need to generate two separate out-of-source build dirs,
   # one for each architecture.
   # TODO: There must be some way to fix this, Juce manages to do it...
-  if(${platform_bits} EQUAL 32)
+  if(${PLATFORM_BITS} EQUAL 32)
     add_executable(mrswatsontest ${mrswatsontest_SOURCES} ${mrswatsontest_HEADERS})
     set_target_properties(mrswatsontest PROPERTIES COMPILE_FLAGS "/D WIN32=1")
     target_link_libraries(mrswatsontest mrswatsoncore)
-  elseif(${platform_bits} EQUAL 64)
+  elseif(${PLATFORM_BITS} EQUAL 64)
     add_executable(mrswatsontest64 ${mrswatsontest_SOURCES} ${mrswatsontest_HEADERS})
     set_target_properties(mrswatsontest64 PROPERTIES COMPILE_FLAGS "/MACHINE:X64 /D WIN64=1")
     target_link_libraries(mrswatsontest64 mrswatsoncore64)
