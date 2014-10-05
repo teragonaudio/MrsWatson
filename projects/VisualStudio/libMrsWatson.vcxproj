@@ -13,13 +13,13 @@
   <ItemGroup>
     <ClInclude Include="..\..\source\app\BuildInfo.h" />
     <ClInclude Include="..\..\source\app\ProgramOption.h" />
+    <ClInclude Include="..\..\source\audio\AudioSettings.h" />
     <ClInclude Include="..\..\source\audio\SampleBuffer.h" />
     <ClInclude Include="..\..\source\base\CharString.h" />
     <ClInclude Include="..\..\source\base\File.h" />
     <ClInclude Include="..\..\source\base\FileUtilities.h" />
     <ClInclude Include="..\..\source\base\LinkedList.h" />
     <ClInclude Include="..\..\source\base\PlatformUtilities.h" />
-    <ClInclude Include="..\..\source\base\StringUtilities.h" />
     <ClInclude Include="..\..\source\base\Types.h" />
     <ClInclude Include="..\..\source\io\RiffFile.h" />
     <ClInclude Include="..\..\source\io\SampleSource.h" />
@@ -33,6 +33,7 @@
     <ClInclude Include="..\..\source\logging\EventLogger.h" />
     <ClInclude Include="..\..\source\logging\LogPrinter.h" />
     <ClInclude Include="..\..\source\midi\MidiEvent.h" />
+    <ClInclude Include="..\..\source\midi\MidiSequence.h" />
     <ClInclude Include="..\..\source\midi\MidiSource.h" />
     <ClInclude Include="..\..\source\midi\MidiSourceFile.h" />
     <ClInclude Include="..\..\source\MrsWatson.h" />
@@ -46,21 +47,20 @@
     <ClInclude Include="..\..\source\plugin\PluginSilence.h" />
     <ClInclude Include="..\..\source\plugin\PluginVst2x.h" />
     <ClInclude Include="..\..\source\plugin\PluginVst2xHostCallback.h" />
-    <ClInclude Include="..\..\source\sequencer\AudioClock.h" />
-    <ClInclude Include="..\..\source\sequencer\AudioSettings.h" />
-    <ClInclude Include="..\..\source\sequencer\MidiSequence.h" />
+    <ClInclude Include="..\..\source\plugin\PluginVst2xId.h" />
+    <ClInclude Include="..\..\source\time\AudioClock.h" />
     <ClInclude Include="..\..\source\time\TaskTimer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\app\BuildInfo.c" />
     <ClCompile Include="..\..\source\app\ProgramOption.c" />
+    <ClCompile Include="..\..\source\audio\AudioSettings.c" />
     <ClCompile Include="..\..\source\audio\SampleBuffer.c" />
     <ClCompile Include="..\..\source\base\CharString.c" />
     <ClCompile Include="..\..\source\base\File.c" />
     <ClCompile Include="..\..\source\base\FileUtilities.c" />
     <ClCompile Include="..\..\source\base\LinkedList.c" />
     <ClCompile Include="..\..\source\base\PlatformUtilities.c" />
-    <ClCompile Include="..\..\source\base\StringUtilities.c" />
     <ClCompile Include="..\..\source\io\RiffFile.c" />
     <ClCompile Include="..\..\source\io\SampleSource.c" />
     <ClCompile Include="..\..\source\io\SampleSourceAiff.c" />
@@ -73,6 +73,7 @@
     <ClCompile Include="..\..\source\logging\EventLogger.c" />
     <ClCompile Include="..\..\source\logging\LogPrinter.c" />
     <ClCompile Include="..\..\source\midi\MidiEvent.c" />
+    <ClCompile Include="..\..\source\midi\MidiSequence.c" />
     <ClCompile Include="..\..\source\midi\MidiSource.c" />
     <ClCompile Include="..\..\source\midi\MidiSourceFile.c" />
     <ClCompile Include="..\..\source\MrsWatson.c" />
@@ -86,10 +87,9 @@
     <ClCompile Include="..\..\source\plugin\PluginSilence.c" />
     <ClCompile Include="..\..\source\plugin\PluginVst2x.cpp" />
     <ClCompile Include="..\..\source\plugin\PluginVst2xHostCallback.cpp" />
+    <ClCompile Include="..\..\source\plugin\PluginVst2xId.c" />
     <ClCompile Include="..\..\source\plugin\PluginVst2xWindows.cpp" />
-    <ClCompile Include="..\..\source\sequencer\AudioClock.c" />
-    <ClCompile Include="..\..\source\sequencer\AudioSettings.c" />
-    <ClCompile Include="..\..\source\sequencer\MidiSequence.c" />
+    <ClCompile Include="..\..\source\time\AudioClock.c" />
     <ClCompile Include="..\..\source\time\TaskTimer.c" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
