@@ -43,9 +43,9 @@ static int _testNewFileDefault(void) {
   File f = newFile();
 
   assertNotNull(f);
-  assertCharStringEquals(f->absolutePath, "");
-  assertIntEquals(f->fileType, kFileTypeInvalid);
-  assertIntEquals(f->_openMode, kFileOpenModeClosed);
+  assertCharStringEquals(EMPTY_STRING, f->absolutePath);
+  assertIntEquals(kFileTypeInvalid, f->fileType);
+  assertIntEquals(kFileOpenModeClosed, f->_openMode);
   assertIsNull(f->_fileHandle);
   assertFalse(fileExists(f));
 
@@ -63,8 +63,8 @@ static int _testNewFileAlreadyExists(void) {
   assert(fileExists(f));
 
   ftest = newFileWithPath(p);
-  assertIntEquals(ftest->fileType, kFileTypeFile);
-  assertIntEquals(ftest->_openMode, kFileOpenModeClosed);
+  assertIntEquals(kFileTypeFile, ftest->fileType);
+  assertIntEquals(kFileOpenModeClosed, ftest->_openMode);
   assertIsNull(ftest->_fileHandle);
 
   freeCharString(p);
@@ -83,10 +83,10 @@ static int _testNewFileWithRelativePath(void) {
   f = newFileWithPath(p);
   assertNotNull(f);
   sprintf(pAbs->data, "%s%c%s", pwd->data, PATH_DELIMITER, p->data);
-  assertCharStringEquals(f->absolutePath, pAbs->data);
+  assertCharStringEquals(pAbs->data, f->absolutePath);
   assertFalse(fileExists(f));
-  assertIntEquals(f->fileType, kFileTypeInvalid);
-  assertIntEquals(f->_openMode, kFileOpenModeClosed);
+  assertIntEquals(kFileTypeInvalid, f->fileType);
+  assertIntEquals(kFileOpenModeClosed, f->_openMode);
   assertIsNull(f->_fileHandle);
 
   freeFile(f);
@@ -109,8 +109,8 @@ static int _testNewFileWithAbsolutePath(void) {
   sprintf(pAbs->data, "%s%c%s%c%s", ROOT_DIRECTORY, PATH_DELIMITER, TEST_DIRNAME, PATH_DELIMITER, TEST_FILENAME);
   assert(charStringIsEqualTo(pAbs, f->absolutePath, false));
   assertFalse(fileExists(f));
-  assertIntEquals(f->fileType, kFileTypeInvalid);
-  assertIntEquals(f->_openMode, kFileOpenModeClosed);
+  assertIntEquals(kFileTypeInvalid, f->fileType);
+  assertIntEquals(kFileOpenModeClosed, f->_openMode);
   assertIsNull(f->_fileHandle);
 
   freeFile(f);
@@ -135,8 +135,8 @@ static int _testNewFileWithNetworkPath(void) {
   sprintf(pAbs->data, "\\\\%s%c%s", TEST_DIRNAME, PATH_DELIMITER, TEST_FILENAME);
   assert(charStringIsEqualTo(pAbs, f->absolutePath, false));
   assertFalse(fileExists(f));
-  assertIntEquals(f->fileType, kFileTypeInvalid);
-  assertIntEquals(f->_openMode, kFileOpenModeClosed);
+  assertIntEquals(kFileTypeInvalid, f->fileType);
+  assertIntEquals(kFileOpenModeClosed, f->_openMode);
   assertIsNull(f->_fileHandle);
 
   freeFile(f);
@@ -200,8 +200,8 @@ static int _testNewFileWithNullPath(void) {
   // Should yield the same result as newFile()
   f = newFileWithPath(NULL);
   assertNotNull(f);
-  assertCharStringEquals(f->absolutePath, EMPTY_STRING);
-  assertIntEquals(f->fileType, kFileTypeInvalid);
+  assertCharStringEquals(EMPTY_STRING, f->absolutePath);
+  assertIntEquals(kFileTypeInvalid, f->fileType);
   assertFalse(fileExists(f));
 
   freeFile(f);
@@ -236,8 +236,8 @@ static int _testNewFileWithParent(void) {
   assertNotNull(f);
   assertFalse(fileExists(f));
   sprintf(pAbs->data, "%s%c%s%c%s", pwd->data, PATH_DELIMITER, pdir->data, PATH_DELIMITER, pfile->data);
-  assertCharStringEquals(f->absolutePath, pAbs->data);
-  assertIntEquals(f->_openMode, kFileOpenModeClosed);
+  assertCharStringEquals(pAbs->data, f->absolutePath);
+  assertIntEquals(kFileOpenModeClosed, f->_openMode);
   assertIsNull(f->_fileHandle);
 
   freeCharString(pAbs);
@@ -306,7 +306,7 @@ static int _testNewFileWithParentAlreadyExists(void) {
   assert(fileCreate(f, kFileTypeFile));
   ftest = newFileWithParent(dir, pfile);
   assert(fileExists(ftest));
-  assertIntEquals(ftest->fileType, kFileTypeFile);
+  assertIntEquals(kFileTypeFile, ftest->fileType);
 
   freeCharString(pdir);
   freeCharString(pfile);
@@ -405,14 +405,14 @@ static int _testFileCreateFile(void) {
   assertFalse(fileExists(f));
   assert(fileCreate(f, kFileTypeFile));
   assert(fileExists(f));
-  assertIntEquals(f->_openMode, kFileOpenModeWrite);
+  assertIntEquals(kFileOpenModeWrite, f->_openMode);
   assertNotNull(f->_fileHandle);
 
   // Just to make sure...
   f2 = newFileWithPath(p);
   assert(fileExists(f2));
-  assertIntEquals(f2->fileType, kFileTypeFile);
-  assertIntEquals(f2->_openMode, kFileOpenModeClosed);
+  assertIntEquals(kFileTypeFile, f2->fileType);
+  assertIntEquals(kFileOpenModeClosed, f2->_openMode);
   assertIsNull(f2->_fileHandle);
 
   freeFile(f);
@@ -434,8 +434,8 @@ static int _testFileCreateDir(void) {
   // Just to make sure...
   f2 = newFileWithPath(p);
   assert(fileExists(f2));
-  assertIntEquals(f2->fileType, kFileTypeDirectory);
-  assertIntEquals(f->_openMode, kFileOpenModeClosed);
+  assertIntEquals(kFileTypeDirectory, f2->fileType);
+  assertIntEquals(kFileOpenModeClosed, f->_openMode);
   assertIsNull(f->_fileHandle);
 
   freeFile(f);
@@ -728,10 +728,10 @@ static int _testFileListDirectory(void) {
   item = (File)list->item;
   assertNotNull(item);
   if(item->fileType == kFileTypeFile) {
-    assertCharStringContains(item->absolutePath, TEST_FILENAME);
+    assertCharStringContains(TEST_FILENAME, item->absolutePath);
   }
   else if(item->fileType == kFileTypeDirectory) {
-    assertCharStringContains(item->absolutePath, TEST_DIRNAME);
+    assertCharStringContains(TEST_DIRNAME, item->absolutePath);
   }
   else {
     assert(false);
@@ -740,10 +740,10 @@ static int _testFileListDirectory(void) {
   item = (File)(((LinkedList)list->nextItem)->item);
   assertNotNull(item);
   if(item->fileType == kFileTypeFile) {
-    assertCharStringContains(item->absolutePath, TEST_FILENAME);
+    assertCharStringContains(TEST_FILENAME, item->absolutePath);
   }
   else if(item->fileType == kFileTypeDirectory) {
-    assertCharStringContains(item->absolutePath, TEST_DIRNAME);
+    assertCharStringContains(TEST_DIRNAME, item->absolutePath);
   }
   else {
     assert(false);
@@ -799,7 +799,7 @@ static int _testFileListDirectoryEmpty(void) {
   assert(fileExists(dir));
   list = fileListDirectory(dir);
   assertNotNull(list);
-  assertIntEquals(linkedListLength(list), 0);
+  assertIntEquals(0, linkedListLength(list));
 
   freeLinkedList(list);
   freeFile(dir);
@@ -815,7 +815,7 @@ static int _testFileGetSize(void) {
   assert(fileCreate(f, kFileTypeFile));
   assert(fileWrite(f, p));
   fileClose(f); // force flush and close to be called
-  assertSizeEquals(fileGetSize(f), strlen(p->data));
+  assertSizeEquals(strlen(p->data), fileGetSize(f));
 
   freeCharString(p);
   freeFile(f);
@@ -827,7 +827,7 @@ static int _testFileGetSizeNotExists(void) {
   File f = newFileWithPath(p);
 
   assertFalse(fileExists(f));
-  assertSizeEquals(fileGetSize(f), (size_t)0);
+  assertSizeEquals(0ul, fileGetSize(f));
 
   freeCharString(p);
   freeFile(f);
@@ -841,7 +841,7 @@ static int _testFileGetSizeDirectory(void) {
   assertFalse(fileExists(d));
   assert(fileCreate(d, kFileTypeDirectory));
   assert(fileExists(d));
-  assertSizeEquals(fileGetSize(d), (size_t)0);
+  assertSizeEquals(0ul, fileGetSize(d));
 
   freeCharString(p);
   freeFile(d);
@@ -859,7 +859,7 @@ static int _testFileReadContents(void) {
   assert(fileWrite(f, p));
   result = fileReadContents(f);
   assertNotNull(result);
-  assertCharStringEquals(result, p->data);
+  assertCharStringEquals(p->data, result);
 
   freeCharString(result);
   freeCharString(p);
@@ -914,11 +914,11 @@ static int _testFileReadLines(void) {
   assert(fileWrite(f, p));
   lines = fileReadLines(f);
   assertNotNull(lines);
-  assertIntEquals(linkedListLength(lines), 2);
+  assertIntEquals(2, linkedListLength(lines));
   items = (CharString*)linkedListToArray(lines);
   assertNotNull(items);
   for(i = 0; i < linkedListLength(lines); i++) {
-    assertCharStringEquals(items[i], p->data);
+    assertCharStringEquals(p->data, items[i]);
   }
 
   freeLinkedListAndItems(lines, (LinkedListFreeItemFunc)freeCharString);
@@ -938,7 +938,7 @@ static int _testFileReadLinesEmpty(void) {
   assert(fileExists(f));
   lines = fileReadLines(f);
   assertNotNull(lines);
-  assertIntEquals(linkedListLength(lines), 0);
+  assertIntEquals(0, linkedListLength(lines));
 
   freeLinkedList(lines);
   freeCharString(p);
@@ -980,7 +980,7 @@ static int _testFileReadBytes(void) {
   CharString p = newCharStringWithCString(TEST_FILENAME);
   File f = newFileWithPath(p);
   size_t s = 0;
-  char* result = NULL;
+  CharString result = NULL;
 
   assertFalse(fileExists(f));
   assert(fileCreate(f, kFileTypeFile));
@@ -989,11 +989,11 @@ static int _testFileReadBytes(void) {
   fileClose(f);
   s = fileGetSize(f);
   assert(s > 0);
-  result = (char*)fileReadBytes(f, s);
+  result = newCharStringWithCString(fileReadBytes(f, s));
   assertNotNull(result);
-  assertCharStringEquals(p, result);
+  assertCharStringEquals(TEST_FILENAME, result);
 
-  free(result);
+  freeCharString(result);
   freeCharString(p);
   freeFile(f);
   return 0;
@@ -1058,7 +1058,7 @@ static int _testFileReadBytesGreaterSize(void) {
   CharString p = newCharStringWithCString(TEST_FILENAME);
   File f = newFileWithPath(p);
   size_t s = 0;
-  char* result = NULL;
+  CharString result = NULL;
 
   assertFalse(fileExists(f));
   assert(fileCreate(f, kFileTypeFile));
@@ -1067,11 +1067,11 @@ static int _testFileReadBytesGreaterSize(void) {
   fileClose(f);
   s = fileGetSize(f);
   assert(s > 0);
-  result = (char*)fileReadBytes(f, s * 2);
+  result = newCharStringWithCString(fileReadBytes(f, s * 2));
   assertNotNull(result);
-  assertCharStringEquals(p, result);
+  assertCharStringEquals(TEST_FILENAME, result);
 
-  free(result);
+  freeCharString(result);
   freeCharString(p);
   freeFile(f);
   return 0;
@@ -1088,7 +1088,7 @@ static int _testFileWrite(void) {
   assert(fileWrite(f, p));
   result = fileReadContents(f);
   assertNotNull(result);
-  assertCharStringEquals(result, p->data);
+  assertCharStringEquals(TEST_FILENAME, result);
 
   freeCharString(result);
   freeCharString(p);
@@ -1110,7 +1110,7 @@ static int _testFileWriteMultiple(void) {
   result = fileReadContents(f);
   assertNotNull(result);
   charStringAppend(p, p2);
-  assertCharStringEquals(result, p->data);
+  assertCharStringEquals(p->data, result);
 
   freeCharString(result);
   freeCharString(p);
@@ -1148,7 +1148,7 @@ static int _testFileWriteBytes(void) {
   CharString p = newCharStringWithCString(TEST_FILENAME);
   File f = newFileWithPath(p);
   size_t s = 0;
-  char* result = NULL;
+  CharString result = NULL;
 
   assertFalse(fileExists(f));
   assert(fileCreate(f, kFileTypeFile));
@@ -1157,11 +1157,11 @@ static int _testFileWriteBytes(void) {
   fileClose(f);
   s = fileGetSize(f);
   assert(s > 0);
-  result = (char*)fileReadBytes(f, s);
+  result = newCharStringWithCString(fileReadBytes(f, s));
   assertNotNull(result);
-  assertCharStringEquals(p, result);
+  assertCharStringEquals(TEST_FILENAME, result);
 
-  free(result);
+  freeCharString(result);
   freeCharString(p);
   freeFile(f);
   return 0;
@@ -1198,7 +1198,7 @@ static int _testFileGetBasename(void) {
   CharString b = fileGetBasename(f);
 
   assertNotNull(b);
-  assertCharStringEquals(b, TEST_FILENAME);
+  assertCharStringEquals(TEST_FILENAME, b);
 
   freeCharString(b);
   freeCharString(p);
@@ -1227,7 +1227,7 @@ static int _testFileGetBasenameDirectory(void) {
   assert(fileCreate(d, kFileTypeDirectory));
   b = fileGetBasename(d);
   assertNotNull(b);
-  assertCharStringEquals(b, TEST_DIRNAME);
+  assertCharStringEquals(TEST_DIRNAME, b);
 
   freeCharString(b);
   freeCharString(p);
@@ -1254,7 +1254,7 @@ static int _testFileGetParent(void) {
 
   result = fileGetParent(f);
   assertNotNull(result);
-  assertCharStringEquals(dir->absolutePath, result->absolutePath->data);
+  assertCharStringEquals(dir->absolutePath->data, result->absolutePath);
 
   freeCharString(pdir);
   freeCharString(pfile);
@@ -1278,7 +1278,7 @@ static int _testFileGetExtension(void) {
   CharString extension = fileGetExtension(f);
 
   assertNotNull(extension);
-  assertCharStringEquals(extension, "txt");
+  assertCharStringEquals("txt", extension);
 
   freeCharString(p);
   freeCharString(extension);

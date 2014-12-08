@@ -7,7 +7,7 @@ const char* TEST_PRESET_FILENAME = "test.fxp";
 static int _testGuessPluginPresetType(void) {
   CharString c = newCharStringWithCString(TEST_PRESET_FILENAME);
   PluginPreset p = pluginPresetFactory(c);
-  assertIntEquals(p->presetType, PRESET_TYPE_FXP);
+  assertIntEquals(PRESET_TYPE_FXP, p->presetType);
   freePluginPreset(p);
   freeCharString(c);
   return 0;
@@ -26,7 +26,7 @@ static int _testNewObject(void) {
   CharString c = newCharStringWithCString(TEST_PRESET_FILENAME);
   PluginPreset p = pluginPresetFactory(c);
   assertIntEquals(p->presetType, PRESET_TYPE_FXP);
-  assertCharStringEquals(p->presetName, TEST_PRESET_FILENAME);
+  assertCharStringEquals(TEST_PRESET_FILENAME, p->presetName);
   freePluginPreset(p);
   freeCharString(c);
   return 0;

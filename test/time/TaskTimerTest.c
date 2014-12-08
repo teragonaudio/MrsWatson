@@ -32,9 +32,9 @@ static int _testNewTaskTimer(void) {
   TaskTimer t = newTaskTimer(c, TEST_SUBCOMPONENT_NAME);
 
   assert(t->enabled);
-  assertCharStringEquals(t->component, TEST_COMPONENT_NAME);
-  assertCharStringEquals(t->subcomponent, TEST_SUBCOMPONENT_NAME);
-  assertDoubleEquals(t->totalTaskTime, 0.0, TEST_FLOAT_TOLERANCE);
+  assertCharStringEquals(TEST_COMPONENT_NAME, t->component);
+  assertCharStringEquals(TEST_SUBCOMPONENT_NAME, t->subcomponent);
+  assertDoubleEquals(0.0, t->totalTaskTime, TEST_DEFAULT_TOLERANCE);
 
   freeCharString(c);
   freeTaskTimer(t);
@@ -46,8 +46,8 @@ static int _testNewObjectWithEmptyComponent(void) {
   TaskTimer t = newTaskTimer(c, TEST_SUBCOMPONENT_NAME);
 
   assertNotNull(t);
-  assertCharStringEquals(t->component, EMPTY_STRING);
-  assertCharStringEquals(t->subcomponent, TEST_SUBCOMPONENT_NAME);
+  assertCharStringEquals(EMPTY_STRING, t->component);
+  assertCharStringEquals(TEST_SUBCOMPONENT_NAME, t->subcomponent);
 
   freeCharString(c);
   freeTaskTimer(t);
@@ -59,8 +59,8 @@ static int _testNewObjectWithEmptySubcomponent(void) {
   TaskTimer t = newTaskTimer(c, EMPTY_STRING);
 
   assertNotNull(t);
-  assertCharStringEquals(t->component, TEST_COMPONENT_NAME);
-  assertCharStringEquals(t->subcomponent, EMPTY_STRING);
+  assertCharStringEquals(TEST_COMPONENT_NAME, t->component);
+  assertCharStringEquals(EMPTY_STRING, t->subcomponent);
 
   freeCharString(c);
   freeTaskTimer(t);
@@ -71,8 +71,8 @@ static int _testNewObjectWithNullComponent(void) {
   TaskTimer t = newTaskTimer(NULL, NULL);
 
   assertNotNull(t);
-  assertCharStringEquals(t->component, EMPTY_STRING);
-  assertCharStringEquals(t->subcomponent, EMPTY_STRING);
+  assertCharStringEquals(EMPTY_STRING, t->component);
+  assertCharStringEquals(EMPTY_STRING, t->subcomponent);
 
   freeTaskTimer(t);
   return 0;
@@ -82,8 +82,8 @@ static int _testNewObjectWithNullComponentCString(void) {
   TaskTimer t = newTaskTimerWithCString(NULL, NULL);
 
   assertNotNull(t);
-  assertCharStringEquals(t->component, EMPTY_STRING);
-  assertCharStringEquals(t->subcomponent, EMPTY_STRING);
+  assertCharStringEquals(EMPTY_STRING, t->component);
+  assertCharStringEquals(EMPTY_STRING, t->subcomponent);
 
   freeTaskTimer(t);
   return 0;
@@ -94,8 +94,8 @@ static int _testNewObjectWithNullSubcomponent(void) {
   TaskTimer t = newTaskTimer(c, NULL);
 
   assertNotNull(t);
-  assertCharStringEquals(t->component, TEST_COMPONENT_NAME);
-  assertCharStringEquals(t->subcomponent, EMPTY_STRING);
+  assertCharStringEquals(TEST_COMPONENT_NAME, t->component);
+  assertCharStringEquals(EMPTY_STRING, t->subcomponent);
 
   freeCharString(c);
   freeTaskTimer(t);
@@ -106,9 +106,9 @@ static int _testNewObjectWithCStrings(void) {
   TaskTimer t = newTaskTimerWithCString(TEST_COMPONENT_NAME, TEST_SUBCOMPONENT_NAME);
 
   assert(t->enabled);
-  assertCharStringEquals(t->component, TEST_COMPONENT_NAME);
-  assertCharStringEquals(t->subcomponent, TEST_SUBCOMPONENT_NAME);
-  assertDoubleEquals(t->totalTaskTime, 0.0, TEST_FLOAT_TOLERANCE);
+  assertCharStringEquals(TEST_COMPONENT_NAME, t->component);
+  assertCharStringEquals(TEST_SUBCOMPONENT_NAME, t->subcomponent);
+  assertDoubleEquals(0.0, t->totalTaskTime, TEST_DEFAULT_TOLERANCE);
 
   freeTaskTimer(t);
   return 0;
@@ -123,8 +123,8 @@ static int _testTaskTimerDuration(void) {
   taskTimerStart(_testTaskTimer);
   _testSleep();
   elapsedTime = taskTimerStop(_testTaskTimer);
-  assertTimeEquals(_testTaskTimer->totalTaskTime, SLEEP_DURATION_MS, MAX_TIMER_TOLERANCE_MS);
-  assertTimeEquals(elapsedTime, SLEEP_DURATION_MS, MAX_TIMER_TOLERANCE_MS);
+  assertTimeEquals(SLEEP_DURATION_MS, _testTaskTimer->totalTaskTime, MAX_TIMER_TOLERANCE_MS);
+  assertTimeEquals(SLEEP_DURATION_MS, elapsedTime, MAX_TIMER_TOLERANCE_MS);
   return 0;
 }
 
@@ -136,10 +136,10 @@ static int _testTaskTimerDurationMultipleTimes(void) {
     taskTimerStart(_testTaskTimer);
     _testSleep();
     elapsedTime = taskTimerStop(_testTaskTimer);
-    assertTimeEquals(elapsedTime, SLEEP_DURATION_MS, MAX_TIMER_TOLERANCE_MS);
+    assertTimeEquals(SLEEP_DURATION_MS, elapsedTime, MAX_TIMER_TOLERANCE_MS);
     elapsedTime = 0.0;
   }
-  assertTimeEquals(_testTaskTimer->totalTaskTime, 5.0 * SLEEP_DURATION_MS, MAX_TIMER_TOLERANCE_MS * 5.0);
+  assertTimeEquals(5.0 * SLEEP_DURATION_MS, _testTaskTimer->totalTaskTime, MAX_TIMER_TOLERANCE_MS * 5.0);
 
   return 0;
 }
@@ -149,7 +149,7 @@ static int _testTaskTimerCallStartTwice(void) {
   taskTimerStart(_testTaskTimer);
   _testSleep();
   taskTimerStop(_testTaskTimer);
-  assertTimeEquals(_testTaskTimer->totalTaskTime, SLEEP_DURATION_MS, MAX_TIMER_TOLERANCE_MS);
+  assertTimeEquals(SLEEP_DURATION_MS, _testTaskTimer->totalTaskTime, MAX_TIMER_TOLERANCE_MS);
   return 0;
 }
 
@@ -158,7 +158,7 @@ static int _testTaskTimerCallStopTwice(void) {
   _testSleep();
   taskTimerStop(_testTaskTimer);
   taskTimerStop(_testTaskTimer);
-  assertTimeEquals(_testTaskTimer->totalTaskTime, SLEEP_DURATION_MS, MAX_TIMER_TOLERANCE_MS);
+  assertTimeEquals(SLEEP_DURATION_MS, _testTaskTimer->totalTaskTime, MAX_TIMER_TOLERANCE_MS);
   return 0;
 }
 
@@ -167,7 +167,7 @@ static int _testCallStopBeforeStart(void) {
   taskTimerStart(_testTaskTimer);
   _testSleep();
   taskTimerStop(_testTaskTimer);
-  assertTimeEquals(_testTaskTimer->totalTaskTime, SLEEP_DURATION_MS, MAX_TIMER_TOLERANCE_MS);
+  assertTimeEquals(SLEEP_DURATION_MS, _testTaskTimer->totalTaskTime, MAX_TIMER_TOLERANCE_MS);
   return 0;
 }
 
@@ -175,7 +175,7 @@ static int _testHumanReadableTimeMs(void) {
   CharString s;
   _testTaskTimer->totalTaskTime = 230;
   s = taskTimerHumanReadbleString(_testTaskTimer);
-  assertCharStringEquals(s, "230ms");
+  assertCharStringEquals("230ms", s);
   freeCharString(s);
   return 0;
 }
@@ -185,7 +185,7 @@ static int _testHumanReadableTimeSec(void) {
   // 23 seconds
   _testTaskTimer->totalTaskTime = 23000;
   s = taskTimerHumanReadbleString(_testTaskTimer);
-  assertCharStringEquals(s, "23sec");
+  assertCharStringEquals("23sec", s);
   freeCharString(s);
   return 0;
 }
@@ -195,7 +195,7 @@ static int _testHumanReadableTimeMinSec(void) {
   // 10 minutes, 23 seconds
   _testTaskTimer->totalTaskTime = 600000 + 23000;
   s = taskTimerHumanReadbleString(_testTaskTimer);
-  assertCharStringEquals(s, "10:23sec");
+  assertCharStringEquals("10:23sec", s);
   freeCharString(s);
   return 0;
 }
@@ -205,14 +205,14 @@ static int _testHumanReadableTimeHoursMinSec(void) {
   // 2 hours, 10 minutes, 23 seconds
   _testTaskTimer->totalTaskTime = (1000 * 60 * 60 * 2) + 600000 + 23000;
   s = taskTimerHumanReadbleString(_testTaskTimer);
-  assertCharStringEquals(s, "2:10:23sec");
+  assertCharStringEquals("2:10:23sec", s);
   freeCharString(s);
   return 0;
 }
 
 static int _testHumanReadableTimeNotStarted(void) {
   CharString s = taskTimerHumanReadbleString(_testTaskTimer);
-  assertCharStringEquals(s, "0ms");
+  assertCharStringEquals("0ms", s);
   freeCharString(s);
   return 0;
 }

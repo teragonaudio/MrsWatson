@@ -5,14 +5,14 @@ const char* TEST_MIDI_FILENAME = "test.mid";
 
 static int _testGuessMidiSourceType(void) {
   CharString c = newCharStringWithCString(TEST_MIDI_FILENAME);
-  assertIntEquals(guessMidiSourceType(c), MIDI_SOURCE_TYPE_FILE);
+  assertIntEquals(MIDI_SOURCE_TYPE_FILE, guessMidiSourceType(c));
   freeCharString(c);
   return 0;
 }
 
 static int _testGuessMidiSourceTypeInvalid(void) {
   CharString c = newCharStringWithCString("invalid");
-  assertIntEquals(guessMidiSourceType(c), MIDI_SOURCE_TYPE_INVALID);
+  assertIntEquals(MIDI_SOURCE_TYPE_INVALID, guessMidiSourceType(c));
   freeCharString(c);
   return 0;
 }
@@ -20,8 +20,8 @@ static int _testGuessMidiSourceTypeInvalid(void) {
 static int _testNewMidiSource(void) {
   CharString c = newCharStringWithCString(TEST_MIDI_FILENAME);
   MidiSource m = newMidiSource(MIDI_SOURCE_TYPE_FILE, c);
-  assertCharStringEquals(m->sourceName, TEST_MIDI_FILENAME);
-  assertIntEquals(m->midiSourceType, MIDI_SOURCE_TYPE_FILE);
+  assertCharStringEquals(TEST_MIDI_FILENAME, m->sourceName);
+  assertIntEquals(MIDI_SOURCE_TYPE_FILE, m->midiSourceType);
   freeMidiSource(m);
   freeCharString(c);
   return 0;

@@ -118,9 +118,9 @@ static int _testListDirectory(void) {
   assertNotNull(f);
   fclose(f);
   l = listDirectory(tempDir);
-  assertIntEquals(linkedListLength(l), 1);
+  assertIntEquals(1, linkedListLength(l));
   filename = (CharString)l->item;
-  assertCharStringEquals(filename, TEST_FILENAME);
+  assertCharStringEquals(TEST_FILENAME, filename);
 
   removeDirectory(tempDir);
   freeCharString(tempDir);
@@ -134,7 +134,7 @@ static int _testListEmptyDirectory(void) {
   CharString tempDir = _fileUtilitiesMakeTempDir();
   LinkedList l = listDirectory(tempDir);
 
-  assertIntEquals(linkedListLength(l), 0);
+  assertIntEquals(0, linkedListLength(l));
   removeDirectory(tempDir);
 
   freeCharString(tempDir);
@@ -145,7 +145,7 @@ static int _testListEmptyDirectory(void) {
 static int _testListInvalidDirectory(void) {
   CharString c = newCharStringWithCString("invalid");
   LinkedList l = listDirectory(c);
-  assertIntEquals(linkedListLength(l), 0);
+  assertIntEquals(0, linkedListLength(l));
   freeLinkedList(l);
   freeCharString(c);
   return 0;
@@ -227,7 +227,7 @@ static int _testBuildAbsolutePathWithFileExtensionTwice(void) {
 
   snprintf(expected->data, expected->capacity, "%s%c%s", ROOT_DIRECTORY, PATH_DELIMITER, TEST_FILENAME);
   buildAbsolutePath(d, f, "txt", out);
-  assertCharStringEquals(out, expected->data);
+  assertCharStringEquals(expected->data, out);
 
   freeCharString(d);
   freeCharString(out);
@@ -259,7 +259,7 @@ static int _testIsInvalidFileAbsolutePath(void) {
 
 static int _testGetFileBasename(void) {
   CharString c = newCharStringWithCString(getFileBasename(ABSOLUTE_TEST_FILENAME));
-  assertCharStringEquals(c, TEST_FILENAME);
+  assertCharStringEquals(TEST_FILENAME, c);
   freeCharString(c);
   return 0;
 }
@@ -271,7 +271,7 @@ static int _testGetNullFileBasename(void) {
 
 static int _testGetFileExtension(void) {
   CharString c = newCharStringWithCString(getFileExtension(TEST_FILENAME));
-  assertCharStringEquals(c, "txt");
+  assertCharStringEquals("txt", c);
   freeCharString(c);
   return 0;
 }
@@ -297,7 +297,7 @@ static int _testGetFileDirname(void) {
   charStringCopyCString(expected, "C:\\Temp");
 #endif
   getFileDirname(filename, result);
-  assertCharStringEquals(result, expected->data);
+  assertCharStringEquals(expected->data, result);
 
   freeCharString(filename);
   freeCharString(expected);

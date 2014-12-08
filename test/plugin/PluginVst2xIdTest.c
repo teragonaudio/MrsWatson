@@ -3,24 +3,24 @@
 
 static int _testNewPluginVst2xId(void) {
   PluginVst2xId id = newPluginVst2xId();
-  assertUnsignedLongEquals(id->id, (unsigned long)0);
-  assertCharStringEquals(id->idString, PLUGIN_VST2X_ID_UNKNOWN);
+  assertUnsignedLongEquals(ZERO_UNSIGNED_LONG, id->id);
+  assertCharStringEquals(PLUGIN_VST2X_ID_UNKNOWN, id->idString);
   freePluginVst2xId(id);
   return 0;
 }
 
 static int _testNewPluginVst2xIdWithIntId(void) {
   PluginVst2xId id = newPluginVst2xIdWithId(0x61626364);
-  assertUnsignedLongEquals(id->id, 0x61626364l);
-  assertCharStringEquals(id->idString, "abcd");
+  assertUnsignedLongEquals(0x61626364l, id->id);
+  assertCharStringEquals("abcd", id->idString);
   freePluginVst2xId(id);
   return 0;
 }
 
 static int _testNewPluginVst2xIdWithZeroIntId(void) {
   PluginVst2xId id = newPluginVst2xIdWithId(0);
-  assertUnsignedLongEquals(id->id, (unsigned long)0);
-  assertCharStringEquals(id->idString, EMPTY_STRING);
+  assertUnsignedLongEquals(ZERO_UNSIGNED_LONG, id->id);
+  assertCharStringEquals(EMPTY_STRING, id->idString);
   freePluginVst2xId(id);
   return 0;
 }
@@ -28,8 +28,8 @@ static int _testNewPluginVst2xIdWithZeroIntId(void) {
 static int _testNewPluginVst2xIdWithStringId(void) {
   CharString c = newCharStringWithCString("abcd");
   PluginVst2xId id = newPluginVst2xIdWithStringId(c);
-  assertUnsignedLongEquals(id->id, 0x61626364l);
-  assertCharStringEquals(id->idString, c->data);
+  assertUnsignedLongEquals(0x61626364l, id->id);
+  assertCharStringEquals(c->data, id->idString);
   freePluginVst2xId(id);
   freeCharString(c);
   return 0;
@@ -38,8 +38,8 @@ static int _testNewPluginVst2xIdWithStringId(void) {
 static int _testNewPluginVst2xIdWithEmptyStringId(void) {
   CharString empty = newCharStringWithCString(EMPTY_STRING);
   PluginVst2xId id = newPluginVst2xIdWithStringId(empty);
-  assertUnsignedLongEquals(id->id, (unsigned long)0);
-  assertCharStringEquals(id->idString, PLUGIN_VST2X_ID_UNKNOWN);
+  assertUnsignedLongEquals(0, id->id);
+  assertCharStringEquals(PLUGIN_VST2X_ID_UNKNOWN, id->idString);
   freePluginVst2xId(id);
   freeCharString(empty);
   return 0;
@@ -47,8 +47,8 @@ static int _testNewPluginVst2xIdWithEmptyStringId(void) {
 
 static int _testNewPluginVst2xIdWithNullStringId(void) {
   PluginVst2xId id = newPluginVst2xIdWithStringId(NULL);
-  assertUnsignedLongEquals(id->id, (unsigned long)0);
-  assertCharStringEquals(id->idString, PLUGIN_VST2X_ID_UNKNOWN);
+  assertUnsignedLongEquals(ZERO_UNSIGNED_LONG, id->id);
+  assertCharStringEquals(PLUGIN_VST2X_ID_UNKNOWN, id->idString);
   freePluginVst2xId(id);
   return 0;
 }
@@ -56,8 +56,8 @@ static int _testNewPluginVst2xIdWithNullStringId(void) {
 static int _testNewPluginVst2xIdWithInvalidStringId(void) {
   CharString c = newCharStringWithCString("a");
   PluginVst2xId id = newPluginVst2xIdWithStringId(c);
-  assertUnsignedLongEquals(id->id, (unsigned long)0);
-  assertCharStringEquals(id->idString, PLUGIN_VST2X_ID_UNKNOWN);
+  assertUnsignedLongEquals(ZERO_UNSIGNED_LONG, id->id);
+  assertCharStringEquals(PLUGIN_VST2X_ID_UNKNOWN, id->idString);
   freePluginVst2xId(id);
   freeCharString(c);
   return 0;

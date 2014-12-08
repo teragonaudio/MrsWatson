@@ -7,8 +7,8 @@ static int _testPluginFactory(void) {
   Plugin p = pluginFactory(silence, pluginRoot);
 
   assertNotNull(p);
-  assertIntEquals(p->interfaceType, PLUGIN_TYPE_INTERNAL);
-  assertCharStringEquals(p->pluginName, silence->data);
+  assertIntEquals(PLUGIN_TYPE_INTERNAL, p->interfaceType);
+  assertCharStringEquals(silence->data, p->pluginName);
 
   freeCharString(silence);
   freeCharString(pluginRoot);
@@ -58,8 +58,8 @@ static int _testPluginFactoryNullRoot(void) {
   Plugin p = pluginFactory(silence, NULL);
 
   assertNotNull(p);
-  assertIntEquals(p->interfaceType, PLUGIN_TYPE_INTERNAL);
-  assertCharStringEquals(p->pluginName, silence->data);
+  assertIntEquals(PLUGIN_TYPE_INTERNAL, p->interfaceType);
+  assertCharStringEquals(silence->data, p->pluginName);
 
   freeCharString(silence);
   freePlugin(p);

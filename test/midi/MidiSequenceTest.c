@@ -4,7 +4,7 @@
 static int _testNewMidiSequence(void) {
   MidiSequence m = newMidiSequence();
   assertNotNull(m);
-  assertIntEquals(linkedListLength(m->midiEvents), 0);
+  assertIntEquals(0, linkedListLength(m->midiEvents));
   freeMidiSequence(m);
   return 0;
 }
@@ -13,7 +13,7 @@ static int _testAppendMidiEventToSequence(void) {
   MidiSequence m = newMidiSequence();
   MidiEvent e = newMidiEvent();
   appendMidiEventToSequence(m, e);
-  assertIntEquals(linkedListLength(m->midiEvents), 1);
+  assertIntEquals(1, linkedListLength(m->midiEvents));
   freeMidiSequence(m);
   return 0;
 }
@@ -21,7 +21,7 @@ static int _testAppendMidiEventToSequence(void) {
 static int _testAppendNullMidiEventToSequence(void) {
   MidiSequence m = newMidiSequence();
   appendMidiEventToSequence(m, NULL);
-  assertIntEquals(linkedListLength(m->midiEvents), 0);
+  assertIntEquals(0, linkedListLength(m->midiEvents));
   freeMidiSequence(m);
   return 0;
 }
@@ -43,8 +43,8 @@ static int _testFillMidiEventsFromRangeStart(void) {
   e->timestamp = 100;
   appendMidiEventToSequence(m, e);
   assertFalse(fillMidiEventsFromRange(m, 0, 256, l));
-  assertIntEquals(linkedListLength(l), 1);
-  assertIntEquals(((MidiEvent)l->item)->status, 0xf7);
+  assertIntEquals(1, linkedListLength(l));
+  assertIntEquals(0xf7, ((MidiEvent)l->item)->status);
 
   freeMidiSequence(m);
   freeLinkedList(l);
@@ -60,7 +60,7 @@ static int _testFillEventsFromEmptyRange(void) {
   e->timestamp = 100;
   appendMidiEventToSequence(m, e);
   assert(fillMidiEventsFromRange(m, 0, 0, l));
-  assertIntEquals(linkedListLength(l), 0);
+  assertIntEquals(0, linkedListLength(l));
 
   freeMidiSequence(m);
   freeLinkedList(l);
@@ -80,11 +80,11 @@ static int _testFillEventsSequentially(void) {
   appendMidiEventToSequence(m, e);
   appendMidiEventToSequence(m, e2);
   assert(fillMidiEventsFromRange(m, 0, 256, l));
-  assertIntEquals(linkedListLength(l), 1);
+  assertIntEquals(1, linkedListLength(l));
   freeLinkedList(l);
   l = newLinkedList();
   assertFalse(fillMidiEventsFromRange(m, 256, 256, l));
-  assertIntEquals(linkedListLength(l), 1);
+  assertIntEquals(1, linkedListLength(l));
 
   freeMidiSequence(m);
   freeLinkedList(l);
@@ -101,11 +101,11 @@ static int _testFillEventsFromRangePastSequence(void) {
   appendMidiEventToSequence(m, e);
   // Should return false since this is the last event in the sequence
   assertFalse(fillMidiEventsFromRange(m, 0, 200, l));
-  assertIntEquals(linkedListLength(l), 1);
+  assertIntEquals(1, linkedListLength(l));
   freeLinkedList(l);
   l = newLinkedList();
   assertFalse(fillMidiEventsFromRange(m, 200, 256, l));
-  assertIntEquals(linkedListLength(l), 0);
+  assertIntEquals(0, linkedListLength(l));
 
   freeMidiSequence(m);
   freeLinkedList(l);

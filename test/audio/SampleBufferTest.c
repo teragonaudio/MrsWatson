@@ -8,8 +8,8 @@ static SampleBuffer _newMockSampleBuffer(void) {
 
 static int _testNewSampleBuffer(void) {
   SampleBuffer s = _newMockSampleBuffer();
-  assertIntEquals(s->numChannels, 1);
-  assertUnsignedLongEquals(s->blocksize, 1l);
+  assertIntEquals(1, s->numChannels);
+  assertUnsignedLongEquals(1l, s->blocksize);
   freeSampleBuffer(s);
   return 0;
 }
@@ -18,7 +18,7 @@ static int _testNewSampleBufferMultichannel(void) {
   SampleBuffer s = newSampleBuffer(8, 128);
   unsigned int i, j;
   assertNotNull(s);
-  assertIntEquals(s->numChannels, 8);
+  assertIntEquals(8, s->numChannels);
   // Actually write a bunch of samples to expose memory corruption
   for(i = 0; i < s->blocksize; ++i) {
     for(j = 0; j < s->numChannels; ++j) {
@@ -33,7 +33,7 @@ static int _testClearSampleBuffer(void) {
   SampleBuffer s = _newMockSampleBuffer();
   s->samples[0][0] = 123;
   sampleBufferClear(s);
-  assertDoubleEquals(s->samples[0][0], 0.0, TEST_FLOAT_TOLERANCE);
+  assertDoubleEquals(0.0, s->samples[0][0], TEST_DEFAULT_TOLERANCE);
   freeSampleBuffer(s);
   return 0;
 }
@@ -43,7 +43,7 @@ static int _testCopyAndMapChannelsSampleBuffers(void) {
   SampleBuffer s2 = _newMockSampleBuffer();
   s1->samples[0][0] = 123.0;
   assert(sampleBufferCopyAndMapChannels(s2, s1));
-  assertDoubleEquals(s2->samples[0][0], 123.0, TEST_FLOAT_TOLERANCE);
+  assertDoubleEquals(123.0, s2->samples[0][0], TEST_DEFAULT_TOLERANCE);
   freeSampleBuffer(s1);
   freeSampleBuffer(s2);
   return 0;
@@ -56,7 +56,7 @@ static int _testCopyAndMapChannelsSampleBuffersDifferentBlocksizes(void) {
   s1->samples[0][0] = 123.0;
   assertFalse(sampleBufferCopyAndMapChannels(s2, s1));
   // Contents should not change; copying with different sizes is invalid
-  assertDoubleEquals(s1->samples[0][0], 123.0, TEST_FLOAT_TOLERANCE);
+  assertDoubleEquals(123.0, s1->samples[0][0], TEST_DEFAULT_TOLERANCE);
 
   freeSampleBuffer(s1);
   freeSampleBuffer(s2);
@@ -71,10 +71,10 @@ static int _testCopyAndMapChannelsSampleBuffersDifferentChannelsBigger(void) {
   s2->samples[1][0] = 2.0;
 
   assert(sampleBufferCopyAndMapChannels(s1, s2));
-  assertDoubleEquals(s1->samples[0][0], 1.0, TEST_FLOAT_TOLERANCE);
-  assertDoubleEquals(s1->samples[1][0], 2.0, TEST_FLOAT_TOLERANCE);
-  assertDoubleEquals(s1->samples[2][0], 1.0, TEST_FLOAT_TOLERANCE);
-  assertDoubleEquals(s1->samples[3][0], 2.0, TEST_FLOAT_TOLERANCE);
+  assertDoubleEquals(1.0, s1->samples[0][0], TEST_DEFAULT_TOLERANCE);
+  assertDoubleEquals(2.0, s1->samples[1][0], TEST_DEFAULT_TOLERANCE);
+  assertDoubleEquals(1.0, s1->samples[2][0], TEST_DEFAULT_TOLERANCE);
+  assertDoubleEquals(2.0, s1->samples[3][0], TEST_DEFAULT_TOLERANCE);
 
   freeSampleBuffer(s1);
   freeSampleBuffer(s2);
@@ -94,7 +94,7 @@ static int _testCopyAndMapChannelsSampleBuffersDifferentChannelsSmaller(void) {
   }
 
   assert(sampleBufferCopyAndMapChannels(s1, s2));
-  assertDoubleEquals(s1->samples[0][0], 2.0, TEST_FLOAT_TOLERANCE);
+  assertDoubleEquals(2.0, s1->samples[0][0], TEST_DEFAULT_TOLERANCE);
 
   freeSampleBuffer(s1);
   freeSampleBuffer(s2);

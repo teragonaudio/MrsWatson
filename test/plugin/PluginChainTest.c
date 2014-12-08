@@ -17,7 +17,7 @@ static void _pluginChainTestTeardown(void) {
 
 static int _testInitPluginChain(void) {
   PluginChain p = getPluginChain();
-  assertIntEquals(p->numPlugins, 0);
+  assertIntEquals(0, p->numPlugins);
   assertNotNull(p->plugins);
   assertNotNull(p->presets);
   return 0;
@@ -28,7 +28,7 @@ static int _testAddFromArgumentStringNull(void) {
   CharString c = newCharStringWithCString("/");
 
   assertFalse(pluginChainAddFromArgumentString(p, NULL, c));
-  assertIntEquals(p->numPlugins, 0);
+  assertIntEquals(0, p->numPlugins);
 
   freeCharString(c);
   return 0;
@@ -40,7 +40,7 @@ static int _testAddFromArgumentStringEmpty(void) {
   CharString empty = newCharString();
 
   assertFalse(pluginChainAddFromArgumentString(p, empty, c));
-  assertIntEquals(p->numPlugins, 0);
+  assertIntEquals(0, p->numPlugins);
 
   freeCharString(c);
   freeCharString(empty);
@@ -53,7 +53,7 @@ static int _testAddFromArgumentStringEmptyLocation(void) {
   CharString empty = newCharString();
 
   assert(pluginChainAddFromArgumentString(p, c, empty));
-  assertIntEquals(p->numPlugins, 1);
+  assertIntEquals(1, p->numPlugins);
 
   freeCharString(c);
   freeCharString(empty);
@@ -65,7 +65,7 @@ static int _testAddFromArgumentStringNullLocation(void) {
   CharString c = newCharStringWithCString(kInternalPluginPassthruName);
 
   assert(pluginChainAddFromArgumentString(p, c, NULL));
-  assertIntEquals(p->numPlugins, 1);
+  assertIntEquals(1, p->numPlugins);
 
   freeCharString(c);
   return 0;
@@ -76,10 +76,10 @@ static int _testAddFromArgumentString(void) {
   CharString testArgs = newCharStringWithCString(kInternalPluginPassthruName);
 
   assert(pluginChainAddFromArgumentString(p, testArgs, NULL));
-  assertIntEquals(p->numPlugins, 1);
+  assertIntEquals(1, p->numPlugins);
   assertNotNull(p->plugins[0]);
-  assertIntEquals(p->plugins[0]->pluginType, PLUGIN_TYPE_INTERNAL);
-  assertCharStringEquals(p->plugins[0]->pluginName, kInternalPluginPassthruName);
+  assertIntEquals(PLUGIN_TYPE_INTERNAL, p->plugins[0]->pluginType);
+  assertCharStringEquals(kInternalPluginPassthruName, p->plugins[0]->pluginName);
 
   freeCharString(testArgs);
   return 0;
@@ -92,11 +92,11 @@ static int _testAddFromArgumentStringMultiple(void) {
 
   assert(pluginChainAddFromArgumentString(p, testArgs, NULL));
   assert(pluginChainAddFromArgumentString(p, testArgs, NULL));
-  assertIntEquals(p->numPlugins, 2);
+  assertIntEquals(2, p->numPlugins);
   for(i = 0; i < p->numPlugins; i++) {
     assertNotNull(p->plugins[i]);
-    assertIntEquals(p->plugins[i]->pluginType, PLUGIN_TYPE_INTERNAL);
-    assertCharStringEquals(p->plugins[i]->pluginName, kInternalPluginPassthruName);
+    assertIntEquals(PLUGIN_TYPE_INTERNAL, p->plugins[i]->pluginType);
+    assertCharStringEquals(kInternalPluginPassthruName, p->plugins[i]->pluginName);
   }
 
   freeCharString(testArgs);
@@ -108,11 +108,11 @@ static int _testAddPluginWithPresetFromArgumentString(void) {
   CharString testArgs = newCharStringWithCString("mrs_passthru,testPreset.fxp");
 
   assert(pluginChainAddFromArgumentString(p, testArgs, NULL));
-  assertIntEquals(p->numPlugins, 1);
-  assertIntEquals(p->plugins[0]->pluginType, PLUGIN_TYPE_INTERNAL);
-  assertCharStringEquals(p->plugins[0]->pluginName, kInternalPluginPassthruName);
+  assertIntEquals(1, p->numPlugins);
+  assertIntEquals(PLUGIN_TYPE_INTERNAL, p->plugins[0]->pluginType);
+  assertCharStringEquals(kInternalPluginPassthruName, p->plugins[0]->pluginName);
   assertNotNull(p->presets[0]);
-  assertCharStringEquals(p->presets[0]->presetName, "testPreset.fxp");
+  assertCharStringEquals("testPreset.fxp", p->presets[0]->presetName);
 
   freeCharString(testArgs);
   return 0;
@@ -123,11 +123,11 @@ static int _testAddFromArgumentStringWithPresetSpaces(void) {
   CharString testArgs = newCharStringWithCString("mrs_passthru,test preset.fxp");
 
   assert(pluginChainAddFromArgumentString(p, testArgs, NULL));
-  assertIntEquals(p->numPlugins, 1);
-  assertIntEquals(p->plugins[0]->pluginType, PLUGIN_TYPE_INTERNAL);
-  assertCharStringEquals(p->plugins[0]->pluginName, kInternalPluginPassthruName);
+  assertIntEquals(1, p->numPlugins);
+  assertIntEquals(PLUGIN_TYPE_INTERNAL, p->plugins[0]->pluginType);
+  assertCharStringEquals(kInternalPluginPassthruName, p->plugins[0]->pluginName);
   assertNotNull(p->presets[0]);
-  assertCharStringEquals(p->presets[0]->presetName, "test preset.fxp");
+  assertCharStringEquals("test preset.fxp", p->presets[0]->presetName);
 
   freeCharString(testArgs);
   return 0;
@@ -136,28 +136,22 @@ static int _testAddFromArgumentStringWithPresetSpaces(void) {
 static int _testAppendPlugin(void) {
   Plugin mock = newPluginMock();
   PluginChain p = getPluginChain();
-
   assert(pluginChainAppend(p, mock, NULL));
-
   return 0;
 }
 
 static int _testAppendWithNullPlugin(void) {
   PluginChain p = getPluginChain();
-
   assertFalse(pluginChainAppend(p, NULL, NULL));
-
-  return 0;  
+  return 0;
 }
 
 static int _testAppendWithPreset(void) {
   Plugin mock = newPluginMock();
   PluginChain p = getPluginChain();
   PluginPreset mockPreset = newPluginPresetMock();
-
   assert(pluginChainAppend(p, mock, mockPreset));
-
-  return 0;  
+  return 0;
 }
 
 static int _testInitializePluginChain(void) {
@@ -181,7 +175,7 @@ static int _testGetMaximumTailTime(void) {
 
   assert(pluginChainAppend(p, mock, NULL));
   maxTailTime = pluginChainGetMaximumTailTimeInMs(p);
-  assertIntEquals(maxTailTime, kPluginMockTailTime);
+  assertIntEquals(kPluginMockTailTime, maxTailTime);
 
   return 0;
 }
@@ -191,7 +185,7 @@ static int _testPrepareForProcessing(void) {
   PluginChain p = getPluginChain();
 
   assert(pluginChainAppend(p, mock, NULL));
-  assertIntEquals(pluginChainInitialize(p), RETURN_CODE_SUCCESS);
+  assertIntEquals(RETURN_CODE_SUCCESS, pluginChainInitialize(p));
   pluginChainPrepareForProcessing(p);
   assert(((PluginMockData)mock->extraData)->isPrepared);
 
@@ -224,7 +218,7 @@ static int _testProcessPluginChainAudioRealtime(void) {
   pluginChainSetRealtime(p, true);
   taskTimerStart(t);
   pluginChainProcessAudio(p, inBuffer, outBuffer);
-  assertTimeEquals(taskTimerStop(t), 1000 * DEFAULT_BLOCKSIZE / getSampleRate(), 0.1);
+  assertTimeEquals(1000 * DEFAULT_BLOCKSIZE / getSampleRate(), taskTimerStop(t), 0.1);
   assert(((PluginMockData)mock->extraData)->processAudioCalled);
 
   freeTaskTimer(t);

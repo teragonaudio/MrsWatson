@@ -15,7 +15,7 @@ static void _sampleSourceTeardown(void) {
 static int _testGuessSampleSourceTypePcm(void) {
   CharString c = newCharStringWithCString(TEST_SAMPLESOURCE_FILENAME);
   SampleSource s = sampleSourceFactory(c);
-  assertIntEquals(s->sampleSourceType, SAMPLE_SOURCE_TYPE_PCM);
+  assertIntEquals(SAMPLE_SOURCE_TYPE_PCM, s->sampleSourceType);
   freeSampleSource(s);
   freeCharString(c);
   return 0;
@@ -24,7 +24,7 @@ static int _testGuessSampleSourceTypePcm(void) {
 static int _testGuessSampleSourceTypeEmpty(void) {
   CharString empty = newCharString();
   SampleSource s = sampleSourceFactory(empty);
-  assertIntEquals(s->sampleSourceType, SAMPLE_SOURCE_TYPE_SILENCE);
+  assertIntEquals(SAMPLE_SOURCE_TYPE_SILENCE, s->sampleSourceType);
   freeSampleSource(s);
   freeCharString(empty);
   return 0;
@@ -33,7 +33,7 @@ static int _testGuessSampleSourceTypeEmpty(void) {
 static int _testGuessSampleSourceTypeWrongCase(void) {
   CharString c = newCharStringWithCString("TEST.PCM");
   SampleSource s = sampleSourceFactory(c);
-  assertIntEquals(s->sampleSourceType, SAMPLE_SOURCE_TYPE_PCM);
+  assertIntEquals(SAMPLE_SOURCE_TYPE_PCM, s->sampleSourceType);
   freeSampleSource(s);
   freeCharString(c);
   return 0;

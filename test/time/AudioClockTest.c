@@ -13,7 +13,7 @@ static void _audioClockTestTeardown(void) {
 
 static int _testInitAudioClock(void) {
   AudioClock audioClock = getAudioClock();
-  assertUnsignedLongEquals(audioClock->currentFrame, (unsigned long)00);
+  assertUnsignedLongEquals(ZERO_UNSIGNED_LONG, audioClock->currentFrame);
   assertFalse(audioClock->isPlaying);
   assertFalse(audioClock->transportChanged);
   return 0;
@@ -22,7 +22,7 @@ static int _testInitAudioClock(void) {
 static int _testAdvanceAudioClock(void) {
   AudioClock audioClock = getAudioClock();
   advanceAudioClock(audioClock, kAudioClockTestBlocksize);
-  assertUnsignedLongEquals(audioClock->currentFrame, kAudioClockTestBlocksize);
+  assertUnsignedLongEquals(kAudioClockTestBlocksize, audioClock->currentFrame);
   assert(audioClock->isPlaying);
   assert(audioClock->transportChanged);
   return 0;
@@ -44,7 +44,7 @@ static int _testRestartAudioClock(void) {
   advanceAudioClock(audioClock, kAudioClockTestBlocksize);
   assert(audioClock->isPlaying);
   assert(audioClock->transportChanged);
-  assertUnsignedLongEquals(audioClock->currentFrame, kAudioClockTestBlocksize * 2);
+  assertUnsignedLongEquals(kAudioClockTestBlocksize * 2, audioClock->currentFrame);
   return 0;
 }
 
@@ -56,7 +56,7 @@ static int _testAdvanceClockMulitpleTimes(void) {
   }
   assert(audioClock->isPlaying);
   assertFalse(audioClock->transportChanged);
-  assertUnsignedLongEquals(audioClock->currentFrame, kAudioClockTestBlocksize * 100);
+  assertUnsignedLongEquals(kAudioClockTestBlocksize * 100, audioClock->currentFrame);
   return 0;
 }
 

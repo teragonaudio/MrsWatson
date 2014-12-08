@@ -6,8 +6,8 @@ static char *const OTHER_TEST_STRING = "other test string";
 
 static int _testNewCharString(void) {
   CharString c = newCharString();
-  assertSizeEquals(c->capacity, kCharStringLengthDefault);
-  assertCharStringEquals(c, "");
+  assertSizeEquals(kCharStringLengthDefault, c->capacity);
+  assertCharStringEquals(EMPTY_STRING, c);
   freeCharString(c);
   return 0;
 }
@@ -15,24 +15,24 @@ static int _testNewCharString(void) {
 static int _testNewCharStringWithCapacity(void) {
   size_t testSize = 123;
   CharString c = newCharStringWithCapacity(testSize);
-  assertSizeEquals(c->capacity, testSize);
-  assertCharStringEquals(c, "");
+  assertSizeEquals(testSize, c->capacity);
+  assertCharStringEquals(EMPTY_STRING, c);
   freeCharString(c);
   return 0;
 }
 
 static int _testNewObjectWithNullCString(void) {
   CharString c = newCharStringWithCString(NULL);
-  assertSizeEquals(c->capacity, kCharStringLengthDefault);
-  assertCharStringEquals(c, "");
+  assertSizeEquals(kCharStringLengthDefault, c->capacity);
+  assertCharStringEquals(EMPTY_STRING, c);
   freeCharString(c);
   return 0;
 }
 
 static int _testNewObjectWithEmptyCString(void) {
   CharString c = newCharStringWithCString(EMPTY_STRING);
-  assertSizeEquals(c->capacity, kCharStringLengthDefault);
-  assertCharStringEquals(c, EMPTY_STRING);
+  assertSizeEquals(kCharStringLengthDefault, c->capacity);
+  assertCharStringEquals(EMPTY_STRING, c);
   freeCharString(c);
   return 0;
 }
@@ -41,8 +41,8 @@ static int _testClearCharString(void) {
   CharString c = newCharString();
   charStringCopyCString(c, TEST_STRING);
   charStringClear(c);
-  assertSizeEquals(c->capacity, kCharStringLengthDefault);
-  assertCharStringEquals(c, "");
+  assertSizeEquals(kCharStringLengthDefault, c->capacity);
+  assertCharStringEquals(EMPTY_STRING, c);
   freeCharString(c);
   return 0;
 }
@@ -50,8 +50,8 @@ static int _testClearCharString(void) {
 static int _testCopyToCharString(void) {
   CharString c = newCharString();
   charStringCopyCString(c, TEST_STRING);
-  assertSizeEquals(c->capacity, kCharStringLengthDefault);
-  assertCharStringEquals(c, TEST_STRING);
+  assertSizeEquals(kCharStringLengthDefault, c->capacity);
+  assertCharStringEquals(TEST_STRING, c);
   freeCharString(c);
   return 0;
 }
@@ -62,7 +62,7 @@ static int _testCopyCharStrings(void) {
   c2 = newCharString();
   charStringCopyCString(c, TEST_STRING);
   charStringCopy(c2, c);
-  assertCharStringEquals(c, c2->data);
+  assertCharStringEquals(c2->data, c);
   freeCharString(c);
   freeCharString(c2);
   return 0;
@@ -92,7 +92,7 @@ static int _testAppendCharStrings(void) {
   CharString a = newCharStringWithCString("a");
   CharString b = newCharStringWithCString("b");
   charStringAppend(a, b);
-  assertCharStringEquals(a, "ab");
+  assertCharStringEquals("ab", a);
   freeCharString(a);
   freeCharString(b);
   return 0;
@@ -101,10 +101,10 @@ static int _testAppendCharStrings(void) {
 static int _testAppendCharStringsOverCapacity(void) {
   CharString a = newCharStringWithCString("a");
   CharString b = newCharStringWithCString("1234567890");
-  assertSizeEquals(a->capacity, (size_t)2);
+  assertSizeEquals(2ul, a->capacity);
   charStringAppend(a, b);
-  assertCharStringEquals(a, "a1234567890");
-  assertSizeEquals(a->capacity, (size_t)12);
+  assertCharStringEquals("a1234567890", a);
+  assertSizeEquals(12ul, a->capacity);
   freeCharString(a);
   freeCharString(b);
   return 0;
@@ -238,12 +238,12 @@ static int _testSplitString(void) {
   CharString* items = NULL;
 
   assertNotNull(l);
-  assertIntEquals(linkedListLength(l), 3);
+  assertIntEquals(3, linkedListLength(l));
   items = (CharString*)linkedListToArray(l);
   assertNotNull(items);
-  assertCharStringEquals(items[0], "abc");
-  assertCharStringEquals(items[1], "def");
-  assertCharStringEquals(items[2], "ghi");
+  assertCharStringEquals("abc", items[0]);
+  assertCharStringEquals("def", items[1]);
+  assertCharStringEquals("ghi", items[2]);
 
   freeLinkedListAndItems(l, (LinkedListFreeItemFunc)freeCharString);
   freeCharString(c);
@@ -258,9 +258,9 @@ static int _testSplitStringWithoutDelimiter(void) {
   LinkedList l = charStringSplit(c, ',');
 
   assertNotNull(l);
-  assertIntEquals(linkedListLength(l), 1);
+  assertIntEquals(1, linkedListLength(l));
   c2 = l->item;
-  assertCharStringEquals(c2, expected);
+  assertCharStringEquals(expected, c2);
 
   freeLinkedListAndItems(l, (LinkedListFreeItemFunc)freeCharString);
   freeCharString(c);
@@ -279,7 +279,7 @@ static int _testSplitStringEmptyString(void) {
   CharString c = newCharString();
   LinkedList l = charStringSplit(c, ',');
   assertNotNull(l);
-  assertIntEquals(linkedListLength(l), 0);
+  assertIntEquals(0, linkedListLength(l));
   freeCharString(c);
   freeLinkedList(l);
   return 0;
@@ -301,7 +301,7 @@ static int _testWrapString(void) {
   // Create dest string the same way as in wrapString(), cheap I know...
   CharString dest = newCharStringWithCapacity(src->capacity * 2);
   _charStringWrap(src->data, dest->data, dest->capacity, 0, 0x10);
-  assertCharStringEquals(dest, "1234 6789 bcde\n01");
+  assertCharStringEquals("1234 6789 bcde\n01", dest);
   freeCharString(src);
   freeCharString(dest);
   return 0;
@@ -312,7 +312,7 @@ static int _testWrapStringWithIndent(void) {
   // Create dest string the same way as in wrapString(), cheap I know...
   CharString dest = newCharStringWithCapacity(src->capacity * 2);
   _charStringWrap(src->data, dest->data, dest->capacity, 1, 0xe);
-  assertCharStringEquals(dest, " 1234 6789\n bcde 01");
+  assertCharStringEquals(" 1234 6789\n bcde 01", dest);
   freeCharString(src);
   freeCharString(dest);
   return 0;
@@ -323,7 +323,7 @@ static int _testWrapStringLongerThanLine(void) {
   // Create dest string the same way as in wrapString(), cheap I know...
   CharString dest = newCharStringWithCapacity(src->capacity * 2);
   _charStringWrap(src->data, dest->data, dest->capacity, 0, 0xf);
-  assertCharStringEquals(dest, "123456789abcde-\nf12");
+  assertCharStringEquals("123456789abcde-\nf12", dest);
   freeCharString(src);
   freeCharString(dest);
   return 0;

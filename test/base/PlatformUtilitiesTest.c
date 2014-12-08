@@ -25,13 +25,13 @@
 
 static int _testGetPlatformType(void) {
 #if LINUX
-  assertIntEquals(getPlatformType(), PLATFORM_LINUX);
+  assertIntEquals(PLATFORM_LINUX, getPlatformType());
 #elif MACOSX
-  assertIntEquals(getPlatformType(), PLATFORM_MACOSX);
+  assertIntEquals(PLATFORM_MACOSX, getPlatformType());
 #elif WINDOWS
-  assertIntEquals(getPlatformType(), PLATFORM_WINDOWS);
+  assertIntEquals(PLATFORM_WINDOWS, getPlatformType());
 #else
-  assertIntEquals(getPlatformType(), PLATFORM_UNSUPPORTED);
+  assertIntEquals(PLATFORM_UNSUPPORTED, getPlatformType());
 #endif
   return 0;
 }
@@ -39,13 +39,13 @@ static int _testGetPlatformType(void) {
 static int _testGetPlatformName(void) {
   CharString p = getPlatformName();
 #if LINUX
-  assertCharStringContains(p, "Linux");
+  assertCharStringContains("Linux", p);
 #elif MACOSX
-  assertCharStringContains(p, "Mac OS X");
+  assertCharStringContains("Mac OS X", p);
 #elif WINDOWS
-  assertCharStringContains(p, "Windows");
+  assertCharStringContains("Windows", p);
 #else
-  assertCharStringEquals(p, "Unsupported platform");
+  assertCharStringEquals("Unsupported platform", p);
 #endif
   freeCharString(p);
   return 0;
@@ -55,22 +55,22 @@ static int _testGetShortPlatformName(void) {
   CharString p = newCharStringWithCString(getShortPlatformName());
 #if LINUX
   if(isHost64Bit() && isExecutable64Bit()) {
-    assertCharStringEquals(p, "Linux-x86_64");
+    assertCharStringEquals("Linux-x86_64", p);
   }
   else {
-    assertCharStringEquals(p, "Linux-i686");
+    assertCharStringEquals("Linux-i686", p);
   }
 #elif MACOSX
-  assertCharStringEquals(p, "Mac OS X");
+  assertCharStringEquals("Mac OS X", p);
 #elif WINDOWS
   if(isHost64Bit() && isExecutable64Bit()) {
-    assertCharStringEquals(p, "Windows 64-bit");
+    assertCharStringEquals("Windows 64-bit", p);
   }
   else {
-    assertCharStringEquals(p, "Windows 32-bit");
+    assertCharStringEquals("Windows 32-bit", p);
   }
 #else
-  assertCharStringEquals(p, "Unsupported");
+  assertCharStringEquals("Unsupported", p);
 #endif
   freeCharString(p);
   return 0;
@@ -88,7 +88,7 @@ static int _testIsHostLittleEndian(void) {
 static int _testFlipShortEndian(void) {
   unsigned short s = 0xabcd;
   unsigned short r = flipShortEndian(s);
-  assertUnsignedLongEquals(r, 0xcdabul);
+  assertUnsignedLongEquals(0xcdabul, r);
   assertIntEquals(s, flipShortEndian(r));
   return 0;
 }
@@ -99,7 +99,7 @@ static int _testConvertBigEndianShortToPlatform(void) {
 #if HOST_BIG_ENDIAN
   assertUnsignedLongEquals(s, (unsigned long)r);
 #elif HOST_LITTLE_ENDIAN
-  assertUnsignedLongEquals(s, (unsigned long)flipShortEndian(r));
+  assertUnsignedLongEquals((unsigned long)s, (unsigned long)flipShortEndian(r));
 #endif
   return 0;
 }
@@ -108,9 +108,9 @@ static int _testConvertBigEndianIntToPlatform(void) {
   unsigned int i = 0xdeadbeef;
   unsigned int r = convertBigEndianIntToPlatform(i);
 #if HOST_BIG_ENDIAN
-  assertUnsignedLongEquals(r, (unsigned long)i);
+  assertUnsignedLongEquals((unsigned long)i, r);
 #elif HOST_LITTLE_ENDIAN
-  assertUnsignedLongEquals(r, 0xefbeaddeul);
+  assertUnsignedLongEquals(0xefbeaddeul, r);
 #endif
   return 0;
 }
@@ -119,9 +119,9 @@ static int _testConvertLittleEndianIntToPlatform(void) {
   unsigned int i = 0xdeadbeef;
   unsigned int r = convertLittleEndianIntToPlatform(i);
 #if HOST_BIG_ENDIAN
-  assertUnsignedLongEquals(r, 0xefbeaddeul);
+  assertUnsignedLongEquals(0xefbeaddeul, r);
 #elif HOST_LITTLE_ENDIAN
-  assertUnsignedLongEquals(r, (unsigned long)i);
+  assertUnsignedLongEquals((unsigned long)i, r);
 #endif
   return 0;
 }
@@ -144,7 +144,7 @@ static int _testConvertBigEndianFloatToPlatform(void) {
   // Sanity check to make sure that the actual result is the really huge number which we
   // are expecting.
   assert(fabs(r) > bigFloatTolerance);
-  assertDoubleEquals(r, *f2, bigFloatTolerance);
+  assertDoubleEquals(*f2, r, bigFloatTolerance);
 #endif
   return 0;
 }
@@ -159,9 +159,9 @@ static int _testConvertByteArrayToUnsignedShort(void) {
   s = convertByteArrayToUnsignedShort(b);
 
 #if HOST_BIG_ENDIAN
-  assertUnsignedLongEquals(s, 0xaaabul);
+  assertUnsignedLongEquals(0xaaabul, s);
 #elif HOST_LITTLE_ENDIAN
-  assertUnsignedLongEquals(s, 0xabaaul);
+  assertUnsignedLongEquals(0xabaaul, s);
 #endif
   return 0;
 }
@@ -176,9 +176,9 @@ static int _testConvertByteArrayToUnsignedInt(void) {
   s = convertByteArrayToUnsignedInt(b);
 
 #if HOST_BIG_ENDIAN
-  assertUnsignedLongEquals(s, 0xaaabacadul);
+  assertUnsignedLongEquals(0xaaabacadul, s);
 #elif HOST_LITTLE_ENDIAN
-  assertUnsignedLongEquals(s, 0xadacabaaul);
+  assertUnsignedLongEquals(0xadacabaaul, s);
 #endif
   return 0;
 }
@@ -189,7 +189,7 @@ static int _testSleepMilliseconds(void) {
   taskTimerStart(t);
   sleepMilliseconds(12);
   elapsedTime = taskTimerStop(t);
-  assertTimeEquals(elapsedTime, 12, 0.1);
+  assertTimeEquals(12, elapsedTime, 0.1);
   freeTaskTimer(t);
   return 0;
 }

@@ -10,70 +10,70 @@ static void _audioSettingsTeardown(void) {
 }
 
 static int _testInitAudioSettings(void) {
-  assertDoubleEquals(getSampleRate(), DEFAULT_SAMPLE_RATE, TEST_FLOAT_TOLERANCE);
-  assertIntEquals(getNumChannels(), DEFAULT_NUM_CHANNELS);
-  assertUnsignedLongEquals(getBlocksize(), DEFAULT_BLOCKSIZE);
-  assertDoubleEquals(getTempo(), DEFAULT_TEMPO, TEST_FLOAT_TOLERANCE);
-  assertIntEquals(getTimeSignatureBeatsPerMeasure(), DEFAULT_TIMESIG_BEATS_PER_MEASURE);
-  assertIntEquals(getTimeSignatureNoteValue(), DEFAULT_TIMESIG_NOTE_VALUE);
+  assertDoubleEquals(DEFAULT_SAMPLE_RATE, getSampleRate(), TEST_DEFAULT_TOLERANCE);
+  assertIntEquals(DEFAULT_NUM_CHANNELS, getNumChannels());
+  assertUnsignedLongEquals(DEFAULT_BLOCKSIZE, getBlocksize());
+  assertDoubleEquals(DEFAULT_TEMPO, getTempo(), TEST_DEFAULT_TOLERANCE);
+  assertIntEquals(DEFAULT_TIMESIG_BEATS_PER_MEASURE, getTimeSignatureBeatsPerMeasure());
+  assertIntEquals(DEFAULT_TIMESIG_NOTE_VALUE, getTimeSignatureNoteValue());
   return 0;
 }
 
 static int _testSetSampleRate(void) {
   setSampleRate(22050.0);
-  assertDoubleEquals(getSampleRate(), 22050.0, TEST_FLOAT_TOLERANCE);
+  assertDoubleEquals(22050.0, getSampleRate(), TEST_DEFAULT_TOLERANCE);
   return 0;
 }
 
 static int _testSetInvalidSampleRate(void) {
   setSampleRate(22050.0);
-  assertDoubleEquals(getSampleRate(), 22050.0, TEST_FLOAT_TOLERANCE);
+  assertDoubleEquals(22050.0, getSampleRate(), TEST_DEFAULT_TOLERANCE);
   setSampleRate(0.0);
-  assertDoubleEquals(getSampleRate(), 22050.0, TEST_FLOAT_TOLERANCE);
+  assertDoubleEquals(22050.0, getSampleRate(), TEST_DEFAULT_TOLERANCE);
   return 0;
 }
 
 static int _testSetNumChannels(void) {
   setNumChannels(4);
-  assertIntEquals(getNumChannels(), 4);
+  assertIntEquals(4, getNumChannels());
   return 0;
 }
 
 static int _testSetInvalidNumChannels(void) {
   setNumChannels(2);
-  assertIntEquals(getNumChannels(), 2);
+  assertIntEquals(2, getNumChannels());
   setNumChannels(0);
-  assertIntEquals(getNumChannels(), 2);
+  assertIntEquals(2, getNumChannels());
   return 0;
 }
 
 static int _testSetBlocksize(void) {
   setBlocksize(123);
-  assertUnsignedLongEquals(getBlocksize(), 123l);
+  assertUnsignedLongEquals(123l, getBlocksize());
   return 0;
 }
 
 static int _testSetInvalidBlocksize(void) {
   setBlocksize(123);
-  assertUnsignedLongEquals(getBlocksize(), 123l);
+  assertUnsignedLongEquals(123l, getBlocksize());
   setBlocksize(0);
-  assertUnsignedLongEquals(getBlocksize(), 123l);
+  assertUnsignedLongEquals(123l, getBlocksize());
   return 0;
 }
 
 static int _testSetTempo(void) {
   setTempo(123.45);
-  assertDoubleEquals(getTempo(), 123.45, 0.1);
+  assertDoubleEquals(123.45, getTempo(), 0.1);
   return 0;
 }
 
 static int _testSetInvalidTempo(void) {
   setTempo(100.0);
-  assertDoubleEquals(getTempo(), 100.0, TEST_FLOAT_TOLERANCE);
+  assertDoubleEquals(100.0, getTempo(), TEST_DEFAULT_TOLERANCE);
   setTempo(-666.0);
-  assertDoubleEquals(getTempo(), 100.0, TEST_FLOAT_TOLERANCE);
+  assertDoubleEquals(100.0, getTempo(), TEST_DEFAULT_TOLERANCE);
   setTempo(0.0);
-  assertDoubleEquals(getTempo(), 100.0, TEST_FLOAT_TOLERANCE);
+  assertDoubleEquals(100.0, getTempo(), TEST_DEFAULT_TOLERANCE);
   return 0;
 }
 
@@ -83,27 +83,27 @@ static int _testSetTempoWithMidiBytes(void) {
   bytes[1] = 0xe7;
   bytes[2] = 0x1b;
   setTempoFromMidiBytes(bytes);
-  assertDoubleEquals(getTempo(), 46.0, TEST_FLOAT_TOLERANCE);
+  assertDoubleEquals(46.0, getTempo(), TEST_DEFAULT_TOLERANCE);
   return 0;
 }
 
 static int _testSetTempoWithMidiBytesNull(void) {
   setTempo(100.0);
-  assertDoubleEquals(getTempo(), 100.0, TEST_FLOAT_TOLERANCE);
+  assertDoubleEquals(100.0, getTempo(), TEST_DEFAULT_TOLERANCE);
   setTempoFromMidiBytes(NULL);
-  assertDoubleEquals(getTempo(), 100.0, TEST_FLOAT_TOLERANCE);
+  assertDoubleEquals(100.0, getTempo(), TEST_DEFAULT_TOLERANCE);
   return 0;
 }
 
 static int _testSetTimeSigBeatsPerMeasure(void) {
   assert(setTimeSignatureBeatsPerMeasure(8));
-  assertIntEquals(getTimeSignatureBeatsPerMeasure(), 8);
+  assertIntEquals(8, getTimeSignatureBeatsPerMeasure());
   return 0;
 }
 
 static int _testSetTimeSigNoteValue(void) {
   assert(setTimeSignatureNoteValue(2));
-  assertIntEquals(getTimeSignatureNoteValue(), 2);
+  assertIntEquals(2, getTimeSignatureNoteValue());
   return 0;
 }
 
@@ -113,19 +113,19 @@ static int _testSetTimeSignatureWithMidiBytes(void) {
   bytes[0] = 3;
   bytes[1] = 3;
   assert(setTimeSignatureFromMidiBytes(bytes));
-  assertIntEquals(getTimeSignatureBeatsPerMeasure(), 3);
-  assertIntEquals(getTimeSignatureNoteValue(), 8);
+  assertIntEquals(3, getTimeSignatureBeatsPerMeasure());
+  assertIntEquals(8, getTimeSignatureNoteValue());
   return 0;
 }
 
 static int _testSetTimeSignatureWithMidiBytesNull(void) {
   assert(setTimeSignatureBeatsPerMeasure(3));
   assert(setTimeSignatureNoteValue(8));
-  assertIntEquals(getTimeSignatureBeatsPerMeasure(), 3);
-  assertIntEquals(getTimeSignatureNoteValue(), 8);
+  assertIntEquals(3, getTimeSignatureBeatsPerMeasure());
+  assertIntEquals(8, getTimeSignatureNoteValue());
   assertFalse(setTimeSignatureFromMidiBytes(NULL));
-  assertIntEquals(getTimeSignatureBeatsPerMeasure(), 3);
-  assertIntEquals(getTimeSignatureNoteValue(), 8);
+  assertIntEquals(3, getTimeSignatureBeatsPerMeasure());
+  assertIntEquals(8, getTimeSignatureNoteValue());
   return 0;
 }
 
@@ -133,11 +133,11 @@ static int _testSetTimeSignatureFromString(void) {
   CharString s = newCharStringWithCString("2/16");
   assert(setTimeSignatureBeatsPerMeasure(3));
   assert(setTimeSignatureNoteValue(8));
-  assertIntEquals(getTimeSignatureBeatsPerMeasure(), 3);
-  assertIntEquals(getTimeSignatureNoteValue(), 8);
+  assertIntEquals(3, getTimeSignatureBeatsPerMeasure());
+  assertIntEquals(8, getTimeSignatureNoteValue());
   assert(setTimeSignatureFromString(s));
-  assertIntEquals(getTimeSignatureBeatsPerMeasure(), 2);
-  assertIntEquals(getTimeSignatureNoteValue(), 16);
+  assertIntEquals(2, getTimeSignatureBeatsPerMeasure());
+  assertIntEquals(16, getTimeSignatureNoteValue());
   freeCharString(s);
   return 0;
 }
@@ -146,11 +146,11 @@ static int _testSetTimeSignatureFromInvalidString(void) {
   CharString s = newCharStringWithCString("invalid/none");
   assert(setTimeSignatureBeatsPerMeasure(3));
   assert(setTimeSignatureNoteValue(8));
-  assertIntEquals(getTimeSignatureBeatsPerMeasure(), 3);
-  assertIntEquals(getTimeSignatureNoteValue(), 8);
+  assertIntEquals(3, getTimeSignatureBeatsPerMeasure());
+  assertIntEquals(8, getTimeSignatureNoteValue());
   assertFalse(setTimeSignatureFromString(s));
-  assertIntEquals(getTimeSignatureBeatsPerMeasure(), 3);
-  assertIntEquals(getTimeSignatureNoteValue(), 8);
+  assertIntEquals(3, getTimeSignatureBeatsPerMeasure());
+  assertIntEquals(8, getTimeSignatureNoteValue());
   freeCharString(s);
   return 0;
 }
@@ -158,11 +158,11 @@ static int _testSetTimeSignatureFromInvalidString(void) {
 static int _testSetTimeSignatureFromNullString(void) {
   assert(setTimeSignatureBeatsPerMeasure(3));
   assert(setTimeSignatureNoteValue(8));
-  assertIntEquals(getTimeSignatureBeatsPerMeasure(), 3);
-  assertIntEquals(getTimeSignatureNoteValue(), 8);
+  assertIntEquals(3, getTimeSignatureBeatsPerMeasure());
+  assertIntEquals(8, getTimeSignatureNoteValue());
   assertFalse(setTimeSignatureFromString(NULL));
-  assertIntEquals(getTimeSignatureBeatsPerMeasure(), 3);
-  assertIntEquals(getTimeSignatureNoteValue(), 8);
+  assertIntEquals(3, getTimeSignatureBeatsPerMeasure());
+  assertIntEquals(8, getTimeSignatureNoteValue());
   return 0;
 }
 

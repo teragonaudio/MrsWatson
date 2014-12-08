@@ -27,7 +27,7 @@ static ProgramOption _getTestOption(void) {
 
 static int _testNewProgramOptions(void) {
   ProgramOptions p = newProgramOptions(4);
-  assertIntEquals(p->numOptions, 4);
+  assertIntEquals(4, p->numOptions);
   freeProgramOptions(p);
   return 0;
 }
@@ -36,10 +36,10 @@ static int _testAddNewProgramOption(void) {
   ProgramOptions p = newProgramOptions(1);
   ProgramOption o;
   assert(programOptionsAdd(p, _getTestOption()));
-  assertIntEquals(p->numOptions, 1);
+  assertIntEquals(1, p->numOptions);
   o = p->options[0];
   assertNotNull(o);
-  assertCharStringEquals(o->name, "test");
+  assertCharStringEquals("test", o->name);
   freeProgramOptions(p);
   return 0;
 }
@@ -56,7 +56,7 @@ static int _testAddNewProgramOptionOutsideRange(void) {
   ProgramOption o = _getTestOption();
   o->index++;
   assertFalse(programOptionsAdd(p, o));
-  assertIntEquals(p->numOptions, 1);
+  assertIntEquals(1, p->numOptions);
   freeProgramOption(o);
   freeProgramOptions(p);
   return 0;
@@ -112,9 +112,9 @@ static int _testParseCommandLineRequiredOption(void) {
   assert(programOptionsAdd(p, o));
 
   assertFalse(p->options[0]->enabled);
-  assertDoubleEquals(programOptionsGetNumber(p, 0), 0.0f, 0.0f);
+  assertDoubleEquals(0.0, programOptionsGetNumber(p, 0), 0.0f);
   assert(programOptionsParseArgs(p, 3, argv));
-  assertDoubleEquals(programOptionsGetNumber(p, 0), 1.23f, 0.01f);
+  assertDoubleEquals(1.23, programOptionsGetNumber(p, 0), TEST_DEFAULT_TOLERANCE);
   assert(p->options[0]->enabled);
 
   freeProgramOptions(p);
@@ -131,7 +131,7 @@ static int _testParseCommandLineRequiredOptionMissing(void) {
   assert(programOptionsAdd(p, o));
 
   assertFalse(p->options[0]->enabled);
-  assertDoubleEquals(programOptionsGetNumber(p, 0), 0.0f, 0.0f);
+  assertDoubleEquals(0.0, programOptionsGetNumber(p, 0), TEST_EXACT_TOLERANCE);
   assertFalse(programOptionsParseArgs(p, 2, argv));
   assertFalse(p->options[0]->enabled);
 
@@ -163,7 +163,7 @@ static int _testParseConfigFile(void) {
   assert(programOptionsParseConfigFile(p, filename));
   assert(p->options[0]->enabled);
   assert(p->options[1]->enabled);
-  assertCharStringEquals(programOptionsGetString(p, 1), "foo");
+  assertCharStringEquals("foo", programOptionsGetString(p, 1));
 
   unlink(TEST_CONFIG_FILE);
   freeProgramOptions(p);
@@ -213,7 +213,7 @@ static int _testFindProgramOptionFromString(void) {
   assertIntEquals(p->numOptions, 1);
   o = programOptionsFind(p, c);
   assertNotNull(o);
-  assertCharStringEquals(o->name, "test");
+  assertCharStringEquals("test", o->name);
 
   freeProgramOptions(p);
   freeCharString(c);
@@ -226,7 +226,7 @@ static int _testFindProgramOptionFromStringInvalid(void) {
   ProgramOption o;
 
   assert(programOptionsAdd(p, _getTestOption()));
-  assertIntEquals(p->numOptions, 1);
+  assertIntEquals(1, p->numOptions);
   o = programOptionsFind(p, c);
   assertIsNull(o);
 
@@ -249,7 +249,7 @@ static ProgramOptions _getTestOptionMultipleTypes(void) {
 static int _testGetString(void) {
   ProgramOptions p = _getTestOptionMultipleTypes();
   CharString s = programOptionsGetString(p, 0);
-  assertCharStringEquals(s, "");
+  assertCharStringEquals("", s);
   freeProgramOptions(p);
   return 0;
 }
@@ -273,7 +273,7 @@ static int _testGetStringForInvalidOption(void) {
 static int _testGetNumeric(void) {
   ProgramOptions p = _getTestOptionMultipleTypes();
   float f = programOptionsGetNumber(p, 1);
-  assertDoubleEquals(f, 0.0f, 0.1f);
+  assertDoubleEquals(0.0, f, TEST_DEFAULT_TOLERANCE);
   freeProgramOptions(p);
   return 0;
 }
@@ -281,7 +281,7 @@ static int _testGetNumeric(void) {
 static int _testGetNumericForWrongType(void) {
   ProgramOptions p = _getTestOptionMultipleTypes();
   float f = programOptionsGetNumber(p, 0);
-  assertDoubleEquals(f, -1.0f, 0.1f);
+  assertDoubleEquals(-1.0, f, TEST_DEFAULT_TOLERANCE);
   freeProgramOptions(p);
   return 0;
 }
@@ -289,7 +289,7 @@ static int _testGetNumericForWrongType(void) {
 static int _testGetNumericForInvalidOption(void) {
   ProgramOptions p = _getTestOptionMultipleTypes();
   float f = programOptionsGetNumber(p, 4);
-  assertDoubleEquals(f, -1.0f, 0.1f);
+  assertDoubleEquals(-1.0, f, TEST_DEFAULT_TOLERANCE);
   freeProgramOptions(p);
   return 0;
 }
@@ -297,7 +297,7 @@ static int _testGetNumericForInvalidOption(void) {
 static int _testGetList(void) {
   ProgramOptions p = _getTestOptionMultipleTypes();
   LinkedList l = programOptionsGetList(p, 2);
-  assertIntEquals(l->_numItems, 0);
+  assertIntEquals(0, l->_numItems);
   freeProgramOptions(p);
   return 0;
 }
@@ -324,7 +324,7 @@ static int _testSetString(void) {
   programOptionsSetCString(p, 0, "test");
   s = programOptionsGetString(p, 0);
   assertNotNull(s);
-  assertCharStringEquals(s, "test");
+  assertCharStringEquals("test", s);
   freeProgramOptions(p);
   return 0;
 }
@@ -342,7 +342,7 @@ static int _testSetStringForInvalidOption(void) {
   programOptionsSetCString(p, 4, "test");
   s = programOptionsGetString(p, 0);
   assertNotNull(s);
-  assertCharStringEquals(s, "");
+  assertCharStringEquals("", s);
   freeProgramOptions(p);
   return 0;
 }
@@ -353,7 +353,7 @@ static int _testSetStringWithNull(void) {
   programOptionsSetCString(p, 0, NULL);
   s = programOptionsGetString(p, 0);
   assertNotNull(s);
-  assertCharStringEquals(s, "");
+  assertCharStringEquals("", s);
   freeProgramOptions(p);
   return 0;
 }
@@ -363,7 +363,7 @@ static int _testSetNumeric(void) {
   float f;
   programOptionsSetNumber(p, 1, 1.23f);
   f = programOptionsGetNumber(p, 1);
-  assertDoubleEquals(f, 1.23f, 0.01f);
+  assertDoubleEquals(1.23, f, TEST_DEFAULT_TOLERANCE);
   freeProgramOptions(p);
   return 0;
 }
@@ -391,9 +391,9 @@ static int _testSetListItem(void) {
   s = newCharStringWithCString("test");
   programOptionsSetListItem(p, 2, s);
   l = programOptionsGetList(p, 2);
-  assertIntEquals(linkedListLength(l), 1);
+  assertIntEquals(1, linkedListLength(l));
   r = l->item;
-  assertCharStringEquals(r, "test");
+  assertCharStringEquals("test", r);
   freeCharString(s);
   freeProgramOptions(p);
   return 0;
