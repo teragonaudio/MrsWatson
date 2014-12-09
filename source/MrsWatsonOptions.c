@@ -165,8 +165,7 @@ errors are always logged to console regardless of this setting.",
                           OPTION_MAX_TIME,
                           "max-time",
                           "Force processing to stop after <argument> milliseconds, regardless of the \
-input source length. Mostly useful when using internal plugins as sources. Note \
-that --tail-time is still applied as normal after this limit is reached.",
+input source length. Mostly useful when using internal plugins as sources.",
                           NO_SHORT_FORM,
                           kProgramOptionTypeNumber,
                           kProgramOptionArgumentTypeRequired));
@@ -262,17 +261,6 @@ using unusual sample rates will probably result in weird behavior from plugins."
                           kProgramOptionTypeNumber,
                           kProgramOptionArgumentTypeRequired));
     programOptionsSetNumber(options, OPTION_SAMPLE_RATE, (const float)getSampleRate());
-
-    programOptionsAdd(options, newProgramOptionWithName(
-                          OPTION_TAIL_TIME,
-                          "tail-time",
-                          "Continue processing for up to <argument> extra milliseconds after input \
-source is finished, in addition to any tail time requested by plugins in the \
-chain. If any plugins in chain the require tail time, the largest value will be \
-used and added to <argument>.",
-                          NO_SHORT_FORM,
-                          kProgramOptionTypeNumber,
-                          kProgramOptionArgumentTypeRequired));
 
     programOptionsAdd(options, newProgramOptionWithName(
                           OPTION_TEMPO,

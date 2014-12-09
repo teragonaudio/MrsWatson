@@ -62,7 +62,8 @@ void sampleBufferClear(SampleBuffer self)
     }
 }
 
-boolByte sampleBufferCopyAndMapChannelsWithOffset(SampleBuffer destinationBuffer, unsigned long destinationOffset, const SampleBuffer sourceBuffer, unsigned long sourceOffset, unsigned long numberOfFrames)
+boolByte sampleBufferCopyAndMapChannelsWithOffset(SampleBuffer destinationBuffer, unsigned long destinationOffset,
+        const SampleBuffer sourceBuffer, unsigned long sourceOffset, unsigned long numberOfFrames)
 {
     unsigned int i;
 

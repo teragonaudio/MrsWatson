@@ -232,38 +232,37 @@ static void _processMidiMetaEvent(void *item, void *userData)
  *  Reads from inputSource.
  *
  * @param inputSource The SampleSource to read from.
- * @param silenceSource The source from where to read silentTailFrames silent tail frames.
  * @param buffer The SampleBuffer to which the samples will be written.
- * @param silentTailFrames Number of silent samples that will be provided at the end of inputSource.
  * @return True if there is more input to read.
  */
-boolByte readInput(SampleSource inputSource, SampleSource silenceSource, SampleBuffer buffer, unsigned long silentTailFrames)
+boolByte readInput(SampleSource inputSource, SampleBuffer buffer)
 {
     unsigned long framesRead;
     unsigned long bufferSize = buffer->blocksize;
 
     inputSource->readSampleBlock(inputSource, buffer);
-    framesRead = buffer->blocksize; //buffer->blocksize tells how man frames have been read from inputSource, during tail period it will be 0.
+    // buffer->blocksize tells how many frames have been read from inputSource
+    framesRead = buffer->blocksize;
 
-    //We are not done until framesRead < bufferSize and silenceSource->numSamplesProcessed/buffer->numChannels == silentTailFrames
     if (framesRead == bufferSize) {
-        return true; // more input
-    } else if (framesRead < bufferSize) {
-        unsigned long remainingSilence = silentTailFrames - silenceSource->numSamplesProcessed / buffer->numChannels; // 0 < remainingSilence <= silentTailFrames
-        unsigned long numberOfFrames = remainingSilence < (bufferSize - framesRead) ? remainingSilence : (bufferSize - framesRead); // 0 < numberOfFrames <= bufferSize
+        // We have filled up the buffer, so return true to ask for more input
+        return true;
+    } else if(framesRead < bufferSize) {
+        // Partial read, meaning that we have reached the end of file
+        unsigned long numberOfFrames = (bufferSize - framesRead);
         SampleBuffer silenceBuffer = newSampleBuffer(buffer->numChannels, numberOfFrames);
 
-        if (!silenceSource->readSampleBlock(silenceSource, silenceBuffer)) {
-            logInternalError("SilentSource does not behave correct.");
-        }
-
-        buffer->blocksize = framesRead + numberOfFrames; // 0 < buffer->blocksize <= bufferSize.
+        buffer->blocksize = framesRead + numberOfFrames;
         sampleBufferCopyAndMapChannelsWithOffset(buffer, framesRead, silenceBuffer, 0, numberOfFrames);
         freeSampleBuffer(silenceBuffer);
-        return (boolByte)(silenceSource->numSamplesProcessed / buffer->numChannels != silentTailFrames);
+
+        // Finished reading
+        return false;
     } else {
-        logInternalError("framesRead > bufferSize");
-        return false; //stop here.
+        // Return false so that this callback is not reached again. With such a weird error, we should
+        // not continue execution.
+        logInternalError("Read more frames than expected, this should not happen");
+        return false;
     }
 }
 
@@ -326,8 +325,6 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char **argv)
     MidiSource midiSource = NULL;
     unsigned long maxTimeInMs = 0;
     unsigned long maxTimeInFrames = 0;
-    unsigned long tailTimeInMs = 0;
-    unsigned long tailTimeInFrames = 0;
     unsigned long processingDelayInFrames;
     ProgramOptions programOptions;
     ProgramOption option;
@@ -338,7 +335,6 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char **argv)
     LinkedList taskTimerList = NULL;
     CharString totalTimeString = NULL;
     boolByte finishedReading = false;
-    SampleSource silentSampleInput;
     SampleSource silentSampleOutput;
     unsigned int i;
 
@@ -495,10 +491,6 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char **argv)
                 setSampleRate(programOptionsGetNumber(programOptions, OPTION_SAMPLE_RATE));
                 break;
 
-            case OPTION_TAIL_TIME:
-                tailTimeInMs = (unsigned long)programOptionsGetNumber(programOptions, OPTION_TAIL_TIME);
-                break;
-
             case OPTION_TEMPO:
                 setTempo(programOptionsGetNumber(programOptions, OPTION_TEMPO));
                 break;
@@ -652,9 +644,6 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char **argv)
     }
 
     processingDelayInFrames = pluginChainGetProcessingDelay(pluginChain);
-    // Get largest tail time requested by any plugin in the chain
-    tailTimeInMs += pluginChainGetMaximumTailTimeInMs(pluginChain);
-    tailTimeInFrames = (unsigned long)(tailTimeInMs * getSampleRate()) / 1000l + processingDelayInFrames;
     pluginChainPrepareForProcessing(pluginChain);
 
     // Update sample rate on the event logger
@@ -668,13 +657,12 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char **argv)
     logDebug("Time signature: %d/%d", getTimeSignatureBeatsPerMeasure(), getTimeSignatureNoteValue());
     taskTimerStop(initTimer);
 
-    silentSampleInput = sampleSourceFactory(NULL);
     silentSampleOutput = sampleSourceFactory(NULL);
 
     // Main processing loop
     while (!finishedReading) {
         taskTimerStart(inputTimer);
-        finishedReading = (boolByte)!readInput(inputSource, silentSampleInput, inputSampleBuffer, tailTimeInFrames);
+        finishedReading = (boolByte)!readInput(inputSource, inputSampleBuffer);
 
         // TODO: For streaming MIDI, we would need to read in events from source here
         if (midiSequence != NULL) {
@@ -708,7 +696,6 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char **argv)
     }
 
     // Close file handles for input/output sources
-    silentSampleInput->closeSampleSource(silentSampleInput);
     silentSampleOutput->closeSampleSource(silentSampleOutput);
     inputSource->closeSampleSource(inputSource);
     outputSource->closeSampleSource(outputSource);
