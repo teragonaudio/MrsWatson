@@ -36,106 +36,176 @@ ProgramOptions newMrsWatsonOptions(void)
 {
     ProgramOptions options = newProgramOptions(NUM_OPTIONS);
 
-    programOptionsAdd(options, newProgramOptionWithName(OPTION_BLOCKSIZE, "blocksize",
-                      "Blocksize in frames to use for processing. If input source is not an even \
+    programOptionsAdd(options, newProgramOptionWithName(
+                          OPTION_BLOCKSIZE,
+                          "blocksize",
+                          "Blocksize in frames to use for processing. If input source is not an even \
 multiple of the blocksize, then empty frames will be added to the last block.",
-                      true, kProgramOptionTypeNumber, kProgramOptionArgumentTypeRequired));
+                          HAS_SHORT_FORM,
+                          kProgramOptionTypeNumber,
+                          kProgramOptionArgumentTypeRequired));
     programOptionsSetNumber(options, OPTION_BLOCKSIZE, (const float)getBlocksize());
 
-    programOptionsAdd(options, newProgramOptionWithName(OPTION_CHANNELS, "channels",
-                      "Number of channels for output source. If the input source specifies a channel \
+    programOptionsAdd(options, newProgramOptionWithName(
+                          OPTION_CHANNELS,
+                          "channels",
+                          "Number of channels for output source. If the input source specifies a channel \
 count, then that value will be override the one set by this option.",
-                      true, kProgramOptionTypeNumber, kProgramOptionArgumentTypeRequired));
+                          HAS_SHORT_FORM,
+                          kProgramOptionTypeNumber,
+                          kProgramOptionArgumentTypeRequired));
     programOptionsSetNumber(options, OPTION_CHANNELS, (const float)getNumChannels());
 
-    programOptionsAdd(options, newProgramOptionWithName(OPTION_COLOR_LOGGING, "color",
-                      "Colored logging output. Argument can be 'auto', 'force', or 'none'. If no \
+    programOptionsAdd(options, newProgramOptionWithName(
+                          OPTION_COLOR_LOGGING,
+                          "color",
+                          "Colored logging output. Argument can be 'auto', 'force', or 'none'. If no \
 argument given, 'force' is assumed. If attached to a terminal device, color is \
 used automatically unless 'none' is given to this option.",
-                      false, kProgramOptionTypeString, kProgramOptionArgumentTypeOptional));
+                          NO_SHORT_FORM,
+                          kProgramOptionTypeString,
+                          kProgramOptionArgumentTypeOptional));
     programOptionsSetCString(options, OPTION_COLOR_LOGGING, "auto");
 
-    programOptionsAdd(options, newProgramOptionWithName(OPTION_COLOR_TEST, "color-test",
-                      "Run a test of all color output combinations.",
-                      false, kProgramOptionTypeEmpty, kProgramOptionArgumentTypeNone));
+    programOptionsAdd(options, newProgramOptionWithName(
+                          OPTION_COLOR_TEST,
+                          "color-test",
+                          "Run a test of all color output combinations.",
+                          NO_SHORT_FORM,
+                          kProgramOptionTypeEmpty,
+                          kProgramOptionArgumentTypeNone));
     options->options[OPTION_COLOR_TEST]->hideInHelp = true;
 
-    programOptionsAdd(options, newProgramOptionWithName(OPTION_CONFIG_FILE, "config-file",
-                      "Load options from a configuration file. The file will be read *after* other \
+    programOptionsAdd(options, newProgramOptionWithName(
+                          OPTION_CONFIG_FILE,
+                          "config-file",
+                          "Load options from a configuration file. The file will be read *after* other \
 options have been parsed, so any options given on the command line will be overriden \
 by those from the file. The file should be plain text, and one argument per line, \
 like so:\n\n\
 \t--plugin-root\n\
 \t/path/to/my/plugins\n\
 \t--verbose",
-                      false, kProgramOptionTypeEmpty, kProgramOptionArgumentTypeRequired));
+                          NO_SHORT_FORM,
+                          kProgramOptionTypeEmpty,
+                          kProgramOptionArgumentTypeRequired));
 
-    programOptionsAdd(options, newProgramOptionWithName(OPTION_DISPLAY_INFO, "display-info",
-                      "Print information about each plugin in the chain.",
-                      false, kProgramOptionTypeEmpty, kProgramOptionArgumentTypeNone));
+    programOptionsAdd(options, newProgramOptionWithName(
+                          OPTION_DISPLAY_INFO,
+                          "display-info",
+                          "Print information about each plugin in the chain.",
+                          NO_SHORT_FORM,
+                          kProgramOptionTypeEmpty,
+                          kProgramOptionArgumentTypeNone));
 
-    programOptionsAdd(options, newProgramOptionWithName(OPTION_ERROR_REPORT, "error-report",
-                      "Generate an error report zipfile on the desktop.",
-                      false, kProgramOptionTypeString, kProgramOptionArgumentTypeNone));
+    programOptionsAdd(options, newProgramOptionWithName(
+                          OPTION_ERROR_REPORT,
+                          "error-report",
+                          "Generate an error report zipfile on the desktop.",
+                          NO_SHORT_FORM,
+                          kProgramOptionTypeString,
+                          kProgramOptionArgumentTypeNone));
 
-    programOptionsAdd(options, newProgramOptionWithName(OPTION_LIST_FILE_TYPES, "list-file-types",
-                      "Print a list of supported file types for input/output sources.",
-                      false, kProgramOptionTypeString, kProgramOptionArgumentTypeNone));
+    programOptionsAdd(options, newProgramOptionWithName(
+                          OPTION_LIST_FILE_TYPES,
+                          "list-file-types",
+                          "Print a list of supported file types for input/output sources.",
+                          NO_SHORT_FORM,
+                          kProgramOptionTypeString,
+                          kProgramOptionArgumentTypeNone));
 
-    programOptionsAdd(options, newProgramOptionWithName(OPTION_HELP, "help",
-                      "With no arguments, prints a summary of options and their default settings. \
+    programOptionsAdd(options, newProgramOptionWithName(
+                          OPTION_HELP,
+                          "help",
+                          "With no arguments, prints a summary of options and their default settings. \
 Otherwise, extended help can be printed for an individual option given by \
 [argument], or use 'full' to print extended help for all options.",
-                      true, kProgramOptionTypeString, kProgramOptionArgumentTypeOptional));
+                          HAS_SHORT_FORM,
+                          kProgramOptionTypeString,
+                          kProgramOptionArgumentTypeOptional));
 
-    programOptionsAdd(options, newProgramOptionWithName(OPTION_INPUT_SOURCE, "input",
-                      "Input source to use for processing, where the file type is determined from \
+    programOptionsAdd(options, newProgramOptionWithName(
+                          OPTION_INPUT_SOURCE,
+                          "input",
+                          "Input source to use for processing, where the file type is determined from \
 the extension. Run with --list-file-types to see a list of supported types. Use \
 '-' to read from stdin.",
-                      true, kProgramOptionTypeString, kProgramOptionArgumentTypeRequired));
+                          HAS_SHORT_FORM,
+                          kProgramOptionTypeString,
+                          kProgramOptionArgumentTypeRequired));
 
-    programOptionsAdd(options, newProgramOptionWithName(OPTION_LIST_PLUGINS, "list-plugins",
-                      "List available plugins. Useful for determining if a plugin can be 'seen'.",
-                      false, kProgramOptionTypeEmpty, kProgramOptionArgumentTypeNone));
+    programOptionsAdd(options, newProgramOptionWithName(
+                          OPTION_LIST_PLUGINS,
+                          "list-plugins",
+                          "List available plugins. Useful for determining if a plugin can be 'seen'.",
+                          NO_SHORT_FORM,
+                          kProgramOptionTypeEmpty,
+                          kProgramOptionArgumentTypeNone));
 
-    programOptionsAdd(options, newProgramOptionWithName(OPTION_LOG_FILE, "log-file",
-                      "Save logging output to the given file instead of the terminal's standard error.",
-                      false, kProgramOptionTypeString, kProgramOptionArgumentTypeRequired));
+    programOptionsAdd(options, newProgramOptionWithName(
+                          OPTION_LOG_FILE,
+                          "log-file",
+                          "Save logging output to the given file instead of the terminal's standard error.",
+                          NO_SHORT_FORM,
+                          kProgramOptionTypeString,
+                          kProgramOptionArgumentTypeRequired));
     programOptionsSetCString(options, OPTION_LOG_FILE, "log.txt");
 
-    programOptionsAdd(options, newProgramOptionWithName(OPTION_LOG_LEVEL, "log-level",
-                      "Logging level to use. Options include: debug, info, warn, error. Critical \
+    programOptionsAdd(options, newProgramOptionWithName(
+                          OPTION_LOG_LEVEL,
+                          "log-level",
+                          "Logging level to use. Options include: debug, info, warn, error. Critical \
 errors are always logged to console regardless of this setting.",
-                      false, kProgramOptionTypeString, kProgramOptionArgumentTypeRequired));
+                          NO_SHORT_FORM,
+                          kProgramOptionTypeString,
+                          kProgramOptionArgumentTypeRequired));
     programOptionsSetCString(options, OPTION_LOG_LEVEL, "info");
 
-    programOptionsAdd(options, newProgramOptionWithName(OPTION_MAX_TIME, "max-time",
-                      "Force processing to stop after <argument> milliseconds, regardless of the \
+    programOptionsAdd(options, newProgramOptionWithName(
+                          OPTION_MAX_TIME,
+                          "max-time",
+                          "Force processing to stop after <argument> milliseconds, regardless of the \
 input source length. Mostly useful when using internal plugins as sources. Note \
 that --tail-time is still applied as normal after this limit is reached.",
-                      false, kProgramOptionTypeNumber, kProgramOptionArgumentTypeRequired));
+                          NO_SHORT_FORM,
+                          kProgramOptionTypeNumber,
+                          kProgramOptionArgumentTypeRequired));
 
-    programOptionsAdd(options, newProgramOptionWithName(OPTION_MIDI_SOURCE, "midi-file",
-                      "MIDI file to read events from. Required if processing an instrument plugin.",
-                      true, kProgramOptionTypeString, kProgramOptionArgumentTypeRequired));
+    programOptionsAdd(options, newProgramOptionWithName(
+                          OPTION_MIDI_SOURCE,
+                          "midi-file",
+                          "MIDI file to read events from. Required if processing an instrument plugin.",
+                          HAS_SHORT_FORM,
+                          kProgramOptionTypeString,
+                          kProgramOptionArgumentTypeRequired));
 
-    programOptionsAdd(options, newProgramOptionWithName(OPTION_OUTPUT_SOURCE, "output",
-                      "Output source to write processed data to, where the file type is determined \
+    programOptionsAdd(options, newProgramOptionWithName(
+                          OPTION_OUTPUT_SOURCE,
+                          "output",
+                          "Output source to write processed data to, where the file type is determined \
 from the extension. Run with --list-file-types to see a list of supported types. \
 Use '-' to write to stdout..",
-                      true, kProgramOptionTypeString, kProgramOptionArgumentTypeOptional));
+                          HAS_SHORT_FORM,
+                          kProgramOptionTypeString,
+                          kProgramOptionArgumentTypeOptional));
     programOptionsSetCString(options, OPTION_OUTPUT_SOURCE, "out.wav");
 
-    programOptionsAdd(options, newProgramOptionWithName(OPTION_PARAMETER, "parameter",
-                      "Set a parameter in a plugin. May be specified multiple times, but can only \
+    programOptionsAdd(options, newProgramOptionWithName(
+                          OPTION_PARAMETER,
+                          "parameter",
+                          "Set a parameter in a plugin. May be specified multiple times, but can only \
 set parameters for the first plugin in a chain. Parameter indexes for plugins \
 can be found with the --display-info option. Use comma-separated arguments for \
 index/value, for example:\n\n\
 \t--parameter 1,0.3 --parameter 0,0.75",
-                      false, kProgramOptionTypeList, kProgramOptionArgumentTypeRequired));
+                          NO_SHORT_FORM,
+                          kProgramOptionTypeList,
+                          kProgramOptionArgumentTypeRequired));
 
-    programOptionsAdd(options, newProgramOptionWithName(OPTION_PLUGIN, "plugin",
-                      "Plugin(s) to process. Multiple plugins can given in a semicolon-separated \
+    programOptionsAdd(options, newProgramOptionWithName(
+                          OPTION_PLUGIN,
+                          "plugin",
+                          "Plugin(s) to process. Multiple plugins can given in a semicolon-separated \
 list, in which case they will be placed into a chain in the order specified. \
 Note that if you specify multiple plugins, you will have to put the argument \
 in quotes or else the shell may mis-interpret it as multiple commands. \
@@ -150,63 +220,105 @@ to indicate which plugin to load. Examples:\n\n\
 \t--plugin 'AutoTune,KayneWest.fxp;Compressor,SoftKnee.fxp;Limiter'\n\
 \t--plugin 'WavesShell-VST' --display-info (list shell sub-plugins)\n\
 \t--plugin 'WavesShell-VST:IDFX' (load a shell plugins)",
-                      true, kProgramOptionTypeString, kProgramOptionArgumentTypeRequired));
+                          HAS_SHORT_FORM,
+                          kProgramOptionTypeString,
+                          kProgramOptionArgumentTypeRequired));
 
-    programOptionsAdd(options, newProgramOptionWithName(OPTION_PLUGIN_ROOT, "plugin-root",
-                      "Custom non-system directory to use when searching for plugins. Will be searched \
+    programOptionsAdd(options, newProgramOptionWithName(
+                          OPTION_PLUGIN_ROOT,
+                          "plugin-root",
+                          "Custom non-system directory to use when searching for plugins. Will be searched \
   before system directories if given.",
-                      false, kProgramOptionTypeString, kProgramOptionArgumentTypeRequired));
+                          NO_SHORT_FORM,
+                          kProgramOptionTypeString,
+                          kProgramOptionArgumentTypeRequired));
 
-    programOptionsAdd(options, newProgramOptionWithName(OPTION_QUIET, "quiet",
-                      "Only log critical errors.",
-                      true, kProgramOptionTypeEmpty, kProgramOptionArgumentTypeNone));
+    programOptionsAdd(options, newProgramOptionWithName(
+                          OPTION_QUIET,
+                          "quiet",
+                          "Only log critical errors.",
+                          HAS_SHORT_FORM,
+                          kProgramOptionTypeEmpty,
+                          kProgramOptionArgumentTypeNone));
 
-    programOptionsAdd(options, newProgramOptionWithName(OPTION_REALTIME, "realtime",
-                      "Simulate running in realtime by sleeping for any remaining time needed to process \
+    programOptionsAdd(options, newProgramOptionWithName(
+                          OPTION_REALTIME,
+                          "realtime",
+                          "Simulate running in realtime by sleeping for any remaining time needed to process \
 the given block. Some plugins which are unable to do offline rendering may require this \
 option in order to function properly.",
-                      false, kProgramOptionTypeEmpty, kProgramOptionArgumentTypeNone));
+                          NO_SHORT_FORM,
+                          kProgramOptionTypeEmpty,
+                          kProgramOptionArgumentTypeNone));
 
-    programOptionsAdd(options, newProgramOptionWithName(OPTION_SAMPLE_RATE, "sample-rate",
-                      "Sample rate to use when processing. If the input source specifies its own \
+    programOptionsAdd(options, newProgramOptionWithName(
+                          OPTION_SAMPLE_RATE,
+                          "sample-rate",
+                          "Sample rate to use when processing. If the input source specifies its own \
 sample rate, that value will override the one set by this option. No error checking \
 is done for sample rates (other than requiring it to be greater than 0), however \
 using unusual sample rates will probably result in weird behavior from plugins.",
-                      true, kProgramOptionTypeNumber, kProgramOptionArgumentTypeRequired));
+                          HAS_SHORT_FORM,
+                          kProgramOptionTypeNumber,
+                          kProgramOptionArgumentTypeRequired));
     programOptionsSetNumber(options, OPTION_SAMPLE_RATE, (const float)getSampleRate());
 
-    programOptionsAdd(options, newProgramOptionWithName(OPTION_TAIL_TIME, "tail-time",
-                      "Continue processing for up to <argument> extra milliseconds after input \
+    programOptionsAdd(options, newProgramOptionWithName(
+                          OPTION_TAIL_TIME,
+                          "tail-time",
+                          "Continue processing for up to <argument> extra milliseconds after input \
 source is finished, in addition to any tail time requested by plugins in the \
 chain. If any plugins in chain the require tail time, the largest value will be \
 used and added to <argument>.",
-                      false, kProgramOptionTypeNumber, kProgramOptionArgumentTypeRequired));
+                          NO_SHORT_FORM,
+                          kProgramOptionTypeNumber,
+                          kProgramOptionArgumentTypeRequired));
 
-    programOptionsAdd(options, newProgramOptionWithName(OPTION_TEMPO, "tempo",
-                      "Tempo to use when processing.",
-                      false, kProgramOptionTypeNumber, kProgramOptionArgumentTypeRequired));
+    programOptionsAdd(options, newProgramOptionWithName(
+                          OPTION_TEMPO,
+                          "tempo",
+                          "Tempo to use when processing.",
+                          NO_SHORT_FORM,
+                          kProgramOptionTypeNumber,
+                          kProgramOptionArgumentTypeRequired));
     programOptionsSetNumber(options, OPTION_TEMPO, getTempo());
 
-    programOptionsAdd(options, newProgramOptionWithName(OPTION_TIME_SIGNATURE, "time-signature",
-                      "Set the global time signature. Should be a string formatted like \"3/4\".",
-                      false, kProgramOptionTypeString, kProgramOptionArgumentTypeRequired));
+    programOptionsAdd(options, newProgramOptionWithName(
+                          OPTION_TIME_SIGNATURE,
+                          "time-signature",
+                          "Set the global time signature. Should be a string formatted like \"3/4\".",
+                          NO_SHORT_FORM,
+                          kProgramOptionTypeString,
+                          kProgramOptionArgumentTypeRequired));
     // This is kind of cheating, because the default time signature could be
     // anything. Realistically we know it will always be hardcoded to 4/4, so this
     // hardcoded string is also relatively safe.
     programOptionsSetCString(options, OPTION_TIME_SIGNATURE, "4/4");
 
-    programOptionsAdd(options, newProgramOptionWithName(OPTION_VERBOSE, "verbose",
-                      "Verbose logging. Logging output is printed in the following form:\n\
+    programOptionsAdd(options, newProgramOptionWithName(
+                          OPTION_VERBOSE,
+                          "verbose",
+                          "Verbose logging. Logging output is printed in the following form:\n\
 (Level) (Frames processed) (Elapsed time in ms) (Logging message)",
-                      true, kProgramOptionTypeEmpty, kProgramOptionArgumentTypeNone));
+                          HAS_SHORT_FORM,
+                          kProgramOptionTypeEmpty,
+                          kProgramOptionArgumentTypeNone));
 
-    programOptionsAdd(options, newProgramOptionWithName(OPTION_VERSION, "version",
-                      "Print full program version and copyright information.",
-                      false, kProgramOptionTypeEmpty, kProgramOptionArgumentTypeNone));
+    programOptionsAdd(options, newProgramOptionWithName(
+                          OPTION_VERSION,
+                          "version",
+                          "Print full program version and copyright information.",
+                          NO_SHORT_FORM,
+                          kProgramOptionTypeEmpty,
+                          kProgramOptionArgumentTypeNone));
 
-    programOptionsAdd(options, newProgramOptionWithName(OPTION_ZEBRA_SIZE, "zebra-size",
-                      "Alternate logging output colors every <argument> frames.",
-                      false, kProgramOptionTypeNumber, kProgramOptionArgumentTypeRequired));
+    programOptionsAdd(options, newProgramOptionWithName(
+                          OPTION_ZEBRA_SIZE,
+                          "zebra-size",
+                          "Alternate logging output colors every <argument> frames.",
+                          NO_SHORT_FORM,
+                          kProgramOptionTypeNumber,
+                          kProgramOptionArgumentTypeRequired));
     programOptionsSetNumber(options, OPTION_ZEBRA_SIZE, (const float)getSampleRate());
 
     return options;

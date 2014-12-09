@@ -32,6 +32,9 @@
 #include "base/LinkedList.h"
 #include "base/Types.h"
 
+#define NO_SHORT_FORM false
+#define HAS_SHORT_FORM true
+
 typedef enum {
     kProgramOptionTypeEmpty,
     kProgramOptionTypeString,
