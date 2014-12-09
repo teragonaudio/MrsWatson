@@ -1,0 +1,8 @@
+style=1tbs
+indent=spaces
+indent-preproc-define
+break-blocks
+pad-header
+pad-oper
+align-pointer=name
+align-reference=name
