@@ -344,7 +344,7 @@ void pluginChainProcessAudio(PluginChain pluginChain, SampleBuffer inBuffer, Sam
         plugin->processAudio(plugin, plugin->inputBuffer, plugin->outputBuffer);
         processingTimeInMs = taskTimerStop(pluginChain->audioTimers[i]);
 
-        if (processingTimeInMs > maxProcessingTimeInMs) {
+        if (processingTimeInMs > maxProcessingTimeInMs && pluginChain->_realtime) {
             logWarn("Possible dropout! Plugin '%s' spent %dms processing time (%dms max)",
                     plugin->pluginName->data, (int)processingTimeInMs, (int)maxProcessingTimeInMs);
         } else {
