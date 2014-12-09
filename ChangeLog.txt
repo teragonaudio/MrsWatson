@@ -1,3 +1,18 @@
+Version 0.9.7:
+- New command-line option for setting parameters
+- Ensure that executable runs on 10.5 and above
+- Now have a single option for setting time signature
+- Handle key signature & proprietary MIDI meta events
+- Fix several small memory leaks
+- Fix several crashes
+- Log CPU usage overloads
+- Bugfixes, tests with 32/64 bit detection
+- Bugfixes, tests with big/little endian detection
+- New and more robust file API
+- Fix CMake project generation on Mac/Windows
+- Allow test suite to show log output from app
+- Improve internal documentation
+
 Version 0.9.6:
 - Compatibility with VST shell plugins (including Waves plugins)
 - Compatibility fixes with plugins that declare more than 2 outputs
