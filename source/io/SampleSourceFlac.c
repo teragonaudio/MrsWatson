@@ -32,36 +32,41 @@
 #include "io/SampleSourceFlac.h"
 #include "logging/EventLogger.h"
 
-static boolByte _openSampleSourceFlac(void* sampleSourcePtr, const SampleSourceOpenAs openAs) {
-  logUnsupportedFeature("Flac file I/O");
-  return false;
+static boolByte _openSampleSourceFlac(void *sampleSourcePtr, const SampleSourceOpenAs openAs)
+{
+    logUnsupportedFeature("Flac file I/O");
+    return false;
 }
 
-static boolByte _readBlockFromFlacFile(void* sampleSourcePtr, SampleBuffer sampleBuffer) {
-  logUnsupportedFeature("Flac file I/O");
-  return false;
+static boolByte _readBlockFromFlacFile(void *sampleSourcePtr, SampleBuffer sampleBuffer)
+{
+    logUnsupportedFeature("Flac file I/O");
+    return false;
 }
 
-static boolByte _writeBlockToFlacFile(void* sampleSourcePtr, const SampleBuffer sampleBuffer) {
-  logUnsupportedFeature("Flac file I/O");
-  return false;
+static boolByte _writeBlockToFlacFile(void *sampleSourcePtr, const SampleBuffer sampleBuffer)
+{
+    logUnsupportedFeature("Flac file I/O");
+    return false;
 }
 
-static void _freeSampleSourceFlac(void* sampleSourceDataPtr) {
-  
+static void _freeSampleSourceFlac(void *sampleSourceDataPtr)
+{
+
 }
 
-SampleSource newSampleSourceFlac(const CharString sampleSourceName) {
-  SampleSource sampleSource = (SampleSource)malloc(sizeof(SampleSourceMembers));
-  
-  sampleSource->sampleSourceType = SAMPLE_SOURCE_TYPE_FLAC;
-  
-  sampleSource->openSampleSource = _openSampleSourceFlac;
-  sampleSource->readSampleBlock = _readBlockFromFlacFile;
-  sampleSource->writeSampleBlock = _writeBlockToFlacFile;
-  sampleSource->freeSampleSourceData = _freeSampleSourceFlac;
-  
-  return sampleSource;
+SampleSource newSampleSourceFlac(const CharString sampleSourceName)
+{
+    SampleSource sampleSource = (SampleSource)malloc(sizeof(SampleSourceMembers));
+
+    sampleSource->sampleSourceType = SAMPLE_SOURCE_TYPE_FLAC;
+
+    sampleSource->openSampleSource = _openSampleSourceFlac;
+    sampleSource->readSampleBlock = _readBlockFromFlacFile;
+    sampleSource->writeSampleBlock = _writeBlockToFlacFile;
+    sampleSource->freeSampleSourceData = _freeSampleSourceFlac;
+
+    return sampleSource;
 }
 
 #endif

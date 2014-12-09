@@ -39,17 +39,17 @@
 // are defined in the individual subclasses.
 
 typedef struct {
-  AFfilehandle fileHandle;
-  float* interlacedBuffer;
-  short* pcmBuffer;
+    AFfilehandle fileHandle;
+    float *interlacedBuffer;
+    short *pcmBuffer;
 } SampleSourceAudiofileDataMembers;
 
-typedef SampleSourceAudiofileDataMembers* SampleSourceAudiofileData;
+typedef SampleSourceAudiofileDataMembers *SampleSourceAudiofileData;
 
-boolByte readBlockFromAudiofile(void* sampleSourcePtr, SampleBuffer sampleBuffer);
-boolByte writeBlockToAudiofile(void* sampleSourcePtr, const SampleBuffer sampleBuffer);
-void closeSampleSourceAudiofile(void* sampleSourceDataPtr);
-void freeSampleSourceDataAudiofile(void* sampleSourceDataPtr);
+boolByte readBlockFromAudiofile(void *sampleSourcePtr, SampleBuffer sampleBuffer);
+boolByte writeBlockToAudiofile(void *sampleSourcePtr, const SampleBuffer sampleBuffer);
+void closeSampleSourceAudiofile(void *sampleSourceDataPtr);
+void freeSampleSourceDataAudiofile(void *sampleSourceDataPtr);
 
 #endif
 #endif

@@ -42,117 +42,121 @@
 #endif
 #endif
 
-static boolByte _openSampleSourceAiff(void *sampleSourcePtr, const SampleSourceOpenAs openAs) {
-  SampleSource sampleSource = (SampleSource)sampleSourcePtr;
+static boolByte _openSampleSourceAiff(void *sampleSourcePtr, const SampleSourceOpenAs openAs)
+{
+    SampleSource sampleSource = (SampleSource)sampleSourcePtr;
 #if HAVE_LIBAUDIOFILE
-  SampleSourceAudiofileData extraData = (SampleSourceAudiofileData)(sampleSource->extraData);
+    SampleSourceAudiofileData extraData = (SampleSourceAudiofileData)(sampleSource->extraData);
 #else
-  SampleSourcePcmData extraData = (SampleSourcePcmData)(sampleSource->extraData);
+    SampleSourcePcmData extraData = (SampleSourcePcmData)(sampleSource->extraData);
 #endif
 
-  if(openAs == SAMPLE_SOURCE_OPEN_READ) {
+    if (openAs == SAMPLE_SOURCE_OPEN_READ) {
 #if HAVE_LIBAUDIOFILE
-    extraData->fileHandle = afOpenFile(sampleSource->sourceName->data, "r", NULL);
-    if(extraData->fileHandle != NULL) {
-      setNumChannels(afGetVirtualChannels(extraData->fileHandle, AF_DEFAULT_TRACK));
-      setSampleRate((float)afGetRate(extraData->fileHandle, AF_DEFAULT_TRACK));
+        extraData->fileHandle = afOpenFile(sampleSource->sourceName->data, "r", NULL);
+
+        if (extraData->fileHandle != NULL) {
+            setNumChannels(afGetVirtualChannels(extraData->fileHandle, AF_DEFAULT_TRACK));
+            setSampleRate((float)afGetRate(extraData->fileHandle, AF_DEFAULT_TRACK));
+        }
+
+#else
+        logUnsupportedFeature("Reading AIFF files");
+#endif
+    } else if (openAs == SAMPLE_SOURCE_OPEN_WRITE) {
+#if HAVE_LIBAUDIOFILE
+        AFfilesetup outfileSetup = afNewFileSetup();
+        afInitFileFormat(outfileSetup, AF_FILE_AIFF);
+        afInitByteOrder(outfileSetup, AF_DEFAULT_TRACK, AF_BYTEORDER_BIGENDIAN);
+        afInitChannels(outfileSetup, AF_DEFAULT_TRACK, getNumChannels());
+        afInitRate(outfileSetup, AF_DEFAULT_TRACK, getSampleRate());
+        afInitSampleFormat(outfileSetup, AF_DEFAULT_TRACK, AF_SAMPFMT_TWOSCOMP, DEFAULT_BITRATE);
+        extraData->fileHandle = afOpenFile(sampleSource->sourceName->data, "w", outfileSetup);
+#else
+        logUnsupportedFeature("Writing AIFF files");
+#endif
+    } else {
+        logInternalError("Invalid type for openAs in AIFF file");
+        return false;
     }
-#else
-    logUnsupportedFeature("Reading AIFF files");
-#endif
-  }
-  else if(openAs == SAMPLE_SOURCE_OPEN_WRITE) {
-#if HAVE_LIBAUDIOFILE
-    AFfilesetup outfileSetup = afNewFileSetup();
-    afInitFileFormat(outfileSetup, AF_FILE_AIFF);
-    afInitByteOrder(outfileSetup, AF_DEFAULT_TRACK, AF_BYTEORDER_BIGENDIAN);
-    afInitChannels(outfileSetup, AF_DEFAULT_TRACK, getNumChannels());
-    afInitRate(outfileSetup, AF_DEFAULT_TRACK, getSampleRate());
-    afInitSampleFormat(outfileSetup, AF_DEFAULT_TRACK, AF_SAMPFMT_TWOSCOMP, DEFAULT_BITRATE);
-    extraData->fileHandle = afOpenFile(sampleSource->sourceName->data, "w", outfileSetup);
-#else
-    logUnsupportedFeature("Writing AIFF files");
-#endif
-  }
-  else {
-    logInternalError("Invalid type for openAs in AIFF file");
-    return false;
-  }
 
-  if(extraData->fileHandle == NULL) {
-    logError("AIFF file '%s' could not be opened for '%s'",
-      sampleSource->sourceName->data, openAs == SAMPLE_SOURCE_OPEN_READ ? "reading" : "writing");
-    return false;
-  }
+    if (extraData->fileHandle == NULL) {
+        logError("AIFF file '%s' could not be opened for '%s'",
+                 sampleSource->sourceName->data, openAs == SAMPLE_SOURCE_OPEN_READ ? "reading" : "writing");
+        return false;
+    }
 
-  sampleSource->openedAs = openAs;
-  return true;
+    sampleSource->openedAs = openAs;
+    return true;
 }
 
-static boolByte _readBlockFromAiffFile(void* sampleSourcePtr, SampleBuffer sampleBuffer) {
-  SampleSource sampleSource = (SampleSource)sampleSourcePtr;
-  SampleSourcePcmData extraData = (SampleSourcePcmData)(sampleSource->extraData);
-  unsigned long originalBlocksize = sampleBuffer->blocksize;
-  size_t samplesRead = sampleSourcePcmRead(extraData, sampleBuffer);
-  sampleSource->numSamplesProcessed += samplesRead;
-  return (boolByte)(originalBlocksize == sampleBuffer->blocksize);
+static boolByte _readBlockFromAiffFile(void *sampleSourcePtr, SampleBuffer sampleBuffer)
+{
+    SampleSource sampleSource = (SampleSource)sampleSourcePtr;
+    SampleSourcePcmData extraData = (SampleSourcePcmData)(sampleSource->extraData);
+    unsigned long originalBlocksize = sampleBuffer->blocksize;
+    size_t samplesRead = sampleSourcePcmRead(extraData, sampleBuffer);
+    sampleSource->numSamplesProcessed += samplesRead;
+    return (boolByte)(originalBlocksize == sampleBuffer->blocksize);
 }
 
-static boolByte _writeBlockToAiffFile(void* sampleSourcePtr, const SampleBuffer sampleBuffer) {
-  SampleSource sampleSource = (SampleSource)sampleSourcePtr;
-  SampleSourcePcmData extraData = (SampleSourcePcmData)(sampleSource->extraData);
-  unsigned int samplesWritten = (int)sampleSourcePcmWrite(extraData, sampleBuffer);
-  sampleSource->numSamplesProcessed += samplesWritten;
-  return (boolByte)(samplesWritten == sampleBuffer->blocksize);
+static boolByte _writeBlockToAiffFile(void *sampleSourcePtr, const SampleBuffer sampleBuffer)
+{
+    SampleSource sampleSource = (SampleSource)sampleSourcePtr;
+    SampleSourcePcmData extraData = (SampleSourcePcmData)(sampleSource->extraData);
+    unsigned int samplesWritten = (int)sampleSourcePcmWrite(extraData, sampleBuffer);
+    sampleSource->numSamplesProcessed += samplesWritten;
+    return (boolByte)(samplesWritten == sampleBuffer->blocksize);
 }
 
 extern void _closeSampleSourceWave(void *pcmData);
 
-SampleSource _newSampleSourceAiff(const CharString sampleSourceName) {
-  SampleSource sampleSource = (SampleSource)malloc(sizeof(SampleSourceMembers));
+SampleSource _newSampleSourceAiff(const CharString sampleSourceName)
+{
+    SampleSource sampleSource = (SampleSource)malloc(sizeof(SampleSourceMembers));
 #if HAVE_LIBAUDIOFILE
-  SampleSourceAudiofileData extraData = (SampleSourceAudiofileData)malloc(sizeof(SampleSourceAudiofileDataMembers));
+    SampleSourceAudiofileData extraData = (SampleSourceAudiofileData)malloc(sizeof(SampleSourceAudiofileDataMembers));
 #else
-  SampleSourcePcmData extraData = (SampleSourcePcmData)malloc(sizeof(SampleSourcePcmDataMembers));
+    SampleSourcePcmData extraData = (SampleSourcePcmData)malloc(sizeof(SampleSourcePcmDataMembers));
 #endif
 
-  sampleSource->sampleSourceType = SAMPLE_SOURCE_TYPE_AIFF;
-  sampleSource->openedAs = SAMPLE_SOURCE_OPEN_NOT_OPENED;
-  sampleSource->sourceName = newCharString();
-  charStringCopy(sampleSource->sourceName, sampleSourceName);
-  sampleSource->numSamplesProcessed = 0;
+    sampleSource->sampleSourceType = SAMPLE_SOURCE_TYPE_AIFF;
+    sampleSource->openedAs = SAMPLE_SOURCE_OPEN_NOT_OPENED;
+    sampleSource->sourceName = newCharString();
+    charStringCopy(sampleSource->sourceName, sampleSourceName);
+    sampleSource->numSamplesProcessed = 0;
 
-  sampleSource->openSampleSource = _openSampleSourceAiff;
+    sampleSource->openSampleSource = _openSampleSourceAiff;
 #if HAVE_LIBAUDIOFILE
-  sampleSource->readSampleBlock = readBlockFromAudiofile;
-  sampleSource->writeSampleBlock = writeBlockToAudiofile;
-  sampleSource->closeSampleSource = closeSampleSourceAudiofile;
-  sampleSource->freeSampleSourceData = freeSampleSourceDataAudiofile;
+    sampleSource->readSampleBlock = readBlockFromAudiofile;
+    sampleSource->writeSampleBlock = writeBlockToAudiofile;
+    sampleSource->closeSampleSource = closeSampleSourceAudiofile;
+    sampleSource->freeSampleSourceData = freeSampleSourceDataAudiofile;
 #else
-  sampleSource->readSampleBlock = _readBlockFromAiffFile;
-  sampleSource->writeSampleBlock = _writeBlockToAiffFile;
-  // The same function can be shared for both AIFF & WAVE here
-  sampleSource->closeSampleSource = _closeSampleSourceWave;
-  sampleSource->freeSampleSourceData = freeSampleSourceDataPcm;
+    sampleSource->readSampleBlock = _readBlockFromAiffFile;
+    sampleSource->writeSampleBlock = _writeBlockToAiffFile;
+    // The same function can be shared for both AIFF & WAVE here
+    sampleSource->closeSampleSource = _closeSampleSourceWave;
+    sampleSource->freeSampleSourceData = freeSampleSourceDataPcm;
 #endif
 
 #if HAVE_LIBAUDIOFILE
-  extraData->fileHandle = NULL;
-  extraData->interlacedBuffer = NULL;
-  extraData->pcmBuffer = NULL;
+    extraData->fileHandle = NULL;
+    extraData->interlacedBuffer = NULL;
+    extraData->pcmBuffer = NULL;
 #else
-  extraData->isStream = false;
-  extraData->isLittleEndian = false;
-  extraData->fileHandle = NULL;
-  extraData->dataBufferNumItems = 0;
-  extraData->interlacedPcmDataBuffer = NULL;
+    extraData->isStream = false;
+    extraData->isLittleEndian = false;
+    extraData->fileHandle = NULL;
+    extraData->dataBufferNumItems = 0;
+    extraData->interlacedPcmDataBuffer = NULL;
 
-  extraData->numChannels = (unsigned short)getNumChannels();
-  extraData->sampleRate = (unsigned int)getSampleRate();
-  extraData->bitsPerSample = 16;
+    extraData->numChannels = (unsigned short)getNumChannels();
+    extraData->sampleRate = (unsigned int)getSampleRate();
+    extraData->bitsPerSample = 16;
 #endif
 
-  sampleSource->extraData = extraData;
+    sampleSource->extraData = extraData;
 
-  return sampleSource;
+    return sampleSource;
 }

@@ -33,15 +33,15 @@
 #include "io/SampleSource.h"
 
 typedef struct {
-  boolByte isStream;
-  boolByte isLittleEndian;
-  FILE* fileHandle;
-  size_t dataBufferNumItems;
-  short* interlacedPcmDataBuffer;
+    boolByte isStream;
+    boolByte isLittleEndian;
+    FILE *fileHandle;
+    size_t dataBufferNumItems;
+    short *interlacedPcmDataBuffer;
 
-  unsigned short numChannels;
-  unsigned int sampleRate;
-  unsigned short bitsPerSample;
+    unsigned short numChannels;
+    unsigned int sampleRate;
+    unsigned short bitsPerSample;
 } SampleSourcePcmDataMembers;
 typedef SampleSourcePcmDataMembers *SampleSourcePcmData;
 
@@ -68,7 +68,7 @@ size_t sampleSourcePcmWrite(SampleSourcePcmData self, const SampleBuffer sampleB
  * @param sampleSourcePtr
  * @param sampleRate Sample rate, in Hertz
  */
-void sampleSourcePcmSetSampleRate(void* sampleSourcePtr, double sampleRate);
+void sampleSourcePcmSetSampleRate(void *sampleSourcePtr, double sampleRate);
 
 /**
  * Set the number of channels to be used for raw PCM file operations. Like the
@@ -76,12 +76,12 @@ void sampleSourcePcmSetSampleRate(void* sampleSourcePtr, double sampleRate);
  * @param sampleSourcePtr
  * @param numChannels Number of channels
  */
-void sampleSourcePcmSetNumChannels(void* sampleSourcePtr, int numChannels);
+void sampleSourcePcmSetNumChannels(void *sampleSourcePtr, int numChannels);
 
 /**
  * Free a PCM sample source and all associated data
  * @param sampleSourceDataPtr Pointer to sample source data
  */
-void freeSampleSourceDataPcm(void* sampleSourceDataPtr);
+void freeSampleSourceDataPcm(void *sampleSourceDataPtr);
 
 #endif

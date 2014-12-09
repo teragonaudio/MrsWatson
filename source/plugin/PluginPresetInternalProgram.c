@@ -31,40 +31,44 @@
 #include "plugin/PluginPresetInternalProgram.h"
 #include "plugin/PluginVst2x.h"
 
-static boolByte _openPluginPresetInternalProgram(void* pluginPresetPtr) {
-  PluginPreset pluginPreset = (PluginPreset)pluginPresetPtr;
-  PluginPresetInternalProgramData extraData = (PluginPresetInternalProgramData)pluginPreset->extraData;
-  extraData->programNumber = (unsigned int)strtoul(pluginPreset->presetName->data, NULL, 10);
-  return true;
+static boolByte _openPluginPresetInternalProgram(void *pluginPresetPtr)
+{
+    PluginPreset pluginPreset = (PluginPreset)pluginPresetPtr;
+    PluginPresetInternalProgramData extraData = (PluginPresetInternalProgramData)pluginPreset->extraData;
+    extraData->programNumber = (unsigned int)strtoul(pluginPreset->presetName->data, NULL, 10);
+    return true;
 }
 
-static boolByte _loadPluginPresetInternalProgram(void* pluginPresetPtr, Plugin plugin) {
-  PluginPreset pluginPreset = (PluginPreset)pluginPresetPtr;
-  PluginPresetInternalProgramData extraData = (PluginPresetInternalProgramData)pluginPreset->extraData;
-  return pluginVst2xSetProgram(plugin, extraData->programNumber);
+static boolByte _loadPluginPresetInternalProgram(void *pluginPresetPtr, Plugin plugin)
+{
+    PluginPreset pluginPreset = (PluginPreset)pluginPresetPtr;
+    PluginPresetInternalProgramData extraData = (PluginPresetInternalProgramData)pluginPreset->extraData;
+    return pluginVst2xSetProgram(plugin, extraData->programNumber);
 }
 
-static void _freePluginPresetInternalProgram(void* extraDataPtr) {
-  // Nothing needed here
+static void _freePluginPresetInternalProgram(void *extraDataPtr)
+{
+    // Nothing needed here
 }
 
-PluginPreset newPluginPresetInternalProgram(const CharString presetName) {
-  PluginPreset pluginPreset = (PluginPreset)malloc(sizeof(PluginPresetMembers));
-  PluginPresetInternalProgramData extraData; // Yay for long type names!
-  extraData = (PluginPresetInternalProgramData)malloc(sizeof(PluginPresetInternalProgramDataMembers));
+PluginPreset newPluginPresetInternalProgram(const CharString presetName)
+{
+    PluginPreset pluginPreset = (PluginPreset)malloc(sizeof(PluginPresetMembers));
+    PluginPresetInternalProgramData extraData; // Yay for long type names!
+    extraData = (PluginPresetInternalProgramData)malloc(sizeof(PluginPresetInternalProgramDataMembers));
 
-  pluginPreset->presetType = PRESET_TYPE_INTERNAL_PROGRAM;
-  pluginPreset->presetName = newCharString();
-  charStringCopy(pluginPreset->presetName, presetName);
-  pluginPreset->compatiblePluginTypes = 0;
-  pluginPresetSetCompatibleWith(pluginPreset, PLUGIN_TYPE_VST_2X);
+    pluginPreset->presetType = PRESET_TYPE_INTERNAL_PROGRAM;
+    pluginPreset->presetName = newCharString();
+    charStringCopy(pluginPreset->presetName, presetName);
+    pluginPreset->compatiblePluginTypes = 0;
+    pluginPresetSetCompatibleWith(pluginPreset, PLUGIN_TYPE_VST_2X);
 
-  pluginPreset->openPreset = _openPluginPresetInternalProgram;
-  pluginPreset->loadPreset = _loadPluginPresetInternalProgram;
-  pluginPreset->freePresetData = _freePluginPresetInternalProgram;
+    pluginPreset->openPreset = _openPluginPresetInternalProgram;
+    pluginPreset->loadPreset = _loadPluginPresetInternalProgram;
+    pluginPreset->freePresetData = _freePluginPresetInternalProgram;
 
-  extraData->programNumber = 0;
-  pluginPreset->extraData = extraData;
-  
-  return pluginPreset;
+    extraData->programNumber = 0;
+    pluginPreset->extraData = extraData;
+
+    return pluginPreset;
 }

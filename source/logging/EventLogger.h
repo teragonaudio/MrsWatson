@@ -35,23 +35,23 @@
 #include "base/Types.h"
 
 typedef enum {
-  LOG_DEBUG,
-  LOG_INFO,
-  LOG_WARN,
-  LOG_ERROR,
-  NUM_LOG_LEVELS
+    LOG_DEBUG,
+    LOG_INFO,
+    LOG_WARN,
+    LOG_ERROR,
+    NUM_LOG_LEVELS
 } LogLevel;
 
 typedef struct {
-  LogLevel logLevel;
-  long startTimeInSec;
-  long startTimeInMs;
-  boolByte useColor;
-  unsigned long zebraStripeSize;
-  FILE *logFile;
-  CharString systemErrorMessage;
+    LogLevel logLevel;
+    long startTimeInSec;
+    long startTimeInMs;
+    boolByte useColor;
+    unsigned long zebraStripeSize;
+    FILE *logFile;
+    CharString systemErrorMessage;
 } EventLoggerMembers;
-typedef EventLoggerMembers* EventLogger;
+typedef EventLoggerMembers *EventLogger;
 extern EventLogger eventLoggerInstance;
 
 /**
@@ -66,7 +66,7 @@ void initEventLogger(void);
  * @param errorNumber Error code from the operating system
  * @return String description of the error code
  */
-char* stringForLastError(int errorNumber);
+char *stringForLastError(int errorNumber);
 
 /**
  * Check if the current log level is at a given level or higher. This is useful
@@ -128,28 +128,28 @@ void setLoggingZebraSize(const unsigned long zebraStripeSize);
  * @param message Format string, like printf
  * @param ... Arguments
  */
-void logDebug(const char* message, ...);
+void logDebug(const char *message, ...);
 
 /**
  * Log a message with regular priority
  * @param message Format string, like printf
  * @param ... Arguments
  */
-void logInfo(const char* message, ...);
+void logInfo(const char *message, ...);
 
 /**
  * Log a warning message
  * @param message Format string, like printf
  * @param ... Arguments
  */
-void logWarn(const char* message, ...);
+void logWarn(const char *message, ...);
 
 /**
  * Log an error message
  * @param message Format string, like printf
  * @param ... Arguments
  */
-void logError(const char* message, ...);
+void logError(const char *message, ...);
 
 /**
  * Log a severe error message. Unlike logError, this method does not use colors
@@ -158,7 +158,7 @@ void logError(const char* message, ...);
  * @param message Format string, like printf
  * @param ... Arguments
  */
-void logCritical(const char* message, ...);
+void logCritical(const char *message, ...);
 
 /**
  * Display a message to the user indicating that something terribly wrong has
@@ -167,7 +167,7 @@ void logCritical(const char* message, ...);
  * @param message Format string, like printf
  * @param ... Arguments
  */
-void logInternalError(const char* message, ...);
+void logInternalError(const char *message, ...);
 
 /**
  * Display a message to the user indicating that they have tried to use part of
@@ -177,7 +177,7 @@ void logInternalError(const char* message, ...);
  * contribution to the project by indicating that this is a planned future.
  * @param featureName Missing feature name
  */
-void logUnsupportedFeature(const char* featureName);
+void logUnsupportedFeature(const char *featureName);
 
 /**
  * Used when a plug-in has attempted to utilize a deprecated host feature. In
@@ -187,7 +187,7 @@ void logUnsupportedFeature(const char* featureName);
  * @param functionName Deprecated feature name
  * @param plugin
  */
-void logDeprecated(const char* functionName, const char* plugin);
+void logDeprecated(const char *functionName, const char *plugin);
 
 /**
  * Used to indicate that a file may be corrupt or incorrectly parsed. This is
@@ -196,7 +196,7 @@ void logDeprecated(const char* functionName, const char* plugin);
  * @param filename File name
  * @param message Description of what went wrong
  */
-void logFileError(const char* filename, const char* message);
+void logFileError(const char *filename, const char *message);
 
 /**
  * Used when a serious error has occurred, and its source is not entirely known.
@@ -204,7 +204,7 @@ void logFileError(const char* filename, const char* message);
  * the program crashing.
  * @param cause Description of error cause
  */
-void logPossibleBug(const char* cause);
+void logPossibleBug(const char *cause);
 
 /**
  * Flush the contents of the ErrorLogger

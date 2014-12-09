@@ -33,43 +33,41 @@
 #include "plugin/PluginPreset.h"
 
 typedef enum {
-  FXP_TYPE_INVALID,
-  FXP_TYPE_REGULAR,
-  FXP_TYPE_OPAQUE_CHUNK,
+    FXP_TYPE_INVALID,
+    FXP_TYPE_REGULAR,
+    FXP_TYPE_OPAQUE_CHUNK,
 } PluginPresetFxpProgramType;
 
 // Copied from the VST SDK. Yes, this is a bit lame, but otherwise the C++ "virus"
 // starts to leak into the code again, and as vstfxstore.h is pure C, I don't see
 // any reason why all these files must be compiled as C++.
 typedef struct {
-  unsigned int chunkMagic;    ///< 'CcnK'
-  unsigned int byteSize;      ///< size of this chunk, excl. magic + byteSize
+    unsigned int chunkMagic;    ///< 'CcnK'
+    unsigned int byteSize;      ///< size of this chunk, excl. magic + byteSize
 
-  unsigned int fxMagic;     ///< 'FxCk' (regular) or 'FPCh' (opaque chunk)
-  unsigned int version;     ///< format version (currently 1)
-  unsigned int fxID;        ///< fx unique ID
-  unsigned int fxVersion;     ///< fx version
+    unsigned int fxMagic;     ///< 'FxCk' (regular) or 'FPCh' (opaque chunk)
+    unsigned int version;     ///< format version (currently 1)
+    unsigned int fxID;        ///< fx unique ID
+    unsigned int fxVersion;     ///< fx version
 
-  unsigned int numParams;     ///< number of parameters
-  char prgName[28];     ///< program name (null-terminated ASCII string)
+    unsigned int numParams;     ///< number of parameters
+    char prgName[28];     ///< program name (null-terminated ASCII string)
 
-  union
-  {
-    float* params;    ///< variable sized array with parameter values
-    struct
-    {
-      unsigned int size;    ///< size of program data
-      char* chunk;    ///< variable sized array with opaque program data
-    } data;         ///< program chunk data
-  } content;          ///< program content depending on fxMagic
+    union {
+        float *params;    ///< variable sized array with parameter values
+        struct {
+            unsigned int size;    ///< size of program data
+            char *chunk;    ///< variable sized array with opaque program data
+        } data;         ///< program chunk data
+    } content;          ///< program content depending on fxMagic
 } FxpProgramMembers;
-typedef FxpProgramMembers* FxpProgram;
+typedef FxpProgramMembers *FxpProgram;
 
 typedef struct {
-  FILE* fileHandle;
-  byte* chunk;
+    FILE *fileHandle;
+    byte *chunk;
 } PluginPresetFxpDataMembers;
-typedef PluginPresetFxpDataMembers* PluginPresetFxpData;
+typedef PluginPresetFxpDataMembers *PluginPresetFxpData;
 
 PluginPreset newPluginPresetFxp(const CharString presetName);
 

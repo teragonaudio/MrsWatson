@@ -33,45 +33,45 @@
 #include "base/Types.h"
 
 typedef enum {
-  SAMPLE_SOURCE_TYPE_INVALID,
-  SAMPLE_SOURCE_TYPE_SILENCE,
-  SAMPLE_SOURCE_TYPE_PCM,
-  SAMPLE_SOURCE_TYPE_AIFF,
-  SAMPLE_SOURCE_TYPE_FLAC,
-  SAMPLE_SOURCE_TYPE_MP3,
-  SAMPLE_SOURCE_TYPE_OGG,
-  SAMPLE_SOURCE_TYPE_WAVE,
-  NUM_SAMPLE_SOURCES
+    SAMPLE_SOURCE_TYPE_INVALID,
+    SAMPLE_SOURCE_TYPE_SILENCE,
+    SAMPLE_SOURCE_TYPE_PCM,
+    SAMPLE_SOURCE_TYPE_AIFF,
+    SAMPLE_SOURCE_TYPE_FLAC,
+    SAMPLE_SOURCE_TYPE_MP3,
+    SAMPLE_SOURCE_TYPE_OGG,
+    SAMPLE_SOURCE_TYPE_WAVE,
+    NUM_SAMPLE_SOURCES
 } SampleSourceType;
 
 typedef enum {
-  SAMPLE_SOURCE_OPEN_NOT_OPENED,
-  SAMPLE_SOURCE_OPEN_READ,
-  SAMPLE_SOURCE_OPEN_WRITE,
-  NUM_SAMPLE_SOURCE_OPEN_AS
+    SAMPLE_SOURCE_OPEN_NOT_OPENED,
+    SAMPLE_SOURCE_OPEN_READ,
+    SAMPLE_SOURCE_OPEN_WRITE,
+    NUM_SAMPLE_SOURCE_OPEN_AS
 } SampleSourceOpenAs;
 
-typedef boolByte (*OpenSampleSourceFunc)(void*, const SampleSourceOpenAs);
-typedef boolByte (*ReadSampleBlockFunc)(void*, SampleBuffer);
-typedef boolByte (*WriteSampleBlockFunc)(void*, const SampleBuffer);
-typedef void (*CloseSampleSourceFunc)(void*);
-typedef void (*FreeSampleSourceDataFunc)(void*);
+typedef boolByte (*OpenSampleSourceFunc)(void *, const SampleSourceOpenAs);
+typedef boolByte (*ReadSampleBlockFunc)(void *, SampleBuffer);
+typedef boolByte (*WriteSampleBlockFunc)(void *, const SampleBuffer);
+typedef void (*CloseSampleSourceFunc)(void *);
+typedef void (*FreeSampleSourceDataFunc)(void *);
 
 typedef struct {
-  SampleSourceType sampleSourceType;
-  SampleSourceOpenAs openedAs;
-  CharString sourceName;
-  unsigned long numSamplesProcessed;
+    SampleSourceType sampleSourceType;
+    SampleSourceOpenAs openedAs;
+    CharString sourceName;
+    unsigned long numSamplesProcessed;
 
-  OpenSampleSourceFunc openSampleSource;
-  ReadSampleBlockFunc readSampleBlock;
-  WriteSampleBlockFunc writeSampleBlock;
-  CloseSampleSourceFunc closeSampleSource;
-  FreeSampleSourceDataFunc freeSampleSourceData;
+    OpenSampleSourceFunc openSampleSource;
+    ReadSampleBlockFunc readSampleBlock;
+    WriteSampleBlockFunc writeSampleBlock;
+    CloseSampleSourceFunc closeSampleSource;
+    FreeSampleSourceDataFunc freeSampleSourceData;
 
-  void* extraData;
+    void *extraData;
 } SampleSourceMembers;
-typedef SampleSourceMembers* SampleSource;
+typedef SampleSourceMembers *SampleSource;
 
 /**
  * Factory method to create a new sample source

@@ -49,10 +49,10 @@ static const size_t kCharStringLengthLong = 8192;
 #endif
 
 typedef struct {
-  size_t capacity;
-  char* data;
+    size_t capacity;
+    char *data;
 } CharStringMembers;
-typedef CharStringMembers* CharString;
+typedef CharStringMembers *CharString;
 
 /**
  * @return Create a new CharString instance
@@ -70,7 +70,7 @@ CharString newCharStringWithCapacity(size_t length);
  * @param string C-String to use (copied to contents)
  * @return New CharString instance
  */
-CharString newCharStringWithCString(const char* string);
+CharString newCharStringWithCString(const char *string);
 
 /**
  * Append another CharString to this instance, truncating if necessary. Appending
@@ -86,7 +86,7 @@ void charStringAppend(CharString self, const CharString string);
  * @param self
  * @param string NULL-terminated string to append
  */
-void charStringAppendCString(CharString self, const char* string);
+void charStringAppendCString(CharString self, const char *string);
 
 /**
  * Copy the contents of another CharString to this one
@@ -100,7 +100,7 @@ void charStringCopy(CharString self, const CharString string);
  * @param self
  * @param string NULL-terminated string to copy
  */
-void charStringCopyCString(CharString self, const char* string);
+void charStringCopyCString(CharString self, const char *string);
 
 /**
  * Clear a string's contents
@@ -130,7 +130,7 @@ boolByte charStringIsEqualTo(const CharString self, const CharString string, boo
  * @param caseInsensitive True for a case-insensitive comparison
  * @return True if the strings are equal, false otherwise
  */
-boolByte charStringIsEqualToCString(const CharString self, const char* string, boolByte caseInsensitive);
+boolByte charStringIsEqualToCString(const CharString self, const char *string, boolByte caseInsensitive);
 
 /**
  * Test if a given character in this string is a letter. This function does not

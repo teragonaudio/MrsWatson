@@ -39,22 +39,22 @@
 #define CHAIN_STRING_PROGRAM_SEPARATOR ','
 
 typedef struct {
-  unsigned int numPlugins;
-  Plugin* plugins;
-  PluginPreset* presets;
-  TaskTimer* audioTimers;
-  TaskTimer* midiTimers;
+    unsigned int numPlugins;
+    Plugin *plugins;
+    PluginPreset *presets;
+    TaskTimer *audioTimers;
+    TaskTimer *midiTimers;
 
-  // Private fields
-  boolByte _realtime;
-  TaskTimer _realtimeTimer;
+    // Private fields
+    boolByte _realtime;
+    TaskTimer _realtimeTimer;
 } PluginChainMembers;
 
 /**
  * Class which holds multiple plugins which process audio in serial. Only one
  * instrument may be present in a plugin chain.
  */
-typedef PluginChainMembers* PluginChain;
+typedef PluginChainMembers *PluginChain;
 
 /**
  * Get a reference to the global plugin chain instance.

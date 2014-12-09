@@ -31,65 +31,70 @@
 #include "logging/EventLogger.h"
 #include "midi/MidiSequence.h"
 
-MidiSequence newMidiSequence(void) {
-  MidiSequence midiSequence = malloc(sizeof(MidiSequenceMembers));
+MidiSequence newMidiSequence(void)
+{
+    MidiSequence midiSequence = malloc(sizeof(MidiSequenceMembers));
 
-  midiSequence->midiEvents = newLinkedList();
-  midiSequence->_lastEvent = midiSequence->midiEvents;
-  midiSequence->_lastTimestamp = 0;
-  midiSequence->numMidiEventsProcessed = 0;
+    midiSequence->midiEvents = newLinkedList();
+    midiSequence->_lastEvent = midiSequence->midiEvents;
+    midiSequence->_lastTimestamp = 0;
+    midiSequence->numMidiEventsProcessed = 0;
 
-  return midiSequence;
+    return midiSequence;
 }
 
-void appendMidiEventToSequence(MidiSequence self, MidiEvent midiEvent) {
-  if(self != NULL && midiEvent != NULL) {
-    linkedListAppend(self->midiEvents, midiEvent);
-  }
+void appendMidiEventToSequence(MidiSequence self, MidiEvent midiEvent)
+{
+    if (self != NULL && midiEvent != NULL) {
+        linkedListAppend(self->midiEvents, midiEvent);
+    }
 }
 
 boolByte fillMidiEventsFromRange(MidiSequence self, const unsigned long startTimestamp,
-  const unsigned long blocksize, LinkedList outMidiEvents) {
-  MidiEvent midiEvent;
-  LinkedListIterator iterator = self->_lastEvent;
-  const unsigned long stopTimestamp = startTimestamp + blocksize;
+                                 const unsigned long blocksize, LinkedList outMidiEvents)
+{
+    MidiEvent midiEvent;
+    LinkedListIterator iterator = self->_lastEvent;
+    const unsigned long stopTimestamp = startTimestamp + blocksize;
 
-  while(true) {
-    if((iterator == NULL) || (iterator->item == NULL)) {
-      return false;
+    while (true) {
+        if ((iterator == NULL) || (iterator->item == NULL)) {
+            return false;
+        }
+
+        midiEvent = iterator->item;
+
+        if (stopTimestamp < midiEvent->timestamp) {
+            // We have not yet reached this event, stop iterating
+            break;
+        } else if (startTimestamp <= midiEvent->timestamp && stopTimestamp > midiEvent->timestamp) {
+            midiEvent->deltaFrames = midiEvent->timestamp - startTimestamp;
+            logDebug("Scheduling MIDI event 0x%x (%x, %x) in %ld frames",
+                     midiEvent->status, midiEvent->data1, midiEvent->data2, midiEvent->deltaFrames);
+            linkedListAppend(outMidiEvents, midiEvent);
+            self->_lastEvent = iterator->nextItem;
+            self->numMidiEventsProcessed++;
+        } else if (startTimestamp > midiEvent->timestamp) {
+            logInternalError("Inconsistent MIDI sequence ordering");
+        }
+
+        // Last item in the list
+        if (iterator->nextItem == NULL) {
+            if (startTimestamp <= midiEvent->timestamp && stopTimestamp > midiEvent->timestamp) {
+                return false;
+            }
+
+            break;
+        }
+
+        iterator = iterator->nextItem;
     }
 
-    midiEvent = iterator->item;
-    if(stopTimestamp < midiEvent->timestamp) {
-      // We have not yet reached this event, stop iterating
-      break;
-    }
-    else if(startTimestamp <= midiEvent->timestamp && stopTimestamp > midiEvent->timestamp) {
-      midiEvent->deltaFrames = midiEvent->timestamp - startTimestamp;
-      logDebug("Scheduling MIDI event 0x%x (%x, %x) in %ld frames",
-        midiEvent->status, midiEvent->data1, midiEvent->data2, midiEvent->deltaFrames);
-      linkedListAppend(outMidiEvents, midiEvent);
-      self->_lastEvent = iterator->nextItem;
-      self->numMidiEventsProcessed++;
-    }
-    else if(startTimestamp > midiEvent->timestamp) {
-      logInternalError("Inconsistent MIDI sequence ordering");
-    }
-
-    // Last item in the list
-    if(iterator->nextItem == NULL) {
-      if(startTimestamp <= midiEvent->timestamp && stopTimestamp > midiEvent->timestamp) {
-        return false;
-      }
-      break;
-    }
-    iterator = iterator->nextItem;
-  }
-
-  return true;
+    return true;
 }
 
-void freeMidiSequence(MidiSequence self) {
-  freeLinkedListAndItems(self->midiEvents, (LinkedListFreeItemFunc)freeMidiEvent);
-  free(self);
+void freeMidiSequence(MidiSequence self)
+{
+    freeLinkedListAndItems(self->midiEvents, (LinkedListFreeItemFunc)freeMidiEvent);
+    free(self);
 }

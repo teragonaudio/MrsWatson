@@ -86,6 +86,6 @@ boolByte pluginVst2xSetProgram(Plugin self, const int programNumber);
  * @param chunk Chunk data to set
  * @param chunkSize Chunk size
  */
-void pluginVst2xSetProgramChunk(Plugin self, char* chunk, size_t chunkSize);
+void pluginVst2xSetProgramChunk(Plugin self, char *chunk, size_t chunkSize);
 
 #endif

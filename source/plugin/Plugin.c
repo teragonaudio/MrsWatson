@@ -36,46 +36,48 @@
 #include "plugin/PluginVst2x.h"
 #include "plugin/PluginSilence.h"
 
-static PluginInterfaceType _guessPluginInterfaceType(const CharString pluginName, const CharString pluginSearchRoot) {
-  PluginInterfaceType pluginType = PLUGIN_TYPE_INVALID;
+static PluginInterfaceType _guessPluginInterfaceType(const CharString pluginName, const CharString pluginSearchRoot)
+{
+    PluginInterfaceType pluginType = PLUGIN_TYPE_INVALID;
 
-  if(pluginName == NULL || charStringIsEmpty(pluginName)) {
-    logError("Attempt to guess plugin with empty name");
+    if (pluginName == NULL || charStringIsEmpty(pluginName)) {
+        logError("Attempt to guess plugin with empty name");
+        return pluginType;
+    }
+
+    logDebug("Trying to find plugin '%s'", pluginName->data);
+
+    if (pluginVst2xExists(pluginName, pluginSearchRoot)) {
+        logInfo("Plugin '%s' is of type VST2.x", pluginName->data);
+        pluginType = PLUGIN_TYPE_VST_2X;
+    } else if (!strncmp(INTERNAL_PLUGIN_PREFIX, pluginName->data, strlen(INTERNAL_PLUGIN_PREFIX))) {
+        logInfo("Plugin '%s' is an internal plugin", pluginName->data);
+        pluginType = PLUGIN_TYPE_INTERNAL;
+    } else {
+        logError("Plugin '%s' could not be found", pluginName->data);
+    }
+
     return pluginType;
-  }
-
-  logDebug("Trying to find plugin '%s'", pluginName->data);
-
-  if(pluginVst2xExists(pluginName, pluginSearchRoot)) {
-    logInfo("Plugin '%s' is of type VST2.x", pluginName->data);
-    pluginType = PLUGIN_TYPE_VST_2X;
-  }
-  else if(!strncmp(INTERNAL_PLUGIN_PREFIX, pluginName->data, strlen(INTERNAL_PLUGIN_PREFIX))) {
-    logInfo("Plugin '%s' is an internal plugin", pluginName->data);
-    pluginType = PLUGIN_TYPE_INTERNAL;
-  }
-  else {
-    logError("Plugin '%s' could not be found", pluginName->data);
-  }
-
-  return pluginType;
 }
 
-static void _logPluginLocation(const CharString location) {
-  logInfo("Location (internal):", location->data);
+static void _logPluginLocation(const CharString location)
+{
+    logInfo("Location (internal):", location->data);
 }
 
-static void _listAvailablePluginsInternal(void) {
-  CharString internalLocation = newCharStringWithCString("(Internal)");
-  _logPluginLocation(internalLocation);
-  logInfo("  %s", kInternalPluginPassthruName);
-  logInfo("  %s", kInternalPluginSilenceName);
-  freeCharString(internalLocation);
+static void _listAvailablePluginsInternal(void)
+{
+    CharString internalLocation = newCharStringWithCString("(Internal)");
+    _logPluginLocation(internalLocation);
+    logInfo("  %s", kInternalPluginPassthruName);
+    logInfo("  %s", kInternalPluginSilenceName);
+    freeCharString(internalLocation);
 }
 
-void listAvailablePlugins(const CharString pluginRoot) {
-  listAvailablePluginsVst2x(pluginRoot);
-  _listAvailablePluginsInternal();
+void listAvailablePlugins(const CharString pluginRoot)
+{
+    listAvailablePluginsVst2x(pluginRoot);
+    _listAvailablePluginsInternal();
 }
 
 /**
@@ -87,91 +89,102 @@ void listAvailablePlugins(const CharString pluginRoot) {
  * @param internalName Internal name to compare against
  * @return True if the plugin is a match
  */
-static boolByte _internalPluginNameMatches(const CharString pluginName, const char* internalName) {
-  return (boolByte)(strncmp(pluginName->data, internalName, strlen(internalName)) == 0);
+static boolByte _internalPluginNameMatches(const CharString pluginName, const char *internalName)
+{
+    return (boolByte)(strncmp(pluginName->data, internalName, strlen(internalName)) == 0);
 }
 
 // Plugin newPlugin(PluginInterfaceType interfaceType, const CharString pluginName, const CharString pluginLocation) {
-Plugin pluginFactory(const CharString pluginName, const CharString pluginRoot) {
-  PluginInterfaceType interfaceType = _guessPluginInterfaceType(pluginName, pluginRoot);
-  if(interfaceType == PLUGIN_TYPE_INVALID) {
-    return NULL;
-  }
+Plugin pluginFactory(const CharString pluginName, const CharString pluginRoot)
+{
+    PluginInterfaceType interfaceType = _guessPluginInterfaceType(pluginName, pluginRoot);
 
-  switch(interfaceType) {
-    case PLUGIN_TYPE_VST_2X:
-      return newPluginVst2x(pluginName, pluginRoot);
-    case PLUGIN_TYPE_INTERNAL:
-      if(_internalPluginNameMatches(pluginName, kInternalPluginPassthruName)) {
-        return newPluginPassthru(pluginName);
-      }
-      else if(_internalPluginNameMatches(pluginName, kInternalPluginSilenceName)) {
-        return newPluginSilence(pluginName);
-      }
-      // h4r h4r easter eggs
-      else if(_internalPluginNameMatches(pluginName, INTERNAL_PLUGIN_PREFIX "watson")) {
-        logError("Yo dawg, I heard you like MrsWatson, so I put some mrs_watson \
-in your MrsWatson so you can run plugins in your plugins!");
-        logError("http://open.spotify.com/track/4apmxBhNKCBuiYEGHcK5yo");
+    if (interfaceType == PLUGIN_TYPE_INVALID) {
         return NULL;
-      }
-      else {
-        logError("'%s' is not a recognized internal plugin", pluginName->data);
-        return NULL;
-      }
-    default:
-      logError("Could not find plugin type for '%s'", pluginName->data);
-      return NULL;
-  }
-}
-
-boolByte openPlugin(Plugin self) {
-  if(self == NULL) {
-    logError("There is no plugin to open");
-    return false;
-  }
-  if(!self->openPlugin(self)){
-    logError("Plugin '%s' could not be opened", self->pluginName->data);
-    return false;
-  }else{
-    self->inputBuffer = newSampleBuffer((unsigned int)self->getSetting(self, PLUGIN_NUM_INPUTS), getBlocksize());
-    self->outputBuffer = newSampleBuffer((unsigned int)self->getSetting(self, PLUGIN_NUM_OUTPUTS), getBlocksize());
-  }
-  return true;
-}
-
-boolByte closePlugin(Plugin self){
-  if(self == NULL) {
-    logError("There is no plugin to open");
-    return false;
-  }
-  self->closePlugin(self);
-  freeSampleBuffer(self->inputBuffer);
-  freeSampleBuffer(self->outputBuffer);
-  return true;
-}
-
-Plugin _newPlugin(PluginInterfaceType interfaceType, PluginType pluginType) {
-  Plugin plugin = (Plugin)malloc(sizeof(PluginMembers));
-
-  plugin->interfaceType = interfaceType;
-  plugin->pluginType = pluginType;
-  plugin->pluginName = newCharString();
-  plugin->pluginLocation = newCharString();
-  plugin->pluginAbsolutePath = newCharString();
-
-  return plugin;
-}
-
-void freePlugin(Plugin self) {
-  if(self != NULL) {
-    if(self->extraData != NULL) {
-      self->freePluginData(self->extraData);
-      free(self->extraData);
     }
-    freeCharString(self->pluginName);
-    freeCharString(self->pluginLocation);
-    freeCharString(self->pluginAbsolutePath);
-    free(self);
-  }
+
+    switch (interfaceType) {
+    case PLUGIN_TYPE_VST_2X:
+        return newPluginVst2x(pluginName, pluginRoot);
+
+    case PLUGIN_TYPE_INTERNAL:
+        if (_internalPluginNameMatches(pluginName, kInternalPluginPassthruName)) {
+            return newPluginPassthru(pluginName);
+        } else if (_internalPluginNameMatches(pluginName, kInternalPluginSilenceName)) {
+            return newPluginSilence(pluginName);
+        }
+        // h4r h4r easter eggs
+        else if (_internalPluginNameMatches(pluginName, INTERNAL_PLUGIN_PREFIX "watson")) {
+            logError("Yo dawg, I heard you like MrsWatson, so I put some mrs_watson \
+in your MrsWatson so you can run plugins in your plugins!");
+            logError("http://open.spotify.com/track/4apmxBhNKCBuiYEGHcK5yo");
+            return NULL;
+        } else {
+            logError("'%s' is not a recognized internal plugin", pluginName->data);
+            return NULL;
+        }
+
+    default:
+        logError("Could not find plugin type for '%s'", pluginName->data);
+        return NULL;
+    }
+}
+
+boolByte openPlugin(Plugin self)
+{
+    if (self == NULL) {
+        logError("There is no plugin to open");
+        return false;
+    }
+
+    if (!self->openPlugin(self)) {
+        logError("Plugin '%s' could not be opened", self->pluginName->data);
+        return false;
+    } else {
+        self->inputBuffer = newSampleBuffer((unsigned int)self->getSetting(self, PLUGIN_NUM_INPUTS), getBlocksize());
+        self->outputBuffer = newSampleBuffer((unsigned int)self->getSetting(self, PLUGIN_NUM_OUTPUTS), getBlocksize());
+    }
+
+    return true;
+}
+
+boolByte closePlugin(Plugin self)
+{
+    if (self == NULL) {
+        logError("There is no plugin to open");
+        return false;
+    }
+
+    self->closePlugin(self);
+    freeSampleBuffer(self->inputBuffer);
+    freeSampleBuffer(self->outputBuffer);
+    return true;
+}
+
+Plugin _newPlugin(PluginInterfaceType interfaceType, PluginType pluginType)
+{
+    Plugin plugin = (Plugin)malloc(sizeof(PluginMembers));
+
+    plugin->interfaceType = interfaceType;
+    plugin->pluginType = pluginType;
+    plugin->pluginName = newCharString();
+    plugin->pluginLocation = newCharString();
+    plugin->pluginAbsolutePath = newCharString();
+
+    return plugin;
+}
+
+void freePlugin(Plugin self)
+{
+    if (self != NULL) {
+        if (self->extraData != NULL) {
+            self->freePluginData(self->extraData);
+            free(self->extraData);
+        }
+
+        freeCharString(self->pluginName);
+        freeCharString(self->pluginLocation);
+        freeCharString(self->pluginAbsolutePath);
+        free(self);
+    }
 }

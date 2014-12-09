@@ -30,64 +30,76 @@
 #include "logging/EventLogger.h"
 #include "plugin/PluginSilence.h"
 
-const char* kInternalPluginSilenceName = INTERNAL_PLUGIN_PREFIX "silence";
+const char *kInternalPluginSilenceName = INTERNAL_PLUGIN_PREFIX "silence";
 
-static void _pluginSilenceEmpty(void* pluginPtr) {
-  // Nothing to do here
+static void _pluginSilenceEmpty(void *pluginPtr)
+{
+    // Nothing to do here
 }
 
-static boolByte _pluginSilenceOpen(void* pluginPtr) {
-  return true;
+static boolByte _pluginSilenceOpen(void *pluginPtr)
+{
+    return true;
 }
 
-static void _pluginSilenceDisplayInfo(void* pluginPtr) {
-  logInfo("Information for Internal plugin '%s'", kInternalPluginSilenceName);
-  logInfo("Type: instrument, parameters: none");
-  logInfo("Description: an instrument which generates silence");
+static void _pluginSilenceDisplayInfo(void *pluginPtr)
+{
+    logInfo("Information for Internal plugin '%s'", kInternalPluginSilenceName);
+    logInfo("Type: instrument, parameters: none");
+    logInfo("Description: an instrument which generates silence");
 }
 
-static int _pluginSilenceGetSetting(void* pluginPtr, PluginSetting pluginSetting) {
-  switch(pluginSetting) {
+static int _pluginSilenceGetSetting(void *pluginPtr, PluginSetting pluginSetting)
+{
+    switch (pluginSetting) {
     case PLUGIN_SETTING_TAIL_TIME_IN_MS:
-      return 0;
+        return 0;
+
     case PLUGIN_NUM_INPUTS:
-      return 0;
+        return 0;
+
     case PLUGIN_NUM_OUTPUTS:
-      return 2;
+        return 2;
+
     case PLUGIN_INITIAL_DELAY:
-      return 0;
+        return 0;
+
     default:
-      return 0;
-  }
+        return 0;
+    }
 }
 
-static void _pluginSilenceProcessAudio(void* pluginPtr, SampleBuffer inputs, SampleBuffer outputs) {
-  sampleBufferClear(outputs);
+static void _pluginSilenceProcessAudio(void *pluginPtr, SampleBuffer inputs, SampleBuffer outputs)
+{
+    sampleBufferClear(outputs);
 }
 
-static void _pluginSilenceProcessMidiEvents(void* pluginPtr, LinkedList midiEvents) {
-  // Nothing to do here
+static void _pluginSilenceProcessMidiEvents(void *pluginPtr, LinkedList midiEvents)
+{
+    // Nothing to do here
 }
 
-static boolByte _pluginSilenceSetParameter(void* pluginPtr, unsigned int i, float value) {
-  return false;
+static boolByte _pluginSilenceSetParameter(void *pluginPtr, unsigned int i, float value)
+{
+    return false;
 }
 
-Plugin newPluginSilence(const CharString pluginName) {
-  Plugin plugin = _newPlugin(PLUGIN_TYPE_INTERNAL, PLUGIN_TYPE_INSTRUMENT);
-  charStringCopy(plugin->pluginName, pluginName);
-  charStringCopyCString(plugin->pluginLocation, "Internal");
+Plugin newPluginSilence(const CharString pluginName)
+{
+    Plugin plugin = _newPlugin(PLUGIN_TYPE_INTERNAL, PLUGIN_TYPE_INSTRUMENT);
+    charStringCopy(plugin->pluginName, pluginName);
+    charStringCopyCString(plugin->pluginLocation, "Internal");
 
-  plugin->openPlugin = _pluginSilenceOpen;
-  plugin->displayInfo = _pluginSilenceDisplayInfo;
-  plugin->getSetting = _pluginSilenceGetSetting;
-  plugin->prepareForProcessing = _pluginSilenceEmpty;
-  plugin->processAudio = _pluginSilenceProcessAudio;
-  plugin->processMidiEvents = _pluginSilenceProcessMidiEvents;
-  plugin->setParameter = _pluginSilenceSetParameter;
-  plugin->closePlugin = _pluginSilenceEmpty;
-  plugin->freePluginData = _pluginSilenceEmpty;
+    plugin->openPlugin = _pluginSilenceOpen;
+    plugin->displayInfo = _pluginSilenceDisplayInfo;
+    plugin->getSetting = _pluginSilenceGetSetting;
+    plugin->prepareForProcessing = _pluginSilenceEmpty;
+    plugin->processAudio = _pluginSilenceProcessAudio;
+    plugin->processMidiEvents = _pluginSilenceProcessMidiEvents;
+    plugin->setParameter = _pluginSilenceSetParameter;
+    plugin->closePlugin = _pluginSilenceEmpty;
+    plugin->freePluginData = _pluginSilenceEmpty;
 
-  plugin->extraData = NULL;
-  return plugin;
+    plugin->extraData = NULL;
+    return plugin;
 }

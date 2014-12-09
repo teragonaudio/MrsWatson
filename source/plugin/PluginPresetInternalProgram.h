@@ -31,9 +31,9 @@
 #include "plugin/PluginPreset.h"
 
 typedef struct {
-  unsigned int programNumber;
+    unsigned int programNumber;
 } PluginPresetInternalProgramDataMembers;
-typedef PluginPresetInternalProgramDataMembers* PluginPresetInternalProgramData;
+typedef PluginPresetInternalProgramDataMembers *PluginPresetInternalProgramData;
 
 PluginPreset newPluginPresetInternalProgram(const CharString presetName);
 

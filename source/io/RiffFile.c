@@ -31,53 +31,62 @@
 #include "base/PlatformUtilities.h"
 #include "io/RiffFile.h"
 
-RiffChunk newRiffChunk(void) {
-  RiffChunk chunk = (RiffChunk)malloc(sizeof(RiffChunkMembers));
-  memset(chunk->id, 0, 5);
-  chunk->size = 0;
-  chunk->data = NULL;
-  return chunk;
+RiffChunk newRiffChunk(void)
+{
+    RiffChunk chunk = (RiffChunk)malloc(sizeof(RiffChunkMembers));
+    memset(chunk->id, 0, 5);
+    chunk->size = 0;
+    chunk->data = NULL;
+    return chunk;
 }
 
-boolByte riffChunkReadNext(RiffChunk self, FILE* fileHandle, boolByte readData) {
-  size_t itemsRead = 0;
-  byte* chunkSize;
+boolByte riffChunkReadNext(RiffChunk self, FILE *fileHandle, boolByte readData)
+{
+    size_t itemsRead = 0;
+    byte *chunkSize;
 
-  if(fileHandle != NULL) {
-    itemsRead = fread(self->id, 1, 4, fileHandle);
-    if(itemsRead != 4) {
-      return false;
+    if (fileHandle != NULL) {
+        itemsRead = fread(self->id, 1, 4, fileHandle);
+
+        if (itemsRead != 4) {
+            return false;
+        }
+
+        chunkSize = (byte *)malloc(sizeof(byte) * 4);
+        memset(chunkSize, 0, 4);
+        itemsRead = fread(chunkSize, 1, 4, fileHandle);
+
+        if (itemsRead != 4) {
+            free(chunkSize);
+            return false;
+        }
+
+        self->size = convertByteArrayToUnsignedInt(chunkSize);
+        free(chunkSize);
+
+        if (self->size > 0 && readData) {
+            self->data = (byte *)malloc(self->size);
+            itemsRead = fread(self->data, 1, self->size, fileHandle);
+
+            if (itemsRead != self->size) {
+                return false;
+            }
+        }
     }
 
-    chunkSize = (byte*)malloc(sizeof(byte) * 4);
-    memset(chunkSize, 0, 4);
-    itemsRead = fread(chunkSize, 1, 4, fileHandle);
-    if(itemsRead != 4) {
-      free(chunkSize);
-      return false;
-    }
-    self->size = convertByteArrayToUnsignedInt(chunkSize);
-    free(chunkSize);
-
-    if(self->size > 0 && readData) {
-      self->data = (byte*)malloc(self->size);
-      itemsRead = fread(self->data, 1, self->size, fileHandle);
-      if(itemsRead != self->size) {
-        return false;
-      }
-    }
-  }
-
-  return (boolByte)!feof(fileHandle);
+    return (boolByte)!feof(fileHandle);
 }
 
-boolByte riffChunkIsIdEqualTo(const RiffChunk self, const char*id) {
-  return (boolByte)(strncmp(self->id, id, 4) == 0);
+boolByte riffChunkIsIdEqualTo(const RiffChunk self, const char *id)
+{
+    return (boolByte)(strncmp(self->id, id, 4) == 0);
 }
 
-void freeRiffChunk(RiffChunk self) {
-  if(self->data) {
-    free(self->data);
-  }
-  free(self);
+void freeRiffChunk(RiffChunk self)
+{
+    if (self->data) {
+        free(self->data);
+    }
+
+    free(self);
 }

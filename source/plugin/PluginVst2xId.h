@@ -31,10 +31,10 @@
 #define PLUGIN_VST2X_ID_UNKNOWN "????"
 
 typedef struct {
-  unsigned long id;
-  CharString idString;
+    unsigned long id;
+    CharString idString;
 } PluginVst2xIdMembers;
-typedef PluginVst2xIdMembers* PluginVst2xId;
+typedef PluginVst2xIdMembers *PluginVst2xId;
 
 PluginVst2xId newPluginVst2xId(void);
 PluginVst2xId newPluginVst2xIdWithId(unsigned long id);

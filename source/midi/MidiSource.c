@@ -33,37 +33,39 @@
 #include "logging/EventLogger.h"
 #include "midi/MidiSourceFile.h"
 
-MidiSourceType guessMidiSourceType(const CharString midiSourceTypeString) {
-  if(!charStringIsEmpty(midiSourceTypeString)) {
-    const char* fileExtension = getFileExtension(midiSourceTypeString->data);
-    if(fileExtension == NULL) {
-      return MIDI_SOURCE_TYPE_INVALID;
+MidiSourceType guessMidiSourceType(const CharString midiSourceTypeString)
+{
+    if (!charStringIsEmpty(midiSourceTypeString)) {
+        const char *fileExtension = getFileExtension(midiSourceTypeString->data);
+
+        if (fileExtension == NULL) {
+            return MIDI_SOURCE_TYPE_INVALID;
+        } else if (!strcasecmp(fileExtension, "mid") || !strcasecmp(fileExtension, "midi")) {
+            return MIDI_SOURCE_TYPE_FILE;
+        } else {
+            logCritical("MIDI source '%s' does not match any supported type");
+            return MIDI_SOURCE_TYPE_INVALID;
+        }
+    } else {
+        logInternalError("MIDI source type was null");
+        return MIDI_SOURCE_TYPE_INVALID;
     }
-    else if(!strcasecmp(fileExtension, "mid") || !strcasecmp(fileExtension, "midi")) {
-      return MIDI_SOURCE_TYPE_FILE;
-    }
-    else {
-      logCritical("MIDI source '%s' does not match any supported type");
-      return MIDI_SOURCE_TYPE_INVALID;
-    }
-  }
-  else {
-    logInternalError("MIDI source type was null");
-    return MIDI_SOURCE_TYPE_INVALID;
-  }
 }
 
-MidiSource newMidiSource(MidiSourceType midiSourceType, const CharString midiSourceName) {
-  switch(midiSourceType) {
+MidiSource newMidiSource(MidiSourceType midiSourceType, const CharString midiSourceName)
+{
+    switch (midiSourceType) {
     case MIDI_SOURCE_TYPE_FILE:
-      return newMidiSourceFile(midiSourceName);
+        return newMidiSourceFile(midiSourceName);
+
     default:
-      return NULL;
-  }
+        return NULL;
+    }
 }
 
-void freeMidiSource(MidiSource self) {
-  self->freeMidiSourceData(self->extraData);
-  freeCharString(self->sourceName);
-  free(self);
+void freeMidiSource(MidiSource self)
+{
+    self->freeMidiSourceData(self->extraData);
+    freeCharString(self->sourceName);
+    free(self);
 }

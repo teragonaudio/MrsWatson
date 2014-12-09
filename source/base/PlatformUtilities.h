@@ -59,19 +59,19 @@
 #include <CoreFoundation/CFBundle.h>
 typedef CFBundleRef LibraryHandle;
 #elif LINUX
-typedef void* LibraryHandle;
+typedef void *LibraryHandle;
 #elif WINDOWS
 typedef HMODULE LibraryHandle;
 #else
-typedef void* LibraryHandle;
+typedef void *LibraryHandle;
 #endif
 
 typedef enum {
-  PLATFORM_UNSUPPORTED,
-  PLATFORM_MACOSX,
-  PLATFORM_WINDOWS,
-  PLATFORM_LINUX,
-  NUM_PLATFORMS
+    PLATFORM_UNSUPPORTED,
+    PLATFORM_MACOSX,
+    PLATFORM_WINDOWS,
+    PLATFORM_LINUX,
+    NUM_PLATFORMS
 } PlatformType;
 
 /**
@@ -91,7 +91,7 @@ CharString getPlatformName(void);
  * the platform and name is being compared to something.
  * @return Platform name string. Guaranteed to be non-null.
  */
-const char* getShortPlatformName(void);
+const char *getShortPlatformName(void);
 
 /**
  * Return the path to the current running executable.
@@ -171,7 +171,7 @@ float convertBigEndianFloatToPlatform(const float value);
  * @param value A buffer which holds at least two bytes
  * @return Unsigned short integer
  */
-unsigned short convertByteArrayToUnsignedShort(const byte* value);
+unsigned short convertByteArrayToUnsignedShort(const byte *value);
 
 /**
  * Convert raw bytes to an unsigned int value, taking into account the host's
@@ -179,7 +179,7 @@ unsigned short convertByteArrayToUnsignedShort(const byte* value);
  * @param value A buffer which holds at least four bytes
  * @return Unsigned short integer
  */
-unsigned int convertByteArrayToUnsignedInt(const byte* value);
+unsigned int convertByteArrayToUnsignedInt(const byte *value);
 
 /**
  * Suspend execution for a given amount of milliseconds. Depending on the host

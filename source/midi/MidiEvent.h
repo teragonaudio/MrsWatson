@@ -31,23 +31,23 @@
 #include "base/Types.h"
 
 typedef enum {
-  MIDI_TYPE_INVALID,
-  MIDI_TYPE_REGULAR,
-  MIDI_TYPE_SYSEX,
-  MIDI_TYPE_META,
-  NUM_MIDI_TYPES
+    MIDI_TYPE_INVALID,
+    MIDI_TYPE_REGULAR,
+    MIDI_TYPE_SYSEX,
+    MIDI_TYPE_META,
+    NUM_MIDI_TYPES
 } MidiEventType;
 
 typedef struct {
-  MidiEventType eventType;
-  unsigned long deltaFrames;
-  unsigned long timestamp;
-  byte status;
-  byte data1;
-  byte data2;
-  byte* extraData;
+    MidiEventType eventType;
+    unsigned long deltaFrames;
+    unsigned long timestamp;
+    byte status;
+    byte data1;
+    byte data2;
+    byte *extraData;
 } MidiEventMembers;
-typedef MidiEventMembers* MidiEvent;
+typedef MidiEventMembers *MidiEvent;
 
 // MIDI Meta Event types
 #define MIDI_META_TYPE_TEXT 0x01

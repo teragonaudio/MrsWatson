@@ -30,7 +30,7 @@
 
 #include "plugin/Plugin.h"
 
-extern const char* kInternalPluginSilenceName;
+extern const char *kInternalPluginSilenceName;
 
 Plugin newPluginSilence(const CharString pluginName);
 

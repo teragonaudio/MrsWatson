@@ -31,118 +31,127 @@
 #include "base/LinkedList.h"
 #include "base/Types.h"
 
-LinkedList newLinkedList(void) {
-  LinkedList list = malloc(sizeof(LinkedListMembers));
+LinkedList newLinkedList(void)
+{
+    LinkedList list = malloc(sizeof(LinkedListMembers));
 
-  list->item = NULL;
-  list->nextItem = NULL;
-  list->_numItems = 0;
+    list->item = NULL;
+    list->nextItem = NULL;
+    list->_numItems = 0;
 
-  return list;
+    return list;
 }
 
-void linkedListAppend(LinkedList self, void* item) {
-  LinkedListIterator iterator = self;
-  LinkedListIterator headNode;
-  LinkedList nextItem;
+void linkedListAppend(LinkedList self, void *item)
+{
+    LinkedListIterator iterator = self;
+    LinkedListIterator headNode;
+    LinkedList nextItem;
 
-  if(self == NULL || item == NULL) {
-    return;
-  }
-
-  // First item in the list
-  if(iterator->item == NULL) {
-    iterator->item = item;
-    iterator->_numItems = 1;
-    return;
-  }
-
-  headNode = self;
-  while(true) {
-    if(iterator->nextItem == NULL) {
-      nextItem = newLinkedList();
-      nextItem->item = item;
-      iterator->nextItem = nextItem;
-      headNode->_numItems++;
-      break;
+    if (self == NULL || item == NULL) {
+        return;
     }
-    else {
-      iterator = (LinkedListIterator)(iterator->nextItem);
+
+    // First item in the list
+    if (iterator->item == NULL) {
+        iterator->item = item;
+        iterator->_numItems = 1;
+        return;
     }
-  }
+
+    headNode = self;
+
+    while (true) {
+        if (iterator->nextItem == NULL) {
+            nextItem = newLinkedList();
+            nextItem->item = item;
+            iterator->nextItem = nextItem;
+            headNode->_numItems++;
+            break;
+        } else {
+            iterator = (LinkedListIterator)(iterator->nextItem);
+        }
+    }
 }
 
-int linkedListLength(LinkedList self) {
-  return self != NULL ? self->_numItems : 0;
+int linkedListLength(LinkedList self)
+{
+    return self != NULL ? self->_numItems : 0;
 }
 
-void** linkedListToArray(LinkedList self) {
-  LinkedListIterator iterator = self;
-  void** array;
-  int i = 0;
+void **linkedListToArray(LinkedList self)
+{
+    LinkedListIterator iterator = self;
+    void **array;
+    int i = 0;
 
-  if(self == NULL || linkedListLength(self) == 0) {
-    return NULL;
-  }
-
-  array = (void**)malloc(sizeof(void*) * (linkedListLength(self) + 1));
-  while(iterator != NULL) {
-    if(iterator->item != NULL) {
-      array[i++] = iterator->item;
+    if (self == NULL || linkedListLength(self) == 0) {
+        return NULL;
     }
-    iterator = iterator->nextItem;
-  }
 
-  array[i] = NULL;
-  return array;
+    array = (void **)malloc(sizeof(void *) * (linkedListLength(self) + 1));
+
+    while (iterator != NULL) {
+        if (iterator->item != NULL) {
+            array[i++] = iterator->item;
+        }
+
+        iterator = iterator->nextItem;
+    }
+
+    array[i] = NULL;
+    return array;
 }
 
-void linkedListForeach(LinkedList self, LinkedListForeachFunc foreachFunc, void* userData) {
-  LinkedListIterator iterator = self;
+void linkedListForeach(LinkedList self, LinkedListForeachFunc foreachFunc, void *userData)
+{
+    LinkedListIterator iterator = self;
 
-  while(iterator != NULL) {
-    if(iterator->item != NULL) {
-      foreachFunc(iterator->item, userData);
+    while (iterator != NULL) {
+        if (iterator->item != NULL) {
+            foreachFunc(iterator->item, userData);
+        }
+
+        iterator = iterator->nextItem;
     }
-    iterator = iterator->nextItem;
-  }
 }
 
-void freeLinkedList(LinkedList self) {
-  LinkedListIterator iterator = self;
-  while(iterator != NULL) {
-    if(iterator->nextItem == NULL) {
-      free(iterator);
-      break;
+void freeLinkedList(LinkedList self)
+{
+    LinkedListIterator iterator = self;
+
+    while (iterator != NULL) {
+        if (iterator->nextItem == NULL) {
+            free(iterator);
+            break;
+        } else {
+            LinkedList current = iterator;
+            iterator = iterator->nextItem;
+            free(current);
+        }
     }
-    else {
-      LinkedList current = iterator;
-      iterator = iterator->nextItem;
-      free(current);
-    }
-  }
 }
 
-void freeLinkedListAndItems(LinkedList self, LinkedListFreeItemFunc freeItem) {
-  LinkedListIterator iterator = self;
-  LinkedList current;
+void freeLinkedListAndItems(LinkedList self, LinkedListFreeItemFunc freeItem)
+{
+    LinkedListIterator iterator = self;
+    LinkedList current;
 
-  if(iterator->item == NULL){
-    free(iterator);
-    return;
-  }
+    if (iterator->item == NULL) {
+        free(iterator);
+        return;
+    }
 
-  while(true) {
-    if(iterator->nextItem == NULL) {
-      freeItem(iterator->item);
-      free(iterator);
-      break;
+    while (true) {
+        if (iterator->nextItem == NULL) {
+            freeItem(iterator->item);
+            free(iterator);
+            break;
+        } else {
+            freeItem(iterator->item);
+            current = iterator;
+            iterator = (LinkedListIterator)(iterator->nextItem);
+            free(current);
+        }
     }
-    else {
-      freeItem(iterator->item);
-      current = iterator;
-      iterator = (LinkedListIterator)(iterator->nextItem);
-      free(current);
-    }
-  }
 }

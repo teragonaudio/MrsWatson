@@ -32,10 +32,10 @@
 #include "midi/MidiEvent.h"
 
 typedef struct {
-  LinkedList midiEvents;
-  LinkedListIterator _lastEvent;
-  int _lastTimestamp;
-  int numMidiEventsProcessed;
+    LinkedList midiEvents;
+    LinkedListIterator _lastEvent;
+    int _lastTimestamp;
+    int numMidiEventsProcessed;
 } MidiSequenceMembers;
 
 /**
@@ -44,7 +44,7 @@ typedef struct {
  * actual device, the events are stored here where they can easily be read block
  * by block.
  */
-typedef MidiSequenceMembers* MidiSequence;
+typedef MidiSequenceMembers *MidiSequence;
 
 /**
  * Creating a new MidiSequence object
@@ -75,7 +75,7 @@ void appendMidiEventToSequence(MidiSequence self, MidiEvent midiEvent);
  * sequence has been reached.
  */
 boolByte fillMidiEventsFromRange(MidiSequence self, const unsigned long startTimestamp,
-  const unsigned long blocksize, LinkedList outMidiEvents);
+                                 const unsigned long blocksize, LinkedList outMidiEvents);
 
 /**
  * Free a MIDI sequence and its associated resources

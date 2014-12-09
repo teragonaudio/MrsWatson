@@ -32,14 +32,14 @@
 #include "aeffectx.h"
 
 // Callbacks used by VST2.x plugins
-typedef AEffect* (*Vst2xPluginEntryFunc)(audioMasterCallback host);
+typedef AEffect *(*Vst2xPluginEntryFunc)(audioMasterCallback host);
 typedef VstIntPtr (*Vst2xPluginDispatcherFunc)(AEffect *effect, VstInt32 opCode, VstInt32 index, VstIntPtr value, void *ptr, float opt);
 typedef float (*Vst2xPluginGetParameterFunc)(AEffect *effect, VstInt32 index);
 typedef void (*Vst2xPluginSetParameterFunc)(AEffect *effect, VstInt32 index, float value);
-typedef void (*Vst2xPluginProcessFunc)(AEffect* effect, float** inputs, float** outputs, VstInt32 sampleFrames);
+typedef void (*Vst2xPluginProcessFunc)(AEffect *effect, float **inputs, float **outputs, VstInt32 sampleFrames);
 
 extern "C" {
-VstIntPtr VSTCALLBACK pluginVst2xHostCallback(AEffect *effect, VstInt32 opcode, VstInt32 index, VstIntPtr value, void *dataPtr, float opt);
+    VstIntPtr VSTCALLBACK pluginVst2xHostCallback(AEffect *effect, VstInt32 opcode, VstInt32 index, VstIntPtr value, void *dataPtr, float opt);
 }
 
 #endif

@@ -33,30 +33,30 @@
 #include "midi/MidiSequence.h"
 
 typedef enum {
-  MIDI_SOURCE_TYPE_INVALID,
-  MIDI_SOURCE_TYPE_FILE,
-  NUM_MIDI_SOURCE_TYPES
+    MIDI_SOURCE_TYPE_INVALID,
+    MIDI_SOURCE_TYPE_FILE,
+    NUM_MIDI_SOURCE_TYPES
 } MidiSourceType;
 
-typedef boolByte (*OpenMidiSourceFunc)(void*);
-typedef boolByte (*ReadMidiEventsFunc)(void*, MidiSequence);
-typedef void (*FreeMidiSourceDataFunc)(void*);
+typedef boolByte (*OpenMidiSourceFunc)(void *);
+typedef boolByte (*ReadMidiEventsFunc)(void *, MidiSequence);
+typedef void (*FreeMidiSourceDataFunc)(void *);
 
 typedef struct {
-  MidiSourceType midiSourceType;
-  CharString sourceName;
+    MidiSourceType midiSourceType;
+    CharString sourceName;
 
-  OpenMidiSourceFunc openMidiSource;
-  ReadMidiEventsFunc readMidiEvents;
-  FreeMidiSourceDataFunc freeMidiSourceData;
+    OpenMidiSourceFunc openMidiSource;
+    ReadMidiEventsFunc readMidiEvents;
+    FreeMidiSourceDataFunc freeMidiSourceData;
 
-  void* extraData;
+    void *extraData;
 } MidiSourceMembers;
 
 /**
  * A class which acts as a source for MIDI data.
  */
-typedef MidiSourceMembers* MidiSource;
+typedef MidiSourceMembers *MidiSource;
 
 /**
  * Factory method to create a new MIDI source

@@ -41,15 +41,15 @@
 #define DEFAULT_TIMESIG_NOTE_VALUE 4
 
 typedef struct {
-  double sampleRate;
-  unsigned int numChannels;
-  unsigned long blocksize;
-  float tempo;
-  unsigned short timeSignatureBeatsPerMeasure;
-  unsigned short timeSignatureNoteValue;
+    double sampleRate;
+    unsigned int numChannels;
+    unsigned long blocksize;
+    float tempo;
+    unsigned short timeSignatureBeatsPerMeasure;
+    unsigned short timeSignatureNoteValue;
 } AudioSettingsMembers;
 
-typedef AudioSettingsMembers* AudioSettings;
+typedef AudioSettingsMembers *AudioSettings;
 extern AudioSettings audioSettingsInstance;
 
 /**
@@ -133,7 +133,7 @@ void setTempo(const float tempo);
  * in beats per minute, and then sets the global tempo to this value.
  * @param bytes Three byte sequence as read from a MIDI file
  */
-void setTempoFromMidiBytes(const byte* bytes);
+void setTempoFromMidiBytes(const byte *bytes);
 
 /**
  * Set the time signature's numerator. This function does very little error
@@ -160,7 +160,7 @@ boolByte setTimeSignatureNoteValue(const unsigned short noteValue);
  * @param bytes Two byte sequence as read from a MIDI file
  * @return True if successfully set, false otherwise
  */
-boolByte setTimeSignatureFromMidiBytes(const byte* bytes);
+boolByte setTimeSignatureFromMidiBytes(const byte *bytes);
 
 /**
  * Set the time signature from a string, should look like "3/4".

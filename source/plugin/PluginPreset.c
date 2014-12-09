@@ -35,60 +35,69 @@
 #include "plugin/PluginPresetFxp.h"
 #include "plugin/PluginPresetInternalProgram.h"
 
-static PluginPresetType _pluginPresetGuessType(const CharString presetName) {
-  const char* fileExtension;
-  size_t i;
+static PluginPresetType _pluginPresetGuessType(const CharString presetName)
+{
+    const char *fileExtension;
+    size_t i;
 
-  if(presetName == NULL || charStringIsEmpty(presetName)) {
-    return PRESET_TYPE_INVALID;
-  }
-
-  fileExtension = getFileExtension(presetName->data);
-  if(fileExtension == NULL) {
-    for(i = 0; i < strlen(presetName->data); i++) {
-      if(!charStringIsNumber(presetName, i)) {
+    if (presetName == NULL || charStringIsEmpty(presetName)) {
         return PRESET_TYPE_INVALID;
-      }
     }
-    // If the preset name is all numeric, then it's an internal program number
-    return PRESET_TYPE_INTERNAL_PROGRAM;
-  }
-  else if(!strcasecmp(fileExtension, "fxp")) {
-    return PRESET_TYPE_FXP;
-  }
-  else {
-    logCritical("Preset '%s' does not match any supported type", presetName->data);
-    return PRESET_TYPE_INVALID;
-  }
+
+    fileExtension = getFileExtension(presetName->data);
+
+    if (fileExtension == NULL) {
+        for (i = 0; i < strlen(presetName->data); i++) {
+            if (!charStringIsNumber(presetName, i)) {
+                return PRESET_TYPE_INVALID;
+            }
+        }
+
+        // If the preset name is all numeric, then it's an internal program number
+        return PRESET_TYPE_INTERNAL_PROGRAM;
+    } else if (!strcasecmp(fileExtension, "fxp")) {
+        return PRESET_TYPE_FXP;
+    } else {
+        logCritical("Preset '%s' does not match any supported type", presetName->data);
+        return PRESET_TYPE_INVALID;
+    }
 }
 
-PluginPreset pluginPresetFactory(const CharString presetName) {
-  PluginPresetType presetType = _pluginPresetGuessType(presetName);
-  switch(presetType) {
+PluginPreset pluginPresetFactory(const CharString presetName)
+{
+    PluginPresetType presetType = _pluginPresetGuessType(presetName);
+
+    switch (presetType) {
     case PRESET_TYPE_FXP:
-      return newPluginPresetFxp(presetName);
+        return newPluginPresetFxp(presetName);
+
     case PRESET_TYPE_INTERNAL_PROGRAM:
-      return newPluginPresetInternalProgram(presetName);
+        return newPluginPresetInternalProgram(presetName);
+
     default:
-      return NULL;
-  }
-}
-
-void pluginPresetSetCompatibleWith(PluginPreset pluginPreset, PluginInterfaceType interfaceType) {
-  pluginPreset->compatiblePluginTypes |= (1 << interfaceType);
-}
-
-boolByte pluginPresetIsCompatibleWith(const PluginPreset pluginPreset, const Plugin plugin) {
-  return (pluginPreset->compatiblePluginTypes & (1 << plugin->interfaceType));
-}
-
-void freePluginPreset(PluginPreset pluginPreset) {
-  if(pluginPreset != NULL) {
-    if(pluginPreset->extraData != NULL) {
-      pluginPreset->freePresetData(pluginPreset->extraData);
-      free(pluginPreset->extraData);
+        return NULL;
     }
-    freeCharString(pluginPreset->presetName);
-    free(pluginPreset);
-  }
+}
+
+void pluginPresetSetCompatibleWith(PluginPreset pluginPreset, PluginInterfaceType interfaceType)
+{
+    pluginPreset->compatiblePluginTypes |= (1 << interfaceType);
+}
+
+boolByte pluginPresetIsCompatibleWith(const PluginPreset pluginPreset, const Plugin plugin)
+{
+    return (pluginPreset->compatiblePluginTypes & (1 << plugin->interfaceType));
+}
+
+void freePluginPreset(PluginPreset pluginPreset)
+{
+    if (pluginPreset != NULL) {
+        if (pluginPreset->extraData != NULL) {
+            pluginPreset->freePresetData(pluginPreset->extraData);
+            free(pluginPreset->extraData);
+        }
+
+        freeCharString(pluginPreset->presetName);
+        free(pluginPreset);
+    }
 }

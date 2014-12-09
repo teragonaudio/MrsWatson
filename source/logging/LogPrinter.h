@@ -32,7 +32,7 @@
 #include <stdio.h>
 
 #if UNIX
-typedef const char* LogColor;
+typedef const char *LogColor;
 
 #define COLOR_RESET      "\x1b[0m"
 #define COLOR_NONE       NULL
@@ -133,13 +133,13 @@ typedef WORD LogColor;
  * @param logFile Log file to write to
  * @param message Message contents
  */
-void printToLog(const LogColor color, FILE* logFile, const char* message);
+void printToLog(const LogColor color, FILE *logFile, const char *message);
 
 /**
  * Flush the log file to disk
  * @param logFile Log file
  */
-void flushLog(FILE* logFile);
+void flushLog(FILE *logFile);
 
 /**
  * Print a test pattern of all known color combinations.

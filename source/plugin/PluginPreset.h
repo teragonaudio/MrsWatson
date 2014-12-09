@@ -32,17 +32,17 @@
 #include "plugin/Plugin.h"
 
 typedef enum {
-  PRESET_TYPE_INVALID,
-  PRESET_TYPE_FXP,
-  PRESET_TYPE_INTERNAL_PROGRAM,
-  NUM_PRESET_TYPES
+    PRESET_TYPE_INVALID,
+    PRESET_TYPE_FXP,
+    PRESET_TYPE_INTERNAL_PROGRAM,
+    NUM_PRESET_TYPES
 } PluginPresetType;
 
 /**
  * Called when the preset is to be loaded from the filesystem
  * @param pluginPresetPtr self
  */
-typedef boolByte (*OpenPresetFunc)(void* pluginPresetPtr);
+typedef boolByte (*OpenPresetFunc)(void *pluginPresetPtr);
 /**
  * Called when the preset is to be loaded into a plugin
  * @param plugin Plugin which will receive the preset. This should check that
@@ -50,30 +50,30 @@ typedef boolByte (*OpenPresetFunc)(void* pluginPresetPtr);
  * @param pluginPresetPtr self
  * @return True on success, false on failure
  */
-typedef boolByte (*LoadPresetFunc)(void* pluginPresetPtr, Plugin plugin);
+typedef boolByte (*LoadPresetFunc)(void *pluginPresetPtr, Plugin plugin);
 /**
  * Free a preset and it's related data
  * @param pluginPresetPtr self
  */
-typedef void (*FreePresetDataFunc)(void* pluginPresetPtr);
+typedef void (*FreePresetDataFunc)(void *pluginPresetPtr);
 
 typedef struct {
-  PluginPresetType presetType;
-  CharString presetName;
-  unsigned int compatiblePluginTypes;
+    PluginPresetType presetType;
+    CharString presetName;
+    unsigned int compatiblePluginTypes;
 
-  OpenPresetFunc openPreset;
-  LoadPresetFunc loadPreset;
-  FreePresetDataFunc freePresetData;
+    OpenPresetFunc openPreset;
+    LoadPresetFunc loadPreset;
+    FreePresetDataFunc freePresetData;
 
-  void* extraData;
+    void *extraData;
 } PluginPresetMembers;
 
 /**
  * Class which is used to hold preset data which will be loaded into a plugin
  * before audio processing.
  */
-typedef PluginPresetMembers* PluginPreset;
+typedef PluginPresetMembers *PluginPreset;
 
 /**
  * Create a new plugin preset from a given name. Usually this function inspects

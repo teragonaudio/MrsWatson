@@ -1,28 +1,28 @@
-// 
-// File.h - MrsWatson 
-// Created by Nik Reiman on 09 Dec 12. 
-// Copyright (c) 2012 Teragon Audio. All rights reserved. 
-// 
-// Redistribution and use in source and binary forms, with or without 
-// modification, are permitted provided that the following conditions are met: 
-// 
-// * Redistributions of source code must retain the above copyright notice, 
-//   this list of conditions and the following disclaimer. 
-// * Redistributions in binary form must reproduce the above copyright notice, 
-//   this list of conditions and the following disclaimer in the documentation 
-//   and/or other materials provided with the distribution. 
-// 
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
-// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
-// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE 
-// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
-// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
-// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
-// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
-// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
-// POSSIBILITY OF SUCH DAMAGE. 
+//
+// File.h - MrsWatson
+// Created by Nik Reiman on 09 Dec 12.
+// Copyright (c) 2012 Teragon Audio. All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are met:
+//
+// * Redistributions of source code must retain the above copyright notice,
+//   this list of conditions and the following disclaimer.
+// * Redistributions in binary form must reproduce the above copyright notice,
+//   this list of conditions and the following disclaimer in the documentation
+//   and/or other materials provided with the distribution.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+// POSSIBILITY OF SUCH DAMAGE.
 //
 
 #ifndef MrsWatson_File_h
@@ -43,28 +43,28 @@
 #endif
 
 typedef enum {
-  kFileTypeFile,
-  kFileTypeDirectory,
-  kFileTypeInvalid
+    kFileTypeFile,
+    kFileTypeDirectory,
+    kFileTypeInvalid
 } FileType;
 
 typedef enum {
-  kFileOpenModeClosed,
-  kFileOpenModeRead,
-  kFileOpenModeWrite,
-  kFileOpenModeInvalid
+    kFileOpenModeClosed,
+    kFileOpenModeRead,
+    kFileOpenModeWrite,
+    kFileOpenModeInvalid
 } FileOpenMode;
 
 typedef struct {
-  CharString absolutePath;
-  FileType fileType;
+    CharString absolutePath;
+    FileType fileType;
 
-  /** Private */
-  FILE *_fileHandle;
-  /** Private */
-  FileOpenMode _openMode;
+    /** Private */
+    FILE *_fileHandle;
+    /** Private */
+    FileOpenMode _openMode;
 } FileMembers;
-typedef FileMembers* File;
+typedef FileMembers *File;
 
 /**
  * @return New empty file object
@@ -87,7 +87,7 @@ File newFileWithPath(const CharString path);
  * be relative to the current directory.
  * @return New file object
  */
-File newFileWithPathCString(const char* path);
+File newFileWithPathCString(const char *path);
 
 /**
  * Create a new file object which points to a path under another directory. If
@@ -186,7 +186,7 @@ LinkedList fileReadLines(File self);
  * @return An initialized array of numBytes bytes with the data, or NULL if an
  * error occurred.
  */
-void* fileReadBytes(File self, size_t numBytes);
+void *fileReadBytes(File self, size_t numBytes);
 
 /**
  * Write a string to file. The first time this function is called, the file will
@@ -208,7 +208,7 @@ boolByte fileWrite(File self, const CharString data);
  * @param numBytes Number of bytes to write
  * @return True if the data could be written
  */
-boolByte fileWriteBytes(File self, const void* data, size_t numBytes);
+boolByte fileWriteBytes(File self, const void *data, size_t numBytes);
 
 /**
  * Get the file basename, for example "/foo/bar" would return "bar" (regardless

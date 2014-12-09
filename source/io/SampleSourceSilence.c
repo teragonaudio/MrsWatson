@@ -32,47 +32,53 @@
 #include "io/SampleSource.h"
 #include "logging/EventLogger.h"
 
-static boolByte _openSampleSourceSilence(void* sampleSourcePtr, const SampleSourceOpenAs openAs) {
-  SampleSource sampleSource = (SampleSource)sampleSourcePtr;
-  sampleSource->openedAs = openAs;
-  return true;
+static boolByte _openSampleSourceSilence(void *sampleSourcePtr, const SampleSourceOpenAs openAs)
+{
+    SampleSource sampleSource = (SampleSource)sampleSourcePtr;
+    sampleSource->openedAs = openAs;
+    return true;
 }
 
-static void _closeSampleSourceSilence(void* sampleSourcePtr) {
+static void _closeSampleSourceSilence(void *sampleSourcePtr)
+{
 }
 
-static boolByte _readBlockFromSilence(void* sampleSourcePtr, SampleBuffer sampleBuffer) {
-  unsigned long samplesRead = sampleBuffer->blocksize * sampleBuffer->numChannels;
-  sampleBufferClear(sampleBuffer);
-  ((SampleSource)sampleSourcePtr)->numSamplesProcessed += sampleBuffer->blocksize * sampleBuffer->numChannels;
-  logDebug("Read %d samples from silence source", samplesRead);
-  return true;
+static boolByte _readBlockFromSilence(void *sampleSourcePtr, SampleBuffer sampleBuffer)
+{
+    unsigned long samplesRead = sampleBuffer->blocksize * sampleBuffer->numChannels;
+    sampleBufferClear(sampleBuffer);
+    ((SampleSource)sampleSourcePtr)->numSamplesProcessed += sampleBuffer->blocksize * sampleBuffer->numChannels;
+    logDebug("Read %d samples from silence source", samplesRead);
+    return true;
 }
 
-static boolByte _writeBlockToSilence(void* sampleSourcePtr, const SampleBuffer sampleBuffer) {
-  unsigned long samplesWritten = sampleBuffer->blocksize * sampleBuffer->numChannels;
-  ((SampleSource)sampleSourcePtr)->numSamplesProcessed += samplesWritten;
-  logDebug("Wrote %d samples to silence source", samplesWritten);
-  return true;
+static boolByte _writeBlockToSilence(void *sampleSourcePtr, const SampleBuffer sampleBuffer)
+{
+    unsigned long samplesWritten = sampleBuffer->blocksize * sampleBuffer->numChannels;
+    ((SampleSource)sampleSourcePtr)->numSamplesProcessed += samplesWritten;
+    logDebug("Wrote %d samples to silence source", samplesWritten);
+    return true;
 }
 
-static void _freeInputSourceDataSilence(void* sampleSourceDataPtr) {
+static void _freeInputSourceDataSilence(void *sampleSourceDataPtr)
+{
 }
 
-SampleSource _newSampleSourceSilence(void) {
-  SampleSource sampleSource = (SampleSource)malloc(sizeof(SampleSourceMembers));
+SampleSource _newSampleSourceSilence(void)
+{
+    SampleSource sampleSource = (SampleSource)malloc(sizeof(SampleSourceMembers));
 
-  sampleSource->sampleSourceType = SAMPLE_SOURCE_TYPE_SILENCE;
-  sampleSource->openedAs = SAMPLE_SOURCE_OPEN_NOT_OPENED;
-  sampleSource->sourceName = newCharString();
-  charStringCopyCString(sampleSource->sourceName, "(silence)");
-  sampleSource->numSamplesProcessed = 0;
+    sampleSource->sampleSourceType = SAMPLE_SOURCE_TYPE_SILENCE;
+    sampleSource->openedAs = SAMPLE_SOURCE_OPEN_NOT_OPENED;
+    sampleSource->sourceName = newCharString();
+    charStringCopyCString(sampleSource->sourceName, "(silence)");
+    sampleSource->numSamplesProcessed = 0;
 
-  sampleSource->openSampleSource = _openSampleSourceSilence;
-  sampleSource->closeSampleSource = _closeSampleSourceSilence;
-  sampleSource->readSampleBlock = _readBlockFromSilence;
-  sampleSource->writeSampleBlock = _writeBlockToSilence;
-  sampleSource->freeSampleSourceData = _freeInputSourceDataSilence;
+    sampleSource->openSampleSource = _openSampleSourceSilence;
+    sampleSource->closeSampleSource = _closeSampleSourceSilence;
+    sampleSource->readSampleBlock = _readBlockFromSilence;
+    sampleSource->writeSampleBlock = _writeBlockToSilence;
+    sampleSource->freeSampleSourceData = _freeInputSourceDataSilence;
 
-  return sampleSource;
+    return sampleSource;
 }

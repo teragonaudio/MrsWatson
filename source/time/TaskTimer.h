@@ -36,20 +36,20 @@
 #endif
 
 typedef struct {
-  CharString component;
-  CharString subcomponent;
-  boolByte enabled;
-  boolByte _running;
-  double totalTaskTime;
+    CharString component;
+    CharString subcomponent;
+    boolByte enabled;
+    boolByte _running;
+    double totalTaskTime;
 
 #if WINDOWS
-  LARGE_INTEGER startTime;
-  double counterFrequency;
+    LARGE_INTEGER startTime;
+    double counterFrequency;
 #elif UNIX
-  struct timeval startTime;
+    struct timeval startTime;
 #endif
 } TaskTimerMembers;
-typedef TaskTimerMembers* TaskTimer;
+typedef TaskTimerMembers *TaskTimer;
 
 /**
  * Create a new task timer.
@@ -59,7 +59,7 @@ typedef TaskTimerMembers* TaskTimer;
  * string may be passed for this argument.
  * @return Initialized instance
  */
-TaskTimer newTaskTimer(const CharString component, const char* subcomponent);
+TaskTimer newTaskTimer(const CharString component, const char *subcomponent);
 
 /**
  * Create a new task timer.
@@ -69,7 +69,7 @@ TaskTimer newTaskTimer(const CharString component, const char* subcomponent);
  * string may be passed for this argument.
  * @return Initialized instance
  */
-TaskTimer newTaskTimerWithCString(const char* component, const char* subcomponent);
+TaskTimer newTaskTimerWithCString(const char *component, const char *subcomponent);
 
 /**
  * Start the timer. Timers may be stopped and started multiple times.

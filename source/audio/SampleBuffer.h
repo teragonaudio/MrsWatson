@@ -31,14 +31,14 @@
 #include "base/Types.h"
 
 typedef float Sample;
-typedef Sample* Samples;
+typedef Sample *Samples;
 
 typedef struct {
-  unsigned int numChannels;
-  unsigned long blocksize;
-  Samples* samples;
+    unsigned int numChannels;
+    unsigned long blocksize;
+    Samples *samples;
 } SampleBufferMembers;
-typedef SampleBufferMembers* SampleBuffer;
+typedef SampleBufferMembers *SampleBuffer;
 
 /**
  * Create a new SampleBuffer instance
@@ -65,12 +65,12 @@ void sampleBufferClear(SampleBuffer self);
  */
 boolByte sampleBufferCopyAndMapChannelsWithOffset(SampleBuffer destinationBuffer, unsigned long destinationOffset, const SampleBuffer sourceBuffer, unsigned long sourceOffset, unsigned long numberOfFrames);
 
-  /**
- * Copy all samples from another buffer to this one
- * @param self
- * @param buffer Other buffer to copy from
- * @return True on success, false on failure
- */
+/**
+* Copy all samples from another buffer to this one
+* @param self
+* @param buffer Other buffer to copy from
+* @return True on success, false on failure
+*/
 boolByte sampleBufferCopyAndMapChannels(SampleBuffer self, const SampleBuffer buffer);
 
 /**
@@ -82,7 +82,7 @@ boolByte sampleBufferCopyAndMapChannels(SampleBuffer self, const SampleBuffer bu
  * length of this array must match the SampleBuffer's blocksize * channel count,
  * or else undefined behavior will occur.
  */
-void sampleBufferCopyPcmSamples(SampleBuffer self, const short* inPcmSamples);
+void sampleBufferCopyPcmSamples(SampleBuffer self, const short *inPcmSamples);
 
 /**
  * Get an array of interlaced short integer samples from the SampleBuffer. This
@@ -95,7 +95,7 @@ void sampleBufferCopyPcmSamples(SampleBuffer self, const short* inPcmSamples);
  * @param flipEndian True if the output data should have the samples flipped
  * from the native endianness.
  */
-void sampleBufferGetPcmSamples(const SampleBuffer self, short* outPcmSamples, boolByte flipEndian);
+void sampleBufferGetPcmSamples(const SampleBuffer self, short *outPcmSamples, boolByte flipEndian);
 
 /**
  * Free all memory used by a SampleBuffer instance

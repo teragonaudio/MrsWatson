@@ -54,11 +54,11 @@
 #include <archive_entry.h>
 #endif
 
-static const char* kErrorReportInfoText = "MrsWatson is now running \
+static const char *kErrorReportInfoText = "MrsWatson is now running \
 in error report mode, which will generate a report on your desktop with \
 any input/output sources and error logs. This also enables some extra \
 arguments and will disable console logging.\n";
-static const char* kErrorReportCopyPluginsPromptText = "Would you like to copy the \
+static const char *kErrorReportCopyPluginsPromptText = "Would you like to copy the \
 plugin to the report? All data sent to the official support address is kept \
 strictly confidential. If the plugin in question has copy protection (or is \
 cracked), or depends on external resources, this probably won't work. But if \
@@ -66,255 +66,279 @@ the plugin can be copied, it greatly helps in fixing bugs.\n\
 Copy the plugin? (y/n) ";
 
 
-ErrorReporter newErrorReporter(void) {
-  ErrorReporter errorReporter = (ErrorReporter)malloc(sizeof(ErrorReporterMembers));
+ErrorReporter newErrorReporter(void)
+{
+    ErrorReporter errorReporter = (ErrorReporter)malloc(sizeof(ErrorReporterMembers));
 
-  errorReporter->started = false;
-  errorReporter->completed = false;
-  errorReporter->reportName = newCharString();
+    errorReporter->started = false;
+    errorReporter->completed = false;
+    errorReporter->reportName = newCharString();
 
-  errorReporter->desktopPath = newCharString();
-  errorReporter->reportDirPath = newCharString();
+    errorReporter->desktopPath = newCharString();
+    errorReporter->reportDirPath = newCharString();
 
-  return errorReporter;
+    return errorReporter;
 }
 
-void errorReporterInitialize(ErrorReporter self) {
-  CharString infoText = newCharStringWithCString(kErrorReportInfoText);
-  CharString wrappedInfoText;
-  time_t now;
-  size_t length;
-  size_t i;
+void errorReporterInitialize(ErrorReporter self)
+{
+    CharString infoText = newCharStringWithCString(kErrorReportInfoText);
+    CharString wrappedInfoText;
+    time_t now;
+    size_t length;
+    size_t i;
 
-  printf("=== Starting error report ===\n");
-  wrappedInfoText = charStringWrap(infoText, 0);
-  // The second newline here is intentional
-  printf("%s\n", wrappedInfoText->data);
+    printf("=== Starting error report ===\n");
+    wrappedInfoText = charStringWrap(infoText, 0);
+    // The second newline here is intentional
+    printf("%s\n", wrappedInfoText->data);
 
-  time(&now);
-  self->started = true;
+    time(&now);
+    self->started = true;
 
-  snprintf(self->reportName->data, self->reportName->capacity,
-    "MrsWatson Report %s", ctime(&now));
-  // Trim the final newline character from this string if it exists
-  length = strlen(self->reportName->data);
-  if(self->reportName->data[length - 1] == '\n') {
-    self->reportName->data[length - 1] = '\0';
-    length--;
-  }
-  for(i = 0; i < length; i++) {
-    if(!(charStringIsLetter(self->reportName, i) ||
-         charStringIsNumber(self->reportName, i))) {
-      self->reportName->data[i] = '-';
+    snprintf(self->reportName->data, self->reportName->capacity,
+             "MrsWatson Report %s", ctime(&now));
+    // Trim the final newline character from this string if it exists
+    length = strlen(self->reportName->data);
+
+    if (self->reportName->data[length - 1] == '\n') {
+        self->reportName->data[length - 1] = '\0';
+        length--;
     }
-  }
 
- #if UNIX
-  snprintf(self->desktopPath->data, self->desktopPath->capacity,
-    "%s/Desktop", getenv("HOME"));
+    for (i = 0; i < length; i++) {
+        if (!(charStringIsLetter(self->reportName, i) ||
+                charStringIsNumber(self->reportName, i))) {
+            self->reportName->data[i] = '-';
+        }
+    }
+
+#if UNIX
+    snprintf(self->desktopPath->data, self->desktopPath->capacity,
+             "%s/Desktop", getenv("HOME"));
 #elif WINDOWS
-  SHGetFolderPathA(NULL, CSIDL_DESKTOPDIRECTORY, NULL, 0, self->desktopPath->data);
+    SHGetFolderPathA(NULL, CSIDL_DESKTOPDIRECTORY, NULL, 0, self->desktopPath->data);
 #endif
-  snprintf(self->reportDirPath->data, self->reportDirPath->capacity,
-    "%s%c%s", self->desktopPath->data, PATH_DELIMITER, self->reportName->data);
-  makeDirectory(self->reportDirPath);
+    snprintf(self->reportDirPath->data, self->reportDirPath->capacity,
+             "%s%c%s", self->desktopPath->data, PATH_DELIMITER, self->reportName->data);
+    makeDirectory(self->reportDirPath);
 
-  freeCharString(wrappedInfoText);
-  freeCharString(infoText);
+    freeCharString(wrappedInfoText);
+    freeCharString(infoText);
 }
 
-void errorReporterCreateLauncher(ErrorReporter self, int argc, char* argv[]) {
-  CharString outScriptName = newCharString();
-  FILE *scriptFilePointer;
-  int i;
+void errorReporterCreateLauncher(ErrorReporter self, int argc, char *argv[])
+{
+    CharString outScriptName = newCharString();
+    FILE *scriptFilePointer;
+    int i;
 
-  charStringCopyCString(outScriptName, "run.sh");
-  errorReporterRemapPath(self, outScriptName);
-  scriptFilePointer = fopen(outScriptName->data, "w");
-  fprintf(scriptFilePointer, "#!/bin/sh\n");
-  fprintf(scriptFilePointer, "mrswatson");
-  for(i = 1; i < argc; i++) {
-    // Don't run with the error report option again
-    if(strcmp(argv[i], "--error-report")) {
-      fprintf(scriptFilePointer, " %s", argv[i]);
+    charStringCopyCString(outScriptName, "run.sh");
+    errorReporterRemapPath(self, outScriptName);
+    scriptFilePointer = fopen(outScriptName->data, "w");
+    fprintf(scriptFilePointer, "#!/bin/sh\n");
+    fprintf(scriptFilePointer, "mrswatson");
+
+    for (i = 1; i < argc; i++) {
+        // Don't run with the error report option again
+        if (strcmp(argv[i], "--error-report")) {
+            fprintf(scriptFilePointer, " %s", argv[i]);
+        }
     }
-  }
-  fprintf(scriptFilePointer, "\n");
-  fclose(scriptFilePointer);
+
+    fprintf(scriptFilePointer, "\n");
+    fclose(scriptFilePointer);
 }
 
-void errorReporterRemapPath(ErrorReporter self, CharString path) {
-  CharString basename = newCharString();
-  CharString outString = newCharStringWithCapacity(path->capacity);
+void errorReporterRemapPath(ErrorReporter self, CharString path)
+{
+    CharString basename = newCharString();
+    CharString outString = newCharStringWithCapacity(path->capacity);
 
-  charStringCopyCString(basename, getFileBasename(path->data));
-  buildAbsolutePath(self->reportDirPath, basename, NULL, outString);
-  charStringCopy(path, outString);
+    charStringCopyCString(basename, getFileBasename(path->data));
+    buildAbsolutePath(self->reportDirPath, basename, NULL, outString);
+    charStringCopy(path, outString);
 
-  freeCharString(basename);
-  freeCharString(outString);
+    freeCharString(basename);
+    freeCharString(outString);
 }
 
-boolByte errorReportCopyFileToReport(ErrorReporter self, CharString path) {
-  boolByte success;
-  CharString destination = newCharString();
+boolByte errorReportCopyFileToReport(ErrorReporter self, CharString path)
+{
+    boolByte success;
+    CharString destination = newCharString();
 
-  charStringCopy(destination, path);
-  errorReporterRemapPath(self, destination);
-  success = copyFileToDirectory(path, self->reportDirPath);
+    charStringCopy(destination, path);
+    errorReporterRemapPath(self, destination);
+    success = copyFileToDirectory(path, self->reportDirPath);
 
-  freeCharString(destination);
-  return success;
+    freeCharString(destination);
+    return success;
 }
 
 // TODO: Refactor this into FileUtilities
-static boolByte _copyDirectoryToErrorReportDir(ErrorReporter self, CharString path) {
-  boolByte success;
+static boolByte _copyDirectoryToErrorReportDir(ErrorReporter self, CharString path)
+{
+    boolByte success;
 
 #if UNIX
-  int result;
-  CharString copyCommand = newCharString();
-  // TODO: This is the lazy way of doing this...
-  snprintf(copyCommand->data, copyCommand->capacity, "/bin/cp -r \"%s\" \"%s\"",
-    path->data, self->reportDirPath->data);
-  result = system(copyCommand->data);
-  success = (boolByte)(WEXITSTATUS(result) == 0);
-  if(!success) {
-    logError("Could not copy '%s' to '%s'\n", path->data, self->reportDirPath->data);
-  }
+    int result;
+    CharString copyCommand = newCharString();
+    // TODO: This is the lazy way of doing this...
+    snprintf(copyCommand->data, copyCommand->capacity, "/bin/cp -r \"%s\" \"%s\"",
+             path->data, self->reportDirPath->data);
+    result = system(copyCommand->data);
+    success = (boolByte)(WEXITSTATUS(result) == 0);
+
+    if (!success) {
+        logError("Could not copy '%s' to '%s'\n", path->data, self->reportDirPath->data);
+    }
+
 #else
-  logUnsupportedFeature("Copy directory recursively");
-  success = false;
+    logUnsupportedFeature("Copy directory recursively");
+    success = false;
 #endif
 
-  return success;
+    return success;
 }
 
-boolByte errorReporterShouldCopyPlugins(void) {
-  CharString promptText = newCharStringWithCString(kErrorReportCopyPluginsPromptText);
-  CharString wrappedPromptText;
-  char response;
+boolByte errorReporterShouldCopyPlugins(void)
+{
+    CharString promptText = newCharStringWithCString(kErrorReportCopyPluginsPromptText);
+    CharString wrappedPromptText;
+    char response;
 
-  wrappedPromptText = charStringWrap(promptText, 0);
-  printf("%s", wrappedPromptText->data);
-  freeCharString(wrappedPromptText);
-  freeCharString(promptText);
+    wrappedPromptText = charStringWrap(promptText, 0);
+    printf("%s", wrappedPromptText->data);
+    freeCharString(wrappedPromptText);
+    freeCharString(promptText);
 
-  response = (char)getchar();
-  return (boolByte)(response == 'y' || response == 'Y');
+    response = (char)getchar();
+    return (boolByte)(response == 'y' || response == 'Y');
 }
 
-boolByte errorReporterCopyPlugins(ErrorReporter self, PluginChain pluginChain) {
-  CharString pluginAbsolutePath = NULL;
-  Plugin currentPlugin = NULL;
-  boolByte failed = false;
-  unsigned int i;
+boolByte errorReporterCopyPlugins(ErrorReporter self, PluginChain pluginChain)
+{
+    CharString pluginAbsolutePath = NULL;
+    Plugin currentPlugin = NULL;
+    boolByte failed = false;
+    unsigned int i;
 
-  for(i = 0; i < pluginChain->numPlugins; i++) {
-    currentPlugin = pluginChain->plugins[i];
-    pluginAbsolutePath = currentPlugin->pluginAbsolutePath;
-    if(charStringIsEmpty(pluginAbsolutePath)) {
-      logInfo("Plugin '%s' does not have an absolute path and could not be copied", currentPlugin->pluginName->data);
-    }
-    else if(getPlatformType() == PLATFORM_MACOSX) {
-      failed |= !_copyDirectoryToErrorReportDir(self, pluginAbsolutePath);
-    }
-    else {
-      failed |= !errorReportCopyFileToReport(self, pluginAbsolutePath);
-    }
-  }
+    for (i = 0; i < pluginChain->numPlugins; i++) {
+        currentPlugin = pluginChain->plugins[i];
+        pluginAbsolutePath = currentPlugin->pluginAbsolutePath;
 
-  return (boolByte)!failed;
+        if (charStringIsEmpty(pluginAbsolutePath)) {
+            logInfo("Plugin '%s' does not have an absolute path and could not be copied", currentPlugin->pluginName->data);
+        } else if (getPlatformType() == PLATFORM_MACOSX) {
+            failed |= !_copyDirectoryToErrorReportDir(self, pluginAbsolutePath);
+        } else {
+            failed |= !errorReportCopyFileToReport(self, pluginAbsolutePath);
+        }
+    }
+
+    return (boolByte)!failed;
 }
 
 #if HAVE_LIBARCHIVE
-static void _remapFileToErrorReportRelativePath(void* item, void* userData) {
-  char* itemName = (char*)item;
-  CharString tempPath = newCharString();
-  ErrorReporter errorReporter = (ErrorReporter)userData;
-  charStringCopyCString(tempPath, itemName);
-  snprintf(tempPath->data, tempPath->length, "%s/%s", errorReporter->reportName->data, itemName);
-  strncpy(itemName, tempPath->data, tempPath->length);
+static void _remapFileToErrorReportRelativePath(void *item, void *userData)
+{
+    char *itemName = (char *)item;
+    CharString tempPath = newCharString();
+    ErrorReporter errorReporter = (ErrorReporter)userData;
+    charStringCopyCString(tempPath, itemName);
+    snprintf(tempPath->data, tempPath->length, "%s/%s", errorReporter->reportName->data, itemName);
+    strncpy(itemName, tempPath->data, tempPath->length);
 }
 #endif
 
 #if HAVE_LIBARCHIVE
-static void _addFileToArchive(void* item, void* userData) {
-  char* itemPath = (char*)item;
-  struct archive* outArchive = (struct archive*)userData;
-  struct archive_entry* entry = archive_entry_new();
-  struct stat fileStat;
-  FILE* filePointer;
-  size_t bytesRead;
-  byte* fileBuffer = (byte*)malloc(8192);
+static void _addFileToArchive(void *item, void *userData)
+{
+    char *itemPath = (char *)item;
+    struct archive *outArchive = (struct archive *)userData;
+    struct archive_entry *entry = archive_entry_new();
+    struct stat fileStat;
+    FILE *filePointer;
+    size_t bytesRead;
+    byte *fileBuffer = (byte *)malloc(8192);
 
-  stat(itemPath, &fileStat);
-  archive_entry_set_pathname(entry, itemPath);
-  archive_entry_set_size(entry, fileStat.st_size);
-  archive_entry_set_filetype(entry, AE_IFREG);
-  archive_entry_set_perm(entry, 0644);
-  archive_write_header(outArchive, entry);
-  filePointer = fopen(itemPath, "rb");
-  do {
-    bytesRead = fread(fileBuffer, 1, 8192, filePointer);
-    if(bytesRead > 0) {
-      archive_write_data(outArchive, fileBuffer, bytesRead);
-    }
-  } while(bytesRead > 0);
-  fclose(filePointer);
-  archive_entry_free(entry);
+    stat(itemPath, &fileStat);
+    archive_entry_set_pathname(entry, itemPath);
+    archive_entry_set_size(entry, fileStat.st_size);
+    archive_entry_set_filetype(entry, AE_IFREG);
+    archive_entry_set_perm(entry, 0644);
+    archive_write_header(outArchive, entry);
+    filePointer = fopen(itemPath, "rb");
+
+    do {
+        bytesRead = fread(fileBuffer, 1, 8192, filePointer);
+
+        if (bytesRead > 0) {
+            archive_write_data(outArchive, fileBuffer, bytesRead);
+        }
+    } while (bytesRead > 0);
+
+    fclose(filePointer);
+    archive_entry_free(entry);
 }
 #endif
 
-void errorReporterClose(ErrorReporter self) {
+void errorReporterClose(ErrorReporter self)
+{
 #if HAVE_LIBARCHIVE
-  struct archive* outArchive;
-  CharString outputFilename = newCharString();
-  LinkedList reportContents = newLinkedList();
+    struct archive *outArchive;
+    CharString outputFilename = newCharString();
+    LinkedList reportContents = newLinkedList();
 #endif
 
-  // Always do this, just in case
-  flushErrorLog();
+    // Always do this, just in case
+    flushErrorLog();
 
 #if HAVE_LIBARCHIVE
-  // In case any part of the error report causes a segfault, this function will
-  // be called recursively. A mutex would really be a better solution here, but
-  // this will also work just fine.
-  if(!self->completed) {
-    self->completed = true;
-    buildAbsolutePath(self->desktopPath, self->reportName, "tar.gz", outputFilename);
-    listDirectory(self->reportDirPath->data, reportContents);
-    if(self != NULL) {
-      outArchive = archive_write_new();
-      archive_write_set_compression_gzip(outArchive);
-      archive_write_set_format_pax_restricted(outArchive);
-      archive_write_open_filename(outArchive, outputFilename->data);
 
-      linkedListForeach(reportContents, _remapFileToErrorReportRelativePath, self);
-      chdir(self->desktopPath->data);
-      linkedListForeach(reportContents, _addFileToArchive, outArchive);
+    // In case any part of the error report causes a segfault, this function will
+    // be called recursively. A mutex would really be a better solution here, but
+    // this will also work just fine.
+    if (!self->completed) {
+        self->completed = true;
+        buildAbsolutePath(self->desktopPath, self->reportName, "tar.gz", outputFilename);
+        listDirectory(self->reportDirPath->data, reportContents);
 
-      archive_write_close(outArchive);
-      archive_write_free(outArchive);
+        if (self != NULL) {
+            outArchive = archive_write_new();
+            archive_write_set_compression_gzip(outArchive);
+            archive_write_set_format_pax_restricted(outArchive);
+            archive_write_open_filename(outArchive, outputFilename->data);
+
+            linkedListForeach(reportContents, _remapFileToErrorReportRelativePath, self);
+            chdir(self->desktopPath->data);
+            linkedListForeach(reportContents, _addFileToArchive, outArchive);
+
+            archive_write_close(outArchive);
+            archive_write_free(outArchive);
+        }
+
+        // Remove original error report
+        removeDirectory(self->reportDirPath);
     }
-    // Remove original error report
-    removeDirectory(self->reportDirPath);
-  }
+
 #endif
 
-  printf("\n=== Error report complete ===\n");
-  printf("Created error report at %s\n", self->reportDirPath->data);
+    printf("\n=== Error report complete ===\n");
+    printf("Created error report at %s\n", self->reportDirPath->data);
 #if HAVE_LIBARCHIVE
-  printf("Please email the report to: %s\n", SUPPORT_EMAIL);
+    printf("Please email the report to: %s\n", SUPPORT_EMAIL);
 #else
-  printf("Please compress and email the report to: %s\n", SUPPORT_EMAIL);
+    printf("Please compress and email the report to: %s\n", SUPPORT_EMAIL);
 #endif
-  printf("Thanks!\n");
+    printf("Thanks!\n");
 }
 
-void freeErrorReporter(ErrorReporter errorReporter) {
-  freeCharString(errorReporter->reportName);
-  freeCharString(errorReporter->reportDirPath);
-  freeCharString(errorReporter->desktopPath);
-  free(errorReporter);
+void freeErrorReporter(ErrorReporter errorReporter)
+{
+    freeCharString(errorReporter->reportName);
+    freeCharString(errorReporter->reportDirPath);
+    freeCharString(errorReporter->desktopPath);
+    free(errorReporter);
 }

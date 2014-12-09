@@ -34,11 +34,11 @@
 #include "base/Types.h"
 
 typedef struct {
-  char id[5];
-  unsigned int size;
-  byte* data;
+    char id[5];
+    unsigned int size;
+    byte *data;
 } RiffChunkMembers;
-typedef RiffChunkMembers* RiffChunk;
+typedef RiffChunkMembers *RiffChunk;
 
 /**
  * Create a new RIFF chunk object
@@ -56,7 +56,7 @@ RiffChunk newRiffChunk(void);
  * chunk, but then to read bites from it in smaller blocks.
  * @return True if the chunk was successfully read
  */
-boolByte riffChunkReadNext(RiffChunk self, FILE* fileHandle, boolByte readData);
+boolByte riffChunkReadNext(RiffChunk self, FILE *fileHandle, boolByte readData);
 
 /**
  * Test to see if this chunk's ID is equal to the given four character sequence
@@ -64,7 +64,7 @@ boolByte riffChunkReadNext(RiffChunk self, FILE* fileHandle, boolByte readData);
  * @param id String to compare to, should be exactly 4 characters
  * @return True if the ID's are equal, false otherwise
  */
-boolByte riffChunkIsIdEqualTo(const RiffChunk self, const char* id);
+boolByte riffChunkIsIdEqualTo(const RiffChunk self, const char *id);
 
 /**
  * Free a RiffChunk object and its associated memory.

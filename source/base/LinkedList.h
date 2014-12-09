@@ -29,18 +29,18 @@
 #define MrsWatson_LinkedList_h
 
 typedef struct {
-  void* item;
-  void* nextItem;
+    void *item;
+    void *nextItem;
 
-  // This field should be considered private, and is only valid for the head node
-  int _numItems;
+    // This field should be considered private, and is only valid for the head node
+    int _numItems;
 } LinkedListMembers;
 
 typedef LinkedListMembers *LinkedList;
 typedef LinkedListMembers *LinkedListIterator;
 
-typedef void (*LinkedListForeachFunc)(void* item, void* userData);
-typedef void (*LinkedListFreeItemFunc)(void* item);
+typedef void (*LinkedListForeachFunc)(void *item, void *userData);
+typedef void (*LinkedListFreeItemFunc)(void *item);
 
 /**
  * Create a new linked list
@@ -55,7 +55,7 @@ LinkedList newLinkedList(void);
  * of the same type. However, if items in the list are not of the same type,
  * using functions such as foreachItemInList() will be much more difficult.
  */
-void linkedListAppend(LinkedList self, void* item);
+void linkedListAppend(LinkedList self, void *item);
 
 /**
  * Get the number of items in a list. Use this function instead of accessing
@@ -71,7 +71,7 @@ int linkedListLength(LinkedList self);
  * @param self
  * @return Array of void* objects with terminating NULL member
  */
-void** linkedListToArray(LinkedList self);
+void **linkedListToArray(LinkedList self);
 
 /**
  * Iterate over each item in a linked list, calling the given function on each item.
@@ -79,7 +79,7 @@ void** linkedListToArray(LinkedList self);
  * @param foreachFunc Function to call
  * @param userData User data to pass to the function
  */
-void linkedListForeach(LinkedList self, LinkedListForeachFunc foreachFunc, void* userData);
+void linkedListForeach(LinkedList self, LinkedListForeachFunc foreachFunc, void *userData);
 
 /**
  * Free each item in a linked list. The contents of the items themselves are *not*

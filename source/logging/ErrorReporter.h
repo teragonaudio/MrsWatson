@@ -32,13 +32,13 @@
 #include "plugin/PluginChain.h"
 
 typedef struct {
-  CharString reportName;
-  CharString reportDirPath;
-  CharString desktopPath;
-  boolByte started;
-  boolByte completed;
+    CharString reportName;
+    CharString reportDirPath;
+    CharString desktopPath;
+    boolByte started;
+    boolByte completed;
 } ErrorReporterMembers;
-typedef ErrorReporterMembers* ErrorReporter;
+typedef ErrorReporterMembers *ErrorReporter;
 
 /**
  * Create a new ErrorReporter
@@ -61,7 +61,7 @@ void errorReporterInitialize(ErrorReporter self);
  * @param argc Number of arguments, as taken from main()
  * @param argv Argument array, as taken from main()
  */
-void errorReporterCreateLauncher(ErrorReporter self, int argc, char* argv[]);
+void errorReporterCreateLauncher(ErrorReporter self, int argc, char *argv[]);
 
 /**
  * Remap a resource to point to the ErrorReporter's directory. This ensures all

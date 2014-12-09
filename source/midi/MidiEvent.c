@@ -30,23 +30,26 @@
 
 #include "midi/MidiEvent.h"
 
-MidiEvent newMidiEvent(void) {
-  MidiEvent midiEvent = malloc(sizeof(MidiEventMembers));
+MidiEvent newMidiEvent(void)
+{
+    MidiEvent midiEvent = malloc(sizeof(MidiEventMembers));
 
-  midiEvent->eventType = MIDI_TYPE_INVALID;
-  midiEvent->deltaFrames = 0;
-  midiEvent->timestamp = 0;
-  midiEvent->status = 0;
-  midiEvent->data1 = 0;
-  midiEvent->data2 = 0;
-  midiEvent->extraData = NULL;
+    midiEvent->eventType = MIDI_TYPE_INVALID;
+    midiEvent->deltaFrames = 0;
+    midiEvent->timestamp = 0;
+    midiEvent->status = 0;
+    midiEvent->data1 = 0;
+    midiEvent->data2 = 0;
+    midiEvent->extraData = NULL;
 
-  return midiEvent;
+    return midiEvent;
 }
 
-void freeMidiEvent(MidiEvent self) {
-  if(self->eventType == MIDI_TYPE_SYSEX || self->eventType == MIDI_TYPE_META) {
-    free(self->extraData);
-  }
-  free(self);
+void freeMidiEvent(MidiEvent self)
+{
+    if (self->eventType == MIDI_TYPE_SYSEX || self->eventType == MIDI_TYPE_META) {
+        free(self->extraData);
+    }
+
+    free(self);
 }

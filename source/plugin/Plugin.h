@@ -36,26 +36,26 @@
 #define INTERNAL_PLUGIN_PREFIX "mrs_"
 
 typedef enum {
-  PLUGIN_TYPE_INVALID,
-  PLUGIN_TYPE_VST_2X,
-  PLUGIN_TYPE_INTERNAL,
-  NUM_PLUGIN_INTERFACE_TYPES
+    PLUGIN_TYPE_INVALID,
+    PLUGIN_TYPE_VST_2X,
+    PLUGIN_TYPE_INTERNAL,
+    NUM_PLUGIN_INTERFACE_TYPES
 } PluginInterfaceType;
 
 typedef enum {
-  PLUGIN_TYPE_UNKNOWN,
-  PLUGIN_TYPE_UNSUPPORTED,
-  PLUGIN_TYPE_EFFECT,
-  PLUGIN_TYPE_INSTRUMENT,
-  NUM_PLUGIN_TYPES
+    PLUGIN_TYPE_UNKNOWN,
+    PLUGIN_TYPE_UNSUPPORTED,
+    PLUGIN_TYPE_EFFECT,
+    PLUGIN_TYPE_INSTRUMENT,
+    NUM_PLUGIN_TYPES
 } PluginType;
 
 typedef enum {
-  PLUGIN_SETTING_TAIL_TIME_IN_MS,
-  PLUGIN_NUM_INPUTS,
-  PLUGIN_NUM_OUTPUTS,
-  PLUGIN_INITIAL_DELAY,
-  NUM_PLUGIN_SETTINGS
+    PLUGIN_SETTING_TAIL_TIME_IN_MS,
+    PLUGIN_NUM_INPUTS,
+    PLUGIN_NUM_OUTPUTS,
+    PLUGIN_INITIAL_DELAY,
+    NUM_PLUGIN_SETTINGS
 } PluginSetting;
 
 /**
@@ -63,7 +63,7 @@ typedef enum {
  * libraries into memory initializing the plugin.
  * @param pluginPtr self
  */
-typedef boolByte (*PluginOpenFunc)(void* pluginPtr);
+typedef boolByte (*PluginOpenFunc)(void *pluginPtr);
 /**
  * Called when the plugin should display some generic info about itself. This
  * may be a list of supported parameters or programs, or any other information
@@ -71,7 +71,7 @@ typedef boolByte (*PluginOpenFunc)(void* pluginPtr);
  * example.
  * @param pluginPtr self
  */
-typedef void (*PluginDisplayInfoFunc)(void* pluginPtr);
+typedef void (*PluginDisplayInfoFunc)(void *pluginPtr);
 /**
  * Used to gather information about the plugin, such as the number of inputs and
  * outputs. See the PluginSetting enum for examples of information which may be
@@ -79,14 +79,14 @@ typedef void (*PluginDisplayInfoFunc)(void* pluginPtr);
  * @param pluginPtr self
  * @param pluginSetting Setting to query
  */
-typedef int (*PluginGetSettingFunc)(void* pluginPtr, PluginSetting pluginSetting);
+typedef int (*PluginGetSettingFunc)(void *pluginPtr, PluginSetting pluginSetting);
 /**
  * Called with the host wants to process a block of audio samples.
  * @param pluginPtr self
  * @param inputs Block of input samples to process
  * @param outputs Block where output samples shall be written
  */
-typedef void (*PluginProcessAudioFunc)(void* pluginPtr, SampleBuffer inputs, SampleBuffer outputs);
+typedef void (*PluginProcessAudioFunc)(void *pluginPtr, SampleBuffer inputs, SampleBuffer outputs);
 /**
  * Called the host wants to process MIDI events. This will be called directly
  * before the call to process audio.
@@ -94,58 +94,58 @@ typedef void (*PluginProcessAudioFunc)(void* pluginPtr, SampleBuffer inputs, Sam
  * @param midiEvents List of events to process. This should be non-empty, as
  * this function is not called when there are no events to process.
  */
-typedef void (*PluginProcessMidiEventsFunc)(void* pluginPtr, LinkedList midiEvents);
+typedef void (*PluginProcessMidiEventsFunc)(void *pluginPtr, LinkedList midiEvents);
 /**
  * Set a parameter within a plugin
  * @param pluginPtr self
  * @param index Parameter index
  * @param value New value
  */
-typedef boolByte (*PluginSetParameterFunc)(void* pluginPtr, unsigned int index, float value);
+typedef boolByte (*PluginSetParameterFunc)(void *pluginPtr, unsigned int index, float value);
 /**
  * Called once before audio processing begins. Some interfaces provide hooks for
  * a plugin to prepare itself before audio blocks are sent to it.
  * @param pluginPtr self
  */
-typedef void (*PluginPrepareForProcessingFunc)(void* pluginPtr);
+typedef void (*PluginPrepareForProcessingFunc)(void *pluginPtr);
 /**
  * Called when the plugin is to be uninitialized and closed.
  * @param pluginPtr self
  */
-typedef void (*PluginCloseFunc)(void* pluginPtr);
+typedef void (*PluginCloseFunc)(void *pluginPtr);
 /**
  * Pointer to the free routine for the plugin interface
  * @param pluginPtr self
  */
-typedef void (*FreePluginDataFunc)(void* pluginDataPtr);
+typedef void (*FreePluginDataFunc)(void *pluginDataPtr);
 
 typedef struct {
-  PluginInterfaceType interfaceType;
-  PluginType pluginType;
-  CharString pluginName;
-  CharString pluginLocation;
-  CharString pluginAbsolutePath;
+    PluginInterfaceType interfaceType;
+    PluginType pluginType;
+    CharString pluginName;
+    CharString pluginLocation;
+    CharString pluginAbsolutePath;
 
-  PluginOpenFunc openPlugin;
-  PluginDisplayInfoFunc displayInfo;
-  PluginGetSettingFunc getSetting;
-  PluginProcessAudioFunc processAudio;
-  PluginProcessMidiEventsFunc processMidiEvents;
-  PluginSetParameterFunc setParameter;
-  PluginPrepareForProcessingFunc prepareForProcessing;
-  PluginCloseFunc closePlugin;
-  FreePluginDataFunc freePluginData;
-  SampleBuffer inputBuffer;
-  SampleBuffer outputBuffer;
+    PluginOpenFunc openPlugin;
+    PluginDisplayInfoFunc displayInfo;
+    PluginGetSettingFunc getSetting;
+    PluginProcessAudioFunc processAudio;
+    PluginProcessMidiEventsFunc processMidiEvents;
+    PluginSetParameterFunc setParameter;
+    PluginPrepareForProcessingFunc prepareForProcessing;
+    PluginCloseFunc closePlugin;
+    FreePluginDataFunc freePluginData;
+    SampleBuffer inputBuffer;
+    SampleBuffer outputBuffer;
 
-  void* extraData;
+    void *extraData;
 } PluginMembers;
 
 /**
  * One of the base classes of the API, this represents a plugin. Currently only
  * instrument and effect plugins are supported.
  */
-typedef PluginMembers* Plugin;
+typedef PluginMembers *Plugin;
 
 /**
  * Create a plugin instance. The plugin interface type will be automatically
@@ -175,13 +175,13 @@ boolByte openPlugin(Plugin self);
  */
 boolByte closePlugin(Plugin self);
 
-  /**
- * Create a new plugin. Considered "protected", only subclasses of Plugin should
- * directly call this.
- * @param interfaceType Plugin interface type
- * @param pluginType Plugin type
- * @return Plugin initialized base Plugin struct
- */
+/**
+* Create a new plugin. Considered "protected", only subclasses of Plugin should
+* directly call this.
+* @param interfaceType Plugin interface type
+* @param pluginType Plugin type
+* @return Plugin initialized base Plugin struct
+*/
 Plugin _newPlugin(PluginInterfaceType interfaceType, PluginType pluginType);
 
 /**
