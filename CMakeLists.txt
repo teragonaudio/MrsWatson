@@ -154,6 +154,8 @@ if(UNIX)
 
     add_definitions("-DMACOSX=1")
   endif()
+
+  add_definitions("-DUNIX=1")
 endif()
 
 # Subdirectories ###############################################

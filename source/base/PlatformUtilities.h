@@ -25,16 +25,12 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef MrsWatson_PlatformInfo_h
-#define MrsWatson_PlatformInfo_h
+#ifndef MrsWatson_PlatformUtilities_h
+#define MrsWatson_PlatformUtilities_h
 
 #include "base/CharString.h"
 #include "base/LinkedList.h"
 #include "base/Types.h"
-
-#if LINUX || MACOSX
-#define UNIX 1
-#endif
 
 #if WINDOWS
 #define WIN32_LEAN_AND_MEAN 1
