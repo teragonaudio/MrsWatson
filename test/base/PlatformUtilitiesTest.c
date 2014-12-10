@@ -132,18 +132,6 @@ static int _testConvertByteArrayToUnsignedInt(void)
     return 0;
 }
 
-static int _testSleepMilliseconds(void)
-{
-    double elapsedTime;
-    TaskTimer t = newTaskTimerWithCString("test", "test");
-    taskTimerStart(t);
-    sleepMilliseconds(12);
-    elapsedTime = taskTimerStop(t);
-    assertTimeEquals(12, elapsedTime, 0.1);
-    freeTaskTimer(t);
-    return 0;
-}
-
 TestSuite addPlatformUtilitiesTests(void);
 TestSuite addPlatformUtilitiesTests(void)
 {
@@ -158,6 +146,5 @@ TestSuite addPlatformUtilitiesTests(void)
     addTest(testSuite, "ConvertByteArrayToUnsignedShort", _testConvertByteArrayToUnsignedShort);
     addTest(testSuite, "ConvertByteArrayToUnsignedInt", _testConvertByteArrayToUnsignedInt);
 
-    addTest(testSuite, "SleepMilliseconds", _testSleepMilliseconds);
     return testSuite;
 }

@@ -364,7 +364,7 @@ void pluginChainProcessAudio(PluginChain pluginChain, SampleBuffer inBuffer, Sam
         totalProcessingTimeInMs = taskTimerStop(pluginChain->_realtimeTimer);
 
         if (totalProcessingTimeInMs < maxProcessingTimeInMs) {
-            sleepMilliseconds(maxProcessingTimeInMs - totalProcessingTimeInMs);
+            taskTimerSleep(maxProcessingTimeInMs - totalProcessingTimeInMs);
         }
     }
 }

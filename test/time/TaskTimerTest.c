@@ -125,7 +125,7 @@ static int _testNewObjectWithCStrings(void)
 
 static void _testSleep(void)
 {
-    sleepMilliseconds(SLEEP_DURATION_MS);
+    taskTimerSleep(SLEEP_DURATION_MS);
 }
 
 static int _testTaskTimerDuration(void)
@@ -238,6 +238,18 @@ static int _testHumanReadableTimeNotStarted(void)
     return 0;
 }
 
+static int _testSleepMilliseconds(void)
+{
+    double elapsedTime;
+    TaskTimer t = newTaskTimerWithCString("test", "test");
+    taskTimerStart(t);
+    taskTimerSleep(12);
+    elapsedTime = taskTimerStop(t);
+    assertTimeEquals(12, elapsedTime, 0.1);
+    freeTaskTimer(t);
+    return 0;
+}
+
 TestSuite addTaskTimerTests(void);
 TestSuite addTaskTimerTests(void)
 {
@@ -263,5 +275,7 @@ TestSuite addTaskTimerTests(void)
     addTest(testSuite, "HumanReadableTimeMinSec", _testHumanReadableTimeMinSec);
     addTest(testSuite, "HumanReadableTimeHoursMinSec", _testHumanReadableTimeHoursMinSec);
     addTest(testSuite, "HumanReadableTimeNotStarted", _testHumanReadableTimeNotStarted);
+
+    addTest(testSuite, "SleepMilliseconds", _testSleepMilliseconds);
     return testSuite;
 }

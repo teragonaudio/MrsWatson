@@ -92,6 +92,14 @@ double taskTimerStop(TaskTimer self);
 CharString taskTimerHumanReadbleString(TaskTimer self);
 
 /**
+ * Suspend execution for a given amount of milliseconds. Depending on the host
+ * operating system, the amount of time actually slept may differ slightly from
+ * the requested amount.
+ * @param milliseconds Number of milliseconds to sleep
+ */
+void taskTimerSleep(const double milliseconds);
+
+/**
  * Free a task timer and its associated resources
  * @param self
  */
