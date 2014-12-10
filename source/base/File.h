@@ -236,6 +236,18 @@ File fileGetParent(File self);
 CharString fileGetExtension(File self);
 
 /**
+ * Return the path to the current running executable.
+ * @return Absolute path of the current executable
+ */
+CharString fileGetExecutablePath(void);
+
+/**
+ * Get the current working directory.
+ * @return Current working directory
+ */
+CharString fileGetCurrentDirectory(void);
+
+/**
  * Close a file and flush its buffers to disk.
  * @param self
  */

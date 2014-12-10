@@ -136,7 +136,7 @@ File _findMrsWatsonExe(CharString mrsWatsonExeArg)
     if (mrsWatsonExeArg != NULL && !charStringIsEmpty(mrsWatsonExeArg)) {
         mrsWatsonExe = newFileWithPath(mrsWatsonExeArg);
     } else {
-        currentExecutableFilename = getExecutablePath();
+        currentExecutableFilename = fileGetExecutablePath();
         currentExecutablePath = newFileWithPath(currentExecutableFilename);
 
         if (currentExecutablePath != NULL) {

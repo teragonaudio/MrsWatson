@@ -83,7 +83,7 @@ static int _testNewFileWithRelativePath(void)
 {
     CharString p = newCharString();
     CharString pAbs = newCharString();
-    CharString pwd = getCurrentDirectory();
+    CharString pwd = fileGetCurrentDirectory();
     File f = NULL;
 
     sprintf(p->data, "%s%c%s", TEST_DIRNAME, PATH_DELIMITER, TEST_FILENAME);
@@ -241,7 +241,7 @@ static int _testNewFileWithParent(void)
     CharString pfile = newCharStringWithCString(TEST_FILENAME);
     File dir = newFileWithPath(pdir);
     File f = NULL;
-    CharString pwd = getCurrentDirectory();
+    CharString pwd = fileGetCurrentDirectory();
     CharString pAbs = newCharString();
 
     assertFalse(fileExists(dir));

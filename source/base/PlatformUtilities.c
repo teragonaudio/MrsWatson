@@ -40,50 +40,11 @@
 #include <unistd.h>
 #if MACOSX
 #include <CoreServices/CoreServices.h>
-#include <mach-o/dyld.h>
 #elif LINUX
-#define LSB_FILE_PATH "/etc/lsb-release"
-#define LSB_DISTRIBUTION "DISTRIB_DESCRIPTION"
 #include <sys/utsname.h>
 #include <errno.h>
 #endif
 #endif
-
-CharString getExecutablePath(void)
-{
-    CharString executablePath = newCharString();
-#if LINUX
-    ssize_t result = readlink("/proc/self/exe", executablePath->data, executablePath->capacity);
-
-    if (result < 0) {
-        logWarn("Could not find executable path, %s", stringForLastError(errno));
-        return NULL;
-    }
-
-#elif MACOSX
-    _NSGetExecutablePath(executablePath->data, (uint32_t *)&executablePath->capacity);
-#elif WINDOWS
-    GetModuleFileNameA(NULL, executablePath->data, (DWORD)executablePath->capacity);
-#endif
-    return executablePath;
-}
-
-CharString getCurrentDirectory(void)
-{
-    CharString currentDirectory = newCharString();
-#if UNIX
-
-    if (getcwd(currentDirectory->data, currentDirectory->capacity) == NULL) {
-        logError("Could not get current working directory");
-        freeCharString(currentDirectory);
-        return NULL;
-    }
-
-#elif WINDOWS
-    GetCurrentDirectoryA((DWORD)currentDirectory->capacity, currentDirectory->data);
-#endif
-    return currentDirectory;
-}
 
 boolByte isExecutable64Bit(void)
 {

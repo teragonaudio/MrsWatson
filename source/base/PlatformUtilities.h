@@ -51,18 +51,6 @@
 #endif
 
 /**
- * Return the path to the current running executable.
- * @return Absolute path of the current executable
- */
-CharString getExecutablePath(void);
-
-/**
- * Get the current working directory.
- * @return Current working directory
- */
-CharString getCurrentDirectory(void);
-
-/**
  * See if this program has been compiled as a 64-bit executable
  * @return True if this executable is 64-bit, otherwise
  */

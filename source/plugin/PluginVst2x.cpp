@@ -156,7 +156,7 @@ void listAvailablePluginsVst2x(const CharString pluginRoot) {
     _listPluginsVst2xInLocation(pluginRoot, NULL);
   }
 
-  LinkedList pluginLocations = getVst2xPluginLocations(getCurrentDirectory());
+  LinkedList pluginLocations = getVst2xPluginLocations(fileGetCurrentDirectory());
   linkedListForeach(pluginLocations, _listPluginsVst2xInLocation, NULL);
   freeLinkedListAndItems(pluginLocations, (LinkedListFreeItemFunc)freeCharString);
 }
@@ -229,7 +229,7 @@ static CharString _getVst2xPluginLocation(const CharString pluginName, const Cha
 
   // If the plugin wasn't found in the user's plugin root, then try searching
   // the default locations for the platform, starting with the current directory.
-  LinkedList pluginLocations = getVst2xPluginLocations(getCurrentDirectory());
+  LinkedList pluginLocations = getVst2xPluginLocations(fileGetCurrentDirectory());
   if(pluginLocations->item == NULL) {
     freeLinkedListAndItems(pluginLocations, (LinkedListFreeItemFunc)freeCharString);
     return NULL;

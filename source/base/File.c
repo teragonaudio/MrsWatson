@@ -41,8 +41,13 @@
 #include <Windows.h>
 #include <Shellapi.h>
 #elif UNIX
+#if MACOSX
+#include <mach-o/dyld.h>
+#endif
+
 #include <dirent.h>
 #include <ftw.h>
+#include <unistd.h>
 #endif
 
 static const int kFileNameStringLength = 1024;
@@ -77,7 +82,7 @@ static boolByte _isAbsolutePath(const CharString path)
 static CharString _convertRelativePathToAbsolute(const CharString path)
 {
     CharString result = newCharStringWithCapacity(kFileNameStringLength);
-    CharString currentDirectory = getCurrentDirectory();
+    CharString currentDirectory = fileGetCurrentDirectory();
     snprintf(result->data, result->capacity, "%s%c%s", currentDirectory->data, PATH_DELIMITER, path->data);
     freeCharString(currentDirectory);
     return result;
@@ -186,7 +191,7 @@ File newFileWithPath(const CharString path)
             freeFile(result);
             return NULL;
         } else {
-            currentDirectory = getCurrentDirectory();
+            currentDirectory = fileGetCurrentDirectory();
 
             if (currentDirectory == NULL) {
                 logWarn("Could not create file relative to current directory");
@@ -863,6 +868,42 @@ CharString fileGetExtension(File self) {
 
     freeCharString(basename);
     return result;
+}
+
+CharString fileGetExecutablePath(void)
+{
+    CharString executablePath = newCharString();
+#if LINUX
+    ssize_t result = readlink("/proc/self/exe", executablePath->data, executablePath->capacity);
+
+    if (result < 0) {
+        logWarn("Could not find executable path, %s", stringForLastError(errno));
+        return NULL;
+    }
+
+#elif MACOSX
+    _NSGetExecutablePath(executablePath->data, (uint32_t *)&executablePath->capacity);
+#elif WINDOWS
+    GetModuleFileNameA(NULL, executablePath->data, (DWORD)executablePath->capacity);
+#endif
+    return executablePath;
+}
+
+CharString fileGetCurrentDirectory(void)
+{
+    CharString currentDirectory = newCharString();
+#if UNIX
+
+    if (getcwd(currentDirectory->data, currentDirectory->capacity) == NULL) {
+        logError("Could not get current working directory");
+        freeCharString(currentDirectory);
+        return NULL;
+    }
+
+#elif WINDOWS
+    GetCurrentDirectoryA((DWORD)currentDirectory->capacity, currentDirectory->data);
+#endif
+    return currentDirectory;
 }
 
 void fileClose(File self) {

@@ -25,12 +25,14 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
+#include "base/FileUtilities.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
 
-#include "base/FileUtilities.h"
+#include "base/File.h"
 #include "logging/EventLogger.h"
 
 #if WINDOWS
@@ -252,7 +254,7 @@ void buildAbsolutePath(const CharString directory, const CharString file, const 
 /** DEPRECATED */
 void convertRelativePathToAbsolute(const CharString file, CharString outString)
 {
-    CharString currentDirectory = getCurrentDirectory();
+    CharString currentDirectory = fileGetCurrentDirectory();
     snprintf(outString->data, outString->capacity, "%s%c%s", currentDirectory->data, PATH_DELIMITER, file->data);
     freeCharString(currentDirectory);
 }

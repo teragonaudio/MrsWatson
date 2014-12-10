@@ -1,4 +1,5 @@
 #include "unit/TestRunner.h"
+#include "base/File.h"
 
 static const char *TEST_FILENAME = "fileUtilitiesTest.txt";
 #if UNIX
@@ -200,7 +201,7 @@ static int _testBuildAbsolutePathEmptyPath(void)
 
 static int _testBuildAbsolutePathEmptyFile(void)
 {
-    CharString d = getCurrentDirectory();
+    CharString d = fileGetCurrentDirectory();
     CharString f = newCharString();
     CharString out = newCharString();
 
@@ -228,7 +229,7 @@ static int _testBuildAbsolutePathNullPath(void)
 
 static int _testBuildAbsolutePathNullFile(void)
 {
-    CharString d = getCurrentDirectory();
+    CharString d = fileGetCurrentDirectory();
     CharString out = newCharString();
 
     buildAbsolutePath(d, NULL, NULL, out);

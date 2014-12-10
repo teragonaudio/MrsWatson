@@ -27,6 +27,11 @@
 
 #include "PlatformInfo.h"
 
+#if LINUX
+#define LSB_FILE_PATH "/etc/lsb-release"
+#define LSB_DISTRIBUTION "DISTRIB_DESCRIPTION"
+#endif
+
 static PlatformType _getPlatformType()
 {
 #if MACOSX
