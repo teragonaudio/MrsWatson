@@ -32,7 +32,6 @@
 
 #include "app/BuildInfo.h"
 #include "audio/AudioSettings.h"
-#include "base/PlatformUtilities.h"
 #include "logging/EventLogger.h"
 #include "logging/LogPrinter.h"
 #include "time/AudioClock.h"

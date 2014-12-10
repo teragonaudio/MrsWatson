@@ -5,7 +5,6 @@
 #include <string.h>
 #include <math.h>
 
-#include "base/PlatformUtilities.h"
 #include "base/CharString.h"
 #include "base/FileUtilities.h"
 #include "logging/LogPrinter.h"

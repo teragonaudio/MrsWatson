@@ -33,9 +33,8 @@
 #include <sys/stat.h>
 
 #include "base/File.h"
-#include "base/PlatformUtilities.h"
+#include "base/FileUtilities.h"
 #include "logging/EventLogger.h"
-#include "FileUtilities.h"
 
 #if WINDOWS
 #include <Windows.h>

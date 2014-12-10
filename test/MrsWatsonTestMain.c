@@ -14,6 +14,7 @@
 #include "app/ProgramOption.h"
 #include "base/File.h"
 #include "base/FileUtilities.h"
+#include "base/PlatformInfo.h"
 #include "unit/ApplicationRunner.h"
 
 #include "MrsWatsonTestMain.h"

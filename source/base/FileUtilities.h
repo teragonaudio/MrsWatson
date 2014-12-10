@@ -30,7 +30,6 @@
 
 #include "base/CharString.h"
 #include "base/LinkedList.h"
-#include "base/PlatformUtilities.h"
 
 #if UNIX
 #define PATH_DELIMITER '/'

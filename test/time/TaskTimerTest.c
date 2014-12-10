@@ -1,5 +1,3 @@
-#include "base/PlatformUtilities.h"
-
 #include <math.h>
 
 #include "unit/TestRunner.h"

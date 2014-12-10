@@ -45,6 +45,26 @@ typedef unsigned char byte;
 #define true 1
 #endif
 
+// Platform-specific hooks or compiler overrides
+#if WINDOWS
+#define WIN32_LEAN_AND_MEAN 1
+#include <Windows.h>
+
+// Even redefining most of the functions below doesn't stop the compiler
+// from nagging about them.
+#pragma warning(disable: 4996)
+
+// Substitutes for POSIX functions not found on Windows
+#define strcasecmp _stricmp
+#define strdup _strdup
+#define unlink _unlink
+#define snprintf _snprintf
+#define isatty _isatty
+#define chdir _chdir
+#define unlink _unlink
+#endif
+
+// LibraryHandle definition
 #if MACOSX
 #include <CoreFoundation/CFBundle.h>
 typedef CFBundleRef LibraryHandle;

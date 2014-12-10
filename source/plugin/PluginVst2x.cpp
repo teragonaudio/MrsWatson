@@ -38,7 +38,6 @@ extern "C" {
 #include "base/File.h"
 #include "base/FileUtilities.h"
 #include "base/PlatformInfo.h"
-#include "base/PlatformUtilities.h"
 #include "base/Types.h"
 #include "logging/EventLogger.h"
 #include "midi/MidiEvent.h"

@@ -29,7 +29,6 @@
 #define MrsWatson_TaskTimer_h
 
 #include "base/CharString.h"
-#include "base/PlatformUtilities.h"
 
 #if UNIX
 #include <sys/time.h>

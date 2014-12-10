@@ -30,8 +30,6 @@
 
 #include <stdio.h>
 
-#include "base/PlatformUtilities.h"
-
 #if UNIX
 typedef const char *LogColor;
 

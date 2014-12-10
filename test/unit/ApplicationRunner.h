@@ -7,7 +7,6 @@
 #include <stdlib.h>
 #include "unit/TestRunner.h"
 #include "base/LinkedList.h"
-#include "base/PlatformUtilities.h"
 #include "logging/EventLogger.h"
 #include "base/CharString.h"
 #include "MrsWatson.h"

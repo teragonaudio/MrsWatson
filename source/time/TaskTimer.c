@@ -28,7 +28,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "base/PlatformUtilities.h"
 #include "time/TaskTimer.h"
 
 TaskTimer newTaskTimer(const CharString component, const char *subcomponent)

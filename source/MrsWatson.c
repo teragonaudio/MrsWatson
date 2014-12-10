@@ -31,7 +31,6 @@
 #include "app/BuildInfo.h"
 #include "audio/AudioSettings.h"
 #include "base/PlatformInfo.h"
-#include "base/PlatformUtilities.h"
 #include "io/SampleSource.h"
 #include "io/SampleSourcePcm.h"
 #include "logging/EventLogger.h"

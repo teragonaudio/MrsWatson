@@ -1,5 +1,3 @@
-#include "base/PlatformUtilities.h"
-
 #include <stdio.h>
 #include <stdarg.h>
 
