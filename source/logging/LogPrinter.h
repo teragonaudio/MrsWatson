@@ -28,8 +28,9 @@
 #ifndef MrsWatson_LogPrinter_h
 #define MrsWatson_LogPrinter_h
 
-#include "base/PlatformUtilities.h"
 #include <stdio.h>
+
+#include "base/PlatformUtilities.h"
 
 #if UNIX
 typedef const char *LogColor;

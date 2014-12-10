@@ -29,6 +29,7 @@
 #define MrsWatson_CharString_h
 
 #include <stdlib.h>
+
 #include "base/LinkedList.h"
 #include "base/Types.h"
 

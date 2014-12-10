@@ -30,6 +30,7 @@
 #include <time.h>
 
 #include "base/File.h"
+#include "base/PlatformInfo.h"
 #include "base/PlatformUtilities.h"
 #include "logging/EventLogger.h"
 
@@ -47,162 +48,6 @@
 #include <errno.h>
 #endif
 #endif
-
-PlatformType getPlatformType()
-{
-#if MACOSX
-    return PLATFORM_MACOSX;
-#elif WINDOWS
-    return PLATFORM_WINDOWS;
-#elif LINUX
-    return PLATFORM_LINUX;
-#else
-    return PLATFORM_UNSUPPORTED;
-#endif
-}
-
-const char *getShortPlatformName(void)
-{
-#if MACOSX
-    return "Mac OS X";
-#elif WINDOWS
-
-    if (isExecutable64Bit()) {
-        return "Windows 64-bit";
-    } else {
-        return "Windows 32-bit";
-    }
-
-#elif LINUX
-
-    if (isExecutable64Bit()) {
-        return "Linux-x86_64";
-    } else {
-        return "Linux-i686";
-    }
-
-#else
-    return "Unsupported";
-#endif
-}
-
-#if LINUX
-void _findLsbDistribution(void *item, void *userData)
-{
-    CharString line = (CharString)item;
-    CharString distributionName = (CharString)userData;
-    LinkedList tokens = charStringSplit(line, '=');
-
-    if (tokens != NULL && linkedListLength(tokens) == 2) {
-        CharString *tokensArray = (CharString *)linkedListToArray(tokens);
-        CharString key = tokensArray[0];
-        CharString value = tokensArray[1];
-
-        if (!strcmp(key->data, LSB_DISTRIBUTION)) {
-            charStringCopy(distributionName, value);
-        }
-
-        free(tokensArray);
-    }
-
-    freeLinkedListAndItems(tokens, (LinkedListFreeItemFunc)freeCharString);
-}
-#endif
-
-CharString getPlatformName(void)
-{
-    CharString result = newCharString();
-#if MACOSX
-    SInt32 major, minor, bugfix;
-    Gestalt(gestaltSystemVersionMajor, &major);
-    Gestalt(gestaltSystemVersionMinor, &minor);
-    Gestalt(gestaltSystemVersionBugFix, &bugfix);
-    snprintf(result->data, result->capacity, "Mac OS X %d.%d.%d", (int)major, (int)minor, (int)bugfix);
-#elif LINUX
-    CharString distributionName = newCharString();
-    struct utsname systemInfo;
-    File lsbRelease = NULL;
-    LinkedList lsbReleaseLines = NULL;
-
-    if (uname(&systemInfo) != 0) {
-        logWarn("Could not get system information from uname");
-        charStringCopyCString(result, "Linux (Unknown platform)");
-        freeCharString(distributionName);
-        return result;
-    }
-
-    charStringCopyCString(distributionName, "(Unknown distribution)");
-
-    lsbRelease = newFileWithPathCString(LSB_FILE_PATH);
-
-    if (fileExists(lsbRelease)) {
-        lsbReleaseLines = fileReadLines(lsbRelease);
-
-        if (lsbReleaseLines != NULL && linkedListLength(lsbReleaseLines) > 0) {
-            linkedListForeach(lsbReleaseLines, _findLsbDistribution, distributionName);
-        }
-    }
-
-    if (charStringIsEmpty(result)) {
-        snprintf(result->data, result->capacity, "Linux %s, kernel %s %s",
-                 distributionName->data, systemInfo.release, systemInfo.machine);
-    }
-
-    freeCharString(distributionName);
-    freeLinkedListAndItems(lsbReleaseLines, (LinkedListFreeItemFunc)freeCharString);
-    freeFile(lsbRelease);
-#elif WINDOWS
-    OSVERSIONINFOEX versionInformation;
-    memset(&versionInformation, 0, sizeof(OSVERSIONINFOEX));
-    versionInformation.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
-    GetVersionEx((OSVERSIONINFO *)&versionInformation);
-    // Generic string which will also work with newer versions of windows
-    snprintf(result->data, result->capacity, "Windows %d.%d",
-             versionInformation.dwMajorVersion, versionInformation.dwMinorVersion);
-
-    // This is a bit lame, but it seems that this is the standard way of getting
-    // the platform name on Windows.
-    switch (versionInformation.dwMajorVersion) {
-    case 6:
-        switch (versionInformation.dwMinorVersion) {
-        case 2:
-            charStringCopyCString(result, "Windows 8");
-            break;
-
-        case 1:
-            charStringCopyCString(result, "Windows 7");
-            break;
-
-        case 0:
-            charStringCopyCString(result, "Windows Vista");
-            break;
-        }
-
-        break;
-
-    case 5:
-        switch (versionInformation.dwMinorVersion) {
-        case 2:
-            charStringCopyCString(result, "Windows Server 2003");
-            break;
-
-        case 1:
-            charStringCopyCString(result, "Windows XP");
-            break;
-
-        case 0:
-            charStringCopyCString(result, "Windows 2000");
-            break;
-        }
-
-        break;
-    }
-
-#else
-    charStringCopyCString(result, "Unsupported platform");
-#endif
-    return result;
-}
 
 CharString getExecutablePath(void)
 {
@@ -245,56 +90,6 @@ boolByte isExecutable64Bit(void)
     return (boolByte)(sizeof(void *) == 8);
 }
 
-boolByte isHost64Bit(void)
-{
-    boolByte result = false;
-
-#if LINUX
-    struct utsname systemInfo;
-
-    if (uname(&systemInfo) != 0) {
-        logError("Could not get system bitness from uname");
-    } else {
-        result = (strcmp(systemInfo.machine, "x86_64") == 0);
-    }
-
-#elif MACOSX
-#elif WINDOWS
-    typedef BOOL (WINAPI * IsWow64ProcessFuncPtr)(HANDLE, PBOOL);
-    BOOL isProcessRunningInWow64 = false;
-    IsWow64ProcessFuncPtr isWow64ProcessFunc = NULL;
-
-    // The IsWow64Process() function is not available on all versions of Windows,
-    // so it must be looked up first and called only if it exists.
-    isWow64ProcessFunc = (IsWow64ProcessFuncPtr)GetProcAddress(GetModuleHandle(TEXT("kernel32")), "IsWow64Process");
-
-    if (isWow64ProcessFunc != NULL) {
-        if (isWow64ProcessFunc(GetCurrentProcess(), &isProcessRunningInWow64)) {
-            // IsWow64Process will only return true if the current process is a 32-bit
-            // application running on 64-bit Windows.
-            if (isProcessRunningInWow64) {
-                result = true;
-            } else {
-                // If false, then we can assume that the host has the same bitness as
-                // the executable.
-                result = isExecutable64Bit();
-            }
-        }
-    }
-
-#else
-    logUnsupportedFeature("Get host 64-bitness");
-#endif
-
-    return result;
-}
-
-boolByte isHostLittleEndian(void)
-{
-    int num = 1;
-    return (boolByte)(*(char *)&num == 1);
-}
-
 unsigned short flipShortEndian(const unsigned short value)
 {
     return (value << 8) | (value >> 8);
@@ -302,7 +97,7 @@ unsigned short flipShortEndian(const unsigned short value)
 
 unsigned short convertBigEndianShortToPlatform(const unsigned short value)
 {
-    if (isHostLittleEndian()) {
+    if (platformInfoIsLittleEndian()) {
         return (value << 8) | (value >> 8);
     } else {
         return value;
@@ -311,7 +106,7 @@ unsigned short convertBigEndianShortToPlatform(const unsigned short value)
 
 unsigned int convertBigEndianIntToPlatform(const unsigned int value)
 {
-    if (isHostLittleEndian()) {
+    if (platformInfoIsLittleEndian()) {
         return (value << 24) | ((value << 8) & 0x00ff0000) | ((value >> 8) & 0x0000ff00) | (value >> 24);
     } else {
         return value;
@@ -320,7 +115,7 @@ unsigned int convertBigEndianIntToPlatform(const unsigned int value)
 
 unsigned int convertLittleEndianIntToPlatform(const unsigned int value)
 {
-    if (!isHostLittleEndian()) {
+    if (!platformInfoIsLittleEndian()) {
         return (value << 24) | ((value << 8) & 0x00ff0000) | ((value >> 8) & 0x0000ff00) | (value >> 24);
     } else {
         return value;
@@ -329,7 +124,7 @@ unsigned int convertLittleEndianIntToPlatform(const unsigned int value)
 
 unsigned short convertByteArrayToUnsignedShort(const byte *value)
 {
-    if (isHostLittleEndian()) {
+    if (platformInfoIsLittleEndian()) {
         return ((value[1] << 8) & 0x0000ff00) | value[0];
     } else {
         return ((value[0] << 8) & 0x0000ff00) | value[1];
@@ -338,7 +133,7 @@ unsigned short convertByteArrayToUnsignedShort(const byte *value)
 
 unsigned int convertByteArrayToUnsignedInt(const byte *value)
 {
-    if (isHostLittleEndian()) {
+    if (platformInfoIsLittleEndian()) {
         return ((value[3] << 24) | ((value[2] << 16) & 0x00ff0000) |
                 ((value[1] << 8) & 0x0000ff00) | value[0]);
     } else {

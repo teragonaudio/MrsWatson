@@ -10,6 +10,7 @@ extern TestSuite addFileUtilitiesTests(void);
 extern TestSuite addLinkedListTests(void);
 extern TestSuite addMidiSequenceTests(void);
 extern TestSuite addMidiSourceTests(void);
+extern TestSuite addPlatformInfoTests(void);
 extern TestSuite addPlatformUtilitiesTests(void);
 extern TestSuite addPluginTests(void);
 extern TestSuite addPluginChainTests(void);
@@ -47,6 +48,7 @@ LinkedList getTestSuites(void)
     linkedListAppend(internalTestSuites, addLinkedListTests());
     linkedListAppend(internalTestSuites, addMidiSequenceTests());
     linkedListAppend(internalTestSuites, addMidiSourceTests());
+    linkedListAppend(internalTestSuites, addPlatformInfoTests());
     linkedListAppend(internalTestSuites, addPlatformUtilitiesTests());
     linkedListAppend(internalTestSuites, addPluginTests());
     linkedListAppend(internalTestSuites, addPluginChainTests());

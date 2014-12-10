@@ -23,74 +23,6 @@
 #error Both HOST_BIG_ENDIAN and HOST_LITTLE_ENDIAN cannot be defined to 1!
 #endif
 
-static int _testGetPlatformType(void)
-{
-#if LINUX
-    assertIntEquals(PLATFORM_LINUX, getPlatformType());
-#elif MACOSX
-    assertIntEquals(PLATFORM_MACOSX, getPlatformType());
-#elif WINDOWS
-    assertIntEquals(PLATFORM_WINDOWS, getPlatformType());
-#else
-    assertIntEquals(PLATFORM_UNSUPPORTED, getPlatformType());
-#endif
-    return 0;
-}
-
-static int _testGetPlatformName(void)
-{
-    CharString p = getPlatformName();
-#if LINUX
-    assertCharStringContains("Linux", p);
-#elif MACOSX
-    assertCharStringContains("Mac OS X", p);
-#elif WINDOWS
-    assertCharStringContains("Windows", p);
-#else
-    assertCharStringEquals("Unsupported platform", p);
-#endif
-    freeCharString(p);
-    return 0;
-}
-
-static int _testGetShortPlatformName(void)
-{
-    CharString p = newCharStringWithCString(getShortPlatformName());
-#if LINUX
-
-    if (isHost64Bit() && isExecutable64Bit()) {
-        assertCharStringEquals("Linux-x86_64", p);
-    } else {
-        assertCharStringEquals("Linux-i686", p);
-    }
-
-#elif MACOSX
-    assertCharStringEquals("Mac OS X", p);
-#elif WINDOWS
-
-    if (isHost64Bit() && isExecutable64Bit()) {
-        assertCharStringEquals("Windows 64-bit", p);
-    } else {
-        assertCharStringEquals("Windows 32-bit", p);
-    }
-
-#else
-    assertCharStringEquals("Unsupported", p);
-#endif
-    freeCharString(p);
-    return 0;
-}
-
-static int _testIsHostLittleEndian(void)
-{
-#if HOST_BIG_ENDIAN
-    assertFalse(isHostLittleEndian());
-#elif HOST_LITTLE_ENDIAN
-    assert(isHostLittleEndian());
-#endif
-    return 0;
-}
-
 static int _testFlipShortEndian(void)
 {
     unsigned short s = 0xabcd;
@@ -216,11 +148,6 @@ TestSuite addPlatformUtilitiesTests(void);
 TestSuite addPlatformUtilitiesTests(void)
 {
     TestSuite testSuite = newTestSuite("PlatformUtilities", NULL, NULL);
-    addTest(testSuite, "GetPlatformType", _testGetPlatformType);
-    addTest(testSuite, "GetPlatformName", _testGetPlatformName);
-    addTest(testSuite, "GetShortPlatformName", _testGetShortPlatformName);
-
-    addTest(testSuite, "IsHostLittleEndian", _testIsHostLittleEndian);
 
     addTest(testSuite, "FlipShortEndian", _testFlipShortEndian);
     addTest(testSuite, "ConvertBigEndianShortToPlatform", _testConvertBigEndianShortToPlatform);

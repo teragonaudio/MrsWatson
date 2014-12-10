@@ -30,7 +30,7 @@
 #include <string.h>
 
 #include "audio/AudioSettings.h"
-#include "base/PlatformUtilities.h"
+#include "base/PlatformInfo.h"
 #include "io/SampleSourcePcm.h"
 #include "logging/EventLogger.h"
 
@@ -131,7 +131,8 @@ size_t sampleSourcePcmWrite(SampleSourcePcmData self, const SampleBuffer sampleB
     // Clear the PCM data buffer just to be safe
     memset(self->interlacedPcmDataBuffer, 0, sizeof(short) * self->dataBufferNumItems);
 
-    sampleBufferGetPcmSamples(sampleBuffer, self->interlacedPcmDataBuffer, (boolByte)(self->isLittleEndian != isHostLittleEndian()));
+    boolByte isLittleEndian = (boolByte)(self->isLittleEndian != platformInfoIsLittleEndian());
+    sampleBufferGetPcmSamples(sampleBuffer, self->interlacedPcmDataBuffer, isLittleEndian);
     pcmSamplesWritten = fwrite(self->interlacedPcmDataBuffer, sizeof(short), numSamplesToWrite, self->fileHandle);
 
     if (pcmSamplesWritten < numSamplesToWrite) {

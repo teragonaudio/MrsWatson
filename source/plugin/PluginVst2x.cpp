@@ -37,6 +37,9 @@ extern "C" {
 #include "audio/AudioSettings.h"
 #include "base/File.h"
 #include "base/FileUtilities.h"
+#include "base/PlatformInfo.h"
+#include "base/PlatformUtilities.h"
+#include "base/Types.h"
 #include "logging/EventLogger.h"
 #include "midi/MidiEvent.h"
 #include "plugin/PluginVst2x.h"
@@ -82,7 +85,10 @@ extern "C" {
 VstInt32 currentPluginUniqueId;
 
 static const char* _getVst2xPlatformExtension(void) {
-  PlatformType platformType = getPlatformType();
+  PlatformInfo platform = newPlatformInfo();
+  PlatformType platformType = platform->type;
+  freePlatformInfo(platform);
+
   switch(platformType) {
     case PLATFORM_MACOSX:
       return "vst";

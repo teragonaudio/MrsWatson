@@ -32,6 +32,7 @@
 
 #include "app/BuildInfo.h"
 #include "base/FileUtilities.h"
+#include "base/PlatformInfo.h"
 #include "logging/ErrorReporter.h"
 #include "logging/EventLogger.h"
 
@@ -223,6 +224,7 @@ boolByte errorReporterCopyPlugins(ErrorReporter self, PluginChain pluginChain)
     Plugin currentPlugin = NULL;
     boolByte failed = false;
     unsigned int i;
+    PlatformInfo platform = newPlatformInfo();
 
     for (i = 0; i < pluginChain->numPlugins; i++) {
         currentPlugin = pluginChain->plugins[i];
@@ -230,13 +232,14 @@ boolByte errorReporterCopyPlugins(ErrorReporter self, PluginChain pluginChain)
 
         if (charStringIsEmpty(pluginAbsolutePath)) {
             logInfo("Plugin '%s' does not have an absolute path and could not be copied", currentPlugin->pluginName->data);
-        } else if (getPlatformType() == PLATFORM_MACOSX) {
+        } else if (platform->type == PLATFORM_MACOSX) {
             failed |= !_copyDirectoryToErrorReportDir(self, pluginAbsolutePath);
         } else {
             failed |= !errorReportCopyFileToReport(self, pluginAbsolutePath);
         }
     }
 
+    freePlatformInfo(platform);
     return (boolByte)!failed;
 }
 

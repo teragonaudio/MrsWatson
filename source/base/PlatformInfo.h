@@ -1,7 +1,7 @@
 //
-// Types.h - MrsWatson
-// Created by Nik Reiman on 1/2/12.
-// Copyright (c) 2012 Teragon Audio. All rights reserved.
+// PlatformInfo.h - MrsWatson
+// Created by Nik Reiman on 14/12/14.
+// Copyright (c) 2014 Teragon Audio. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are met:
@@ -25,35 +25,34 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef MrsWatson_Types_h
-#define MrsWatson_Types_h
+#ifndef MrsWatson_PlatformInfo_h
+#define MrsWatson_PlatformInfo_h
 
-// Using "bool" or "boolByte" (or their uppercase equivalents) is a bit dangerous
-// since compilers on some platforms define this for us. This gets tricky when
-// mixing C89/C99 syntax, so to be safe, we will use a new made-up type instead.
-typedef unsigned char boolByte;
+#include "base/CharString.h"
 
-#ifndef byte
-typedef unsigned char byte;
-#endif
+typedef enum {
+    PLATFORM_UNSUPPORTED,
+    PLATFORM_MACOSX,
+    PLATFORM_WINDOWS,
+    PLATFORM_LINUX,
+    NUM_PLATFORMS
+} PlatformType;
 
-#ifndef false
-#define false 0
-#endif
+typedef struct {
+    PlatformType type;
+    CharString name;
+    CharString shortName;
+    boolByte is64Bit;
+} PlatformInfoMembers;
+typedef PlatformInfoMembers *PlatformInfo;
 
-#ifndef true
-#define true 1
-#endif
+PlatformInfo newPlatformInfo(void);
 
-#if MACOSX
-#include <CoreFoundation/CFBundle.h>
-typedef CFBundleRef LibraryHandle;
-#elif LINUX
-typedef void *LibraryHandle;
-#elif WINDOWS
-typedef HMODULE LibraryHandle;
-#else
-typedef void *LibraryHandle;
-#endif
+/**
+ * @brief Static method which returns true if the host CPU is little endian
+ */
+boolByte platformInfoIsLittleEndian(void);
+
+void freePlatformInfo(PlatformInfo self);
 
 #endif

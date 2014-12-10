@@ -5,6 +5,7 @@
 
 #include "ApplicationRunner.h"
 #include "base/File.h"
+#include "base/PlatformInfo.h"
 #include "analysis/AnalyzeFile.h"
 
 const char *kDefaultTestOutputFileType = "pcm";
@@ -56,8 +57,10 @@ CharString getTestOutputFilename(const char *testName, const char *fileExtension
 static CharString _getTestPluginResourcesPath(const char *resourcesPath)
 {
     CharString pluginRoot = newCharString();
+    PlatformInfo platform = newPlatformInfo();
     snprintf(pluginRoot->data, pluginRoot->capacity, "%s%cvst%c%s",
-             resourcesPath, PATH_DELIMITER, PATH_DELIMITER, getShortPlatformName());
+             resourcesPath, PATH_DELIMITER, PATH_DELIMITER, platform->shortName->data);
+    freePlatformInfo(platform);
     return pluginRoot;
 }
 

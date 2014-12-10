@@ -50,45 +50,6 @@
 #define unlink _unlink
 #endif
 
-// Type definitions
-#if MACOSX
-#include <CoreFoundation/CFBundle.h>
-typedef CFBundleRef LibraryHandle;
-#elif LINUX
-typedef void *LibraryHandle;
-#elif WINDOWS
-typedef HMODULE LibraryHandle;
-#else
-typedef void *LibraryHandle;
-#endif
-
-typedef enum {
-    PLATFORM_UNSUPPORTED,
-    PLATFORM_MACOSX,
-    PLATFORM_WINDOWS,
-    PLATFORM_LINUX,
-    NUM_PLATFORMS
-} PlatformType;
-
-/**
- * Get the current platform type, i.e. Linux, Mac, Windows.
- * @return Platform type enum constant
- */
-PlatformType getPlatformType(void);
-
-/**
- * Get the full platform name and version, i.e. "Mac OS X 10.8.3"
- * @return Platform name string. The caller must free this memory.
- */
-CharString getPlatformName(void);
-
-/**
- * Get the short version of the platform name, i.e. "Windows". This is used when
- * the platform and name is being compared to something.
- * @return Platform name string. Guaranteed to be non-null.
- */
-const char *getShortPlatformName(void);
-
 /**
  * Return the path to the current running executable.
  * @return Absolute path of the current executable
@@ -106,20 +67,6 @@ CharString getCurrentDirectory(void);
  * @return True if this executable is 64-bit, otherwise
  */
 boolByte isExecutable64Bit(void);
-
-/**
- * See if the host is a 64-bit operating system. This is mostly used in Windows,
- * where the "Program Files" directory changes name depending on the host's
- * bitness.
- * @return True if the host operating system is 64-bit, false otherwise
- */
-boolByte isHost64Bit(void);
-
-/**
- * See if the host operating system is running on little endian hardware.
- * @return True if the host's CPU is little endian
- */
-boolByte isHostLittleEndian(void);
 
 /**
  * Flip bytes for a short value. This does not take into account the host's

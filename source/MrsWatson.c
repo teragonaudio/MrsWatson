@@ -30,6 +30,7 @@
 
 #include "app/BuildInfo.h"
 #include "audio/AudioSettings.h"
+#include "base/PlatformInfo.h"
 #include "base/PlatformUtilities.h"
 #include "io/SampleSource.h"
 #include "io/SampleSourcePcm.h"
@@ -82,10 +83,10 @@ static void printWelcomeMessage(int argc, char **argv)
 
     // Don't bother doing a bunch of silly work in case the log level isn't debug
     if (isLogLevelAtLeast(LOG_DEBUG)) {
-        stringBuffer = getPlatformName();
-        logDebug("Host platform is %s (%s)", getShortPlatformName(), stringBuffer->data);
-        logDebug("Application is %d-bit", isExecutable64Bit() ? 64 : 32);
-        freeCharString(stringBuffer);
+        PlatformInfo platform = newPlatformInfo();
+        logDebug("Host platform is %s (%s)", platform->shortName->data, platform->name->data);
+        logDebug("Application is %d-bit", platform->is64Bit ? 64 : 32);
+        freePlatformInfo(platform);
 
         stringBuffer = newCharStringWithCapacity(kCharStringLengthLong);
 
@@ -247,7 +248,7 @@ boolByte readInput(SampleSource inputSource, SampleBuffer buffer)
     if (framesRead == bufferSize) {
         // We have filled up the buffer, so return true to ask for more input
         return true;
-    } else if(framesRead < bufferSize) {
+    } else if (framesRead < bufferSize) {
         // Partial read, meaning that we have reached the end of file
         unsigned long numberOfFrames = (bufferSize - framesRead);
         SampleBuffer silenceBuffer = newSampleBuffer(buffer->numChannels, numberOfFrames);
