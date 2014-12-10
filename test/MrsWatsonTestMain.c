@@ -145,7 +145,7 @@ File _findMrsWatsonExe(CharString mrsWatsonExeArg)
             if (currentExecutableDir != NULL) {
                 mrsWatsonExeName = newCharStringWithCString(MRSWATSON_EXE_NAME);
 
-                if (isExecutable64Bit()) {
+                if (platformInfoIsRuntime64Bit()) {
                     charStringAppendCString(mrsWatsonExeName, "64");
                 }
 

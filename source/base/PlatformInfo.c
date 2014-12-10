@@ -51,7 +51,7 @@ static const char *_getShortPlatformName(void)
     return "Mac OS X";
 #elif WINDOWS
 
-    if (isExecutable64Bit()) {
+    if (platformInfoIsRuntime64Bit()) {
         return "Windows 64-bit";
     } else {
         return "Windows 32-bit";
@@ -59,7 +59,7 @@ static const char *_getShortPlatformName(void)
 
 #elif LINUX
 
-    if (isExecutable64Bit()) {
+    if (platformInfoIsRuntime64Bit()) {
         return "Linux-x86_64";
     } else {
         return "Linux-i686";
@@ -190,7 +190,12 @@ static CharString _getPlatformName(void)
     return result;
 }
 
-boolByte _isHost64Bit(void)
+boolByte platformInfoIsRuntime64Bit(void)
+{
+    return (boolByte)(sizeof(void *) == 8);
+}
+
+boolByte platformInfoIsHost64Bit(void)
 {
     boolByte result = false;
 
@@ -222,7 +227,7 @@ boolByte _isHost64Bit(void)
             } else {
                 // If false, then we can assume that the host has the same bitness as
                 // the executable.
-                result = isExecutable64Bit();
+                result = platformInfoIsRuntime64Bit();
             }
         }
     }
@@ -246,7 +251,7 @@ PlatformInfo newPlatformInfo(void)
     platformInfo->type = _getPlatformType();
     platformInfo->name = _getPlatformName();
     platformInfo->shortName = newCharStringWithCString(_getShortPlatformName());
-    platformInfo->is64Bit = _isHost64Bit();
+    platformInfo->is64Bit = platformInfoIsHost64Bit();
     return platformInfo;
 }
 

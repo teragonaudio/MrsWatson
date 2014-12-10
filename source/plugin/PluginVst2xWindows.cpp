@@ -32,7 +32,7 @@
 
 extern "C" {
 #include <stdio.h>
-#include "base/PlatformUtilities.h"
+#include "base/PlatformInfo.h"
 #include "logging/EventLogger.h"
 
 static const char* kPlatformWindowsProgramFolder = "C:\\Program Files";
@@ -41,7 +41,7 @@ static const char* kPlatformWindows32BitProgramFolder = "C:\\Program Files (x86)
 LinkedList getVst2xPluginLocations(CharString currentDirectory) {
   LinkedList locations = newLinkedList();
   CharString locationBuffer;
-  const char* programFiles = (!isExecutable64Bit() && isHost64Bit()) ?
+  const char* programFiles = (!platformInfoIsRuntime64Bit() && platformInfoIsHost64Bit()) ?
     kPlatformWindows32BitProgramFolder : kPlatformWindowsProgramFolder;
 
   linkedListAppend(locations, currentDirectory);

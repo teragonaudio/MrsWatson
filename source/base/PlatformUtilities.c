@@ -45,8 +45,3 @@
 #include <errno.h>
 #endif
 #endif
-
-boolByte isExecutable64Bit(void)
-{
-    return (boolByte)(sizeof(void *) == 8);
-}

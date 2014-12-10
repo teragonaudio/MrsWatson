@@ -54,6 +54,6 @@
  * See if this program has been compiled as a 64-bit executable
  * @return True if this executable is 64-bit, otherwise
  */
-boolByte isExecutable64Bit(void);
+boolByte platformInfoIsRuntime64Bit(void);
 
 #endif

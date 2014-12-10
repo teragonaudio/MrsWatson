@@ -53,6 +53,16 @@ PlatformInfo newPlatformInfo(void);
  */
 boolByte platformInfoIsLittleEndian(void);
 
+/**
+ * @brief True if the platform is a native 64-bit OS
+ */
+boolByte platformInfoIsHost64Bit(void);
+
+/**
+ * @brief True if the executable is running as a 64-bit binary
+ */
+boolByte platformInfoIsRuntime64Bit(void);
+
 void freePlatformInfo(PlatformInfo self);
 
 #endif
