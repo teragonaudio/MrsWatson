@@ -13,10 +13,10 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
   set_target_properties(mrswatsoncore64 PROPERTIES COMPILE_FLAGS "-m64")
   set_target_properties(mrswatsoncore64 PROPERTIES LINK_FLAGS "-m64")
 elseif(APPLE)
-  add_library(mrswatsoncore ${mrswatsoncore_SOURCES} ${mrswatsoncore_HEADERS})
+  add_library(mrswatsoncore ${mrswatsoncore_SOURCES} ${mrswatsoncore_HEADERS} base/PlatformInfoMac.m)
   set_target_properties(mrswatsoncore PROPERTIES OSX_ARCHITECTURES "i386")
 
-  add_library(mrswatsoncore64 ${mrswatsoncore_SOURCES} ${mrswatsoncore_HEADERS})
+  add_library(mrswatsoncore64 ${mrswatsoncore_SOURCES} ${mrswatsoncore_HEADERS} base/PlatformInfoMac.m)
   set_target_properties(mrswatsoncore64 PROPERTIES OSX_ARCHITECTURES "x86_64")
 elseif(MSVC)
   # On unix, we can build both the 32/64 bit versions at once. However with

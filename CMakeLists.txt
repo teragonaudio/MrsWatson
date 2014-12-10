@@ -150,7 +150,7 @@ if(UNIX)
     set(CMAKE_CXX_FLAGS_DEBUG "${SHARED_GCC_CPPFLAGS} -O0 -g")
     set(CMAKE_CXX_FLAGS_RELEASE "${SHARED_GCC_CPPFLAGS} -O3")
 
-    set(CMAKE_EXE_LINKER_FLAGS "-framework Carbon -framework CoreFoundation")
+    set(CMAKE_EXE_LINKER_FLAGS "-framework Carbon -framework CoreFoundation -framework Foundation")
 
     add_definitions("-DMACOSX=1")
   endif()

@@ -88,16 +88,16 @@ static void _findLsbDistribution(void *item, void *userData)
 }
 #endif
 
+#if MACOSX
+extern void _getMacVersionString(CharString outString);
+#endif
+
 static CharString _getPlatformName(void)
 {
     CharString result = newCharString();
 #if MACOSX
-    SInt32 major, minor, bugfix;
-    Gestalt(gestaltSystemVersionMajor, &major);
-    Gestalt(gestaltSystemVersionMinor, &minor);
-    Gestalt(gestaltSystemVersionBugFix, &bugfix);
-    snprintf(result->data, result->capacity, "Mac OS X %d.%d.%d",
-             (int)major, (int)minor, (int)bugfix);
+    charStringCopyCString(result, _getShortPlatformName());
+    _getMacVersionString(result);
 #elif LINUX
     CharString distributionName = newCharString();
     struct utsname systemInfo;
