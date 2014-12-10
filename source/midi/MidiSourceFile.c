@@ -30,7 +30,7 @@
 #include <string.h>
 
 #include "audio/AudioSettings.h"
-#include "base/PlatformUtilities.h"
+#include "base/Endian.h"
 #include "logging/EventLogger.h"
 #include "midi/MidiSourceFile.h"
 

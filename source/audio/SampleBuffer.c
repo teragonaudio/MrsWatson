@@ -30,7 +30,7 @@
 #include <string.h>
 
 #include "audio/SampleBuffer.h"
-#include "base/PlatformUtilities.h"
+#include "base/Endian.h"
 #include "logging/EventLogger.h"
 
 SampleBuffer newSampleBuffer(unsigned int numChannels, unsigned long blocksize)

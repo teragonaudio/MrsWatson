@@ -29,7 +29,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "base/PlatformUtilities.h"
+#include "base/Endian.h"
 #include "logging/EventLogger.h"
 #include "plugin/PluginPresetFxp.h"
 #include "plugin/PluginVst2x.h"

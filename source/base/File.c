@@ -870,8 +870,7 @@ CharString fileGetExtension(File self) {
     return result;
 }
 
-CharString fileGetExecutablePath(void)
-{
+CharString fileGetExecutablePath(void) {
     CharString executablePath = newCharString();
 #if LINUX
     ssize_t result = readlink("/proc/self/exe", executablePath->data, executablePath->capacity);
@@ -889,8 +888,7 @@ CharString fileGetExecutablePath(void)
     return executablePath;
 }
 
-CharString fileGetCurrentDirectory(void)
-{
+CharString fileGetCurrentDirectory(void) {
     CharString currentDirectory = newCharString();
 #if UNIX
 

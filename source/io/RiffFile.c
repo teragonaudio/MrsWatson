@@ -28,7 +28,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "base/PlatformUtilities.h"
+#include "base/Endian.h"
 #include "io/RiffFile.h"
 
 RiffChunk newRiffChunk(void)

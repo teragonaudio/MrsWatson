@@ -1,5 +1,7 @@
 #include "unit/TestRunner.h"
-#include "time/TaskTimer.h"
+#include "base/Endian.h"
+
+#include "unit/TestRunner.h"
 
 #if LINUX
 #if defined(__BYTE_ORDER__)
@@ -132,10 +134,10 @@ static int _testConvertByteArrayToUnsignedInt(void)
     return 0;
 }
 
-TestSuite addPlatformUtilitiesTests(void);
-TestSuite addPlatformUtilitiesTests(void)
+TestSuite addEndianTests(void);
+TestSuite addEndianTests(void)
 {
-    TestSuite testSuite = newTestSuite("PlatformUtilities", NULL, NULL);
+    TestSuite testSuite = newTestSuite("Endian", NULL, NULL);
 
     addTest(testSuite, "FlipShortEndian", _testFlipShortEndian);
     addTest(testSuite, "ConvertBigEndianShortToPlatform", _testConvertBigEndianShortToPlatform);
