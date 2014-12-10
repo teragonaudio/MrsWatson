@@ -25,7 +25,6 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include <QuickTime/QuickTime.h>
 #include "PlatformInfo.h"
 
 static PlatformType _getPlatformType()
