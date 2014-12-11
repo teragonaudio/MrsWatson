@@ -36,7 +36,6 @@ extern "C" {
 
 #include "audio/AudioSettings.h"
 #include "base/File.h"
-#include "base/FileUtilities.h"
 #include "base/PlatformInfo.h"
 #include "base/Types.h"
 #include "logging/EventLogger.h"
@@ -397,7 +396,8 @@ static boolByte _openVst2xPlugin(void* pluginPtr) {
   AEffect* pluginHandle;
   Plugin plugin = (Plugin)pluginPtr;
   PluginVst2xData data = (PluginVst2xData)plugin->extraData;
-  const char* pluginBasename = getFileBasename(plugin->pluginName->data);
+  File pluginPath = newFileWithPath(plugin->pluginName);
+  CharString pluginBasename = fileGetBasename(pluginPath);
   char* subpluginSeparator = strrchr((char*)pluginBasename, kPluginVst2xSubpluginSeparator);
   CharString subpluginIdString = NULL;
 
@@ -412,12 +412,23 @@ static boolByte _openVst2xPlugin(void* pluginPtr) {
   }
 
   logInfo("Opening VST2.x plugin '%s'", plugin->pluginName->data);
-  if(isAbsolutePath(plugin->pluginName)) {
-    charStringCopy(plugin->pluginAbsolutePath, plugin->pluginName);
+  if(fileExists(pluginPath)) {
+    charStringCopy(plugin->pluginAbsolutePath, pluginPath->absolutePath);
   }
   else {
-    buildAbsolutePath(plugin->pluginLocation, plugin->pluginName, _getVst2xPlatformExtension(), plugin->pluginAbsolutePath);
+    File pluginLocationPath = newFileWithPath(plugin->pluginLocation);
+    CharString pluginNameWithExtension = newCharString();
+    charStringCopy(pluginNameWithExtension, plugin->pluginName);
+    charStringAppendCString(pluginNameWithExtension, _getVst2xPlatformExtension());
+    File pluginAbsolutePath = newFileWithParent(pluginLocationPath, pluginNameWithExtension);
+    charStringCopy(plugin->pluginLocation, pluginAbsolutePath->absolutePath);
+    freeFile(pluginAbsolutePath);
+    freeFile(pluginLocationPath);
+    freeCharString(pluginNameWithExtension);
   }
+
+  freeCharString(pluginBasename);
+  freeFile(pluginPath);
   logDebug("Plugin location is '%s'", plugin->pluginLocation->data);
 
   data->libraryHandle = getLibraryHandleForPlugin(plugin->pluginAbsolutePath);
@@ -434,7 +445,7 @@ static boolByte _openVst2xPlugin(void* pluginPtr) {
   // The plugin name which is passed into this function is basically just used to find the
   // actual location. Now that the plugin has been loaded, we can set a friendlier name.
   CharString temp = plugin->pluginName;
-  plugin->pluginName = newCharStringWithCString(pluginBasename);
+  plugin->pluginName = newCharStringWithCString(pluginBasename->data);
   freeCharString(temp);
 
   if(data->shellPluginId && subpluginIdString != NULL) {
