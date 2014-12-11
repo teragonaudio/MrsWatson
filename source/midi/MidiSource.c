@@ -27,23 +27,27 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
-#include "base/FileUtilities.h"
+#include "base/File.h"
 #include "logging/EventLogger.h"
 #include "midi/MidiSourceFile.h"
 
 MidiSourceType guessMidiSourceType(const CharString midiSourceTypeString)
 {
     if (!charStringIsEmpty(midiSourceTypeString)) {
-        const char *fileExtension = getFileExtension(midiSourceTypeString->data);
+        File midiSourceFile = newFileWithPath(midiSourceTypeString);
+        CharString fileExtension = fileGetExtension(midiSourceFile);
+        freeFile(midiSourceFile);
 
         if (fileExtension == NULL) {
             return MIDI_SOURCE_TYPE_INVALID;
-        } else if (!strcasecmp(fileExtension, "mid") || !strcasecmp(fileExtension, "midi")) {
+        } else if (charStringIsEqualToCString(fileExtension, "mid", true) ||
+                charStringIsEqualToCString(fileExtension, "midi", true)) {
+            freeCharString(fileExtension);
             return MIDI_SOURCE_TYPE_FILE;
         } else {
             logCritical("MIDI source '%s' does not match any supported type");
+            freeCharString(fileExtension);
             return MIDI_SOURCE_TYPE_INVALID;
         }
     } else {
