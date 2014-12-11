@@ -40,21 +40,6 @@
 #include <Shlobj.h>
 #endif
 
-// If support for libarchive is built, then the error report will be compressed
-// on completion. However, this library doesn't build so easily on Windows, so
-// this feature is disabled for the time being.
-#define HAVE_LIBARCHIVE 0
-
-#if HAVE_LIBARCHIVE
-#if UNIX
-#include <sys/socket.h>
-#include <fcntl.h>
-#include <unistd.h>
-#endif
-#include <archive.h>
-#include <archive_entry.h>
-#endif
-
 static const char *kErrorReportInfoText = "MrsWatson is now running \
 in error report mode, which will generate a report on your desktop with \
 any input/output sources and error logs. This also enables some extra \
@@ -281,98 +266,14 @@ boolByte errorReporterCopyPlugins(ErrorReporter self, PluginChain pluginChain)
     return (boolByte)!failed;
 }
 
-#if HAVE_LIBARCHIVE
-static void _remapFileToErrorReportRelativePath(void *item, void *userData)
-{
-    char *itemName = (char *)item;
-    CharString tempPath = newCharString();
-    ErrorReporter errorReporter = (ErrorReporter)userData;
-    charStringCopyCString(tempPath, itemName);
-    snprintf(tempPath->data, tempPath->length, "%s/%s", errorReporter->reportName->data, itemName);
-    strncpy(itemName, tempPath->data, tempPath->length);
-}
-#endif
-
-#if HAVE_LIBARCHIVE
-static void _addFileToArchive(void *item, void *userData)
-{
-    char *itemPath = (char *)item;
-    struct archive *outArchive = (struct archive *)userData;
-    struct archive_entry *entry = archive_entry_new();
-    struct stat fileStat;
-    FILE *filePointer;
-    size_t bytesRead;
-    byte *fileBuffer = (byte *)malloc(8192);
-
-    stat(itemPath, &fileStat);
-    archive_entry_set_pathname(entry, itemPath);
-    archive_entry_set_size(entry, fileStat.st_size);
-    archive_entry_set_filetype(entry, AE_IFREG);
-    archive_entry_set_perm(entry, 0644);
-    archive_write_header(outArchive, entry);
-    filePointer = fopen(itemPath, "rb");
-
-    do {
-        bytesRead = fread(fileBuffer, 1, 8192, filePointer);
-
-        if (bytesRead > 0) {
-            archive_write_data(outArchive, fileBuffer, bytesRead);
-        }
-    } while (bytesRead > 0);
-
-    fclose(filePointer);
-    archive_entry_free(entry);
-}
-#endif
-
 void errorReporterClose(ErrorReporter self)
 {
-#if HAVE_LIBARCHIVE
-    struct archive *outArchive;
-    CharString outputFilename = newCharString();
-    LinkedList reportContents = newLinkedList();
-#endif
-
     // Always do this, just in case
     flushErrorLog();
 
-#if HAVE_LIBARCHIVE
-
-    // In case any part of the error report causes a segfault, this function will
-    // be called recursively. A mutex would really be a better solution here, but
-    // this will also work just fine.
-    if (!self->completed) {
-        self->completed = true;
-        buildAbsolutePath(self->desktopPath, self->reportName, "tar.gz", outputFilename);
-        listDirectory(self->reportDirPath->data, reportContents);
-
-        if (self != NULL) {
-            outArchive = archive_write_new();
-            archive_write_set_compression_gzip(outArchive);
-            archive_write_set_format_pax_restricted(outArchive);
-            archive_write_open_filename(outArchive, outputFilename->data);
-
-            linkedListForeach(reportContents, _remapFileToErrorReportRelativePath, self);
-            chdir(self->desktopPath->data);
-            linkedListForeach(reportContents, _addFileToArchive, outArchive);
-
-            archive_write_close(outArchive);
-            archive_write_free(outArchive);
-        }
-
-        // Remove original error report
-        removeDirectory(self->reportDirPath);
-    }
-
-#endif
-
     printf("\n=== Error report complete ===\n");
     printf("Created error report at %s\n", self->reportDirPath->data);
-#if HAVE_LIBARCHIVE
-    printf("Please email the report to: %s\n", SUPPORT_EMAIL);
-#else
     printf("Please compress and email the report to: %s\n", SUPPORT_EMAIL);
-#endif
     printf("Thanks!\n");
 }
 
