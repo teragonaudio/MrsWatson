@@ -38,3 +38,6 @@ elseif(MSVC)
   endif()
 endif()
 
+# The main executable must be built to run integration tests
+add_dependencies(mrswatsontest mrswatson)
+add_dependencies(mrswatsontest64 mrswatson64)
