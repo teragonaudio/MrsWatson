@@ -10,6 +10,7 @@ MrsWatson*.zip
 *.o
 *.obj
 *.so
+*.a
 
 # Test output
 out/*
