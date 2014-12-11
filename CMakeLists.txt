@@ -26,18 +26,6 @@ else()
 endif()
 message("Platform bitness: ${PLATFORM_BITS}-bit")
 
-# On Windows, one should build out-of-source
-if(UNIX)
-  if(CMAKE_BUILD_TYPE MATCHES "Debug")
-    set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/build)
-    set(LIBRARY_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/build)
-  else()
-    set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/bin/${PLATFORM_NAME})
-    set(LIBRARY_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/bin/${PLATFORM_NAME})
-  endif()
-endif()
-message("Output directory: ${EXECUTABLE_OUTPUT_PATH}")
-
 # Third-party dependencies #####################################
 
 # TODO: Currently unused, but probably needed soon
