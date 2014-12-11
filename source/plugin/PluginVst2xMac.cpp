@@ -36,93 +36,101 @@ extern "C" {
 #include "logging/EventLogger.h"
 #include "plugin/PluginVst2xHostCallback.h"
 
-LinkedList getVst2xPluginLocations(CharString currentDirectory);
-LinkedList getVst2xPluginLocations(CharString currentDirectory) {
-  LinkedList locations = newLinkedList();
-  CharString locationBuffer;
+    LinkedList getVst2xPluginLocations(CharString currentDirectory);
+    LinkedList getVst2xPluginLocations(CharString currentDirectory)
+    {
+        LinkedList locations = newLinkedList();
+        CharString locationBuffer;
 
-  linkedListAppend(locations, currentDirectory);
+        linkedListAppend(locations, currentDirectory);
 
-  locationBuffer = newCharString();
-  snprintf(locationBuffer->data, (size_t)(locationBuffer->capacity), "/Library/Audio/Plug-Ins/VST");
-  linkedListAppend(locations, locationBuffer);
+        locationBuffer = newCharString();
+        snprintf(locationBuffer->data, (size_t)(locationBuffer->capacity), "/Library/Audio/Plug-Ins/VST");
+        linkedListAppend(locations, locationBuffer);
 
-  locationBuffer = newCharString();
-  snprintf(locationBuffer->data, (size_t)(locationBuffer->capacity), "%s/Library/Audio/Plug-Ins/VST", getenv("HOME"));
-  linkedListAppend(locations, locationBuffer);
+        locationBuffer = newCharString();
+        snprintf(locationBuffer->data, (size_t)(locationBuffer->capacity), "%s/Library/Audio/Plug-Ins/VST", getenv("HOME"));
+        linkedListAppend(locations, locationBuffer);
 
-  return locations;
-}
+        return locations;
+    }
 
-LibraryHandle getLibraryHandleForPlugin(const CharString pluginAbsolutePath);
-LibraryHandle getLibraryHandleForPlugin(const CharString pluginAbsolutePath) {
-  // Create a path to the bundle
-  CFStringRef pluginPathStringRef = CFStringCreateWithCString(NULL, pluginAbsolutePath->data, kCFStringEncodingASCII);
-  CFURLRef bundleUrl = CFURLCreateWithFileSystemPath(kCFAllocatorDefault, pluginPathStringRef, kCFURLPOSIXPathStyle, true);
-  if(bundleUrl == NULL) {
-    logError("Couldn't make URL reference for plugin");
-    return NULL;
-  }
+    LibraryHandle getLibraryHandleForPlugin(const CharString pluginAbsolutePath);
+    LibraryHandle getLibraryHandleForPlugin(const CharString pluginAbsolutePath)
+    {
+        // Create a path to the bundle
+        CFStringRef pluginPathStringRef = CFStringCreateWithCString(NULL, pluginAbsolutePath->data, kCFStringEncodingASCII);
+        CFURLRef bundleUrl = CFURLCreateWithFileSystemPath(kCFAllocatorDefault, pluginPathStringRef, kCFURLPOSIXPathStyle, true);
 
-  // Open the bundle
-  CFBundleRef bundleRef = CFBundleCreate(kCFAllocatorDefault, bundleUrl);
-  if(bundleRef == NULL) {
-    logError("Couldn't create bundle reference");
-    CFRelease(pluginPathStringRef);
-    CFRelease(bundleUrl);
-    return NULL;
-  }
+        if (bundleUrl == NULL) {
+            logError("Couldn't make URL reference for plugin");
+            return NULL;
+        }
 
-  // Clean up
-  CFRelease(pluginPathStringRef);
-  CFRelease(bundleUrl);
+        // Open the bundle
+        CFBundleRef bundleRef = CFBundleCreate(kCFAllocatorDefault, bundleUrl);
 
-  return bundleRef;
-}
+        if (bundleRef == NULL) {
+            logError("Couldn't create bundle reference");
+            CFRelease(pluginPathStringRef);
+            CFRelease(bundleUrl);
+            return NULL;
+        }
 
-AEffect* loadVst2xPlugin(LibraryHandle libraryHandle);
-AEffect* loadVst2xPlugin(LibraryHandle libraryHandle) {
-  // Somewhat cheap hack to avoid a tricky compiler warning. Casting from void* to a proper function
-  // pointer will cause GCC to warn that "ISO C++ forbids casting between pointer-to-function and
-  // pointer-to-object". Here, we represent both types in a union and use the correct one in the given
-  // context, thus avoiding the need to cast anything.
-  // See also: http://stackoverflow.com/a/2742234/14302
-  union {
-    Vst2xPluginEntryFunc entryPointFuncPtr;
-    void *entryPointVoidPtr;
-  } entryPoint;
+        // Clean up
+        CFRelease(pluginPathStringRef);
+        CFRelease(bundleUrl);
 
-  entryPoint.entryPointVoidPtr = CFBundleGetFunctionPointerForName(libraryHandle, CFSTR("VSTPluginMain"));
-  Vst2xPluginEntryFunc mainEntryPoint = entryPoint.entryPointFuncPtr;
-  // VST plugins previous to the 2.4 SDK used main_macho for the entry point name
-  if(mainEntryPoint == NULL) {
-    entryPoint.entryPointVoidPtr = CFBundleGetFunctionPointerForName(libraryHandle, CFSTR("main_macho"));
-    mainEntryPoint = entryPoint.entryPointFuncPtr;
-  }
+        return bundleRef;
+    }
 
-  if(mainEntryPoint == NULL) {
-    logError("Couldn't get a pointer to plugin's main()");
-    CFBundleUnloadExecutable(libraryHandle);
-    CFRelease(libraryHandle);
-    return NULL;
-  }
+    AEffect *loadVst2xPlugin(LibraryHandle libraryHandle);
+    AEffect *loadVst2xPlugin(LibraryHandle libraryHandle)
+    {
+        // Somewhat cheap hack to avoid a tricky compiler warning. Casting from void* to a proper function
+        // pointer will cause GCC to warn that "ISO C++ forbids casting between pointer-to-function and
+        // pointer-to-object". Here, we represent both types in a union and use the correct one in the given
+        // context, thus avoiding the need to cast anything.
+        // See also: http://stackoverflow.com/a/2742234/14302
+        union {
+            Vst2xPluginEntryFunc entryPointFuncPtr;
+            void *entryPointVoidPtr;
+        } entryPoint;
 
-  AEffect* plugin = mainEntryPoint(pluginVst2xHostCallback);
-  if(plugin == NULL) {
-    logError("Plugin's main() returns null");
-    CFBundleUnloadExecutable(libraryHandle);
-    CFRelease(libraryHandle);
-    return NULL;
-  }
+        entryPoint.entryPointVoidPtr = CFBundleGetFunctionPointerForName(libraryHandle, CFSTR("VSTPluginMain"));
+        Vst2xPluginEntryFunc mainEntryPoint = entryPoint.entryPointFuncPtr;
 
-  return plugin;
-}
+        // VST plugins previous to the 2.4 SDK used main_macho for the entry point name
+        if (mainEntryPoint == NULL) {
+            entryPoint.entryPointVoidPtr = CFBundleGetFunctionPointerForName(libraryHandle, CFSTR("main_macho"));
+            mainEntryPoint = entryPoint.entryPointFuncPtr;
+        }
 
-void closeLibraryHandle(LibraryHandle libraryHandle);
-void closeLibraryHandle(LibraryHandle libraryHandle) {
-  CFBundleUnloadExecutable(libraryHandle);
-  CFRelease(libraryHandle);
-}
+        if (mainEntryPoint == NULL) {
+            logError("Couldn't get a pointer to plugin's main()");
+            CFBundleUnloadExecutable(libraryHandle);
+            CFRelease(libraryHandle);
+            return NULL;
+        }
+
+        AEffect *plugin = mainEntryPoint(pluginVst2xHostCallback);
+
+        if (plugin == NULL) {
+            logError("Plugin's main() returns null");
+            CFBundleUnloadExecutable(libraryHandle);
+            CFRelease(libraryHandle);
+            return NULL;
+        }
+
+        return plugin;
+    }
+
+    void closeLibraryHandle(LibraryHandle libraryHandle);
+    void closeLibraryHandle(LibraryHandle libraryHandle)
+    {
+        CFBundleUnloadExecutable(libraryHandle);
+        CFRelease(libraryHandle);
+    }
 
 } // extern "C"
 #endif

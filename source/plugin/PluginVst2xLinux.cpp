@@ -37,68 +37,77 @@ extern "C" {
 #include "logging/EventLogger.h"
 #include "plugin/PluginVst2xHostCallback.h"
 
-LinkedList getVst2xPluginLocations(CharString currentDirectory) {
-  LinkedList locations = newLinkedList();
-  CharString locationBuffer;
-  char* vstPathEnv;
+    LinkedList getVst2xPluginLocations(CharString currentDirectory)
+    {
+        LinkedList locations = newLinkedList();
+        CharString locationBuffer;
+        char *vstPathEnv;
 
-  linkedListAppend(locations, currentDirectory);
+        linkedListAppend(locations, currentDirectory);
 
-  locationBuffer = newCharString();
-  snprintf(locationBuffer->data, (size_t)(locationBuffer->capacity), "%s/.vst", getenv("HOME"));
-  linkedListAppend(locations, locationBuffer);
+        locationBuffer = newCharString();
+        snprintf(locationBuffer->data, (size_t)(locationBuffer->capacity), "%s/.vst", getenv("HOME"));
+        linkedListAppend(locations, locationBuffer);
 
-  locationBuffer = newCharString();
-  vstPathEnv = getenv("VST_PATH");
-  if(vstPathEnv != NULL) {
-    snprintf(locationBuffer->data, (size_t)(locationBuffer->capacity), "%s", vstPathEnv);
-    linkedListAppend(locations, locationBuffer);
-  }
-  else {
-    freeCharString(locationBuffer);
-  }
+        locationBuffer = newCharString();
+        vstPathEnv = getenv("VST_PATH");
 
-  return locations;
-}
+        if (vstPathEnv != NULL) {
+            snprintf(locationBuffer->data, (size_t)(locationBuffer->capacity), "%s", vstPathEnv);
+            linkedListAppend(locations, locationBuffer);
+        } else {
+            freeCharString(locationBuffer);
+        }
 
-LibraryHandle getLibraryHandleForPlugin(const CharString pluginAbsolutePath) {
-  void* libraryHandle = dlopen(pluginAbsolutePath->data, RTLD_NOW | RTLD_LOCAL);
-  if(libraryHandle == NULL) {
-    logError("Could not open library, %s", dlerror());
-    return NULL;
-  }
-  return libraryHandle;
-}
-
-AEffect* loadVst2xPlugin(LibraryHandle libraryHandle) {
-  // Somewhat cheap hack to avoid a tricky compiler warning. Casting from void* to a proper function
-  // pointer will cause GCC to warn that "ISO C++ forbids casting between pointer-to-function and
-  // pointer-to-object". Here, we represent both types in a union and use the correct one in the given
-  // context, thus avoiding the need to cast anything.
-  // See also: http://stackoverflow.com/a/2742234/14302
-  union {
-    Vst2xPluginEntryFunc entryPointFuncPtr;
-    void *entryPointVoidPtr;
-  } entryPoint;
-
-  entryPoint.entryPointVoidPtr = dlsym(libraryHandle, "VSTPluginMain");
-  if(entryPoint.entryPointVoidPtr == NULL) {
-    entryPoint.entryPointVoidPtr = dlsym(libraryHandle, "main");
-    if(entryPoint.entryPointVoidPtr == NULL) {
-      logError("Couldn't get a pointer to plugin's main()");
-      return NULL;
+        return locations;
     }
-  }
-  Vst2xPluginEntryFunc mainEntryPoint = entryPoint.entryPointFuncPtr;
-  AEffect* plugin = mainEntryPoint(pluginVst2xHostCallback);
-  return plugin;
-}
 
-void closeLibraryHandle(LibraryHandle libraryHandle) {
-  if(dlclose(libraryHandle) != 0) {
-    logWarn("Could not safely close plugin, possible resource leak");
-  }
-}
+    LibraryHandle getLibraryHandleForPlugin(const CharString pluginAbsolutePath)
+    {
+        void *libraryHandle = dlopen(pluginAbsolutePath->data, RTLD_NOW | RTLD_LOCAL);
+
+        if (libraryHandle == NULL) {
+            logError("Could not open library, %s", dlerror());
+            return NULL;
+        }
+
+        return libraryHandle;
+    }
+
+    AEffect *loadVst2xPlugin(LibraryHandle libraryHandle)
+    {
+        // Somewhat cheap hack to avoid a tricky compiler warning. Casting from void* to a proper function
+        // pointer will cause GCC to warn that "ISO C++ forbids casting between pointer-to-function and
+        // pointer-to-object". Here, we represent both types in a union and use the correct one in the given
+        // context, thus avoiding the need to cast anything.
+        // See also: http://stackoverflow.com/a/2742234/14302
+        union {
+            Vst2xPluginEntryFunc entryPointFuncPtr;
+            void *entryPointVoidPtr;
+        } entryPoint;
+
+        entryPoint.entryPointVoidPtr = dlsym(libraryHandle, "VSTPluginMain");
+
+        if (entryPoint.entryPointVoidPtr == NULL) {
+            entryPoint.entryPointVoidPtr = dlsym(libraryHandle, "main");
+
+            if (entryPoint.entryPointVoidPtr == NULL) {
+                logError("Couldn't get a pointer to plugin's main()");
+                return NULL;
+            }
+        }
+
+        Vst2xPluginEntryFunc mainEntryPoint = entryPoint.entryPointFuncPtr;
+        AEffect *plugin = mainEntryPoint(pluginVst2xHostCallback);
+        return plugin;
+    }
+
+    void closeLibraryHandle(LibraryHandle libraryHandle)
+    {
+        if (dlclose(libraryHandle) != 0) {
+            logWarn("Could not safely close plugin, possible resource leak");
+        }
+    }
 
 } // extern "C"
 #endif
