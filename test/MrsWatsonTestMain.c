@@ -288,7 +288,7 @@ int main(int argc, char *argv[])
         printf("=== Unit tests ===\n");
         testSuites = getTestSuites();
         unitTestResults = runUnitTests(testSuites,
-                programOptions->options[OPTION_TEST_PRINT_ONLY_FAILING]->enabled);
+                                       programOptions->options[OPTION_TEST_PRINT_ONLY_FAILING]->enabled);
 
         totalTestsRun += unitTestResults->numSuccess + unitTestResults->numFail;
         totalTestsPassed += unitTestResults->numSuccess;

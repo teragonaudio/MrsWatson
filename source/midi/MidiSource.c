@@ -42,7 +42,7 @@ MidiSourceType guessMidiSourceType(const CharString midiSourceTypeString)
         if (fileExtension == NULL) {
             return MIDI_SOURCE_TYPE_INVALID;
         } else if (charStringIsEqualToCString(fileExtension, "mid", true) ||
-                charStringIsEqualToCString(fileExtension, "midi", true)) {
+                   charStringIsEqualToCString(fileExtension, "midi", true)) {
             freeCharString(fileExtension);
             return MIDI_SOURCE_TYPE_FILE;
         } else {
