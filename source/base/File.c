@@ -33,7 +33,6 @@
 #include <sys/stat.h>
 
 #include "base/File.h"
-#include "base/FileUtilities.h"
 #include "logging/EventLogger.h"
 
 #if WINDOWS

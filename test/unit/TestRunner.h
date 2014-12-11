@@ -6,7 +6,7 @@
 #include <math.h>
 
 #include "base/CharString.h"
-#include "base/FileUtilities.h"
+#include "base/File.h"
 #include "logging/LogPrinter.h"
 
 #if UNIX

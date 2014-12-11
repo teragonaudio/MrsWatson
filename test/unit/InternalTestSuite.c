@@ -7,7 +7,6 @@ extern TestSuite addAudioSettingsTests(void);
 extern TestSuite addCharStringTests(void);
 extern TestSuite addEndianTests(void);
 extern TestSuite addFileTests(void);
-extern TestSuite addFileUtilitiesTests(void);
 extern TestSuite addLinkedListTests(void);
 extern TestSuite addMidiSequenceTests(void);
 extern TestSuite addMidiSourceTests(void);
@@ -45,7 +44,6 @@ LinkedList getTestSuites(void)
     linkedListAppend(internalTestSuites, addCharStringTests());
     linkedListAppend(internalTestSuites, addEndianTests());
     linkedListAppend(internalTestSuites, addFileTests());
-    linkedListAppend(internalTestSuites, addFileUtilitiesTests());
     linkedListAppend(internalTestSuites, addLinkedListTests());
     linkedListAppend(internalTestSuites, addMidiSequenceTests());
     linkedListAppend(internalTestSuites, addMidiSourceTests());
