@@ -29,7 +29,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "base/FileUtilities.h"
+#include "base/File.h"
 #include "logging/EventLogger.h"
 #include "plugin/PluginPreset.h"
 #include "plugin/PluginPresetFxp.h"
@@ -37,17 +37,16 @@
 
 static PluginPresetType _pluginPresetGuessType(const CharString presetName)
 {
-    const char *fileExtension;
-    size_t i;
-
     if (presetName == NULL || charStringIsEmpty(presetName)) {
         return PRESET_TYPE_INVALID;
     }
 
-    fileExtension = getFileExtension(presetName->data);
+    File presetFile = newFileWithPath(presetName);
+    CharString fileExtension = fileGetExtension(presetFile);
+    freeFile(presetFile);
 
     if (fileExtension == NULL) {
-        for (i = 0; i < strlen(presetName->data); i++) {
+        for (size_t i = 0; i < strlen(presetName->data); i++) {
             if (!charStringIsNumber(presetName, i)) {
                 return PRESET_TYPE_INVALID;
             }
@@ -55,10 +54,12 @@ static PluginPresetType _pluginPresetGuessType(const CharString presetName)
 
         // If the preset name is all numeric, then it's an internal program number
         return PRESET_TYPE_INTERNAL_PROGRAM;
-    } else if (!strcasecmp(fileExtension, "fxp")) {
+    } else if (charStringIsEqualToCString(fileExtension, "fxp", true)) {
+        freeCharString(fileExtension);
         return PRESET_TYPE_FXP;
     } else {
         logCritical("Preset '%s' does not match any supported type", presetName->data);
+        freeCharString(fileExtension);
         return PRESET_TYPE_INVALID;
     }
 }
