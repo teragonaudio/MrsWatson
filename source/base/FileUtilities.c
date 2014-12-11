@@ -43,24 +43,6 @@
 #endif
 
 /** DEPRECATED */
-const char *getFileBasename(const char *filename)
-{
-    const char *lastDelimiter;
-
-    if (filename == NULL) {
-        return NULL;
-    }
-
-    lastDelimiter = strrchr(filename, PATH_DELIMITER);
-
-    if (lastDelimiter == NULL) {
-        return (char *)filename;
-    } else {
-        return lastDelimiter + 1;
-    }
-}
-
-/** DEPRECATED */
 const char *getFileExtension(const char *filename)
 {
     const char *dot;

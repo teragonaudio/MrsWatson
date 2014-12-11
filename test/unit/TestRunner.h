@@ -65,13 +65,30 @@ TestCase newTestCase(char *name, char *filename, int lineNumber, TestCaseExecFun
 void freeTestCase(TestCase self);
 void freeTestSuite(TestSuite self);
 
+static const char *_getFileBasename(const char *filename)
+{
+    const char *lastDelimiter;
+
+    if (filename == NULL) {
+        return NULL;
+    }
+
+    lastDelimiter = strrchr(filename, PATH_DELIMITER);
+
+    if (lastDelimiter == NULL) {
+        return (char *)filename;
+    } else {
+        return lastDelimiter + 1;
+    }
+}
+
 #define addTest(testSuite, name, testCaseFunc) { \
         addTestToTestSuite(testSuite, newTestCase(name, __FILE__, __LINE__, testCaseFunc)); \
     }
 
 #define assert(_result) { \
         if(!(_result)) { \
-            fprintf(stderr, "\nAssertion failed at %s:%d. ", getFileBasename(__FILE__), __LINE__); \
+            fprintf(stderr, "\nAssertion failed at %s:%d. ", _getFileBasename(__FILE__), __LINE__); \
             return 1; \
         } \
     }
@@ -83,7 +100,7 @@ void freeTestSuite(TestSuite self);
 #define assertIntEquals(expected, _result) { \
         int _resultInt = _result; \
         if(_resultInt != expected) { \
-            fprintf(stderr, "Assertion failed at %s:%d. Expected %d, got %d. ", getFileBasename(__FILE__), __LINE__, expected, _resultInt); \
+            fprintf(stderr, "Assertion failed at %s:%d. Expected %d, got %d. ", _getFileBasename(__FILE__), __LINE__, expected, _resultInt); \
             return 1; \
         } \
     }
@@ -91,7 +108,7 @@ void freeTestSuite(TestSuite self);
 #define assertLongEquals(expected, _result) { \
         long _resultLong = _result; \
         if(_resultLong != expected) { \
-            fprintf(stderr, "Assertion failed at %s:%d. Expected %lu, got %lu. ", getFileBasename(__FILE__), __LINE__, expected, _resultLong); \
+            fprintf(stderr, "Assertion failed at %s:%d. Expected %lu, got %lu. ", _getFileBasename(__FILE__), __LINE__, expected, _resultLong); \
             return 1; \
         } \
     }
@@ -100,7 +117,7 @@ void freeTestSuite(TestSuite self);
 #define assertUnsignedLongEquals(expected, _result) { \
         unsigned long _resultULong = _result; \
         if(_resultULong != expected) { \
-            fprintf(stderr, "Assertion failed at %s:%d. Expected %ld, got %ld. ", getFileBasename(__FILE__), __LINE__, expected, _resultULong); \
+            fprintf(stderr, "Assertion failed at %s:%d. Expected %ld, got %ld. ", _getFileBasename(__FILE__), __LINE__, expected, _resultULong); \
             return 1; \
         } \
     }
@@ -108,7 +125,7 @@ void freeTestSuite(TestSuite self);
 #define assertSizeEquals(expected, _result) { \
         size_t _resultSize = _result; \
         if(_result != expected) { \
-            fprintf(stderr, "Assertion failed at %s:%d. Expected %zu, got %zu. ", getFileBasename(__FILE__), __LINE__, expected, _resultSize); \
+            fprintf(stderr, "Assertion failed at %s:%d. Expected %zu, got %zu. ", _getFileBasename(__FILE__), __LINE__, expected, _resultSize); \
             return 1; \
         } \
     }
@@ -121,7 +138,7 @@ void freeTestSuite(TestSuite self);
         double expectedRounded = floor(expected * 100.0) / 100.0; \
         double _resultDiff = fabs(resultRounded - expectedRounded); \
         if(_resultDiff > tolerance) { \
-            fprintf(stderr, "Assertion failed at %s:%d. Expected %g, got %g. ", getFileBasename(__FILE__), __LINE__, expectedRounded, resultRounded); \
+            fprintf(stderr, "Assertion failed at %s:%d. Expected %g, got %g. ", _getFileBasename(__FILE__), __LINE__, expectedRounded, resultRounded); \
             return 1; \
         } \
     }
@@ -131,21 +148,21 @@ void freeTestSuite(TestSuite self);
         double expectedRounded = floor(expected * 100.0) / 100.0; \
         double _resultDiff = fabs(resultRounded - expectedRounded); \
         if(_resultDiff > tolerance) { \
-            fprintf(stderr, "Warning: timing assertion failed at %s:%d. Expected %g, got %g. ", getFileBasename(__FILE__), __LINE__, expectedRounded, resultRounded); \
+            fprintf(stderr, "Warning: timing assertion failed at %s:%d. Expected %g, got %g. ", _getFileBasename(__FILE__), __LINE__, expectedRounded, resultRounded); \
             return 0; \
         } \
     }
 
 #define assertCharStringEquals(expected, _result) { \
         if(!charStringIsEqualToCString(_result, expected, false)) { \
-            fprintf(stderr, "Assertion failed at %s:%d. Expected '%s', got '%s'. ", getFileBasename(__FILE__), __LINE__, expected, _result->data); \
+            fprintf(stderr, "Assertion failed at %s:%d. Expected '%s', got '%s'. ", _getFileBasename(__FILE__), __LINE__, expected, _result->data); \
             return 1; \
         } \
     }
 
 #define assertCharStringContains(expected, _result) { \
         if(strstr(_result->data, expected) == NULL) { \
-            fprintf(stderr, "Assertion failed at %s:%d. Expected '%s' to contain '%s'. ", getFileBasename(__FILE__), __LINE__, _result->data, expected); \
+            fprintf(stderr, "Assertion failed at %s:%d. Expected '%s' to contain '%s'. ", _getFileBasename(__FILE__), __LINE__, _result->data, expected); \
             return 1; \
         } \
     }

@@ -40,8 +40,6 @@
 #endif
 
 /** DEPRECATED */
-const char *getFileBasename(const char *filename);
-/** DEPRECATED */
 const char *getFileExtension(const char *filename);
 
 #endif
