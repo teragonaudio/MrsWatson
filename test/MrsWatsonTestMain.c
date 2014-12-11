@@ -13,7 +13,6 @@
 
 #include "app/ProgramOption.h"
 #include "base/File.h"
-#include "base/FileUtilities.h"
 #include "base/PlatformInfo.h"
 #include "unit/ApplicationRunner.h"
 
@@ -194,7 +193,7 @@ int main(int argc, char *argv[])
     programOptions = _newTestProgramOptions();
 
     if (!programOptionsParseArgs(programOptions, argc, argv)) {
-        printf("Or run %s --help (option) to see help for a single option\n", getFileBasename(argv[0]));
+        printf("Or run with --help (option) to see help for a single option\n");
         return -1;
     }
 
@@ -271,7 +270,7 @@ int main(int argc, char *argv[])
 
         if (testSuite == NULL) {
             printf("ERROR: Invalid test suite '%s'\n", testSuiteToRun->data);
-            printf("Run '%s --list' suite to show possible test suites\n", getFileBasename(argv[0]));
+            printf("Run with '--list' suite to show possible test suites\n");
             freeLinkedListAndItems(testSuites, (LinkedListFreeItemFunc)freeTestSuite);
             return -1;
         } else {
