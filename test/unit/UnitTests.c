@@ -38,30 +38,30 @@ static void _sumTestSuiteResults(void *item, void *extraData)
 LinkedList getTestSuites(void);
 LinkedList getTestSuites(void)
 {
-    LinkedList internalTestSuites = newLinkedList();
-    linkedListAppend(internalTestSuites, addAudioClockTests());
-    linkedListAppend(internalTestSuites, addAudioSettingsTests());
-    linkedListAppend(internalTestSuites, addCharStringTests());
-    linkedListAppend(internalTestSuites, addEndianTests());
-    linkedListAppend(internalTestSuites, addFileTests());
-    linkedListAppend(internalTestSuites, addLinkedListTests());
-    linkedListAppend(internalTestSuites, addMidiSequenceTests());
-    linkedListAppend(internalTestSuites, addMidiSourceTests());
-    linkedListAppend(internalTestSuites, addPlatformInfoTests());
-    linkedListAppend(internalTestSuites, addPluginTests());
-    linkedListAppend(internalTestSuites, addPluginChainTests());
-    linkedListAppend(internalTestSuites, addPluginPresetTests());
-    linkedListAppend(internalTestSuites, addPluginVst2xIdTests());
-    linkedListAppend(internalTestSuites, addProgramOptionTests());
-    linkedListAppend(internalTestSuites, addSampleBufferTests());
-    linkedListAppend(internalTestSuites, addSampleSourceTests());
-    linkedListAppend(internalTestSuites, addTaskTimerTests());
+    LinkedList unitTestSuites = newLinkedList();
+    linkedListAppend(unitTestSuites, addAudioClockTests());
+    linkedListAppend(unitTestSuites, addAudioSettingsTests());
+    linkedListAppend(unitTestSuites, addCharStringTests());
+    linkedListAppend(unitTestSuites, addEndianTests());
+    linkedListAppend(unitTestSuites, addFileTests());
+    linkedListAppend(unitTestSuites, addLinkedListTests());
+    linkedListAppend(unitTestSuites, addMidiSequenceTests());
+    linkedListAppend(unitTestSuites, addMidiSourceTests());
+    linkedListAppend(unitTestSuites, addPlatformInfoTests());
+    linkedListAppend(unitTestSuites, addPluginTests());
+    linkedListAppend(unitTestSuites, addPluginChainTests());
+    linkedListAppend(unitTestSuites, addPluginPresetTests());
+    linkedListAppend(unitTestSuites, addPluginVst2xIdTests());
+    linkedListAppend(unitTestSuites, addProgramOptionTests());
+    linkedListAppend(unitTestSuites, addSampleBufferTests());
+    linkedListAppend(unitTestSuites, addSampleSourceTests());
+    linkedListAppend(unitTestSuites, addTaskTimerTests());
 
-    linkedListAppend(internalTestSuites, addAnalysisClippingTests());
-    linkedListAppend(internalTestSuites, addAnalysisDistortionTests());
-    linkedListAppend(internalTestSuites, addAnalysisSilenceTests());
+    linkedListAppend(unitTestSuites, addAnalysisClippingTests());
+    linkedListAppend(unitTestSuites, addAnalysisDistortionTests());
+    linkedListAppend(unitTestSuites, addAnalysisSilenceTests());
 
-    return internalTestSuites;
+    return unitTestSuites;
 }
 
 static void _setTestSuiteOnlyPrintFailing(void *item, void *userData)
@@ -70,8 +70,8 @@ static void _setTestSuiteOnlyPrintFailing(void *item, void *userData)
     testSuite->onlyPrintFailing = true;
 }
 
-TestSuite runInternalTestSuite(LinkedList testSuites, boolByte onlyPrintFailing);
-TestSuite runInternalTestSuite(LinkedList testSuites, boolByte onlyPrintFailing)
+TestSuite runUnitTests(LinkedList testSuites, boolByte onlyPrintFailing);
+TestSuite runUnitTests(LinkedList testSuites, boolByte onlyPrintFailing)
 {
     TestSuite suiteResults;
 
@@ -151,10 +151,10 @@ static void _printTestsInSuite(void *item, void *userData)
     linkedListForeach(testSuite->testCases, _printTestCases, testSuite->name);
 }
 
-void printInternalTests(void);
-void printInternalTests(void)
+void printUnitTestSuites(void);
+void printUnitTestSuites(void)
 {
-    LinkedList internalTestSuites = getTestSuites();
-    linkedListForeach(internalTestSuites, _printTestsInSuite, NULL);
-    freeLinkedListAndItems(internalTestSuites, (LinkedListFreeItemFunc)freeTestSuite);
+    LinkedList unitTestSuites = getTestSuites();
+    linkedListForeach(unitTestSuites, _printTestsInSuite, NULL);
+    freeLinkedListAndItems(unitTestSuites, (LinkedListFreeItemFunc)freeTestSuite);
 }

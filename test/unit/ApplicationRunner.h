@@ -26,9 +26,9 @@ typedef struct {
 typedef TestEnvironmentMembers *TestEnvironment;
 TestEnvironment newTestEnvironment(char *applicationPath, char *resourcesPath);
 
-void runApplicationTest(const TestEnvironment testEnvironment,
-                        const char *testName, CharString testArguments,
-                        ReturnCodes expectedResultCode, const char *outputFileType);
+void runIntegrationTest(const TestEnvironment testEnvironment,
+        const char *testName, CharString testArguments,
+        ReturnCodes expectedResultCode, const char *outputFileType);
 
 CharString buildTestArgumentString(const char *arguments, ...);
 CharString getTestResourceFilename(const char *resourcesPath, const char *resourceType, const char *resourceName);

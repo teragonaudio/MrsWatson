@@ -148,9 +148,9 @@ static const char *_getResultCodeString(const int resultCode)
     }
 }
 
-void runApplicationTest(const TestEnvironment testEnvironment,
-                        const char *testName, CharString testArguments,
-                        ReturnCodes expectedResultCode, const char *outputFileType)
+void runIntegrationTest(const TestEnvironment testEnvironment,
+        const char *testName, CharString testArguments,
+        ReturnCodes expectedResultCode, const char *outputFileType)
 {
     int result = -1;
     ReturnCodes resultCode = (ReturnCodes)result;
