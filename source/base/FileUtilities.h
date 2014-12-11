@@ -39,18 +39,6 @@
 #define ROOT_DIRECTORY "C:\\"
 #endif
 
-/** DEPRECATED */
-boolByte _fileExists(const char *path);
-/** DEPRECATED */
-boolByte copyFileToDirectory(const CharString fileAbsolutePath, const CharString directoryAbsolutePath);
-
-/** DEPRECATED */
-boolByte makeDirectory(const CharString absolutePath);
-/** DEPRECATED */
-LinkedList listDirectory(const CharString directory);
-/** DEPRECATED */
-boolByte removeDirectory(const CharString absolutePath);
-
 // const char* is used here as it is assumed that the extensions will be defined by the preprocessor
 // for given platforms, not kept in stack memory.
 /** DEPRECATED */
@@ -64,7 +52,5 @@ boolByte isAbsolutePath(const CharString path);
 const char *getFileBasename(const char *filename);
 /** DEPRECATED */
 const char *getFileExtension(const char *filename);
-/** DEPRECATED */
-void getFileDirname(const CharString filename, CharString outString);
 
 #endif
