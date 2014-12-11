@@ -99,6 +99,10 @@ void runIntegrationTests(TestEnvironment environment)
                       );
 
     // Internal plugins
+    runIntegrationTest(environment, "Process with internal limiter",
+                       buildTestArgumentString("--plugin mrs_limiter --input \"%s\"", a440_stereo_pcm),
+                       RETURN_CODE_SUCCESS, kDefaultTestOutputFileType);
+
     runIntegrationTest(environment, "Process with internal passthru plugin",
                        buildTestArgumentString("--plugin mrs_passthru --input \"%s\"", a440_stereo_pcm),
                        RETURN_CODE_SUCCESS, kDefaultTestOutputFileType

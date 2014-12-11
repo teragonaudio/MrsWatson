@@ -32,6 +32,7 @@
 #include "audio/AudioSettings.h"
 #include "logging/EventLogger.h"
 #include "plugin/Plugin.h"
+#include "plugin/PluginLimiter.h"
 #include "plugin/PluginPassthru.h"
 #include "plugin/PluginVst2x.h"
 #include "plugin/PluginSilence.h"
@@ -108,17 +109,12 @@ Plugin pluginFactory(const CharString pluginName, const CharString pluginRoot)
         return newPluginVst2x(pluginName, pluginRoot);
 
     case PLUGIN_TYPE_INTERNAL:
-        if (_internalPluginNameMatches(pluginName, kInternalPluginPassthruName)) {
+        if (_internalPluginNameMatches(pluginName, kInternalPluginLimiterName)) {
+            return newPluginLimiter(pluginName);
+        } else if (_internalPluginNameMatches(pluginName, kInternalPluginPassthruName)) {
             return newPluginPassthru(pluginName);
         } else if (_internalPluginNameMatches(pluginName, kInternalPluginSilenceName)) {
             return newPluginSilence(pluginName);
-        }
-        // h4r h4r easter eggs
-        else if (_internalPluginNameMatches(pluginName, INTERNAL_PLUGIN_PREFIX "watson")) {
-            logError("Yo dawg, I heard you like MrsWatson, so I put some mrs_watson \
-in your MrsWatson so you can run plugins in your plugins!");
-            logError("http://open.spotify.com/track/4apmxBhNKCBuiYEGHcK5yo");
-            return NULL;
         } else {
             logError("'%s' is not a recognized internal plugin", pluginName->data);
             return NULL;
