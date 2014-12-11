@@ -31,7 +31,7 @@
 #include <time.h>
 
 #include "app/BuildInfo.h"
-#include "base/FileUtilities.h"
+#include "base/File.h"
 #include "base/PlatformInfo.h"
 #include "logging/ErrorReporter.h"
 #include "logging/EventLogger.h"
@@ -120,10 +120,35 @@ void errorReporterInitialize(ErrorReporter self)
 #elif WINDOWS
     SHGetFolderPathA(NULL, CSIDL_DESKTOPDIRECTORY, NULL, 0, self->desktopPath->data);
 #endif
-    snprintf(self->reportDirPath->data, self->reportDirPath->capacity,
-             "%s%c%s", self->desktopPath->data, PATH_DELIMITER, self->reportName->data);
-    makeDirectory(self->reportDirPath);
 
+    // Try to place the report on the user's desktop. However, if we cannot find
+    // the desktop (which may occur with localized Linux installations, for instance),
+    // then just dump it in the current directory instead.
+    File desktopPath = newFileWithPath(self->desktopPath);
+    File reportPath;
+
+    if (!fileExists(desktopPath)) {
+        logWarn("Could not find desktop location, placing error report in current directory instead");
+        CharString currentDirString = fileGetCurrentDirectory();
+        File currentDir = newFileWithPath(currentDirString);
+        reportPath = newFileWithParent(currentDir, self->reportName);
+        freeFile(currentDir);
+        freeCharString(currentDirString);
+    } else {
+        reportPath = newFileWithParent(desktopPath, self->reportName);
+        freeFile(desktopPath);
+    }
+
+    if (fileExists(reportPath)) {
+        logCritical("The path '%s' already contains a previous error report. Please remove the report data and try again.");
+    } else {
+        fileCreate(reportPath, kFileTypeDirectory);
+    }
+
+    // Now we should have a real error report path
+    charStringCopy(self->reportDirPath, reportPath->absolutePath);
+
+    freeFile(reportPath);
     freeCharString(wrappedInfoText);
     freeCharString(infoText);
 }
@@ -153,31 +178,44 @@ void errorReporterCreateLauncher(ErrorReporter self, int argc, char *argv[])
 
 void errorReporterRemapPath(ErrorReporter self, CharString path)
 {
-    CharString basename = newCharString();
-    CharString outString = newCharStringWithCapacity(path->capacity);
+    File pathAsFile = newFileWithPath(path);
+    CharString basename = fileGetBasename(pathAsFile);
+    File parent = newFileWithPath(self->reportDirPath);
+    File remappedPath = newFileWithParent(parent, basename);
 
-    charStringCopyCString(basename, getFileBasename(path->data));
-    buildAbsolutePath(self->reportDirPath, basename, NULL, outString);
-    charStringCopy(path, outString);
+    charStringCopy(path, remappedPath->absolutePath);
 
     freeCharString(basename);
-    freeCharString(outString);
+    freeFile(parent);
+    freeFile(pathAsFile);
+    freeFile(remappedPath);
 }
 
 boolByte errorReportCopyFileToReport(ErrorReporter self, CharString path)
 {
     boolByte success;
-    CharString destination = newCharString();
 
+    // Copy the destination path so that the original is not modified
+    CharString destination = newCharString();
     charStringCopy(destination, path);
     errorReporterRemapPath(self, destination);
-    success = copyFileToDirectory(path, self->reportDirPath);
+
+    File reportDirPath = newFileWithPath(self->reportDirPath);
+    File distinationPath = newFileWithPath(path);
+    File result = fileCopyTo(distinationPath, reportDirPath);
+    success = fileExists(result);
 
     freeCharString(destination);
+    freeFile(reportDirPath);
+    freeFile(distinationPath);
+    freeFile(result);
     return success;
 }
 
-// TODO: Refactor this into FileUtilities
+// This could live in File, however this is currently the only place it is being used
+// and also it's a rather cheap hack, so I would prefer to keep it as a static function
+// here until another use-case presents itself. If that should happen, then we should
+// refactor this code properly and move it to File.
 static boolByte _copyDirectoryToErrorReportDir(ErrorReporter self, CharString path)
 {
     boolByte success;
