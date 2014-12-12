@@ -29,91 +29,105 @@
 #include "logging/EventLogger.h"
 #include "plugin/PluginGain.h"
 
-const char* kInternalPluginGainName = INTERNAL_PLUGIN_PREFIX "gain";
+const char *kInternalPluginGainName = INTERNAL_PLUGIN_PREFIX "gain";
 
-static void _pluginGainEmpty(void* pluginPtr) {
-  // Nothing to do here
+static void _pluginGainEmpty(void *pluginPtr)
+{
+    // Nothing to do here
 }
 
-static boolByte _pluginGainOpen(void* pluginPtr) {
-  return true;
+static boolByte _pluginGainOpen(void *pluginPtr)
+{
+    return true;
 }
 
-static void _pluginGainGetAbsolutePath(void* pluginPtr, CharString outPath) {
-  // Internal plugins don't have a path, and thus can't be copied. So just copy
-  // an empty string here and let any callers needing the absolute path to check
-  // for this value before doing anything important.
-  charStringClear(outPath);
+static void _pluginGainGetAbsolutePath(void *pluginPtr, CharString outPath)
+{
+    // Internal plugins don't have a path, and thus can't be copied. So just copy
+    // an empty string here and let any callers needing the absolute path to check
+    // for this value before doing anything important.
+    charStringClear(outPath);
 }
 
-static void _pluginGainDisplayInfo(void* pluginPtr) {
-  logInfo("Information for Internal plugin '%s'", kInternalPluginGainName);
-  logInfo("Type: effect, parameters: none");
-  logInfo("Description: a basic gain effect");
+static void _pluginGainDisplayInfo(void *pluginPtr)
+{
+    logInfo("Information for Internal plugin '%s'", kInternalPluginGainName);
+    logInfo("Type: effect, parameters: none");
+    logInfo("Description: a basic gain effect");
 }
 
-static int _pluginGainGetSetting(void* pluginPtr, PluginSetting pluginSetting) {
-  switch(pluginSetting) {
+static int _pluginGainGetSetting(void *pluginPtr, PluginSetting pluginSetting)
+{
+    switch (pluginSetting) {
     case PLUGIN_SETTING_TAIL_TIME_IN_MS:
-      return 0;
+        return 0;
+
     case PLUGIN_NUM_INPUTS:
-      return 2;
+        return 2;
+
     case PLUGIN_NUM_OUTPUTS:
-      return 2;
+        return 2;
+
     default:
-      return 0;
-  }
-}
-
-static void _pluginGainProcessAudio(void* pluginPtr, SampleBuffer inputs, SampleBuffer outputs) {
-  Plugin plugin = (Plugin)pluginPtr;
-  PluginGainSettings settings = (PluginGainSettings)plugin->extraData;
-  unsigned long channel, sample;
-
-  sampleBufferCopyAndMapChannels(outputs, inputs);
-  for(channel = 0; channel < outputs->numChannels; ++channel) {
-    for(sample = 0; sample < outputs->blocksize; ++sample) {
-      outputs->samples[channel][sample] *= settings->gain;
+        return 0;
     }
-  }
 }
 
-static void _pluginGainProcessMidiEvents(void* pluginPtr, LinkedList midiEvents) {
-  // Nothing to do here
+static void _pluginGainProcessAudio(void *pluginPtr, SampleBuffer inputs, SampleBuffer outputs)
+{
+    Plugin plugin = (Plugin)pluginPtr;
+    PluginGainSettings settings = (PluginGainSettings)plugin->extraData;
+    unsigned long channel, sample;
+
+    sampleBufferCopyAndMapChannels(outputs, inputs);
+
+    for (channel = 0; channel < outputs->numChannels; ++channel) {
+        for (sample = 0; sample < outputs->blocksize; ++sample) {
+            outputs->samples[channel][sample] *= settings->gain;
+        }
+    }
 }
 
-static boolByte _pluginGainSetParameter(void* pluginPtr, unsigned int i, float value) {
-  Plugin plugin = (Plugin)pluginPtr;
-  PluginGainSettings settings = (PluginGainSettings)plugin->extraData;
+static void _pluginGainProcessMidiEvents(void *pluginPtr, LinkedList midiEvents)
+{
+    // Nothing to do here
+}
 
-  switch(i) {
+static boolByte _pluginGainSetParameter(void *pluginPtr, unsigned int i, float value)
+{
+    Plugin plugin = (Plugin)pluginPtr;
+    PluginGainSettings settings = (PluginGainSettings)plugin->extraData;
+
+    switch (i) {
     case PLUGIN_GAIN_SETTINGS_GAIN:
-      settings->gain = value;
-      return true;
+        settings->gain = value;
+        return true;
+
     default:
-      logInternalError("Attempt to set invalid parameter %d on internal gain plugin", i);
-      return false;
-  }
+        logInternalError("Attempt to set invalid parameter %d on internal gain plugin", i);
+        return false;
+    }
 }
 
-Plugin newPluginGain(const CharString pluginName) {
-  Plugin plugin = _newPlugin(PLUGIN_TYPE_INTERNAL, PLUGIN_TYPE_EFFECT);
-  PluginGainSettings settings = (PluginGainSettings)malloc(sizeof(PluginGainSettingsMembers));
+Plugin newPluginGain(const CharString pluginName)
+{
+    Plugin plugin = _newPlugin(PLUGIN_TYPE_INTERNAL, PLUGIN_TYPE_EFFECT);
+    PluginGainSettings settings = (PluginGainSettings)malloc(sizeof(PluginGainSettingsMembers));
 
-  charStringCopy(plugin->pluginName, pluginName);
-  charStringCopyCString(plugin->pluginLocation, "Internal");
+    charStringCopy(plugin->pluginName, pluginName);
+    charStringCopyCString(plugin->pluginLocation, "Internal");
 
-  plugin->openPlugin = _pluginGainOpen;
-  plugin->displayInfo = _pluginGainDisplayInfo;
-  plugin->getSetting = _pluginGainGetSetting;
-  plugin->prepareForProcessing = _pluginGainEmpty;
-  plugin->processAudio = _pluginGainProcessAudio;
-  plugin->processMidiEvents = _pluginGainProcessMidiEvents;
-  plugin->setParameter = _pluginGainSetParameter;
-  plugin->closePlugin = _pluginGainEmpty;
-  plugin->freePluginData = _pluginGainEmpty;
+    plugin->openPlugin = _pluginGainOpen;
+    plugin->displayInfo = _pluginGainDisplayInfo;
+    plugin->getSetting = _pluginGainGetSetting;
+    plugin->prepareForProcessing = _pluginGainEmpty;
+    plugin->processAudio = _pluginGainProcessAudio;
+    plugin->processMidiEvents = _pluginGainProcessMidiEvents;
+    plugin->setParameter = _pluginGainSetParameter;
+    plugin->closePlugin = _pluginGainEmpty;
+    plugin->freePluginData = _pluginGainEmpty;
 
-  settings->gain = 1.0f;
-  plugin->extraData = settings;
-  return plugin;
+    settings->gain = 1.0f;
+    plugin->extraData = settings;
+    return plugin;
 }

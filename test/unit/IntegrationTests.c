@@ -21,82 +21,64 @@ void runIntegrationTests(TestEnvironment environment)
     // Basic non-processing operations
     runIntegrationTest(environment, "List plugins",
                        newCharStringWithCString("--list-plugins"),
-                       RETURN_CODE_NOT_RUN, NULL
-                      );
+                       RETURN_CODE_NOT_RUN, NULL);
     runIntegrationTest(environment, "List file types",
                        newCharStringWithCString("--list-file-types"),
-                       RETURN_CODE_NOT_RUN, NULL
-                      );
+                       RETURN_CODE_NOT_RUN, NULL);
     runIntegrationTest(environment, "Invalid argument",
                        newCharStringWithCString("--invalid"),
-                       RETURN_CODE_INVALID_ARGUMENT, NULL
-                      );
+                       RETURN_CODE_INVALID_ARGUMENT, NULL);
 
     // Invalid configurations
     runIntegrationTest(environment, "Run with no plugins",
                        newCharString(),
-                       RETURN_CODE_INVALID_PLUGIN_CHAIN, NULL
-                      );
+                       RETURN_CODE_INVALID_PLUGIN_CHAIN, NULL);
     runIntegrationTest(environment, "Effect with no input source",
                        newCharStringWithCString("--plugin again"),
-                       RETURN_CODE_MISSING_REQUIRED_OPTION, NULL
-                      );
+                       RETURN_CODE_MISSING_REQUIRED_OPTION, NULL);
     runIntegrationTest(environment, "Instrument with no MIDI source",
                        newCharStringWithCString("--plugin vstxsynth"),
-                       RETURN_CODE_MISSING_REQUIRED_OPTION, NULL
-                      );
+                       RETURN_CODE_MISSING_REQUIRED_OPTION, NULL);
     runIntegrationTest(environment, "Plugin chain with instrument not at head",
                        buildTestArgumentString("--plugin \"again;vstxsynth\" --input \"%s\"", a440_stereo_pcm),
-                       RETURN_CODE_INVALID_PLUGIN_CHAIN, NULL
-                      );
+                       RETURN_CODE_INVALID_PLUGIN_CHAIN, NULL);
     runIntegrationTest(environment, "Plugin with invalid preset",
                        buildTestArgumentString("--plugin \"again,invalid.fxp\" --input \"%s\"", a440_stereo_pcm),
-                       RETURN_CODE_INVALID_ARGUMENT, NULL
-                      );
+                       RETURN_CODE_INVALID_ARGUMENT, NULL);
     runIntegrationTest(environment, "Preset for wrong plugin",
                        buildTestArgumentString("--plugin \"vstxsynth,%s\" --midi-file \"%s\"", again_test_fxp, c_scale_mid),
-                       RETURN_CODE_INVALID_ARGUMENT, NULL
-                      );
+                       RETURN_CODE_INVALID_ARGUMENT, NULL);
     runIntegrationTest(environment, "Set invalid parameter",
                        buildTestArgumentString("--plugin again --input \"%s\" --parameter 1,0.5", a440_stereo_pcm),
-                       RETURN_CODE_INVALID_ARGUMENT, NULL
-                      );
+                       RETURN_CODE_INVALID_ARGUMENT, NULL);
     runIntegrationTest(environment, "Set invalid time signature",
                        buildTestArgumentString("--plugin again --input \"%s\" --time-signature invalid", a440_stereo_pcm),
-                       RETURN_CODE_INVALID_ARGUMENT, NULL
-                      );
+                       RETURN_CODE_INVALID_ARGUMENT, NULL);
 
     // Audio file types
     runIntegrationTest(environment, "Read WAV file",
                        buildTestArgumentString("--plugin again --input \"%s\"", a440_stereo_wav),
-                       RETURN_CODE_SUCCESS, kDefaultTestOutputFileType
-                      );
+                       RETURN_CODE_SUCCESS, kDefaultTestOutputFileType);
     runIntegrationTest(environment, "Write WAV file",
                        buildTestArgumentString("--plugin again --input \"%s\"", a440_stereo_pcm),
-                       RETURN_CODE_SUCCESS, "wav"
-                      );
+                       RETURN_CODE_SUCCESS, "wav");
 
     // Configuration tests
     runIntegrationTest(environment, "Read mono input source",
                        buildTestArgumentString("--plugin again --input \"%s\" --channels 1", a440_mono_pcm),
-                       RETURN_CODE_SUCCESS, kDefaultTestOutputFileType
-                      );
+                       RETURN_CODE_SUCCESS, kDefaultTestOutputFileType);
     runIntegrationTest(environment, "Read with user-defined sample rate",
                        buildTestArgumentString("--plugin again --input \"%s\" --sample-rate 48000", a440_stereo_pcm),
-                       RETURN_CODE_SUCCESS, kDefaultTestOutputFileType
-                      );
+                       RETURN_CODE_SUCCESS, kDefaultTestOutputFileType);
     runIntegrationTest(environment, "Read with user-defined blocksize",
                        buildTestArgumentString("--plugin again --input \"%s\" --blocksize 128", a440_stereo_pcm),
-                       RETURN_CODE_SUCCESS, kDefaultTestOutputFileType
-                      );
+                       RETURN_CODE_SUCCESS, kDefaultTestOutputFileType);
     runIntegrationTest(environment, "Set parameter",
                        buildTestArgumentString("--plugin again --input \"%s\" --parameter 0,0.5", a440_stereo_pcm),
-                       RETURN_CODE_SUCCESS, kDefaultTestOutputFileType
-                      );
+                       RETURN_CODE_SUCCESS, kDefaultTestOutputFileType);
     runIntegrationTest(environment, "Set time signature",
                        buildTestArgumentString("--plugin again --input \"%s\" --time-signature 3/4", a440_stereo_pcm),
-                       RETURN_CODE_SUCCESS, kDefaultTestOutputFileType
-                      );
+                       RETURN_CODE_SUCCESS, kDefaultTestOutputFileType);
 
     // Internal plugins
     runIntegrationTest(environment, "Process with internal limiter",
@@ -104,47 +86,38 @@ void runIntegrationTests(TestEnvironment environment)
                        RETURN_CODE_SUCCESS, kDefaultTestOutputFileType);
     runIntegrationTest(environment, "Process with internal gain plugin",
                        buildTestArgumentString("--plugin mrs_gain --parameter 0,0.5 --input \"%s\"", a440_stereo_pcm),
-                       RETURN_CODE_SUCCESS, kDefaultTestOutputFileType
-    );
+                       RETURN_CODE_SUCCESS, kDefaultTestOutputFileType);
     runIntegrationTest(environment, "Process with internal gain plugin and invalid parameter",
                        buildTestArgumentString("--plugin mrs_gain --parameter 1,0.5 --input \"%s\"", a440_stereo_pcm),
-                       RETURN_CODE_INVALID_ARGUMENT, NULL
-    );
+                       RETURN_CODE_INVALID_ARGUMENT, NULL);
     runIntegrationTest(environment, "Process with internal passthru plugin",
                        buildTestArgumentString("--plugin mrs_passthru --input \"%s\"", a440_stereo_pcm),
-                       RETURN_CODE_SUCCESS, kDefaultTestOutputFileType
-                      );
+                       RETURN_CODE_SUCCESS, kDefaultTestOutputFileType);
 #if 0
     // This test case works, but fails the analysis check for silence (obviously).
     // It will remain disabled until we have a smarter way to specify which analysis
     // functions should be run for each integration test.
     runIntegrationTest(environment, "Process with silence generator",
                        newCharStringWithCString("--plugin mrs_silence --max-time 1000"),
-                       RETURN_CODE_SUCCESS, kDefaultTestOutputFileType
-                      );
+                       RETURN_CODE_SUCCESS, kDefaultTestOutputFileType);
 #endif
 
     // Plugin processing tests
     runIntegrationTest(environment, "Process audio with again plugin",
                        buildTestArgumentString("--plugin again --input \"%s\"", a440_stereo_pcm),
-                       RETURN_CODE_SUCCESS, kDefaultTestOutputFileType
-                      );
+                       RETURN_CODE_SUCCESS, kDefaultTestOutputFileType);
     runIntegrationTest(environment, "Process MIDI with vstxsynth plugin",
                        buildTestArgumentString("--plugin vstxsynth --midi-file \"%s\"", c_scale_mid),
-                       RETURN_CODE_SUCCESS, kDefaultTestOutputFileType
-                      );
+                       RETURN_CODE_SUCCESS, kDefaultTestOutputFileType);
     runIntegrationTest(environment, "Process effect chain",
                        buildTestArgumentString("--plugin vstxsynth,again --midi-file \"%s\"", c_scale_mid),
-                       RETURN_CODE_SUCCESS, kDefaultTestOutputFileType
-                      );
+                       RETURN_CODE_SUCCESS, kDefaultTestOutputFileType);
     runIntegrationTest(environment, "Load FXP preset to VST",
                        buildTestArgumentString("--plugin \"again,%s\" --input \"%s\"", again_test_fxp, a440_stereo_pcm),
-                       RETURN_CODE_SUCCESS, kDefaultTestOutputFileType
-                      );
+                       RETURN_CODE_SUCCESS, kDefaultTestOutputFileType);
     runIntegrationTest(environment, "Load internal program to VST",
                        buildTestArgumentString("--plugin vstxsynth,2 --midi-file \"%s\"", c_scale_mid),
-                       RETURN_CODE_SUCCESS, kDefaultTestOutputFileType
-                      );
+                       RETURN_CODE_SUCCESS, kDefaultTestOutputFileType);
 
     _printTestSummary(environment->results->numSuccess + environment->results->numFail + environment->results->numSkips,
                       environment->results->numSuccess, environment->results->numFail, environment->results->numSkips);

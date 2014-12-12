@@ -110,9 +110,9 @@ Plugin pluginFactory(const CharString pluginName, const CharString pluginRoot)
         return newPluginVst2x(pluginName, pluginRoot);
 
     case PLUGIN_TYPE_INTERNAL:
-        if(_internalPluginNameMatches(pluginName, kInternalPluginGainName)) {
+        if (_internalPluginNameMatches(pluginName, kInternalPluginGainName)) {
             return newPluginGain(pluginName);
-        } else if(_internalPluginNameMatches(pluginName, kInternalPluginLimiterName)) {
+        } else if (_internalPluginNameMatches(pluginName, kInternalPluginLimiterName)) {
             return newPluginLimiter(pluginName);
         } else if (_internalPluginNameMatches(pluginName, kInternalPluginPassthruName)) {
             return newPluginPassthru(pluginName);
