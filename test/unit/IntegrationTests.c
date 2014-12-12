@@ -89,10 +89,6 @@ void runIntegrationTests(TestEnvironment environment)
                        buildTestArgumentString("--plugin again --input \"%s\" --blocksize 128", a440_stereo_pcm),
                        RETURN_CODE_SUCCESS, kDefaultTestOutputFileType
                       );
-    runIntegrationTest(environment, "Add tail-time",
-                       buildTestArgumentString("--plugin again --input \"%s\" --tail-time 10", a440_stereo_pcm),
-                       RETURN_CODE_SUCCESS, kDefaultTestOutputFileType
-                      );
     runIntegrationTest(environment, "Set parameter",
                        buildTestArgumentString("--plugin again --input \"%s\" --parameter 0,0.5", a440_stereo_pcm),
                        RETURN_CODE_SUCCESS, kDefaultTestOutputFileType
