@@ -90,13 +90,13 @@ extern "C" {
 
         switch (platformType) {
         case PLATFORM_MACOSX:
-            return "vst";
+            return ".vst";
 
         case PLATFORM_WINDOWS:
-            return "dll";
+            return ".dll";
 
         case PLATFORM_LINUX:
-            return "so";
+            return ".so";
 
         default:
             return EMPTY_STRING;
@@ -114,7 +114,7 @@ extern "C" {
         dot = strrchr(itemPath->data, '.');
 
         if (dot != NULL) {
-            if (!strncmp(dot + 1, _getVst2xPlatformExtension(), 3)) {
+            if (!strncmp(dot, _getVst2xPlatformExtension(), 3)) {
                 *dot = '\0';
                 logInfo("  %s", itemPath->data);
                 *pluginsFound = true;
@@ -205,7 +205,6 @@ extern "C" {
 
         if (pluginSearchExtension == NULL) {
             freeFile(pluginSearchPath);
-            charStringAppendCString(pluginSearchName, ".");
             charStringAppendCString(pluginSearchName, _getVst2xPlatformExtension());
             pluginSearchPath = newFileWithParent(location, pluginSearchName);
         }
