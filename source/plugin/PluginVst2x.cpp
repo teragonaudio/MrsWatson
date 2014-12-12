@@ -467,15 +467,14 @@ extern "C" {
             charStringCopy(pluginNameWithExtension, plugin->pluginName);
             charStringAppendCString(pluginNameWithExtension, _getVst2xPlatformExtension());
             File pluginAbsolutePath = newFileWithParent(pluginLocationPath, pluginNameWithExtension);
-            charStringCopy(plugin->pluginLocation, pluginAbsolutePath->absolutePath);
+            charStringCopy(plugin->pluginAbsolutePath, pluginAbsolutePath->absolutePath);
             freeFile(pluginAbsolutePath);
             freeFile(pluginLocationPath);
             freeCharString(pluginNameWithExtension);
         }
 
-        freeCharString(pluginBasename);
         freeFile(pluginPath);
-        logDebug("Plugin location is '%s'", plugin->pluginLocation->data);
+        logDebug("Plugin location is '%s'", plugin->pluginAbsolutePath->data);
 
         data->libraryHandle = getLibraryHandleForPlugin(plugin->pluginAbsolutePath);
 
@@ -494,6 +493,7 @@ extern "C" {
         // actual location. Now that the plugin has been loaded, we can set a friendlier name.
         CharString temp = plugin->pluginName;
         plugin->pluginName = newCharStringWithCString(pluginBasename->data);
+        freeCharString(pluginBasename);
         freeCharString(temp);
 
         if (data->shellPluginId && subpluginIdString != NULL) {
