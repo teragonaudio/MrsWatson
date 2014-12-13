@@ -4,3 +4,6 @@
 [submodule "vendor/audiofile"]
 	path = vendor/audiofile
 	url = git://github.com/teragonaudio/audiofile.git
+[submodule "vendor/flac"]
+	path = vendor/flac
+	url = git://github.com/teragonaudio/flac.git
