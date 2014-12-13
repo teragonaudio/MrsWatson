@@ -5,7 +5,7 @@
 /* #undef AC_APPLE_UNIVERSAL_BUILD */
 
 /* Whether FLAC is enabled. */
-#define ENABLE_FLAC 1
+#define ENABLE_FLAC USE_FLAC
 
 /* Define to 1 if you have the <dlfcn.h> header file. */
 #define HAVE_DLFCN_H 1
