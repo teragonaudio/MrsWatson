@@ -13,9 +13,6 @@ set(mrswatsoncore_SOURCES
   base/PlatformInfo.c
   io/RiffFile.c
   io/SampleSource.c
-  io/SampleSourceAiff.c
-  io/SampleSourceAudiofile.c
-  io/SampleSourceFlac.c
   io/SampleSourcePcm.c
   io/SampleSourceSilence.c
   io/SampleSourceWave.c
@@ -58,9 +55,6 @@ set(mrswatsoncore_HEADERS
   base/Types.h
   io/RiffFile.h
   io/SampleSource.h
-  io/SampleSourceAiff.h
-  io/SampleSourceAudiofile.h
-  io/SampleSourceFlac.h
   io/SampleSourcePcm.h
   io/SampleSourceSilence.h
   io/SampleSourceWave.h
