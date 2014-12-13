@@ -281,16 +281,16 @@ void writeOutput(SampleSource outputSource, SampleSource silenceSource, SampleBu
     unsigned long nextBlockStart = framesProcessed + buffer->blocksize;
 
     if (framesProcessed != getAudioClock()->currentFrame) {
-        logInternalError("framesProcessed (%lu) != getAudioClock()->currentFrame (%lu)", framesProcessed, getAudioClock()->currentFrame);
+        logInternalError("framesProcessed (%lu) != getAudioClock()->currentFrame (%lu)",
+                framesProcessed, getAudioClock()->currentFrame);
     }
 
-    //Cut the delay at the start
-    if (        nextBlockStart <= skipHeadFrames ) {
+    // Cut the delay at the start
+    if (nextBlockStart <= skipHeadFrames ) {
         // Cutting away the whole block. nothing is written to the outputSource
         silenceSource->writeSampleBlock(silenceSource, buffer);
-    } else if (framesProcessed <  skipHeadFrames
-               &&                    skipHeadFrames < nextBlockStart) {
-        SampleBuffer sourceBuffer = newSampleBuffer(buffer->numChannels, buffer->blocksize);//blocksize < skipHeadFrames
+    } else if (framesProcessed <  skipHeadFrames && skipHeadFrames < nextBlockStart) {
+        SampleBuffer sourceBuffer = newSampleBuffer(buffer->numChannels, buffer->blocksize);
         unsigned long skippedFrames = skipHeadFrames - framesProcessed;
         unsigned long soundFrames = nextBlockStart - skipHeadFrames;
 
@@ -305,7 +305,7 @@ void writeOutput(SampleSource outputSource, SampleSource silenceSource, SampleBu
         outputSource->writeSampleBlock(outputSource, sourceBuffer);
 
         freeSampleBuffer(sourceBuffer);
-    } else { //                  skipHeadFrames <=  framesProcessed
+    } else {
         // Normal case: Nothing more to cut. The whole block shall be written.
         outputSource->writeSampleBlock(outputSource, buffer);
     }
