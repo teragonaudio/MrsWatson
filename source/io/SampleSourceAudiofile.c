@@ -25,10 +25,9 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#if HAVE_LIBAUDIOFILE
+#if USE_AUDIOFILE
 
 #include <stdio.h>
-#include <stdint.h>
 #include <string.h>
 #include <stdlib.h>
 
@@ -37,23 +36,60 @@
 #include "io/SampleSourcePcm.h"
 #include "logging/EventLogger.h"
 
-boolByte readBlockFromAudiofile(void *sampleSourcePtr, SampleBuffer sampleBuffer)
+static boolByte _openSampleSourceAudiofile(void *sampleSourcePtr, const SampleSourceOpenAs openAs)
+{
+    SampleSource sampleSource = (SampleSource)sampleSourcePtr;
+    SampleSourceAudiofileData extraData = sampleSource->extraData;
+
+    if (openAs == SAMPLE_SOURCE_OPEN_READ) {
+        extraData->fileHandle = afOpenFile(sampleSource->sourceName->data, "r", NULL);
+
+        if (extraData->fileHandle != NULL) {
+            setNumChannels(afGetVirtualChannels(extraData->fileHandle, AF_DEFAULT_TRACK));
+            setSampleRate((float)afGetRate(extraData->fileHandle, AF_DEFAULT_TRACK));
+        }
+    } else if (openAs == SAMPLE_SOURCE_OPEN_WRITE) {
+        AFfilesetup outfileSetup = afNewFileSetup();
+        afInitFileFormat(outfileSetup, AF_FILE_WAVE);
+        afInitByteOrder(outfileSetup, AF_DEFAULT_TRACK, AF_BYTEORDER_LITTLEENDIAN);
+        afInitChannels(outfileSetup, AF_DEFAULT_TRACK, getNumChannels());
+        afInitRate(outfileSetup, AF_DEFAULT_TRACK, getSampleRate());
+        afInitSampleFormat(outfileSetup, AF_DEFAULT_TRACK, AF_SAMPFMT_TWOSCOMP, DEFAULT_BITRATE);
+        extraData->fileHandle = afOpenFile(sampleSource->sourceName->data, "w", outfileSetup);
+    } else {
+        logInternalError("Invalid type for openAs in WAVE file");
+        return false;
+    }
+
+    if (extraData->fileHandle == NULL) {
+        logError("WAVE file '%s' could not be opened for %s",
+                sampleSource->sourceName->data, openAs == SAMPLE_SOURCE_OPEN_READ ? "reading" : "writing");
+        return false;
+    }
+
+    sampleSource->openedAs = openAs;
+    return true;
+}
+
+boolByte _readBlockFromAudiofile(void *sampleSourcePtr, SampleBuffer sampleBuffer)
 {
     SampleSource sampleSource = (SampleSource)sampleSourcePtr;
     SampleSourceAudiofileData extraData = (SampleSourceAudiofileData)(sampleSource->extraData);
+    const size_t bytesToRead = sizeof(float) * getNumChannels() * getBlocksize();
+    AFframecount numFramesRead;
 
-    int numFramesRead;
     int currentInterlacedSample = 0;
     int currentDeinterlacedSample = 0;
     int currentChannel;
 
     if (extraData->interlacedBuffer == NULL) {
-        extraData->interlacedBuffer = (float *)malloc(sizeof(float) * getNumChannels() * getBlocksize());
+        extraData->interlacedBuffer = (float *)malloc(bytesToRead);
     }
 
-    memset(extraData->interlacedBuffer, 0, sizeof(float) * getNumChannels() * getBlocksize());
+    memset(extraData->interlacedBuffer, 0, bytesToRead);
 
-    numFramesRead = afReadFrames(extraData->fileHandle, AF_DEFAULT_TRACK, extraData->interlacedBuffer, getBlocksize());
+    numFramesRead = afReadFrames(extraData->fileHandle, AF_DEFAULT_TRACK,
+            extraData->interlacedBuffer, (int)getBlocksize());
 
     // Loop over the number of frames wanted, not the number we actually got. This means that the last block will
     // be partial, but then we write empty data to the end, since the interlaced buffer gets cleared above.
@@ -65,6 +101,8 @@ boolByte readBlockFromAudiofile(void *sampleSourcePtr, SampleBuffer sampleBuffer
         currentDeinterlacedSample++;
     }
 
+    // Set the blocksize of the sample buffer to be the number of frames read
+    sampleBuffer->blocksize = (unsigned long)numFramesRead;
     sampleSource->numSamplesProcessed += numFramesRead;
 
     if (numFramesRead == 0) {
@@ -78,25 +116,37 @@ boolByte readBlockFromAudiofile(void *sampleSourcePtr, SampleBuffer sampleBuffer
     }
 }
 
-boolByte writeBlockToAudiofile(void *sampleSourcePtr, const SampleBuffer sampleBuffer)
+boolByte _writeBlockToAudiofile(void *sampleSourcePtr, const SampleBuffer sampleBuffer)
 {
     SampleSource sampleSource = (SampleSource)sampleSourcePtr;
     SampleSourceAudiofileData extraData = (SampleSourceAudiofileData)(sampleSource->extraData);
-    int result = 0;
+    const AFframecount numSamplesToWrite = sampleBuffer->blocksize * sampleBuffer->numChannels;
+    AFframecount numFramesWritten = 0;
 
     if (extraData->pcmBuffer == NULL) {
         extraData->pcmBuffer = (short *)malloc(sizeof(short) * getNumChannels() * getBlocksize());
     }
 
     memset(extraData->pcmBuffer, 0, sizeof(short) * getNumChannels() * getBlocksize());
-    convertSampleBufferToPcmData(sampleBuffer, extraData->pcmBuffer, false);
+    // TODO: flip endian property is probably wrong!!
+    sampleBufferGetPcmSamples(sampleBuffer, extraData->pcmBuffer, false);
 
-    result = afWriteFrames(extraData->fileHandle, AF_DEFAULT_TRACK, extraData->pcmBuffer, getBlocksize());
+    numFramesWritten = afWriteFrames(extraData->fileHandle, AF_DEFAULT_TRACK,
+            extraData->pcmBuffer, (int)getBlocksize());
     sampleSource->numSamplesProcessed += getBlocksize() * getNumChannels();
-    return (result == 1);
+
+    if (numFramesWritten == -1) {
+        logWarn("audiofile encountered an error when writing to file");
+        return false;
+    } else if (numFramesWritten == numSamplesToWrite) {
+        return true;
+    } else {
+        logWarn("Short write occurred while writing samples");
+        return false;
+    }
 }
 
-void closeSampleSourceAudiofile(void *sampleSourcePtr)
+void _closeSampleSourceAudiofile(void *sampleSourcePtr)
 {
     SampleSource sampleSource = (SampleSource)sampleSourcePtr;
     SampleSourceAudiofileData extraData = (SampleSourceAudiofileData)sampleSource->extraData;
@@ -106,7 +156,7 @@ void closeSampleSourceAudiofile(void *sampleSourcePtr)
     }
 }
 
-void freeSampleSourceDataAudiofile(void *sampleSourceDataPtr)
+void _freeSampleSourceDataAudiofile(void *sampleSourceDataPtr)
 {
     SampleSourceAudiofileData extraData = (SampleSourceAudiofileData)sampleSourceDataPtr;
 
@@ -119,6 +169,32 @@ void freeSampleSourceDataAudiofile(void *sampleSourceDataPtr)
     }
 
     free(extraData);
+}
+
+SampleSource _newSampleSourceAudiofile(const CharString sampleSourceName,
+        const SampleSourceType sampleSourceType)
+{
+    SampleSource sampleSource = (SampleSource)malloc(sizeof(SampleSourceMembers));
+    SampleSourceAudiofileData extraData = (SampleSourceAudiofileData)malloc(sizeof(SampleSourceAudiofileDataMembers));
+
+    sampleSource->sampleSourceType = sampleSourceType;
+    sampleSource->openedAs = SAMPLE_SOURCE_OPEN_NOT_OPENED;
+    sampleSource->sourceName = newCharString();
+    charStringCopy(sampleSource->sourceName, sampleSourceName);
+    sampleSource->numSamplesProcessed = 0;
+
+    sampleSource->openSampleSource = _openSampleSourceAudiofile;
+    sampleSource->readSampleBlock = _readBlockFromAudiofile;
+    sampleSource->writeSampleBlock = _writeBlockToAudiofile;
+    sampleSource->closeSampleSource = _closeSampleSourceAudiofile;
+    sampleSource->freeSampleSourceData = _freeSampleSourceDataAudiofile;
+
+    extraData->fileHandle = NULL;
+    extraData->interlacedBuffer = NULL;
+    extraData->pcmBuffer = NULL;
+
+    sampleSource->extraData = extraData;
+    return sampleSource;
 }
 
 #endif
