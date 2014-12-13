@@ -183,3 +183,114 @@ if(WITH_AUDIOFILE)
     # TODO: bah
   endif()
 endif()
+
+# flac #########################################################
+
+# Configured with: ./configure --disable-ogg --enable-static
+# But on Mac: ./configure --disable-ogg --enable-static --disable-asm-optimizations
+# (See https://github.com/Homebrew/homebrew/issues/34589)
+
+if(WITH_FLAC)
+  set(flac_SOURCES
+    flac/src/libFLAC/bitmath.c
+    flac/src/libFLAC/bitreader.c
+    flac/src/libFLAC/bitwriter.c
+    flac/src/libFLAC/cpu.c
+    flac/src/libFLAC/crc.c
+    flac/src/libFLAC/fixed.c
+    flac/src/libFLAC/fixed_intrin_sse2.c
+    flac/src/libFLAC/fixed_intrin_ssse3.c
+    flac/src/libFLAC/float.c
+    flac/src/libFLAC/format.c
+    flac/src/libFLAC/lpc.c
+    flac/src/libFLAC/lpc_intrin_avx2.c
+    flac/src/libFLAC/lpc_intrin_sse.c
+    flac/src/libFLAC/lpc_intrin_sse2.c
+    flac/src/libFLAC/lpc_intrin_sse41.c
+    flac/src/libFLAC/md5.c
+    flac/src/libFLAC/memory.c
+    flac/src/libFLAC/metadata_iterators.c
+    flac/src/libFLAC/metadata_object.c
+    # flac/src/libFLAC/ogg_decoder_aspect.c (Ignore)
+    # flac/src/libFLAC/ogg_encoder_aspect.c (Ignore)
+    # flac/src/libFLAC/ogg_helper.c (Ignore)
+    # flac/src/libFLAC/ogg_mapping.c (Ignore)
+    flac/src/libFLAC/stream_decoder.c
+    flac/src/libFLAC/stream_encoder.c
+    flac/src/libFLAC/stream_encoder_framing.c
+    flac/src/libFLAC/stream_encoder_intrin_avx2.c
+    flac/src/libFLAC/stream_encoder_intrin_sse2.c
+    flac/src/libFLAC/stream_encoder_intrin_ssse3.c
+    flac/src/libFLAC/window.c
+  )
+
+  set(flac++_SOURCES
+    flac/src/libFLAC++/metadata.cpp
+    flac/src/libFLAC++/stream_decoder.cpp
+    flac/src/libFLAC++/stream_encoder.cpp
+  )
+
+  set(flac_HEADERS
+    flac/include/FLAC/all.h
+    flac/include/FLAC/assert.h
+    flac/include/FLAC/callback.h
+    flac/include/FLAC/export.h
+    flac/include/FLAC/format.h
+    flac/include/FLAC/metadata.h
+    flac/include/FLAC/ordinals.h
+    flac/include/FLAC/stream_decoder.h
+    flac/include/FLAC/stream_encoder.h
+  )
+
+  set(flac++_HEADERS
+    flac/include/FLAC++/all.h
+    flac/include/FLAC++/decoder.h
+    flac/include/FLAC++/encoder.h
+    flac/include/FLAC++/export.h
+    flac/include/FLAC++/metadata.h
+  )
+
+  add_library(flac STATIC
+    ${flac_SOURCES}
+    ${flac++_SOURCES}
+    ${flac_HEADERS}
+    ${flac++_HEADERS}
+  )
+
+  add_library(flac64 STATIC
+    ${flac_SOURCES}
+    ${flac++_SOURCES}
+    ${flac_HEADERS}
+    ${flac++_HEADERS}
+  )
+
+  target_include_directories(flac PUBLIC
+    flac/include
+    flac/include/FLAC
+    flac/include/FLAC++
+    flac/src/libFLAC/include
+    flac-config/${PLATFORM_CONFIG_DIR}
+  )
+  target_include_directories(flac64 PUBLIC
+    flac/include
+    flac/include/FLAC
+    flac/include/FLAC++
+    flac/src/libFLAC/include
+    flac-config/${PLATFORM_CONFIG_DIR}
+  )
+
+  set_target_properties(flac PROPERTIES COMPILE_DEFINITIONS "HAVE_CONFIG_H=1")
+  set_target_properties(flac64 PROPERTIES COMPILE_DEFINITIONS "HAVE_CONFIG_H=1")
+
+  if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+    set_target_properties(flac PROPERTIES COMPILE_FLAGS "-m32")
+    set_target_properties(flac PROPERTIES LINK_FLAGS "-m32")
+    set_target_properties(flac64 PROPERTIES COMPILE_FLAGS "-m64")
+    set_target_properties(flac64 PROPERTIES LINK_FLAGS "-m64")
+  elseif(APPLE)
+    set_target_properties(flac PROPERTIES OSX_ARCHITECTURES "i386")
+    set_target_properties(flac64 PROPERTIES OSX_ARCHITECTURES "x86_64")
+  elseif(MSVC)
+    # TODO: bah
+  endif()
+endif()

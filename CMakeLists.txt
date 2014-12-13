@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 2.8.11)
 project(MrsWatson)
 
 set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
@@ -100,7 +100,7 @@ if(UNIX)
   )
 
   set(SHARED_GCC_CFLAGS_LIST
-    "-std=c99"
+    "-std=gnu99"
     "-Wmain"
     "-Wenum-compare"
     "-Wmissing-braces"

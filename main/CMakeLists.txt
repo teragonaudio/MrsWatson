@@ -15,7 +15,8 @@ if(WITH_AUDIOFILE)
   set(mrswatsonmain_64_LIBS ${mrswatsonmain_64_LIBS} audiofile64)
 
   if(WITH_FLAC)
-    # TODO: 32/64 bit FLAC libraries
+    set(mrswatsonmain_LIBS ${mrswatsonmain_LIBS} flac)
+    set(mrswatsonmain_64_LIBS ${mrswatsonmain_64_LIBS} flac64)
   endif()
 endif()
 
