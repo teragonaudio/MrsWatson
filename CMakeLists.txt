@@ -10,10 +10,13 @@ message("Build type: ${CMAKE_BUILD_TYPE}")
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
   set(PLATFORM_NAME "Linux")
+  set(PLATFORM_CONFIG_DIR "linux")
 elseif(APPLE)
   set(PLATFORM_NAME "Mac OS X")
+  set(PLATFORM_CONFIG_DIR "mac")
 elseif(WIN32)
   set(PLATFORM_NAME "Windows")
+  set(PLATFORM_CONFIG_DIR "windows")
 else()
   set(PLATFORM_NAME "Unknown")
 endif()
@@ -25,12 +28,6 @@ else()
   set(PLATFORM_BITS 32)
 endif()
 message("Platform bitness: ${PLATFORM_BITS}-bit")
-
-# Third-party dependencies #####################################
-
-# TODO: Currently unused, but probably needed soon
-#include(ExternalProject)
-#set(generic_CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=${CMAKE_SOURCE_DIR}/build CFLAGS=${arch_flags} CXXFLAGS=${arch_flags} LDFLAGS=${arch_flags} --enable-static)
 
 # Build Flags ##################################################
 
@@ -151,3 +148,4 @@ endif()
 add_subdirectory(source)
 add_subdirectory(main)
 add_subdirectory(test)
+add_subdirectory(vendor)
