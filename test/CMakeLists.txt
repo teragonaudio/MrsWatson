@@ -47,23 +47,28 @@ set(mrswatsontest_HEADERS
   unit/TestRunner.h
 )
 
-add_executable(mrswatsontest
-  ${mrswatsontest_SOURCES}
-  ${mrswatsontest_HEADERS}
-)
-target_link_libraries(mrswatsontest
-  mrswatsoncore
-  audiofile
-)
+set(mrswatsontest_LIBS mrswatsoncore)
+set(mrswatsontest_64_LIBS mrswatsoncore64)
 
-add_executable(mrswatsontest64
-  ${mrswatsontest_SOURCES}
-  ${mrswatsontest_HEADERS}
-)
-target_link_libraries(mrswatsontest64
-  mrswatsoncore64
-  audiofile64
-)
+if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+  set(mrswatsontest_LIBS ${mrswatsontest_LIBS} dl)
+  set(mrswatsontest_64_LIBS ${mrswatsontest_64_LIBS} dl)
+endif()
+
+if(WITH_AUDIOFILE)
+  set(mrswatsontest_LIBS ${mrswatsontest_LIBS} audiofile)
+  set(mrswatsontest_64_LIBS ${mrswatsontest_64_LIBS} audiofile64)
+
+  if(WITH_FLAC)
+    # TODO: 32/64 bit FLAC libraries
+  endif()
+endif()
+
+add_executable(mrswatsontest ${mrswatsontest_SOURCES} ${mrswatsontest_HEADERS})
+target_link_libraries(mrswatsontest ${mrswatsontest_LIBS})
+add_executable(mrswatsontest64 ${mrswatsontest_SOURCES} ${mrswatsontest_HEADERS})
+target_link_libraries(mrswatsontest64 ${mrswatsontest_64_LIBS})
+
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
   set_target_properties(mrswatsontest PROPERTIES COMPILE_FLAGS "-m32")

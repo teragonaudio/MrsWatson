@@ -39,23 +39,17 @@ void sampleSourcePrintSupportedTypes(void)
     // We can theoretically support more formats, pretty much anything audiofile supports
     // would work here. However, most of those file types are rather uncommon, and require
     // special setup when writing, so we only choose the most common ones.
-#if HAVE_LIBAUDIOFILE
+#if USE_AUDIOFILE
     logInfo("- AIFF (via libaudiofile)");
-#else
-    logInfo("- AIFF (internal, experimental)");
 #endif
-#if HAVE_LIBFLAC
-    logInfo("- FLAC");
+#if USE_FLAC
+    logInfo("- FLAC (via libaudiofile)");
 #endif
-#if HAVE_LIBLAME
-    logInfo("- MP3");
-#endif
-#if HAVE_LIBVORBIS
-    logInfo("- OGG");
-#endif
+
     // Always supported
     logInfo("- PCM");
-#if HAVE_LIBAUDIOFILE
+
+#if USE_AUDIOFILE
     logInfo("- WAV (via libaudiofile)");
 #else
     logInfo("- WAV (internal)");
@@ -88,30 +82,22 @@ static SampleSourceType _sampleSourceGuess(const CharString sampleSourceName)
                      charStringIsEqualToCString(sourceFileExtension, "raw", true) ||
                      charStringIsEqualToCString(sourceFileExtension, "dat", true)) {
                 result = SAMPLE_SOURCE_TYPE_PCM;
-            } else if (charStringIsEqualToCString(sourceFileExtension, "aif", true) ||
+            }
+
+#if USE_AUDIOFILE
+            else if (charStringIsEqualToCString(sourceFileExtension, "aif", true) ||
                        charStringIsEqualToCString(sourceFileExtension, "aiff", true)) {
                 result = SAMPLE_SOURCE_TYPE_AIFF;
             }
+#endif
 
-#if HAVE_LIBFLAC
+#if USE_FLAC
             else if (charStringIsEqualToCString(sourceFileExtension, "flac", true)) {
                 result = SAMPLE_SOURCE_TYPE_FLAC;
             }
 
 #endif
-#if HAVE_LIBLAME
-            else if (charStringIsEqualToCString(sourceFileExtension, "mp3", true)) {
-                result = SAMPLE_SOURCE_TYPE_MP3;
-            }
 
-#endif
-#if HAVE_LIBVORBIS
-            else if (charStringIsEqualToCString(sourceFileExtension, "ogg", true)) {
-                freeCharString(sourceFileExtension);
-                result = SAMPLE_SOURCE_TYPE_OGG;
-            }
-
-#endif
             else if (charStringIsEqualToCString(sourceFileExtension, "wav", true) ||
                      charStringIsEqualToCString(sourceFileExtension, "wave", true)) {
                 result = SAMPLE_SOURCE_TYPE_WAVE;
@@ -126,9 +112,10 @@ static SampleSourceType _sampleSourceGuess(const CharString sampleSourceName)
     return result;
 }
 
+extern SampleSource _newSampleSourceAudiofile(const CharString sampleSourceName,
+        const SampleSourceType sampleSourceType);
 extern SampleSource _newSampleSourcePcm(const CharString sampleSourceName);
 extern SampleSource _newSampleSourceSilence();
-extern SampleSource _newSampleSourceAiff(const CharString sampleSourceName);
 extern SampleSource _newSampleSourceWave(const CharString sampleSourceName);
 
 SampleSource sampleSourceFactory(const CharString sampleSourceName)
@@ -142,26 +129,23 @@ SampleSource sampleSourceFactory(const CharString sampleSourceName)
     case SAMPLE_SOURCE_TYPE_PCM:
         return _newSampleSourcePcm(sampleSourceName);
 
+#if USE_AUDIOFILE
     case SAMPLE_SOURCE_TYPE_AIFF:
-        return _newSampleSourceAiff(sampleSourceName);
-#if HAVE_LIBFLAC
+        return _newSampleSourceAudiofile(sampleSourceName, sampleSourceType);
+#endif
 
+#if USE_FLAC
     case SAMPLE_SOURCE_TYPE_FLAC:
-        return newSampleSourceFlac(sampleSourceName);
-#endif
-#if HAVE_LIBLAME
-
-    case SAMPLE_SOURCE_TYPE_MP3:
-        return newSampleSourceMp3(sampleSourceName);
-#endif
-#if HAVE_LIBVORBIS
-
-    case SAMPLE_SOURCE_TYPE_OGG:
-        return newSampleSourceOgg(sampleSourceName);
+        return _newSampleSourceAudiofile(sampleSourceName, sampleSourceType);
 #endif
 
+#if USE_AUDIOFILE
+    case SAMPLE_SOURCE_TYPE_WAVE:
+        return _newSampleSourceAudiofile(sampleSourceName, sampleSourceType);
+#else
     case SAMPLE_SOURCE_TYPE_WAVE:
         return _newSampleSourceWave(sampleSourceName);
+#endif
 
     default:
         return NULL;

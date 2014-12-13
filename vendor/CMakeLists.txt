@@ -143,11 +143,12 @@ set(libaudiofile_HEADERS
 include_directories(audiofile-config/${PLATFORM_CONFIG_DIR})
 include_directories(audiofile/libaudiofile)
 
-add_library(audiofile
+add_library(audiofile STATIC
   ${libaudiofile_SOURCES}
   ${libaudiofile_HEADERS}
 )
-add_library(audiofile64
+
+add_library(audiofile64 STATIC
   ${libaudiofile_SOURCES}
   ${libaudiofile_HEADERS}
 )

@@ -5,6 +5,11 @@ set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 include_directories(${CMAKE_SOURCE_DIR}/source)
 include_directories(${CMAKE_SOURCE_DIR}/vendor/vstsdk2.4/pluginterfaces/vst2.x)
 
+# Build options ################################################
+
+option(WITH_AUDIOFILE "Use libaudiofile for reading/writing files" OFF)
+option(WITH_FLAC "Support for FLAC files (requires libaudiofile)" OFF)
+
 # Platform properties ##########################################
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
@@ -29,6 +34,17 @@ endif()
 message("Platform bitness: ${PLATFORM_BITS}-bit")
 
 # Build Flags ##################################################
+
+if(WITH_AUDIOFILE)
+  add_definitions(-DUSE_AUDIOFILE=1)
+endif()
+
+if(WITH_FLAC)
+  if(NOT WITH_AUDIOFILE)
+    message(FATAL_ERROR "FLAC support requires audiofile to be built")
+  endif()
+  add_definitions(-DUSE_FLAC=1)
+endif()
 
 if(MSVC)
   # We don't care about intdir, binary output path is set above
@@ -159,4 +175,7 @@ endif()
 add_subdirectory(source)
 add_subdirectory(main)
 add_subdirectory(test)
-add_subdirectory(vendor)
+
+if(WITH_AUDIOFILE)
+  add_subdirectory(vendor)
+endif()

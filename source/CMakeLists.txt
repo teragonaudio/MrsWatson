@@ -83,6 +83,18 @@ set(mrswatsoncore_HEADERS
   time/TaskTimer.h
 )
 
+if(WITH_AUDIOFILE)
+  set(mrswatsoncore_SOURCES
+    ${mrswatsoncore_SOURCES}
+    io/SampleSourceAudiofile.c
+  )
+  set(mrswatsoncore_HEADERS
+    ${mrswatsoncore_HEADERS}
+    io/SampleSourceAudiofile.h
+  )
+  include_directories(${CMAKE_SOURCE_DIR}/vendor/audiofile/libaudiofile)
+endif()
+
 # Add some extra platform-specific sources
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
   set(mrswatsoncore_PLATFORM_SOURCES
@@ -99,12 +111,13 @@ elseif(MSVC)
   )
 endif()
 
-add_library(mrswatsoncore
+add_library(mrswatsoncore STATIC
   ${mrswatsoncore_SOURCES}
   ${mrswatsoncore_PLATFORM_SOURCES}
   ${mrswatsoncore_HEADERS}
 )
-add_library(mrswatsoncore64
+
+add_library(mrswatsoncore64 STATIC
   ${mrswatsoncore_SOURCES}
   ${mrswatsoncore_PLATFORM_SOURCES}
   ${mrswatsoncore_HEADERS}
