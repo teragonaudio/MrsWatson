@@ -146,11 +146,13 @@ include_directories(audiofile/libaudiofile)
 add_library(audiofile STATIC
   ${libaudiofile_SOURCES}
   ${libaudiofile_HEADERS}
+  audiofile-config/${PLATFORM_CONFIG_DIR}/config.h
 )
 
 add_library(audiofile64 STATIC
   ${libaudiofile_SOURCES}
   ${libaudiofile_HEADERS}
+  audiofile-config/${PLATFORM_CONFIG_DIR}/config.h
 )
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
