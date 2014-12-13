@@ -453,7 +453,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char **argv)
                 break;
 
             case OPTION_CHANNELS:
-                setNumChannels((const unsigned long)programOptionsGetNumber(programOptions, OPTION_CHANNELS));
+                setNumChannels((const unsigned int)programOptionsGetNumber(programOptions, OPTION_CHANNELS));
                 break;
 
             case OPTION_DISPLAY_INFO:

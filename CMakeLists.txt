@@ -2,18 +2,20 @@ cmake_minimum_required(VERSION 2.6)
 project(MrsWatson)
 
 set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
-include_directories(${CMAKE_SOURCE_DIR}/source ${CMAKE_SOURCE_DIR}/vendor/vstsdk2.4/pluginterfaces/vst2.x)
+include_directories(${CMAKE_SOURCE_DIR}/source)
+include_directories(${CMAKE_SOURCE_DIR}/vendor/vstsdk2.4/pluginterfaces/vst2.x)
 
 # Platform properties ##########################################
 
-message("Build type: ${CMAKE_BUILD_TYPE}")
-
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
   set(PLATFORM_NAME "Linux")
+  set(PLATFORM_CONFIG_DIR "linux")
 elseif(APPLE)
   set(PLATFORM_NAME "Mac OS X")
+  set(PLATFORM_CONFIG_DIR "mac")
 elseif(WIN32)
   set(PLATFORM_NAME "Windows")
+  set(PLATFORM_CONFIG_DIR "windows")
 else()
   set(PLATFORM_NAME "Unknown")
 endif()
@@ -25,12 +27,6 @@ else()
   set(PLATFORM_BITS 32)
 endif()
 message("Platform bitness: ${PLATFORM_BITS}-bit")
-
-# Third-party dependencies #####################################
-
-# TODO: Currently unused, but probably needed soon
-#include(ExternalProject)
-#set(generic_CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=${CMAKE_SOURCE_DIR}/build CFLAGS=${arch_flags} CXXFLAGS=${arch_flags} LDFLAGS=${arch_flags} --enable-static)
 
 # Build Flags ##################################################
 
@@ -52,6 +48,9 @@ if(MSVC)
 endif()
 
 if(UNIX)
+  add_definitions("-DUNIX=1")
+
+  # GCC flags common to all Unix platforms
   set(SHARED_GCC_FLAGS_LIST
     "-fmessage-length=0"
     "-pipe"
@@ -103,47 +102,56 @@ if(UNIX)
     "-Wreorder"
   )
 
-  string(REPLACE ";" " " SHARED_GCC_FLAGS "${SHARED_GCC_FLAGS_LIST}")
-  string(REPLACE ";" " " SHARED_GCC_CFLAGS "${SHARED_GCC_CFLAGS_LIST}")
-  string(REPLACE ";" " " SHARED_GCC_CPPFLAGS "${SHARED_GCC_CPPFLAGS_LIST}")
-
+  # Linux-specific GCC stuff
   if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-    set(LINUX_GCC_FLAGS_LIST
+    set(PLATFORM_GCC_FLAGS_LIST
       "-Wuninitialized"
     )
-    string(REPLACE ";" " " LINUX_GCC_FLAGS "${LINUX_GCC_FLAGS_LIST}")
-
-    set(CMAKE_C_FLAGS_DEBUG "${SHARED_GCC_CFLAGS} ${LINUX_GCC_FLAGS} -O0 -g")
-    set(CMAKE_C_FLAGS_RELEASE "${SHARED_GCC_CFLAGS} ${LINUX_GCC_FLAGS} -O3")
-    set(CMAKE_CXX_FLAGS_DEBUG "${SHARED_GCC_CPPFLAGS} ${LINUX_GCC_FLAGS} -O0 -g")
-    set(CMAKE_CXX_FLAGS_RELEASE "${SHARED_GCC_CPPFLAGS} ${LINUX_GCC_FLAGS} -O3")
 
     add_definitions("-DLINUX=1")
     add_definitions("-D_POSIX_C_SOURCE=200809L")
     add_definitions("-D__cdecl=")
   endif()
 
+  # Mac OSX GCC stuff
   if(APPLE)
-    set(MAC_GCC_FLAGS_LIST
+    set(PLATFORM_GCC_FLAGS_LIST
       "-fpascal-strings"
       "-Wnewline-eof"
       "-Wshorten-64-to-32"
       "-fasm-blocks"
       "-mmacosx-version-min=10.5"
     )
-    string(REPLACE ";" " " MAC_GCC_FLAGS "${MAC_GCC_FLAGS_LIST}")
 
-    set(CMAKE_C_FLAGS_DEBUG "${SHARED_GCC_CFLAGS} -O0 -g")
-    set(CMAKE_C_FLAGS_RELEASE "${SHARED_GCC_CFLAGS} -O3")
-    set(CMAKE_CXX_FLAGS_DEBUG "${SHARED_GCC_CPPFLAGS} -O0 -g")
-    set(CMAKE_CXX_FLAGS_RELEASE "${SHARED_GCC_CPPFLAGS} -O3")
-
-    set(CMAKE_EXE_LINKER_FLAGS "-framework Carbon -framework CoreFoundation -framework Foundation")
+    set(PLATFORM_LINKER_FLAGS_LIST
+      "-framework Carbon"
+      "-framework CoreFoundation"
+      "-framework Foundation"
+    )
 
     add_definitions("-DMACOSX=1")
+    # Homebrew places installed library files in /usr/local, but no major
+    # Linux distro does that anymore (last time I checked...)
+    include_directories("/usr/local/include")
   endif()
 
-  add_definitions("-DUNIX=1")
+  # CMake doesn't really support multi-line strings, so the
+  # compiler flags are in lists above to make them easier to
+  # manage. However, we must build strings from the lists in
+  # order to set the respective CMake variables which they
+  # correspond to.
+  string(REPLACE ";" " " SHARED_GCC_FLAGS "${SHARED_GCC_FLAGS_LIST}")
+  string(REPLACE ";" " " SHARED_GCC_CFLAGS "${SHARED_GCC_CFLAGS_LIST}")
+  string(REPLACE ";" " " SHARED_GCC_CPPFLAGS "${SHARED_GCC_CPPFLAGS_LIST}")
+  string(REPLACE ";" " " PLATFORM_GCC_FLAGS "${PLATFORM_GCC_FLAGS_LIST}")
+  string(REPLACE ";" " " PLATFORM_LINKER_FLAGS "${PLATFORM_LINKER_FLAGS_LIST}")
+
+  # Set compiler flags from shared & platform-specific lists
+  set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} ${SHARED_GCC_CFLAGS} ${PLATFORM_GCC_FLAGS}")
+  set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} ${SHARED_GCC_CFLAGS} ${PLATFORM_GCC_FLAGS}")
+  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${SHARED_GCC_CPPFLAGS} ${PLATFORM_GCC_FLAGS}")
+  set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${SHARED_GCC_CPPFLAGS} ${PLATFORM_GCC_FLAGS}")
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${PLATFORM_LINKER_FLAGS}")
 endif()
 
 # Subdirectories ###############################################
@@ -151,3 +159,4 @@ endif()
 add_subdirectory(source)
 add_subdirectory(main)
 add_subdirectory(test)
+add_subdirectory(vendor)
