@@ -173,10 +173,9 @@ endif()
 add_subdirectory(source)
 add_subdirectory(main)
 add_subdirectory(test)
+add_subdirectory(vendor)
 
-if(WITH_AUDIOFILE)
-  add_subdirectory(vendor)
-endif()# Build summary ################################################
+# Build summary ################################################
 
 message("-- Build configuration")
 message("   Platform name: ${PLATFORM_NAME}")
