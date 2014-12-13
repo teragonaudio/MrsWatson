@@ -36,10 +36,6 @@
 #include "io/SampleSourcePcm.h"
 #include "logging/EventLogger.h"
 
-#if HAVE_LIBAUDIOFILE
-#include "io/SampleSourceAudiofile.h"
-#endif
-
 static boolByte _readWaveFileInfo(const char *filename, SampleSourcePcmData extraData)
 {
     int chunkOffset = 0;
@@ -264,22 +260,9 @@ static boolByte _writeWaveFileInfo(SampleSourcePcmData extraData)
 static boolByte _openSampleSourceWave(void *sampleSourcePtr, const SampleSourceOpenAs openAs)
 {
     SampleSource sampleSource = (SampleSource)sampleSourcePtr;
-#if HAVE_LIBAUDIOFILE
-    SampleSourceAudiofileData extraData = sampleSource->extraData;
-#else
     SampleSourcePcmData extraData = (SampleSourcePcmData)sampleSource->extraData;
-#endif
 
     if (openAs == SAMPLE_SOURCE_OPEN_READ) {
-#if HAVE_LIBAUDIOFILE
-        extraData->fileHandle = afOpenFile(sampleSource->sourceName->data, "r", NULL);
-
-        if (extraData->fileHandle != NULL) {
-            setNumChannels(afGetVirtualChannels(extraData->fileHandle, AF_DEFAULT_TRACK));
-            setSampleRate((float)afGetRate(extraData->fileHandle, AF_DEFAULT_TRACK));
-        }
-
-#else
         extraData->fileHandle = fopen(sampleSource->sourceName->data, "rb");
 
         if (extraData->fileHandle != NULL) {
@@ -291,18 +274,7 @@ static boolByte _openSampleSourceWave(void *sampleSourcePtr, const SampleSourceO
                 extraData->fileHandle = NULL;
             }
         }
-
-#endif
     } else if (openAs == SAMPLE_SOURCE_OPEN_WRITE) {
-#if HAVE_LIBAUDIOFILE
-        AFfilesetup outfileSetup = afNewFileSetup();
-        afInitFileFormat(outfileSetup, AF_FILE_WAVE);
-        afInitByteOrder(outfileSetup, AF_DEFAULT_TRACK, AF_BYTEORDER_LITTLEENDIAN);
-        afInitChannels(outfileSetup, AF_DEFAULT_TRACK, getNumChannels());
-        afInitRate(outfileSetup, AF_DEFAULT_TRACK, getSampleRate());
-        afInitSampleFormat(outfileSetup, AF_DEFAULT_TRACK, AF_SAMPFMT_TWOSCOMP, DEFAULT_BITRATE);
-        extraData->fileHandle = afOpenFile(sampleSource->sourceName->data, "w", outfileSetup);
-#else
         extraData->fileHandle = fopen(sampleSource->sourceName->data, "wb");
 
         if (extraData->fileHandle != NULL) {
@@ -315,8 +287,6 @@ static boolByte _openSampleSourceWave(void *sampleSourcePtr, const SampleSourceO
                 extraData->fileHandle = NULL;
             }
         }
-
-#endif
     } else {
         logInternalError("Invalid type for openAs in WAVE file");
         return false;
@@ -353,7 +323,6 @@ static boolByte _writeBlockToWaveFile(void *sampleSourcePtr, const SampleBuffer 
 
 void _closeSampleSourceWave(void *sampleSourceDataPtr)
 {
-#if ! HAVE_LIBAUDIOFILE
     SampleSource sampleSource = (SampleSource)sampleSourceDataPtr;
     SampleSourcePcmData extraData = (SampleSourcePcmData)sampleSource->extraData;
     size_t numBytesWritten;
@@ -431,18 +400,12 @@ void _closeSampleSourceWave(void *sampleSourceDataPtr)
     } else if (sampleSource->openedAs == SAMPLE_SOURCE_OPEN_READ && extraData->fileHandle != NULL) {
         fclose(extraData->fileHandle);
     }
-
-#endif
 }
 
 SampleSource _newSampleSourceWave(const CharString sampleSourceName)
 {
     SampleSource sampleSource = (SampleSource)malloc(sizeof(SampleSourceMembers));
-#if HAVE_LIBAUDIOFILE
-    SampleSourceAudiofileData extraData = (SampleSourceAudiofileData)malloc(sizeof(SampleSourceAudiofileDataMembers));
-#else
     SampleSourcePcmData extraData = (SampleSourcePcmData)malloc(sizeof(SampleSourcePcmDataMembers));
-#endif
 
     sampleSource->sampleSourceType = SAMPLE_SOURCE_TYPE_WAVE;
     sampleSource->openedAs = SAMPLE_SOURCE_OPEN_NOT_OPENED;
@@ -451,23 +414,11 @@ SampleSource _newSampleSourceWave(const CharString sampleSourceName)
     sampleSource->numSamplesProcessed = 0;
 
     sampleSource->openSampleSource = _openSampleSourceWave;
-#if HAVE_LIBAUDIOFILE
-    sampleSource->readSampleBlock = readBlockFromAudiofile;
-    sampleSource->writeSampleBlock = writeBlockToAudiofile;
-    sampleSource->freeSampleSourceData = freeSampleSourceDataAudiofile;
-    sampleSource->closeSampleSource = closeSampleSourceAudiofile;
-#else
     sampleSource->readSampleBlock = _readBlockFromWaveFile;
     sampleSource->writeSampleBlock = _writeBlockToWaveFile;
     sampleSource->closeSampleSource = _closeSampleSourceWave;
     sampleSource->freeSampleSourceData = freeSampleSourceDataPcm;
-#endif
 
-#if HAVE_LIBAUDIOFILE
-    extraData->fileHandle = NULL;
-    extraData->interlacedBuffer = NULL;
-    extraData->pcmBuffer = NULL;
-#else
     extraData->isStream = false;
     extraData->isLittleEndian = true;
     extraData->fileHandle = NULL;
@@ -477,9 +428,7 @@ SampleSource _newSampleSourceWave(const CharString sampleSourceName)
     extraData->numChannels = (unsigned short)getNumChannels();
     extraData->sampleRate = (unsigned int)getSampleRate();
     extraData->bitsPerSample = 16;
-#endif
 
     sampleSource->extraData = extraData;
-
     return sampleSource;
 }
