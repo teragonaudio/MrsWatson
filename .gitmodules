@@ -3,4 +3,4 @@
 	url = git://github.com/teragonaudio/AudioTestData.git
 [submodule "vendor/audiofile"]
 	path = vendor/audiofile
-	url = git@github.com:teragonaudio/audiofile.git
+	url = git://github.com/teragonaudio/audiofile.git
