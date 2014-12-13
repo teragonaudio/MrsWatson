@@ -86,9 +86,10 @@ static SampleSourceType _sampleSourceGuess(const CharString sampleSourceName)
 
 #if USE_AUDIOFILE
             else if (charStringIsEqualToCString(sourceFileExtension, "aif", true) ||
-                       charStringIsEqualToCString(sourceFileExtension, "aiff", true)) {
+                     charStringIsEqualToCString(sourceFileExtension, "aiff", true)) {
                 result = SAMPLE_SOURCE_TYPE_AIFF;
             }
+
 #endif
 
 #if USE_FLAC
@@ -130,19 +131,23 @@ SampleSource sampleSourceFactory(const CharString sampleSourceName)
         return _newSampleSourcePcm(sampleSourceName);
 
 #if USE_AUDIOFILE
+
     case SAMPLE_SOURCE_TYPE_AIFF:
         return _newSampleSourceAudiofile(sampleSourceName, sampleSourceType);
 #endif
 
 #if USE_FLAC
+
     case SAMPLE_SOURCE_TYPE_FLAC:
         return _newSampleSourceAudiofile(sampleSourceName, sampleSourceType);
 #endif
 
 #if USE_AUDIOFILE
+
     case SAMPLE_SOURCE_TYPE_WAVE:
         return _newSampleSourceAudiofile(sampleSourceName, sampleSourceType);
 #else
+
     case SAMPLE_SOURCE_TYPE_WAVE:
         return _newSampleSourceWave(sampleSourceName);
 #endif

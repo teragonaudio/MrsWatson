@@ -63,7 +63,7 @@ static boolByte _openSampleSourceAudiofile(void *sampleSourcePtr, const SampleSo
 
     if (extraData->fileHandle == NULL) {
         logError("WAVE file '%s' could not be opened for %s",
-                sampleSource->sourceName->data, openAs == SAMPLE_SOURCE_OPEN_READ ? "reading" : "writing");
+                 sampleSource->sourceName->data, openAs == SAMPLE_SOURCE_OPEN_READ ? "reading" : "writing");
         return false;
     }
 
@@ -89,7 +89,7 @@ boolByte _readBlockFromAudiofile(void *sampleSourcePtr, SampleBuffer sampleBuffe
     memset(extraData->interlacedBuffer, 0, bytesToRead);
 
     numFramesRead = afReadFrames(extraData->fileHandle, AF_DEFAULT_TRACK,
-            extraData->interlacedBuffer, (int)getBlocksize());
+                                 extraData->interlacedBuffer, (int)getBlocksize());
 
     // Loop over the number of frames wanted, not the number we actually got. This means that the last block will
     // be partial, but then we write empty data to the end, since the interlaced buffer gets cleared above.
@@ -132,7 +132,7 @@ boolByte _writeBlockToAudiofile(void *sampleSourcePtr, const SampleBuffer sample
     sampleBufferGetPcmSamples(sampleBuffer, extraData->pcmBuffer, false);
 
     numFramesWritten = afWriteFrames(extraData->fileHandle, AF_DEFAULT_TRACK,
-            extraData->pcmBuffer, (int)getBlocksize());
+                                     extraData->pcmBuffer, (int)getBlocksize());
     sampleSource->numSamplesProcessed += getBlocksize() * getNumChannels();
 
     if (numFramesWritten == -1) {
@@ -172,7 +172,7 @@ void _freeSampleSourceDataAudiofile(void *sampleSourceDataPtr)
 }
 
 SampleSource _newSampleSourceAudiofile(const CharString sampleSourceName,
-        const SampleSourceType sampleSourceType)
+                                       const SampleSourceType sampleSourceType)
 {
     SampleSource sampleSource = (SampleSource)malloc(sizeof(SampleSourceMembers));
     SampleSourceAudiofileData extraData = (SampleSourceAudiofileData)malloc(sizeof(SampleSourceAudiofileDataMembers));

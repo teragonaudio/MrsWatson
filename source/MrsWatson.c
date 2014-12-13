@@ -282,7 +282,7 @@ void writeOutput(SampleSource outputSource, SampleSource silenceSource, SampleBu
 
     if (framesProcessed != getAudioClock()->currentFrame) {
         logInternalError("framesProcessed (%lu) != getAudioClock()->currentFrame (%lu)",
-                framesProcessed, getAudioClock()->currentFrame);
+                         framesProcessed, getAudioClock()->currentFrame);
     }
 
     // Cut the delay at the start
