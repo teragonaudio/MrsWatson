@@ -45,25 +45,41 @@ static boolByte _openSampleSourceAudiofile(void *sampleSourcePtr, const SampleSo
         extraData->fileHandle = afOpenFile(sampleSource->sourceName->data, "r", NULL);
 
         if (extraData->fileHandle != NULL) {
-            setNumChannels(afGetVirtualChannels(extraData->fileHandle, AF_DEFAULT_TRACK));
+            setNumChannels((const unsigned int)afGetVirtualChannels(extraData->fileHandle, AF_DEFAULT_TRACK));
             setSampleRate((float)afGetRate(extraData->fileHandle, AF_DEFAULT_TRACK));
         }
     } else if (openAs == SAMPLE_SOURCE_OPEN_WRITE) {
         AFfilesetup outfileSetup = afNewFileSetup();
-        afInitFileFormat(outfileSetup, AF_FILE_WAVE);
+        int outfileFormat;
+        switch (sampleSource->sampleSourceType) {
+            case SAMPLE_SOURCE_TYPE_AIFF:
+                outfileFormat = AF_FILE_AIFF;
+                break;
+            case SAMPLE_SOURCE_TYPE_WAVE:
+                outfileFormat = AF_FILE_WAVE;
+                break;
+            case SAMPLE_SOURCE_TYPE_FLAC:
+                outfileFormat = AF_FILE_FLAC;
+                break;
+            default:
+                logInternalError("Unsupported audiofile type %d", sampleSource->sampleSourceType);
+                return false;
+        }
+        afInitFileFormat(outfileSetup, outfileFormat);
         afInitByteOrder(outfileSetup, AF_DEFAULT_TRACK, AF_BYTEORDER_LITTLEENDIAN);
         afInitChannels(outfileSetup, AF_DEFAULT_TRACK, getNumChannels());
         afInitRate(outfileSetup, AF_DEFAULT_TRACK, getSampleRate());
         afInitSampleFormat(outfileSetup, AF_DEFAULT_TRACK, AF_SAMPFMT_TWOSCOMP, DEFAULT_BITRATE);
         extraData->fileHandle = afOpenFile(sampleSource->sourceName->data, "w", outfileSetup);
     } else {
-        logInternalError("Invalid type for openAs in WAVE file");
+        logInternalError("Invalid type for openAs in audiofile source");
         return false;
     }
 
     if (extraData->fileHandle == NULL) {
-        logError("WAVE file '%s' could not be opened for %s",
-                 sampleSource->sourceName->data, openAs == SAMPLE_SOURCE_OPEN_READ ? "reading" : "writing");
+        logError("File '%s' could not be opened for %s",
+                 sampleSource->sourceName->data,
+                 openAs == SAMPLE_SOURCE_OPEN_READ ? "reading" : "writing");
         return false;
     }
 
@@ -75,31 +91,17 @@ boolByte _readBlockFromAudiofile(void *sampleSourcePtr, SampleBuffer sampleBuffe
 {
     SampleSource sampleSource = (SampleSource)sampleSourcePtr;
     SampleSourceAudiofileData extraData = (SampleSourceAudiofileData)(sampleSource->extraData);
-    const size_t bytesToRead = sizeof(float) * getNumChannels() * getBlocksize();
-    AFframecount numFramesRead;
+    const size_t bufferByteSize = sizeof(short) * getNumChannels() * getBlocksize();
+    AFframecount numFramesRead = 0;
 
-    int currentInterlacedSample = 0;
-    int currentDeinterlacedSample = 0;
-    int currentChannel;
-
-    if (extraData->interlacedBuffer == NULL) {
-        extraData->interlacedBuffer = (float *)malloc(bytesToRead);
+    if (extraData->pcmBuffer == NULL) {
+        extraData->pcmBuffer = (short *)malloc(bufferByteSize);
     }
 
-    memset(extraData->interlacedBuffer, 0, bytesToRead);
-
+    memset(extraData->pcmBuffer, 0, bufferByteSize);
     numFramesRead = afReadFrames(extraData->fileHandle, AF_DEFAULT_TRACK,
-                                 extraData->interlacedBuffer, (int)getBlocksize() / getNumChannels());
-
-    // Loop over the number of frames wanted, not the number we actually got. This means that the last block will
-    // be partial, but then we write empty data to the end, since the interlaced buffer gets cleared above.
-    while (currentInterlacedSample < getBlocksize() * getNumChannels()) {
-        for (currentChannel = 0; currentChannel < sampleBuffer->numChannels; currentChannel++) {
-            sampleBuffer->samples[currentChannel][currentDeinterlacedSample] = extraData->interlacedBuffer[currentInterlacedSample++];
-        }
-
-        currentDeinterlacedSample++;
-    }
+                                 extraData->pcmBuffer, (int)getBlocksize());
+    sampleBufferCopyPcmSamples(sampleBuffer, extraData->pcmBuffer);
 
     // Set the blocksize of the sample buffer to be the number of frames read
     sampleBuffer->blocksize = (unsigned long)numFramesRead;
@@ -121,14 +123,15 @@ boolByte _writeBlockToAudiofile(void *sampleSourcePtr, const SampleBuffer sample
     SampleSource sampleSource = (SampleSource)sampleSourcePtr;
     SampleSourceAudiofileData extraData = (SampleSourceAudiofileData)(sampleSource->extraData);
     const AFframecount numSamplesToWrite = sampleBuffer->blocksize;
+    const size_t bufferByteSize = sizeof(short) * getNumChannels() * getBlocksize();
     AFframecount numFramesWritten = 0;
 
     if (extraData->pcmBuffer == NULL) {
-        extraData->pcmBuffer = (short *)malloc(sizeof(short) * getNumChannels() * getBlocksize());
+        extraData->pcmBuffer = (short *)malloc(bufferByteSize);
     }
 
-    memset(extraData->pcmBuffer, 0, sizeof(short) * getNumChannels() * getBlocksize());
-    // TODO: flip endian property is probably wrong!!
+    memset(extraData->pcmBuffer, 0, bufferByteSize);
+    // TODO: flip endian argument is probably wrong for some file formats (namely AIFF)!!
     sampleBufferGetPcmSamples(sampleBuffer, extraData->pcmBuffer, false);
 
     numFramesWritten = afWriteFrames(extraData->fileHandle, AF_DEFAULT_TRACK,
@@ -160,10 +163,6 @@ void _freeSampleSourceDataAudiofile(void *sampleSourceDataPtr)
 {
     SampleSourceAudiofileData extraData = (SampleSourceAudiofileData)sampleSourceDataPtr;
 
-    if (extraData->interlacedBuffer != NULL) {
-        free(extraData->interlacedBuffer);
-    }
-
     if (extraData->pcmBuffer != NULL) {
         free(extraData->pcmBuffer);
     }
@@ -190,7 +189,6 @@ SampleSource _newSampleSourceAudiofile(const CharString sampleSourceName,
     sampleSource->freeSampleSourceData = _freeSampleSourceDataAudiofile;
 
     extraData->fileHandle = NULL;
-    extraData->interlacedBuffer = NULL;
     extraData->pcmBuffer = NULL;
 
     sampleSource->extraData = extraData;

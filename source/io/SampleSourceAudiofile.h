@@ -38,7 +38,6 @@
 
 typedef struct {
     AFfilehandle fileHandle;
-    float *interlacedBuffer;
     short *pcmBuffer;
 } SampleSourceAudiofileDataMembers;
 
