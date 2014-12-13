@@ -24,14 +24,12 @@ elseif(WIN32)
 else()
   set(PLATFORM_NAME "Unknown")
 endif()
-message("Platform name: ${PLATFORM_NAME}")
 
 if(CMAKE_SIZEOF_VOID_P EQUAL 8)
   set(PLATFORM_BITS 64)
 else()
   set(PLATFORM_BITS 32)
 endif()
-message("Platform bitness: ${PLATFORM_BITS}-bit")
 
 # Build Flags ##################################################
 
@@ -178,4 +176,10 @@ add_subdirectory(test)
 
 if(WITH_AUDIOFILE)
   add_subdirectory(vendor)
-endif()
+endif()# Build summary ################################################
+
+message("-- Build configuration")
+message("   Platform name: ${PLATFORM_NAME}")
+message("   Platform bitness: ${PLATFORM_BITS}-bit")
+message("   Build audiofile: ${WITH_AUDIOFILE}")
+message("   Build flac: ${WITH_FLAC}")
