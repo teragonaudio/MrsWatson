@@ -178,6 +178,7 @@ add_subdirectory(vendor)
 # Build summary ################################################
 
 message("-- Build configuration")
+message("   Build type: ${CMAKE_BUILD_TYPE}")
 message("   Platform name: ${PLATFORM_NAME}")
 message("   Platform bitness: ${PLATFORM_BITS}-bit")
 message("   Build audiofile: ${WITH_AUDIOFILE}")
