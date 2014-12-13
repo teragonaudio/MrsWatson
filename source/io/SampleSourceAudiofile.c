@@ -89,7 +89,7 @@ boolByte _readBlockFromAudiofile(void *sampleSourcePtr, SampleBuffer sampleBuffe
     memset(extraData->interlacedBuffer, 0, bytesToRead);
 
     numFramesRead = afReadFrames(extraData->fileHandle, AF_DEFAULT_TRACK,
-                                 extraData->interlacedBuffer, (int)getBlocksize());
+                                 extraData->interlacedBuffer, (int)getBlocksize() / getNumChannels());
 
     // Loop over the number of frames wanted, not the number we actually got. This means that the last block will
     // be partial, but then we write empty data to the end, since the interlaced buffer gets cleared above.
@@ -120,7 +120,7 @@ boolByte _writeBlockToAudiofile(void *sampleSourcePtr, const SampleBuffer sample
 {
     SampleSource sampleSource = (SampleSource)sampleSourcePtr;
     SampleSourceAudiofileData extraData = (SampleSourceAudiofileData)(sampleSource->extraData);
-    const AFframecount numSamplesToWrite = sampleBuffer->blocksize * sampleBuffer->numChannels;
+    const AFframecount numSamplesToWrite = sampleBuffer->blocksize;
     AFframecount numFramesWritten = 0;
 
     if (extraData->pcmBuffer == NULL) {
