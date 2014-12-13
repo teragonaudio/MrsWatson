@@ -8,10 +8,12 @@ void runIntegrationTests(TestEnvironment environment)
     // Test resource paths
     const char *resourcesPath = environment->resourcesPath;
     CharString _a440_mono_pcm = getTestResourceFilename(resourcesPath, "audio", "a440-mono.pcm");
+    CharString _a440_stereo_aiff = getTestResourceFilename(resourcesPath, "audio", "a440-stereo.aif");
     CharString _a440_stereo_pcm = getTestResourceFilename(resourcesPath, "audio", "a440-stereo.pcm");
     CharString _a440_stereo_wav = getTestResourceFilename(resourcesPath, "audio", "a440-stereo.wav");
     CharString _c_scale_mid = getTestResourceFilename(resourcesPath, "midi", "c-scale.mid");
     CharString _again_test_fxp = getTestResourceFilename(resourcesPath, "presets", "again-test.fxp");
+    const char *a440_stereo_aiff = _a440_stereo_aiff->data;
     const char *a440_mono_pcm = _a440_mono_pcm->data;
     const char *a440_stereo_pcm = _a440_stereo_pcm->data;
     const char *a440_stereo_wav = _a440_stereo_wav->data;
@@ -62,6 +64,14 @@ void runIntegrationTests(TestEnvironment environment)
     runIntegrationTest(environment, "Write WAV file",
                        buildTestArgumentString("--plugin again --input \"%s\"", a440_stereo_pcm),
                        RETURN_CODE_SUCCESS, "wav");
+#if USE_AUDIOFILE
+    runIntegrationTest(environment, "Read AIFF file",
+                       buildTestArgumentString("--plugin again --input \"%s\"", a440_stereo_aiff),
+                       RETURN_CODE_SUCCESS, kDefaultTestOutputFileType);
+    runIntegrationTest(environment, "Write AIFF file",
+                       buildTestArgumentString("--plugin again --input \"%s\"", a440_stereo_pcm),
+                       RETURN_CODE_SUCCESS, "aif");
+#endif
 
     // Configuration tests
     runIntegrationTest(environment, "Read mono input source",
@@ -122,6 +132,7 @@ void runIntegrationTests(TestEnvironment environment)
     _printTestSummary(environment->results->numSuccess + environment->results->numFail + environment->results->numSkips,
                       environment->results->numSuccess, environment->results->numFail, environment->results->numSkips);
 
+    freeCharString(_a440_stereo_aiff);
     freeCharString(_a440_mono_pcm);
     freeCharString(_a440_stereo_pcm);
     freeCharString(_a440_stereo_wav);

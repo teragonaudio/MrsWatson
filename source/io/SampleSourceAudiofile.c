@@ -49,10 +49,14 @@ static boolByte _openSampleSourceAudiofile(void *sampleSourcePtr, const SampleSo
             setSampleRate((float)afGetRate(extraData->fileHandle, AF_DEFAULT_TRACK));
         }
     } else if (openAs == SAMPLE_SOURCE_OPEN_WRITE) {
-        AFfilesetup outfileSetup = afNewFileSetup();
+        int byteOrder = AF_BYTEORDER_LITTLEENDIAN;
         int outfileFormat;
         switch (sampleSource->sampleSourceType) {
             case SAMPLE_SOURCE_TYPE_AIFF:
+                // AIFF is the only file format we support which is big-endian. That is,
+                // even on big-endian platforms (which are untested), raw PCM should still
+                // write little-endian data.
+                byteOrder = AF_BYTEORDER_BIGENDIAN;
                 outfileFormat = AF_FILE_AIFF;
                 break;
             case SAMPLE_SOURCE_TYPE_WAVE:
@@ -65,8 +69,10 @@ static boolByte _openSampleSourceAudiofile(void *sampleSourcePtr, const SampleSo
                 logInternalError("Unsupported audiofile type %d", sampleSource->sampleSourceType);
                 return false;
         }
+
+        AFfilesetup outfileSetup = afNewFileSetup();
         afInitFileFormat(outfileSetup, outfileFormat);
-        afInitByteOrder(outfileSetup, AF_DEFAULT_TRACK, AF_BYTEORDER_LITTLEENDIAN);
+        afInitByteOrder(outfileSetup, AF_DEFAULT_TRACK, byteOrder);
         afInitChannels(outfileSetup, AF_DEFAULT_TRACK, getNumChannels());
         afInitRate(outfileSetup, AF_DEFAULT_TRACK, getSampleRate());
         afInitSampleFormat(outfileSetup, AF_DEFAULT_TRACK, AF_SAMPFMT_TWOSCOMP, DEFAULT_BITRATE);
