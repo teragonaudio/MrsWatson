@@ -104,7 +104,7 @@ static boolByte _pluginGainSetParameter(void *pluginPtr, unsigned int i, float v
         return true;
 
     default:
-        logInternalError("Attempt to set invalid parameter %d on internal gain plugin", i);
+        logError("Attempt to set invalid parameter %d on internal gain plugin", i);
         return false;
     }
 }
