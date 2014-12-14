@@ -111,6 +111,15 @@ elseif(MSVC)
   )
 endif()
 
+source_group(app ".*/app/.*")
+source_group(audio ".*/audio/.*")
+source_group(base ".*/base/.*")
+source_group(io ".*/io/.*")
+source_group(logging ".*/logging/.*")
+source_group(midi ".*/midi/.*")
+source_group(plugin ".*/plugin/.*")
+source_group(time ".*/time/.*")
+
 add_library(mrswatsoncore STATIC
   ${mrswatsoncore_SOURCES}
   ${mrswatsoncore_PLATFORM_SOURCES}

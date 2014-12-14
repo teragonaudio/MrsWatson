@@ -47,6 +47,16 @@ set(mrswatsontest_HEADERS
   unit/TestRunner.h
 )
 
+source_group(analysis ".*/analysis/.*")
+source_group(app ".*/app/.*")
+source_group(audio ".*/audio/.*")
+source_group(base ".*/base/.*")
+source_group(io ".*/io/.*")
+source_group(midi ".*/midi/.*")
+source_group(plugin ".*/plugin/.*")
+source_group(time ".*/time/.*")
+source_group(unit ".*/unit/.*")
+
 set(mrswatsontest_LIBS mrswatsoncore)
 set(mrswatsontest_64_LIBS mrswatsoncore64)
 

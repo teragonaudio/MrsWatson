@@ -163,6 +163,7 @@ if(WITH_AUDIOFILE)
   )
 
   include_directories(audiofile/libaudiofile)
+  source_group(config audiofile-config/${PLATFORM_CONFIG_DIR}/config.h)
 
   target_include_directories(audiofile PUBLIC
     audiofile-config/${PLATFORM_CONFIG_DIR}
@@ -255,6 +256,7 @@ if(WITH_FLAC)
     ${flac++_SOURCES}
     ${flac_HEADERS}
     ${flac++_HEADERS}
+    flac-config/${PLATFORM_CONFIG_DIR}/config.h
   )
 
   add_library(flac64 STATIC
@@ -262,6 +264,7 @@ if(WITH_FLAC)
     ${flac++_SOURCES}
     ${flac_HEADERS}
     ${flac++_HEADERS}
+    flac-config/${PLATFORM_CONFIG_DIR}/config.h
   )
 
   target_include_directories(flac PUBLIC
@@ -278,6 +281,8 @@ if(WITH_FLAC)
     flac/src/libFLAC/include
     flac-config/${PLATFORM_CONFIG_DIR}
   )
+
+  source_group(config flac-config/${PLATFORM_CONFIG_DIR}/config.h)
 
   set_target_properties(flac PROPERTIES COMPILE_DEFINITIONS "HAVE_CONFIG_H=1")
   set_target_properties(flac64 PROPERTIES COMPILE_DEFINITIONS "HAVE_CONFIG_H=1")
