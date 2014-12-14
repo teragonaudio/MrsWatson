@@ -25,6 +25,7 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
+#include <stdio.h>
 #include "PlatformInfo.h"
 
 #if LINUX

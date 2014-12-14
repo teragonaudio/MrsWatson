@@ -72,7 +72,7 @@ static int _testSetInvalidBlocksize(void)
 
 static int _testSetTempo(void)
 {
-    setTempo(123.45);
+    setTempo(123.45f);
     assertDoubleEquals(123.45, getTempo(), 0.1);
     return 0;
 }

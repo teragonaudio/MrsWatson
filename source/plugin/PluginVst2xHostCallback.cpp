@@ -30,9 +30,6 @@
 #include "aeffectx.h"
 #include "plugin/PluginVst2xHostCallback.h"
 
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "UnusedImportStatement"
-
 // C includes
 extern "C" {
 #include <stdio.h>
