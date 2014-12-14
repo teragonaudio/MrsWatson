@@ -132,7 +132,7 @@ static int _testNewFileWithNetworkPath(void)
 #if WINDOWS
     CharString p = newCharString();
     CharString pAbs = newCharString();
-    CharString pwd = getCurrentDirectory();
+    CharString pwd = fileGetCurrentDirectory();
     File f;
 
     sprintf(p->data, "\\\\%s%c%s", TEST_DIRNAME, PATH_DELIMITER, TEST_FILENAME);

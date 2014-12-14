@@ -30,6 +30,10 @@
 
 #include <stdio.h>
 
+#if WINDOWS
+#include <Windows.h>
+#endif
+
 #if UNIX
 typedef const char *LogColor;
 
