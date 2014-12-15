@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 2.8.11)
 project(MrsWatsonVendor)
 
+include(${cmake_SCRIPTS_DIR}/ConfigureTarget.cmake)
+
 # The some of third-party libraries under the vendor directory are built with
 # autoconf (ie, ./configure scripts), which can be a bit tricky to integrate
 # with CMake, even with the ExternalProject module (and not to mention on
@@ -185,17 +187,8 @@ if(WITH_AUDIOFILE)
     )
   endif()
 
-  if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-    set_target_properties(audiofile PROPERTIES COMPILE_FLAGS "-m32")
-    set_target_properties(audiofile PROPERTIES LINK_FLAGS "-m32")
-    set_target_properties(audiofile64 PROPERTIES COMPILE_FLAGS "-m64")
-    set_target_properties(audiofile64 PROPERTIES LINK_FLAGS "-m64")
-  elseif(APPLE)
-    set_target_properties(audiofile PROPERTIES OSX_ARCHITECTURES "i386")
-    set_target_properties(audiofile64 PROPERTIES OSX_ARCHITECTURES "x86_64")
-  elseif(MSVC)
-    # TODO: bah
-  endif()
+  configure_target(audiofile 32)
+  configure_target(audiofile64 64)
 endif()
 
 # flac #########################################################
@@ -300,15 +293,6 @@ if(WITH_FLAC)
   set_target_properties(flac PROPERTIES COMPILE_DEFINITIONS "HAVE_CONFIG_H=1")
   set_target_properties(flac64 PROPERTIES COMPILE_DEFINITIONS "HAVE_CONFIG_H=1")
 
-  if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-    set_target_properties(flac PROPERTIES COMPILE_FLAGS "-m32")
-    set_target_properties(flac PROPERTIES LINK_FLAGS "-m32")
-    set_target_properties(flac64 PROPERTIES COMPILE_FLAGS "-m64")
-    set_target_properties(flac64 PROPERTIES LINK_FLAGS "-m64")
-  elseif(APPLE)
-    set_target_properties(flac PROPERTIES OSX_ARCHITECTURES "i386")
-    set_target_properties(flac64 PROPERTIES OSX_ARCHITECTURES "x86_64")
-  elseif(MSVC)
-    # TODO: bah
-  endif()
+  configure_target(flac 32)
+  configure_target(flac64 64)
 endif()

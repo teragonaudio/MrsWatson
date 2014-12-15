@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 2.8.11)
 project(MrsWatson)
 
 set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
+set(cmake_SCRIPTS_DIR ${CMAKE_SOURCE_DIR}/cmake)
 include_directories(${CMAKE_SOURCE_DIR}/source)
 include_directories(${CMAKE_SOURCE_DIR}/vendor/vstsdk2.4/pluginterfaces/vst2.x)
 

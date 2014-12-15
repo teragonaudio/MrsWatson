@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 2.8.11)
 project(MrsWatsonTest)
 
+include(${cmake_SCRIPTS_DIR}/ConfigureTarget.cmake)
+
 set(mrswatsontest_SOURCES
   MrsWatsonTestMain.c
   analysis/AnalysisClipping.c
@@ -80,29 +82,8 @@ target_link_libraries(mrswatsontest ${mrswatsontest_LIBS})
 add_executable(mrswatsontest64 ${mrswatsontest_SOURCES} ${mrswatsontest_HEADERS})
 target_link_libraries(mrswatsontest64 ${mrswatsontest_64_LIBS})
 
-
-if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-  set_target_properties(mrswatsontest PROPERTIES COMPILE_FLAGS "-m32")
-  set_target_properties(mrswatsontest PROPERTIES LINK_FLAGS "-m32")
-  target_link_libraries(mrswatsontest dl)
-
-  set_target_properties(mrswatsontest64 PROPERTIES COMPILE_FLAGS "-m64")
-  set_target_properties(mrswatsontest64 PROPERTIES LINK_FLAGS "-m64")
-  target_link_libraries(mrswatsontest64 dl)
-elseif(APPLE)
-  set_target_properties(mrswatsontest PROPERTIES OSX_ARCHITECTURES "i386")
-  set_target_properties(mrswatsontest64 PROPERTIES OSX_ARCHITECTURES "x86_64")
-elseif(MSVC)
-  # On Unix, we can build both the 32/64 bit versions at once. However with
-  # Visual Studio we need to generate two separate out-of-source build dirs,
-  # one for each architecture.
-  # TODO: There must be some way to fix this, Juce manages to do it...
-  if(${PLATFORM_BITS} EQUAL 32)
-    set_target_properties(mrswatsontest PROPERTIES COMPILE_FLAGS "/D WIN32=1")
-  elseif(${PLATFORM_BITS} EQUAL 64)
-    set_target_properties(mrswatsontest64 PROPERTIES COMPILE_FLAGS "/MACHINE:X64 /D WIN64=1")
-  endif()
-endif()
+configure_target(mrswatsontest 32)
+configure_target(mrswatsontest64 64)
 
 # The main executable must be built to correctly run integration tests
 add_dependencies(mrswatsontest mrswatson)

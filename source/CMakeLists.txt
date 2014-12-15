@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 2.8.11)
 project(mrswatsoncore)
 
+include(${cmake_SCRIPTS_DIR}/ConfigureTarget.cmake)
+
 set(mrswatsoncore_SOURCES
   app/BuildInfo.c
   app/ProgramOption.c
@@ -132,23 +134,5 @@ add_library(mrswatsoncore64 STATIC
   ${mrswatsoncore_HEADERS}
 )
 
-# Extra compiler flags needed for individual platforms
-if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-  set_target_properties(mrswatsoncore PROPERTIES COMPILE_FLAGS "-m32")
-  set_target_properties(mrswatsoncore PROPERTIES LINK_FLAGS "-m32")
-  set_target_properties(mrswatsoncore64 PROPERTIES COMPILE_FLAGS "-m64")
-  set_target_properties(mrswatsoncore64 PROPERTIES LINK_FLAGS "-m64")
-elseif(APPLE)
-  set_target_properties(mrswatsoncore PROPERTIES OSX_ARCHITECTURES "i386")
-  set_target_properties(mrswatsoncore64 PROPERTIES OSX_ARCHITECTURES "x86_64")
-elseif(MSVC)
-  # On Unix, we can build both the 32/64 bit versions at once. However with
-  # Visual Studio we need to generate two separate out-of-source build dirs,
-  # one for each architecture.
-  # TODO: There must be some way to fix this, Juce manages to do it...
-  if(${PLATFORM_BITS} EQUAL 32)
-    set_target_properties(mrswatsoncore PROPERTIES COMPILE_FLAGS "/D WIN32=1")
-  elseif(${PLATFORM_BITS} EQUAL 64)
-    set_target_properties(mrswatsoncore64 PROPERTIES COMPILE_FLAGS "/MACHINE:X64 /D WIN64=1")
-  endif()
-endif()
+configure_target(mrswatsoncore 32)
+configure_target(mrswatsoncore64 64)
