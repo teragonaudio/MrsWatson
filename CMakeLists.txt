@@ -179,8 +179,11 @@ add_subdirectory(vendor)
 # Build summary ################################################
 
 message("-- Build configuration")
+message("   C Compiler: ${CMAKE_C_COMPILER}")
+message("   C++ Compiler: ${CMAKE_CXX_COMPILER}")
 message("   Build type: ${CMAKE_BUILD_TYPE}")
 message("   Platform name: ${PLATFORM_NAME}")
 message("   Platform bitness: ${PLATFORM_BITS}-bit")
-message("   Build audiofile: ${WITH_AUDIOFILE}")
-message("   Build flac: ${WITH_FLAC}")
+message("-- Build options")
+message("   WITH_AUDIOFILE: ${WITH_AUDIOFILE}")
+message("   WITH_FLAC: ${WITH_FLAC}")
