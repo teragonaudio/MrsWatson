@@ -172,6 +172,15 @@ if(WITH_AUDIOFILE)
     audiofile-config/${PLATFORM_CONFIG_DIR}
   )
 
+  if(WITH_FLAC)
+    target_include_directories(audiofile PUBLIC
+      ${CMAKE_CURRENT_SOURCE_DIR}/flac/include
+    )
+    target_include_directories(audiofile64 PUBLIC
+      ${CMAKE_CURRENT_SOURCE_DIR}/flac/include
+    )
+  endif()
+
   if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     set_target_properties(audiofile PROPERTIES COMPILE_FLAGS "-m32")
     set_target_properties(audiofile PROPERTIES LINK_FLAGS "-m32")
