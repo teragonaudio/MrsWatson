@@ -20,6 +20,9 @@ project(MrsWatsonVendor)
 # audiofile ####################################################
 
 # Configured with: ./configure --enable-flac --enable-static --disable-docs
+# Also, the generated config.h file should be edited such that the definition
+# of ENABLE_FLAC is not hardcoded to 0/1, but rather to USE_FLAC (the value
+# set by our CMakeLists).
 
 if(WITH_AUDIOFILE)
   set(audiofile_SOURCES
@@ -166,10 +169,10 @@ if(WITH_AUDIOFILE)
   source_group(config audiofile-config/${PLATFORM_CONFIG_DIR}/config.h)
 
   target_include_directories(audiofile PUBLIC
-    audiofile-config/${PLATFORM_CONFIG_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/audiofile-config/${PLATFORM_CONFIG_DIR}
   )
   target_include_directories(audiofile64 PUBLIC
-    audiofile-config/${PLATFORM_CONFIG_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/audiofile-config/${PLATFORM_CONFIG_DIR}
   )
 
   if(WITH_FLAC)
@@ -277,18 +280,18 @@ if(WITH_FLAC)
   )
 
   target_include_directories(flac PUBLIC
-    flac/include
-    flac/include/FLAC
-    flac/include/FLAC++
-    flac/src/libFLAC/include
-    flac-config/${PLATFORM_CONFIG_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/flac/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/flac/include/FLAC
+    ${CMAKE_CURRENT_SOURCE_DIR}/flac/include/FLAC++
+    ${CMAKE_CURRENT_SOURCE_DIR}/flac/src/libFLAC/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/flac-config/${PLATFORM_CONFIG_DIR}
   )
   target_include_directories(flac64 PUBLIC
-    flac/include
-    flac/include/FLAC
-    flac/include/FLAC++
-    flac/src/libFLAC/include
-    flac-config/${PLATFORM_CONFIG_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/flac/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/flac/include/FLAC
+    ${CMAKE_CURRENT_SOURCE_DIR}/flac/include/FLAC++
+    ${CMAKE_CURRENT_SOURCE_DIR}/flac/src/libFLAC/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/flac-config/${PLATFORM_CONFIG_DIR}
   )
 
   source_group(config flac-config/${PLATFORM_CONFIG_DIR}/config.h)
