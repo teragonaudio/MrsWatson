@@ -48,6 +48,7 @@ void initAudioSettings(void)
     audioSettingsInstance->tempo = DEFAULT_TEMPO;
     audioSettingsInstance->timeSignatureBeatsPerMeasure = DEFAULT_TIMESIG_BEATS_PER_MEASURE;
     audioSettingsInstance->timeSignatureNoteValue = DEFAULT_TIMESIG_NOTE_VALUE;
+    audioSettingsInstance->bitDepth = kBitDepthDefault;
 }
 
 static AudioSettings _getAudioSettings(void)
@@ -89,6 +90,9 @@ unsigned short getTimeSignatureNoteValue(void)
     return _getAudioSettings()->timeSignatureNoteValue;
 }
 
+BitDepth getBitDepth(void) {
+    return _getAudioSettings()->bitDepth;
+}
 
 boolByte setSampleRate(const SampleRate sampleRate)
 {
@@ -216,6 +220,21 @@ boolByte setTimeSignatureFromMidiBytes(const byte *bytes)
 
     return false;
 }
+
+boolByte setBitDepth(BitDepth bitDepth) {
+    switch (bitDepth) {
+        case kBitDepth8Bit:
+        case kBitDepth16Bit:
+        case kBitDepth24Bit:
+        case kBitDepth32Bit:
+            _getAudioSettings()->bitDepth = bitDepth;
+            return true;
+        default:
+            logError("Invalid bit depth %d", bitDepth);
+            return false;
+    }
+}
+
 
 void freeAudioSettings(void)
 {

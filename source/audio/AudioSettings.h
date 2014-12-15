@@ -35,10 +35,17 @@
 #define DEFAULT_NUM_CHANNELS 2
 #define DEFAULT_BLOCKSIZE 512l
 #define DEFAULT_TIME_DIVISION 96
-#define DEFAULT_BITRATE 16
 #define DEFAULT_TEMPO 120.0f
 #define DEFAULT_TIMESIG_BEATS_PER_MEASURE 4
 #define DEFAULT_TIMESIG_NOTE_VALUE 4
+
+typedef enum {
+      kBitDepth8Bit = 8,
+      kBitDepth16Bit = 16,
+      kBitDepth24Bit = 24,
+      kBitDepth32Bit = 32,
+      kBitDepthDefault = kBitDepth16Bit
+} BitDepth;
 
 typedef struct {
     SampleRate sampleRate;
@@ -47,6 +54,7 @@ typedef struct {
     Tempo tempo;
     unsigned short timeSignatureBeatsPerMeasure;
     unsigned short timeSignatureNoteValue;
+    BitDepth bitDepth;
 } AudioSettingsMembers;
 
 typedef AudioSettingsMembers *AudioSettings;
@@ -98,6 +106,12 @@ unsigned short getTimeSignatureBeatsPerMeasure(void);
  * @return Time signature denominator
  */
 unsigned short getTimeSignatureNoteValue(void);
+
+/**
+ * Get bit depth used for processing the arrangement.
+ * @return Bit depth
+ */
+BitDepth getBitDepth(void);
 
 /**
  * Set the sample rate to be used during processing. This must be set before the
@@ -172,6 +186,13 @@ boolByte setTimeSignatureFromMidiBytes(const byte *bytes);
  * @return True if successfully set, false otherwise
  */
 boolByte setTimeSignatureFromString(const CharString signature);
+
+/**
+ * Set the bit depth to be used in processing.
+ * @param bitDepth Bit depth
+ * @return True if successfully set, false otherwise
+ */
+boolByte setBitDepth(BitDepth bitDepth);
 
 /**
  * Release memory of the global audio settings instance. Any attempt to use the

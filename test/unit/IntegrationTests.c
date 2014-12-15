@@ -7,19 +7,39 @@ void runIntegrationTests(TestEnvironment environment)
 {
     // Test resource paths
     const char *resourcesPath = environment->resourcesPath;
+
     CharString _a440_mono_pcm = getTestResourceFilename(resourcesPath, "audio", "a440-mono.pcm");
-    CharString _a440_stereo_aiff = getTestResourceFilename(resourcesPath, "audio", "a440-stereo.aif");
-    CharString _a440_stereo_flac = getTestResourceFilename(resourcesPath, "audio", "a440-stereo.flac");
-    CharString _a440_stereo_pcm = getTestResourceFilename(resourcesPath, "audio", "a440-stereo.pcm");
-    CharString _a440_stereo_wav = getTestResourceFilename(resourcesPath, "audio", "a440-stereo.wav");
-    CharString _c_scale_mid = getTestResourceFilename(resourcesPath, "midi", "c-scale.mid");
-    CharString _again_test_fxp = getTestResourceFilename(resourcesPath, "presets", "again-test.fxp");
-    const char *a440_stereo_aiff = _a440_stereo_aiff->data;
-    const char *a440_stereo_flac = _a440_stereo_flac->data;
     const char *a440_mono_pcm = _a440_mono_pcm->data;
+
+#if USE_AUDIOFILE
+    CharString _a440_stereo_aiff = getTestResourceFilename(resourcesPath, "audio", "a440-stereo.aif");
+    const char *a440_stereo_aiff = _a440_stereo_aiff->data;
+#endif
+
+#if USE_FLAC
+    CharString _a440_stereo_flac = getTestResourceFilename(resourcesPath, "audio", "a440-stereo.flac");
+    const char *a440_stereo_flac = _a440_stereo_flac->data;
+#endif
+
+    CharString _a440_stereo_pcm = getTestResourceFilename(resourcesPath, "audio", "a440-stereo.pcm");
     const char *a440_stereo_pcm = _a440_stereo_pcm->data;
+
+    CharString _a440_stereo_wav = getTestResourceFilename(resourcesPath, "audio", "a440-stereo.wav");
     const char *a440_stereo_wav = _a440_stereo_wav->data;
+
+    CharString _a440_stereo_8bit_wav = getTestResourceFilename(resourcesPath, "audio", "a440-stereo-8bit.wav");
+    const char *a440_stereo_8bit_wav = _a440_stereo_8bit_wav->data;
+
+    CharString _a440_stereo_24bit_wav = getTestResourceFilename(resourcesPath, "audio", "a440-stereo-24bit.wav");
+    const char *a440_stereo_24bit_wav = _a440_stereo_24bit_wav->data;
+
+    CharString _a440_stereo_32bit_wav = getTestResourceFilename(resourcesPath, "audio", "a440-stereo-32bit.wav");
+    const char *a440_stereo_32bit_wav = _a440_stereo_32bit_wav->data;
+
+    CharString _c_scale_mid = getTestResourceFilename(resourcesPath, "midi", "c-scale.mid");
     const char *c_scale_mid = _c_scale_mid->data;
+
+    CharString _again_test_fxp = getTestResourceFilename(resourcesPath, "presets", "again-test.fxp");
     const char *again_test_fxp = _again_test_fxp->data;
 
     // Basic non-processing operations
@@ -81,10 +101,10 @@ void runIntegrationTests(TestEnvironment environment)
     runIntegrationTest(environment, "Write PCM file",
                        buildTestArgumentString("--plugin again --input \"%s\"", a440_stereo_pcm),
                        RETURN_CODE_SUCCESS, "pcm");
-    runIntegrationTest(environment, "Read WAV file",
+    runIntegrationTest(environment, "Read WAVE file",
                        buildTestArgumentString("--plugin again --input \"%s\"", a440_stereo_wav),
                        RETURN_CODE_SUCCESS, kDefaultTestOutputFileType);
-    runIntegrationTest(environment, "Write WAV file",
+    runIntegrationTest(environment, "Write WAVE file",
                        buildTestArgumentString("--plugin again --input \"%s\"", a440_stereo_pcm),
                        RETURN_CODE_SUCCESS, "wav");
 
@@ -106,7 +126,7 @@ void runIntegrationTests(TestEnvironment environment)
                        RETURN_CODE_SUCCESS, "flac");
 #endif
 
-    // Configuration tests
+    // Audio settings tests
     runIntegrationTest(environment, "Read mono input source",
                        buildTestArgumentString("--plugin again --input \"%s\" --channels 1", a440_mono_pcm),
                        RETURN_CODE_SUCCESS, kDefaultTestOutputFileType);
@@ -116,11 +136,22 @@ void runIntegrationTests(TestEnvironment environment)
     runIntegrationTest(environment, "Read with user-defined blocksize",
                        buildTestArgumentString("--plugin again --input \"%s\" --blocksize 128", a440_stereo_pcm),
                        RETURN_CODE_SUCCESS, kDefaultTestOutputFileType);
-    runIntegrationTest(environment, "Set parameter",
-                       buildTestArgumentString("--plugin again --input \"%s\" --parameter 0,0.5", a440_stereo_pcm),
-                       RETURN_CODE_SUCCESS, kDefaultTestOutputFileType);
     runIntegrationTest(environment, "Set time signature",
                        buildTestArgumentString("--plugin again --input \"%s\" --time-signature 3/4", a440_stereo_pcm),
+                       RETURN_CODE_SUCCESS, kDefaultTestOutputFileType);
+    runIntegrationTest(environment, "Process 8-bit WAVE file",
+                       buildTestArgumentString("--plugin again --input \"%s\"", a440_stereo_8bit_wav),
+                       RETURN_CODE_SUCCESS, "wav");
+    runIntegrationTest(environment, "Process 24-bit WAVE file",
+                       buildTestArgumentString("--plugin again --input \"%s\"", a440_stereo_24bit_wav),
+                       RETURN_CODE_SUCCESS, "wav");
+    runIntegrationTest(environment, "Process 32-bit WAVE file",
+                       buildTestArgumentString("--plugin again --input \"%s\"", a440_stereo_32bit_wav),
+                       RETURN_CODE_SUCCESS, "wav");
+
+    // Parameter tests
+    runIntegrationTest(environment, "Set parameter",
+                       buildTestArgumentString("--plugin again --input \"%s\" --parameter 0,0.5", a440_stereo_pcm),
                        RETURN_CODE_SUCCESS, kDefaultTestOutputFileType);
 
     // Internal plugins
@@ -165,11 +196,18 @@ void runIntegrationTests(TestEnvironment environment)
     _printTestSummary(environment->results->numSuccess + environment->results->numFail + environment->results->numSkips,
                       environment->results->numSuccess, environment->results->numFail, environment->results->numSkips);
 
+#if USE_AUDIOFILE
     freeCharString(_a440_stereo_aiff);
+#endif
+#if USE_FLAC
     freeCharString(_a440_stereo_flac);
+#endif
     freeCharString(_a440_mono_pcm);
     freeCharString(_a440_stereo_pcm);
     freeCharString(_a440_stereo_wav);
+    freeCharString(_a440_stereo_8bit_wav);
+    freeCharString(_a440_stereo_24bit_wav);
+    freeCharString(_a440_stereo_32bit_wav);
     freeCharString(_c_scale_mid);
     freeCharString(_again_test_fxp);
 }

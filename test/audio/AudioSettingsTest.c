@@ -19,6 +19,7 @@ static int _testInitAudioSettings(void)
     assertDoubleEquals(DEFAULT_TEMPO, getTempo(), TEST_DEFAULT_TOLERANCE);
     assertIntEquals(DEFAULT_TIMESIG_BEATS_PER_MEASURE, getTimeSignatureBeatsPerMeasure());
     assertIntEquals(DEFAULT_TIMESIG_NOTE_VALUE, getTimeSignatureNoteValue());
+    assertIntEquals(16, getBitDepth());
     return 0;
 }
 
@@ -186,10 +187,24 @@ static int _testSetTimeSignatureFromNullString(void)
     return 0;
 }
 
+static int _testSetBitDepth(void)
+{
+    setBitDepth(kBitDepth8Bit);
+    assertIntEquals(8, getBitDepth());
+    setBitDepth(kBitDepth16Bit);
+    assertIntEquals(16, getBitDepth());
+    setBitDepth(kBitDepth24Bit);
+    assertIntEquals(24, getBitDepth());
+    setBitDepth(kBitDepth32Bit);
+    assertIntEquals(32, getBitDepth());
+    return 0;
+}
+
 TestSuite addAudioSettingsTests(void);
 TestSuite addAudioSettingsTests(void)
 {
     TestSuite testSuite = newTestSuite("AudioSettings", _audioSettingsSetup, _audioSettingsTeardown);
+
     addTest(testSuite, "Initialization", _testInitAudioSettings);
     addTest(testSuite, "SetSampleRate", _testSetSampleRate);
     addTest(testSuite, "SetInvalidSampleRate", _testSetInvalidSampleRate);
@@ -209,5 +224,8 @@ TestSuite addAudioSettingsTests(void)
     addTest(testSuite, "SetTimeSignatureFromString", _testSetTimeSignatureFromString);
     addTest(testSuite, "SetTimeSignatureFromInvalidString", _testSetTimeSignatureFromInvalidString);
     addTest(testSuite, "SetTimeSignatureFromNullString", _testSetTimeSignatureFromNullString);
+
+    addTest(testSuite, "SetBitDepth", _testSetBitDepth);
+
     return testSuite;
 }
