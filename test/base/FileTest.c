@@ -867,7 +867,7 @@ static int _testFileGetSizeNotExists(void)
     File f = newFileWithPath(p);
 
     assertFalse(fileExists(f));
-    assertSizeEquals(0ul, fileGetSize(f));
+    assertSizeEquals((size_t)0, fileGetSize(f));
 
     freeCharString(p);
     freeFile(f);
@@ -882,7 +882,7 @@ static int _testFileGetSizeDirectory(void)
     assertFalse(fileExists(d));
     assert(fileCreate(d, kFileTypeDirectory));
     assert(fileExists(d));
-    assertSizeEquals(0ul, fileGetSize(d));
+    assertSizeEquals((size_t)0, fileGetSize(d));
 
     freeCharString(p);
     freeFile(d);

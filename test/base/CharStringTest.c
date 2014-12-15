@@ -113,10 +113,10 @@ static int _testAppendCharStringsOverCapacity(void)
 {
     CharString a = newCharStringWithCString("a");
     CharString b = newCharStringWithCString("1234567890");
-    assertSizeEquals(2ul, a->capacity);
+    assertSizeEquals((size_t)2, a->capacity);
     charStringAppend(a, b);
     assertCharStringEquals("a1234567890", a);
-    assertSizeEquals(12ul, a->capacity);
+    assertSizeEquals((size_t)12, a->capacity);
     freeCharString(a);
     freeCharString(b);
     return 0;
