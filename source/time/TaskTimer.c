@@ -28,6 +28,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#if UNIX
+#include <time.h>
+#endif
+
 #include "time/TaskTimer.h"
 
 TaskTimer newTaskTimer(const CharString component, const char *subcomponent)

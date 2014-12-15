@@ -39,7 +39,9 @@
 #include <Windows.h>
 #include <Shellapi.h>
 #elif UNIX
-#if MACOSX
+#if LINUX
+#include <errno.h>
+#elif MACOSX
 #include <mach-o/dyld.h>
 #endif
 

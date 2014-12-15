@@ -26,9 +26,15 @@
 //
 
 #include <stdio.h>
-#include "PlatformInfo.h"
+#include <string.h>
+
+#include "base/PlatformInfo.h"
+#include "logging/EventLogger.h"
 
 #if LINUX
+#include <sys/utsname.h>
+#include "base/File.h"
+
 #define LSB_FILE_PATH "/etc/lsb-release"
 #define LSB_DISTRIBUTION "DISTRIB_DESCRIPTION"
 #endif
@@ -206,7 +212,7 @@ boolByte platformInfoIsHost64Bit(void)
     if (uname(&systemInfo) != 0) {
         logError("Could not get system bitness from uname");
     } else {
-        result = (strcmp(systemInfo.machine, "x86_64") == 0);
+        result = (boolByte)(strcmp(systemInfo.machine, "x86_64") == 0);
     }
 
 #elif MACOSX
