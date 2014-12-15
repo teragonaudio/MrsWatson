@@ -1,3 +1,4 @@
+cmake_minimum_required(VERSION 2.8.11)
 project(MrsWatsonVendor)
 
 # The some of third-party libraries under the vendor directory are built with
