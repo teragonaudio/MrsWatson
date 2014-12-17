@@ -119,49 +119,7 @@ boolByte sampleBufferCopyAndMapChannels(SampleBuffer self, const SampleBuffer bu
     return sampleBufferCopyAndMapChannelsWithOffset(self, 0, buffer, 0, self->blocksize);
 }
 
-void sampleBufferCopyPcmSamples(SampleBuffer self, const short *inPcmSamples)
-{
-    const unsigned int numChannels = self->numChannels;
-    const unsigned long numInterlacedSamples = numChannels * self->blocksize;
-    unsigned int currentInterlacedSample = 0;
-    unsigned int currentDeinterlacedSample = 0;
-    unsigned int currentChannel;
-
-    while (currentInterlacedSample < numInterlacedSamples) {
-        for (currentChannel = 0; currentChannel < numChannels; ++currentChannel) {
-            Sample convertedSample = (Sample)inPcmSamples[currentInterlacedSample++] / 32767.0f;
-            self->samples[currentChannel][currentDeinterlacedSample] = convertedSample;
-        }
-
-        ++currentDeinterlacedSample;
-    }
-}
-
-void sampleBufferGetPcmSamples(const SampleBuffer self, short *outPcmSamples, boolByte flipEndian)
-{
-    const unsigned long blocksize = self->blocksize;
-    const unsigned int numChannels = self->numChannels;
-    unsigned int currentInterlacedSample = 0;
-    unsigned int currentSample = 0;
-    unsigned int currentChannel = 0;
-    short shortValue;
-    Sample sample;
-
-    for (currentSample = 0; currentSample < blocksize; ++currentSample) {
-        for (currentChannel = 0; currentChannel < numChannels; ++currentChannel) {
-            sample = self->samples[currentChannel][currentSample];
-            shortValue = (short)(sample * 32767.0f);
-
-            if (flipEndian) {
-                outPcmSamples[currentInterlacedSample++] = flipShortEndian(shortValue);
-            } else {
-                outPcmSamples[currentInterlacedSample++] = shortValue;
-            }
-        }
-    }
-}
-
-void freeSampleBuffer(SampleBuffer self)
+void freeSampleBuffer(SampleBuffer sampleBuffer)
 {
     if (self == NULL) {
         return;
