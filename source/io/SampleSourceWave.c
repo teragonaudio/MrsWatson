@@ -80,9 +80,8 @@ static boolByte _readWaveFileInfo(const char *filename, SampleSourcePcmData extr
 
         audioFormat = convertByteArrayToUnsignedShort(chunk->data + chunkOffset);
         chunkOffset += 2;
-
         if (audioFormat != 1) {
-            logUnsupportedFeature("Compressed WAVE files");
+            logError("WAVE file with audio format %d is not supported", audioFormat);
             freeRiffChunk(chunk);
             return false;
         }
