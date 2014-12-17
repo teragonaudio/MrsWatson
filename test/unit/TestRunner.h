@@ -143,13 +143,16 @@ static const char *_getFileBasename(const char *filename)
         } \
     }
 
+    // Timing assertions fail all the time in debug mode, because the binary is
+    // running in the debugger, is not optimized, is being profiled, etc. So for
+    // debug builds, we should not return early here, or else that will cause
+    // valgrind to go crazy and report a bunch of leaks.
 #define assertTimeEquals(expected, _result, tolerance) { \
         double resultRounded = floor(_result * 100.0) / 100.0; \
         double expectedRounded = floor(expected * 100.0) / 100.0; \
         double _resultDiff = fabs(resultRounded - expectedRounded); \
         if(_resultDiff > tolerance) { \
-            fprintf(stderr, "Warning: timing assertion failed at %s:%d. Expected %g, got %g. ", _getFileBasename(__FILE__), __LINE__, expectedRounded, resultRounded); \
-            return 0; \
+            fprintf(stderr, "Warning: timing assertion failed at %s:%d. Expected %gms, got %gms. ", _getFileBasename(__FILE__), __LINE__, expectedRounded, resultRounded); \
         } \
     }
 
