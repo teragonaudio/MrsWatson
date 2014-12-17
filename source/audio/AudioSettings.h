@@ -192,7 +192,7 @@ boolByte setTimeSignatureFromString(const CharString signature);
  * @param bitDepth Bit depth
  * @return True if successfully set, false otherwise
  */
-boolByte setBitDepth(BitDepth bitDepth);
+boolByte setBitDepth(const BitDepth bitDepth);
 
 /**
  * Release memory of the global audio settings instance. Any attempt to use the

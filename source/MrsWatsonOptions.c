@@ -37,6 +37,15 @@ ProgramOptions newMrsWatsonOptions(void)
     ProgramOptions options = newProgramOptions(NUM_OPTIONS);
 
     programOptionsAdd(options, newProgramOptionWithName(
+                          OPTION_BIT_DEPTH,
+                          "bit-depth",
+                          "Bit depth to use for processing. If the input source specifies a bit depth, \
+than that value will override the one set by this option. Valid values for bit depth include: 8, 16, 24, 32.",
+                          NO_SHORT_FORM,
+                          kProgramOptionTypeNumber,
+                          kProgramOptionArgumentTypeRequired));
+    programOptionsSetNumber(options, OPTION_BIT_DEPTH, (const float)getBitDepth());
+    programOptionsAdd(options, newProgramOptionWithName(
                           OPTION_BLOCKSIZE,
                           "blocksize",
                           "Blocksize in frames to use for processing. If input source is not an even \

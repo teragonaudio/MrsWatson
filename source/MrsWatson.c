@@ -448,6 +448,12 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char **argv)
 
         if (option->enabled) {
             switch (option->index) {
+            case OPTION_BIT_DEPTH:
+                if (!setBitDepth((const BitDepth)(short)programOptionsGetNumber(programOptions, OPTION_BIT_DEPTH))) {
+                    return RETURN_CODE_INVALID_ARGUMENT;
+                }
+                break;
+
             case OPTION_BLOCKSIZE:
                 if (!setBlocksize((const SampleCount)programOptionsGetNumber(programOptions, OPTION_BLOCKSIZE))) {
                     return RETURN_CODE_INVALID_ARGUMENT;

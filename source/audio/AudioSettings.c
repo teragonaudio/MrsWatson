@@ -221,7 +221,8 @@ boolByte setTimeSignatureFromMidiBytes(const byte *bytes)
     return false;
 }
 
-boolByte setBitDepth(BitDepth bitDepth) {
+boolByte setBitDepth(const BitDepth bitDepth)
+{
     switch (bitDepth) {
         case kBitDepth8Bit:
         case kBitDepth16Bit:
