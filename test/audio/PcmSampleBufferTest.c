@@ -30,10 +30,10 @@ static int _testSetSampleBuffer8Bit(void)
     source->samples[0][2] = -0.5f;
     source->samples[0][3] = 1.0f;
     dest->setSampleBuffer(dest, source);
-    assertIntEquals(0, ((char *)dest->pcmSamples)[0]);
-    assertIntEquals(63, ((char *)dest->pcmSamples)[1]);
-    assertIntEquals(-63, ((char *)dest->pcmSamples)[2]);
-    assertIntEquals(127, ((char *)dest->pcmSamples)[3]);
+    assertIntEquals(127, ((unsigned char *)dest->pcmSamples)[0]);
+    assertIntEquals(190, ((unsigned char *)dest->pcmSamples)[1]);
+    assertIntEquals(63, ((unsigned char *)dest->pcmSamples)[2]);
+    assertIntEquals(254, ((unsigned char *)dest->pcmSamples)[3]);
 
     freePcmSampleBuffer(dest);
     freeSampleBuffer(source);
@@ -126,16 +126,16 @@ static int _testSetSamples8BitLittleEndian(void)
     PcmSampleBuffer psb = newPcmSampleBuffer(1, 4, kBitDepth8Bit);
     psb->littleEndian = true;
 
-    char *charSamples = (char *)(psb->pcmSamples);
-    charSamples[0] = 0;
-    charSamples[1] = 64;
-    charSamples[2] = -63;
-    charSamples[3] = 127;
+    unsigned char *charSamples = (unsigned char *)(psb->pcmSamples);
+    charSamples[0] = 127;
+    charSamples[1] = 190;
+    charSamples[2] = 63;
+    charSamples[3] = 254;
     psb->setSamples(psb);
     Samples *psbSamples = psb->getSampleBuffer(psb)->samples;
     assertDoubleEquals(0, psbSamples[0][0], TEST_DEFAULT_TOLERANCE);
-    assertDoubleEquals(0.5, psbSamples[0][1], TEST_DEFAULT_TOLERANCE);
-    assertDoubleEquals(-0.5, psbSamples[0][2], TEST_DEFAULT_TOLERANCE);
+    assertDoubleEquals(0.5, psbSamples[0][1], 0.1);
+    assertDoubleEquals(-0.5, psbSamples[0][2], 0.1);
     assertDoubleEquals(1.0, psbSamples[0][3], TEST_DEFAULT_TOLERANCE);
 
     freePcmSampleBuffer(psb);

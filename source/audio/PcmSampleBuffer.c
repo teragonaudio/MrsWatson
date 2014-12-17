@@ -51,6 +51,8 @@ static void _setSampleBuffer8Bit(void *selfPtr, SampleBuffer sampleBuffer)
     unsigned char *charSamples = (unsigned char *)(self->pcmSamples);
     SampleCount index = 0;
 
+    // 8-bit PCM samples are unsigned, so instead of relying on 2's compliment
+    // storage, we must map the samples from {-1.0 .. 1.0} - {0 .. 255}
     for (SampleCount sample = 0; sample < sampleBuffer->blocksize; ++sample) {
         for (ChannelCount channel = 0; channel < sampleBuffer->numChannels; ++channel) {
             charSamples[index++] = (unsigned char)((sampleBuffer->samples[channel][sample] + 1.0f) * pcmSampleMax);
