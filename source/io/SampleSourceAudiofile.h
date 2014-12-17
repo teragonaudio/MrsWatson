@@ -31,6 +31,8 @@
 #if USE_AUDIOFILE
 #include <audiofile.h>
 
+#include "audio/PcmSampleBuffer.h"
+
 // This isn't a real SampleSource class, but rather a base class to facilitate
 // in reading and writing any file supported via the audiofile library. As each
 // format has slightly different methods for opening and configuring them, those
@@ -38,7 +40,7 @@
 
 typedef struct {
     AFfilehandle fileHandle;
-    short *pcmBuffer;
+    PcmSampleBuffer pcmSampleBuffer;
 } SampleSourceAudiofileDataMembers;
 
 typedef SampleSourceAudiofileDataMembers *SampleSourceAudiofileData;
