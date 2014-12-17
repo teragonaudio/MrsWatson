@@ -134,14 +134,17 @@ boolByte openPlugin(Plugin self)
     if (self == NULL) {
         logError("There is no plugin to open");
         return false;
+    } else if (self->isOpen) {
+        return true;
     }
 
     if (!self->openPlugin(self)) {
         logError("Plugin '%s' could not be opened", self->pluginName->data);
         return false;
     } else {
-        self->inputBuffer = newSampleBuffer((unsigned int)self->getSetting(self, PLUGIN_NUM_INPUTS), getBlocksize());
-        self->outputBuffer = newSampleBuffer((unsigned int)self->getSetting(self, PLUGIN_NUM_OUTPUTS), getBlocksize());
+        self->inputBuffer = newSampleBuffer((ChannelCount)self->getSetting(self, PLUGIN_NUM_INPUTS), getBlocksize());
+        self->outputBuffer = newSampleBuffer((ChannelCount)self->getSetting(self, PLUGIN_NUM_OUTPUTS), getBlocksize());
+        self->isOpen = true;
     }
 
     return true;
@@ -156,7 +159,10 @@ boolByte closePlugin(Plugin self)
 
     self->closePlugin(self);
     freeSampleBuffer(self->inputBuffer);
+    self->inputBuffer = NULL;
     freeSampleBuffer(self->outputBuffer);
+    self->outputBuffer = NULL;
+    self->isOpen = false;
     return true;
 }
 
@@ -170,6 +176,10 @@ Plugin _newPlugin(PluginInterfaceType interfaceType, PluginType pluginType)
     plugin->pluginLocation = newCharString();
     plugin->pluginAbsolutePath = newCharString();
 
+    plugin->inputBuffer = NULL;
+    plugin->outputBuffer = NULL;
+    plugin->isOpen = false;
+
     return plugin;
 }
 
@@ -181,6 +191,12 @@ void freePlugin(Plugin self)
             free(self->extraData);
         }
 
+        if (self->inputBuffer != NULL) {
+            freeSampleBuffer(self->inputBuffer);
+        }
+        if (self->outputBuffer != NULL) {
+            freeSampleBuffer(self->outputBuffer);
+        }
         freeCharString(self->pluginName);
         freeCharString(self->pluginLocation);
         freeCharString(self->pluginAbsolutePath);

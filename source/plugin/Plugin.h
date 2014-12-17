@@ -137,6 +137,7 @@ typedef struct {
     FreePluginDataFunc freePluginData;
     SampleBuffer inputBuffer;
     SampleBuffer outputBuffer;
+    boolByte isOpen;
 
     void *extraData;
 } PluginMembers;
