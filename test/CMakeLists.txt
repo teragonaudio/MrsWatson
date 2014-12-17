@@ -14,6 +14,7 @@ set(mrswatsontest_SOURCES
   analysis/AnalyzeFile.c
   app/ProgramOptionTest.c
   audio/AudioSettingsTest.c
+  audio/PcmSampleBufferTest.c
   audio/SampleBufferTest.c
   base/CharStringTest.c
   base/EndianTest.c

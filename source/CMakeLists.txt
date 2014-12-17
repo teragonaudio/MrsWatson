@@ -7,6 +7,7 @@ set(mrswatsoncore_SOURCES
   app/BuildInfo.c
   app/ProgramOption.c
   audio/AudioSettings.c
+  audio/PcmSampleBuffer.c
   audio/SampleBuffer.c
   base/CharString.c
   base/Endian.c
@@ -48,6 +49,7 @@ set(mrswatsoncore_HEADERS
   app/ProgramOption.h
   app/ReturnCodes.h
   audio/AudioSettings.h
+  audio/PcmSampleBuffer.h
   audio/SampleBuffer.h
   base/CharString.h
   base/Endian.h

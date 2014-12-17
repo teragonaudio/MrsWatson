@@ -10,6 +10,7 @@ extern TestSuite addFileTests(void);
 extern TestSuite addLinkedListTests(void);
 extern TestSuite addMidiSequenceTests(void);
 extern TestSuite addMidiSourceTests(void);
+extern TestSuite addPcmSampleBufferTests(void);
 extern TestSuite addPlatformInfoTests(void);
 extern TestSuite addPluginTests(void);
 extern TestSuite addPluginChainTests(void);
@@ -47,6 +48,7 @@ LinkedList getTestSuites(void)
     linkedListAppend(unitTestSuites, addLinkedListTests());
     linkedListAppend(unitTestSuites, addMidiSequenceTests());
     linkedListAppend(unitTestSuites, addMidiSourceTests());
+    linkedListAppend(unitTestSuites, addPcmSampleBufferTests());
     linkedListAppend(unitTestSuites, addPlatformInfoTests());
     linkedListAppend(unitTestSuites, addPluginTests());
     linkedListAppend(unitTestSuites, addPluginChainTests());
