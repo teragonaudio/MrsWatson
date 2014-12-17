@@ -48,14 +48,14 @@ static void _runAnalysisFunction(void *item, void *userData)
     }
 }
 
-boolByte analyzeFile(const char *filename, CharString failedAnalysisFunctionName, unsigned long *failedAnalysisSample)
+boolByte analyzeFile(const char *filename, CharString failedAnalysisFunctionName, ChannelCount *failedAnalysisSample)
 {
     boolByte result;
     CharString analysisFilename;
     SampleSource sampleSource;
     LinkedList analysisFunctions;
     AnalysisData analysisData = (AnalysisData)malloc(sizeof(AnalysisDataMembers));
-    unsigned long currentBlockSample = 0;
+    SampleCount currentBlockSample = 0;
 
     // Needed to initialize new sample sources
     initAudioSettings();

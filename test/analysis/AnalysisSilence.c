@@ -1,12 +1,10 @@
 #include "AnalysisSilence.h"
+#include "AnalyzeFile.h"
 
 boolByte analysisSilence(const SampleBuffer sampleBuffer, AnalysisFunctionData data)
 {
-    unsigned int i;
-    unsigned long j;
-
-    for (i = 0; i < sampleBuffer->numChannels; i++) {
-        for (j = 0; j < sampleBuffer->blocksize; j++) {
+    for (ChannelCount i = 0; i < sampleBuffer->numChannels; ++i) {
+        for (SampleCount j = 0; j < sampleBuffer->blocksize; ++j) {
             if (sampleBuffer->samples[i][j] == 0.0f) {
                 data->consecutiveFailCounter++;
 

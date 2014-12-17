@@ -41,10 +41,10 @@
 #define DEFAULT_TIMESIG_NOTE_VALUE 4
 
 typedef struct {
-    double sampleRate;
-    unsigned int numChannels;
-    unsigned long blocksize;
-    float tempo;
+    SampleRate sampleRate;
+    ChannelCount numChannels;
+    SampleCount blocksize;
+    Tempo tempo;
     unsigned short timeSignatureBeatsPerMeasure;
     unsigned short timeSignatureNoteValue;
 } AudioSettingsMembers;
@@ -63,13 +63,13 @@ void initAudioSettings(void);
  * Get the current sample rate.
  * @return Sample rate in Hertz
  */
-double getSampleRate(void);
+SampleRate getSampleRate(void);
 
 /**
  * Get the number of output channels.
  * @return Number of channels
  */
-unsigned int getNumChannels(void);
+ChannelCount getNumChannels(void);
 
 /**
  * Give the current block size, which is the number of sample frames sent to the
@@ -79,13 +79,13 @@ unsigned int getNumChannels(void);
  * function would still return 512.
  * @return Blocksize, in sample frames
  */
-unsigned long getBlocksize(void);
+SampleCount getBlocksize(void);
 
 /**
  * Get the current tempo, in beats per minute
  * @return Temo in BPM
  */
-float getTempo(void);
+Tempo getTempo(void);
 
 /**
  * Get the current time signature's numerator, the number of beats per measure.
@@ -104,28 +104,32 @@ unsigned short getTimeSignatureNoteValue(void);
  * plugin chain is initialized. This function only requires a nonzero value,
  * however some plugins may behave strangely when sent unusual sample rates.
  * @param sampleRate Sample rate, in Hertz
+ * @return True if successfully set, false otherwise
  */
-void setSampleRate(const double sampleRate);
+boolByte setSampleRate(const SampleRate sampleRate);
 
 /**
  * Set the number of channels to be used during processing. Note that if the
  * input source defines a channel called, it may override this value.
  * @param numChannels Number of channels
+ * @return True if successfully set, false otherwise
  */
-void setNumChannels(const unsigned int numChannels);
+boolByte setNumChannels(const ChannelCount numChannels);
 
 /**
  * Set the blocksize to be used during processing. Again this should be called
  * before initializing the plugin chain.
  * @param blocksize Blocksize in sample frames
+ * @return True if successfully set, false otherwise
  */
-void setBlocksize(const unsigned long blocksize);
+boolByte setBlocksize(const SampleCount blocksize);
 
 /**
  * Set tempo to be used during processing.
  * @param tempo Tempo in beats per minute
+ * @return True if successfully set, false otherwise
  */
-void setTempo(const float tempo);
+boolByte setTempo(const Tempo tempo);
 
 /**
  * MIDI files represent tempo in meta events with a three-byte payload. This

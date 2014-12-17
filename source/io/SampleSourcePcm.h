@@ -37,11 +37,11 @@ typedef struct {
     boolByte isLittleEndian;
     FILE *fileHandle;
     size_t dataBufferNumItems;
-    short *interlacedPcmDataBuffer;
+    PcmSampleBuffer pcmSampleBuffer;
 
-    unsigned short numChannels;
-    unsigned int sampleRate;
-    unsigned short bitsPerSample;
+    ChannelCount numChannels;
+    SampleRate sampleRate;
+    BitDepth bitDepth;
 } SampleSourcePcmDataMembers;
 typedef SampleSourcePcmDataMembers *SampleSourcePcmData;
 

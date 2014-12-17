@@ -30,12 +30,9 @@
 
 #include "base/Types.h"
 
-typedef float Sample;
-typedef Sample *Samples;
-
 typedef struct {
-    unsigned int numChannels;
-    unsigned long blocksize;
+    ChannelCount numChannels;
+    SampleCount blocksize;
     Samples *samples;
 } SampleBufferMembers;
 typedef SampleBufferMembers *SampleBuffer;
@@ -46,7 +43,7 @@ typedef SampleBufferMembers *SampleBuffer;
  * @param blocksize Processing blocksize to use
  * @return An initialized SampleBuffer instance
  */
-SampleBuffer newSampleBuffer(unsigned int numChannels, unsigned long blocksize);
+SampleBuffer newSampleBuffer(ChannelCount numChannels, SampleCount blocksize);
 
 /**
  * Set all samples to zero
@@ -63,7 +60,11 @@ void sampleBufferClear(SampleBuffer self);
  * @param numberOfFrames number of frames to copy.
  * @return True on success, false on failure
  */
-boolByte sampleBufferCopyAndMapChannelsWithOffset(SampleBuffer destinationBuffer, unsigned long destinationOffset, const SampleBuffer sourceBuffer, unsigned long sourceOffset, unsigned long numberOfFrames);
+boolByte sampleBufferCopyAndMapChannelsWithOffset(SampleBuffer destinationBuffer,
+                                                  SampleCount destinationOffset,
+                                                  const SampleBuffer sourceBuffer,
+                                                  SampleCount sourceOffset,
+                                                  SampleCount numberOfFrames);
 
 /**
 * Copy all samples from another buffer to this one

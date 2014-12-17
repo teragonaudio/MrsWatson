@@ -28,6 +28,16 @@
 #ifndef MrsWatson_Types_h
 #define MrsWatson_Types_h
 
+// Custom types used across the application
+typedef int PcmSample; // TODO: int32_t?
+typedef float Sample;
+typedef Sample *Samples;
+
+typedef double SampleRate;
+typedef double Tempo;
+typedef unsigned long SampleCount;
+typedef unsigned short ChannelCount;
+
 // Using "bool" or "boolByte" (or their uppercase equivalents) is a bit dangerous
 // since compilers on some platforms define this for us. This gets tricky when
 // mixing C89/C99 syntax, so to be safe, we will use a new made-up type instead.

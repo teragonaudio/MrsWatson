@@ -59,22 +59,22 @@ static AudioSettings _getAudioSettings(void)
     return audioSettingsInstance;
 }
 
-double getSampleRate(void)
+SampleRate getSampleRate(void)
 {
     return _getAudioSettings()->sampleRate;
 }
 
-unsigned int getNumChannels(void)
+ChannelCount getNumChannels(void)
 {
     return _getAudioSettings()->numChannels;
 }
 
-unsigned long getBlocksize(void)
+SampleCount getBlocksize(void)
 {
     return _getAudioSettings()->blocksize;
 }
 
-float getTempo(void)
+Tempo getTempo(void)
 {
     return _getAudioSettings()->tempo;
 }
@@ -90,48 +90,52 @@ unsigned short getTimeSignatureNoteValue(void)
 }
 
 
-void setSampleRate(const double sampleRate)
+boolByte setSampleRate(const SampleRate sampleRate)
 {
     if (sampleRate <= 0.0f) {
-        logError("Ignoring attempt to set sample rate to %f", sampleRate);
-        return;
+        logError("Can't set sample rate to %f", sampleRate);
+        return false;
     }
 
     logInfo("Setting sample rate to %gHz", sampleRate);
     _getAudioSettings()->sampleRate = sampleRate;
+    return true;
 }
 
-void setNumChannels(const unsigned int numChannels)
+boolByte setNumChannels(const ChannelCount numChannels)
 {
     if (numChannels <= 0) {
-        logError("Ignoring attempt to set num channels to %d", numChannels);
-        return;
+        logError("Can't set channel count to %d", numChannels);
+        return false;
     }
 
     logInfo("Setting %d channels", numChannels);
     _getAudioSettings()->numChannels = numChannels;
+    return true;
 }
 
-void setBlocksize(const unsigned long blocksize)
+boolByte setBlocksize(const SampleCount blocksize)
 {
     if (blocksize <= 0) {
-        logError("Ignoring attempt to set invalid blocksize to %d", blocksize);
-        return;
+        logError("Can't set invalid blocksize %d", blocksize);
+        return false;
     }
 
     logInfo("Setting blocksize to %ld", blocksize);
     _getAudioSettings()->blocksize = blocksize;
+    return true;
 }
 
-void setTempo(const float tempo)
+boolByte setTempo(const Tempo tempo)
 {
     if (tempo <= 0.0f) {
-        logError("Ignoring attempt to set tempo to %f", tempo);
-        return;
+        logError("Cannot set tempo to %f", tempo);
+        return false;
     }
 
     logInfo("Setting tempo to %d", tempo);
     _getAudioSettings()->tempo = tempo;
+    return true;
 }
 
 void setTempoFromMidiBytes(const byte *bytes)

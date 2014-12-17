@@ -11,7 +11,7 @@ typedef struct {
     void *functionPtr;
     int consecutiveFailCounter;
     Sample lastSample;
-    unsigned long failedSample;
+    SampleCount failedSample;
     int failTolerance;
 } AnalysisFunctionDataMembers;
 typedef AnalysisFunctionDataMembers *AnalysisFunctionData;
@@ -28,7 +28,7 @@ typedef struct {
 typedef AnalysisDataMembers *AnalysisData;
 
 AnalysisFunctionData newAnalysisFunctionData(void);
-boolByte analyzeFile(const char *filename, CharString failedAnalysisFunctionName, unsigned long *failedAnalysisSample);
+boolByte analyzeFile(const char *filename, CharString failedAnalysisFunctionName, ChannelCount *failedAnalysisSample);
 void freeAnalysisFunctionData(AnalysisFunctionData self);
 
 #endif

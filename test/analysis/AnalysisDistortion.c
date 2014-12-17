@@ -6,16 +6,12 @@ static const Sample kAnalysisDistortionTolerance = 0.5f;
 
 boolByte analysisDistortion(const SampleBuffer sampleBuffer, AnalysisFunctionData data)
 {
-    unsigned int i;
-    unsigned long j;
     Sample difference;
 
-    for (i = 0; i < sampleBuffer->numChannels; i++) {
-        data->lastSample = sampleBuffer->samples[i][0];
-
-        for (j = 0; j < sampleBuffer->blocksize; j++) {
-            if (sampleBuffer->samples[i][j] > data->lastSample) {
-                difference = sampleBuffer->samples[i][j] - data->lastSample;
+    for (ChannelCount channelIndex = 0; channelIndex < sampleBuffer->numChannels; channelIndex++) {
+        for (SampleCount sampleIndex = 0; sampleIndex < sampleBuffer->blocksize; sampleIndex++) {
+            if (sampleBuffer->samples[channelIndex][sampleIndex] > data->lastSample[channelIndex]) {
+                difference = sampleBuffer->samples[channelIndex][sampleIndex] - data->lastSample;
             } else {
                 difference = data->lastSample - sampleBuffer->samples[i][j];
             }
