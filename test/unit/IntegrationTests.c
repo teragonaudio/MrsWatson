@@ -58,6 +58,21 @@ void runIntegrationTests(TestEnvironment environment)
     runIntegrationTest(environment, "Set invalid time signature",
                        buildTestArgumentString("--plugin again --input \"%s\" --time-signature invalid", a440_stereo_pcm),
                        RETURN_CODE_INVALID_ARGUMENT, NULL);
+    runIntegrationTest(environment, "Set invalid tempo",
+                       buildTestArgumentString("--plugin again --input \"%s\" --tempo 0", a440_stereo_pcm),
+                       RETURN_CODE_INVALID_ARGUMENT, NULL);
+    runIntegrationTest(environment, "Set invalid blocksize",
+                       buildTestArgumentString("--plugin again --input \"%s\" --blocksize 0", a440_stereo_pcm),
+                       RETURN_CODE_INVALID_ARGUMENT, NULL);
+    runIntegrationTest(environment, "Set invalid bit depth",
+                       buildTestArgumentString("--plugin again --input \"%s\" --bit-depth 5", a440_stereo_pcm),
+                       RETURN_CODE_INVALID_ARGUMENT, NULL);
+    runIntegrationTest(environment, "Set invalid channel count",
+                       buildTestArgumentString("--plugin again --input \"%s\" --channels 0", a440_stereo_pcm),
+                       RETURN_CODE_INVALID_ARGUMENT, NULL);
+    runIntegrationTest(environment, "Set invalid sample rate",
+                       buildTestArgumentString("--plugin again --input \"%s\" --sample-rate 0", a440_stereo_pcm),
+                       RETURN_CODE_INVALID_ARGUMENT, NULL);
 
     // Audio file types
     runIntegrationTest(environment, "Read PCM file",

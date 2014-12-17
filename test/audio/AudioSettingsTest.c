@@ -33,7 +33,7 @@ static int _testSetInvalidSampleRate(void)
 {
     setSampleRate(22050.0);
     assertDoubleEquals(22050.0, getSampleRate(), TEST_DEFAULT_TOLERANCE);
-    setSampleRate(0.0);
+    assertFalse(setSampleRate(0.0));
     assertDoubleEquals(22050.0, getSampleRate(), TEST_DEFAULT_TOLERANCE);
     return 0;
 }
@@ -49,7 +49,7 @@ static int _testSetInvalidNumChannels(void)
 {
     setNumChannels(2);
     assertIntEquals(2, getNumChannels());
-    setNumChannels(0);
+    assertFalse(setNumChannels(0));
     assertIntEquals(2, getNumChannels());
     return 0;
 }
@@ -65,7 +65,7 @@ static int _testSetInvalidBlocksize(void)
 {
     setBlocksize(123);
     assertUnsignedLongEquals(123l, getBlocksize());
-    setBlocksize(0);
+    assertFalse(setBlocksize(0));
     assertUnsignedLongEquals(123l, getBlocksize());
     return 0;
 }
@@ -81,9 +81,9 @@ static int _testSetInvalidTempo(void)
 {
     setTempo(100.0);
     assertDoubleEquals(100.0, getTempo(), TEST_DEFAULT_TOLERANCE);
-    setTempo(-666.0);
+    assertFalse(setTempo(-666.0));
     assertDoubleEquals(100.0, getTempo(), TEST_DEFAULT_TOLERANCE);
-    setTempo(0.0);
+    assertFalse(setTempo(0.0));
     assertDoubleEquals(100.0, getTempo(), TEST_DEFAULT_TOLERANCE);
     return 0;
 }

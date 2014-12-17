@@ -449,11 +449,15 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char **argv)
         if (option->enabled) {
             switch (option->index) {
             case OPTION_BLOCKSIZE:
-                setBlocksize((const unsigned long)programOptionsGetNumber(programOptions, OPTION_BLOCKSIZE));
+                if (!setBlocksize((const SampleCount)programOptionsGetNumber(programOptions, OPTION_BLOCKSIZE))) {
+                    return RETURN_CODE_INVALID_ARGUMENT;
+                }
                 break;
 
             case OPTION_CHANNELS:
-                setNumChannels((const unsigned int)programOptionsGetNumber(programOptions, OPTION_CHANNELS));
+                if (!setNumChannels((const ChannelCount)programOptionsGetNumber(programOptions, OPTION_CHANNELS))) {
+                    return RETURN_CODE_INVALID_ARGUMENT;
+                }
                 break;
 
             case OPTION_DISPLAY_INFO:
@@ -488,11 +492,15 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char **argv)
                 break;
 
             case OPTION_SAMPLE_RATE:
-                setSampleRate(programOptionsGetNumber(programOptions, OPTION_SAMPLE_RATE));
+                if (!setSampleRate(programOptionsGetNumber(programOptions, OPTION_SAMPLE_RATE))) {
+                    return RETURN_CODE_INVALID_ARGUMENT;
+                }
                 break;
 
             case OPTION_TEMPO:
-                setTempo(programOptionsGetNumber(programOptions, OPTION_TEMPO));
+                if (!setTempo(programOptionsGetNumber(programOptions, OPTION_TEMPO))) {
+                    return RETURN_CODE_INVALID_ARGUMENT;
+                }
                 break;
 
             case OPTION_TIME_SIGNATURE:
