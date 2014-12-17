@@ -50,7 +50,7 @@ multiple of the blocksize, then empty frames will be added to the last block.",
                           OPTION_CHANNELS,
                           "channels",
                           "Number of channels for output source. If the input source specifies a channel \
-count, then that value will be override the one set by this option.",
+count, then that value will override the one set by this option.",
                           HAS_SHORT_FORM,
                           kProgramOptionTypeNumber,
                           kProgramOptionArgumentTypeRequired));
