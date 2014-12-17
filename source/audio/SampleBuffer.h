@@ -102,6 +102,6 @@ void sampleBufferGetPcmSamples(const SampleBuffer self, short *outPcmSamples, bo
  * Free all memory used by a SampleBuffer instance
  * @param sampleBuffer
  */
-void freeSampleBuffer(SampleBuffer sampleBuffer);
+void freeSampleBuffer(SampleBuffer self);
 
 #endif

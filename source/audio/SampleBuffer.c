@@ -161,21 +161,15 @@ void sampleBufferGetPcmSamples(const SampleBuffer self, short *outPcmSamples, bo
     }
 }
 
-void freeSampleBuffer(SampleBuffer sampleBuffer)
+void freeSampleBuffer(SampleBuffer self)
 {
-    unsigned int i;
-
-    if (sampleBuffer == NULL) {
+    if (self == NULL) {
         return;
     }
 
-    if (sampleBuffer->samples != NULL) {
-        for (i = 0; i < sampleBuffer->numChannels; i++) {
-            free(sampleBuffer->samples[i]);
-        }
-
-        free(sampleBuffer->samples);
+    for (ChannelCount channel = 0; channel < self->numChannels; ++channel) {
+        free(self->samples[channel]);
     }
-
-    free(sampleBuffer);
+    free(self->samples);
+    free(self);
 }
