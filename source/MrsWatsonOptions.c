@@ -108,6 +108,16 @@ like so:\n\n\
                           kProgramOptionArgumentTypeNone));
 
     programOptionsAdd(options, newProgramOptionWithName(
+                          OPTION_ENDIAN,
+                          "endian",
+                          "Endian-ness to use when reading and writing raw PCM data. Recognized values \
+are \"big\" or \"little\".",
+                          NO_SHORT_FORM,
+                          kProgramOptionTypeString,
+                          kProgramOptionArgumentTypeNone));
+    programOptionsSetCString(options, OPTION_ENDIAN, "little");
+
+    programOptionsAdd(options, newProgramOptionWithName(
                           OPTION_ERROR_REPORT,
                           "error-report",
                           "Generate an error report zipfile on the desktop.",
