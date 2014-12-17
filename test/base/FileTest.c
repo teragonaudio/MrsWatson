@@ -1039,13 +1039,15 @@ static int _testFileReadBytes(void)
     fileClose(f);
     s = fileGetSize(f);
     assert(s > 0);
-    result = newCharStringWithCString(fileReadBytes(f, s));
+    char *fileData = fileReadBytes(f, s);
+    result = newCharStringWithCString(fileData);
     assertNotNull(result);
     assertCharStringEquals(TEST_FILENAME, result);
 
     freeCharString(result);
     freeCharString(p);
     freeFile(f);
+    free(fileData);
     return 0;
 }
 
@@ -1121,13 +1123,15 @@ static int _testFileReadBytesGreaterSize(void)
     fileClose(f);
     s = fileGetSize(f);
     assert(s > 0);
-    result = newCharStringWithCString(fileReadBytes(f, s * 2));
+    char *fileData = (char*)fileReadBytes(f, s * 2);
+    result = newCharStringWithCString(fileData);
     assertNotNull(result);
     assertCharStringEquals(TEST_FILENAME, result);
 
     freeCharString(result);
     freeCharString(p);
     freeFile(f);
+    free(fileData);
     return 0;
 }
 
@@ -1216,13 +1220,15 @@ static int _testFileWriteBytes(void)
     fileClose(f);
     s = fileGetSize(f);
     assert(s > 0);
-    result = newCharStringWithCString(fileReadBytes(f, s));
+    char *fileData = (char *)fileReadBytes(f, s);
+    result = newCharStringWithCString(fileData);
     assertNotNull(result);
     assertCharStringEquals(TEST_FILENAME, result);
 
     freeCharString(result);
     freeCharString(p);
     freeFile(f);
+    free(fileData);
     return 0;
 }
 

@@ -71,7 +71,7 @@ static void _pluginMockClose(void *pluginPtr)
 Plugin newPluginMock(void)
 {
     Plugin plugin = _newPlugin(PLUGIN_TYPE_INTERNAL, PLUGIN_TYPE_INSTRUMENT);
-    plugin->pluginName = newCharStringWithCString("Mock");
+    charStringCopyCString(plugin->pluginName, "Mock");
     charStringCopyCString(plugin->pluginLocation, "Internal");
 
     plugin->openPlugin = _pluginMockOpen;

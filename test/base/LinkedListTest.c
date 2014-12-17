@@ -140,6 +140,7 @@ static int _testLinkedListWithEmptyList(void)
     LinkedList l = newLinkedList();
     arr = (CharString **)linkedListToArray(l);
     assertIsNull(arr);
+    freeLinkedList(l);
     return 0;
 }
 

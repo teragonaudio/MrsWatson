@@ -111,26 +111,29 @@ static int _testConvertByteArrayToUnsignedShort(void)
 #elif HOST_LITTLE_ENDIAN
     assertUnsignedLongEquals(0xabaaul, s);
 #endif
+
+    free(b);
     return 0;
 }
 
 static int _testConvertByteArrayToUnsignedInt(void)
 {
-    byte *b = (byte *)malloc(sizeof(byte) * 2);
-    int i;
+    byte *b = (byte *)malloc(sizeof(byte) * 4);
     unsigned int s;
 
-    for (i = 0; i < 4; i++) {
+    for (size_t i = 0; i < 4; i++) {
         b[i] = (byte)(0xaa + i);
     }
-
     s = convertByteArrayToUnsignedInt(b);
+
 
 #if HOST_BIG_ENDIAN
     assertUnsignedLongEquals(0xaaabacadul, s);
 #elif HOST_LITTLE_ENDIAN
     assertUnsignedLongEquals(0xadacabaaul, s);
 #endif
+
+    free(b);
     return 0;
 }
 
