@@ -100,25 +100,19 @@ static boolByte _readWaveFileInfo(const char *filename, SampleSourcePcmData extr
         blockAlign = convertByteArrayToUnsignedShort(chunk->data + chunkOffset);
         chunkOffset += 2;
 
-        extraData->bitsPerSample = convertByteArrayToUnsignedShort(chunk->data + chunkOffset);
-
-        if (extraData->bitsPerSample > 16) {
-            logUnsupportedFeature("Bitrates greater than 16");
-            freeRiffChunk(chunk);
-            return false;
-        } else if (extraData->bitsPerSample < 16) {
-            logUnsupportedFeature("Bitrates lower than 16");
+        extraData->bitDepth = (BitDepth) convertByteArrayToUnsignedShort(chunk->data + chunkOffset);
+        if (!setBitDepth(extraData->bitDepth)) {
             freeRiffChunk(chunk);
             return false;
         }
 
-        expectedByteRate = extraData->sampleRate * extraData->numChannels * extraData->bitsPerSample / 8;
+        expectedByteRate = extraData->sampleRate * extraData->numChannels * extraData->bitDepth / 8;
 
         if (expectedByteRate != byteRate) {
             logWarn("Possibly invalid bitrate %d, expected %d", byteRate, expectedByteRate);
         }
 
-        expectedBlockAlign = (unsigned int)(extraData->numChannels * extraData->bitsPerSample / 8);
+        expectedBlockAlign = (unsigned int)(extraData->numChannels * extraData->bitDepth / 8);
 
         if (expectedBlockAlign != blockAlign) {
             logWarn("Possibly invalid block align %d, expected %d", blockAlign, expectedBlockAlign);
@@ -151,8 +145,8 @@ static boolByte _writeWaveFileInfo(SampleSourcePcmData extraData)
 {
     RiffChunk chunk = newRiffChunk();
     unsigned short audioFormat = 1;
-    unsigned int byteRate = extraData->sampleRate * extraData->numChannels * extraData->bitsPerSample / 8;
-    unsigned short blockAlign = (unsigned short)(extraData->numChannels * extraData->bitsPerSample / 8);
+    unsigned int byteRate = extraData->sampleRate * extraData->numChannels * extraData->bitDepth / 8;
+    unsigned short blockAlign = (unsigned short)(extraData->numChannels * extraData->bitDepth / 8);
     unsigned int extraParams = 0;
 
     memcpy(chunk->id, "RIFF", 4);
@@ -226,7 +220,7 @@ static boolByte _writeWaveFileInfo(SampleSourcePcmData extraData)
         return false;
     }
 
-    if (fwrite(&(extraData->bitsPerSample), sizeof(unsigned short), 1, extraData->fileHandle) != 1) {
+    if (fwrite(&(extraData->bitDepth), sizeof(unsigned short), 1, extraData->fileHandle) != 1) {
         logError("Could not write bits per sample");
         freeRiffChunk(chunk);
         return false;
@@ -279,7 +273,7 @@ static boolByte _openSampleSourceWave(void *sampleSourcePtr, const SampleSourceO
         if (extraData->fileHandle != NULL) {
             extraData->numChannels = (unsigned short)getNumChannels();
             extraData->sampleRate = (unsigned int)getSampleRate();
-            extraData->bitsPerSample = 16;
+            extraData->bitDepth = getBitDepth();
 
             if (!_writeWaveFileInfo(extraData)) {
                 fclose(extraData->fileHandle);
@@ -367,7 +361,7 @@ void _closeSampleSourceWave(void *sampleSourceDataPtr)
             return;
         }
 
-        numBytesWritten = sampleSource->numSamplesProcessed * extraData->bitsPerSample / 8;
+        numBytesWritten = sampleSource->numSamplesProcessed * extraData->bitDepth / 8;
 
         if (fwrite(&numBytesWritten, sizeof(unsigned int), 1, extraData->fileHandle) != 1) {
             logError("Could not write WAVE file size during finalization");
@@ -421,12 +415,15 @@ SampleSource _newSampleSourceWave(const CharString sampleSourceName)
     extraData->isStream = false;
     extraData->isLittleEndian = true;
     extraData->fileHandle = NULL;
-    extraData->dataBufferNumItems = 0;
-    extraData->interlacedPcmDataBuffer = NULL;
+    // Assume default values for these items. However, if an incoming SampleBuffer
+    // has different values for the channel count or blocksize, then we will reassign
+    // based on those values.
+    extraData->dataBufferNumItems = getNumChannels() * getBlocksize();
+    extraData->pcmSampleBuffer = newPcmSampleBuffer(getNumChannels(), getBlocksize(), getBitDepth());
 
     extraData->numChannels = (unsigned short)getNumChannels();
     extraData->sampleRate = (unsigned int)getSampleRate();
-    extraData->bitsPerSample = 16;
+    extraData->bitDepth = kBitDepthDefault;
 
     sampleSource->extraData = extraData;
     return sampleSource;
