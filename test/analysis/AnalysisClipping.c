@@ -7,6 +7,7 @@ boolByte analysisClipping(const SampleBuffer sampleBuffer, AnalysisFunctionData 
         for (SampleCount j = 0; j < sampleBuffer->blocksize; j++) {
             if (fabs(sampleBuffer->samples[i][j]) >= 1.0f) {
                 if (data->consecutiveFailCounter > data->failTolerance) {
+                    data->failedChannel = i;
                     data->failedSample = j;
                     return false;
                 } else {

@@ -10,8 +10,9 @@ typedef struct {
     const char *analysisName;
     void *functionPtr;
     int consecutiveFailCounter;
-    Sample lastSample;
+    Sample *lastSample;
     SampleCount failedSample;
+    ChannelCount failedChannel;
     int failTolerance;
 } AnalysisFunctionDataMembers;
 typedef AnalysisFunctionDataMembers *AnalysisFunctionData;
@@ -19,8 +20,9 @@ typedef boolByte (*AnalysisFuncPtr)(const SampleBuffer sampleBuffer, AnalysisFun
 
 typedef struct {
     CharString failedAnalysisFunctionName;
-    unsigned long *failedAnalysisSample;
-    unsigned long *currentBlockSample;
+    SampleCount *failedAnalysisFrame;
+    ChannelCount *failedAnalysisChannel;
+    SampleCount *currentFrame;
     boolByte *result;
     SampleBuffer sampleBuffer;
     AnalysisFunctionData functionData;
@@ -28,7 +30,8 @@ typedef struct {
 typedef AnalysisDataMembers *AnalysisData;
 
 AnalysisFunctionData newAnalysisFunctionData(void);
-boolByte analyzeFile(const char *filename, CharString failedAnalysisFunctionName, ChannelCount *failedAnalysisSample);
+boolByte analyzeFile(const char *filename, CharString failedAnalysisFunctionName,
+                     ChannelCount *failedAnalysisChannel, SampleCount *failedAnalysisFrame);
 void freeAnalysisFunctionData(AnalysisFunctionData self);
 
 #endif

@@ -9,6 +9,7 @@ boolByte analysisSilence(const SampleBuffer sampleBuffer, AnalysisFunctionData d
                 data->consecutiveFailCounter++;
 
                 if (data->consecutiveFailCounter > data->failTolerance) {
+                    data->failedChannel = i;
                     data->failedSample = j;
                     return false;
                 }

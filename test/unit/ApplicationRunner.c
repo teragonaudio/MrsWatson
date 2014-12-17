@@ -157,7 +157,8 @@ void runIntegrationTest(const TestEnvironment testEnvironment,
     CharString arguments = newCharStringWithCapacity(kCharStringLengthLong);
     CharString defaultArguments;
     CharString failedAnalysisFunctionName = newCharString();
-    unsigned long failedAnalysisSample;
+    ChannelCount failedAnalysisChannel;
+    SampleCount failedAnalysisFrame;
     File outputFolder = NULL;
     CharString outputFilename = getTestOutputFilename(testName,
                                 outputFileType == NULL ? kDefaultTestOutputFileType : outputFileType);
@@ -227,7 +228,8 @@ Please check the executable path specified in the --mrswatson-path argument.",
         testEnvironment->results->numFail++;
     } else if (resultCode == expectedResultCode) {
         if (outputFileType != NULL) {
-            if (analyzeFile(outputFilename->data, failedAnalysisFunctionName, &failedAnalysisSample)) {
+            if (analyzeFile(outputFilename->data, failedAnalysisFunctionName,
+                            &failedAnalysisChannel, &failedAnalysisFrame)) {
                 testEnvironment->results->numSuccess++;
 
                 if (!testEnvironment->results->keepFiles) {
@@ -242,8 +244,8 @@ Please check the executable path specified in the --mrswatson-path argument.",
                     printTestName(testName);
                 }
 
-                fprintf(stderr, "Analysis function %s failed at sample %lu. ",
-                        failedAnalysisFunctionName->data, failedAnalysisSample);
+                fprintf(stderr, "Audio analysis check for %s failed at channel %d, frame %lu. ",
+                        failedAnalysisFunctionName->data, failedAnalysisChannel, failedAnalysisFrame);
                 printTestFail();
                 testEnvironment->results->numFail++;
             }

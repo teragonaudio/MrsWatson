@@ -43,19 +43,21 @@ static void _runAnalysisFunction(void *item, void *userData)
 
     if (!analysisFuncPtr(analysisData->sampleBuffer, functionData)) {
         charStringCopyCString(analysisData->failedAnalysisFunctionName, functionData->analysisName);
-        *(analysisData->failedAnalysisSample) = *(analysisData->currentBlockSample) + functionData->failedSample;
+        *(analysisData->failedAnalysisFrame) = *(analysisData->currentFrame) + functionData->failedSample;
+        *(analysisData->failedAnalysisChannel) = functionData->failedChannel;
         *(analysisData->result) = false;
     }
 }
 
-boolByte analyzeFile(const char *filename, CharString failedAnalysisFunctionName, ChannelCount *failedAnalysisSample)
+boolByte analyzeFile(const char *filename, CharString failedAnalysisFunctionName,
+                     ChannelCount *failedAnalysisChannel, SampleCount *failedAnalysisFrame)
 {
     boolByte result;
     CharString analysisFilename;
     SampleSource sampleSource;
     LinkedList analysisFunctions;
     AnalysisData analysisData = (AnalysisData)malloc(sizeof(AnalysisDataMembers));
-    SampleCount currentBlockSample = 0;
+    SampleCount currentFrame = 0;
 
     // Needed to initialize new sample sources
     initAudioSettings();
@@ -78,14 +80,15 @@ boolByte analyzeFile(const char *filename, CharString failedAnalysisFunctionName
     }
 
     analysisData->failedAnalysisFunctionName = failedAnalysisFunctionName;
-    analysisData->failedAnalysisSample = failedAnalysisSample;
+    analysisData->failedAnalysisChannel = failedAnalysisChannel;
+    analysisData->failedAnalysisFrame = failedAnalysisFrame;
     analysisData->sampleBuffer = newSampleBuffer(DEFAULT_NUM_CHANNELS, kAnalysisBlocksize);
-    analysisData->currentBlockSample = &currentBlockSample;
+    analysisData->currentFrame = &currentFrame;
     analysisData->result = &result;
 
     while (sampleSource->readSampleBlock(sampleSource, analysisData->sampleBuffer) && result) {
         linkedListForeach(analysisFunctions, _runAnalysisFunction, analysisData);
-        currentBlockSample += kAnalysisBlocksize;
+        currentFrame += kAnalysisBlocksize;
     }
 
     freeSampleSource(sampleSource);
@@ -99,6 +102,7 @@ boolByte analyzeFile(const char *filename, CharString failedAnalysisFunctionName
 
 void freeAnalysisFunctionData(AnalysisFunctionData self)
 {
+    free(self->lastSample);
     free(self);
 }
 
@@ -109,7 +113,10 @@ AnalysisFunctionData newAnalysisFunctionData(void)
     result->consecutiveFailCounter = 0;
     result->failedSample = 0;
     result->functionPtr = NULL;
-    result->lastSample = 0.0f;
+    // TODO: Should use max channels, when we get that
+    result->lastSample = (Sample*)malloc(sizeof(Sample) * 2);
+    result->lastSample[0] = 0.0f;
+    result->lastSample[1] = 0.0f;
     result->failTolerance = kAnalysisDefaultFailTolerance;
     return result;
 }
