@@ -30,6 +30,7 @@
 
 #include <stdio.h>
 
+#include "audio/PcmSampleBuffer.h"
 #include "io/SampleSource.h"
 
 typedef struct {
@@ -37,11 +38,11 @@ typedef struct {
     boolByte isLittleEndian;
     FILE *fileHandle;
     size_t dataBufferNumItems;
-    short *interlacedPcmDataBuffer;
+    PcmSampleBuffer pcmSampleBuffer;
 
     ChannelCount numChannels;
     SampleRate sampleRate;
-    unsigned short bitsPerSample;
+    BitDepth bitDepth;
 } SampleSourcePcmDataMembers;
 typedef SampleSourcePcmDataMembers *SampleSourcePcmData;
 
