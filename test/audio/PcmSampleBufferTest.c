@@ -1,7 +1,7 @@
 #include "unit/TestRunner.h"
 #include "audio/SampleBuffer.h"
 #include "audio/PcmSampleBuffer.h"
-#include "base/Endian.h"
+#include "base/PlatformInfo.h"
 
 static int _testNewPcmSampleBuffer(void)
 {
@@ -100,28 +100,7 @@ static int _testSetSampleBuffer32Bit(void)
     return 0;
 }
 
-static int _testSetSamples8BitBigEndian(void)
-{
-    PcmSampleBuffer psb = newPcmSampleBuffer(1, 4, kBitDepth8Bit);
-    psb->littleEndian = false;
-
-    char *charSamples = (char *)(psb->pcmSamples);
-    charSamples[0] = 0;
-    charSamples[1] = 64;
-    charSamples[2] = -63;
-    charSamples[3] = 127;
-    psb->setSamples(psb);
-    Samples *psbSamples = psb->getSampleBuffer(psb)->samples;
-    assertDoubleEquals(0, psbSamples[0][0], TEST_DEFAULT_TOLERANCE);
-    assertDoubleEquals(0.5, psbSamples[0][1], TEST_DEFAULT_TOLERANCE);
-    assertDoubleEquals(-0.5, psbSamples[0][2], TEST_DEFAULT_TOLERANCE);
-    assertDoubleEquals(1.0, psbSamples[0][3], TEST_DEFAULT_TOLERANCE);
-
-    freePcmSampleBuffer(psb);
-    return 0;
-}
-
-static int _testSetSamples8BitLittleEndian(void)
+static int _testSetSamples8Bit(void)
 {
     PcmSampleBuffer psb = newPcmSampleBuffer(1, 4, kBitDepth8Bit);
     psb->littleEndian = true;
@@ -304,8 +283,7 @@ TestSuite addPcmSampleBufferTests(void)
     addTest(testSuite, "SetSampleBuffer16Bit", _testSetSampleBuffer16Bit);
     addTest(testSuite, "SetSampleBuffer24Bit", _testSetSampleBuffer24Bit);
     addTest(testSuite, "SetSampleBuffer32Bit", _testSetSampleBuffer32Bit);
-    addTest(testSuite, "SetSamples8BitBigEndian", NULL); //_testSetSamples8BitBigEndian);
-    addTest(testSuite, "SetSamples8BitLittleEndian", _testSetSamples8BitLittleEndian);
+    addTest(testSuite, "SetSamples8Bit", _testSetSamples8Bit);
     addTest(testSuite, "SetSamples16BitBigEndian", NULL); //_testSetSamples16BitBigEndian);
     addTest(testSuite, "SetSamples16BitLittleEndian", _testSetSamples16BitLittleEndian);
     addTest(testSuite, "SetSamples24BitBigEndian", _testSetSamples24BitBigEndian);
