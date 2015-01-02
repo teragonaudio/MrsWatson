@@ -26,10 +26,11 @@
 //
 
 #include <math.h>
+#include <string.h>
 
 #include "audio/PcmSampleBuffer.h"
-#include "SampleBuffer.h"
-#include "PcmSampleBuffer.h"
+#include "base/Endian.h"
+#include "base/PlatformInfo.h"
 
 static SampleBuffer _getSampleBuffer(void *selfPtr)
 {
@@ -131,11 +132,23 @@ static void _setSamples16Bit(void *selfPtr)
     ChannelCount channelIndex = 0;
     const double pcmSampleMax = _getMaxPcmSampleValue(self);
 
-    for (SampleCount sample = 0; sample < numSamples; ++sample) {
-        samples[channelIndex++][sampleIndex] = (Sample)((double)shortSamples[sample] / pcmSampleMax);
-        if (channelIndex >= self->_super->numChannels) {
-            channelIndex = 0;
-            ++sampleIndex;
+    if(platformInfoIsLittleEndian() && self->littleEndian) {
+        for (SampleCount sample = 0; sample < numSamples; ++sample) {
+            samples[channelIndex++][sampleIndex] = (Sample)((double)shortSamples[sample] / pcmSampleMax);
+            if (channelIndex >= self->_super->numChannels) {
+                channelIndex = 0;
+                ++sampleIndex;
+            }
+        }
+    } else {
+        short flippedSample;
+        for (SampleCount sample = 0; sample < numSamples; ++sample) {
+            flippedSample = flipShortEndian(shortSamples[sample]);
+            samples[channelIndex++][sampleIndex] = (Sample)((double)flippedSample / pcmSampleMax);
+            if (channelIndex >= self->_super->numChannels) {
+                channelIndex = 0;
+                ++sampleIndex;
+            }
         }
     }
 }
@@ -202,17 +215,32 @@ static void _setSamples32Bit(void *selfPtr)
 {
     PcmSampleBuffer self = (PcmSampleBuffer)selfPtr;
     Samples *samples = self->_super->samples;
-    int *intSamples = (int *)(self->pcmSamples);
+    // 32-bit PCM files are actually not stored as 32-bit integer data,
+    // but rather 32-bit floats written directly to disk. I guess this
+    // is meant to be more efficient since on matching endian platforms
+    // byte-flipping is not necessary.
+    float *floatSamples = (float *)(self->pcmSamples);
     const SampleCount numSamples = self->_super->blocksize * self->_super->numChannels;
     SampleCount sampleIndex = 0;
     ChannelCount channelIndex = 0;
-    const double pcmSampleMax = _getMaxPcmSampleValue(self);
 
-    for (SampleCount sample = 0; sample < numSamples; ++sample) {
-        samples[channelIndex++][sampleIndex] = (Sample)((double)intSamples[sample] / pcmSampleMax);
-        if (channelIndex >= self->_super->numChannels) {
-            channelIndex = 0;
-            ++sampleIndex;
+    if (platformInfoIsLittleEndian() && self->littleEndian) {
+        for (SampleCount sample = 0; sample < numSamples; ++sample) {
+            samples[channelIndex++][sampleIndex] = floatSamples[sample];
+            if (channelIndex >= self->_super->numChannels) {
+                channelIndex = 0;
+                ++sampleIndex;
+            }
+        }
+    } else {
+        float flippedSample;
+        for (SampleCount sample = 0; sample < numSamples; ++sample) {
+            flippedSample = convertBigEndianFloatToPlatform(floatSamples[sample]);
+            samples[channelIndex++][sampleIndex] = flippedSample;
+            if (channelIndex >= self->_super->numChannels) {
+                channelIndex = 0;
+                ++sampleIndex;
+            }
         }
     }
 }

@@ -2,6 +2,7 @@
 #include "audio/SampleBuffer.h"
 #include "audio/PcmSampleBuffer.h"
 #include "base/PlatformInfo.h"
+#include "base/Endian.h"
 
 static int _testNewPcmSampleBuffer(void)
 {
@@ -125,12 +126,20 @@ static int _testSetSamples16BitBigEndian(void)
 {
     PcmSampleBuffer psb = newPcmSampleBuffer(1, 4, kBitDepth16Bit);
     psb->littleEndian = false;
-
     short *shortSamples = (short *)(psb->pcmSamples);
-    shortSamples[0] = 0;
-    shortSamples[1] = 16384;
-    shortSamples[2] = -16383;
-    shortSamples[3] = 32767;
+
+    if (platformInfoIsLittleEndian()) {
+        shortSamples[0] = 0;
+        shortSamples[1] = convertBigEndianShortToPlatform(16384);
+        shortSamples[2] = convertBigEndianShortToPlatform(-16383);
+        shortSamples[3] = convertBigEndianShortToPlatform(32767);
+    } else {
+        shortSamples[0] = 0;
+        shortSamples[1] = 16384;
+        shortSamples[2] = -16383;
+        shortSamples[3] = 32767;
+    }
+
     psb->setSamples(psb);
     Samples *psbSamples = psb->getSampleBuffer(psb)->samples;
     assertDoubleEquals(0, psbSamples[0][0], TEST_DEFAULT_TOLERANCE);
@@ -146,12 +155,20 @@ static int _testSetSamples16BitLittleEndian(void)
 {
     PcmSampleBuffer psb = newPcmSampleBuffer(1, 4, kBitDepth16Bit);
     psb->littleEndian = true;
-
     short *shortSamples = (short *)(psb->pcmSamples);
-    shortSamples[0] = 0;
-    shortSamples[1] = 16384;
-    shortSamples[2] = -16383;
-    shortSamples[3] = 32767;
+
+    if (platformInfoIsLittleEndian()) {
+        shortSamples[0] = 0;
+        shortSamples[1] = 16384;
+        shortSamples[2] = -16383;
+        shortSamples[3] = 32767;
+    } else {
+        shortSamples[0] = 0;
+        shortSamples[1] = convertBigEndianShortToPlatform(16384);
+        shortSamples[2] = convertBigEndianShortToPlatform(-16383);
+        shortSamples[3] = convertBigEndianShortToPlatform(32767);
+    }
+
     psb->setSamples(psb);
     Samples *psbSamples = psb->getSampleBuffer(psb)->samples;
     assertDoubleEquals(0, psbSamples[0][0], TEST_DEFAULT_TOLERANCE);
@@ -235,12 +252,22 @@ static int _testSetSamples32BitBigEndian(void)
 {
     PcmSampleBuffer psb = newPcmSampleBuffer(1, 4, kBitDepth32Bit);
     psb->littleEndian = false;
+    float *floatSamples = (float *)malloc(4 * sizeof(float));
 
-    int *intSamples = (int *)(psb->pcmSamples);
-    intSamples[0] = 0;
-    intSamples[1] = 1073741824;
-    intSamples[2] = -1073741823;
-    intSamples[3] = 2147483647;
+    if(platformInfoIsLittleEndian()) {
+        floatSamples[0] = convertBigEndianFloatToPlatform(0.0f);
+        floatSamples[1] = convertBigEndianFloatToPlatform(0.5f);
+        floatSamples[2] = convertBigEndianFloatToPlatform(-0.5f);
+        floatSamples[3] = convertBigEndianFloatToPlatform(1.0f);
+    } else {
+        floatSamples[0] = 0;
+        floatSamples[1] = 0.5f;
+        floatSamples[2] = -0.5f;
+        floatSamples[3] = 1.0f;
+    }
+
+    // Use memcpy to directly write bytes to the PCM sample buffer
+    memcpy(psb->pcmSamples, floatSamples, 4 * sizeof(float));
     psb->setSamples(psb);
     Samples *psbSamples = psb->getSampleBuffer(psb)->samples;
     assertDoubleEquals(0, psbSamples[0][0], TEST_DEFAULT_TOLERANCE);
@@ -248,6 +275,7 @@ static int _testSetSamples32BitBigEndian(void)
     assertDoubleEquals(-0.5, psbSamples[0][2], TEST_DEFAULT_TOLERANCE);
     assertDoubleEquals(1.0, psbSamples[0][3], TEST_DEFAULT_TOLERANCE);
 
+    free(floatSamples);
     freePcmSampleBuffer(psb);
     return 0;
 }
@@ -256,12 +284,22 @@ static int _testSetSamples32BitLittleEndian(void)
 {
     PcmSampleBuffer psb = newPcmSampleBuffer(1, 4, kBitDepth32Bit);
     psb->littleEndian = true;
+    float *floatSamples = (float *)malloc(4 * sizeof(float));
 
-    int *intSamples = (int *)(psb->pcmSamples);
-    intSamples[0] = 0;
-    intSamples[1] = 1073741824;
-    intSamples[2] = -1073741823;
-    intSamples[3] = 2147483647;
+    if(platformInfoIsLittleEndian()) {
+        floatSamples[0] = 0;
+        floatSamples[1] = 0.5f;
+        floatSamples[2] = -0.5f;
+        floatSamples[3] = 1.0f;
+    } else {
+        floatSamples[0] = convertBigEndianFloatToPlatform(0.0f);
+        floatSamples[1] = convertBigEndianFloatToPlatform(0.5f);
+        floatSamples[2] = convertBigEndianFloatToPlatform(-0.5f);
+        floatSamples[3] = convertBigEndianFloatToPlatform(1.0f);
+    }
+
+    // Use memcpy to directly write bytes to the PCM sample buffer
+    memcpy(psb->pcmSamples, floatSamples, 4 * sizeof(float));
     psb->setSamples(psb);
     Samples *psbSamples = psb->getSampleBuffer(psb)->samples;
     assertDoubleEquals(0, psbSamples[0][0], TEST_DEFAULT_TOLERANCE);
@@ -284,11 +322,11 @@ TestSuite addPcmSampleBufferTests(void)
     addTest(testSuite, "SetSampleBuffer24Bit", _testSetSampleBuffer24Bit);
     addTest(testSuite, "SetSampleBuffer32Bit", _testSetSampleBuffer32Bit);
     addTest(testSuite, "SetSamples8Bit", _testSetSamples8Bit);
-    addTest(testSuite, "SetSamples16BitBigEndian", NULL); //_testSetSamples16BitBigEndian);
+    addTest(testSuite, "SetSamples16BitBigEndian", _testSetSamples16BitBigEndian);
     addTest(testSuite, "SetSamples16BitLittleEndian", _testSetSamples16BitLittleEndian);
     addTest(testSuite, "SetSamples24BitBigEndian", _testSetSamples24BitBigEndian);
     addTest(testSuite, "SetSamples24BitLittleEndian", _testSetSamples24BitLittleEndian);
-    addTest(testSuite, "SetSamples32BitBigEndian", NULL); //_testSetSamples32BitBigEndian);
+    addTest(testSuite, "SetSamples32BitBigEndian", _testSetSamples32BitBigEndian);
     addTest(testSuite, "SetSamples32BitLittleEndian", _testSetSamples32BitLittleEndian);
 
     return testSuite;
