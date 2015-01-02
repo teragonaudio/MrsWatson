@@ -61,6 +61,37 @@ static int _testSetSampleBuffer16Bit(void)
     return 0;
 }
 
+static int _testSetSampleBuffer16BitStereo(void)
+{
+    SampleBuffer source = newSampleBuffer(2, 4);
+    PcmSampleBuffer dest = newPcmSampleBuffer(2, 4, kBitDepth16Bit);
+
+    source->samples[0][0] = 0.0f;
+    source->samples[0][1] = 0.5f;
+    source->samples[0][2] = -0.5f;
+    source->samples[0][3] = 1.0f;
+
+    source->samples[1][0] = 0.0f;
+    source->samples[1][1] = 0.5f;
+    source->samples[1][2] = -0.5f;
+    source->samples[1][3] = 1.0f;
+
+    dest->setSampleBuffer(dest, source);
+    // Result should be interlaced
+    assertIntEquals(0, ((short *)dest->pcmSamples)[0]);
+    assertIntEquals(0, ((short *)dest->pcmSamples)[1]);
+    assertIntEquals(16383, ((short *)dest->pcmSamples)[2]);
+    assertIntEquals(16383, ((short *)dest->pcmSamples)[3]);
+    assertIntEquals(-16383, ((short *)dest->pcmSamples)[4]);
+    assertIntEquals(-16383, ((short *)dest->pcmSamples)[5]);
+    assertIntEquals(32767, ((short *)dest->pcmSamples)[6]);
+    assertIntEquals(32767, ((short *)dest->pcmSamples)[7]);
+
+    freePcmSampleBuffer(dest);
+    freeSampleBuffer(source);
+    return 0;
+}
+
 static int _testSetSampleBuffer24Bit(void)
 {
     SampleBuffer source = newSampleBuffer(1, 4);
@@ -214,6 +245,47 @@ static int _testSetSamples24BitBigEndian(void)
     return 0;
 }
 
+static int _testSetSamples16BitStereo(void)
+{
+    PcmSampleBuffer psb = newPcmSampleBuffer(2, 4, kBitDepth16Bit);
+    psb->littleEndian = true;
+    short *shortSamples = (short *)(psb->pcmSamples);
+
+    if (platformInfoIsLittleEndian()) {
+        shortSamples[0] = 0;
+        shortSamples[1] = 0;
+        shortSamples[2] = 16384;
+        shortSamples[3] = 16384;
+        shortSamples[4] = -16383;
+        shortSamples[5] = -16383;
+        shortSamples[6] = 32767;
+        shortSamples[7] = 32767;
+    } else {
+        shortSamples[0] = 0;
+        shortSamples[1] = 0;
+        shortSamples[2] = convertBigEndianShortToPlatform(16384);
+        shortSamples[3] = convertBigEndianShortToPlatform(16384);
+        shortSamples[4] = convertBigEndianShortToPlatform(-16383);
+        shortSamples[5] = convertBigEndianShortToPlatform(-16383);
+        shortSamples[6] = convertBigEndianShortToPlatform(32767);
+        shortSamples[7] = convertBigEndianShortToPlatform(32767);
+    }
+
+    psb->setSamples(psb);
+    Samples *psbSamples = psb->getSampleBuffer(psb)->samples;
+    assertDoubleEquals(0, psbSamples[0][0], TEST_DEFAULT_TOLERANCE);
+    assertDoubleEquals(0, psbSamples[1][0], TEST_DEFAULT_TOLERANCE);
+    assertDoubleEquals(0.5, psbSamples[0][1], TEST_DEFAULT_TOLERANCE);
+    assertDoubleEquals(0.5, psbSamples[1][1], TEST_DEFAULT_TOLERANCE);
+    assertDoubleEquals(-0.5, psbSamples[0][2], TEST_DEFAULT_TOLERANCE);
+    assertDoubleEquals(-0.5, psbSamples[1][2], TEST_DEFAULT_TOLERANCE);
+    assertDoubleEquals(1.0, psbSamples[0][3], TEST_DEFAULT_TOLERANCE);
+    assertDoubleEquals(1.0, psbSamples[1][3], TEST_DEFAULT_TOLERANCE);
+
+    freePcmSampleBuffer(psb);
+    return 0;
+}
+
 static int _testSetSamples24BitLittleEndian(void)
 {
     PcmSampleBuffer psb = newPcmSampleBuffer(1, 4, kBitDepth24Bit);
@@ -319,11 +391,13 @@ TestSuite addPcmSampleBufferTests(void)
     addTest(testSuite, "NewObject", _testNewPcmSampleBuffer);
     addTest(testSuite, "SetSampleBuffer8Bit", _testSetSampleBuffer8Bit);
     addTest(testSuite, "SetSampleBuffer16Bit", _testSetSampleBuffer16Bit);
+    addTest(testSuite, "SetSampleBuffer16BitStereo", _testSetSampleBuffer16BitStereo);
     addTest(testSuite, "SetSampleBuffer24Bit", _testSetSampleBuffer24Bit);
     addTest(testSuite, "SetSampleBuffer32Bit", _testSetSampleBuffer32Bit);
     addTest(testSuite, "SetSamples8Bit", _testSetSamples8Bit);
     addTest(testSuite, "SetSamples16BitBigEndian", _testSetSamples16BitBigEndian);
     addTest(testSuite, "SetSamples16BitLittleEndian", _testSetSamples16BitLittleEndian);
+    addTest(testSuite, "SetSamples16BitStereo", _testSetSamples16BitStereo);
     addTest(testSuite, "SetSamples24BitBigEndian", _testSetSamples24BitBigEndian);
     addTest(testSuite, "SetSamples24BitLittleEndian", _testSetSamples24BitLittleEndian);
     addTest(testSuite, "SetSamples32BitBigEndian", _testSetSamples32BitBigEndian);
