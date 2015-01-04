@@ -36,13 +36,13 @@
 #include "io/SampleSourcePcm.h"
 #include "logging/EventLogger.h"
 
-static boolByte _openSampleSourceAudiofile(void *sampleSourcePtr, const SampleSourceOpenAs openAs)
+static boolByte _openSampleSourceAudiofile(void *selfPtr, const SampleSourceOpenAs openAs)
 {
-    SampleSource sampleSource = (SampleSource)sampleSourcePtr;
-    SampleSourceAudiofileData extraData = sampleSource->extraData;
+    SampleSource self = (SampleSource) selfPtr;
+    SampleSourceAudiofileData extraData = self->extraData;
 
     if (openAs == SAMPLE_SOURCE_OPEN_READ) {
-        extraData->fileHandle = afOpenFile(sampleSource->sourceName->data, "r", NULL);
+        extraData->fileHandle = afOpenFile(self->sourceName->data, "r", NULL);
 
         if (extraData->fileHandle != NULL) {
             setNumChannels((const ChannelCount)afGetVirtualChannels(extraData->fileHandle, AF_DEFAULT_TRACK));
@@ -52,12 +52,28 @@ static boolByte _openSampleSourceAudiofile(void *sampleSourcePtr, const SampleSo
             afGetSampleFormat(extraData->fileHandle, AF_DEFAULT_TRACK, &sampleFormat, &bitDepth);
             setBitDepth((BitDepth) bitDepth);
             extraData->pcmSampleBuffer = newPcmSampleBuffer(getNumChannels(), getBlocksize(), getBitDepth());
+            logDebug("Opened audiofile %d-bit, %s-endian for reading",
+                     extraData->pcmSampleBuffer->bitDepth,
+                     extraData->pcmSampleBuffer->littleEndian ? "little" : "big");
         }
     } else if (openAs == SAMPLE_SOURCE_OPEN_WRITE) {
         int byteOrder = AF_BYTEORDER_LITTLEENDIAN;
-        int sampleFormat = getBitDepth() > kBitDepth8Bit ? AF_SAMPFMT_TWOSCOMP : AF_SAMPFMT_UNSIGNED;
+
+        int sampleFormat;
+        switch (getBitDepth()) {
+            case kBitDepth8Bit:
+               sampleFormat = AF_SAMPFMT_TWOSCOMP;
+                break;
+            case kBitDepth32Bit:
+                sampleFormat = AF_SAMPFMT_FLOAT;
+                break;
+            default:
+                sampleFormat = AF_SAMPFMT_UNSIGNED;
+                break;
+        }
+
         int outfileFormat;
-        switch (sampleSource->sampleSourceType) {
+        switch (self->sampleSourceType) {
             case SAMPLE_SOURCE_TYPE_AIFF:
                 // AIFF is the only file format we support which is big-endian. That is,
                 // even on big-endian platforms (which are untested), raw PCM should still
@@ -72,7 +88,7 @@ static boolByte _openSampleSourceAudiofile(void *sampleSourcePtr, const SampleSo
                 outfileFormat = AF_FILE_FLAC;
                 break;
             default:
-                logInternalError("Unsupported audiofile type %d", sampleSource->sampleSourceType);
+                logInternalError("Unsupported audiofile type %d", self->sampleSourceType);
                 return false;
         }
 
@@ -82,9 +98,12 @@ static boolByte _openSampleSourceAudiofile(void *sampleSourcePtr, const SampleSo
         afInitChannels(outfileSetup, AF_DEFAULT_TRACK, getNumChannels());
         afInitRate(outfileSetup, AF_DEFAULT_TRACK, getSampleRate());
         afInitSampleFormat(outfileSetup, AF_DEFAULT_TRACK, sampleFormat, getBitDepth());
-        extraData->fileHandle = afOpenFile(sampleSource->sourceName->data, "w", outfileSetup);
+        extraData->fileHandle = afOpenFile(self->sourceName->data, "w", outfileSetup);
         extraData->pcmSampleBuffer = newPcmSampleBuffer(getNumChannels(), getBlocksize(), getBitDepth());
         extraData->pcmSampleBuffer->littleEndian = (boolByte)(byteOrder == AF_BYTEORDER_LITTLEENDIAN);
+        logDebug("Opened audiofile %d-bit, %s-endian for writing",
+                 extraData->pcmSampleBuffer->bitDepth,
+                 extraData->pcmSampleBuffer->littleEndian ? "little" : "big");
     } else {
         logInternalError("Invalid type for openAs in audiofile source");
         return false;
@@ -92,12 +111,12 @@ static boolByte _openSampleSourceAudiofile(void *sampleSourcePtr, const SampleSo
 
     if (extraData->fileHandle == NULL) {
         logError("File '%s' could not be opened for %s",
-                 sampleSource->sourceName->data,
+                 self->sourceName->data,
                  openAs == SAMPLE_SOURCE_OPEN_READ ? "reading" : "writing");
         return false;
     }
 
-    sampleSource->openedAs = openAs;
+    self->openedAs = openAs;
     return true;
 }
 
@@ -105,24 +124,24 @@ boolByte _readBlockFromAudiofile(void *selfPtr, SampleBuffer sampleBuffer)
 {
     SampleSource self = (SampleSource)selfPtr;
     SampleSourceAudiofileData extraData = (SampleSourceAudiofileData)(self->extraData);
-    PcmSampleBuffer pcmSampleBuffer = extraData->pcmSampleBuffer;
-    const SampleBuffer internalSampleBuffer = pcmSampleBuffer->getSampleBuffer(pcmSampleBuffer);
+    const SampleBuffer superSampleBuffer = extraData->pcmSampleBuffer->getSampleBuffer(extraData->pcmSampleBuffer);
     AFframecount numFramesRead = 0;
 
     // If the blocksize has changed, then regenerate our PCM sample buffer to
     // make room for it.
-    if (internalSampleBuffer->blocksize != sampleBuffer->blocksize ||
-            internalSampleBuffer->numChannels != sampleBuffer->numChannels) {
-        freePcmSampleBuffer(pcmSampleBuffer);
-        pcmSampleBuffer = newPcmSampleBuffer(sampleBuffer->numChannels, sampleBuffer->blocksize, getBitDepth());
+    if (superSampleBuffer->blocksize != sampleBuffer->blocksize ||
+            superSampleBuffer->numChannels != sampleBuffer->numChannels) {
+        freePcmSampleBuffer(extraData->pcmSampleBuffer);
+        extraData->pcmSampleBuffer = newPcmSampleBuffer(sampleBuffer->numChannels, sampleBuffer->blocksize, getBitDepth());
     }
 
     numFramesRead = afReadFrames(extraData->fileHandle,
                                  AF_DEFAULT_TRACK,
-                                 pcmSampleBuffer->pcmSamples,
+                                 extraData->pcmSampleBuffer->pcmSamples,
                                  (int)getBlocksize());
-    pcmSampleBuffer->setSamples(pcmSampleBuffer);
-    sampleBufferCopyAndMapChannels(sampleBuffer, pcmSampleBuffer->getSampleBuffer(pcmSampleBuffer));
+    extraData->pcmSampleBuffer->setSamples(extraData->pcmSampleBuffer);
+
+    sampleBufferCopyAndMapChannels(sampleBuffer, extraData->pcmSampleBuffer->getSampleBuffer(extraData->pcmSampleBuffer));
 
     // Set the blocksize of the sample buffer to be the number of frames read
     sampleBuffer->blocksize = (SampleCount)numFramesRead;
@@ -139,10 +158,10 @@ boolByte _readBlockFromAudiofile(void *selfPtr, SampleBuffer sampleBuffer)
     }
 }
 
-boolByte _writeBlockToAudiofile(void *sampleSourcePtr, const SampleBuffer sampleBuffer)
+boolByte _writeBlockToAudiofile(void *selfPtr, const SampleBuffer sampleBuffer)
 {
-    SampleSource sampleSource = (SampleSource)sampleSourcePtr;
-    SampleSourceAudiofileData extraData = (SampleSourceAudiofileData)(sampleSource->extraData);
+    SampleSource self = (SampleSource) selfPtr;
+    SampleSourceAudiofileData extraData = (SampleSourceAudiofileData)(self->extraData);
     const AFframecount numSamplesToWrite = sampleBuffer->blocksize;
     AFframecount numFramesWritten = 0;
 
@@ -151,7 +170,7 @@ boolByte _writeBlockToAudiofile(void *sampleSourcePtr, const SampleBuffer sample
                                      AF_DEFAULT_TRACK,
                                      extraData->pcmSampleBuffer->pcmSamples,
                                      (int)getBlocksize());
-    sampleSource->numSamplesProcessed += getBlocksize() * getNumChannels();
+    self->numSamplesProcessed += getBlocksize() * getNumChannels();
 
     if (numFramesWritten == -1) {
         logWarn("audiofile encountered an error when writing to file");
@@ -164,19 +183,19 @@ boolByte _writeBlockToAudiofile(void *sampleSourcePtr, const SampleBuffer sample
     }
 }
 
-void _closeSampleSourceAudiofile(void *sampleSourcePtr)
+void _closeSampleSourceAudiofile(void *selfPtr)
 {
-    SampleSource sampleSource = (SampleSource)sampleSourcePtr;
-    SampleSourceAudiofileData extraData = (SampleSourceAudiofileData)sampleSource->extraData;
+    SampleSource self = (SampleSource) selfPtr;
+    SampleSourceAudiofileData extraData = (SampleSourceAudiofileData) self->extraData;
 
     if (extraData->fileHandle != NULL) {
         afCloseFile(extraData->fileHandle);
     }
 }
 
-void _freeSampleSourceDataAudiofile(void *sampleSourceDataPtr)
+void _freeSampleSourceDataAudiofile(void *extraDataPtr)
 {
-    SampleSourceAudiofileData extraData = (SampleSourceAudiofileData)sampleSourceDataPtr;
+    SampleSourceAudiofileData extraData = (SampleSourceAudiofileData) extraDataPtr;
     if (extraData->pcmSampleBuffer != NULL) {
         freePcmSampleBuffer(extraData->pcmSampleBuffer);
     }
