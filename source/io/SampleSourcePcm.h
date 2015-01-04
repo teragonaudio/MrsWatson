@@ -69,7 +69,7 @@ size_t sampleSourcePcmWrite(SampleSourcePcmData extraData, const SampleBuffer sa
  * @param sampleSourcePtr
  * @param sampleRate Sample rate, in Hertz
  */
-void sampleSourcePcmSetSampleRate(void *sampleSourcePtr, double sampleRate);
+void sampleSourcePcmSetSampleRate(void *selfPtr, double sampleRate);
 
 /**
  * Set the number of channels to be used for raw PCM file operations. Like the
@@ -77,12 +77,12 @@ void sampleSourcePcmSetSampleRate(void *sampleSourcePtr, double sampleRate);
  * @param sampleSourcePtr
  * @param numChannels Number of channels
  */
-void sampleSourcePcmSetNumChannels(void *sampleSourcePtr, int numChannels);
+void sampleSourcePcmSetNumChannels(void *selfPtr, int numChannels);
 
 /**
  * Free a PCM sample source and all associated data
  * @param sampleSourceDataPtr Pointer to sample source data
  */
-void freeSampleSourceDataPcm(void *sampleSourceDataPtr);
+void freeSampleSourceDataPcm(void *extraDataPtr);
 
 #endif

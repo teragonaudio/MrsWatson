@@ -33,26 +33,26 @@
 #include "io/SampleSourcePcm.h"
 #include "logging/EventLogger.h"
 
-static boolByte openSampleSourcePcm(void *sampleSourcePtr, const SampleSourceOpenAs openAs)
+static boolByte openSampleSourcePcm(void *selfPtr, const SampleSourceOpenAs openAs)
 {
-    SampleSource sampleSource = (SampleSource)sampleSourcePtr;
-    SampleSourcePcmData extraData = (SampleSourcePcmData)(sampleSource->extraData);
+    SampleSource self = (SampleSource) selfPtr;
+    SampleSourcePcmData extraData = (SampleSourcePcmData)(self->extraData);
 
     if (openAs == SAMPLE_SOURCE_OPEN_READ) {
-        if (charStringIsEqualToCString(sampleSource->sourceName, "-", false)) {
+        if (charStringIsEqualToCString(self->sourceName, "-", false)) {
             extraData->fileHandle = stdin;
-            charStringCopyCString(sampleSource->sourceName, "stdin");
+            charStringCopyCString(self->sourceName, "stdin");
             extraData->isStream = true;
         } else {
-            extraData->fileHandle = fopen(sampleSource->sourceName->data, "rb");
+            extraData->fileHandle = fopen(self->sourceName->data, "rb");
         }
     } else if (openAs == SAMPLE_SOURCE_OPEN_WRITE) {
-        if (charStringIsEqualToCString(sampleSource->sourceName, "-", false)) {
+        if (charStringIsEqualToCString(self->sourceName, "-", false)) {
             extraData->fileHandle = stdout;
-            charStringCopyCString(sampleSource->sourceName, "stdout");
+            charStringCopyCString(self->sourceName, "stdout");
             extraData->isStream = true;
         } else {
-            extraData->fileHandle = fopen(sampleSource->sourceName->data, "wb");
+            extraData->fileHandle = fopen(self->sourceName->data, "wb");
         }
     } else {
         logInternalError("Invalid type for openAs in PCM file");
@@ -61,11 +61,11 @@ static boolByte openSampleSourcePcm(void *sampleSourcePtr, const SampleSourceOpe
 
     if (extraData->fileHandle == NULL) {
         logError("PCM File '%s' could not be opened for %s",
-                 sampleSource->sourceName->data, openAs == SAMPLE_SOURCE_OPEN_READ ? "reading" : "writing");
+                 self->sourceName->data, openAs == SAMPLE_SOURCE_OPEN_READ ? "reading" : "writing");
         return false;
     }
 
-    sampleSource->openedAs = openAs;
+    self->openedAs = openAs;
     return true;
 }
 
@@ -78,21 +78,22 @@ size_t sampleSourcePcmRead(SampleSourcePcmData extraData, SampleBuffer sampleBuf
 
     // If the blocksize has changed, then regenerate our PCM sample buffer to
     // make room for it.
-    PcmSampleBuffer pcmSampleBuffer = extraData->pcmSampleBuffer;
-    const SampleBuffer internalSampleBuffer = pcmSampleBuffer->getSampleBuffer(pcmSampleBuffer);
+    const SampleBuffer internalSampleBuffer = extraData->pcmSampleBuffer->getSampleBuffer(extraData->pcmSampleBuffer);
     if (internalSampleBuffer->blocksize != sampleBuffer->blocksize ||
             internalSampleBuffer->numChannels != sampleBuffer->numChannels) {
-        freePcmSampleBuffer(pcmSampleBuffer);
-        pcmSampleBuffer = newPcmSampleBuffer(sampleBuffer->numChannels, sampleBuffer->blocksize, getBitDepth());
+        freePcmSampleBuffer(extraData->pcmSampleBuffer);
+        extraData->pcmSampleBuffer = newPcmSampleBuffer(sampleBuffer->numChannels, sampleBuffer->blocksize, getBitDepth());
         extraData->dataBufferNumItems = sampleBuffer->numChannels * sampleBuffer->blocksize;
     }
 
     // Read data into our temporary holding buffer, and then set it to the
     // PcmSampleBuffer, which will convert it to floating point for us.
-    size_t pcmSamplesRead = fread(pcmSampleBuffer->pcmSamples, pcmSampleBuffer->bytesPerSample,
-                                  extraData->dataBufferNumItems, extraData->fileHandle);
-    pcmSampleBuffer->setSamples(pcmSampleBuffer);
-    sampleBufferCopyAndMapChannels(sampleBuffer, pcmSampleBuffer->getSampleBuffer(pcmSampleBuffer));
+    size_t pcmSamplesRead = fread(extraData->pcmSampleBuffer->pcmSamples,
+                                  extraData->pcmSampleBuffer->bytesPerSample,
+                                  extraData->dataBufferNumItems,
+                                  extraData->fileHandle);
+    extraData->pcmSampleBuffer->setSamples(extraData->pcmSampleBuffer);
+    sampleBufferCopyAndMapChannels(sampleBuffer, extraData->pcmSampleBuffer->getSampleBuffer(extraData->pcmSampleBuffer));
 
     if (pcmSamplesRead < extraData->dataBufferNumItems) {
         logDebug("End of PCM file reached");
@@ -104,13 +105,13 @@ size_t sampleSourcePcmRead(SampleSourcePcmData extraData, SampleBuffer sampleBuf
     return pcmSamplesRead;
 }
 
-static boolByte readBlockFromPcmFile(void *sampleSourcePtr, SampleBuffer sampleBuffer)
+static boolByte readBlockFromPcmFile(void *selfPtr, SampleBuffer sampleBuffer)
 {
-    SampleSource sampleSource = (SampleSource)sampleSourcePtr;
-    SampleSourcePcmData extraData = (SampleSourcePcmData)(sampleSource->extraData);
+    SampleSource self = (SampleSource) selfPtr;
+    SampleSourcePcmData extraData = (SampleSourcePcmData)(self->extraData);
     SampleCount originalBlocksize = sampleBuffer->blocksize;
     size_t samplesRead = sampleSourcePcmRead(extraData, sampleBuffer);
-    sampleSource->numSamplesProcessed += samplesRead;
+    self->numSamplesProcessed += samplesRead;
     return (boolByte)(originalBlocksize == sampleBuffer->blocksize);
 }
 
@@ -137,42 +138,42 @@ size_t sampleSourcePcmWrite(SampleSourcePcmData extraData, const SampleBuffer sa
     return pcmSamplesWritten;
 }
 
-static boolByte writeBlockToPcmFile(void *sampleSourcePtr, const SampleBuffer sampleBuffer)
+static boolByte writeBlockToPcmFile(void *selfPtr, const SampleBuffer sampleBuffer)
 {
-    SampleSource sampleSource = (SampleSource)sampleSourcePtr;
-    SampleSourcePcmData extraData = (SampleSourcePcmData)(sampleSource->extraData);
+    SampleSource self = (SampleSource) selfPtr;
+    SampleSourcePcmData extraData = (SampleSourcePcmData)(self->extraData);
     unsigned int samplesWritten = (int)sampleSourcePcmWrite(extraData, sampleBuffer);
-    sampleSource->numSamplesProcessed += samplesWritten;
+    self->numSamplesProcessed += samplesWritten;
     return (boolByte)(samplesWritten == sampleBuffer->blocksize);
 }
 
-static void _closeSampleSourcePcm(void *sampleSourcePtr)
+static void _closeSampleSourcePcm(void *selfPtr)
 {
-    SampleSource sampleSource = (SampleSource)sampleSourcePtr;
-    SampleSourcePcmData extraData = (SampleSourcePcmData)sampleSource->extraData;
+    SampleSource self = (SampleSource) selfPtr;
+    SampleSourcePcmData extraData = (SampleSourcePcmData)self->extraData;
 
     if (extraData->fileHandle != NULL) {
         fclose(extraData->fileHandle);
     }
 }
 
-void sampleSourcePcmSetSampleRate(void *sampleSourcePtr, SampleRate sampleRate)
+void sampleSourcePcmSetSampleRate(void *selfPtr, SampleRate sampleRate)
 {
-    SampleSource sampleSource = (SampleSource)sampleSourcePtr;
-    SampleSourcePcmData extraData = (SampleSourcePcmData)sampleSource->extraData;
+    SampleSource self = (SampleSource) selfPtr;
+    SampleSourcePcmData extraData = (SampleSourcePcmData)self->extraData;
     extraData->sampleRate = (unsigned int)sampleRate;
 }
 
-void sampleSourcePcmSetNumChannels(void *sampleSourcePtr, int numChannels)
+void sampleSourcePcmSetNumChannels(void *selfPtr, int numChannels)
 {
-    SampleSource sampleSource = (SampleSource)sampleSourcePtr;
-    SampleSourcePcmData extraData = (SampleSourcePcmData)sampleSource->extraData;
+    SampleSource self = (SampleSource) selfPtr;
+    SampleSourcePcmData extraData = (SampleSourcePcmData)self->extraData;
     extraData->numChannels = (unsigned short)numChannels;
 }
 
-void freeSampleSourceDataPcm(void *sampleSourceDataPtr)
+void freeSampleSourceDataPcm(void *extraDataPtr)
 {
-    SampleSourcePcmData extraData = (SampleSourcePcmData)sampleSourceDataPtr;
+    SampleSourcePcmData extraData = (SampleSourcePcmData) extraDataPtr;
     freePcmSampleBuffer(extraData->pcmSampleBuffer);
     free(extraData);
 }
@@ -205,7 +206,7 @@ SampleSource _newSampleSourcePcm(const CharString sampleSourceName)
 
     extraData->numChannels = getNumChannels();
     extraData->sampleRate = getSampleRate();
-    extraData->bitDepth = kBitDepthDefault;
+    extraData->bitDepth = getBitDepth();
     sampleSource->extraData = extraData;
 
     return sampleSource;
