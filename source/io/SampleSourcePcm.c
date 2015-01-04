@@ -69,32 +69,32 @@ static boolByte openSampleSourcePcm(void *sampleSourcePtr, const SampleSourceOpe
     return true;
 }
 
-size_t sampleSourcePcmRead(SampleSourcePcmData self, SampleBuffer sampleBuffer)
+size_t sampleSourcePcmRead(SampleSourcePcmData extraData, SampleBuffer sampleBuffer)
 {
-    if (self == NULL || self->fileHandle == NULL) {
+    if (extraData == NULL || extraData->fileHandle == NULL) {
         logCritical("Corrupt PCM data structure");
         return 0;
     }
 
     // If the blocksize has changed, then regenerate our PCM sample buffer to
     // make room for it.
-    PcmSampleBuffer pcmSampleBuffer = self->pcmSampleBuffer;
+    PcmSampleBuffer pcmSampleBuffer = extraData->pcmSampleBuffer;
     const SampleBuffer internalSampleBuffer = pcmSampleBuffer->getSampleBuffer(pcmSampleBuffer);
     if (internalSampleBuffer->blocksize != sampleBuffer->blocksize ||
             internalSampleBuffer->numChannels != sampleBuffer->numChannels) {
         freePcmSampleBuffer(pcmSampleBuffer);
         pcmSampleBuffer = newPcmSampleBuffer(sampleBuffer->numChannels, sampleBuffer->blocksize, getBitDepth());
-        self->dataBufferNumItems = sampleBuffer->numChannels * sampleBuffer->blocksize;
+        extraData->dataBufferNumItems = sampleBuffer->numChannels * sampleBuffer->blocksize;
     }
 
     // Read data into our temporary holding buffer, and then set it to the
     // PcmSampleBuffer, which will convert it to floating point for us.
     size_t pcmSamplesRead = fread(pcmSampleBuffer->pcmSamples, pcmSampleBuffer->bytesPerSample,
-                                  self->dataBufferNumItems, self->fileHandle);
+                                  extraData->dataBufferNumItems, extraData->fileHandle);
     pcmSampleBuffer->setSamples(pcmSampleBuffer);
     sampleBufferCopyAndMapChannels(sampleBuffer, pcmSampleBuffer->getSampleBuffer(pcmSampleBuffer));
 
-    if (pcmSamplesRead < self->dataBufferNumItems) {
+    if (pcmSamplesRead < extraData->dataBufferNumItems) {
         logDebug("End of PCM file reached");
         // Set the blocksize of the sample buffer to be the number of frames read
         sampleBuffer->blocksize = pcmSamplesRead / sampleBuffer->numChannels;
@@ -114,19 +114,19 @@ static boolByte readBlockFromPcmFile(void *sampleSourcePtr, SampleBuffer sampleB
     return (boolByte)(originalBlocksize == sampleBuffer->blocksize);
 }
 
-size_t sampleSourcePcmWrite(SampleSourcePcmData self, const SampleBuffer sampleBuffer)
+size_t sampleSourcePcmWrite(SampleSourcePcmData extraData, const SampleBuffer sampleBuffer)
 {
     size_t pcmSamplesWritten = 0;
     size_t numSamplesToWrite = (size_t)(sampleBuffer->numChannels * sampleBuffer->blocksize);
 
-    if (self == NULL || self->fileHandle == NULL) {
+    if (extraData == NULL || extraData->fileHandle == NULL) {
         logCritical("Corrupt PCM data structure");
         return false;
     }
 
-    self->pcmSampleBuffer->setSampleBuffer(self->pcmSampleBuffer, sampleBuffer);
-    pcmSamplesWritten = fwrite(self->pcmSampleBuffer->pcmSamples, self->pcmSampleBuffer->bytesPerSample,
-                               numSamplesToWrite, self->fileHandle);
+    extraData->pcmSampleBuffer->setSampleBuffer(extraData->pcmSampleBuffer, sampleBuffer);
+    pcmSamplesWritten = fwrite(extraData->pcmSampleBuffer->pcmSamples, extraData->pcmSampleBuffer->bytesPerSample,
+                               numSamplesToWrite, extraData->fileHandle);
 
     if (pcmSamplesWritten < numSamplesToWrite) {
         logWarn("Short write to PCM file");

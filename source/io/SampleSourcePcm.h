@@ -52,7 +52,7 @@ typedef SampleSourcePcmDataMembers *SampleSourcePcmData;
  * @param sampleBuffer
  * @return Number of samples read
  */
-size_t sampleSourcePcmRead(SampleSourcePcmData self, SampleBuffer sampleBuffer);
+size_t sampleSourcePcmRead(SampleSourcePcmData extraData, SampleBuffer sampleBuffer);
 
 /**
  * Writes data from a sample buffer to a PCM output
@@ -60,7 +60,7 @@ size_t sampleSourcePcmRead(SampleSourcePcmData self, SampleBuffer sampleBuffer);
  * @param sampleBuffer
  * @return Number of samples written
  */
-size_t sampleSourcePcmWrite(SampleSourcePcmData self, const SampleBuffer sampleBuffer);
+size_t sampleSourcePcmWrite(SampleSourcePcmData extraData, const SampleBuffer sampleBuffer);
 
 /**
  * Set the sample rate to be used for raw PCM file operations. This is most

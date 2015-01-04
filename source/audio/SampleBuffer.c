@@ -119,7 +119,7 @@ boolByte sampleBufferCopyAndMapChannels(SampleBuffer self, const SampleBuffer bu
     return sampleBufferCopyAndMapChannelsWithOffset(self, 0, buffer, 0, self->blocksize);
 }
 
-void freeSampleBuffer(SampleBuffer sampleBuffer)
+void freeSampleBuffer(SampleBuffer self)
 {
     if (self == NULL) {
         return;
