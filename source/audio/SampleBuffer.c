@@ -123,13 +123,11 @@ boolByte sampleBufferCopyAndMapChannels(SampleBuffer self, const SampleBuffer bu
 
 void freeSampleBuffer(SampleBuffer self)
 {
-    if (self == NULL) {
-        return;
+    if (self != NULL) {
+        for (ChannelCount channel = 0; channel < self->numChannels; ++channel) {
+            free(self->samples[channel]);
+        }
+        free(self->samples);
+        free(self);
     }
-
-    for (ChannelCount channel = 0; channel < self->numChannels; ++channel) {
-        free(self->samples[channel]);
-    }
-    free(self->samples);
-    free(self);
 }
