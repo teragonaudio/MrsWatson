@@ -85,7 +85,9 @@ boolByte sampleBufferCopyAndMapChannelsWithOffset(SampleBuffer destinationBuffer
     // sorry about that!
     if (sourceBuffer->numChannels >= destinationBuffer->numChannels) {
         for (ChannelCount i = 0; i < destinationBuffer->numChannels; ++i) {
-            memcpy(destinationBuffer->samples[i] + destinationOffset, sourceBuffer->samples[i] + sourceOffset, sizeof(Sample) * numberOfFrames);
+            memcpy(destinationBuffer->samples[i] + destinationOffset,
+                   sourceBuffer->samples[i] + sourceOffset,
+                   sizeof(Sample) * numberOfFrames);
         }
     }
     // But if this buffer is bigger than the other buffer, then copy all channels

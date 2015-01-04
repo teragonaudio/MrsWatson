@@ -26,7 +26,9 @@
 //
 
 #include <math.h>
+#include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 
 #include "audio/PcmSampleBuffer.h"
 #include "base/Endian.h"
@@ -252,7 +254,15 @@ PcmSampleBuffer newPcmSampleBuffer(ChannelCount numChannels, SampleCount blocksi
     pcmSampleBuffer->littleEndian = true;
     pcmSampleBuffer->bitDepth = bitDepth;
     pcmSampleBuffer->bytesPerSample = bitDepth / 8;
-    pcmSampleBuffer->pcmSamples = malloc(numChannels * blocksize * pcmSampleBuffer->bytesPerSample);
+    SampleCount pcmSampleBufferSize = numChannels * blocksize * pcmSampleBuffer->bytesPerSample;
+    if (bitDepth == kBitDepth24Bit) {
+        // For 24-bit samples, bytesPerSample is 3 but we store the values internally
+        // as regular 32-bit integers. This value is correct when reading samples from
+        // file, but it will cause us to overwrite memory when writing samples.
+        pcmSampleBufferSize = numChannels * blocksize * sizeof(int);
+    }
+    pcmSampleBuffer->pcmSamples = malloc(pcmSampleBufferSize);
+    memset(pcmSampleBuffer->pcmSamples, 0, pcmSampleBufferSize);
     pcmSampleBuffer->getSampleBuffer = _getSampleBuffer;
 
     switch (bitDepth) {
@@ -281,9 +291,7 @@ PcmSampleBuffer newPcmSampleBuffer(ChannelCount numChannels, SampleCount blocksi
 void freePcmSampleBuffer(PcmSampleBuffer self) {
     if (self != NULL) {
         freeSampleBuffer(self->_super);
-        if (self->pcmSamples != NULL) {
-            free(self->pcmSamples);
-        }
+        free(self->pcmSamples);
         free(self);
     }
 }
