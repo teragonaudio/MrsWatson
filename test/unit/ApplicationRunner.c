@@ -159,7 +159,6 @@ void runIntegrationTest(const TestEnvironment testEnvironment,
     CharString failedAnalysisFunctionName = newCharString();
     ChannelCount failedAnalysisChannel;
     SampleCount failedAnalysisFrame;
-    File outputFolder = NULL;
     CharString outputFilename = getTestOutputFilename(testName,
                                 outputFileType == NULL ? kDefaultTestOutputFileType : outputFileType);
 
@@ -169,13 +168,13 @@ void runIntegrationTest(const TestEnvironment testEnvironment,
 #endif
 
     // Remove files from a previous test run
-    outputFolder = newFileWithPathCString(kApplicationRunnerOutputFolder);
-
+    File outputFolder = newFileWithPathCString(kApplicationRunnerOutputFolder);
     if (fileExists(outputFolder)) {
         _removeOutputFiles(testName);
     } else {
         fileCreate(outputFolder, kFileTypeDirectory);
     }
+    freeFile(outputFolder);
 
     // Create the command line argument
     charStringAppendCString(arguments, "\"");

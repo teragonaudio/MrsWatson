@@ -220,7 +220,7 @@ static int _testSetSamples24BitBigEndian(void)
     // writing 24-bit data directly to the PCM sample buffer. So in this case, we
     // allocate a separate integer array first with the values that we want, and
     // then use bitwise operations to set them to the void* buffer space.
-    int *intValues = (int *)malloc(4);
+    int *intValues = (int *)malloc(4 * sizeof(int));
     intValues[0] = 0;
     intValues[1] = 4194304;
     intValues[2] = -4194304;
@@ -295,7 +295,7 @@ static int _testSetSamples24BitLittleEndian(void)
     // writing 24-bit data directly to the PCM sample buffer. So in this case, we
     // allocate a separate integer array first with the values that we want, and
     // then use bitwise operations to set them to the void* buffer space.
-    int *intValues = (int *)malloc(4);
+    int *intValues = (int *)malloc(4 * sizeof(int));
     intValues[0] = 0;
     intValues[1] = 4194304;
     intValues[2] = -4194304;
@@ -379,6 +379,7 @@ static int _testSetSamples32BitLittleEndian(void)
     assertDoubleEquals(-0.5, psbSamples[0][2], TEST_DEFAULT_TOLERANCE);
     assertDoubleEquals(1.0, psbSamples[0][3], TEST_DEFAULT_TOLERANCE);
 
+    free(floatSamples);
     freePcmSampleBuffer(psb);
     return 0;
 }

@@ -91,6 +91,7 @@ boolByte analyzeFile(const char *filename, CharString failedAnalysisFunctionName
         currentFrame += kAnalysisBlocksize;
     }
 
+    sampleSource->closeSampleSource(sampleSource);
     freeSampleSource(sampleSource);
     freeCharString(analysisFilename);
     freeAudioSettings();
