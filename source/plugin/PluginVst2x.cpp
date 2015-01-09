@@ -870,6 +870,7 @@ extern "C" {
     {
         Plugin plugin = _newPlugin(PLUGIN_TYPE_VST_2X, PLUGIN_TYPE_UNKNOWN);
         charStringCopy(plugin->pluginName, pluginName);
+        freeCharString(plugin->pluginLocation);
         plugin->pluginLocation = _getVst2xPluginLocation(pluginName, pluginRoot);
 
         plugin->openPlugin = _openVst2xPlugin;

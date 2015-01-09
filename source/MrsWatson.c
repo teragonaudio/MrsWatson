@@ -764,6 +764,7 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char **argv)
     logInfo("Shutting down");
     freeSampleSource(inputSource);
     freeSampleSource(outputSource);
+    freeSampleSource(silentSampleOutput);
     freeSampleBuffer(inputSampleBuffer);
     freeSampleBuffer(outputSampleBuffer);
     pluginChainShutdown(pluginChain);

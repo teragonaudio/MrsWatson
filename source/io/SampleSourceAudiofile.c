@@ -104,6 +104,7 @@ static boolByte _openSampleSourceAudiofile(void *selfPtr, const SampleSourceOpen
         logDebug("Opened audiofile %d-bit, %s-endian for writing",
                  extraData->pcmSampleBuffer->bitDepth,
                  extraData->pcmSampleBuffer->littleEndian ? "little" : "big");
+        afFreeFileSetup(outfileSetup);
     } else {
         logInternalError("Invalid type for openAs in audiofile source");
         return false;
