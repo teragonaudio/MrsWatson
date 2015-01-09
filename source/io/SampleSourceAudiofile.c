@@ -62,13 +62,13 @@ static boolByte _openSampleSourceAudiofile(void *selfPtr, const SampleSourceOpen
         int sampleFormat;
         switch (getBitDepth()) {
             case kBitDepth8Bit:
-               sampleFormat = AF_SAMPFMT_TWOSCOMP;
+               sampleFormat = AF_SAMPFMT_UNSIGNED;
                 break;
             case kBitDepth32Bit:
                 sampleFormat = AF_SAMPFMT_FLOAT;
                 break;
             default:
-                sampleFormat = AF_SAMPFMT_UNSIGNED;
+                sampleFormat = AF_SAMPFMT_TWOSCOMP;
                 break;
         }
 
