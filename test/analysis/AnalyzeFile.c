@@ -39,6 +39,15 @@ static void _runAnalysisFunction(void *item, void *userData)
     AnalysisFuncPtr analysisFuncPtr = (AnalysisFuncPtr)(functionData->functionPtr);
     AnalysisData analysisData = (AnalysisData)userData;
 
+    // If we are on the first block, then set the last sample value to be the same as
+    // the first sample in the block. Otherwise, checks which use the lastSample value
+    // (such as the distortion check) will erroneously fail on the first sample.
+    if (*(analysisData->currentFrame) == 0) {
+        for (ChannelCount i = 0; i < analysisData->sampleBuffer->numChannels; ++i) {
+            functionData->lastSample[i] = analysisData->sampleBuffer->samples[i][0];
+        }
+    }
+
     if (!analysisFuncPtr(analysisData->sampleBuffer, functionData)) {
         charStringCopyCString(analysisData->failedAnalysisFunctionName, functionData->analysisName);
         *(analysisData->failedAnalysisFrame) = *(analysisData->currentFrame) + functionData->failedSample;
