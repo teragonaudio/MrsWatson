@@ -31,6 +31,7 @@
 
 #include "audio/AudioSettings.h"
 #include "base/Endian.h"
+#include "base/PlatformInfo.h"
 #include "io/RiffFile.h"
 #include "io/SampleSource.h"
 #include "io/SampleSourcePcm.h"
@@ -101,7 +102,8 @@ static boolByte _readWaveFileInfo(const char *filename, SampleSourcePcmData extr
         chunkOffset += 2;
 
         extraData->bitDepth = (BitDepth) convertByteArrayToUnsignedShort(chunk->data + chunkOffset);
-        if (!setBitDepth(extraData->bitDepth)) {
+        if (extraData->bitDepth != kBitDepth16Bit) {
+            logUnsupportedFeature("Non-16-bit files with internal WAVE file support (build with audiofile instead!)");
             freeRiffChunk(chunk);
             return false;
         }
@@ -145,7 +147,7 @@ static boolByte _writeWaveFileInfo(SampleSourcePcmData extraData)
 {
     RiffChunk chunk = newRiffChunk();
     unsigned short audioFormat = 1;
-    unsigned int byteRate = extraData->sampleRate * extraData->numChannels * extraData->bitDepth / 8;
+    unsigned int byteRate = (unsigned int)(extraData->sampleRate) * extraData->numChannels * extraData->bitDepth / 8;
     unsigned short blockAlign = (unsigned short)(extraData->numChannels * extraData->bitDepth / 8);
     unsigned int extraParams = 0;
 
@@ -188,7 +190,11 @@ static boolByte _writeWaveFileInfo(SampleSourcePcmData extraData)
         return false;
     }
 
-    // NOTE: These calls will not work on big-endian platforms
+    if (!platformInfoIsLittleEndian()) {
+        logUnsupportedFeature("WAVE files on big-endian platforms");
+        freeRiffChunk(chunk);
+        return false;
+    }
 
     if (fwrite(&audioFormat, sizeof(unsigned short), 1, extraData->fileHandle) != 1) {
         logError("Could not write audio format");
