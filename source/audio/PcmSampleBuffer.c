@@ -33,6 +33,7 @@
 #include "audio/PcmSampleBuffer.h"
 #include "base/Endian.h"
 #include "base/PlatformInfo.h"
+#include "logging/EventLogger.h"
 
 static SampleBuffer _getSampleBuffer(void *selfPtr)
 {
@@ -158,11 +159,38 @@ static void _setSamples24Bit(void *selfPtr)
 {
     PcmSampleBuffer self = (PcmSampleBuffer)selfPtr;
     Samples *samples = self->_super->samples;
-    char *charSamples = (char *)(self->pcmSamples);
     const SampleCount numSamples = self->_super->blocksize * self->_super->numChannels;
     SampleCount sampleIndex = 0;
     ChannelCount channelIndex = 0;
     const double pcmSampleMax = _getMaxPcmSampleValue(self);
+
+#if USE_AUDIOFILE
+    int *intSamples = (int *)(self->pcmSamples);
+
+    if(platformInfoIsLittleEndian() && self->littleEndian) {
+        for (SampleCount sample = 0; sample < numSamples; ++sample) {
+            samples[channelIndex++][sampleIndex] = (Sample)((double)intSamples[sample] / pcmSampleMax);
+            if (channelIndex >= self->_super->numChannels) {
+                channelIndex = 0;
+                ++sampleIndex;
+            }
+        }
+    } else {
+        logWarn("Bit-flipping on 24-bit PCM data has not been tested, unexpected output may occur");
+        int flippedSample;
+        for (SampleCount sample = 0; sample < numSamples; ++sample) {
+            flippedSample = flipIntEndian(intSamples[sample]);
+            samples[channelIndex++][sampleIndex] = (Sample)((double)flippedSample / pcmSampleMax);
+            if (channelIndex >= self->_super->numChannels) {
+                channelIndex = 0;
+                ++sampleIndex;
+            }
+        }
+    }
+#else
+    // audiofile will expand 24-bit samples to 32-bit integer quantities for us, but
+    // if we are not using audiofile, then we will need to do the expansion by hand.
+    char *charSamples = (char *)(self->pcmSamples);
     int value;
 
     if(self->littleEndian) {
@@ -210,6 +238,7 @@ static void _setSamples24Bit(void *selfPtr)
             }
         }
     }
+#endif
 }
 
 static void _setSamples32Bit(void *selfPtr)
