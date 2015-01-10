@@ -5,12 +5,6 @@
 #include "AnalysisDistortion.h"
 #include "AnalysisSilence.h"
 
-// Number of consecutive samples which need to fail in order for the test to fail
-static const int kAnalysisDefaultFailTolerance = 16;
-// Use a blocksize of the default * 2 in order to avoid false positives of the
-// silence detection algorithm, since the last block is likely to be silent.
-static const int kAnalysisBlocksize = DEFAULT_BLOCKSIZE * 2;
-
 static LinkedList _getAnalysisFunctions(void)
 {
     AnalysisFunctionData data;
@@ -19,6 +13,7 @@ static LinkedList _getAnalysisFunctions(void)
     data = newAnalysisFunctionData();
     data->analysisName = "clipping";
     data->functionPtr = (void *)analysisClipping;
+    data->failTolerance = kAnalysisClippingFailTolerance;
     linkedListAppend(functionsList, data);
 
     data = newAnalysisFunctionData();
@@ -29,7 +24,10 @@ static LinkedList _getAnalysisFunctions(void)
     data = newAnalysisFunctionData();
     data->analysisName = "silence";
     data->functionPtr = (void *)analysisSilence;
-    data->failTolerance = kAnalysisBlocksize;
+    // Use a fail tolerance here of the blocksize * 2 in order to avoid false
+    // positives, which may occur with a partial last block or MIDI tests where
+    // there is some silence expected between the notes.
+    data->failTolerance = (int)getBlocksize() * 2;
     linkedListAppend(functionsList, data);
 
     return functionsList;
@@ -63,8 +61,8 @@ boolByte analyzeFile(const char *filename, CharString failedAnalysisFunctionName
     initAudioSettings();
     analysisFunctions = _getAnalysisFunctions();
     analysisFilename = newCharStringWithCString(filename);
-    sampleSource = sampleSourceFactory(analysisFilename);
 
+    sampleSource = sampleSourceFactory(analysisFilename);
     if (sampleSource == NULL) {
         freeCharString(analysisFilename);
         free(analysisData);
@@ -73,7 +71,6 @@ boolByte analyzeFile(const char *filename, CharString failedAnalysisFunctionName
     }
 
     result = sampleSource->openSampleSource(sampleSource, SAMPLE_SOURCE_OPEN_READ);
-
     if (!result) {
         free(analysisData);
         return result;
@@ -82,13 +79,13 @@ boolByte analyzeFile(const char *filename, CharString failedAnalysisFunctionName
     analysisData->failedAnalysisFunctionName = failedAnalysisFunctionName;
     analysisData->failedAnalysisChannel = failedAnalysisChannel;
     analysisData->failedAnalysisFrame = failedAnalysisFrame;
-    analysisData->sampleBuffer = newSampleBuffer(DEFAULT_NUM_CHANNELS, kAnalysisBlocksize);
+    analysisData->sampleBuffer = newSampleBuffer(getNumChannels(), getBlocksize());
     analysisData->currentFrame = &currentFrame;
     analysisData->result = &result;
 
     while (sampleSource->readSampleBlock(sampleSource, analysisData->sampleBuffer) && result) {
         linkedListForeach(analysisFunctions, _runAnalysisFunction, analysisData);
-        currentFrame += kAnalysisBlocksize;
+        currentFrame += getBlocksize();
     }
 
     sampleSource->closeSampleSource(sampleSource);
@@ -118,7 +115,7 @@ AnalysisFunctionData newAnalysisFunctionData(void)
     result->lastSample = (Sample*)malloc(sizeof(Sample) * 2);
     result->lastSample[0] = 0.0f;
     result->lastSample[1] = 0.0f;
-    result->failTolerance = kAnalysisDefaultFailTolerance;
+    result->failTolerance = 0;
     return result;
 }
 
