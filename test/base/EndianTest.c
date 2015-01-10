@@ -34,6 +34,15 @@ static int _testFlipShortEndian(void)
     return 0;
 }
 
+static int _testFlipIntEndian(void)
+{
+    unsigned int i = 0xdeadbeef;
+    unsigned int r = flipIntEndian(i);
+    assertUnsignedLongEquals(0xefbeaddel, r);
+    assertIntEquals(i, flipIntEndian(r));
+    return 0;
+}
+
 static int _testConvertBigEndianShortToPlatform(void)
 {
     unsigned short s = 0xabcd;
@@ -143,6 +152,8 @@ TestSuite addEndianTests(void)
     TestSuite testSuite = newTestSuite("Endian", NULL, NULL);
 
     addTest(testSuite, "FlipShortEndian", _testFlipShortEndian);
+    addTest(testSuite, "FlipIntEndian", _testFlipIntEndian);
+
     addTest(testSuite, "ConvertBigEndianShortToPlatform", _testConvertBigEndianShortToPlatform);
     addTest(testSuite, "ConvertBigEndianIntToPlatform", _testConvertBigEndianIntToPlatform);
     addTest(testSuite, "ConvertLittleEndianIntToPlatform", _testConvertLittleEndianIntToPlatform);

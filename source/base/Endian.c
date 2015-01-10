@@ -33,31 +33,24 @@ unsigned short flipShortEndian(const unsigned short value)
     return (value << 8) | (value >> 8);
 }
 
+unsigned int flipIntEndian(const unsigned int value)
+{
+    return (value << 24) | ((value << 8) & 0x00ff0000) | ((value >> 8) & 0x0000ff00) | (value >> 24);
+}
+
 unsigned short convertBigEndianShortToPlatform(const unsigned short value)
 {
-    if (platformInfoIsLittleEndian()) {
-        return (value << 8) | (value >> 8);
-    } else {
-        return value;
-    }
+    return platformInfoIsLittleEndian() ? flipShortEndian(value) : value;
 }
 
 unsigned int convertBigEndianIntToPlatform(const unsigned int value)
 {
-    if (platformInfoIsLittleEndian()) {
-        return (value << 24) | ((value << 8) & 0x00ff0000) | ((value >> 8) & 0x0000ff00) | (value >> 24);
-    } else {
-        return value;
-    }
+    return platformInfoIsLittleEndian() ? flipIntEndian(value) : value;
 }
 
 unsigned int convertLittleEndianIntToPlatform(const unsigned int value)
 {
-    if (!platformInfoIsLittleEndian()) {
-        return (value << 24) | ((value << 8) & 0x00ff0000) | ((value >> 8) & 0x0000ff00) | (value >> 24);
-    } else {
-        return value;
-    }
+    return !platformInfoIsLittleEndian() ? flipIntEndian(value) : value;
 }
 
 unsigned short convertByteArrayToUnsignedShort(const byte *value)

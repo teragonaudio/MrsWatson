@@ -39,6 +39,14 @@
 unsigned short flipShortEndian(const unsigned short value);
 
 /**
+ * Flip bytes for an integer value. This does not take into account the host's
+ * endian-ness.
+ * @param value Integer
+ * @return Flipped version of integer
+ */
+unsigned int flipIntEndian(const unsigned int value);
+
+/**
  * Convert a big endian short integer to the platform's native endian-ness.
  * @param value Short integer
  * @return Flipped version of short integer. If the host is big endian, the same
