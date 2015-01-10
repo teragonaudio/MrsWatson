@@ -94,13 +94,12 @@ static void _setSampleBuffer24Bit(void *selfPtr, SampleBuffer sampleBuffer)
 static void _setSampleBuffer32Bit(void *selfPtr, SampleBuffer sampleBuffer)
 {
     PcmSampleBuffer self = (PcmSampleBuffer)selfPtr;
-    const double pcmSampleMax = _getMaxPcmSampleValue(self);
-    int *intSamples = (int *)(self->pcmSamples);
+    float *floatSamples = (float *)(self->pcmSamples);
     SampleCount index = 0;
 
     for (SampleCount sample = 0; sample < sampleBuffer->blocksize; ++sample) {
         for (ChannelCount channel = 0; channel < sampleBuffer->numChannels; ++channel) {
-            intSamples[index++] = (int)(sampleBuffer->samples[channel][sample] * pcmSampleMax);
+            floatSamples[index++] = sampleBuffer->samples[channel][sample];
         }
     }
 }
@@ -217,14 +216,16 @@ static void _setSamples32Bit(void *selfPtr)
 {
     PcmSampleBuffer self = (PcmSampleBuffer)selfPtr;
     Samples *samples = self->_super->samples;
-    // 32-bit PCM files are actually not stored as 32-bit integer data,
-    // but rather 32-bit floats written directly to disk. I guess this
-    // is meant to be more efficient since on matching endian platforms
-    // byte-flipping is not necessary.
     float *floatSamples = (float *)(self->pcmSamples);
     const SampleCount numSamples = self->_super->blocksize * self->_super->numChannels;
     SampleCount sampleIndex = 0;
     ChannelCount channelIndex = 0;
+
+    // 32-bit PCM files are usually not stored as 32-bit integer data (though the
+    // WAVE standard does seem to allow this), but in most cases IEEE 32-bit floats
+    // are just written directly to disk. In this case, we don't need to do any
+    // sample conversion (aside from bit flipping, if necessary), basically we just
+    // interlace the data.
 
     if (platformInfoIsLittleEndian() && self->littleEndian) {
         for (SampleCount sample = 0; sample < numSamples; ++sample) {
