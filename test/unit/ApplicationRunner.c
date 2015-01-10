@@ -243,8 +243,8 @@ Please check the executable path specified in the --mrswatson-path argument.",
                     printTestName(testName);
                 }
 
-                fprintf(stderr, "Audio analysis check for %s failed at channel %d, frame %lu. ",
-                        failedAnalysisFunctionName->data, failedAnalysisChannel, failedAnalysisFrame);
+                fprintf(stderr, "Audio analysis check for %s failed at frame %lu, channel %d. ",
+                        failedAnalysisFunctionName->data, failedAnalysisFrame, failedAnalysisChannel);
                 printTestFail();
                 testEnvironment->results->numFail++;
             }
