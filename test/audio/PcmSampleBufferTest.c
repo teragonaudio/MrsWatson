@@ -122,10 +122,10 @@ static int _testSetSampleBuffer32Bit(void)
     source->samples[0][2] = -0.5f;
     source->samples[0][3] = 1.0f;
     dest->setSampleBuffer(dest, source);
-    assertIntEquals(0, ((int *)dest->pcmSamples)[0]);
-    assertIntEquals(1073741823, ((int *)dest->pcmSamples)[1]);
-    assertIntEquals(-1073741823, ((int *)dest->pcmSamples)[2]);
-    assertIntEquals(2147483647, ((int *)dest->pcmSamples)[3]);
+    assertDoubleEquals(0.0, ((float *)dest->pcmSamples)[0], TEST_DEFAULT_TOLERANCE);
+    assertDoubleEquals(0.5, ((float *)dest->pcmSamples)[1], TEST_DEFAULT_TOLERANCE);
+    assertDoubleEquals(-0.5, ((float *)dest->pcmSamples)[2], TEST_DEFAULT_TOLERANCE);
+    assertDoubleEquals(1.0, ((float *)dest->pcmSamples)[3], TEST_DEFAULT_TOLERANCE);
 
     freePcmSampleBuffer(dest);
     freeSampleBuffer(source);
@@ -216,6 +216,27 @@ static int _testSetSamples24BitBigEndian(void)
     PcmSampleBuffer psb = newPcmSampleBuffer(1, 4, kBitDepth24Bit);
     psb->littleEndian = false;
 
+    // audiofile performs 3-to-4 expansion for us, so the test is rather different
+    // depending on whether the build has audiofile support enabled or not.
+#if USE_AUDIOFILE
+    // This test is a bit more complicated than the others, since we must simulate
+    // writing 24-bit data directly to the PCM sample buffer. So in this case, we
+    // allocate a separate integer array first with the values that we want, and
+    // then use bitwise operations to set them to the void* buffer space.
+    int *intSamples = (int *)(psb->pcmSamples);
+    intSamples[0] = 0;
+    intSamples[1] = flipIntEndian(4194304);
+    intSamples[2] = flipIntEndian(-4194304);
+    intSamples[3] = flipIntEndian(8388607);
+
+    psb->setSamples(psb);
+    Samples *psbSamples = psb->getSampleBuffer(psb)->samples;
+    assertDoubleEquals(0, psbSamples[0][0], TEST_DEFAULT_TOLERANCE);
+    assertDoubleEquals(0.5, psbSamples[0][1], TEST_DEFAULT_TOLERANCE);
+    assertDoubleEquals(-0.5, psbSamples[0][2], 0.1);
+    assertDoubleEquals(1.0, psbSamples[0][3], TEST_DEFAULT_TOLERANCE);
+
+#else
     // This test is a bit more complicated than the others, since we must simulate
     // writing 24-bit data directly to the PCM sample buffer. So in this case, we
     // allocate a separate integer array first with the values that we want, and
@@ -241,6 +262,8 @@ static int _testSetSamples24BitBigEndian(void)
     assertDoubleEquals(1.0, psbSamples[0][3], TEST_DEFAULT_TOLERANCE);
 
     free(intValues);
+#endif
+
     freePcmSampleBuffer(psb);
     return 0;
 }
@@ -291,6 +314,26 @@ static int _testSetSamples24BitLittleEndian(void)
     PcmSampleBuffer psb = newPcmSampleBuffer(1, 4, kBitDepth24Bit);
     psb->littleEndian = true;
 
+    // audiofile performs 3-to-4 expansion for us, so the test is rather different
+    // depending on whether the build has audiofile support enabled or not.
+#if USE_AUDIOFILE
+    // This test is a bit more complicated than the others, since we must simulate
+    // writing 24-bit data directly to the PCM sample buffer. So in this case, we
+    // allocate a separate integer array first with the values that we want, and
+    // then use bitwise operations to set them to the void* buffer space.
+    int *intSamples = (int *)(psb->pcmSamples);
+    intSamples[0] = 0;
+    intSamples[1] = 4194304;
+    intSamples[2] = -4194304;
+    intSamples[3] = 8388607;
+
+    psb->setSamples(psb);
+    Samples *psbSamples = psb->getSampleBuffer(psb)->samples;
+    assertDoubleEquals(0, psbSamples[0][0], TEST_DEFAULT_TOLERANCE);
+    assertDoubleEquals(0.5, psbSamples[0][1], TEST_DEFAULT_TOLERANCE);
+    assertDoubleEquals(-0.5, psbSamples[0][2], 0.1);
+    assertDoubleEquals(1.0, psbSamples[0][3], TEST_DEFAULT_TOLERANCE);
+#else
     // This test is a bit more complicated than the others, since we must simulate
     // writing 24-bit data directly to the PCM sample buffer. So in this case, we
     // allocate a separate integer array first with the values that we want, and
@@ -316,6 +359,8 @@ static int _testSetSamples24BitLittleEndian(void)
     assertDoubleEquals(1.0, psbSamples[0][3], TEST_DEFAULT_TOLERANCE);
 
     free(intValues);
+#endif
+
     freePcmSampleBuffer(psb);
     return 0;
 }
