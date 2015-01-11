@@ -75,6 +75,18 @@ static boolByte _openSampleSourceAudiofile(void *selfPtr, const SampleSourceOpen
         int outfileFormat;
         switch (self->sampleSourceType) {
             case SAMPLE_SOURCE_TYPE_AIFF:
+                // Unlike WAVE, AIFF only supports 2's compliment integer data. This will
+                // require some extra work for 8-bit and 32-bit files.
+                switch (getBitDepth()) {
+                    case kBitDepth8Bit:
+                        logUnsupportedFeature("8-bit AIFF files");
+                        return false;
+                    case kBitDepth32Bit:
+                        logUnsupportedFeature("32-bit AIFF files");
+                        return false;
+                    default:
+                        break;
+                }
                 // AIFF is the only file format we support which is big-endian. That is,
                 // even on big-endian platforms (which are untested), raw PCM should still
                 // write little-endian data.
