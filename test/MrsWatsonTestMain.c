@@ -18,12 +18,11 @@
 
 #include "MrsWatsonTestMain.h"
 
-extern LinkedList getTestSuites(void);
+extern LinkedList getTestSuites(File mrsWatsonExePath, File resourcesPath);
 extern TestSuite findTestSuite(LinkedList testSuites, const CharString testSuiteName);
 extern TestCase findTestCase(TestSuite testSuite, char *testName);
 extern void printUnitTestSuites(void);
 extern TestSuite runUnitTests(LinkedList testSuites, boolByte onlyPrintFailing);
-extern TestSuite runIntegrationTests(TestEnvironment testEnvironment);
 
 static const char *DEFAULT_TEST_SUITE_NAME = "all";
 
@@ -41,13 +40,8 @@ static ProgramOptions _newTestProgramOptions(void)
     srand((unsigned int)time(NULL));
 
     programOptionsAdd(programOptions, newProgramOptionWithName(OPTION_TEST_SUITE, "suite",
-                      "Choose a test suite to run. Current suites include:\n\
-\t- Integration: run audio quality tests against actual executable\n\
-\t- Unit: run all internal unit tests\n\
-\t- All: run all tests (default)\n\
-\t- A suite name (use '--list' to see all suite names)",
+                      "Choose a test suite to run. Run with '--list' option to see all suites.",
                       true, kProgramOptionTypeString, kProgramOptionArgumentTypeRequired));
-    programOptionsSetCString(programOptions, OPTION_TEST_SUITE, DEFAULT_TEST_SUITE_NAME);
 
     programOptionsAdd(programOptions, newProgramOptionWithName(OPTION_TEST_NAME, "test",
                       "Run a single test. Tests are named 'Suite:Name', for example:\n\
@@ -164,24 +158,19 @@ File _findMrsWatsonExe(CharString mrsWatsonExeArg)
 int main(int argc, char *argv[])
 {
     ProgramOptions programOptions;
+    boolByte runAllTests = true;
     int totalTestsRun = 0;
     int totalTestsPassed = 0;
     int totalTestsFailed = 0;
     int totalTestsSkipped = 0;
     CharString testSuiteToRun = NULL;
     CharString testSuiteName = NULL;
-    CharString mrsWatsonExeName = NULL;
     CharString totalTimeString = NULL;
     CharString executablePath = NULL;
-    File mrsWatsonExe = NULL;
-    File resourcesPath = NULL;
-    boolByte shouldRunUnitTests = false;
-    boolByte shouldRunIntegrationTests = false;
     TestCase testCase = NULL;
     TestSuite testSuite = NULL;
     LinkedList testSuites = NULL;
     TestSuite unitTestResults = NULL;
-    TestEnvironment testEnvironment = NULL;
     TaskTimer timer;
     char *testArgument;
     char *colon;
@@ -219,11 +208,10 @@ int main(int argc, char *argv[])
     }
 
     testSuiteToRun = programOptionsGetString(programOptions, OPTION_TEST_SUITE);
+    File mrsWatsonExePath = _findMrsWatsonExe(programOptionsGetString(programOptions, OPTION_TEST_MRSWATSON_PATH));
+    File resourcesPath = newFileWithPath(programOptionsGetString(programOptions, OPTION_TEST_RESOURCES_PATH));
 
     if (programOptions->options[OPTION_TEST_NAME]->enabled) {
-        shouldRunUnitTests = false;
-        shouldRunIntegrationTests = false;
-
         testArgument = programOptionsGetString(programOptions, OPTION_TEST_NAME)->data;
         colon = strchr(testArgument, ':');
 
@@ -237,9 +225,8 @@ int main(int argc, char *argv[])
         *colon = '\0';
 
         testSuiteName = programOptionsGetString(programOptions, OPTION_TEST_NAME);
-        testSuites = getTestSuites();
+        testSuites = getTestSuites(mrsWatsonExePath, resourcesPath);
         testSuite = findTestSuite(testSuites, testSuiteName);
-
         if (testSuite == NULL) {
             printf("ERROR: Could not find test suite '%s'\n", testSuiteName->data);
             freeLinkedListAndItems(testSuites, (LinkedListFreeItemFunc)freeTestSuite);
@@ -247,25 +234,17 @@ int main(int argc, char *argv[])
         }
 
         testCase = findTestCase(testSuite, testCaseName);
-
         if (testCase == NULL) {
             printf("ERROR: Could not find test case '%s'\n", testCaseName);
             freeLinkedListAndItems(testSuites, (LinkedListFreeItemFunc)freeTestSuite);
             return -1;
         } else {
-            printf("Running test in %s:\n", testSuite->name);
+            printf("=== Running test %s:%s ===\n", testSuite->name, testCase->name);
             runTestCase(testCase, testSuite);
             freeLinkedListAndItems(testSuites, (LinkedListFreeItemFunc)freeTestSuite);
         }
-    } else if (charStringIsEqualToCString(testSuiteToRun, "all", true)) {
-        shouldRunUnitTests = true;
-        shouldRunIntegrationTests = true;
-    } else if (charStringIsEqualToCString(testSuiteToRun, "unit", true)) {
-        shouldRunUnitTests = true;
-    } else if (charStringIsEqualToCString(testSuiteToRun, "integration", true)) {
-        shouldRunIntegrationTests = true;
-    } else {
-        testSuites = getTestSuites();
+    } else if (programOptions->options[OPTION_TEST_SUITE]->enabled) {
+        testSuites = getTestSuites(mrsWatsonExePath, resourcesPath);
         testSuite = findTestSuite(testSuites, testSuiteToRun);
 
         if (testSuite == NULL) {
@@ -274,6 +253,7 @@ int main(int argc, char *argv[])
             freeLinkedListAndItems(testSuites, (LinkedListFreeItemFunc)freeTestSuite);
             return -1;
         } else {
+            printf("=== Running test suite %s ===\n", testSuite->name);
             testSuite->onlyPrintFailing = programOptions->options[OPTION_TEST_PRINT_ONLY_FAILING]->enabled;
             runTestSuite(testSuite, NULL);
             totalTestsRun = testSuite->numSuccess + testSuite->numFail;
@@ -282,11 +262,10 @@ int main(int argc, char *argv[])
             totalTestsSkipped = testSuite->numSkips;
             freeLinkedListAndItems(testSuites, (LinkedListFreeItemFunc)freeTestSuite);
         }
-    }
+    } else {
+        testSuites = getTestSuites(mrsWatsonExePath, resourcesPath);
 
-    if (shouldRunUnitTests) {
-        printf("=== Unit tests ===\n");
-        testSuites = getTestSuites();
+        printf("=== Running tests ===\n");
         unitTestResults = runUnitTests(testSuites,
                                        programOptions->options[OPTION_TEST_PRINT_ONLY_FAILING]->enabled);
 
@@ -299,34 +278,6 @@ int main(int argc, char *argv[])
         freeTestSuite(unitTestResults);
     }
 
-    mrsWatsonExe = _findMrsWatsonExe(programOptionsGetString(programOptions, OPTION_TEST_MRSWATSON_PATH));
-
-    if (shouldRunIntegrationTests && mrsWatsonExe == NULL) {
-        printf("Could not find mrswatson, skipping integration tests\n");
-        shouldRunIntegrationTests = false;
-    }
-
-    if (programOptions->options[OPTION_TEST_RESOURCES_PATH]->enabled) {
-        resourcesPath = newFileWithPath(programOptionsGetString(programOptions, OPTION_TEST_RESOURCES_PATH));
-    }
-
-    if (shouldRunIntegrationTests && !fileExists(resourcesPath)) {
-        printf("Could not find test resources, skipping integration tests\n");
-        shouldRunIntegrationTests = false;
-    }
-
-    if (shouldRunIntegrationTests) {
-        printf("\n=== Integration tests ===\n");
-        testEnvironment = newTestEnvironment(mrsWatsonExe->absolutePath->data, resourcesPath->absolutePath->data);
-        testEnvironment->results->onlyPrintFailing = programOptions->options[OPTION_TEST_PRINT_ONLY_FAILING]->enabled;
-        testEnvironment->results->keepFiles = programOptions->options[OPTION_TEST_KEEP_FILES]->enabled;
-        runIntegrationTests(testEnvironment);
-        totalTestsRun += testEnvironment->results->numSuccess + testEnvironment->results->numFail;
-        totalTestsPassed += testEnvironment->results->numSuccess;
-        totalTestsFailed += testEnvironment->results->numFail;
-        totalTestsSkipped += testEnvironment->results->numSkips;
-    }
-
     taskTimerStop(timer);
 
     if (totalTestsRun > 0) {
@@ -336,12 +287,10 @@ int main(int argc, char *argv[])
         printf("Total time: %s\n", totalTimeString->data);
     }
 
-    freeTestEnvironment(testEnvironment);
     freeProgramOptions(programOptions);
     freeCharString(executablePath);
-    freeCharString(mrsWatsonExeName);
     freeCharString(totalTimeString);
-    freeFile(mrsWatsonExe);
+    freeFile(mrsWatsonExePath);
     freeFile(resourcesPath);
     freeTaskTimer(timer);
     return totalTestsFailed;

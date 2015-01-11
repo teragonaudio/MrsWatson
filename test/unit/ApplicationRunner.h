@@ -11,29 +11,28 @@
 #include "base/CharString.h"
 #include "MrsWatson.h"
 
-extern const char *kDefaultTestOutputFileType;
+typedef enum {
+    kTestOutputNone,
+    kTestOutputAiff,
+    kTestOutputPcm,
+    kTestOutputText,
+    kTestOutputWave,
+} TestOutputType;
 
 typedef struct {
     int currentIndex;
     char **outArray;
 } ArgumentsCopyData;
 
-typedef struct {
-    char *applicationPath;
-    char *resourcesPath;
-    TestSuite results;
-} TestEnvironmentMembers;
-typedef TestEnvironmentMembers *TestEnvironment;
-TestEnvironment newTestEnvironment(char *applicationPath, char *resourcesPath);
-
-void runIntegrationTest(const TestEnvironment testEnvironment,
-                        const char *testName, CharString testArguments,
-                        ReturnCodes expectedResultCode, const char *outputFileType);
+int runIntegrationTest(const char *testName,
+                       CharString testArguments,
+                       ReturnCodes expectedResultCode,
+                       const TestOutputType testOutputType,
+                       const CharString mrsWatsonExePath,
+                       const CharString resourcesPath);
 
 CharString buildTestArgumentString(const char *arguments, ...);
-CharString getTestResourceFilename(const char *resourcesPath, const char *resourceType, const char *resourceName);
-CharString getTestOutputFilename(const char *testName, const char *fileExtension);
-
-void freeTestEnvironment(TestEnvironment testEnvironment);
+CharString getTestResourcePath(const CharString resourcesPath, const char *resourceType, const char *resourceName);
+CharString getTestOutputFilename(const char *testName, const TestOutputType testOutputType);
 
 #endif

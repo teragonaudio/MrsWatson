@@ -1,286 +1,711 @@
-#include "ApplicationRunner.h"
+#include "base/CharString.h"
+#include "base/File.h"
+#include "unit/ApplicationRunner.h"
+#include "unit/TestRunner.h"
 
-extern void _printTestSummary(int testsRun, int testsPassed, int testsFailed, int testsSkipped);
-
-void runIntegrationTests(TestEnvironment environment);
-void runIntegrationTests(TestEnvironment environment)
-{
-    // Test resource paths
-    const char *resourcesPath = environment->resourcesPath;
-
-    // Resources used by multiple tests
-    CharString _a440_stereo_pcm = getTestResourceFilename(resourcesPath, "audio", "a440-16bit-stereo.pcm");
-    const char *a440_stereo_pcm = _a440_stereo_pcm->data;
-    CharString _a440_16bit_stereo_wav = getTestResourceFilename(resourcesPath, "audio", "a440-16bit-stereo.wav");
-    const char *a440_16bit_stereo_wav = _a440_16bit_stereo_wav->data;
-    CharString _c_scale_mid = getTestResourceFilename(resourcesPath, "midi", "c-scale.mid");
-    const char *c_scale_mid = _c_scale_mid->data;
-    CharString _again_test_fxp = getTestResourceFilename(resourcesPath, "presets", "again-test.fxp");
-    const char *again_test_fxp = _again_test_fxp->data;
-
-    // Basic non-processing operations
-    runIntegrationTest(environment, "List plugins",
-                       newCharStringWithCString("--list-plugins"),
-                       RETURN_CODE_NOT_RUN, NULL);
-    runIntegrationTest(environment, "List file types",
-                       newCharStringWithCString("--list-file-types"),
-                       RETURN_CODE_NOT_RUN, NULL);
-    runIntegrationTest(environment, "Invalid argument",
-                       newCharStringWithCString("--invalid"),
-                       RETURN_CODE_INVALID_ARGUMENT, NULL);
-
-    // Invalid configurations
-    runIntegrationTest(environment, "Run with no plugins",
-                       newCharString(),
-                       RETURN_CODE_INVALID_PLUGIN_CHAIN, NULL);
-    runIntegrationTest(environment, "Effect with no input source",
-                       newCharStringWithCString("--plugin again"),
-                       RETURN_CODE_MISSING_REQUIRED_OPTION, NULL);
-    runIntegrationTest(environment, "Instrument with no MIDI source",
-                       newCharStringWithCString("--plugin vstxsynth"),
-                       RETURN_CODE_MISSING_REQUIRED_OPTION, NULL);
-    runIntegrationTest(environment, "Plugin chain with instrument not at head",
-                       buildTestArgumentString("--plugin \"again;vstxsynth\" --input \"%s\"", a440_stereo_pcm),
-                       RETURN_CODE_INVALID_PLUGIN_CHAIN, NULL);
-    runIntegrationTest(environment, "Plugin with invalid preset",
-                       buildTestArgumentString("--plugin \"again,invalid.fxp\" --input \"%s\"", a440_stereo_pcm),
-                       RETURN_CODE_INVALID_ARGUMENT, NULL);
-    runIntegrationTest(environment, "Preset for wrong plugin",
-                       buildTestArgumentString("--plugin \"vstxsynth,%s\" --midi-file \"%s\"", again_test_fxp, c_scale_mid),
-                       RETURN_CODE_INVALID_ARGUMENT, NULL);
-    runIntegrationTest(environment, "Set invalid parameter",
-                       buildTestArgumentString("--plugin again --input \"%s\" --parameter 1,0.5", a440_stereo_pcm),
-                       RETURN_CODE_INVALID_ARGUMENT, NULL);
-    runIntegrationTest(environment, "Set invalid time signature",
-                       buildTestArgumentString("--plugin again --input \"%s\" --time-signature invalid", a440_stereo_pcm),
-                       RETURN_CODE_INVALID_ARGUMENT, NULL);
-    runIntegrationTest(environment, "Set invalid tempo",
-                       buildTestArgumentString("--plugin again --input \"%s\" --tempo 0", a440_stereo_pcm),
-                       RETURN_CODE_INVALID_ARGUMENT, NULL);
-    runIntegrationTest(environment, "Set invalid blocksize",
-                       buildTestArgumentString("--plugin again --input \"%s\" --blocksize 0", a440_stereo_pcm),
-                       RETURN_CODE_INVALID_ARGUMENT, NULL);
-    runIntegrationTest(environment, "Set invalid bit depth",
-                       buildTestArgumentString("--plugin again --input \"%s\" --bit-depth 5", a440_stereo_pcm),
-                       RETURN_CODE_INVALID_ARGUMENT, NULL);
-    runIntegrationTest(environment, "Set invalid channel count",
-                       buildTestArgumentString("--plugin again --input \"%s\" --channels 0", a440_stereo_pcm),
-                       RETURN_CODE_INVALID_ARGUMENT, NULL);
-    runIntegrationTest(environment, "Set invalid sample rate",
-                       buildTestArgumentString("--plugin again --input \"%s\" --sample-rate 0", a440_stereo_pcm),
-                       RETURN_CODE_INVALID_ARGUMENT, NULL);
-
-    // Audio file types
-    runIntegrationTest(environment, "Read PCM file",
-                       buildTestArgumentString("--plugin again --input \"%s\"", a440_stereo_pcm),
-                       RETURN_CODE_SUCCESS, kDefaultTestOutputFileType);
-    runIntegrationTest(environment, "Write PCM file",
-                       buildTestArgumentString("--plugin again --input \"%s\"", a440_stereo_pcm),
-                       RETURN_CODE_SUCCESS, "pcm");
-    runIntegrationTest(environment, "Read WAVE file",
-                       buildTestArgumentString("--plugin again --input \"%s\"", a440_16bit_stereo_wav),
-                       RETURN_CODE_SUCCESS, kDefaultTestOutputFileType);
-    runIntegrationTest(environment, "Write WAVE file",
-                       buildTestArgumentString("--plugin again --input \"%s\"", a440_stereo_pcm),
-                       RETURN_CODE_SUCCESS, "wav");
-
-    // WAVE files
-    CharString _a440_16bit_mono_wav = getTestResourceFilename(resourcesPath, "audio", "a440-16bit-mono.wav");
-    const char *a440_16bit_mono_wav = _a440_16bit_mono_wav->data;
-    runIntegrationTest(environment, "Process 16-bit WAVE file (mono)",
-                       buildTestArgumentString("--plugin again --input \"%s\"", a440_16bit_mono_wav),
-                       RETURN_CODE_SUCCESS, "wav");
-    freeCharString(_a440_16bit_mono_wav);
-
-    runIntegrationTest(environment, "Process 16-bit WAVE file (stereo)",
-                       buildTestArgumentString("--plugin again --input \"%s\"", a440_16bit_stereo_wav),
-                       RETURN_CODE_SUCCESS, "wav");
+// Helper functions and macros
 
 #if USE_AUDIOFILE
-    CharString _a440_8bit_mono_wav = getTestResourceFilename(resourcesPath, "audio", "a440-8bit-mono.wav");
-    const char *a440_8bit_mono_wav = _a440_8bit_mono_wav->data;
-    runIntegrationTest(environment, "Process 8-bit WAVE file (mono)",
-                       buildTestArgumentString("--plugin again --input \"%s\"", a440_8bit_mono_wav),
-                       RETURN_CODE_SUCCESS, "wav");
-    freeCharString(_a440_8bit_mono_wav);
-
-    CharString _a440_8bit_stereo_wav = getTestResourceFilename(resourcesPath, "audio", "a440-8bit-stereo.wav");
-    const char *a440_8bit_stereo_wav = _a440_8bit_stereo_wav->data;
-    runIntegrationTest(environment, "Process 8-bit WAVE file (stereo)",
-                       buildTestArgumentString("--plugin again --input \"%s\"", a440_8bit_stereo_wav),
-                       RETURN_CODE_SUCCESS, "wav");
-    freeCharString(_a440_8bit_stereo_wav);
-
-    CharString _a440_24bit_mono_wav = getTestResourceFilename(resourcesPath, "audio", "a440-24bit-mono.wav");
-    const char *a440_24bit_mono_wav = _a440_24bit_mono_wav->data;
-    runIntegrationTest(environment, "Process 24-bit WAVE file (mono)",
-                       buildTestArgumentString("--plugin again --input \"%s\"", a440_24bit_mono_wav),
-                       RETURN_CODE_SUCCESS, "wav");
-    freeCharString(_a440_24bit_mono_wav);
-
-    CharString _a440_24bit_stereo_wav = getTestResourceFilename(resourcesPath, "audio", "a440-24bit-stereo.wav");
-    const char *a440_24bit_stereo_wav = _a440_24bit_stereo_wav->data;
-    runIntegrationTest(environment, "Process 24-bit WAVE file (stereo)",
-                       buildTestArgumentString("--plugin again --input \"%s\"", a440_24bit_stereo_wav),
-                       RETURN_CODE_SUCCESS, "wav");
-    freeCharString(_a440_24bit_stereo_wav);
-
-    CharString _a440_32bit_mono_wav = getTestResourceFilename(resourcesPath, "audio", "a440-32bit-mono.wav");
-    const char *a440_32bit_mono_wav = _a440_32bit_mono_wav->data;
-    runIntegrationTest(environment, "Process 32-bit WAVE file (mono)",
-                       buildTestArgumentString("--plugin again --input \"%s\"", a440_32bit_mono_wav),
-                       RETURN_CODE_SUCCESS, "wav");
-    freeCharString(_a440_32bit_mono_wav);
-
-    CharString _a440_32bit_stereo_wav = getTestResourceFilename(resourcesPath, "audio", "a440-32bit-stereo.wav");
-    const char *a440_32bit_stereo_wav = _a440_32bit_stereo_wav->data;
-    runIntegrationTest(environment, "Process 32-bit WAVE file (stereo)",
-                       buildTestArgumentString("--plugin again --input \"%s\"", a440_32bit_stereo_wav),
-                       RETURN_CODE_SUCCESS, "wav");
-    freeCharString(_a440_32bit_stereo_wav);
-
-    // AIFF files
-    /* TODO: Currently unsupported
-    CharString _a440_8bit_mono_aiff = getTestResourceFilename(resourcesPath, "audio", "a440-8bit-mono.aiff");
-    const char *a440_8bit_mono_aiff = _a440_8bit_mono_aiff->data;
-    runIntegrationTest(environment, "Process 8-bit AIFF file (mono)",
-                       buildTestArgumentString("--plugin again --input \"%s\"", a440_8bit_mono_aiff),
-                       RETURN_CODE_SUCCESS, "aiff");
-    freeCharString(_a440_8bit_mono_aiff);
-
-    CharString _a440_8bit_stereo_aiff = getTestResourceFilename(resourcesPath, "audio", "a440-8bit-stereo.aiff");
-    const char *a440_8bit_stereo_aiff = _a440_8bit_stereo_aiff->data;
-    runIntegrationTest(environment, "Process 8-bit AIFF file (stereo)",
-                       buildTestArgumentString("--plugin again --input \"%s\"", a440_8bit_stereo_aiff),
-                       RETURN_CODE_SUCCESS, "aiff");
-    freeCharString(_a440_8bit_stereo_aiff);
-    */
-
-    CharString _a440_16bit_mono_aiff = getTestResourceFilename(resourcesPath, "audio", "a440-16bit-mono.aiff");
-    const char *a440_16bit_mono_aiff = _a440_16bit_mono_aiff->data;
-    runIntegrationTest(environment, "Process 16-bit AIFF file (mono)",
-                       buildTestArgumentString("--plugin again --input \"%s\"", a440_16bit_mono_aiff),
-                       RETURN_CODE_SUCCESS, "aiff");
-    freeCharString(_a440_16bit_mono_aiff);
-
-    CharString _a440_16bit_stereo_aiff = getTestResourceFilename(resourcesPath, "audio", "a440-16bit-stereo.aiff");
-    const char *a440_16bit_stereo_aiff = _a440_16bit_stereo_aiff->data;
-    runIntegrationTest(environment, "Process 16-bit AIFF file (stereo)",
-                       buildTestArgumentString("--plugin again --input \"%s\"", a440_16bit_stereo_aiff),
-                       RETURN_CODE_SUCCESS, "aiff");
-    freeCharString(_a440_16bit_stereo_aiff);
-
-    CharString _a440_24bit_mono_aiff = getTestResourceFilename(resourcesPath, "audio", "a440-24bit-mono.aiff");
-    const char *a440_24bit_mono_aiff = _a440_24bit_mono_aiff->data;
-    runIntegrationTest(environment, "Process 24-bit AIFF file (mono)",
-                       buildTestArgumentString("--plugin again --input \"%s\"", a440_24bit_mono_aiff),
-                       RETURN_CODE_SUCCESS, "aiff");
-    freeCharString(_a440_24bit_mono_aiff);
-
-    CharString _a440_24bit_stereo_aiff = getTestResourceFilename(resourcesPath, "audio", "a440-24bit-stereo.aiff");
-    const char *a440_24bit_stereo_aiff = _a440_24bit_stereo_aiff->data;
-    runIntegrationTest(environment, "Process 24-bit AIFF file (stereo)",
-                       buildTestArgumentString("--plugin again --input \"%s\"", a440_24bit_stereo_aiff),
-                       RETURN_CODE_SUCCESS, "aiff");
-    freeCharString(_a440_24bit_stereo_aiff);
-
-    /* TODO: Currently unsupported
-    CharString _a440_32bit_mono_aiff = getTestResourceFilename(resourcesPath, "audio", "a440-32bit-mono.aiff");
-    const char *a440_32bit_mono_aiff = _a440_32bit_mono_aiff->data;
-    runIntegrationTest(environment, "Process 32-bit AIFF file (mono)",
-                       buildTestArgumentString("--plugin again --input \"%s\"", a440_32bit_mono_aiff),
-                       RETURN_CODE_SUCCESS, "aiff");
-    freeCharString(_a440_32bit_mono_aiff);
-
-    CharString _a440_32bit_stereo_aif = getTestResourceFilename(resourcesPath, "audio", "a440-32bit-stereo.aif");
-    const char *a440_32bit_stereo_aif = _a440_32bit_stereo_aif->data;
-    runIntegrationTest(environment, "Process 32-bit AIFF file (stereo)",
-                       buildTestArgumentString("--plugin again --input \"%s\"", a440_32bit_stereo_aif),
-                       RETURN_CODE_SUCCESS, "aif");
-    freeCharString(_a440_32bit_stereo_aif);
-    */
+#define REQUIRES_AUDIOFILE(x) x
+#else
+#define REQUIRES_AUDIOFILE(x) NULL
 #endif
 
 #if USE_FLAC
-    CharString _a440_stereo_flac = getTestResourceFilename(resourcesPath, "audio", "a440-stereo.flac");
-    const char *a440_stereo_flac = _a440_stereo_flac->data;
-    runIntegrationTest(environment, "Read FLAC file",
-                       buildTestArgumentString("--plugin again --input \"%s\"", a440_stereo_flac),
-                       RETURN_CODE_SUCCESS, kDefaultTestOutputFileType);
-    freeCharString(_a440_stereo_flac);
-
-    runIntegrationTest(environment, "Write FLAC file",
-                       buildTestArgumentString("--plugin again --input \"%s\"", a440_stereo_pcm),
-                       RETURN_CODE_SUCCESS, "flac");
+#define REQUIRES_FLAC(x)
+#else
+#define REQUIRES_FLAC(NULL)
 #endif
 
-    // Audio settings tests
-    CharString _a440_mono_pcm = getTestResourceFilename(resourcesPath, "audio", "a440-16bit-mono.pcm");
-    const char *a440_mono_pcm = _a440_mono_pcm->data;
-    runIntegrationTest(environment, "Read mono input source",
-                       buildTestArgumentString("--plugin again --input \"%s\" --channels 1", a440_mono_pcm),
-                       RETURN_CODE_SUCCESS, kDefaultTestOutputFileType);
-    freeCharString(_a440_mono_pcm);
+static CharString getDefaultInputPath(const CharString resourcesPath) {
+    return getTestResourcePath(resourcesPath, "audio", "a440-16bit-stereo.pcm");
+}
 
-    runIntegrationTest(environment, "Read with user-defined sample rate",
-                       buildTestArgumentString("--plugin again --input \"%s\" --sample-rate 48000", a440_stereo_pcm),
-                       RETURN_CODE_SUCCESS, kDefaultTestOutputFileType);
-    runIntegrationTest(environment, "Read with user-defined blocksize",
-                       buildTestArgumentString("--plugin again --input \"%s\" --blocksize 128", a440_stereo_pcm),
-                       RETURN_CODE_SUCCESS, kDefaultTestOutputFileType);
-    runIntegrationTest(environment, "Set time signature",
-                       buildTestArgumentString("--plugin again --input \"%s\" --time-signature 3/4", a440_stereo_pcm),
-                       RETURN_CODE_SUCCESS, kDefaultTestOutputFileType);
+// Tests
+
+static int _testListPlugins(const char *testName, const CharString applicationPath, const CharString resourcesPath) {
+    return runIntegrationTest(testName,
+                              newCharStringWithCString("--list-plugins"),
+                              RETURN_CODE_NOT_RUN,
+                              kTestOutputNone,
+                              applicationPath,
+                              resourcesPath);
+}
+
+static int _testListFileTypes(const char *testName, const CharString applicationPath, const CharString resourcesPath) {
+    return runIntegrationTest(testName,
+                              newCharStringWithCString("--list-file-types"),
+                              RETURN_CODE_NOT_RUN,
+                              kTestOutputNone,
+                              applicationPath,
+                              resourcesPath);
+}
+
+static int _testInvalidArgument(const char *testName, const CharString applicationPath, const CharString resourcesPath) {
+    return runIntegrationTest(testName,
+                              newCharStringWithCString("--invalid"),
+                              RETURN_CODE_INVALID_ARGUMENT,
+                              kTestOutputNone,
+                              applicationPath,
+                              resourcesPath);
+}
+
+static int _testRunWithNoPlugins(const char *testName, const CharString applicationPath, const CharString resourcesPath) {
+    return runIntegrationTest(testName,
+                              newCharString(),
+                              RETURN_CODE_INVALID_PLUGIN_CHAIN,
+                              kTestOutputNone,
+                              applicationPath,
+                              resourcesPath);
+}
+
+static int _testEffectWithNoInputSource(const char *testName, const CharString applicationPath, const CharString resourcesPath) {
+    return runIntegrationTest(testName,
+                              newCharStringWithCString("--plugin again"),
+                              RETURN_CODE_MISSING_REQUIRED_OPTION,
+                              kTestOutputPcm,
+                              applicationPath,
+                              resourcesPath);
+
+}
+
+static int _testInstrumentWithNoMidiSource(const char *testName, const CharString applicationPath, const CharString resourcesPath) {
+    return runIntegrationTest(testName,
+                              newCharStringWithCString("--plugin vstxsynth"),
+                              RETURN_CODE_MISSING_REQUIRED_OPTION,
+                              kTestOutputPcm,
+                              applicationPath,
+                              resourcesPath);
+}
+
+static int _testPluginChainWithInstrumentNotAtHead(const char *testName, const CharString applicationPath, const CharString resourcesPath) {
+    CharString inputPath = getDefaultInputPath(resourcesPath);
+    int result = runIntegrationTest(testName,
+                                    buildTestArgumentString("--plugin \"again;vstxsynth\" --input \"%s\"",
+                                                            inputPath->data),
+                                    RETURN_CODE_INVALID_PLUGIN_CHAIN,
+                                    kTestOutputNone,
+                                    applicationPath,
+                                    resourcesPath);
+    freeCharString(inputPath);
+    return result;
+}
+
+static int _testPluginWithInvalidPreset(const char *testName, const CharString applicationPath, const CharString resourcesPath) {
+    CharString inputPath = getDefaultInputPath(resourcesPath);
+    int result = runIntegrationTest(testName,
+                                    buildTestArgumentString("--plugin \"again,invalid.fxp\" --input \"%s\"",
+                                                            inputPath->data),
+                                    RETURN_CODE_INVALID_ARGUMENT,
+                                    kTestOutputNone,
+                                    applicationPath,
+                                    resourcesPath);
+    freeCharString(inputPath);
+    return result;
+}
+
+static int _testPresetForWrongPlugin(const char *testName, const CharString applicationPath, const CharString resourcesPath) {
+    CharString midiPath = getTestResourcePath(resourcesPath, "midi", "c-scale.mid");
+    CharString presetPath = getTestResourcePath(resourcesPath, "presets", "again-test.fxp");
+    int result = runIntegrationTest(testName,
+                                    buildTestArgumentString("--plugin \"vstxsynth,%s\" --midi-file \"%s\"",
+                                                            presetPath->data,
+                                                            midiPath->data),
+                                    RETURN_CODE_INVALID_ARGUMENT,
+                                    kTestOutputNone,
+                                    applicationPath,
+                                    resourcesPath);
+    freeCharString(midiPath);
+    freeCharString(presetPath);
+    return result;
+}
+
+static int _testSetInvalidParameter(const char *testName, const CharString applicationPath, const CharString resourcesPath) {
+    CharString inputPath = getDefaultInputPath(resourcesPath);
+    int result = runIntegrationTest(testName,
+                                    buildTestArgumentString("--plugin again --input \"%s\" --parameter 1,0.5",
+                                                            inputPath->data),
+                                    RETURN_CODE_INVALID_ARGUMENT,
+                                    kTestOutputNone,
+                                    applicationPath,
+                                    resourcesPath);
+    freeCharString(inputPath);
+    return result;
+}
+
+static int _testSetInvalidTimeSignature(const char *testName, const CharString applicationPath, const CharString resourcesPath) {
+    CharString inputPath = getDefaultInputPath(resourcesPath);
+    int result = runIntegrationTest(testName,
+                                    buildTestArgumentString("--plugin again --input \"%s\" --time-signature invalid",
+                                                            inputPath->data),
+                                    RETURN_CODE_INVALID_ARGUMENT,
+                                    kTestOutputNone,
+                                    applicationPath,
+                                    resourcesPath);
+    freeCharString(inputPath);
+    return result;
+}
+
+static int _testSetInvalidTempo(const char *testName, const CharString applicationPath, const CharString resourcesPath) {
+    CharString inputPath = getDefaultInputPath(resourcesPath);
+    int result = runIntegrationTest(testName,
+                                    buildTestArgumentString("--plugin again --input \"%s\" --tempo 0",
+                                                            inputPath->data),
+                                    RETURN_CODE_INVALID_ARGUMENT,
+                                    kTestOutputNone,
+                                    applicationPath,
+                                    resourcesPath);
+    freeCharString(inputPath);
+    return result;
+}
+
+static int _testSetInvalidBlocksize(const char *testName, const CharString applicationPath, const CharString resourcesPath) {
+    CharString inputPath = getDefaultInputPath(resourcesPath);
+    int result = runIntegrationTest(testName,
+                                    buildTestArgumentString("--plugin again --input \"%s\" --blocksize 0",
+                                                            inputPath->data),
+                                    RETURN_CODE_INVALID_ARGUMENT,
+                                    kTestOutputNone,
+                                    applicationPath,
+                                    resourcesPath);
+    freeCharString(inputPath);
+    return result;
+}
+
+static int _testSetInvalidBitDepth(const char *testName, const CharString applicationPath, const CharString resourcesPath) {
+    CharString inputPath = getDefaultInputPath(resourcesPath);
+    int result = runIntegrationTest(testName,
+                                    buildTestArgumentString("--plugin again --input \"%s\" --bit-depth 5",
+                                                            inputPath->data),
+                                    RETURN_CODE_INVALID_ARGUMENT,
+                                    kTestOutputNone,
+                                    applicationPath,
+                                    resourcesPath);
+    freeCharString(inputPath);
+    return result;
+}
+
+static int _testSetInvalidChannelCount(const char *testName, const CharString applicationPath, const CharString resourcesPath) {
+    CharString inputPath = getDefaultInputPath(resourcesPath);
+    int result = runIntegrationTest(testName,
+                                    buildTestArgumentString("--plugin again --input \"%s\" --channels 0",
+                                                            inputPath->data),
+                                    RETURN_CODE_INVALID_ARGUMENT,
+                                    kTestOutputNone,
+                                    applicationPath,
+                                    resourcesPath);
+    freeCharString(inputPath);
+    return result;
+}
+
+static int _testSetInvalidSampleRate(const char *testName, const CharString applicationPath, const CharString resourcesPath) {
+    CharString inputPath = getDefaultInputPath(resourcesPath);
+    int result = runIntegrationTest(testName,
+                                    buildTestArgumentString("--plugin again --input \"%s\" --sample-rate 0",
+                                                            inputPath->data),
+                                    RETURN_CODE_INVALID_ARGUMENT,
+                                    kTestOutputNone,
+                                    applicationPath,
+                                    resourcesPath);
+    freeCharString(inputPath);
+    return result;
+}
+
+static int _testProcessPcmFile16BitMono(const char *testName, const CharString applicationPath, const CharString resourcesPath) {
+    CharString inputPath = getTestResourcePath(resourcesPath, "audio", "a440-16bit-mono.pcm");
+    int result = runIntegrationTest(testName,
+                                    buildTestArgumentString("--plugin again --input \"%s\" --channels 1",
+                                                            inputPath->data),
+                                    RETURN_CODE_SUCCESS,
+                                    kTestOutputPcm,
+                                    applicationPath,
+                                    resourcesPath);
+    freeCharString(inputPath);
+    return result;
+}
+
+static int _testProcessPcmFile16BitStereo(const char *testName, const CharString applicationPath, const CharString resourcesPath) {
+    CharString inputPath = getTestResourcePath(resourcesPath, "audio", "a440-16bit-stereo.pcm");
+    int result = runIntegrationTest(testName,
+                                    buildTestArgumentString("--plugin again --input \"%s\"",
+                                                            inputPath->data),
+                                    RETURN_CODE_SUCCESS,
+                                    kTestOutputPcm,
+                                    applicationPath,
+                                    resourcesPath);
+    freeCharString(inputPath);
+    return result;
+}
+
+static int _testProcessWaveFile8BitMono(const char *testName, const CharString applicationPath, const CharString resourcesPath) {
+    CharString inputPath = getTestResourcePath(resourcesPath, "audio", "a440-8bit-mono.wav");
+    int result = runIntegrationTest(testName,
+                                    buildTestArgumentString("--plugin again --input \"%s\"",
+                                                            inputPath->data),
+                                    RETURN_CODE_SUCCESS,
+                                    kTestOutputWave,
+                                    applicationPath,
+                                    resourcesPath);
+    freeCharString(inputPath);
+    return result;
+}
+
+static int _testProcessWaveFile8BitStereo(const char *testName, const CharString applicationPath, const CharString resourcesPath) {
+    CharString inputPath = getTestResourcePath(resourcesPath, "audio", "a440-8bit-stereo.wav");
+    int result = runIntegrationTest(testName,
+                                    buildTestArgumentString("--plugin again --input \"%s\"",
+                                                            inputPath->data),
+                                    RETURN_CODE_SUCCESS,
+                                    kTestOutputWave,
+                                    applicationPath,
+                                    resourcesPath);
+    freeCharString(inputPath);
+    return result;
+}
+
+static int _testProcessWaveFile16BitMono(const char *testName, const CharString applicationPath, const CharString resourcesPath) {
+    CharString inputPath = getTestResourcePath(resourcesPath, "audio", "a440-16bit-mono.wav");
+    int result = runIntegrationTest(testName,
+                                    buildTestArgumentString("--plugin again --input \"%s\"",
+                                                            inputPath->data),
+                                    RETURN_CODE_SUCCESS,
+                                    kTestOutputWave,
+                                    applicationPath,
+                                    resourcesPath);
+    freeCharString(inputPath);
+    return result;
+}
+
+static int _testProcessWaveFile16BitStereo(const char *testName, const CharString applicationPath, const CharString resourcesPath) {
+    CharString inputPath = getTestResourcePath(resourcesPath, "audio", "a440-16bit-stereo.wav");
+    int result = runIntegrationTest(testName,
+                                    buildTestArgumentString("--plugin again --input \"%s\"",
+                                                            inputPath->data),
+                                    RETURN_CODE_SUCCESS,
+                                    kTestOutputWave,
+                                    applicationPath,
+                                    resourcesPath);
+    freeCharString(inputPath);
+    return result;
+}
+
+static int _testProcessWaveFile24BitMono(const char *testName, const CharString applicationPath, const CharString resourcesPath) {
+    CharString inputPath = getTestResourcePath(resourcesPath, "audio", "a440-24bit-mono.wav");
+    int result = runIntegrationTest(testName,
+                                    buildTestArgumentString("--plugin again --input \"%s\"",
+                                                            inputPath->data),
+                                    RETURN_CODE_SUCCESS,
+                                    kTestOutputWave,
+                                    applicationPath,
+                                    resourcesPath);
+    freeCharString(inputPath);
+    return result;
+}
+
+static int _testProcessWaveFile24BitStereo(const char *testName, const CharString applicationPath, const CharString resourcesPath) {
+    CharString inputPath = getTestResourcePath(resourcesPath, "audio", "a440-24bit-stereo.wav");
+    int result = runIntegrationTest(testName,
+                                    buildTestArgumentString("--plugin again --input \"%s\"",
+                                                            inputPath->data),
+                                    RETURN_CODE_SUCCESS,
+                                    kTestOutputWave,
+                                    applicationPath,
+                                    resourcesPath);
+    freeCharString(inputPath);
+    return result;
+}
+
+static int _testProcessWaveFile32BitMono(const char *testName, const CharString applicationPath, const CharString resourcesPath) {
+    CharString inputPath = getTestResourcePath(resourcesPath, "audio", "a440-32bit-mono.wav");
+    int result = runIntegrationTest(testName,
+                                    buildTestArgumentString("--plugin again --input \"%s\"",
+                                                            inputPath->data),
+                                    RETURN_CODE_SUCCESS,
+                                    kTestOutputWave,
+                                    applicationPath,
+                                    resourcesPath);
+    freeCharString(inputPath);
+    return result;
+}
+
+static int _testProcessWaveFile32BitStereo(const char *testName, const CharString applicationPath, const CharString resourcesPath) {
+    CharString inputPath = getTestResourcePath(resourcesPath, "audio", "a440-32bit-stereo.wav");
+    int result = runIntegrationTest(testName,
+                                    buildTestArgumentString("--plugin again --input \"%s\"",
+                                                            inputPath->data),
+                                    RETURN_CODE_SUCCESS,
+                                    kTestOutputWave,
+                                    applicationPath,
+                                    resourcesPath);
+    freeCharString(inputPath);
+    return result;
+}
+
+static int _testProcessAiffFile8BitMono(const char *testName, const CharString applicationPath, const CharString resourcesPath) {
+    CharString inputPath = getTestResourcePath(resourcesPath, "audio", "a440-8bit-mono.aiff");
+    int result = runIntegrationTest(testName,
+                                    buildTestArgumentString("--plugin again --input \"%s\"",
+                                                            inputPath->data),
+                                    RETURN_CODE_SUCCESS,
+                                    kTestOutputAiff,
+                                    applicationPath,
+                                    resourcesPath);
+    freeCharString(inputPath);
+    return result;
+}
+
+static int _testProcessAiffFile8BitStereo(const char *testName, const CharString applicationPath, const CharString resourcesPath) {
+    CharString inputPath = getTestResourcePath(resourcesPath, "audio", "a440-8bit-stereo.aiff");
+    int result = runIntegrationTest(testName,
+                                    buildTestArgumentString("--plugin again --input \"%s\"",
+                                                            inputPath->data),
+                                    RETURN_CODE_SUCCESS,
+                                    kTestOutputAiff,
+                                    applicationPath,
+                                    resourcesPath);
+    freeCharString(inputPath);
+    return result;
+}
+
+static int _testProcessAiffFile16BitMono(const char *testName, const CharString applicationPath, const CharString resourcesPath) {
+    CharString inputPath = getTestResourcePath(resourcesPath, "audio", "a440-16bit-mono.aiff");
+    int result = runIntegrationTest(testName,
+                                    buildTestArgumentString("--plugin again --input \"%s\"",
+                                                            inputPath->data),
+                                    RETURN_CODE_SUCCESS,
+                                    kTestOutputAiff,
+                                    applicationPath,
+                                    resourcesPath);
+    freeCharString(inputPath);
+    return result;
+}
+
+static int _testProcessAiffFile16BitStereo(const char *testName, const CharString applicationPath, const CharString resourcesPath) {
+    CharString inputPath = getTestResourcePath(resourcesPath, "audio", "a440-16bit-stereo.aiff");
+    int result = runIntegrationTest(testName,
+                                    buildTestArgumentString("--plugin again --input \"%s\"",
+                                                            inputPath->data),
+                                    RETURN_CODE_SUCCESS,
+                                    kTestOutputAiff,
+                                    applicationPath,
+                                    resourcesPath);
+    freeCharString(inputPath);
+    return result;
+}
+
+static int _testProcessAiffFile24BitMono(const char *testName, const CharString applicationPath, const CharString resourcesPath) {
+    CharString inputPath = getTestResourcePath(resourcesPath, "audio", "a440-24bit-mono.aiff");
+    int result = runIntegrationTest(testName,
+                                    buildTestArgumentString("--plugin again --input \"%s\"", inputPath->data),
+                                    RETURN_CODE_SUCCESS,
+                                    kTestOutputAiff,
+                                    applicationPath,
+                                    resourcesPath);
+    freeCharString(inputPath);
+    return result;
+}
+
+static int _testProcessAiffFile24BitStereo(const char *testName, const CharString applicationPath, const CharString resourcesPath) {
+    CharString inputPath = getTestResourcePath(resourcesPath, "audio", "a440-24bit-stereo.aiff");
+    int result = runIntegrationTest(testName,
+                                    buildTestArgumentString("--plugin again --input \"%s\"",
+                                                            inputPath->data),
+                                    RETURN_CODE_SUCCESS,
+                                    kTestOutputAiff,
+                                    applicationPath,
+                                    resourcesPath);
+    freeCharString(inputPath);
+    return result;
+}
+
+static int _testProcessAiffFile32BitMono(const char *testName, const CharString applicationPath, const CharString resourcesPath) {
+    CharString inputPath = getTestResourcePath(resourcesPath, "audio", "a440-32bit-mono.aiff");
+    int result = runIntegrationTest(testName,
+                                    buildTestArgumentString("--plugin again --input \"%s\"",
+                                                            inputPath->data),
+                                    RETURN_CODE_SUCCESS,
+                                    kTestOutputAiff,
+                                    applicationPath,
+                                    resourcesPath);
+    freeCharString(inputPath);
+    return result;
+}
+
+static int _testProcessAiffFile32BitStereo(const char *testName, const CharString applicationPath, const CharString resourcesPath) {
+    CharString inputPath = getTestResourcePath(resourcesPath, "audio", "a440-32bit-stereo.aiff");
+    int result = runIntegrationTest(testName,
+                                    buildTestArgumentString("--plugin again --input \"%s\"",
+                                                            inputPath->data),
+                                    RETURN_CODE_SUCCESS,
+                                    kTestOutputAiff,
+                                    applicationPath,
+                                    resourcesPath);
+    freeCharString(inputPath);
+    return result;
+}
+
+static int _testProcessWithSampleRate(const char *testName, const CharString applicationPath, const CharString resourcesPath) {
+    CharString inputPath = getDefaultInputPath(resourcesPath);
+    int result = runIntegrationTest(testName,
+                                    buildTestArgumentString("--plugin again --input \"%s\" --sample-rate 48000",
+                                                            inputPath->data),
+                                    RETURN_CODE_SUCCESS,
+                                    kTestOutputPcm,
+                                    applicationPath,
+                                    resourcesPath);
+    freeCharString(inputPath);
+    return result;
+}
+
+static int _testProcessWithBlocksize(const char *testName, const CharString applicationPath, const CharString resourcesPath) {
+    CharString inputPath = getDefaultInputPath(resourcesPath);
+    int result = runIntegrationTest(testName,
+                                    buildTestArgumentString("--plugin again --input \"%s\" --blocksize 128",
+                                                            inputPath->data),
+                                    RETURN_CODE_SUCCESS,
+                                    kTestOutputPcm,
+                                    applicationPath,
+                                    resourcesPath);
+    freeCharString(inputPath);
+    return result;
+}
+
+static int _testProcessWithTimeSignature(const char *testName, const CharString applicationPath, const CharString resourcesPath) {
+    CharString inputPath = getDefaultInputPath(resourcesPath);
+    int result = runIntegrationTest(testName,
+                                    buildTestArgumentString("--plugin again --input \"%s\" --time-signature 3/4",
+                                                            inputPath->data),
+                                    RETURN_CODE_SUCCESS,
+                                    kTestOutputPcm,
+                                    applicationPath,
+                                    resourcesPath);
+    freeCharString(inputPath);
+    return result;
+}
+
+static int _testSetParameter(const char *testName, const CharString applicationPath, const CharString resourcesPath) {
+    CharString inputPath = getDefaultInputPath(resourcesPath);
+    int result = runIntegrationTest(testName,
+                                    buildTestArgumentString("--plugin again --input \"%s\" --parameter 0,0.5",
+                                                            inputPath->data),
+                                    RETURN_CODE_SUCCESS,
+                                    kTestOutputPcm,
+                                    applicationPath,
+                                    resourcesPath);
+    freeCharString(inputPath);
+    return result;
+}
+
+static int _testInternalLimiter(const char *testName, const CharString applicationPath, const CharString resourcesPath) {
+    CharString inputPath = getDefaultInputPath(resourcesPath);
+    int result = runIntegrationTest(testName,
+                                    buildTestArgumentString("--plugin mrs_limiter --input \"%s\"",
+                                                            inputPath->data),
+                                    RETURN_CODE_SUCCESS,
+                                    kTestOutputPcm,
+                                    applicationPath,
+                                    resourcesPath);
+    freeCharString(inputPath);
+    return result;
+}
+
+static int _testInternalGainPlugin(const char *testName, const CharString applicationPath, const CharString resourcesPath) {
+    CharString inputPath = getDefaultInputPath(resourcesPath);
+    int result = runIntegrationTest(testName,
+                                    buildTestArgumentString("--plugin mrs_gain --parameter 0,0.5 --input \"%s\"",
+                                                            inputPath->data),
+                                    RETURN_CODE_SUCCESS,
+                                    kTestOutputPcm,
+                                    applicationPath,
+                                    resourcesPath);
+    freeCharString(inputPath);
+    return result;
+}
+
+static int _testInternalGainPluginInvalidParameter(const char *testName, const CharString applicationPath, const CharString resourcesPath) {
+    CharString inputPath = getDefaultInputPath(resourcesPath);
+    int result = runIntegrationTest(testName,
+                                    buildTestArgumentString("--plugin mrs_gain --parameter 1,0.5 --input \"%s\"",
+                                                            inputPath->data),
+                                    RETURN_CODE_INVALID_ARGUMENT,
+                                    kTestOutputNone,
+                                    applicationPath,
+                                    resourcesPath);
+    freeCharString(inputPath);
+    return result;
+}
+
+static int _testInternalPassthruPlugin(const char *testName, const CharString applicationPath, const CharString resourcesPath) {
+    CharString inputPath = getDefaultInputPath(resourcesPath);
+    int result = runIntegrationTest(testName,
+                                    buildTestArgumentString("--plugin mrs_passthru --input \"%s\"",
+                                                            inputPath->data),
+                                    RETURN_CODE_SUCCESS,
+                                    kTestOutputPcm,
+                                    applicationPath,
+                                    resourcesPath);
+    freeCharString(inputPath);
+    return result;
+}
+
+static int _testInternalSilenceGenerator(const char *testName, const CharString applicationPath, const CharString resourcesPath) {
+    return runIntegrationTest(testName,
+                              newCharStringWithCString("--plugin mrs_silence --max-time 1000"),
+                              RETURN_CODE_SUCCESS,
+                              kTestOutputPcm,
+                              applicationPath,
+                              resourcesPath);
+}
+
+static int _testProcessWithAgainPlugin(const char *testName, const CharString applicationPath, const CharString resourcesPath) {
+    CharString inputPath = getDefaultInputPath(resourcesPath);
+    int result = runIntegrationTest(testName,
+                                    buildTestArgumentString("--plugin again --input \"%s\"",
+                                                            inputPath->data),
+                                    RETURN_CODE_SUCCESS,
+                                    kTestOutputPcm,
+                                    applicationPath,
+                                    resourcesPath);
+    freeCharString(inputPath);
+    return result;
+}
+
+static int _testProcessWithVstxsynthPlugin(const char *testName, const CharString applicationPath, const CharString resourcesPath) {
+    CharString midiFile = getTestResourcePath(resourcesPath, "midi", "c-scale.mid");
+    int result = runIntegrationTest(testName,
+                                    buildTestArgumentString("--plugin vstxsynth --midi-file \"%s\"",
+                                                            midiFile->data),
+                                    RETURN_CODE_SUCCESS,
+                                    kTestOutputPcm,
+                                    applicationPath,
+                                    resourcesPath);
+    freeCharString(midiFile);
+    return result;
+}
+
+static int _testProcessEffectChain(const char *testName, const CharString applicationPath, const CharString resourcesPath) {
+    CharString midiFile = getTestResourcePath(resourcesPath, "midi", "c-scale.mid");
+    int result = runIntegrationTest(testName,
+                                    buildTestArgumentString("--plugin vstxsynth,again --midi-file \"%s\"",
+                                                            midiFile->data),
+                                    RETURN_CODE_SUCCESS,
+                                    kTestOutputPcm,
+                                    applicationPath,
+                                    resourcesPath);
+    freeCharString(midiFile);
+    return result;
+}
+
+static int _testLoadFxpPresetInVst(const char *testName, const CharString applicationPath, const CharString resourcesPath) {
+    CharString inputPath = getDefaultInputPath(resourcesPath);
+    CharString presetPath = getTestResourcePath(resourcesPath, "presets", "again-test.fxp");
+    int result = runIntegrationTest(testName,
+                                    buildTestArgumentString("--plugin \"again,%s\" --input \"%s\"",
+                                                            presetPath->data,
+                                                            inputPath->data),
+                                    RETURN_CODE_SUCCESS,
+                                    kTestOutputPcm,
+                                    applicationPath,
+                                    resourcesPath);
+    freeCharString(inputPath);
+    freeCharString(presetPath);
+    return result;
+}
+
+static int _testLoadInternalProgramInVst(const char *testName, const CharString applicationPath, const CharString resourcesPath) {
+    CharString midiFile = getTestResourcePath(resourcesPath, "midi", "c-scale.mid");
+    int result = runIntegrationTest(testName,
+                                    buildTestArgumentString("--plugin vstxsynth,2 --midi-file \"%s\"",
+                                                            midiFile->data),
+                                    RETURN_CODE_SUCCESS,
+                                    kTestOutputPcm,
+                                    applicationPath,
+                                    resourcesPath);
+    freeCharString(midiFile);
+    return result;
+}
+
+
+TestSuite addIntegrationTests(File mrsWatsonExePath, File resourcesPath);
+
+TestSuite addIntegrationTests(File mrsWatsonExePath, File resourcesPath) {
+    TestSuite testSuite = newTestSuite("Integration", NULL, NULL);
+    testSuite->applicationPath = newCharStringWithCString(mrsWatsonExePath->absolutePath->data);
+    testSuite->resourcesPath = newCharStringWithCString(resourcesPath->absolutePath->data);
+
+    // Basic non-processing operations
+    addTestWithPaths(testSuite, "ListPlugins", _testListPlugins);
+    addTestWithPaths(testSuite, "ListFileTypes", _testListFileTypes);
+    addTestWithPaths(testSuite, "InvalidArugment", _testInvalidArgument);
+
+    // Invalid configurations
+    addTestWithPaths(testSuite, "Run with no plugins", _testRunWithNoPlugins);
+    addTestWithPaths(testSuite, "Effect with no input source", _testEffectWithNoInputSource);
+    addTestWithPaths(testSuite, "Instrument with no MIDI source", _testInstrumentWithNoMidiSource);
+    addTestWithPaths(testSuite, "Plugin chain with instrument not at head", _testPluginChainWithInstrumentNotAtHead);
+    addTestWithPaths(testSuite, "Plugin with invalid preset", _testPluginWithInvalidPreset);
+    addTestWithPaths(testSuite, "Preset for wrong plugin", _testPresetForWrongPlugin);
+    addTestWithPaths(testSuite, "Set invalid parameter", _testSetInvalidParameter);
+    addTestWithPaths(testSuite, "Set invalid time signature", _testSetInvalidTimeSignature);
+    addTestWithPaths(testSuite, "Set invalid tempo", _testSetInvalidTempo);
+    addTestWithPaths(testSuite, "Set invalid blocksize", _testSetInvalidBlocksize);
+    addTestWithPaths(testSuite, "Set invalid bit depth", _testSetInvalidBitDepth);
+    addTestWithPaths(testSuite, "Set invalid channel count", _testSetInvalidChannelCount);
+    addTestWithPaths(testSuite, "Set invalid sample rate", _testSetInvalidSampleRate);
+
+    // PCM files
+    // TODO: Should add tests for other bit depths
+    addTestWithPaths(testSuite, "Process 16-bit PCM file (mono)", _testProcessPcmFile16BitMono);
+    addTestWithPaths(testSuite, "Process 16-bit PCM file (stereo)", _testProcessPcmFile16BitStereo);
+
+    // WAVE files
+    addTestWithPaths(testSuite, "Process 8-bit WAVE file (mono)", REQUIRES_AUDIOFILE(_testProcessWaveFile8BitMono));
+    addTestWithPaths(testSuite, "Process 8-bit WAVE file (stereo)", REQUIRES_AUDIOFILE(_testProcessWaveFile8BitStereo));
+    addTestWithPaths(testSuite, "Process 16-bit WAVE file (mono)", _testProcessWaveFile16BitMono);
+    addTestWithPaths(testSuite, "Process 16-bit WAVE file (stereo)", _testProcessWaveFile16BitStereo);
+    addTestWithPaths(testSuite, "Process 24-bit WAVE file (mono)", REQUIRES_AUDIOFILE(_testProcessWaveFile24BitMono));
+    addTestWithPaths(testSuite, "Process 24-bit WAVE file (stereo)", REQUIRES_AUDIOFILE(_testProcessWaveFile24BitStereo));
+    addTestWithPaths(testSuite, "Process 32-bit WAVE file (mono)", REQUIRES_AUDIOFILE(_testProcessWaveFile32BitMono));
+    addTestWithPaths(testSuite, "Process 32-bit WAVE file (stereo)", REQUIRES_AUDIOFILE(_testProcessWaveFile32BitStereo));
+
+    // AIFF files
+    // 8-bit AIFF will require some extra work in SampleSourceAudiofile
+    addTestWithPaths(testSuite, "Process 8-bit AIFF file (mono)", NULL); //REQUIRES_AUDIOFILE(_testProcessAiffFile8BitMono));
+    addTestWithPaths(testSuite, "Process 8-bit AIFF file (stereo)", NULL); //REQUIRES_AUDIOFILE(_testProcessAiffFile8BitStereo));
+    addTestWithPaths(testSuite, "Process 16-bit AIFF file (mono)", REQUIRES_AUDIOFILE(_testProcessAiffFile16BitMono));
+    addTestWithPaths(testSuite, "Process 16-bit AIFF file (stereo)", REQUIRES_AUDIOFILE(_testProcessAiffFile16BitStereo));
+    addTestWithPaths(testSuite, "Process 24-bit AIFF file (mono)", REQUIRES_AUDIOFILE(_testProcessAiffFile24BitMono));
+    addTestWithPaths(testSuite, "Process 24-bit AIFF file (stereo)", REQUIRES_AUDIOFILE(_testProcessAiffFile24BitStereo));
+    // 32-bit AIFF will require some extra work in SampleSourceAudiofile
+    addTestWithPaths(testSuite, "Process 32-bit AIFF file (mono)", NULL); //REQUIRES_AUDIOFILE(_testProcessAiffFile32BitMono));
+    addTestWithPaths(testSuite, "Process 32-bit AIFF file (stereo)", NULL); //REQUIRES_AUDIOFILE(_testProcessAiffFile32BitStereo));
+
+    // Audio settings
+    addTestWithPaths(testSuite, "Process with sample rate", _testProcessWithSampleRate);
+    addTestWithPaths(testSuite, "Process with blocksize", _testProcessWithBlocksize);
+    addTestWithPaths(testSuite, "Process with time signature", _testProcessWithTimeSignature);
 
     // Parameter tests
-    runIntegrationTest(environment, "Set parameter",
-                       buildTestArgumentString("--plugin again --input \"%s\" --parameter 0,0.5", a440_stereo_pcm),
-                       RETURN_CODE_SUCCESS, kDefaultTestOutputFileType);
+    addTestWithPaths(testSuite, "Set parameter", _testSetParameter);
 
     // Internal plugins
-    runIntegrationTest(environment, "Process with internal limiter",
-                       buildTestArgumentString("--plugin mrs_limiter --input \"%s\"", a440_stereo_pcm),
-                       RETURN_CODE_SUCCESS, kDefaultTestOutputFileType);
-    runIntegrationTest(environment, "Process with internal gain plugin",
-                       buildTestArgumentString("--plugin mrs_gain --parameter 0,0.5 --input \"%s\"", a440_stereo_pcm),
-                       RETURN_CODE_SUCCESS, kDefaultTestOutputFileType);
-    runIntegrationTest(environment, "Process with internal gain plugin and invalid parameter",
-                       buildTestArgumentString("--plugin mrs_gain --parameter 1,0.5 --input \"%s\"", a440_stereo_pcm),
-                       RETURN_CODE_INVALID_ARGUMENT, NULL);
-    runIntegrationTest(environment, "Process with internal passthru plugin",
-                       buildTestArgumentString("--plugin mrs_passthru --input \"%s\"", a440_stereo_pcm),
-                       RETURN_CODE_SUCCESS, kDefaultTestOutputFileType);
+    addTestWithPaths(testSuite, "Internal limiter", _testInternalLimiter);
+    addTestWithPaths(testSuite, "Internal gain plugin", _testInternalGainPlugin);
+    addTestWithPaths(testSuite, "Internal gain plugin invalid parameter", _testInternalGainPluginInvalidParameter);
+    addTestWithPaths(testSuite, "Internal passthru plugin", _testInternalPassthruPlugin);
 #if 0
     // This test case works, but fails the analysis check for silence (obviously).
     // It will remain disabled until we have a smarter way to specify which analysis
     // functions should be run for each integration test.
-    runIntegrationTest(environment, "Process with silence generator",
-                       newCharStringWithCString("--plugin mrs_silence --max-time 1000"),
-                       RETURN_CODE_SUCCESS, kDefaultTestOutputFileType);
+    addTestWithPaths(testSuite, "Internal silence generator", _testInternalSilenceGenerator);
 #endif
 
     // Plugin processing tests
-    runIntegrationTest(environment, "Process audio with again plugin",
-                       buildTestArgumentString("--plugin again --input \"%s\"", a440_stereo_pcm),
-                       RETURN_CODE_SUCCESS, kDefaultTestOutputFileType);
-    runIntegrationTest(environment, "Process MIDI with vstxsynth plugin",
-                       buildTestArgumentString("--plugin vstxsynth --midi-file \"%s\"", c_scale_mid),
-                       RETURN_CODE_SUCCESS, kDefaultTestOutputFileType);
-    runIntegrationTest(environment, "Process effect chain",
-                       buildTestArgumentString("--plugin vstxsynth,again --midi-file \"%s\"", c_scale_mid),
-                       RETURN_CODE_SUCCESS, kDefaultTestOutputFileType);
-    runIntegrationTest(environment, "Load FXP preset to VST",
-                       buildTestArgumentString("--plugin \"again,%s\" --input \"%s\"", again_test_fxp, a440_stereo_pcm),
-                       RETURN_CODE_SUCCESS, kDefaultTestOutputFileType);
-    runIntegrationTest(environment, "Load internal program to VST",
-                       buildTestArgumentString("--plugin vstxsynth,2 --midi-file \"%s\"", c_scale_mid),
-                       RETURN_CODE_SUCCESS, kDefaultTestOutputFileType);
+    addTestWithPaths(testSuite, "Process audio with again plugin", _testProcessWithAgainPlugin);
+    addTestWithPaths(testSuite, "Process MIDI with vstxsynth plugin", _testProcessWithVstxsynthPlugin);
+    addTestWithPaths(testSuite, "Process effect chain", _testProcessEffectChain);
+    addTestWithPaths(testSuite, "Load FXP preset in VST", _testLoadFxpPresetInVst);
+    addTestWithPaths(testSuite, "Load internal program in VST", _testLoadInternalProgramInVst);
 
-    _printTestSummary(environment->results->numSuccess + environment->results->numFail + environment->results->numSkips,
-                      environment->results->numSuccess, environment->results->numFail, environment->results->numSkips);
-
-    freeCharString(_a440_stereo_pcm);
-    freeCharString(_a440_16bit_stereo_wav);
-    freeCharString(_c_scale_mid);
-    freeCharString(_again_test_fxp);
+    return testSuite;
 }

@@ -6,7 +6,6 @@
 #include "base/PlatformInfo.h"
 #include "analysis/AnalyzeFile.h"
 
-const char *kDefaultTestOutputFileType = "pcm";
 static const char *kApplicationRunnerOutputFolder = "out";
 static const int kApplicationRunnerWaitTimeoutInMs = 1000;
 
@@ -21,20 +20,39 @@ CharString buildTestArgumentString(const char *arguments, ...)
     return formattedArguments;
 }
 
-CharString getTestResourceFilename(const char *resourcesPath, const char *resourceType, const char *resourceName)
+CharString getTestResourcePath(const CharString resourcesPath, const char *resourceType, const char *resourceName)
 {
     CharString filename = newCharString();
     snprintf(filename->data, filename->capacity, "%s%c%s%c%s",
-             resourcesPath, PATH_DELIMITER, resourceType, PATH_DELIMITER, resourceName);
+             resourcesPath->data, PATH_DELIMITER, resourceType, PATH_DELIMITER, resourceName);
     return filename;
 }
 
-CharString getTestOutputFilename(const char *testName, const char *fileExtension)
+CharString getTestOutputFilename(const char *testName, const TestOutputType outputType)
 {
-    CharString filename = newCharString();
+    char *fileExtension = NULL;
+    switch (outputType) {
+        case kTestOutputPcm:
+            fileExtension = "pcm";
+            break;
+        case kTestOutputNone:
+            return NULL;
+        case kTestOutputAiff:
+            fileExtension = "aiff";
+            break;
+        case kTestOutputWave:
+            fileExtension = "wav";
+            break;
+        case kTestOutputText:
+            fileExtension = "txt";
+            break;
+        default:
+            return NULL;
+    }
+
     char *space;
     char *spacePtr;
-
+    CharString filename = newCharString();
     snprintf(filename->data, filename->capacity, "%s%c%s.%s",
              kApplicationRunnerOutputFolder, PATH_DELIMITER, testName, fileExtension);
     spacePtr = filename->data;
@@ -52,26 +70,33 @@ CharString getTestOutputFilename(const char *testName, const char *fileExtension
     return filename;
 }
 
-static CharString _getTestPluginResourcesPath(const char *resourcesPath)
+static CharString _getTestPluginResourcesPath(const CharString resourcesPath)
 {
     CharString pluginRoot = newCharString();
     PlatformInfo platform = newPlatformInfo();
     snprintf(pluginRoot->data, pluginRoot->capacity, "%s%cvst%c%s",
-             resourcesPath, PATH_DELIMITER, PATH_DELIMITER, platform->shortName->data);
+             resourcesPath->data, PATH_DELIMITER, PATH_DELIMITER, platform->shortName->data);
     freePlatformInfo(platform);
     return pluginRoot;
 }
 
-static CharString _getDefaultArguments(TestEnvironment testEnvironment, const char *testName, const char *outputFilename)
+static CharString _getDefaultArguments(const char *testName,
+                                       const CharString resourcesPath,
+                                       const CharString outputFilename)
 {
     CharString outString = newCharStringWithCapacity(kCharStringLengthLong);
-    CharString logfileName = getTestOutputFilename(testName, "txt");
-    CharString resourcesPath = _getTestPluginResourcesPath(testEnvironment->resourcesPath);
+    CharString logfileName = getTestOutputFilename(testName, kTestOutputText);
+    CharString pluginRootPath = _getTestPluginResourcesPath(resourcesPath);
     snprintf(outString->data, outString->capacity,
-             "--log-file \"%s\" --verbose --output \"%s\" --plugin-root \"%s\"",
-             logfileName->data, outputFilename, resourcesPath->data);
+             "--log-file \"%s\" --verbose --plugin-root \"%s\"",
+             logfileName->data, pluginRootPath->data);
+    if (outputFilename != NULL) {
+        charStringAppendCString(outString, " --output \"");
+        charStringAppend(outString, outputFilename);
+        charStringAppendCString(outString, "\"");
+    }
     freeCharString(logfileName);
-    freeCharString(resourcesPath);
+    freeCharString(pluginRootPath);
     return outString;
 }
 
@@ -93,19 +118,21 @@ static void _removeOutputFiles(const char *testName)
     // Remove all possible output files generated during testing
     CharString outputFilename;
 
-    outputFilename = getTestOutputFilename(testName, "aif");
+    outputFilename = getTestOutputFilename(testName, kTestOutputAiff);
     _removeOutputFile(outputFilename->data);
     freeCharString(outputFilename);
+#if USE_FLAC
     outputFilename = getTestOutputFilename(testName, "flac");
     _removeOutputFile(outputFilename->data);
     freeCharString(outputFilename);
-    outputFilename = getTestOutputFilename(testName, "pcm");
+#endif
+    outputFilename = getTestOutputFilename(testName, kTestOutputPcm);
     _removeOutputFile(outputFilename->data);
     freeCharString(outputFilename);
-    outputFilename = getTestOutputFilename(testName, "wav");
+    outputFilename = getTestOutputFilename(testName, kTestOutputText);
     _removeOutputFile(outputFilename->data);
     freeCharString(outputFilename);
-    outputFilename = getTestOutputFilename(testName, "txt");
+    outputFilename = getTestOutputFilename(testName, kTestOutputWave);
     _removeOutputFile(outputFilename->data);
     freeCharString(outputFilename);
 }
@@ -148,19 +175,22 @@ static const char *_getResultCodeString(const int resultCode)
     }
 }
 
-void runIntegrationTest(const TestEnvironment testEnvironment,
-                        const char *testName, CharString testArguments,
-                        ReturnCodes expectedResultCode, const char *outputFileType)
+int runIntegrationTest(const char *testName,
+                       CharString testArguments,
+                       ReturnCodes expectedResultCode,
+                       const TestOutputType testOutputType,
+                       const CharString mrsWatsonExePath,
+                       const CharString resourcesPath)
 {
-    int result = -1;
-    ReturnCodes resultCode = (ReturnCodes)result;
+    int result = 0;
+    int returnCode;
+    ReturnCodes resultCode;
     CharString arguments = newCharStringWithCapacity(kCharStringLengthLong);
     CharString defaultArguments;
     CharString failedAnalysisFunctionName = newCharString();
     ChannelCount failedAnalysisChannel;
     SampleCount failedAnalysisFrame;
-    CharString outputFilename = getTestOutputFilename(testName,
-                                outputFileType == NULL ? kDefaultTestOutputFileType : outputFileType);
+    CharString outputFilename = getTestOutputFilename(testName, testOutputType);
 
 #if WINDOWS
     STARTUPINFOA startupInfo;
@@ -176,28 +206,31 @@ void runIntegrationTest(const TestEnvironment testEnvironment,
     }
     freeFile(outputFolder);
 
+    // TODO: Should also check if path does not exist
+    if (mrsWatsonExePath == NULL) {
+        return 1;
+    } else if (resourcesPath == NULL) {
+        return 1;
+    }
+
     // Create the command line argument
     charStringAppendCString(arguments, "\"");
-    charStringAppendCString(arguments, testEnvironment->applicationPath);
+    charStringAppend(arguments, mrsWatsonExePath);
     charStringAppendCString(arguments, "\"");
     charStringAppendCString(arguments, " ");
-    defaultArguments = _getDefaultArguments(testEnvironment, testName, outputFilename->data);
+    defaultArguments = _getDefaultArguments(testName, resourcesPath, outputFilename);
     charStringAppend(arguments, defaultArguments);
     charStringAppendCString(arguments, " ");
     charStringAppend(arguments, testArguments);
-
-    if (!testEnvironment->results->onlyPrintFailing) {
-        printTestName(testName);
-    }
 
 #if WINDOWS
     memset(&startupInfo, 0, sizeof(startupInfo));
     memset(&processInfo, 0, sizeof(processInfo));
     startupInfo.cb = sizeof(startupInfo);
-    result = CreateProcessA((LPCSTR)(testEnvironment->applicationPath), (LPSTR)(arguments->data),
+    returnCode = CreateProcessA((LPCSTR)(testEnvironment->applicationPath), (LPSTR)(arguments->data),
                             0, 0, false, CREATE_DEFAULT_ERROR_MODE, 0, 0, &startupInfo, &processInfo);
 
-    if (result) {
+    if (returnCode) {
         // TODO: Check return codes for these calls
         WaitForSingleObject(processInfo.hProcess, kApplicationRunnerWaitTimeoutInMs);
         GetExitCodeProcess(processInfo.hProcess, (LPDWORD)&resultCode);
@@ -205,70 +238,48 @@ void runIntegrationTest(const TestEnvironment testEnvironment,
         CloseHandle(processInfo.hThread);
     } else {
         logCritical("Could not launch process, got error %s", stringForLastError(GetLastError()));
-        return;
+        return 1;
     }
 
 #else
-    result = system(arguments->data);
-    resultCode = (ReturnCodes)WEXITSTATUS(result);
+    returnCode = system(arguments->data);
+    resultCode = (ReturnCodes)WEXITSTATUS(returnCode);
 #endif
 
     if (resultCode == RETURN_CODE_FORK_FAILED ||
             resultCode == RETURN_CODE_SHELL_FAILED ||
             resultCode == RETURN_CODE_LAUNCH_FAILED_OTHER) {
-        if (testEnvironment->results->onlyPrintFailing) {
-            printTestName(testName);
-        }
-
-        printTestFail();
         logCritical("Could not launch shell, got return code %d\n\
 Please check the executable path specified in the --mrswatson-path argument.",
                     resultCode);
-        testEnvironment->results->numFail++;
+        return 1;
     } else if (resultCode == expectedResultCode) {
-        if (outputFileType != NULL) {
+        if (testOutputType != kTestOutputNone) {
             if (analyzeFile(outputFilename->data, failedAnalysisFunctionName,
                             &failedAnalysisChannel, &failedAnalysisFrame)) {
-                testEnvironment->results->numSuccess++;
-
-                if (!testEnvironment->results->keepFiles) {
-                    _removeOutputFiles(testName);
-                }
-
-                if (!testEnvironment->results->onlyPrintFailing) {
-                    printTestSuccess();
-                }
+                // TODO:
+//                if (!testEnvironment->results->keepFiles) {
+//                    _removeOutputFiles(testName);
+//                }
+                result = 0;
             } else {
-                if (testEnvironment->results->onlyPrintFailing) {
-                    printTestName(testName);
-                }
-
                 fprintf(stderr, "Audio analysis check for %s failed at frame %lu, channel %d. ",
                         failedAnalysisFunctionName->data, failedAnalysisFrame, failedAnalysisChannel);
-                printTestFail();
-                testEnvironment->results->numFail++;
+                result = 1;
             }
         } else {
-            testEnvironment->results->numSuccess++;
+            result = 0;
 
-            if (!testEnvironment->results->keepFiles) {
-                _removeOutputFiles(testName);
-            }
-
-            if (!testEnvironment->results->onlyPrintFailing) {
-                printTestSuccess();
-            }
+            // TODO:
+//            if (!testEnvironment->results->keepFiles) {
+//                _removeOutputFiles(testName);
+//            }
         }
     } else {
-        if (testEnvironment->results->onlyPrintFailing) {
-            printTestName(testName);
-        }
-
         fprintf(stderr, "Expected result code %d (%s), got %d (%s). ",
                 expectedResultCode, _getResultCodeString(expectedResultCode),
                 resultCode, _getResultCodeString(resultCode));
-        printTestFail();
-        testEnvironment->results->numFail++;
+        result = 1;
     }
 
     freeCharString(outputFilename);
@@ -276,21 +287,5 @@ Please check the executable path specified in the --mrswatson-path argument.",
     freeCharString(defaultArguments);
     freeCharString(testArguments);
     freeCharString(failedAnalysisFunctionName);
-}
-
-void freeTestEnvironment(TestEnvironment self)
-{
-    if (self != NULL) {
-        freeTestSuite(self->results);
-        free(self);
-    }
-}
-
-TestEnvironment newTestEnvironment(char *applicationPath, char *resourcesPath)
-{
-    TestEnvironment testEnvironment = (TestEnvironment)malloc(sizeof(TestEnvironmentMembers));
-    testEnvironment->applicationPath = applicationPath;
-    testEnvironment->resourcesPath = resourcesPath;
-    testEnvironment->results = newTestSuite("Results", NULL, NULL);
-    return testEnvironment;
+    return result;
 }

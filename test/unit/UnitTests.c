@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include "base/File.h"
 #include "base/LinkedList.h"
 #include "unit/TestRunner.h"
 
@@ -24,6 +25,7 @@ extern TestSuite addTaskTimerTests(void);
 extern TestSuite addAnalysisClippingTests(void);
 extern TestSuite addAnalysisDistortionTests(void);
 extern TestSuite addAnalysisSilenceTests(void);
+extern TestSuite addIntegrationTests(File mrsWatsonExePath, File resourcesPath);
 
 extern void _printTestSummary(int testsRun, int testsPassed, int testsFailed, int testsSkipped);
 
@@ -36,10 +38,11 @@ static void _sumTestSuiteResults(void *item, void *extraData)
     result->numSkips += testSuite->numSkips;
 }
 
-LinkedList getTestSuites(void);
-LinkedList getTestSuites(void)
+LinkedList getTestSuites(File mrsWatsonExePath, File resourcesPath);
+LinkedList getTestSuites(File mrsWatsonExePath, File resourcesPath)
 {
     LinkedList unitTestSuites = newLinkedList();
+
     linkedListAppend(unitTestSuites, addAudioClockTests());
     linkedListAppend(unitTestSuites, addAudioSettingsTests());
     linkedListAppend(unitTestSuites, addCharStringTests());
@@ -62,6 +65,7 @@ LinkedList getTestSuites(void)
     linkedListAppend(unitTestSuites, addAnalysisClippingTests());
     linkedListAppend(unitTestSuites, addAnalysisDistortionTests());
     linkedListAppend(unitTestSuites, addAnalysisSilenceTests());
+    linkedListAppend(unitTestSuites, addIntegrationTests(mrsWatsonExePath, resourcesPath));
 
     return unitTestSuites;
 }
@@ -156,7 +160,7 @@ static void _printTestsInSuite(void *item, void *userData)
 void printUnitTestSuites(void);
 void printUnitTestSuites(void)
 {
-    LinkedList unitTestSuites = getTestSuites();
+    LinkedList unitTestSuites = getTestSuites(NULL, NULL);
     linkedListForeach(unitTestSuites, _printTestsInSuite, NULL);
     freeLinkedListAndItems(unitTestSuites, (LinkedListFreeItemFunc)freeTestSuite);
 }

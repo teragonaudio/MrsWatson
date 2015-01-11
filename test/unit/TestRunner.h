@@ -28,6 +28,9 @@ typedef enum {
 const LogColor getLogColor(TestLogEventType eventType);
 
 typedef int (*TestCaseExecFunc)(void);
+typedef int (*TestCaseExecWithPathsFunc)(const char* testName,
+                                         const CharString mrsWatsonExePath,
+                                         const CharString resourcesPath);
 typedef void (*TestCaseSetupFunc)(void);
 typedef void (*TestCaseTeardownFunc)(void);
 
@@ -36,6 +39,7 @@ typedef struct {
     char *filename;
     int lineNumber;
     TestCaseExecFunc testCaseFunc;
+    TestCaseExecWithPathsFunc testCaseWithPathsFunc;
 } TestCaseMembers;
 typedef TestCaseMembers *TestCase;
 
@@ -49,6 +53,8 @@ typedef struct {
     TestCaseTeardownFunc teardown;
     boolByte onlyPrintFailing;
     boolByte keepFiles;
+    CharString applicationPath;
+    CharString resourcesPath;
 } TestSuiteMembers;
 typedef TestSuiteMembers *TestSuite;
 
@@ -61,6 +67,7 @@ void printTestFail(void);
 
 TestSuite newTestSuite(char *name, TestCaseSetupFunc setup, TestCaseTeardownFunc teardown);
 TestCase newTestCase(char *name, char *filename, int lineNumber, TestCaseExecFunc testCaseFunc);
+TestCase newTestCaseWithPaths(char *name, char *filename, int lineNumber, TestCaseExecWithPathsFunc testCaseFunc);
 
 void freeTestCase(TestCase self);
 void freeTestSuite(TestSuite self);
@@ -84,6 +91,10 @@ static const char *_getFileBasename(const char *filename)
 
 #define addTest(testSuite, name, testCaseFunc) { \
         addTestToTestSuite(testSuite, newTestCase(name, __FILE__, __LINE__, testCaseFunc)); \
+    }
+
+#define addTestWithPaths(testSuite, name, testCaseFunc) { \
+        addTestToTestSuite(testSuite, newTestCaseWithPaths(name, __FILE__, __LINE__, testCaseFunc)); \
     }
 
 #define assert(_result) { \

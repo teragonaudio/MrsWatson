@@ -63,18 +63,22 @@ void runTestCase(void *item, void *extraData)
 {
     TestCase testCase = (TestCase)item;
     TestSuite testSuite = (TestSuite)extraData;
-    int result;
+    int result = 0;
 
     if (!testSuite->onlyPrintFailing) {
         printTestName(testCase->name);
     }
 
-    if (testCase->testCaseFunc != NULL) {
+    if (testCase->testCaseFunc != NULL || testCase->testCaseWithPathsFunc != NULL) {
         if (testSuite->setup != NULL) {
             testSuite->setup();
         }
 
-        result = testCase->testCaseFunc();
+        if (testCase->testCaseWithPathsFunc != NULL) {
+            result = testCase->testCaseWithPathsFunc(testCase->name, testSuite->applicationPath, testSuite->resourcesPath);
+        } else {
+            result = testCase->testCaseFunc();
+        }
 
         if (result == 0) {
             if (!testSuite->onlyPrintFailing) {
@@ -125,6 +129,8 @@ TestSuite newTestSuite(char *name, TestCaseSetupFunc setup, TestCaseTeardownFunc
     testSuite->teardown = teardown;
     testSuite->onlyPrintFailing = false;
     testSuite->keepFiles = false;
+    testSuite->applicationPath = NULL;
+    testSuite->resourcesPath = NULL;
     return testSuite;
 }
 
@@ -135,6 +141,18 @@ TestCase newTestCase(char *name, char *filename, int lineNumber, TestCaseExecFun
     testCase->filename = filename;
     testCase->lineNumber = lineNumber;
     testCase->testCaseFunc = testCaseFunc;
+    testCase->testCaseWithPathsFunc = NULL;
+    return testCase;
+}
+
+TestCase newTestCaseWithPaths(char *name, char *filename, int lineNumber, TestCaseExecWithPathsFunc testCaseWithPathsFunc)
+{
+    TestCase testCase = (TestCase)malloc(sizeof(TestCaseMembers));
+    testCase->name = name;
+    testCase->filename = filename;
+    testCase->lineNumber = lineNumber;
+    testCase->testCaseFunc = NULL;
+    testCase->testCaseWithPathsFunc = testCaseWithPathsFunc;
     return testCase;
 }
 
@@ -147,6 +165,8 @@ void freeTestSuite(TestSuite self)
 {
     if (self != NULL) {
         freeLinkedListAndItems(self->testCases, (LinkedListFreeItemFunc)freeTestCase);
+        freeCharString(self->applicationPath);
+        freeCharString(self->resourcesPath);
         free(self);
     }
 }
