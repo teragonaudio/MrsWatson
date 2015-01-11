@@ -9,7 +9,7 @@ void runIntegrationTests(TestEnvironment environment)
     const char *resourcesPath = environment->resourcesPath;
 
     // Resources used by multiple tests
-    CharString _a440_stereo_pcm = getTestResourceFilename(resourcesPath, "audio", "a440-stereo.pcm");
+    CharString _a440_stereo_pcm = getTestResourceFilename(resourcesPath, "audio", "a440-16bit-stereo.pcm");
     const char *a440_stereo_pcm = _a440_stereo_pcm->data;
     CharString _a440_16bit_stereo_wav = getTestResourceFilename(resourcesPath, "audio", "a440-16bit-stereo.wav");
     const char *a440_16bit_stereo_wav = _a440_16bit_stereo_wav->data;
@@ -84,6 +84,7 @@ void runIntegrationTests(TestEnvironment environment)
                        buildTestArgumentString("--plugin again --input \"%s\"", a440_stereo_pcm),
                        RETURN_CODE_SUCCESS, "wav");
 
+    // WAVE files
     CharString _a440_16bit_mono_wav = getTestResourceFilename(resourcesPath, "audio", "a440-16bit-mono.wav");
     const char *a440_16bit_mono_wav = _a440_16bit_mono_wav->data;
     runIntegrationTest(environment, "Process 16-bit WAVE file (mono)",
@@ -164,7 +165,7 @@ void runIntegrationTests(TestEnvironment environment)
 #endif
 
     // Audio settings tests
-    CharString _a440_mono_pcm = getTestResourceFilename(resourcesPath, "audio", "a440-mono.pcm");
+    CharString _a440_mono_pcm = getTestResourceFilename(resourcesPath, "audio", "a440-16bit-mono.pcm");
     const char *a440_mono_pcm = _a440_mono_pcm->data;
     runIntegrationTest(environment, "Read mono input source",
                        buildTestArgumentString("--plugin again --input \"%s\" --channels 1", a440_mono_pcm),
