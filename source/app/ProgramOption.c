@@ -93,13 +93,13 @@ void _programOptionPrintDefaultValue(const ProgramOption self)
         stringValue = _programOptionGetString(self);
 
         if (stringValue != NULL && !charStringIsEmpty(stringValue)) {
-            printf(", default value '%s'", stringValue->data);
+            printf(" (default '%s')", stringValue->data);
         }
 
         break;
 
     case kProgramOptionTypeNumber:
-        printf(", default value: %.0f", _programOptionGetNumber(self));
+        printf(" (default: %.0f)", _programOptionGetNumber(self));
         break;
 
     default:
