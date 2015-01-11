@@ -40,11 +40,11 @@
 #define DEFAULT_TIMESIG_NOTE_VALUE 4
 
 typedef enum {
-      kBitDepth8Bit = 8,
-      kBitDepth16Bit = 16,
-      kBitDepth24Bit = 24,
-      kBitDepth32Bit = 32,
-      kBitDepthDefault = kBitDepth16Bit
+    kBitDepth8Bit = 8,
+    kBitDepth16Bit = 16,
+    kBitDepth24Bit = 24,
+    kBitDepth32Bit = 32,
+    kBitDepthDefault = kBitDepth16Bit
 } BitDepth;
 
 typedef struct {

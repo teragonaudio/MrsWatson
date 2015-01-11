@@ -1123,7 +1123,7 @@ static int _testFileReadBytesGreaterSize(void)
     fileClose(f);
     s = fileGetSize(f);
     assert(s > 0);
-    char *fileData = (char*)fileReadBytes(f, s * 2);
+    char *fileData = (char *)fileReadBytes(f, s * 2);
     result = newCharStringWithCString(fileData);
     assertNotNull(result);
     assertCharStringEquals(TEST_FILENAME, result);

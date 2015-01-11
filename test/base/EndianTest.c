@@ -133,6 +133,7 @@ static int _testConvertByteArrayToUnsignedInt(void)
     for (size_t i = 0; i < 4; i++) {
         b[i] = (byte)(0xaa + i);
     }
+
     s = convertByteArrayToUnsignedInt(b);
 
 

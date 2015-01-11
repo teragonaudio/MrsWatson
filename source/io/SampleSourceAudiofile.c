@@ -60,48 +60,59 @@ static boolByte _openSampleSourceAudiofile(void *selfPtr, const SampleSourceOpen
         int byteOrder = AF_BYTEORDER_LITTLEENDIAN;
 
         int sampleFormat;
+
         switch (getBitDepth()) {
-            case kBitDepth8Bit:
-               sampleFormat = AF_SAMPFMT_UNSIGNED;
-                break;
-            case kBitDepth32Bit:
-                sampleFormat = AF_SAMPFMT_FLOAT;
-                break;
-            default:
-                sampleFormat = AF_SAMPFMT_TWOSCOMP;
-                break;
+        case kBitDepth8Bit:
+            sampleFormat = AF_SAMPFMT_UNSIGNED;
+            break;
+
+        case kBitDepth32Bit:
+            sampleFormat = AF_SAMPFMT_FLOAT;
+            break;
+
+        default:
+            sampleFormat = AF_SAMPFMT_TWOSCOMP;
+            break;
         }
 
         int outfileFormat;
+
         switch (self->sampleSourceType) {
-            case SAMPLE_SOURCE_TYPE_AIFF:
-                // Unlike WAVE, AIFF only supports 2's compliment integer data. This will
-                // require some extra work for 8-bit and 32-bit files.
-                switch (getBitDepth()) {
-                    case kBitDepth8Bit:
-                        logUnsupportedFeature("8-bit AIFF files");
-                        return false;
-                    case kBitDepth32Bit:
-                        logUnsupportedFeature("32-bit AIFF files");
-                        return false;
-                    default:
-                        break;
-                }
-                // AIFF is the only file format we support which is big-endian. That is,
-                // even on big-endian platforms (which are untested), raw PCM should still
-                // write little-endian data.
-                byteOrder = AF_BYTEORDER_BIGENDIAN;
-                outfileFormat = AF_FILE_AIFF;
-                break;
-            case SAMPLE_SOURCE_TYPE_WAVE:
-                outfileFormat = AF_FILE_WAVE;
-                break;
-            case SAMPLE_SOURCE_TYPE_FLAC:
-                outfileFormat = AF_FILE_FLAC;
-                break;
-            default:
-                logInternalError("Unsupported audiofile type %d", self->sampleSourceType);
+        case SAMPLE_SOURCE_TYPE_AIFF:
+
+            // Unlike WAVE, AIFF only supports 2's compliment integer data. This will
+            // require some extra work for 8-bit and 32-bit files.
+            switch (getBitDepth()) {
+            case kBitDepth8Bit:
+                logUnsupportedFeature("8-bit AIFF files");
                 return false;
+
+            case kBitDepth32Bit:
+                logUnsupportedFeature("32-bit AIFF files");
+                return false;
+
+            default:
+                break;
+            }
+
+            // AIFF is the only file format we support which is big-endian. That is,
+            // even on big-endian platforms (which are untested), raw PCM should still
+            // write little-endian data.
+            byteOrder = AF_BYTEORDER_BIGENDIAN;
+            outfileFormat = AF_FILE_AIFF;
+            break;
+
+        case SAMPLE_SOURCE_TYPE_WAVE:
+            outfileFormat = AF_FILE_WAVE;
+            break;
+
+        case SAMPLE_SOURCE_TYPE_FLAC:
+            outfileFormat = AF_FILE_FLAC;
+            break;
+
+        default:
+            logInternalError("Unsupported audiofile type %d", self->sampleSourceType);
+            return false;
         }
 
         AFfilesetup outfileSetup = afNewFileSetup();
@@ -209,9 +220,11 @@ void _closeSampleSourceAudiofile(void *selfPtr)
 void _freeSampleSourceDataAudiofile(void *extraDataPtr)
 {
     SampleSourceAudiofileData extraData = (SampleSourceAudiofileData) extraDataPtr;
+
     if (extraData->pcmSampleBuffer != NULL) {
         freePcmSampleBuffer(extraData->pcmSampleBuffer);
     }
+
     free(extraData);
 }
 

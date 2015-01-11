@@ -227,6 +227,7 @@ int main(int argc, char *argv[])
         testSuiteName = programOptionsGetString(programOptions, OPTION_TEST_NAME);
         testSuites = getTestSuites(mrsWatsonExePath, resourcesPath);
         testSuite = findTestSuite(testSuites, testSuiteName);
+
         if (testSuite == NULL) {
             printf("ERROR: Could not find test suite '%s'\n", testSuiteName->data);
             freeLinkedListAndItems(testSuites, (LinkedListFreeItemFunc)freeTestSuite);
@@ -234,6 +235,7 @@ int main(int argc, char *argv[])
         }
 
         testCase = findTestCase(testSuite, testCaseName);
+
         if (testCase == NULL) {
             printf("ERROR: Could not find test case '%s'\n", testCaseName);
             freeLinkedListAndItems(testSuites, (LinkedListFreeItemFunc)freeTestSuite);

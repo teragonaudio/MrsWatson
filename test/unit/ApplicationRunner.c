@@ -31,26 +31,33 @@ CharString getTestResourcePath(const CharString resourcesPath, const char *resou
 CharString getTestOutputFilename(const char *testName, const TestOutputType outputType)
 {
     char *fileExtension = NULL;
+
     switch (outputType) {
-        case kTestOutputNone:
-            return NULL;
-        case kTestOutputAiff:
-            fileExtension = "aiff";
-            break;
-        case kTestOutputFlac:
-            fileExtension = "flac";
-            break;
-        case kTestOutputPcm:
-            fileExtension = "pcm";
-            break;
-        case kTestOutputText:
-            fileExtension = "txt";
-            break;
-        case kTestOutputWave:
-            fileExtension = "wav";
-            break;
-        default:
-            return NULL;
+    case kTestOutputNone:
+        return NULL;
+
+    case kTestOutputAiff:
+        fileExtension = "aiff";
+        break;
+
+    case kTestOutputFlac:
+        fileExtension = "flac";
+        break;
+
+    case kTestOutputPcm:
+        fileExtension = "pcm";
+        break;
+
+    case kTestOutputText:
+        fileExtension = "txt";
+        break;
+
+    case kTestOutputWave:
+        fileExtension = "wav";
+        break;
+
+    default:
+        return NULL;
     }
 
     char *space;
@@ -93,11 +100,13 @@ static CharString _getDefaultArguments(const char *testName,
     snprintf(outString->data, outString->capacity,
              "--log-file \"%s\" --verbose --plugin-root \"%s\"",
              logfileName->data, pluginRootPath->data);
+
     if (outputFilename != NULL) {
         charStringAppendCString(outString, " --output \"");
         charStringAppend(outString, outputFilename);
         charStringAppendCString(outString, "\"");
     }
+
     freeCharString(logfileName);
     freeCharString(pluginRootPath);
     return outString;
@@ -202,11 +211,13 @@ int runIntegrationTest(const char *testName,
 
     // Remove files from a previous test run
     File outputFolder = newFileWithPathCString(kApplicationRunnerOutputFolder);
+
     if (fileExists(outputFolder)) {
         _removeOutputFiles(testName);
     } else {
         fileCreate(outputFolder, kFileTypeDirectory);
     }
+
     freeFile(outputFolder);
 
     // TODO: Should also check if path does not exist
@@ -231,7 +242,7 @@ int runIntegrationTest(const char *testName,
     memset(&processInfo, 0, sizeof(processInfo));
     startupInfo.cb = sizeof(startupInfo);
     returnCode = CreateProcessA((LPCSTR)(testEnvironment->applicationPath), (LPSTR)(arguments->data),
-                            0, 0, false, CREATE_DEFAULT_ERROR_MODE, 0, 0, &startupInfo, &processInfo);
+                                0, 0, false, CREATE_DEFAULT_ERROR_MODE, 0, 0, &startupInfo, &processInfo);
 
     if (returnCode) {
         // TODO: Check return codes for these calls

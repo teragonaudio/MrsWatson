@@ -248,6 +248,7 @@ static int _testSetSamples24BitBigEndian(void)
     intValues[3] = 8388607;
 
     char *charSamples = psb->pcmSamples;
+
     for (int i = 0; i < 4; ++i) {
         charSamples[i * 3] = (char)((intValues[i] >> 16) & 0x000000ff);
         charSamples[i * 3 + 1] = (char)((intValues[i] >> 8) & 0x000000ff);
@@ -345,6 +346,7 @@ static int _testSetSamples24BitLittleEndian(void)
     intValues[3] = 8388607;
 
     char *charSamples = psb->pcmSamples;
+
     for (int i = 0; i < 4; ++i) {
         charSamples[i * 3 + 2] = (char)((intValues[i] >> 16) & 0x000000ff);
         charSamples[i * 3 + 1] = (char)((intValues[i] >> 8) & 0x000000ff);
@@ -371,7 +373,7 @@ static int _testSetSamples32BitBigEndian(void)
     psb->littleEndian = false;
     float *floatSamples = (float *)malloc(4 * sizeof(float));
 
-    if(platformInfoIsLittleEndian()) {
+    if (platformInfoIsLittleEndian()) {
         floatSamples[0] = convertBigEndianFloatToPlatform(0.0f);
         floatSamples[1] = convertBigEndianFloatToPlatform(0.5f);
         floatSamples[2] = convertBigEndianFloatToPlatform(-0.5f);
@@ -403,7 +405,7 @@ static int _testSetSamples32BitLittleEndian(void)
     psb->littleEndian = true;
     float *floatSamples = (float *)malloc(4 * sizeof(float));
 
-    if(platformInfoIsLittleEndian()) {
+    if (platformInfoIsLittleEndian()) {
         floatSamples[0] = 0;
         floatSamples[1] = 0.5f;
         floatSamples[2] = -0.5f;

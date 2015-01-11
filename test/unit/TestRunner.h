@@ -28,9 +28,9 @@ typedef enum {
 const LogColor getLogColor(TestLogEventType eventType);
 
 typedef int (*TestCaseExecFunc)(void);
-typedef int (*TestCaseExecWithPathsFunc)(const char* testName,
-                                         const CharString mrsWatsonExePath,
-                                         const CharString resourcesPath);
+typedef int (*TestCaseExecWithPathsFunc)(const char *testName,
+        const CharString mrsWatsonExePath,
+        const CharString resourcesPath);
 typedef void (*TestCaseSetupFunc)(void);
 typedef void (*TestCaseTeardownFunc)(void);
 
@@ -154,10 +154,10 @@ static const char *_getFileBasename(const char *filename)
         } \
     }
 
-    // Timing assertions fail all the time in debug mode, because the binary is
-    // running in the debugger, is not optimized, is being profiled, etc. So for
-    // debug builds, we should not return early here, or else that will cause
-    // valgrind to go crazy and report a bunch of leaks.
+// Timing assertions fail all the time in debug mode, because the binary is
+// running in the debugger, is not optimized, is being profiled, etc. So for
+// debug builds, we should not return early here, or else that will cause
+// valgrind to go crazy and report a bunch of leaks.
 #define assertTimeEquals(expected, _result, tolerance) { \
         double resultRounded = floor(_result * 100.0) / 100.0; \
         double expectedRounded = floor(expected * 100.0) / 100.0; \

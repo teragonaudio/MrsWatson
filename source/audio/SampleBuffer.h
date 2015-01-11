@@ -61,10 +61,10 @@ void sampleBufferClear(SampleBuffer self);
  * @return True on success, false on failure
  */
 boolByte sampleBufferCopyAndMapChannelsWithOffset(SampleBuffer destinationBuffer,
-                                                  SampleCount destinationOffset,
-                                                  const SampleBuffer sourceBuffer,
-                                                  SampleCount sourceOffset,
-                                                  SampleCount numberOfFrames);
+        SampleCount destinationOffset,
+        const SampleBuffer sourceBuffer,
+        SampleCount sourceOffset,
+        SampleCount numberOfFrames);
 
 /**
 * Copy all samples from another buffer to this one

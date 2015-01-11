@@ -194,9 +194,11 @@ void freePlugin(Plugin self)
         if (self->inputBuffer != NULL) {
             freeSampleBuffer(self->inputBuffer);
         }
+
         if (self->outputBuffer != NULL) {
             freeSampleBuffer(self->outputBuffer);
         }
+
         freeCharString(self->pluginName);
         freeCharString(self->pluginLocation);
         freeCharString(self->pluginAbsolutePath);

@@ -59,10 +59,10 @@ void sampleBufferClear(SampleBuffer self)
 }
 
 boolByte sampleBufferCopyAndMapChannelsWithOffset(SampleBuffer destinationBuffer,
-                                                  SampleCount destinationOffset,
-                                                  const SampleBuffer sourceBuffer,
-                                                  SampleCount sourceOffset,
-                                                  SampleCount numberOfFrames)
+        SampleCount destinationOffset,
+        const SampleBuffer sourceBuffer,
+        SampleCount sourceOffset,
+        SampleCount numberOfFrames)
 {
     // Definitely not supported.
     if (destinationBuffer->blocksize < destinationOffset + numberOfFrames) {
@@ -127,6 +127,7 @@ void freeSampleBuffer(SampleBuffer self)
         for (ChannelCount channel = 0; channel < self->numChannels; ++channel) {
             free(self->samples[channel]);
         }
+
         free(self->samples);
         free(self);
     }

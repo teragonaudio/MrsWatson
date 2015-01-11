@@ -72,6 +72,7 @@ boolByte analyzeFile(const char *filename, CharString failedAnalysisFunctionName
     analysisFilename = newCharStringWithCString(filename);
 
     sampleSource = sampleSourceFactory(analysisFilename);
+
     if (sampleSource == NULL) {
         freeCharString(analysisFilename);
         free(analysisData);
@@ -80,6 +81,7 @@ boolByte analyzeFile(const char *filename, CharString failedAnalysisFunctionName
     }
 
     result = sampleSource->openSampleSource(sampleSource, SAMPLE_SOURCE_OPEN_READ);
+
     if (!result) {
         free(analysisData);
         return result;
@@ -121,7 +123,7 @@ AnalysisFunctionData newAnalysisFunctionData(void)
     result->failedSample = 0;
     result->functionPtr = NULL;
     // TODO: Should use max channels, when we get that
-    result->lastSample = (Sample*)malloc(sizeof(Sample) * 2);
+    result->lastSample = (Sample *)malloc(sizeof(Sample) * 2);
     result->lastSample[0] = 0.0f;
     result->lastSample[1] = 0.0f;
     result->failTolerance = 0;

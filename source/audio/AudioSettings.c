@@ -90,7 +90,8 @@ unsigned short getTimeSignatureNoteValue(void)
     return _getAudioSettings()->timeSignatureNoteValue;
 }
 
-BitDepth getBitDepth(void) {
+BitDepth getBitDepth(void)
+{
     return _getAudioSettings()->bitDepth;
 }
 
@@ -224,15 +225,16 @@ boolByte setTimeSignatureFromMidiBytes(const byte *bytes)
 boolByte setBitDepth(const BitDepth bitDepth)
 {
     switch (bitDepth) {
-        case kBitDepth8Bit:
-        case kBitDepth16Bit:
-        case kBitDepth24Bit:
-        case kBitDepth32Bit:
-            _getAudioSettings()->bitDepth = bitDepth;
-            return true;
-        default:
-            logError("Invalid bit depth %d", bitDepth);
-            return false;
+    case kBitDepth8Bit:
+    case kBitDepth16Bit:
+    case kBitDepth24Bit:
+    case kBitDepth32Bit:
+        _getAudioSettings()->bitDepth = bitDepth;
+        return true;
+
+    default:
+        logError("Invalid bit depth %d", bitDepth);
+        return false;
     }
 }
 

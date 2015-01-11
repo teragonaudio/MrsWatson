@@ -79,6 +79,7 @@ size_t sampleSourcePcmRead(SampleSourcePcmData extraData, SampleBuffer sampleBuf
     // If the blocksize has changed, then regenerate our PCM sample buffer to
     // make room for it.
     const SampleBuffer internalSampleBuffer = extraData->pcmSampleBuffer->getSampleBuffer(extraData->pcmSampleBuffer);
+
     if (internalSampleBuffer->blocksize != sampleBuffer->blocksize ||
             internalSampleBuffer->numChannels != sampleBuffer->numChannels) {
         freePcmSampleBuffer(extraData->pcmSampleBuffer);

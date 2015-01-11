@@ -81,6 +81,7 @@ static boolByte _readWaveFileInfo(const char *filename, SampleSourcePcmData extr
 
         audioFormat = convertByteArrayToUnsignedShort(chunk->data + chunkOffset);
         chunkOffset += 2;
+
         if (audioFormat != 1) {
             logError("WAVE file with audio format %d is not supported", audioFormat);
             freeRiffChunk(chunk);
@@ -102,6 +103,7 @@ static boolByte _readWaveFileInfo(const char *filename, SampleSourcePcmData extr
         chunkOffset += 2;
 
         extraData->bitDepth = (BitDepth) convertByteArrayToUnsignedShort(chunk->data + chunkOffset);
+
         if (extraData->bitDepth != kBitDepth16Bit) {
             logUnsupportedFeature("Non-16-bit files with internal WAVE file support (build with audiofile instead!)");
             freeRiffChunk(chunk);
