@@ -139,16 +139,66 @@ void runIntegrationTests(TestEnvironment environment)
                        RETURN_CODE_SUCCESS, "wav");
     freeCharString(_a440_32bit_stereo_wav);
 
-    CharString _a440_stereo_aiff = getTestResourceFilename(resourcesPath, "audio", "a440-stereo.aif");
-    const char *a440_stereo_aiff = _a440_stereo_aiff->data;
-    runIntegrationTest(environment, "Read AIFF file",
-                       buildTestArgumentString("--plugin again --input \"%s\"", a440_stereo_aiff),
-                       RETURN_CODE_SUCCESS, kDefaultTestOutputFileType);
-    freeCharString(_a440_stereo_aiff);
+    // AIFF files
+    /* TODO: Currently unsupported
+    CharString _a440_8bit_mono_aiff = getTestResourceFilename(resourcesPath, "audio", "a440-8bit-mono.aiff");
+    const char *a440_8bit_mono_aiff = _a440_8bit_mono_aiff->data;
+    runIntegrationTest(environment, "Process 8-bit AIFF file (mono)",
+                       buildTestArgumentString("--plugin again --input \"%s\"", a440_8bit_mono_aiff),
+                       RETURN_CODE_SUCCESS, "aiff");
+    freeCharString(_a440_8bit_mono_aiff);
 
-    runIntegrationTest(environment, "Write AIFF file",
-                       buildTestArgumentString("--plugin again --input \"%s\"", a440_stereo_pcm),
+    CharString _a440_8bit_stereo_aiff = getTestResourceFilename(resourcesPath, "audio", "a440-8bit-stereo.aiff");
+    const char *a440_8bit_stereo_aiff = _a440_8bit_stereo_aiff->data;
+    runIntegrationTest(environment, "Process 8-bit AIFF file (stereo)",
+                       buildTestArgumentString("--plugin again --input \"%s\"", a440_8bit_stereo_aiff),
+                       RETURN_CODE_SUCCESS, "aiff");
+    freeCharString(_a440_8bit_stereo_aiff);
+    */
+
+    CharString _a440_16bit_mono_aiff = getTestResourceFilename(resourcesPath, "audio", "a440-16bit-mono.aiff");
+    const char *a440_16bit_mono_aiff = _a440_16bit_mono_aiff->data;
+    runIntegrationTest(environment, "Process 16-bit AIFF file (mono)",
+                       buildTestArgumentString("--plugin again --input \"%s\"", a440_16bit_mono_aiff),
+                       RETURN_CODE_SUCCESS, "aiff");
+    freeCharString(_a440_16bit_mono_aiff);
+
+    CharString _a440_16bit_stereo_aiff = getTestResourceFilename(resourcesPath, "audio", "a440-16bit-stereo.aiff");
+    const char *a440_16bit_stereo_aiff = _a440_16bit_stereo_aiff->data;
+    runIntegrationTest(environment, "Process 16-bit AIFF file (stereo)",
+                       buildTestArgumentString("--plugin again --input \"%s\"", a440_16bit_stereo_aiff),
+                       RETURN_CODE_SUCCESS, "aiff");
+    freeCharString(_a440_16bit_stereo_aiff);
+
+    CharString _a440_24bit_mono_aiff = getTestResourceFilename(resourcesPath, "audio", "a440-24bit-mono.aiff");
+    const char *a440_24bit_mono_aiff = _a440_24bit_mono_aiff->data;
+    runIntegrationTest(environment, "Process 24-bit AIFF file (mono)",
+                       buildTestArgumentString("--plugin again --input \"%s\"", a440_24bit_mono_aiff),
+                       RETURN_CODE_SUCCESS, "aiff");
+    freeCharString(_a440_24bit_mono_aiff);
+
+    CharString _a440_24bit_stereo_aiff = getTestResourceFilename(resourcesPath, "audio", "a440-24bit-stereo.aiff");
+    const char *a440_24bit_stereo_aiff = _a440_24bit_stereo_aiff->data;
+    runIntegrationTest(environment, "Process 24-bit AIFF file (stereo)",
+                       buildTestArgumentString("--plugin again --input \"%s\"", a440_24bit_stereo_aiff),
+                       RETURN_CODE_SUCCESS, "aiff");
+    freeCharString(_a440_24bit_stereo_aiff);
+
+    /* TODO: Currently unsupported
+    CharString _a440_32bit_mono_aiff = getTestResourceFilename(resourcesPath, "audio", "a440-32bit-mono.aiff");
+    const char *a440_32bit_mono_aiff = _a440_32bit_mono_aiff->data;
+    runIntegrationTest(environment, "Process 32-bit AIFF file (mono)",
+                       buildTestArgumentString("--plugin again --input \"%s\"", a440_32bit_mono_aiff),
+                       RETURN_CODE_SUCCESS, "aiff");
+    freeCharString(_a440_32bit_mono_aiff);
+
+    CharString _a440_32bit_stereo_aif = getTestResourceFilename(resourcesPath, "audio", "a440-32bit-stereo.aif");
+    const char *a440_32bit_stereo_aif = _a440_32bit_stereo_aif->data;
+    runIntegrationTest(environment, "Process 32-bit AIFF file (stereo)",
+                       buildTestArgumentString("--plugin again --input \"%s\"", a440_32bit_stereo_aif),
                        RETURN_CODE_SUCCESS, "aif");
+    freeCharString(_a440_32bit_stereo_aif);
+    */
 #endif
 
 #if USE_FLAC
