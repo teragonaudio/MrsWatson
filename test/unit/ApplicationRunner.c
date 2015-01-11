@@ -220,11 +220,25 @@ int runIntegrationTest(const char *testName,
 
     freeFile(outputFolder);
 
-    // TODO: Should also check if path does not exist
     if (mrsWatsonExePath == NULL) {
-        return 1;
-    } else if (resourcesPath == NULL) {
-        return 1;
+        return -1;
+    } else {
+        File mrsWatsonExe = newFileWithPath(mrsWatsonExePath);
+        boolByte mrsWatsonExeExists = fileExists(mrsWatsonExe);
+        freeFile(mrsWatsonExe);
+        if (!mrsWatsonExeExists) {
+            return -1;
+        }
+    }
+    if (resourcesPath == NULL) {
+        return -1;
+    } else {
+        File resourcesFile = newFileWithPath(resourcesPath);
+        boolByte resourcesExists = fileExists(resourcesFile);
+        freeFile(resourcesFile);
+        if (!resourcesExists) {
+            return -1;
+        }
     }
 
     // Create the command line argument

@@ -81,11 +81,15 @@ void runTestCase(void *item, void *extraData)
         }
 
         if (result == 0) {
-            if (!testSuite->onlyPrintFailing) {
+            testSuite->numSuccess++;
+            if(!testSuite->onlyPrintFailing) {
                 printTestSuccess();
             }
-
-            testSuite->numSuccess++;
+        } else if (result == -1) {
+            testSuite->numSkips++;
+            if (!testSuite->onlyPrintFailing) {
+                _printTestSkipped();
+            }
         } else {
             printTestFail();
             testSuite->numFail++;
@@ -95,11 +99,10 @@ void runTestCase(void *item, void *extraData)
             testSuite->teardown();
         }
     } else {
+        testSuite->numSkips++;
         if (!testSuite->onlyPrintFailing) {
             _printTestSkipped();
         }
-
-        testSuite->numSkips++;
     }
 }
 
