@@ -14,6 +14,7 @@
 typedef enum {
     kTestOutputNone,
     kTestOutputAiff,
+    kTestOutputFlac,
     kTestOutputPcm,
     kTestOutputText,
     kTestOutputWave,

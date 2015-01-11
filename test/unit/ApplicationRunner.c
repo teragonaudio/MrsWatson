@@ -32,19 +32,22 @@ CharString getTestOutputFilename(const char *testName, const TestOutputType outp
 {
     char *fileExtension = NULL;
     switch (outputType) {
-        case kTestOutputPcm:
-            fileExtension = "pcm";
-            break;
         case kTestOutputNone:
             return NULL;
         case kTestOutputAiff:
             fileExtension = "aiff";
             break;
-        case kTestOutputWave:
-            fileExtension = "wav";
+        case kTestOutputFlac:
+            fileExtension = "flac";
+            break;
+        case kTestOutputPcm:
+            fileExtension = "pcm";
             break;
         case kTestOutputText:
             fileExtension = "txt";
+            break;
+        case kTestOutputWave:
+            fileExtension = "wav";
             break;
         default:
             return NULL;
@@ -122,7 +125,7 @@ static void _removeOutputFiles(const char *testName)
     _removeOutputFile(outputFilename->data);
     freeCharString(outputFilename);
 #if USE_FLAC
-    outputFilename = getTestOutputFilename(testName, "flac");
+    outputFilename = getTestOutputFilename(testName, kTestOutputFlac);
     _removeOutputFile(outputFilename->data);
     freeCharString(outputFilename);
 #endif

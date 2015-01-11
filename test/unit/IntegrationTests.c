@@ -12,9 +12,9 @@
 #endif
 
 #if USE_FLAC
-#define REQUIRES_FLAC(x)
+#define REQUIRES_FLAC(x) x
 #else
-#define REQUIRES_FLAC(NULL)
+#define REQUIRES_FLAC(x) NULL
 #endif
 
 static CharString getDefaultInputPath(const CharString resourcesPath) {
@@ -444,6 +444,110 @@ static int _testProcessAiffFile32BitStereo(const char *testName, const CharStrin
     return result;
 }
 
+static int _testProcessFlacFile8BitMono(const char *testName, const CharString applicationPath, const CharString resourcesPath) {
+    CharString inputPath = getTestResourcePath(resourcesPath, "audio", "a440-8bit-mono.flac");
+    int result = runIntegrationTest(testName,
+                                    buildTestArgumentString("--plugin again --input \"%s\"",
+                                                            inputPath->data),
+                                    RETURN_CODE_SUCCESS,
+                                    kTestOutputFlac,
+                                    applicationPath,
+                                    resourcesPath);
+    freeCharString(inputPath);
+    return result;
+}
+
+static int _testProcessFlacFile8BitStereo(const char *testName, const CharString applicationPath, const CharString resourcesPath) {
+    CharString inputPath = getTestResourcePath(resourcesPath, "audio", "a440-8bit-stereo.flac");
+    int result = runIntegrationTest(testName,
+                                    buildTestArgumentString("--plugin again --input \"%s\"",
+                                                            inputPath->data),
+                                    RETURN_CODE_SUCCESS,
+                                    kTestOutputFlac,
+                                    applicationPath,
+                                    resourcesPath);
+    freeCharString(inputPath);
+    return result;
+}
+
+static int _testProcessFlacFile16BitMono(const char *testName, const CharString applicationPath, const CharString resourcesPath) {
+    CharString inputPath = getTestResourcePath(resourcesPath, "audio", "a440-16bit-mono.flac");
+    int result = runIntegrationTest(testName,
+                                    buildTestArgumentString("--plugin again --input \"%s\"",
+                                                            inputPath->data),
+                                    RETURN_CODE_SUCCESS,
+                                    kTestOutputFlac,
+                                    applicationPath,
+                                    resourcesPath);
+    freeCharString(inputPath);
+    return result;
+}
+
+static int _testProcessFlacFile16BitStereo(const char *testName, const CharString applicationPath, const CharString resourcesPath) {
+    CharString inputPath = getTestResourcePath(resourcesPath, "audio", "a440-16bit-stereo.flac");
+    int result = runIntegrationTest(testName,
+                                    buildTestArgumentString("--plugin again --input \"%s\"",
+                                                            inputPath->data),
+                                    RETURN_CODE_SUCCESS,
+                                    kTestOutputFlac,
+                                    applicationPath,
+                                    resourcesPath);
+    freeCharString(inputPath);
+    return result;
+}
+
+static int _testProcessFlacFile24BitMono(const char *testName, const CharString applicationPath, const CharString resourcesPath) {
+    CharString inputPath = getTestResourcePath(resourcesPath, "audio", "a440-24bit-mono.flac");
+    int result = runIntegrationTest(testName,
+                                    buildTestArgumentString("--plugin again --input \"%s\"",
+                                                            inputPath->data),
+                                    RETURN_CODE_SUCCESS,
+                                    kTestOutputFlac,
+                                    applicationPath,
+                                    resourcesPath);
+    freeCharString(inputPath);
+    return result;
+}
+
+static int _testProcessFlacFile24BitStereo(const char *testName, const CharString applicationPath, const CharString resourcesPath) {
+    CharString inputPath = getTestResourcePath(resourcesPath, "audio", "a440-24bit-stereo.flac");
+    int result = runIntegrationTest(testName,
+                                    buildTestArgumentString("--plugin again --input \"%s\"",
+                                                            inputPath->data),
+                                    RETURN_CODE_SUCCESS,
+                                    kTestOutputFlac,
+                                    applicationPath,
+                                    resourcesPath);
+    freeCharString(inputPath);
+    return result;
+}
+
+static int _testProcessFlacFile32BitMono(const char *testName, const CharString applicationPath, const CharString resourcesPath) {
+    CharString inputPath = getTestResourcePath(resourcesPath, "audio", "a440-32bit-mono.flac");
+    int result = runIntegrationTest(testName,
+                                    buildTestArgumentString("--plugin again --input \"%s\"",
+                                                            inputPath->data),
+                                    RETURN_CODE_SUCCESS,
+                                    kTestOutputFlac,
+                                    applicationPath,
+                                    resourcesPath);
+    freeCharString(inputPath);
+    return result;
+}
+
+static int _testProcessFlacFile32BitStereo(const char *testName, const CharString applicationPath, const CharString resourcesPath) {
+    CharString inputPath = getTestResourcePath(resourcesPath, "audio", "a440-32bit-stereo.flac");
+    int result = runIntegrationTest(testName,
+                                    buildTestArgumentString("--plugin again --input \"%s\"",
+                                                            inputPath->data),
+                                    RETURN_CODE_SUCCESS,
+                                    kTestOutputFlac,
+                                    applicationPath,
+                                    resourcesPath);
+    freeCharString(inputPath);
+    return result;
+}
+
 static int _testProcessWithSampleRate(const char *testName, const CharString applicationPath, const CharString resourcesPath) {
     CharString inputPath = getDefaultInputPath(resourcesPath);
     int result = runIntegrationTest(testName,
@@ -679,6 +783,16 @@ TestSuite addIntegrationTests(File mrsWatsonExePath, File resourcesPath) {
     // 32-bit AIFF will require some extra work in SampleSourceAudiofile
     addTestWithPaths(testSuite, "Process 32-bit AIFF file (mono)", NULL); //REQUIRES_AUDIOFILE(_testProcessAiffFile32BitMono));
     addTestWithPaths(testSuite, "Process 32-bit AIFF file (stereo)", NULL); //REQUIRES_AUDIOFILE(_testProcessAiffFile32BitStereo));
+
+    // FLAC files
+    addTestWithPaths(testSuite, "Process 8-bit FLAC file (mono)", REQUIRES_FLAC(_testProcessFlacFile8BitMono));
+    addTestWithPaths(testSuite, "Process 8-bit FLAC file (stereo)", REQUIRES_FLAC(_testProcessFlacFile8BitStereo));
+    addTestWithPaths(testSuite, "Process 16-bit FLAC file (mono)", REQUIRES_FLAC(_testProcessFlacFile16BitMono));
+    addTestWithPaths(testSuite, "Process 16-bit FLAC file (stereo)", REQUIRES_FLAC(_testProcessFlacFile16BitStereo));
+    addTestWithPaths(testSuite, "Process 24-bit FLAC file (mono)", REQUIRES_FLAC(_testProcessFlacFile24BitMono));
+    addTestWithPaths(testSuite, "Process 24-bit FLAC file (stereo)", REQUIRES_FLAC(_testProcessFlacFile24BitStereo));
+    addTestWithPaths(testSuite, "Process 32-bit FLAC file (mono)", REQUIRES_FLAC(_testProcessFlacFile32BitMono));
+    addTestWithPaths(testSuite, "Process 32-bit FLAC file (stereo)", REQUIRES_FLAC(_testProcessFlacFile32BitStereo));
 
     // Audio settings
     addTestWithPaths(testSuite, "Process with sample rate", _testProcessWithSampleRate);
