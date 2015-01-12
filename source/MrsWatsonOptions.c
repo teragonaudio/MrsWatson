@@ -288,7 +288,7 @@ using unusual sample rates will probably result in weird behavior from plugins."
                           NO_SHORT_FORM,
                           kProgramOptionTypeNumber,
                           kProgramOptionArgumentTypeRequired));
-    programOptionsSetNumber(options, OPTION_TEMPO, getTempo());
+    programOptionsSetNumber(options, OPTION_TEMPO, (float)getTempo());
 
     programOptionsAdd(options, newProgramOptionWithName(
                           OPTION_TIME_SIGNATURE,

@@ -174,6 +174,7 @@ static int _testParseConfigFile(void)
     ProgramOptions p = _getTestProgramOptionsForConfigFile();
     CharString filename = newCharStringWithCString(TEST_CONFIG_FILE);
     FILE *fp = _openTestProgramConfigFile();
+    assertNotNull(fp);
     fprintf(fp, "--test\n-o\nfoo\n");
     fclose(fp);
     assert(programOptionsParseConfigFile(p, filename));
@@ -210,7 +211,7 @@ static int _testParseConfigFileWithInvalidOptions(void)
     ProgramOptions p = _getTestProgramOptionsForConfigFile();
     CharString filename = newCharStringWithCString(TEST_CONFIG_FILE);
     FILE *fp = _openTestProgramConfigFile();
-
+    assertNotNull(fp);
     fprintf(fp, "--test\n-s\n");
     fclose(fp);
     assertFalse(programOptionsParseConfigFile(p, filename));

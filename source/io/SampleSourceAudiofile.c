@@ -169,7 +169,7 @@ boolByte _readBlockFromAudiofile(void *selfPtr, SampleBuffer sampleBuffer)
 
     // Set the blocksize of the sample buffer to be the number of frames read
     sampleBuffer->blocksize = (SampleCount)numFramesRead;
-    self->numSamplesProcessed += numFramesRead;
+    self->numSamplesProcessed += sampleBuffer->blocksize;
 
     if (numFramesRead == 0) {
         logDebug("End of audio file reached");

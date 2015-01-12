@@ -110,7 +110,8 @@ static boolByte _readWaveFileInfo(const char *filename, SampleSourcePcmData extr
             return false;
         }
 
-        expectedByteRate = extraData->sampleRate * extraData->numChannels * extraData->bitDepth / 8;
+        expectedByteRate = (unsigned int)(extraData->sampleRate) *
+            extraData->numChannels * extraData->bitDepth / 8;
 
         if (expectedByteRate != byteRate) {
             logWarn("Possibly invalid bitrate %d, expected %d", byteRate, expectedByteRate);
