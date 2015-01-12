@@ -15,11 +15,6 @@ endif()
 if(WITH_AUDIOFILE)
   set(mrswatsonmain_LIBS ${mrswatsonmain_LIBS} audiofile)
   set(mrswatsonmain_64_LIBS ${mrswatsonmain_64_LIBS} audiofile64)
-
-  if(WITH_FLAC)
-    set(mrswatsonmain_LIBS ${mrswatsonmain_LIBS} flac)
-    set(mrswatsonmain_64_LIBS ${mrswatsonmain_64_LIBS} flac64)
-  endif()
 endif()
 
 # Main executable target and associated libraries

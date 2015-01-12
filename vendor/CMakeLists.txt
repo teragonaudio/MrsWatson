@@ -185,6 +185,9 @@ if(WITH_AUDIOFILE)
     target_include_directories(audiofile64 PUBLIC
       ${CMAKE_CURRENT_SOURCE_DIR}/flac/include
     )
+
+    target_link_libraries(audiofile flac)
+    target_link_libraries(audiofile64 flac64)
   endif()
 
   configure_target(audiofile 32)
@@ -280,6 +283,7 @@ if(WITH_FLAC)
     ${CMAKE_CURRENT_SOURCE_DIR}/flac/src/libFLAC/include
     ${CMAKE_CURRENT_SOURCE_DIR}/flac-config/${PLATFORM_CONFIG_DIR}
   )
+
   target_include_directories(flac64 PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/flac/include
     ${CMAKE_CURRENT_SOURCE_DIR}/flac/include/FLAC
