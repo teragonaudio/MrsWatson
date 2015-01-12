@@ -88,7 +88,6 @@ if(WITH_AUDIOFILE)
     audiofile/libaudiofile/Track.cpp
     audiofile/libaudiofile/units.cpp
     audiofile/libaudiofile/util.cpp
-    audiofile/libaudiofile/UUID.cpp
     audiofile/libaudiofile/VOC.cpp
     audiofile/libaudiofile/WAVE.cpp
   )
@@ -151,7 +150,6 @@ if(WITH_AUDIOFILE)
     audiofile/libaudiofile/Track.h
     audiofile/libaudiofile/units.h
     audiofile/libaudiofile/util.h
-    audiofile/libaudiofile/UUID.h
     audiofile/libaudiofile/VOC.h
     audiofile/libaudiofile/WAVE.h
   )
