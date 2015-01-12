@@ -255,7 +255,7 @@ int runIntegrationTest(const char *testName,
     memset(&startupInfo, 0, sizeof(startupInfo));
     memset(&processInfo, 0, sizeof(processInfo));
     startupInfo.cb = sizeof(startupInfo);
-    returnCode = CreateProcessA((LPCSTR)(testEnvironment->applicationPath), (LPSTR)(arguments->data),
+    returnCode = CreateProcessA((LPCSTR)(mrsWatsonExePath->data), (LPSTR)(arguments->data),
                                 0, 0, false, CREATE_DEFAULT_ERROR_MODE, 0, 0, &startupInfo, &processInfo);
 
     if (returnCode) {
