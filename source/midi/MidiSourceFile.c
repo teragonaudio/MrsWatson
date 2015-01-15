@@ -211,7 +211,6 @@ static boolByte _readMidiFileTrack(FILE *midiFile, const int trackNumber,
 
         switch (divisionType) {
         case TIME_DIVISION_TYPE_TICKS_PER_BEAT: {
-            // TODO: If the time signature is not 4/4, this calculation will be wrong
             double ticksPerSecond = (double)timeDivision * getTempo() / 60.0;
             double sampleFramesPerTick = getSampleRate() / ticksPerSecond;
             currentTimeInSampleFrames += (long)(unpackedVariableLength * sampleFramesPerTick);
