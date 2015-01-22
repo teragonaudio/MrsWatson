@@ -231,44 +231,50 @@ endif()
 # But on Mac: ./configure --disable-ogg --enable-static --disable-asm-optimizations
 # (See https://github.com/Homebrew/homebrew/issues/34589)
 
+set(flac_DIR ${CMAKE_CURRENT_SOURCE_DIR}/flac/src)
+if(NOT EXISTS ${flac_DIR})
+  message("FLAC sources not found, did you forget to update submodules?")
+  message(FATAL_ERROR "FLAC not found")
+endif()
+
 if(WITH_FLAC)
   set(flac_SOURCES
-    flac/src/libFLAC/bitmath.c
-    flac/src/libFLAC/bitreader.c
-    flac/src/libFLAC/bitwriter.c
-    flac/src/libFLAC/cpu.c
-    flac/src/libFLAC/crc.c
-    flac/src/libFLAC/fixed.c
-    flac/src/libFLAC/fixed_intrin_sse2.c
-    flac/src/libFLAC/fixed_intrin_ssse3.c
-    flac/src/libFLAC/float.c
-    flac/src/libFLAC/format.c
-    flac/src/libFLAC/lpc.c
-    flac/src/libFLAC/lpc_intrin_avx2.c
-    flac/src/libFLAC/lpc_intrin_sse.c
-    flac/src/libFLAC/lpc_intrin_sse2.c
-    flac/src/libFLAC/lpc_intrin_sse41.c
-    flac/src/libFLAC/md5.c
-    flac/src/libFLAC/memory.c
-    flac/src/libFLAC/metadata_iterators.c
-    flac/src/libFLAC/metadata_object.c
-    # flac/src/libFLAC/ogg_decoder_aspect.c (Ignore)
-    # flac/src/libFLAC/ogg_encoder_aspect.c (Ignore)
-    # flac/src/libFLAC/ogg_helper.c (Ignore)
-    # flac/src/libFLAC/ogg_mapping.c (Ignore)
-    flac/src/libFLAC/stream_decoder.c
-    flac/src/libFLAC/stream_encoder.c
-    flac/src/libFLAC/stream_encoder_framing.c
-    flac/src/libFLAC/stream_encoder_intrin_avx2.c
-    flac/src/libFLAC/stream_encoder_intrin_sse2.c
-    flac/src/libFLAC/stream_encoder_intrin_ssse3.c
-    flac/src/libFLAC/window.c
+    ${flac_DIR}/libFLAC/bitmath.c
+    ${flac_DIR}/libFLAC/bitreader.c
+    ${flac_DIR}/libFLAC/bitwriter.c
+    ${flac_DIR}/libFLAC/cpu.c
+    ${flac_DIR}/libFLAC/crc.c
+    ${flac_DIR}/libFLAC/fixed.c
+    ${flac_DIR}/libFLAC/fixed_intrin_sse2.c
+    ${flac_DIR}/libFLAC/fixed_intrin_ssse3.c
+    ${flac_DIR}/libFLAC/float.c
+    ${flac_DIR}/libFLAC/format.c
+    ${flac_DIR}/libFLAC/lpc.c
+    ${flac_DIR}/libFLAC/lpc_intrin_avx2.c
+    ${flac_DIR}/libFLAC/lpc_intrin_sse.c
+    ${flac_DIR}/libFLAC/lpc_intrin_sse2.c
+    ${flac_DIR}/libFLAC/lpc_intrin_sse41.c
+    ${flac_DIR}/libFLAC/md5.c
+    ${flac_DIR}/libFLAC/memory.c
+    ${flac_DIR}/libFLAC/metadata_iterators.c
+    ${flac_DIR}/libFLAC/metadata_object.c
+    # ${flac_DIR}/libFLAC/ogg_decoder_aspect.c (Ignore)
+    # ${flac_DIR}/libFLAC/ogg_encoder_aspect.c (Ignore)
+    # ${flac_DIR}/libFLAC/ogg_helper.c (Ignore)
+    # ${flac_DIR}/libFLAC/ogg_mapping.c (Ignore)
+    ${flac_DIR}/libFLAC/stream_decoder.c
+    ${flac_DIR}/libFLAC/stream_encoder.c
+    ${flac_DIR}/libFLAC/stream_encoder_framing.c
+    ${flac_DIR}/libFLAC/stream_encoder_intrin_avx2.c
+    ${flac_DIR}/libFLAC/stream_encoder_intrin_sse2.c
+    ${flac_DIR}/libFLAC/stream_encoder_intrin_ssse3.c
+    ${flac_DIR}/libFLAC/window.c
   )
 
   set(flac++_SOURCES
-    flac/src/libFLAC++/metadata.cpp
-    flac/src/libFLAC++/stream_decoder.cpp
-    flac/src/libFLAC++/stream_encoder.cpp
+    ${flac_DIR}/libFLAC++/metadata.cpp
+    ${flac_DIR}/libFLAC++/stream_decoder.cpp
+    ${flac_DIR}/libFLAC++/stream_encoder.cpp
   )
 
   set(flac_HEADERS
@@ -323,7 +329,9 @@ if(WITH_FLAC)
     ${CMAKE_CURRENT_SOURCE_DIR}/flac-config/${PLATFORM_CONFIG_DIR}
   )
 
-  source_group(config flac-config/${PLATFORM_CONFIG_DIR}/config.h)
+  source_group(config FILES
+    flac-config/${PLATFORM_CONFIG_DIR}/config.h
+  )
 
   set_target_properties(flac PROPERTIES COMPILE_DEFINITIONS "HAVE_CONFIG_H=1")
   set_target_properties(flac64 PROPERTIES COMPILE_DEFINITIONS "HAVE_CONFIG_H=1")
