@@ -197,12 +197,8 @@ int runIntegrationTest(const char *testName,
     int result = 0;
     int returnCode;
     ReturnCodes resultCode;
-    CharString arguments = newCharStringWithCapacity(kCharStringLengthLong);
-    CharString defaultArguments;
-    CharString failedAnalysisFunctionName = newCharString();
     ChannelCount failedAnalysisChannel;
     SampleCount failedAnalysisFrame;
-    CharString outputFilename = getTestOutputFilename(testName, testOutputType);
 
 #if WINDOWS
     STARTUPINFOA startupInfo;
@@ -228,11 +224,13 @@ int runIntegrationTest(const char *testName,
         freeFile(mrsWatsonExe);
 
         if (!mrsWatsonExeExists) {
+            freeCharString(testArguments);
             return -1;
         }
     }
 
     if (resourcesPath == NULL) {
+        freeCharString(testArguments);
         return -1;
     } else {
         File resourcesFile = newFileWithPath(resourcesPath);
@@ -240,19 +238,28 @@ int runIntegrationTest(const char *testName,
         freeFile(resourcesFile);
 
         if (!resourcesExists) {
+            freeCharString(testArguments);
             return -1;
         }
     }
 
     // Create the command line argument
+    CharString arguments = newCharStringWithCapacity(kCharStringLengthLong);
     charStringAppendCString(arguments, "\"");
     charStringAppend(arguments, mrsWatsonExePath);
     charStringAppendCString(arguments, "\"");
     charStringAppendCString(arguments, " ");
+    CharString defaultArguments;
+    CharString outputFilename = getTestOutputFilename(testName, testOutputType);
     defaultArguments = _getDefaultArguments(testName, resourcesPath, outputFilename);
     charStringAppend(arguments, defaultArguments);
+    freeCharString(defaultArguments);
     charStringAppendCString(arguments, " ");
     charStringAppend(arguments, testArguments);
+    // Although testArguments is passed into this function (and hence, it would generally not take
+    // ownership of it), in this case we free the arguments here to make writing the test cases
+    // simpler and reduce the amount of boilerplate code.
+    freeCharString(testArguments);
 
 #if WINDOWS
     memset(&startupInfo, 0, sizeof(startupInfo));
@@ -276,6 +283,7 @@ int runIntegrationTest(const char *testName,
     returnCode = system(arguments->data);
     resultCode = (ReturnCodes)WEXITSTATUS(returnCode);
 #endif
+    freeCharString(arguments);
 
     if (resultCode == RETURN_CODE_FORK_FAILED ||
             resultCode == RETURN_CODE_SHELL_FAILED ||
@@ -285,6 +293,7 @@ Please check the executable path specified in the --mrswatson-path argument.",
                     resultCode);
         return 1;
     } else if (resultCode == expectedResultCode) {
+        CharString failedAnalysisFunctionName = newCharString();
         if (testOutputType != kTestOutputNone) {
             if (analyzeFile(outputFilename->data, failedAnalysisFunctionName,
                             &failedAnalysisChannel, &failedAnalysisFrame)) {
@@ -306,6 +315,7 @@ Please check the executable path specified in the --mrswatson-path argument.",
 //                _removeOutputFiles(testName);
 //            }
         }
+        freeCharString(failedAnalysisFunctionName);
     } else {
         fprintf(stderr, "Expected result code %d (%s), got %d (%s). ",
                 expectedResultCode, _getResultCodeString(expectedResultCode),
@@ -314,9 +324,5 @@ Please check the executable path specified in the --mrswatson-path argument.",
     }
 
     freeCharString(outputFilename);
-    freeCharString(arguments);
-    freeCharString(defaultArguments);
-    freeCharString(testArguments);
-    freeCharString(failedAnalysisFunctionName);
     return result;
 }
