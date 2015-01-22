@@ -2,13 +2,7 @@
 #include "app/ProgramOption.h"
 #include "base/File.h"
 
-#if UNIX
-#define TEST_CONFIG_FILE "/tmp/mrswatsontest-config.txt"
-#elif WINDOWS
-#define TEST_CONFIG_FILE "C:\\Temp\\mrswatsontest-config.txt"
-#else
 #define TEST_CONFIG_FILE "mrswatsontest-config.txt"
-#endif
 
 static void _programOptionTeardown(void)
 {
@@ -26,7 +20,8 @@ static void _programOptionTeardown(void)
 static ProgramOption _getTestOption(void)
 {
     return newProgramOptionWithName(0, "test", "test help", true,
-                                    kProgramOptionTypeNumber, kProgramOptionArgumentTypeOptional);
+                                    kProgramOptionTypeNumber,
+                                    kProgramOptionArgumentTypeOptional);
 }
 
 static int _testNewProgramOptions(void)
