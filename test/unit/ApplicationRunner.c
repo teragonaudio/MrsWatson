@@ -226,16 +226,19 @@ int runIntegrationTest(const char *testName,
         File mrsWatsonExe = newFileWithPath(mrsWatsonExePath);
         boolByte mrsWatsonExeExists = fileExists(mrsWatsonExe);
         freeFile(mrsWatsonExe);
+
         if (!mrsWatsonExeExists) {
             return -1;
         }
     }
+
     if (resourcesPath == NULL) {
         return -1;
     } else {
         File resourcesFile = newFileWithPath(resourcesPath);
         boolByte resourcesExists = fileExists(resourcesFile);
         freeFile(resourcesFile);
+
         if (!resourcesExists) {
             return -1;
         }

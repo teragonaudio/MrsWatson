@@ -82,11 +82,13 @@ void runTestCase(void *item, void *extraData)
 
         if (result == 0) {
             testSuite->numSuccess++;
-            if(!testSuite->onlyPrintFailing) {
+
+            if (!testSuite->onlyPrintFailing) {
                 printTestSuccess();
             }
         } else if (result == -1) {
             testSuite->numSkips++;
+
             if (!testSuite->onlyPrintFailing) {
                 _printTestSkipped();
             }
@@ -100,6 +102,7 @@ void runTestCase(void *item, void *extraData)
         }
     } else {
         testSuite->numSkips++;
+
         if (!testSuite->onlyPrintFailing) {
             _printTestSkipped();
         }
