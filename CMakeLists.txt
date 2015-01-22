@@ -12,6 +12,7 @@ option(WITH_FLAC "Support for FLAC files (requires libaudiofile)" OFF)
 
 # Platform properties ##########################################
 
+# TODO: Rename to platform_XYZ to conform to coding standard
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
   set(PLATFORM_NAME "Linux")
   set(PLATFORM_CONFIG_DIR "linux")
