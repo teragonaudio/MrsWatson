@@ -20,6 +20,31 @@ include(${cmake_SCRIPTS_DIR}/ConfigureTarget.cmake)
 # 6. Copy the generated config.h file to the platform-specific directory
 #
 
+# VST SDK ######################################################
+
+set(vst_DIR ${CMAKE_CURRENT_SOURCE_DIR}/vstsdk2.4/pluginterfaces/vst2.x)
+if(NOT EXISTS ${vst_DIR})
+  message("VST 2.x SDK sources were not found, please install them from:")
+  message("")
+  message("http://www.steinberg.net/en/company/developer.html")
+  message("")
+  message("The contents of the vstsdk2.4 zipfile should be placed in the")
+  message("top level of the 'vendor/vstsdk2.4' folder.")
+  message(FATAL_ERROR "VST SDK not found")
+endif()
+
+include_directories(${vst_DIR})
+set(vst_HEADERS
+  ${vst_DIR}/aeffect.h
+  ${vst_DIR}/aeffectx.h
+  ${vst_DIR}/vstfxstore.h
+)
+
+# TODO: This source group doesn't show up in the IDE
+source_group(vst FILES
+  ${vst_HEADERS}
+)
+
 # audiofile ####################################################
 
 # Configured with: ./configure --enable-flac --enable-static --disable-docs
