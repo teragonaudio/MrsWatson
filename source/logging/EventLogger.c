@@ -93,8 +93,13 @@ char *stringForLastError(int errorNumber)
 #if UNIX
     return strerror(errorNumber);
 #elif WINDOWS
-    FormatMessageA(FORMAT_MESSAGE_FROM_SYSTEM, 0, errorNumber, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-                   eventLogger->systemErrorMessage->data, eventLogger->systemErrorMessage->capacity - 1, NULL);
+    FormatMessageA(FORMAT_MESSAGE_FROM_SYSTEM,
+                   0,
+                   errorNumber,
+                   MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+                   eventLogger->systemErrorMessage->data,
+                   (DWORD)(eventLogger->systemErrorMessage->capacity - 1),
+                   NULL);
     return eventLogger->systemErrorMessage->data;
 #endif
 
