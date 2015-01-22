@@ -43,6 +43,39 @@ package. To do that you must generate the makefiles like so:
 Ninja and CCache are also supported, both tools should work "out of the box".
 
 
+Windows
+-------
+
+On Windows, Visual Studio is used to compile the software. You will need at
+least Visual Studio 2013 (aka Visual Studio 12) to build MrsWatson, since
+earlier versions do not support C99.
+
+The MrsWatson source code does not include a Visual Studio project, instead
+CMake is used to generate Visual Studio project which can then be used to
+build the software. After you've installed [CMake for Windows][3], you must
+generate the build directory where the Visual Studio product will be placed.
+Unlike on Unix, you cannot build the software from the same directory as the
+source code. So generating the Visual Studio project will look something like
+this:
+
+    cd c:\wherever
+    mkdir build
+    cd build
+    cmake -G "Visual Studio 12" C:\path\to\MrsWatson
+
+Likewise, you can use the CMake GUI tool to accomplish the same task. This
+command will generate a Visual Studio project in `C:\wherever\build` which can
+use to build the software. Unlike on Unix, the generated Visual Studio project
+cannot generate both 32- and 64-bit binaries in the same build. Instead you
+must create another build directory for the 64-bit project. That is done like
+so:
+
+    cd c:\wherever
+    mkdir build64
+    cd build64
+    cmake -G "Visual Studio 12 Win64" C:\path\to\MrsWatson
+
+
 Linux
 -----
 
@@ -83,37 +116,6 @@ Binary format that could contain both architectures, two separate binaries
 are shipped on this platform to avoid confusion when loading plugins.
 
 
-Windows
--------
-
-On Windows, Visual Studio is used to compile the software. The MrsWatson
-source code does not include a Visual Studio project, instead CMake is used
-to generate Visual Studio project which can then be used to build the
-software. After you've installed cmkae for Windows, you must generate the
-build directory where the Visual Studio product will be placed. Unlike on
-Unix, you cannot build the software from the same directory as the source
-code. So generating the Visual Studio project will look something like this:
-
-    cd c:\wherever
-    mkdir MrsWatson-build
-    cd MrsWatson-build
-    cmake -G "Visual Studio 11" C:\path\to\MrsWatson
-
-This command will generate a Visual Studio project in
-`C:\wherever\MrsWatson-build` which can use to build the software. Just like
-on Unix, CMake supports several different generators which can be listed by
-running CMake -h. Namely, several different versions of Visual Studio are
-supported, and you should pick the one which matches your installation.
-
-Unlike on Unix, the generated Visual Studio project will not generate both
-32- and 64-bit builds of the software. Instead you must create another build
-directory for the 64-bit project. That is done like so:
-
-    cd c:\wherever
-    mkdir MrsWatson-build64
-    cd MrsWatson-build64
-    cmake -G "Visual Studio 11 Win64" C:\path\to\MrsWatson
-
-
 [1]: http://www.steinberg.net/en/company/developer.html
 [2]: http://mxcl.github.io/homebrew/
+[3]: http://www.cmake.org/download/
