@@ -689,6 +689,7 @@ extern "C" {
     void pluginVst2xSetProgramChunk(Plugin plugin, char *chunk, size_t chunkSize)
     {
         PluginVst2xData data = (PluginVst2xData)plugin->extraData;
+        logDebug("Setting chunk data with %ld bytes in plugin", chunkSize);
         data->dispatcher(data->pluginHandle, effSetChunk, 1, (VstIntPtr)chunkSize, chunk, 0.0f);
     }
 

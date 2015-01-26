@@ -9,6 +9,7 @@ set(mrswatsoncore_SOURCES
   audio/AudioSettings.c
   audio/PcmSampleBuffer.c
   audio/SampleBuffer.c
+  base/Base64.c
   base/CharString.c
   base/Endian.c
   base/File.c
@@ -36,6 +37,7 @@ set(mrswatsoncore_SOURCES
   plugin/PluginPreset.c
   plugin/PluginPresetFxp.c
   plugin/PluginPresetInternalProgram.c
+  plugin/PluginPresetOzone.c
   plugin/PluginSilence.c
   plugin/PluginVst2x.cpp
   plugin/PluginVst2xHostCallback.cpp
@@ -51,6 +53,7 @@ set(mrswatsoncore_HEADERS
   audio/AudioSettings.h
   audio/PcmSampleBuffer.h
   audio/SampleBuffer.h
+  base/Base64.h
   base/CharString.h
   base/Endian.h
   base/File.h
@@ -79,6 +82,7 @@ set(mrswatsoncore_HEADERS
   plugin/PluginPreset.h
   plugin/PluginPresetFxp.h
   plugin/PluginPresetInternalProgram.h
+  plugin/PluginPresetOzone.h
   plugin/PluginSilence.h
   plugin/PluginVst2x.h
   plugin/PluginVst2xHostCallback.h

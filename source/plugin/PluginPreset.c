@@ -34,6 +34,7 @@
 #include "plugin/PluginPreset.h"
 #include "plugin/PluginPresetFxp.h"
 #include "plugin/PluginPresetInternalProgram.h"
+#include "plugin/PluginPresetOzone.h"
 
 static PluginPresetType _pluginPresetGuessType(const CharString presetName)
 {
@@ -57,6 +58,9 @@ static PluginPresetType _pluginPresetGuessType(const CharString presetName)
     } else if (charStringIsEqualToCString(fileExtension, "fxp", true)) {
         freeCharString(fileExtension);
         return PRESET_TYPE_FXP;
+    } else if (charStringIsEqualToCString(fileExtension, "ozn", true)) {
+        freeCharString(fileExtension);
+        return PRESET_TYPE_OZONE;
     } else {
         logCritical("Preset '%s' does not match any supported type", presetName->data);
         freeCharString(fileExtension);
@@ -75,6 +79,9 @@ PluginPreset pluginPresetFactory(const CharString presetName)
     case PRESET_TYPE_INTERNAL_PROGRAM:
         return newPluginPresetInternalProgram(presetName);
 
+    case PRESET_TYPE_OZONE:
+        return newPluginPresetOzone(presetName);
+
     default:
         return NULL;
     }
@@ -87,7 +94,7 @@ void pluginPresetSetCompatibleWith(PluginPreset pluginPreset, PluginInterfaceTyp
 
 boolByte pluginPresetIsCompatibleWith(const PluginPreset pluginPreset, const Plugin plugin)
 {
-    return (pluginPreset->compatiblePluginTypes & (1 << plugin->interfaceType));
+    return (boolByte)(pluginPreset->compatiblePluginTypes & (1 << plugin->interfaceType));
 }
 
 void freePluginPreset(PluginPreset pluginPreset)
