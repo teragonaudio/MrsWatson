@@ -7,8 +7,17 @@ is not distributed with MrsWatson itself. It can be downloaded from
 [Steinberg's Developer Page][1], and then extracted to the
 `vendor/vstsdk2.4` subdirectory of the project before compiling.
 
-The MrsWatson source code also contains a few submodules, it is recommended
-that you sync the submodules before building the code.
+The MrsWatson source code also contains some submodules for third-party
+libraries, so before building you should run the following commands:
+
+    git submodule sync
+    git submodule update --init --recursive
+
+If you download the MrsWatson sources from the automatically-generated
+zipfile/tarball that GitHub produces for each release, then the third-party
+code will not be included. Currently it is not recommended to use the GitHub
+source releases, but rather to clone the sources and build from the release
+tag.
 
 
 Mac OSX
