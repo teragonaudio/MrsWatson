@@ -139,7 +139,7 @@ Building
 --------
 
 Instructions for building MrsWatson can be found in the file
-[Building.txt][9].
+[BUILDING.md][9].
 
 
 History and Name
@@ -213,4 +213,4 @@ agreements:
 [6]: http://wikimediafoundation.org/wiki/WMFJA085/en
 [7]: http://www.steinberg.net/en/company/developer.html
 [8]: http://audiofile.68k.org/
-[9]: https://github.com/teragonaudio/MrsWatson/blob/master/doc/Building.md
+[9]: https://github.com/teragonaudio/MrsWatson/blob/master/BUILDING.md
