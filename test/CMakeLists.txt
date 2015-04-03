@@ -5,6 +5,7 @@ include(${cmake_SCRIPTS_DIR}/ConfigureTarget.cmake)
 
 set(mrswatsontest_SOURCES
   MrsWatsonTestMain.c
+  IntegrationTests.c
   analysis/AnalysisClipping.c
   analysis/AnalysisClippingTest.c
   analysis/AnalysisDistortion.c
@@ -33,7 +34,6 @@ set(mrswatsontest_SOURCES
   time/AudioClockTest.c
   time/TaskTimerTest.c
   unit/ApplicationRunner.c
-  unit/IntegrationTests.c
   unit/TestRunner.c
   unit/UnitTests.c
 )
