@@ -189,7 +189,6 @@ extern "C" {
         }
 
         logDebug("Looking for plugin '%s' in '%s'", pluginName->data, locationName->data);
-
         location = newFileWithPath(locationName);
         if (location == NULL || !fileExists(location) || location->fileType != kFileTypeDirectory) {
             logWarn("Location '%s' is not a valid directory", locationName->data);
@@ -204,8 +203,13 @@ extern "C" {
             return result;
         }
 
+        // Get the file extension of the plugin name given by the user, but also
+        // check that the extension is what we expect it to be on this platform.
+        // Otherwise, plugin names which contain a dot may give us an incorrect
+        // file extension.
         pluginSearchExtension = fileGetExtension(pluginSearchPath);
-        if (pluginSearchExtension == NULL) {
+        if (pluginSearchExtension == NULL ||
+                !charStringIsEqualToCString(pluginSearchExtension, _getVst2xPlatformExtension(), true)) {
             freeFile(pluginSearchPath);
             charStringAppendCString(pluginSearchName, _getVst2xPlatformExtension());
             pluginSearchPath = newFileWithParent(location, pluginSearchName);
