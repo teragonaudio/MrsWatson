@@ -1,6 +1,3 @@
-Contributing to MrsWatson
-=========================
-
 Writing Good Bug Reports
 ------------------------
 
