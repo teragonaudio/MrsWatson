@@ -257,7 +257,6 @@ extern "C" {
         }
 
         LinkedListIterator iterator = pluginLocations;
-
         while (iterator != NULL) {
             CharString searchLocation = (CharString)(iterator->item);
 
@@ -448,9 +447,7 @@ extern "C" {
         AEffect *pluginHandle;
         Plugin plugin = (Plugin)pluginPtr;
         PluginVst2xData data = (PluginVst2xData)plugin->extraData;
-        File pluginPath = newFileWithPath(plugin->pluginName);
-        CharString pluginBasename = fileGetBasename(pluginPath);
-        char *subpluginSeparator = strrchr((char *)pluginBasename, kPluginVst2xSubpluginSeparator);
+        char *subpluginSeparator = strrchr(plugin->pluginName->data, kPluginVst2xSubpluginSeparator);
         CharString subpluginIdString = NULL;
 
         if (subpluginSeparator != NULL) {
@@ -463,6 +460,8 @@ extern "C" {
             freePluginVst2xId(subpluginId);
         }
 
+        File pluginPath = newFileWithPath(plugin->pluginName);
+        CharString pluginBasename = fileGetBasename(pluginPath);
         logInfo("Opening VST2.x plugin '%s'", plugin->pluginName->data);
 
         if (fileExists(pluginPath)) {
@@ -901,7 +900,8 @@ extern "C" {
         extraData->pluginId = NULL;
         extraData->dispatcher = NULL;
         extraData->libraryHandle = NULL;
-        extraData->isPluginShell = false;
+        const char *shellPluginDelimiter = strchr(pluginName->data, kPluginVst2xSubpluginSeparator);
+        extraData->isPluginShell = (boolByte)(shellPluginDelimiter != NULL);
         extraData->shellPluginId = 0;
         extraData->vstEvents = NULL;
         plugin->extraData = extraData;
