@@ -276,8 +276,8 @@ boolByte readInput(SampleSource inputSource, SampleBuffer buffer)
  */
 void writeOutput(SampleSource outputSource, SampleSource silenceSource, SampleBuffer buffer, unsigned long skipHeadFrames)
 {
-    unsigned long framesSkiped = silenceSource->numSamplesProcessed / buffer->numChannels;
-    unsigned long framesProcessed = framesSkiped + outputSource->numSamplesProcessed / buffer->numChannels;
+    unsigned long framesSkipped = silenceSource->numSamplesProcessed / buffer->numChannels;
+    unsigned long framesProcessed = framesSkipped + outputSource->numSamplesProcessed / buffer->numChannels;
     unsigned long nextBlockStart = framesProcessed + buffer->blocksize;
 
     if (framesProcessed != getAudioClock()->currentFrame) {
