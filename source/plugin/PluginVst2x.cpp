@@ -180,7 +180,6 @@ extern "C" {
         File pluginSearchPath = NULL;
 
         subpluginSeparator = strrchr(pluginName->data, kPluginVst2xSubpluginSeparator);
-
         if (subpluginSeparator != NULL) {
             pluginSearchName = newCharString();
             strncpy(pluginSearchName->data, pluginName->data, subpluginSeparator - pluginName->data);
@@ -192,7 +191,6 @@ extern "C" {
         logDebug("Looking for plugin '%s' in '%s'", pluginName->data, locationName->data);
 
         location = newFileWithPath(locationName);
-
         if (location == NULL || !fileExists(location) || location->fileType != kFileTypeDirectory) {
             logWarn("Location '%s' is not a valid directory", locationName->data);
             freeFile(location);
@@ -201,8 +199,12 @@ extern "C" {
 
         pluginSearchName = newCharStringWithCString(pluginName->data);
         pluginSearchPath = newFileWithParent(location, pluginSearchName);
-        pluginSearchExtension = fileGetExtension(pluginSearchPath);
+        if (pluginSearchPath == NULL) {
+            freeFile(location);
+            return result;
+        }
 
+        pluginSearchExtension = fileGetExtension(pluginSearchPath);
         if (pluginSearchExtension == NULL) {
             freeFile(pluginSearchPath);
             charStringAppendCString(pluginSearchName, _getVst2xPlatformExtension());
