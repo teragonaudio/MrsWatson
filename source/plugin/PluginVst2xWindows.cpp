@@ -75,7 +75,7 @@ extern "C" {
             if (errorCode == ERROR_BAD_EXE_FORMAT) {
                 logError("Could not open library, wrong architecture");
             } else {
-                logError("Could not open library, error code '%s'", stringForLastError(errorCode));
+                logError("Could not open library, error code %d (%s)", errorCode, stringForLastError(errorCode));
             }
 
             return NULL;
