@@ -100,6 +100,15 @@ char *stringForLastError(int errorNumber)
                    eventLogger->systemErrorMessage->data,
                    (DWORD)(eventLogger->systemErrorMessage->capacity - 1),
                    NULL);
+    // Windows adds newlines for error messages which we must trim
+    char *searchChar = strrchr(eventLogger->systemErrorMessage->data, '\n');
+    if (searchChar != NULL) {
+        *searchChar = '\0';
+    }
+    searchChar = strrchr(eventLogger->systemErrorMessage->data, '\r');
+    if (searchChar != NULL) {
+        *searchChar = '\0';
+    }
     return eventLogger->systemErrorMessage->data;
 #endif
 
