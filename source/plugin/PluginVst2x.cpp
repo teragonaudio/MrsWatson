@@ -466,24 +466,31 @@ extern "C" {
             CharString pluginNameWithExtension = newCharString();
             charStringCopy(pluginNameWithExtension, plugin->pluginName);
             charStringAppendCString(pluginNameWithExtension, _getVst2xPlatformExtension());
-            File pluginAbsolutePath = newFileWithParent(pluginLocationPath, pluginNameWithExtension);
-            charStringCopy(plugin->pluginAbsolutePath, pluginAbsolutePath->absolutePath);
-            freeFile(pluginAbsolutePath);
+
+            // Reset pluginPath so that we can check if the file exists below
+            freeFile(pluginPath);
+            pluginPath = newFileWithParent(pluginLocationPath, pluginNameWithExtension);
+            charStringCopy(plugin->pluginAbsolutePath, pluginPath->absolutePath);
+
             freeFile(pluginLocationPath);
             freeCharString(pluginNameWithExtension);
         }
 
-        freeFile(pluginPath);
-        logDebug("Plugin location is '%s'", plugin->pluginAbsolutePath->data);
+        if (!fileExists(pluginPath)) {
+            logError("Plugin file '%s' does not exist", pluginPath->absolutePath->data);
+            freeFile(pluginPath);
+            return false;
+        } else {
+            logDebug("Plugin location is '%s'", pluginPath->absolutePath->data);
+            freeFile(pluginPath);
+        }
 
         data->libraryHandle = getLibraryHandleForPlugin(plugin->pluginAbsolutePath);
-
         if (data->libraryHandle == NULL) {
             return false;
         }
 
         pluginHandle = loadVst2xPlugin(data->libraryHandle);
-
         if (pluginHandle == NULL) {
             logError("Could not load VST2.x plugin '%s'", plugin->pluginAbsolutePath->data);
             return false;
