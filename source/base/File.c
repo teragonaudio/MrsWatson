@@ -63,8 +63,8 @@ static boolByte _isAbsolutePath(const CharString path)
         if (path->data[1] == ':' && path->data[2] == PATH_DELIMITER) {
             return true;
         }
-        // Check for network paths, ie \\SERVER\file
-        else if (path->data[0] == PATH_DELIMITER && path->data[1] == PATH_DELIMITER) {
+        // Check for network paths (like "\\SERVER\file") or absolute paths (like "\Users")
+        if (path->data[0] == PATH_DELIMITER) {
             return true;
         }
     }
