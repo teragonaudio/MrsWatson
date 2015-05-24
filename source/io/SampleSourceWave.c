@@ -211,7 +211,8 @@ static boolByte _writeWaveFileInfo(SampleSourcePcmData extraData)
         return false;
     }
 
-    if (fwrite(&(extraData->sampleRate), sizeof(unsigned int), 1, extraData->fileHandle) != 1) {
+    unsigned int sampleRateAsUInt = (unsigned int)extraData->sampleRate;
+    if (fwrite(&(sampleRateAsUInt), sizeof(unsigned int), 1, extraData->fileHandle) != 1) {
         logError("Could not write sample rate");
         freeRiffChunk(chunk);
         return false;
