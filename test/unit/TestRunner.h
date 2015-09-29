@@ -25,6 +25,8 @@ typedef enum {
     kTestLogEventReset,
     kTestLogEventInvalid
 } TestLogEventType;
+
+void useColoredOutput(const CharString state);
 const LogColor getLogColor(TestLogEventType eventType);
 
 typedef int (*TestCaseExecFunc)(void);

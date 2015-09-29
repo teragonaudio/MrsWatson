@@ -5,6 +5,22 @@
 
 #include "unit/TestRunner.h"
 
+static boolByte gUseColor = false;
+
+void useColoredOutput(const CharString state)
+{
+    if (charStringIsEqualToCString(state, "force", true)) {
+        gUseColor = true;
+    } else if (charStringIsEqualToCString(state, "none", true)) {
+        gUseColor = false;
+    } else if (charStringIsEqualToCString(state, "auto", true)) {
+        gUseColor = (boolByte) isatty(1);
+    } else {
+        // Some other weird string --> no color for you!
+        gUseColor = false;
+    }
+}
+
 void addTestToTestSuite(TestSuite testSuite, TestCase testCase)
 {
     linkedListAppend(testSuite->testCases, testCase);
@@ -14,19 +30,19 @@ const LogColor getLogColor(TestLogEventType eventType)
 {
     switch (eventType) {
     case kTestLogEventSection:
-        return isatty(1) ? COLOR_FG_CYAN : COLOR_NONE;
+        return gUseColor ? COLOR_FG_CYAN : COLOR_NONE;
 
     case kTestLogEventPass:
-        return isatty(1) ? COLOR_FG_GREEN : COLOR_NONE;
+        return gUseColor ? COLOR_FG_GREEN : COLOR_NONE;
 
     case kTestLogEventFail:
-        return isatty(1) ? COLOR_BG_MAROON : COLOR_NONE;
+        return gUseColor ? COLOR_BG_MAROON : COLOR_NONE;
 
     case kTestLogEventSkip:
-        return isatty(1) ? COLOR_FG_YELLOW : COLOR_NONE;
+        return gUseColor ? COLOR_FG_YELLOW : COLOR_NONE;
 
     case kTestLogEventReset:
-        return isatty(1) ? COLOR_RESET : COLOR_NONE;
+        return gUseColor ? COLOR_RESET : COLOR_NONE;
 
     default:
         return COLOR_NONE;
