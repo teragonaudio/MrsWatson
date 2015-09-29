@@ -41,6 +41,7 @@ static boolByte _readWaveFileInfo(const char *filename, SampleSourcePcmData extr
 {
     int chunkOffset = 0;
     RiffChunk chunk = newRiffChunk();
+    boolByte dataChunkFound = false;
     char format[4];
     size_t itemsRead;
     unsigned int audioFormat;
@@ -132,14 +133,26 @@ static boolByte _readWaveFileInfo(const char *filename, SampleSourcePcmData extr
     freeRiffChunk(chunk);
     chunk = newRiffChunk();
 
-    if (riffChunkReadNext(chunk, extraData->fileHandle, false)) {
-        if (!riffChunkIsIdEqualTo(chunk, "data")) {
-            logFileError(filename, "WAVE file has invalid data chunk header");
-            freeRiffChunk(chunk);
-            return false;
+    // FFMpeg (and possibly other programs) have extra sections between the fmt and data chunks. They
+    // can be safely ignored. We just need to find the data chunk. See also:
+    // http://forum.videohelp.com/threads/359689-ffmpeg-Override-Set-ISFT-Metadata
+    while (!dataChunkFound) {
+        if (riffChunkReadNext(chunk, extraData->fileHandle, false)) {
+            if (riffChunkIsIdEqualTo(chunk, "data")) {
+                logDebug("WAVE file has %d bytes", chunk->size);
+                dataChunkFound = true;
+            } else {
+                fseek(extraData->fileHandle, (long) chunk->size, SEEK_CUR);
+            }
+        } else {
+            break;
         }
+    }
 
-        logDebug("WAVE file has %d bytes", chunk->size);
+    if (!dataChunkFound) {
+        logFileError(filename, "Could not find a data chunk. Possibly malformed WAVE file.");
+        freeRiffChunk(chunk);
+        return false;
     }
 
     freeRiffChunk(chunk);

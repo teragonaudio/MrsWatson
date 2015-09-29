@@ -368,6 +368,20 @@ static int _testProcessWaveFile32BitStereo(const char *testName, const CharStrin
     return result;
 }
 
+static int _testProcessWaveFileFfmpeg(const char *testName, const CharString applicationPath, const CharString resourcesPath)
+{
+    CharString inputPath = getTestResourcePath(resourcesPath, "audio", "a440-stereo-ffmpeg.wav");
+    int result = runIntegrationTest(testName,
+                                    buildTestArgumentString("--plugin again --input \"%s\"",
+                                            inputPath->data),
+                                    RETURN_CODE_SUCCESS,
+                                    kTestOutputWave,
+                                    applicationPath,
+                                    resourcesPath);
+    freeCharString(inputPath);
+    return result;
+}
+
 static int _testProcessAiffFile8BitMono(const char *testName, const CharString applicationPath, const CharString resourcesPath)
 {
     CharString inputPath = getTestResourcePath(resourcesPath, "audio", "a440-8bit-mono.aiff");
@@ -829,6 +843,7 @@ TestSuite addIntegrationTests(File mrsWatsonExePath, File resourcesPath)
     addTestWithPaths(testSuite, "Process 24-bit WAVE file (stereo)", REQUIRES_AUDIOFILE(_testProcessWaveFile24BitStereo));
     addTestWithPaths(testSuite, "Process 32-bit WAVE file (mono)", REQUIRES_AUDIOFILE(_testProcessWaveFile32BitMono));
     addTestWithPaths(testSuite, "Process 32-bit WAVE file (stereo)", REQUIRES_AUDIOFILE(_testProcessWaveFile32BitStereo));
+    addTestWithPaths(testSuite, "Process FFMpeg WAVE file (stereo)", _testProcessWaveFileFfmpeg);
 
     // AIFF files
     // 8-bit AIFF will require some extra work in SampleSourceAudiofile
