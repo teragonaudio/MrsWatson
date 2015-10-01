@@ -31,15 +31,21 @@
 
 extern "C" {
 #include <stdlib.h>
+#include <AppKit/AppKit.h>
+#include <Cocoa/Cocoa.h>
+#include <Foundation/Foundation.h>
 #include <CoreFoundation/CFBundle.h>
 #include "base/CharString.h"
 #include "logging/EventLogger.h"
+#include "plugin/Plugin.h"
 #include "plugin/PluginVst2xHostCallback.h"
+#include "plugin/PluginVst2xMacWindow.h"
 
     LinkedList getVst2xPluginLocations(CharString currentDirectory);
     LinkedList getVst2xPluginLocations(CharString currentDirectory)
     {
         LinkedList locations = newLinkedList();
+        char *home = NULL;
         CharString locationBuffer;
 
         linkedListAppend(locations, currentDirectory);
@@ -48,9 +54,14 @@ extern "C" {
         snprintf(locationBuffer->data, (size_t)(locationBuffer->capacity), "/Library/Audio/Plug-Ins/VST");
         linkedListAppend(locations, locationBuffer);
 
-        locationBuffer = newCharString();
-        snprintf(locationBuffer->data, (size_t)(locationBuffer->capacity), "%s/Library/Audio/Plug-Ins/VST", getenv("HOME"));
-        linkedListAppend(locations, locationBuffer);
+        home = getenv("HOME");
+        if (home == NULL) {
+            logWarn("Could not get $HOME environment variable");
+        } else {
+            locationBuffer = newCharString();
+            snprintf(locationBuffer->data, (size_t) (locationBuffer->capacity), "%s/Library/Audio/Plug-Ins/VST", home);
+            linkedListAppend(locations, locationBuffer);
+        }
 
         return locations;
     }
@@ -123,6 +134,51 @@ extern "C" {
         }
 
         return plugin;
+    }
+
+    void showVst2xEditor(AEffect* effect, const CharString pluginName, PluginWindowSize *rect);
+    void showVst2xEditor(AEffect* effect, const CharString pluginName, PluginWindowSize *rect) {
+#if PLATFORM_BITS == 64
+        NSRect frame;
+        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+        [NSApplication sharedApplication];
+        VstWindowAppDelegate *appDelegate = [[[VstWindowAppDelegate alloc] init] autorelease];
+        [NSApp setDelegate:appDelegate];
+        NSApplicationLoad();
+
+        NSRect mainScreenRect = [[NSScreen mainScreen] frame];
+        frame.origin.x = (mainScreenRect.size.width - rect->width) / 2;
+        frame.origin.y = (mainScreenRect.size.height - rect->height) / 2;
+        frame.size.width = rect->width;
+        frame.size.height = rect->height;
+        NSUInteger windowStyleMask = NSTitledWindowMask |
+                NSResizableWindowMask |
+                NSClosableWindowMask |
+                NSMiniaturizableWindowMask;
+        NSWindow *window  = [[[NSWindow alloc] initWithContentRect:frame
+                                                         styleMask:NSBackingStoreBuffered
+                                                           backing:NSBackingStoreBuffered
+                                                             defer:NO]
+                             autorelease];
+        NSRect innerFrame = NSMakeRect(0, 0, rect->width, rect->height);
+        NSView *view = [[[NSView alloc] initWithFrame:innerFrame] autorelease];
+        [window setContentView:view];
+        NSString *windowTitle = [[[NSString alloc] initWithBytes:pluginName->data
+                                                          length:strlen(pluginName->data)
+                                                        encoding:NSASCIIStringEncoding]
+                                autorelease];
+        [window setTitle:windowTitle];
+        [window makeKeyAndOrderFront:NSApp];
+        logDebug("Opening plugin editor window");
+        effect->dispatcher(effect, effEditOpen, 0, 0, (void*)view, 0);
+        [window orderFrontRegardless];
+        logDebug("Starting app runloop");
+        [NSApp run];
+        logDebug("App runloop stopped");
+        [pool release];
+ #else
+        logUnsupportedFeature("Showing plugin editor on 32-bit Mac OS X");
+ #endif
     }
 
     void closeLibraryHandle(LibraryHandle libraryHandle);

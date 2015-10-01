@@ -58,12 +58,18 @@ typedef enum {
     NUM_PLUGIN_SETTINGS
 } PluginSetting;
 
+typedef struct {
+    unsigned int width;
+    unsigned int height;
+} PluginWindowSize;
+
 /**
  * Called when a plugin is to be opened. This includes loading any dynamic
  * libraries into memory initializing the plugin.
  * @param pluginPtr self
  */
 typedef boolByte (*PluginOpenFunc)(void *pluginPtr);
+
 /**
  * Called when the plugin should display some generic info about itself. This
  * may be a list of supported parameters or programs, or any other information
@@ -72,6 +78,7 @@ typedef boolByte (*PluginOpenFunc)(void *pluginPtr);
  * @param pluginPtr self
  */
 typedef void (*PluginDisplayInfoFunc)(void *pluginPtr);
+
 /**
  * Used to gather information about the plugin, such as the number of inputs and
  * outputs. See the PluginSetting enum for examples of information which may be
@@ -80,6 +87,7 @@ typedef void (*PluginDisplayInfoFunc)(void *pluginPtr);
  * @param pluginSetting Setting to query
  */
 typedef int (*PluginGetSettingFunc)(void *pluginPtr, PluginSetting pluginSetting);
+
 /**
  * Called with the host wants to process a block of audio samples.
  * @param pluginPtr self
@@ -87,6 +95,7 @@ typedef int (*PluginGetSettingFunc)(void *pluginPtr, PluginSetting pluginSetting
  * @param outputs Block where output samples shall be written
  */
 typedef void (*PluginProcessAudioFunc)(void *pluginPtr, SampleBuffer inputs, SampleBuffer outputs);
+
 /**
  * Called the host wants to process MIDI events. This will be called directly
  * before the call to process audio.
@@ -95,6 +104,7 @@ typedef void (*PluginProcessAudioFunc)(void *pluginPtr, SampleBuffer inputs, Sam
  * this function is not called when there are no events to process.
  */
 typedef void (*PluginProcessMidiEventsFunc)(void *pluginPtr, LinkedList midiEvents);
+
 /**
  * Set a parameter within a plugin
  * @param pluginPtr self
@@ -102,17 +112,26 @@ typedef void (*PluginProcessMidiEventsFunc)(void *pluginPtr, LinkedList midiEven
  * @param value New value
  */
 typedef boolByte (*PluginSetParameterFunc)(void *pluginPtr, unsigned int index, float value);
+
 /**
  * Called once before audio processing begins. Some interfaces provide hooks for
  * a plugin to prepare itself before audio blocks are sent to it.
  * @param pluginPtr self
  */
 typedef void (*PluginPrepareForProcessingFunc)(void *pluginPtr);
+
+/**
+ * Called when the plugin should show its GUI editor.
+ * @param pluginPtr self
+ */
+typedef void (*PluginShowEditorFunc)(void *pluginPtr);
+
 /**
  * Called when the plugin is to be uninitialized and closed.
  * @param pluginPtr self
  */
 typedef void (*PluginCloseFunc)(void *pluginPtr);
+
 /**
  * Pointer to the free routine for the plugin interface
  * @param pluginPtr self
@@ -133,6 +152,7 @@ typedef struct {
     PluginProcessMidiEventsFunc processMidiEvents;
     PluginSetParameterFunc setParameter;
     PluginPrepareForProcessingFunc prepareForProcessing;
+    PluginShowEditorFunc showEditor;
     PluginCloseFunc closePlugin;
     FreePluginDataFunc freePluginData;
     SampleBuffer inputBuffer;

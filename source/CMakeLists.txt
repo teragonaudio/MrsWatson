@@ -107,7 +107,13 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 elseif(APPLE)
   set(mrswatsoncore_PLATFORM_SOURCES
     base/PlatformInfoMac.m
-    plugin/PluginVst2xMac.cpp
+    plugin/PluginVst2xMac.mm
+    plugin/PluginVst2xMacWindow.h
+    plugin/PluginVst2xMacWindow.m
+  )
+  set_source_files_properties(${mrswatsoncore_PLATFORM_SOURCES}
+    PROPERTIES COMPILE_FLAGS
+    "-x objective-c++"
   )
 elseif(MSVC)
   set(mrswatsoncore_PLATFORM_SOURCES

@@ -1,7 +1,7 @@
 //
-// MrsWatsonOptions.h - MrsWatson
-// Created by Nik Reiman on 10/23/12.
-// Copyright (c) 2012 Teragon Audio. All rights reserved.
+// PluginVst2xMacWindow.h - MrsWatson
+// Created by Nik Reiman on 07 Oct 13.
+// Copyright (c) 2013 Teragon Audio. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are met:
@@ -25,47 +25,15 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef MrsWatson_MrsWatsonOptions_h
-#define MrsWatson_MrsWatsonOptions_h
+#ifndef MrsWatson_PluginVst2xMacWindow_h
+#define MrsWatson_PluginVst2xMacWindow_h
 
-#include "app/ProgramOption.h"
+#if MACOSX
+#import <AppKit/AppKit.h>
 
-// Runtime options
-typedef enum {
-    OPTION_BIT_DEPTH,
-    OPTION_BLOCKSIZE,
-    OPTION_CHANNELS,
-    OPTION_COLOR_LOGGING,
-    OPTION_COLOR_TEST,
-    OPTION_CONFIG_FILE,
-    OPTION_DISPLAY_INFO,
-    OPTION_EDITOR,
-    OPTION_ENDIAN,
-    OPTION_ERROR_REPORT,
-    OPTION_HELP,
-    OPTION_INPUT_SOURCE,
-    OPTION_LIST_FILE_TYPES,
-    OPTION_LIST_PLUGINS,
-    OPTION_LOG_FILE,
-    OPTION_LOG_LEVEL,
-    OPTION_MAX_TIME,
-    OPTION_MIDI_SOURCE,
-    OPTION_OUTPUT_SOURCE,
-    OPTION_PARAMETER,
-    OPTION_PLUGIN,
-    OPTION_PLUGIN_ROOT,
-    OPTION_QUIET,
-    OPTION_REALTIME,
-    OPTION_SAMPLE_RATE,
-    OPTION_TEMPO,
-    OPTION_TIME_SIGNATURE,
-    OPTION_VERBOSE,
-    OPTION_VERSION,
-    OPTION_ZEBRA_SIZE,
-    NUM_OPTIONS
-} ProgramOptionIndex;
+@interface VstWindowAppDelegate : NSObject <NSApplicationDelegate>
 
-ProgramOptions newMrsWatsonOptions(void);
-void printMrsWatsonQuickstart(const char *argvName);
+@end
+#endif
 
 #endif

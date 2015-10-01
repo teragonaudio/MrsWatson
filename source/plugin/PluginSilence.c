@@ -94,6 +94,7 @@ Plugin newPluginSilence(const CharString pluginName)
     plugin->displayInfo = _pluginSilenceDisplayInfo;
     plugin->getSetting = _pluginSilenceGetSetting;
     plugin->prepareForProcessing = _pluginSilenceEmpty;
+    plugin->showEditor = _pluginSilenceEmpty;
     plugin->processAudio = _pluginSilenceProcessAudio;
     plugin->processMidiEvents = _pluginSilenceProcessMidiEvents;
     plugin->setParameter = _pluginSilenceSetParameter;

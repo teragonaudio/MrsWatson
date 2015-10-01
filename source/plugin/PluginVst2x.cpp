@@ -40,11 +40,13 @@ extern "C" {
 #include "base/Types.h"
 #include "logging/EventLogger.h"
 #include "midi/MidiEvent.h"
+#include "plugin/Plugin.h"
 #include "plugin/PluginVst2x.h"
 #include "plugin/PluginVst2xId.h"
 
     extern LinkedList getVst2xPluginLocations(CharString currentDirectory);
     extern LibraryHandle getLibraryHandleForPlugin(const CharString pluginAbsolutePath);
+    extern void showVst2xEditor(AEffect *effect, const CharString pluginName, PluginWindowSize *rect);
     extern AEffect *loadVst2xPlugin(LibraryHandle libraryHandle);
     extern void closeLibraryHandle(LibraryHandle libraryHandle);
 }
@@ -601,6 +603,7 @@ extern "C" {
         logInfo("Version: %d", data->pluginHandle->version);
         logInfo("I/O: %d/%d", data->pluginHandle->numInputs, data->pluginHandle->numOutputs);
         logInfo("InitialDelay: %d frames", data->pluginHandle->initialDelay);
+        logInfo("GUI Editor: %s", data->pluginHandle->flags & effFlagsHasEditor ? "yes" : "no");
 
         if (data->isPluginShell && data->shellPluginId == 0) {
             logInfo("Sub-plugins:");
@@ -853,6 +856,42 @@ extern "C" {
         _resumePlugin(plugin);
     }
 
+    static boolByte _pluginVst2xGetWindowRect(Plugin self, PluginWindowSize *outRect)
+    {
+        PluginVst2xData data = (PluginVst2xData) (self->extraData);
+        ERect *editorRect = 0;
+
+        logDebug("Getting editor window size from plugin");
+        data->pluginHandle->dispatcher(data->pluginHandle, effEditGetRect, 0, 0, &editorRect, 0);
+
+        if (editorRect != NULL) {
+            outRect->width = editorRect->right - editorRect->left;
+            outRect->height = editorRect->bottom - editorRect->top;
+            logDebug("Plugin window should be %dx%d pixels", outRect->width, outRect->height);
+            return true;
+        } else {
+            logError("Plugin did not return GUI window size");
+            return false;
+        }
+    }
+
+    static void _showVst2xEditor(void *pluginPtr)
+    {
+        Plugin plugin = (Plugin) pluginPtr;
+        PluginVst2xData data = (PluginVst2xData) (plugin->extraData);
+        PluginWindowSize windowSize;
+
+        if ((data->pluginHandle->flags & effFlagsHasEditor) != 0) {
+            logDebug("Attempting to open editor for plugin '%s'", plugin->pluginName->data);
+
+            if (_pluginVst2xGetWindowRect(plugin, &windowSize)) {
+                showVst2xEditor(data->pluginHandle, plugin->pluginName, &windowSize);
+            }
+        } else {
+            logError("Plugin '%s' does not have a GUI editor", plugin->pluginName->data);
+        }
+    }
+
     static void _closeVst2xPlugin(void *pluginPtr)
     {
         Plugin plugin = (Plugin)pluginPtr;
@@ -892,6 +931,7 @@ extern "C" {
         plugin->processMidiEvents = _processMidiEventsVst2xPlugin;
         plugin->setParameter = _setParameterVst2xPlugin;
         plugin->prepareForProcessing = _prepareForProcessingVst2xPlugin;
+        plugin->showEditor = _showVst2xEditor;
         plugin->closePlugin = _closeVst2xPlugin;
         plugin->freePluginData = _freeVst2xPluginData;
 

@@ -110,6 +110,7 @@ Plugin newPluginLimiter(const CharString pluginName)
     plugin->displayInfo = _pluginLimiterDisplayInfo;
     plugin->getSetting = _pluginLimiterGetSetting;
     plugin->prepareForProcessing = _pluginLimiterEmpty;
+    plugin->showEditor = _pluginLimiterEmpty;
     plugin->processAudio = _pluginLimiterProcessAudio;
     plugin->processMidiEvents = _pluginLimiterProcessMidiEvents;
     plugin->setParameter = _pluginLimiterSetParameter;

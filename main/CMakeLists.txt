@@ -9,7 +9,7 @@ set(mrswatsonmain_64_LIBS mrswatsoncore64)
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
   set(mrswatsonmain_LIBS ${mrswatsonmain_LIBS} dl)
-  set(mrswatsonmain_64_LIBS ${mrswatsonmain_64_LIBS} dl)
+  set(mrswatsonmain_64_LIBS ${mrswatsonmain_64_LIBS} dl X11)
 endif()
 
 if(WITH_AUDIOFILE)

@@ -29,6 +29,7 @@
 
 #include <Foundation/Foundation.h>
 
+extern "C" {
 #include "base/CharString.h"
 
 void _getMacVersionString(CharString outString);
@@ -37,5 +38,6 @@ void _getMacVersionString(CharString outString) {
     const char *osVersionCString = [osVersion UTF8String];
     charStringAppendCString(outString, osVersionCString);
 }
+};
 
 #endif

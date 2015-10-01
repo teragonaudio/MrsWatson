@@ -32,6 +32,7 @@ if(CMAKE_SIZEOF_VOID_P EQUAL 8)
 else()
   set(PLATFORM_BITS 32)
 endif()
+add_definitions(-DPLATFORM_BITS=${PLATFORM_BITS})
 
 # Build Flags ##################################################
 
@@ -102,7 +103,6 @@ if(UNIX)
   )
 
   set(SHARED_GCC_CFLAGS_LIST
-    "-std=gnu99"
     "-Wmain"
     "-Wenum-compare"
     "-Wmissing-braces"
@@ -121,8 +121,12 @@ if(UNIX)
   # Linux-specific GCC stuff
   if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     set(PLATFORM_GCC_FLAGS_LIST
+      "-std=gnu99"
       "-Wuninitialized"
     )
+
+    find_package(X11)
+    find_library(X11 REQUIRED)
 
     add_definitions("-DLINUX=1")
     add_definitions("-D_POSIX_C_SOURCE=200809L")
@@ -140,6 +144,7 @@ if(UNIX)
     )
 
     set(PLATFORM_LINKER_FLAGS_LIST
+      "-framework AppKit"
       "-framework Carbon"
       "-framework CoreFoundation"
       "-framework Foundation"

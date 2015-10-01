@@ -121,6 +121,7 @@ Plugin newPluginGain(const CharString pluginName)
     plugin->displayInfo = _pluginGainDisplayInfo;
     plugin->getSetting = _pluginGainGetSetting;
     plugin->prepareForProcessing = _pluginGainEmpty;
+    plugin->showEditor = _pluginGainEmpty;
     plugin->processAudio = _pluginGainProcessAudio;
     plugin->processMidiEvents = _pluginGainProcessMidiEvents;
     plugin->setParameter = _pluginGainSetParameter;

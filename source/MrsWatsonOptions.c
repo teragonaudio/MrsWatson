@@ -118,6 +118,17 @@ are \"big\" or \"little\".",
     programOptionsSetCString(options, OPTION_ENDIAN, "little");
 
     programOptionsAdd(options, newProgramOptionWithName(
+                          OPTION_EDITOR,
+                          "editor",
+                          "EXPERIMENTAL: Show plugin editor. When the editor window is closed, \
+MrsWatson will exit. Changes made in the editor are not sent to the plugin. This feature is mostly \
+intended for debugging plugin GUIs.",
+                          false,
+                          kProgramOptionTypeEmpty,
+                          kProgramOptionArgumentTypeNone));
+    options->options[OPTION_EDITOR]->hideInHelp = true;
+
+    programOptionsAdd(options, newProgramOptionWithName(
                           OPTION_ERROR_REPORT,
                           "error-report",
                           "Generate an error report zipfile on the desktop.",

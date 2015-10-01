@@ -586,6 +586,11 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char **argv)
         pluginChainInspect(pluginChain);
     }
 
+    if (programOptions->options[OPTION_EDITOR]->enabled) {
+        pluginChain->plugins[0]->showEditor(pluginChain->plugins[0]);
+        return RETURN_CODE_NOT_RUN;
+    }
+
     // Execute any parameter changes
     if (programOptions->options[OPTION_PARAMETER]->enabled) {
         if (!pluginChainSetParameters(pluginChain, programOptionsGetList(programOptions, OPTION_PARAMETER))) {
