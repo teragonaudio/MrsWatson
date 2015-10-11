@@ -95,6 +95,8 @@ boolByte fillMidiEventsFromRange(MidiSequence self, const unsigned long startTim
 
 void freeMidiSequence(MidiSequence self)
 {
-    freeLinkedListAndItems(self->midiEvents, (LinkedListFreeItemFunc)freeMidiEvent);
-    free(self);
+    if (self != NULL) {
+        freeLinkedListAndItems(self->midiEvents, (LinkedListFreeItemFunc)freeMidiEvent);
+        free(self);
+    }
 }

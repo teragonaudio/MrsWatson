@@ -189,6 +189,8 @@ int main(int argc, char *argv[])
 
     if (!programOptionsParseArgs(programOptions, argc, argv)) {
         printf("Or run with --help (option) to see help for a single option\n");
+        freeProgramOptions(programOptions);
+        freeTaskTimer(timer);
         return -1;
     }
 
@@ -202,9 +204,13 @@ int main(int argc, char *argv[])
             programOptionsPrintHelp(programOptions, true, DEFAULT_INDENT_SIZE);
         }
 
+        freeProgramOptions(programOptions);
+        freeTaskTimer(timer);
         return -1;
     } else if (programOptions->options[OPTION_TEST_PRINT_TESTS]->enabled) {
         printUnitTestSuites();
+        freeProgramOptions(programOptions);
+        freeTaskTimer(timer);
         return -1;
     }
 
@@ -227,6 +233,10 @@ int main(int argc, char *argv[])
         if (colon == NULL) {
             printf("ERROR: Invalid test name");
             programOptionPrintHelp(programOptions->options[OPTION_TEST_NAME], true, DEFAULT_INDENT_SIZE, 0);
+            freeProgramOptions(programOptions);
+            freeFile(mrsWatsonExePath);
+            freeFile(resourcesPath);
+            freeTaskTimer(timer);
             return -1;
         }
 
@@ -240,6 +250,10 @@ int main(int argc, char *argv[])
         if (testSuite == NULL) {
             printf("ERROR: Could not find test suite '%s'\n", testSuiteName->data);
             freeLinkedListAndItems(testSuites, (LinkedListFreeItemFunc)freeTestSuite);
+            freeProgramOptions(programOptions);
+            freeFile(mrsWatsonExePath);
+            freeFile(resourcesPath);
+            freeTaskTimer(timer);
             return -1;
         }
 
@@ -248,6 +262,10 @@ int main(int argc, char *argv[])
         if (testCase == NULL) {
             printf("ERROR: Could not find test case '%s'\n", testCaseName);
             freeLinkedListAndItems(testSuites, (LinkedListFreeItemFunc)freeTestSuite);
+            freeProgramOptions(programOptions);
+            freeFile(mrsWatsonExePath);
+            freeFile(resourcesPath);
+            freeTaskTimer(timer);
             return -1;
         } else {
             printf("=== Running test %s:%s ===\n", testSuite->name, testCase->name);
@@ -262,6 +280,10 @@ int main(int argc, char *argv[])
             printf("ERROR: Invalid test suite '%s'\n", testSuiteToRun->data);
             printf("Run with '--list' suite to show possible test suites\n");
             freeLinkedListAndItems(testSuites, (LinkedListFreeItemFunc)freeTestSuite);
+            freeProgramOptions(programOptions);
+            freeFile(mrsWatsonExePath);
+            freeFile(resourcesPath);
+            freeTaskTimer(timer);
             return -1;
         } else {
             printf("=== Running test suite %s ===\n", testSuite->name);

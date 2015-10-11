@@ -103,10 +103,12 @@ boolByte pluginChainAddFromArgumentString(PluginChain pluginChain, const CharStr
             substringLength = pluginSeparator - substringStart;
         }
 
+        freeCharString(pluginNameBuffer);
         pluginNameBuffer = newCharString();
         strncpy(pluginNameBuffer->data, substringStart, substringLength);
 
         // Look for the separator for presets to load into these plugins
+        freeCharString(presetNameBuffer);
         presetNameBuffer = newCharString();
         presetSeparator = strchr(pluginNameBuffer->data, CHAIN_STRING_PROGRAM_SEPARATOR);
 
@@ -130,8 +132,8 @@ boolByte pluginChainAddFromArgumentString(PluginChain pluginChain, const CharStr
         if (plugin != NULL) {
             if (!pluginChainAppend(pluginChain, plugin, preset)) {
                 logError("Plugin '%s' could not be added to the chain", pluginNameBuffer->data);
-                free(pluginNameBuffer);
-                free(presetNameBuffer);
+                freeCharString(pluginNameBuffer);
+                freeCharString(presetNameBuffer);
                 return false;
             }
         }
@@ -398,23 +400,25 @@ void pluginChainShutdown(PluginChain pluginChain)
 
 void freePluginChain(PluginChain pluginChain)
 {
-    unsigned int i;
+    if (pluginChain != NULL) {
+        unsigned int i;
 
-    for (i = 0; i < pluginChain->numPlugins; i++) {
-        freePluginPreset(pluginChain->presets[i]);
-        freePlugin(pluginChain->plugins[i]);
-        freeTaskTimer(pluginChain->audioTimers[i]);
-        freeTaskTimer(pluginChain->midiTimers[i]);
+        for (i = 0; i < pluginChain->numPlugins; i++) {
+            freePluginPreset(pluginChain->presets[i]);
+            freePlugin(pluginChain->plugins[i]);
+            freeTaskTimer(pluginChain->audioTimers[i]);
+            freeTaskTimer(pluginChain->midiTimers[i]);
+        }
+
+        free(pluginChain->presets);
+        free(pluginChain->plugins);
+        free(pluginChain->audioTimers);
+        free(pluginChain->midiTimers);
+
+        if (pluginChain->_realtime) {
+            freeTaskTimer(pluginChain->_realtimeTimer);
+        }
+
+        free(pluginChain);
     }
-
-    free(pluginChain->presets);
-    free(pluginChain->plugins);
-    free(pluginChain->audioTimers);
-    free(pluginChain->midiTimers);
-
-    if (pluginChain->_realtime) {
-        freeTaskTimer(pluginChain->_realtimeTimer);
-    }
-
-    free(pluginChain);
 }

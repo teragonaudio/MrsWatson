@@ -67,6 +67,6 @@ void freeAudioClock(AudioClock self)
 {
     if (self != NULL) {
         free(self);
-        self = NULL;
+        audioClockInstance = NULL;
     }
 }

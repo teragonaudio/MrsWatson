@@ -159,7 +159,9 @@ SampleSource sampleSourceFactory(const CharString sampleSourceName)
 
 void freeSampleSource(SampleSource self)
 {
-    self->freeSampleSourceData(self->extraData);
-    freeCharString(self->sourceName);
-    free(self);
+    if (self != NULL) {
+        self->freeSampleSourceData(self->extraData);
+        freeCharString(self->sourceName);
+        free(self);
+    }
 }

@@ -143,7 +143,7 @@ static boolByte _isDirectory(const CharString path)
 
 static boolByte _pathContainsInvalidChars(const CharString path)
 {
-    size_t i = 0;
+    size_t i, j = 0;
 #if WINDOWS
 
     // The colon is not allowed in pathnames (even on Windows), however it is
@@ -151,14 +151,14 @@ static boolByte _pathContainsInvalidChars(const CharString path)
     // the first 3 characters of the path when dealing with absolute paths on
     // this platform.
     if (_isAbsolutePath(path)) {
-        i = 3;
+        j = 2;
     }
 
 #endif
 
-    if (path != NULL) {
+    if (path != NULL && path->data != NULL && strlen(path->data) > j) {
         for (i = 0; i < strlen(kFileNameInvalidCharacters); ++i) {
-            if (strchr(path->data, kFileNameInvalidCharacters[i]) != NULL) {
+            if (strchr(path->data + j, kFileNameInvalidCharacters[i]) != NULL) {
                 return true;
             }
         }
@@ -393,8 +393,10 @@ static File _copyFileToDirectory(File self, const File destination) {
         if (!fileWriteBytes(result, selfContents, selfSize)) {
             logError("Could not copy source file");
             freeFile(result);
+            free(selfContents);
             return NULL;
         }
+        free(selfContents);
     }
 
     return result;
