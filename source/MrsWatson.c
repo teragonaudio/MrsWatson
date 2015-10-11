@@ -883,7 +883,6 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char **argv)
         freeAudioSettings();
         freeEventLogger();
         freeAudioClock(getAudioClock());
-        return RETURN_CODE_NOT_RUN;
         return RETURN_CODE_INTERNAL_ERROR;
     }
 
