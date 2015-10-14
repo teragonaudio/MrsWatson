@@ -62,10 +62,12 @@ if(MSVC)
   set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "/MT /Zi /O2 /Ob1 /D NDEBUG")
 
   add_definitions("/W3 /D _CRT_SECURE_NO_WARNINGS=1 /D WINDOWS=1")
+  add_definitions("/D EXPORT=__declspec(dllexport)")
 endif()
 
 if(UNIX)
   add_definitions("-DUNIX=1")
+  add_definitions("-DEXPORT=")
 
   # GCC flags common to all Unix platforms
   set(SHARED_GCC_FLAGS_LIST
@@ -143,6 +145,7 @@ if(UNIX)
       "-mmacosx-version-min=10.5"
     )
 
+    set(CMAKE_MACOSX_RPATH 1)
     set(PLATFORM_LINKER_FLAGS_LIST
       "-framework AppKit"
       "-framework Carbon"
@@ -172,6 +175,7 @@ if(UNIX)
   set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} ${SHARED_GCC_CFLAGS} ${PLATFORM_GCC_FLAGS}")
   set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${SHARED_GCC_CPPFLAGS} ${PLATFORM_GCC_FLAGS}")
   set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${SHARED_GCC_CPPFLAGS} ${PLATFORM_GCC_FLAGS}")
+  set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${PLATFORM_LINKER_FLAGS}")
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${PLATFORM_LINKER_FLAGS}")
 endif()
 

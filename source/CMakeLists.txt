@@ -130,17 +130,33 @@ source_group(midi ".*/midi/.*")
 source_group(plugin ".*/plugin/.*")
 source_group(time ".*/time/.*")
 
-add_library(mrswatsoncore STATIC
+add_library(mrswatsoncore-static STATIC
   ${mrswatsoncore_SOURCES}
   ${mrswatsoncore_PLATFORM_SOURCES}
   ${mrswatsoncore_HEADERS}
 )
 
-add_library(mrswatsoncore64 STATIC
+add_library(mrswatsoncore64-static STATIC
   ${mrswatsoncore_SOURCES}
   ${mrswatsoncore_PLATFORM_SOURCES}
   ${mrswatsoncore_HEADERS}
 )
 
+configure_target(mrswatsoncore-static 32)
+configure_target(mrswatsoncore64-static 64)
+
+# TODO: It would be nicer if the shared library could be created from the static target
+# That should be possible with target_link_libraries(mrswatsoncore mrswatsoncore-static).
+# However, the linker strips out all exported symbols and creates a very small lib (at
+# least on Mac OX, probably also on Linux). Not sure why.
+add_library(mrswatsoncore SHARED
+  ${mrswatsoncore_SOURCES}
+  ${mrswatsoncore_PLATFORM_SOURCES}
+  ${mrswatsoncore_HEADERS})
 configure_target(mrswatsoncore 32)
+
+add_library(mrswatsoncore64 SHARED
+  ${mrswatsoncore_SOURCES}
+  ${mrswatsoncore_PLATFORM_SOURCES}
+  ${mrswatsoncore_HEADERS})
 configure_target(mrswatsoncore64 64)
