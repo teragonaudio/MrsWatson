@@ -11,6 +11,7 @@ extern TestSuite addFileTests(void);
 extern TestSuite addLinkedListTests(void);
 extern TestSuite addMidiSequenceTests(void);
 extern TestSuite addMidiSourceTests(void);
+extern TestSuite addMrsWatsonTests(void);
 extern TestSuite addPcmSampleBufferTests(void);
 extern TestSuite addPlatformInfoTests(void);
 extern TestSuite addPluginTests(void);
@@ -51,6 +52,7 @@ LinkedList getTestSuites(File mrsWatsonExePath, File resourcesPath)
     linkedListAppend(unitTestSuites, addLinkedListTests());
     linkedListAppend(unitTestSuites, addMidiSequenceTests());
     linkedListAppend(unitTestSuites, addMidiSourceTests());
+    linkedListAppend(unitTestSuites, addMrsWatsonTests());
     linkedListAppend(unitTestSuites, addPcmSampleBufferTests());
     linkedListAppend(unitTestSuites, addPlatformInfoTests());
     linkedListAppend(unitTestSuites, addPluginTests());

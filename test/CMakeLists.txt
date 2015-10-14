@@ -4,6 +4,7 @@ project(MrsWatsonTest)
 include(${cmake_SCRIPTS_DIR}/ConfigureTarget.cmake)
 
 set(mrswatsontest_SOURCES
+  MrsWatsonTest.c
   MrsWatsonTestMain.c
   IntegrationTests.c
   analysis/AnalysisClipping.c
