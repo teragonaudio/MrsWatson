@@ -85,7 +85,7 @@ MrsWatson newMrsWatson(void);
  * @param programOptions Initialized program options to use. The MrsWatson instance takes ownership
  *                       of this data during the call, you must NOT free it afterwards.
  *
- * @return 0 on success, 1 on failure
+ * @return 0 on success, any other number on failure. See ReturnCode enum for all possible codes.
  */
 EXPORT
 int mrsWatsonInitialize(MrsWatson self, ProgramOptions programOptions);
@@ -98,7 +98,7 @@ int mrsWatsonInitialize(MrsWatson self, ProgramOptions programOptions);
  * @param argc Number of arguments.
  * @param argv Array of arguments. You may free this memory after the call finishes.
  *
- * @return 0 on success, 1 on failure
+ * @return 0 on success, any other number on failure. See ReturnCode enum for all possible codes.
  */
 EXPORT
 int mrsWatsonInitializeWithCommandLineArgs(MrsWatson self, int argc, char **argv);
@@ -115,10 +115,11 @@ int mrsWatsonInitializeWithCommandLineArgs(MrsWatson self, int argc, char **argv
  *                          MrsWatson instance will remain uninitialized. You may free this memory
  *                          after the call finishes.
  *
- * @return 0 on success, 1 on failure
+ * @return 0 on success, any other number on failure. See ReturnCode enum for all possible codes.
  */
-EXPORT
-int mrsWatsonInitializeWithSerializedOptions(MrsWatson self, const char *serializedOptions);
+// TODO: This will depend on the --configuration option being added first
+// EXPORT
+// int mrsWatsonInitializeWithSerializedOptions(MrsWatson self, const char *serializedOptions);
 
 /**
  * Process audio and/or MIDI with a MrsWatson instance.
@@ -133,7 +134,7 @@ int mrsWatsonInitializeWithSerializedOptions(MrsWatson self, const char *seriali
  * @param inputSource Initialized output source (see sampleSourceFactory(const CharString)). Must
  *                    not be NULL. You may free this memory after the call finishes.
  *
- * @return 0 on success, 1 on failure
+ * @return 0 on success, any other number on failure. See ReturnCode enum for all possible codes.
  */
 EXPORT
 int mrsWatsonProcess(MrsWatson self,
@@ -154,7 +155,7 @@ int mrsWatsonProcess(MrsWatson self,
  * @param numChannels Number of channels for both the input and output sample arrays.
  * @param numSamples Number of samples for any given input/output channel index.
  *
- * @return 0 on success, 1 on failure
+ * @return 0 on success, any other number on failure. See ReturnCode enum for all possible codes.
  */
 EXPORT
 int mrsWatsonProcessBlock(MrsWatson self,
@@ -169,19 +170,21 @@ int mrsWatsonProcessBlock(MrsWatson self,
  *
  * @param self (may not be NULL).
  * @param inputFileName Input file to read sample data from. May be NULL if not needed. You may free
- *                      this memory after the call finishes.
+ *                      this memory after the call finishes. The file type will be automatically
+ *                      determined based on the file extension.
  * @param midiFileName Input MIDI file to use during processing. May be NULL if not needed. You may
  *                     free this memory after the call finishes.
  * @param outputFileName Output file to write data to. Must not be NULL. You may free this memory
- *                       after the call finishes.
+ *                       after the call finishes. The file type will be automatically determined
+ *                       based on the file extension.
  *
- * @return 0 on success, 1 on failure
+ * @return 0 on success, any other number on failure. See ReturnCode enum for all possible codes.
  */
 EXPORT
-int mrsWatsonProcessWithFiles(MrsWatson self,
-                              const char *inputFileName,
-                              const char *midiFileName,
-                              const char *outputFileName);
+int mrsWatsonProcessFiles(MrsWatson self,
+                          const char *inputFileName,
+                          const char *midiFileName,
+                          const char *outputFileName);
 
 /**
  * Reset a MrsWatson instance to the default state.
