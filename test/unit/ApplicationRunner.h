@@ -27,7 +27,7 @@ typedef struct {
 
 int runIntegrationTest(const char *testName,
                        CharString testArguments,
-                       ReturnCodes expectedResultCode,
+                       ReturnCode expectedResultCode,
                        const TestOutputType testOutputType,
                        const CharString mrsWatsonExePath,
                        const CharString resourcesPath);

@@ -189,14 +189,14 @@ static const char *_getResultCodeString(const int resultCode)
 
 int runIntegrationTest(const char *testName,
                        CharString testArguments,
-                       ReturnCodes expectedResultCode,
+                       ReturnCode expectedResultCode,
                        const TestOutputType testOutputType,
                        const CharString mrsWatsonExePath,
                        const CharString resourcesPath)
 {
     int result = 0;
     int returnCode;
-    ReturnCodes resultCode;
+    ReturnCode resultCode;
     ChannelCount failedAnalysisChannel;
     SampleCount failedAnalysisFrame;
 
@@ -281,7 +281,7 @@ int runIntegrationTest(const char *testName,
 
 #else
     returnCode = system(arguments->data);
-    resultCode = (ReturnCodes)WEXITSTATUS(returnCode);
+    resultCode = (ReturnCode)WEXITSTATUS(returnCode);
 #endif
     freeCharString(arguments);
 

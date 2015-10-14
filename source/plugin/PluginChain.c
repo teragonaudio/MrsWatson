@@ -170,7 +170,7 @@ static boolByte _loadPresetForPlugin(Plugin plugin, PluginPreset preset)
     }
 }
 
-ReturnCodes pluginChainInitialize(PluginChain pluginChain)
+ReturnCode pluginChainInitialize(PluginChain pluginChain)
 {
     Plugin plugin;
     PluginPreset preset;

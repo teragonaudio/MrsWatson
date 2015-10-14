@@ -126,7 +126,7 @@ static void printVersion(void)
     freeCharString(versionString);
 }
 
-static ReturnCodes buildPluginChain(PluginChain pluginChain, const CharString argument, const CharString pluginSearchRoot)
+static ReturnCode buildPluginChain(PluginChain pluginChain, const CharString argument, const CharString pluginSearchRoot)
 {
     // Construct plugin chain
     if (!pluginChainAddFromArgumentString(pluginChain, argument, pluginSearchRoot)) {
@@ -144,7 +144,7 @@ static ReturnCodes buildPluginChain(PluginChain pluginChain, const CharString ar
     return RETURN_CODE_SUCCESS;
 }
 
-static ReturnCodes setupInputSource(SampleSource inputSource)
+static ReturnCode setupInputSource(SampleSource inputSource)
 {
     if (inputSource == NULL) {
         return RETURN_CODE_INVALID_ARGUMENT;
@@ -163,7 +163,7 @@ static ReturnCodes setupInputSource(SampleSource inputSource)
     return RETURN_CODE_SUCCESS;
 }
 
-static ReturnCodes setupMidiSource(MidiSource midiSource, MidiSequence *outSequence)
+static ReturnCode setupMidiSource(MidiSource midiSource, MidiSequence *outSequence)
 {
     if (midiSource != NULL) {
         if (!midiSource->openMidiSource(midiSource)) {
@@ -184,7 +184,7 @@ static ReturnCodes setupMidiSource(MidiSource midiSource, MidiSequence *outSeque
     return RETURN_CODE_SUCCESS;
 }
 
-static ReturnCodes setupOutputSource(SampleSource outputSource)
+static ReturnCode setupOutputSource(SampleSource outputSource)
 {
     if (outputSource == NULL) {
         return RETURN_CODE_INVALID_ARGUMENT;
@@ -313,7 +313,7 @@ void writeOutput(SampleSource outputSource, SampleSource silenceSource, SampleBu
 
 int mrsWatsonMain(ErrorReporter errorReporter, int argc, char **argv)
 {
-    ReturnCodes result;
+    ReturnCode result;
     // Input/Output sources, plugin chain, and other required objects
     SampleSource inputSource = NULL;
     SampleSource outputSource = NULL;
