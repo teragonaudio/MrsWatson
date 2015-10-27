@@ -133,7 +133,7 @@ static boolByte _readMidiFileTrack(FILE *midiFile, const int trackNumber,
     size_t itemsRead, numBytes;
     unsigned long currentTimeInSampleFrames = 0;
     unsigned long unpackedVariableLength;
-    MidiEvent midiEvent;
+    MidiEvent midiEvent = NULL;
     unsigned int i;
 
     if (!_readMidiFileChunkHeader(midiFile, "MTrk")) {
@@ -175,6 +175,7 @@ static boolByte _readMidiFileTrack(FILE *midiFile, const int trackNumber,
         }
 
         currentByte++;
+        freeMidiEvent(midiEvent);
         midiEvent = newMidiEvent();
 
         switch (*currentByte) {
@@ -194,6 +195,7 @@ static boolByte _readMidiFileTrack(FILE *midiFile, const int trackNumber,
         case 0x7f:
             logUnsupportedFeature("MIDI files containing sysex events");
             free(trackData);
+            freeMidiEvent(midiEvent);
             return false;
 
         default:
@@ -220,11 +222,15 @@ static boolByte _readMidiFileTrack(FILE *midiFile, const int trackNumber,
         case TIME_DIVISION_TYPE_FRAMES_PER_SECOND:
             // Actually, this should be caught when parsing the file type
             logUnsupportedFeature("Time division frames/sec");
+            free(trackData);
+            freeMidiEvent(midiEvent);
             return false;
 
         case TIME_DIVISION_TYPE_INVALID:
         default:
             logInternalError("Invalid time division type");
+            free(trackData);
+            freeMidiEvent(midiEvent);
             return false;
         }
 
@@ -254,6 +260,7 @@ static boolByte _readMidiFileTrack(FILE *midiFile, const int trackNumber,
             case MIDI_META_TYPE_TRACK_END:
                 logDebug("Parsed MIDI meta event of type 0x%02x at %ld", midiEvent->status, midiEvent->timestamp);
                 appendMidiEventToSequence(midiSequence, midiEvent);
+                midiEvent = NULL;
                 break;
 
             default:
@@ -263,10 +270,12 @@ static boolByte _readMidiFileTrack(FILE *midiFile, const int trackNumber,
         } else {
             logDebug("MIDI event of type 0x%02x parsed at %ld", midiEvent->status, midiEvent->timestamp);
             appendMidiEventToSequence(midiSequence, midiEvent);
+            midiEvent = NULL;
         }
     }
 
     free(trackData);
+    freeMidiEvent(midiEvent);
     return true;
 }
 

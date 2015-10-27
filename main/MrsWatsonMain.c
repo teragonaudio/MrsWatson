@@ -69,5 +69,7 @@ int main(int argc, char *argv[])
     // Visual Studio always closes the console window automatically, so capture
     // the result value to a variable so that we can set a breakpoint here
     int result = mrsWatsonMain(gErrorReporter, argc, argv);
+    freeErrorReporter(gErrorReporter);
+    gErrorReporter = NULL;
     return result;
 }

@@ -133,9 +133,6 @@ static ReturnCode buildPluginChain(PluginChain pluginChain, const CharString arg
         return RETURN_CODE_INVALID_PLUGIN_CHAIN;
     }
 
-    // No longer needed
-    freeCharString(pluginSearchRoot);
-
     if (pluginChain->numPlugins == 0) {
         logError("No plugins loaded");
         return RETURN_CODE_INVALID_PLUGIN_CHAIN;
@@ -355,6 +352,16 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char **argv)
     if (!programOptionsParseArgs(programOptions, argc, argv)) {
         printf("Run with '--help' to see possible options\n");
         printf("Or run with '--help full' to see extended help for all options\n");
+        freeSampleSource(inputSource);
+        freeSampleSource(outputSource);
+        freePluginChain(pluginChain);
+        freeTaskTimer(initTimer);
+        freeTaskTimer(totalTimer);
+        freeProgramOptions(programOptions);
+        freeCharString(pluginSearchRoot);
+        freeAudioSettings();
+        freeEventLogger();
+        freeAudioClock(getAudioClock());
         return RETURN_CODE_INVALID_ARGUMENT;
     }
 
@@ -363,6 +370,16 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char **argv)
     if (argc == 1) {
         printf("%s needs at least a plugin, input source, and output source to run.\n\n", PROGRAM_NAME);
         printMrsWatsonQuickstart(argv[0]);
+        freeSampleSource(inputSource);
+        freeSampleSource(outputSource);
+        freePluginChain(pluginChain);
+        freeProgramOptions(programOptions);
+        freeTaskTimer(initTimer);
+        freeTaskTimer(totalTimer);
+        freeCharString(pluginSearchRoot);
+        freeAudioSettings();
+        freeEventLogger();
+        freeAudioClock(getAudioClock());
         return RETURN_CODE_NOT_RUN;
     } else if (programOptions->options[OPTION_HELP]->enabled) {
         printMrsWatsonQuickstart(argv[0]);
@@ -386,12 +403,42 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char **argv)
             }
         }
 
+        freeSampleSource(inputSource);
+        freeSampleSource(outputSource);
+        freePluginChain(pluginChain);
+        freeProgramOptions(programOptions);
+        freeTaskTimer(initTimer);
+        freeTaskTimer(totalTimer);
+        freeCharString(pluginSearchRoot);
+        freeAudioSettings();
+        freeEventLogger();
+        freeAudioClock(getAudioClock());
         return RETURN_CODE_NOT_RUN;
     } else if (programOptions->options[OPTION_VERSION]->enabled) {
         printVersion();
+        freeSampleSource(inputSource);
+        freeSampleSource(outputSource);
+        freePluginChain(pluginChain);
+        freeProgramOptions(programOptions);
+        freeTaskTimer(initTimer);
+        freeTaskTimer(totalTimer);
+        freeCharString(pluginSearchRoot);
+        freeAudioSettings();
+        freeEventLogger();
+        freeAudioClock(getAudioClock());
         return RETURN_CODE_NOT_RUN;
     } else if (programOptions->options[OPTION_COLOR_TEST]->enabled) {
         printTestPattern();
+        freeSampleSource(inputSource);
+        freeSampleSource(outputSource);
+        freePluginChain(pluginChain);
+        freeProgramOptions(programOptions);
+        freeTaskTimer(initTimer);
+        freeTaskTimer(totalTimer);
+        freeCharString(pluginSearchRoot);
+        freeAudioSettings();
+        freeEventLogger();
+        freeAudioClock(getAudioClock());
         return RETURN_CODE_NOT_RUN;
     }
     // See if we are to make an error report and make necessary changes to the
@@ -414,6 +461,16 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char **argv)
     // Read in options from a configuration file, if given
     if (programOptions->options[OPTION_CONFIG_FILE]->enabled) {
         if (!programOptionsParseConfigFile(programOptions, programOptionsGetString(programOptions, OPTION_CONFIG_FILE))) {
+            freeSampleSource(inputSource);
+            freeSampleSource(outputSource);
+            freePluginChain(pluginChain);
+            freeProgramOptions(programOptions);
+            freeTaskTimer(initTimer);
+            freeTaskTimer(totalTimer);
+            freeCharString(pluginSearchRoot);
+            freeAudioSettings();
+            freeEventLogger();
+            freeAudioClock(getAudioClock());
             return RETURN_CODE_INVALID_ARGUMENT;
         }
     }
@@ -450,6 +507,17 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char **argv)
             switch (option->index) {
             case OPTION_BIT_DEPTH:
                 if (!setBitDepth((const BitDepth)(short)programOptionsGetNumber(programOptions, OPTION_BIT_DEPTH))) {
+                    freeSampleSource(inputSource);
+                    freeSampleSource(outputSource);
+                    freePluginChain(pluginChain);
+                    freeProgramOptions(programOptions);
+                    freeTaskTimer(initTimer);
+                    freeTaskTimer(totalTimer);
+                    freeCharString(pluginSearchRoot);
+                    freeMidiSource(midiSource);
+                    freeAudioSettings();
+                    freeEventLogger();
+                    freeAudioClock(getAudioClock());
                     return RETURN_CODE_INVALID_ARGUMENT;
                 }
 
@@ -457,6 +525,17 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char **argv)
 
             case OPTION_BLOCKSIZE:
                 if (!setBlocksize((const SampleCount)programOptionsGetNumber(programOptions, OPTION_BLOCKSIZE))) {
+                    freeSampleSource(inputSource);
+                    freeSampleSource(outputSource);
+                    freePluginChain(pluginChain);
+                    freeProgramOptions(programOptions);
+                    freeTaskTimer(initTimer);
+                    freeTaskTimer(totalTimer);
+                    freeCharString(pluginSearchRoot);
+                    freeMidiSource(midiSource);
+                    freeAudioSettings();
+                    freeEventLogger();
+                    freeAudioClock(getAudioClock());
                     return RETURN_CODE_INVALID_ARGUMENT;
                 }
 
@@ -464,6 +543,17 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char **argv)
 
             case OPTION_CHANNELS:
                 if (!setNumChannels((const ChannelCount)programOptionsGetNumber(programOptions, OPTION_CHANNELS))) {
+                    freeSampleSource(inputSource);
+                    freeSampleSource(outputSource);
+                    freePluginChain(pluginChain);
+                    freeProgramOptions(programOptions);
+                    freeTaskTimer(initTimer);
+                    freeTaskTimer(totalTimer);
+                    freeCharString(pluginSearchRoot);
+                    freeMidiSource(midiSource);
+                    freeAudioSettings();
+                    freeEventLogger();
+                    freeAudioClock(getAudioClock());
                     return RETURN_CODE_INVALID_ARGUMENT;
                 }
 
@@ -483,12 +573,14 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char **argv)
                 break;
 
             case OPTION_MIDI_SOURCE:
+                freeMidiSource(midiSource);
                 midiSource = newMidiSource(guessMidiSourceType(programOptionsGetString(
                                                programOptions, OPTION_MIDI_SOURCE)),
                                            programOptionsGetString(programOptions, OPTION_MIDI_SOURCE));
                 break;
 
             case OPTION_OUTPUT_SOURCE:
+                freeSampleSource(outputSource);
                 outputSource = sampleSourceFactory(programOptionsGetString(programOptions, OPTION_OUTPUT_SOURCE));
                 break;
 
@@ -502,6 +594,17 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char **argv)
 
             case OPTION_SAMPLE_RATE:
                 if (!setSampleRate(programOptionsGetNumber(programOptions, OPTION_SAMPLE_RATE))) {
+                    freeSampleSource(inputSource);
+                    freeSampleSource(outputSource);
+                    freePluginChain(pluginChain);
+                    freeProgramOptions(programOptions);
+                    freeTaskTimer(initTimer);
+                    freeTaskTimer(totalTimer);
+                    freeCharString(pluginSearchRoot);
+                    freeMidiSource(midiSource);
+                    freeAudioSettings();
+                    freeEventLogger();
+                    freeAudioClock(getAudioClock());
                     return RETURN_CODE_INVALID_ARGUMENT;
                 }
 
@@ -509,6 +612,17 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char **argv)
 
             case OPTION_TEMPO:
                 if (!setTempo(programOptionsGetNumber(programOptions, OPTION_TEMPO))) {
+                    freeSampleSource(inputSource);
+                    freeSampleSource(outputSource);
+                    freePluginChain(pluginChain);
+                    freeProgramOptions(programOptions);
+                    freeTaskTimer(initTimer);
+                    freeTaskTimer(totalTimer);
+                    freeCharString(pluginSearchRoot);
+                    freeMidiSource(midiSource);
+                    freeAudioSettings();
+                    freeEventLogger();
+                    freeAudioClock(getAudioClock());
                     return RETURN_CODE_INVALID_ARGUMENT;
                 }
 
@@ -516,6 +630,17 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char **argv)
 
             case OPTION_TIME_SIGNATURE:
                 if (!setTimeSignatureFromString(programOptionsGetString(programOptions, OPTION_TIME_SIGNATURE))) {
+                    freeSampleSource(inputSource);
+                    freeSampleSource(outputSource);
+                    freePluginChain(pluginChain);
+                    freeProgramOptions(programOptions);
+                    freeTaskTimer(initTimer);
+                    freeTaskTimer(totalTimer);
+                    freeCharString(pluginSearchRoot);
+                    freeMidiSource(midiSource);
+                    freeAudioSettings();
+                    freeEventLogger();
+                    freeAudioClock(getAudioClock());
                     return RETURN_CODE_INVALID_ARGUMENT;
                 }
 
@@ -534,11 +659,33 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char **argv)
 
     if (programOptions->options[OPTION_LIST_PLUGINS]->enabled) {
         listAvailablePlugins(pluginSearchRoot);
+        freeSampleSource(inputSource);
+        freeSampleSource(outputSource);
+        freePluginChain(pluginChain);
+        freeProgramOptions(programOptions);
+        freeTaskTimer(initTimer);
+        freeTaskTimer(totalTimer);
+        freeCharString(pluginSearchRoot);
+        freeMidiSource(midiSource);
+        freeAudioSettings();
+        freeEventLogger();
+        freeAudioClock(getAudioClock());
         return RETURN_CODE_NOT_RUN;
     }
 
     if (programOptions->options[OPTION_LIST_FILE_TYPES]->enabled) {
         sampleSourcePrintSupportedTypes();
+        freeSampleSource(inputSource);
+        freeSampleSource(outputSource);
+        freePluginChain(pluginChain);
+        freeProgramOptions(programOptions);
+        freeTaskTimer(initTimer);
+        freeTaskTimer(totalTimer);
+        freeCharString(pluginSearchRoot);
+        freeMidiSource(midiSource);
+        freeAudioSettings();
+        freeEventLogger();
+        freeAudioClock(getAudioClock());
         return RETURN_CODE_NOT_RUN;
     }
 
@@ -546,20 +693,56 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char **argv)
 
     if ((result = setupInputSource(inputSource)) != RETURN_CODE_SUCCESS) {
         logError("Input source could not be opened, exiting");
+        freeSampleSource(inputSource);
+        freeSampleSource(outputSource);
+        freePluginChain(pluginChain);
+        freeProgramOptions(programOptions);
+        freeTaskTimer(initTimer);
+        freeTaskTimer(totalTimer);
+        freeCharString(pluginSearchRoot);
+        freeMidiSource(midiSource);
+        freeAudioSettings();
+        freeEventLogger();
+        freeAudioClock(getAudioClock());
         return result;
     }
 
     if ((result = buildPluginChain(pluginChain, programOptionsGetString(programOptions, OPTION_PLUGIN),
                                    pluginSearchRoot)) != RETURN_CODE_SUCCESS) {
         logError("Plugin chain could not be constructed, exiting");
+        freeSampleSource(inputSource);
+        freeSampleSource(outputSource);
+        freePluginChain(pluginChain);
+        freeProgramOptions(programOptions);
+        freeTaskTimer(initTimer);
+        freeTaskTimer(totalTimer);
+        freeCharString(pluginSearchRoot);
+        freeMidiSource(midiSource);
+        freeAudioSettings();
+        freeEventLogger();
+        freeAudioClock(getAudioClock());
         return result;
     }
+
+    // No longer needed
+    freeCharString(pluginSearchRoot);
 
     if (midiSource != NULL) {
         result = setupMidiSource(midiSource, &midiSequence);
 
         if (result != RETURN_CODE_SUCCESS) {
             logError("MIDI source could not be opened, exiting");
+            freeSampleSource(inputSource);
+            freeSampleSource(outputSource);
+            freePluginChain(pluginChain);
+            freeProgramOptions(programOptions);
+            freeTaskTimer(initTimer);
+            freeTaskTimer(totalTimer);
+            freeMidiSource(midiSource);
+            freeMidiSequence(midiSequence);
+            freeAudioSettings();
+            freeEventLogger();
+            freeAudioClock(getAudioClock());
             return result;
         }
     }
@@ -578,6 +761,17 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char **argv)
 
     if (result != RETURN_CODE_SUCCESS) {
         logError("Could not initialize plugin chain");
+        freeSampleSource(inputSource);
+        freeSampleSource(outputSource);
+        freePluginChain(pluginChain);
+        freeProgramOptions(programOptions);
+        freeTaskTimer(initTimer);
+        freeTaskTimer(totalTimer);
+        freeMidiSource(midiSource);
+        freeMidiSequence(midiSequence);
+        freeAudioSettings();
+        freeEventLogger();
+        freeAudioClock(getAudioClock());
         return result;
     }
 
@@ -588,12 +782,34 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char **argv)
 
     if (programOptions->options[OPTION_EDITOR]->enabled) {
         pluginChain->plugins[0]->showEditor(pluginChain->plugins[0]);
+        freeSampleSource(inputSource);
+        freeSampleSource(outputSource);
+        freePluginChain(pluginChain);
+        freeProgramOptions(programOptions);
+        freeTaskTimer(initTimer);
+        freeTaskTimer(totalTimer);
+        freeMidiSource(midiSource);
+        freeSampleSource(inputSource);
+        freeAudioSettings();
+        freeEventLogger();
+        freeAudioClock(getAudioClock());
         return RETURN_CODE_NOT_RUN;
     }
 
     // Execute any parameter changes
     if (programOptions->options[OPTION_PARAMETER]->enabled) {
         if (!pluginChainSetParameters(pluginChain, programOptionsGetList(programOptions, OPTION_PARAMETER))) {
+            freeSampleSource(inputSource);
+            freeSampleSource(outputSource);
+            freePluginChain(pluginChain);
+            freeProgramOptions(programOptions);
+            freeTaskTimer(initTimer);
+            freeTaskTimer(totalTimer);
+            freeMidiSource(midiSource);
+            freeMidiSequence(midiSequence);
+            freeAudioSettings();
+            freeEventLogger();
+            freeAudioClock(getAudioClock());
             return RETURN_CODE_INVALID_ARGUMENT;
         }
     }
@@ -602,6 +818,17 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char **argv)
     // to exit if the user only wants to list plugins or query info about a chain.
     if ((result = setupOutputSource(outputSource)) != RETURN_CODE_SUCCESS) {
         logError("Output source could not be opened, exiting");
+        freeSampleSource(inputSource);
+        freeSampleSource(outputSource);
+        freePluginChain(pluginChain);
+        freeProgramOptions(programOptions);
+        freeTaskTimer(initTimer);
+        freeTaskTimer(totalTimer);
+        freeMidiSource(midiSource);
+        freeMidiSequence(midiSequence);
+        freeAudioSettings();
+        freeEventLogger();
+        freeAudioClock(getAudioClock());
         return result;
     }
 
@@ -612,17 +839,50 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char **argv)
         if (charStringIsEqualToCString(inputSource->sourceName, "-", false) ||
                 charStringIsEqualToCString(outputSource->sourceName, "-", false)) {
             printf("ERROR: Using stdin/stdout is incompatible with --error-report\n");
+            freeSampleSource(inputSource);
+            freeSampleSource(outputSource);
+            freePluginChain(pluginChain);
+            freeProgramOptions(programOptions);
+            freeTaskTimer(initTimer);
+            freeTaskTimer(totalTimer);
+            freeMidiSource(midiSource);
+            freeMidiSequence(midiSequence);
+            freeAudioSettings();
+            freeEventLogger();
+            freeAudioClock(getAudioClock());
             return RETURN_CODE_NOT_RUN;
         }
 
         if (midiSource != NULL && charStringIsEqualToCString(midiSource->sourceName, "-", false)) {
             printf("ERROR: MIDI source from stdin is incompatible with --error-report\n");
+            freeSampleSource(inputSource);
+            freeSampleSource(outputSource);
+            freePluginChain(pluginChain);
+            freeProgramOptions(programOptions);
+            freeTaskTimer(initTimer);
+            freeTaskTimer(totalTimer);
+            freeMidiSource(midiSource);
+            freeMidiSequence(midiSequence);
+            freeAudioSettings();
+            freeEventLogger();
+            freeAudioClock(getAudioClock());
             return RETURN_CODE_NOT_RUN;
         }
     }
 
     if (outputSource == NULL) {
         logInternalError("Default output sample source was null");
+        freeSampleSource(inputSource);
+        freeSampleSource(outputSource);
+        freePluginChain(pluginChain);
+        freeProgramOptions(programOptions);
+        freeTaskTimer(initTimer);
+        freeTaskTimer(totalTimer);
+        freeMidiSource(midiSource);
+        freeMidiSequence(midiSequence);
+        freeAudioSettings();
+        freeEventLogger();
+        freeAudioClock(getAudioClock());
         return RETURN_CODE_INTERNAL_ERROR;
     }
 
@@ -642,6 +902,17 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char **argv)
                     // However, if --max-time wasn't given, then there is effectively no input source
                     // and thus processing would continue forever. That won't work.
                     logError("No valid input source or maximum time, don't know when to stop processing");
+                    freeSampleSource(inputSource);
+                    freeSampleSource(outputSource);
+                    freePluginChain(pluginChain);
+                    freeProgramOptions(programOptions);
+                    freeTaskTimer(initTimer);
+                    freeTaskTimer(totalTimer);
+                    freeMidiSource(midiSource);
+                    freeMidiSequence(midiSequence);
+                    freeAudioSettings();
+                    freeEventLogger();
+                    freeAudioClock(getAudioClock());
                     return RETURN_CODE_MISSING_REQUIRED_OPTION;
                 } else {
                     // If maximum time was given and there is no other input source, then use silence
@@ -650,6 +921,17 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char **argv)
             }
         } else {
             logError("Plugin chain contains only effects, but no input source was supplied");
+            freeSampleSource(inputSource);
+            freeSampleSource(outputSource);
+            freePluginChain(pluginChain);
+            freeProgramOptions(programOptions);
+            freeTaskTimer(initTimer);
+            freeTaskTimer(totalTimer);
+            freeMidiSource(midiSource);
+            freeMidiSequence(midiSequence);
+            freeAudioSettings();
+            freeEventLogger();
+            freeAudioClock(getAudioClock());
             return RETURN_CODE_MISSING_REQUIRED_OPTION;
         }
     }
@@ -779,14 +1061,8 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char **argv)
     freeSampleBuffer(outputSampleBuffer);
     pluginChainShutdown(pluginChain);
     freePluginChain(pluginChain);
-
-    if (midiSource != NULL) {
-        freeMidiSource(midiSource);
-    }
-
-    if (midiSequence != NULL) {
-        freeMidiSequence(midiSequence);
-    }
+    freeMidiSource(midiSource);
+    freeMidiSequence(midiSequence);
 
     freeAudioSettings();
     logInfo("Goodbye!");
@@ -796,8 +1072,6 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char **argv)
     if (errorReporter->started) {
         errorReporterClose(errorReporter);
     }
-
-    freeErrorReporter(errorReporter);
 
     return RETURN_CODE_SUCCESS;
 }

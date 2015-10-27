@@ -147,6 +147,7 @@ void errorReporterCreateLauncher(ErrorReporter self, int argc, char *argv[])
     charStringCopyCString(outScriptName, "run.sh");
     errorReporterRemapPath(self, outScriptName);
     scriptFilePointer = fopen(outScriptName->data, "w");
+    freeCharString(outScriptName);
     fprintf(scriptFilePointer, "#!/bin/sh\n");
     fprintf(scriptFilePointer, "mrswatson");
 
@@ -279,8 +280,10 @@ void errorReporterClose(ErrorReporter self)
 
 void freeErrorReporter(ErrorReporter errorReporter)
 {
-    freeCharString(errorReporter->reportName);
-    freeCharString(errorReporter->reportDirPath);
-    freeCharString(errorReporter->desktopPath);
-    free(errorReporter);
+    if (errorReporter != NULL) {
+        freeCharString(errorReporter->reportName);
+        freeCharString(errorReporter->reportDirPath);
+        freeCharString(errorReporter->desktopPath);
+        free(errorReporter);
+    }
 }

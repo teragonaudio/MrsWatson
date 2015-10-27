@@ -381,16 +381,19 @@ void logPossibleBug(const char *cause)
     CharString extraText = newCharStringWithCString("If you believe this to be a \
 bug in MrsWatson, please re-run the program with the --error-report option to \
 generate a diagnostic report to send to support.");
+    CharString causeText = newCharStringWithCString(cause);
     CharString wrappedCause;
     CharString wrappedExtraText;
 
-    wrappedCause = charStringWrap(newCharStringWithCString(cause), 0);
+    wrappedCause = charStringWrap(causeText, 0);
     wrappedExtraText = charStringWrap(extraText, 0);
     fprintf(stderr, "%s\n", wrappedCause->data);
     fprintf(stderr, "%s\n", wrappedExtraText->data);
 
     freeCharString(wrappedCause);
     freeCharString(wrappedExtraText);
+    freeCharString(causeText);
+    freeCharString(extraText);
 }
 
 void flushErrorLog(void)
@@ -402,11 +405,13 @@ void flushErrorLog(void)
 
 void freeEventLogger(void)
 {
-    if (eventLoggerInstance->logFile != NULL) {
-        fclose(eventLoggerInstance->logFile);
-    }
+    if (eventLoggerInstance != NULL) {
+        if (eventLoggerInstance->logFile != NULL) {
+            fclose(eventLoggerInstance->logFile);
+        }
 
-    freeCharString(eventLoggerInstance->systemErrorMessage);
-    free(eventLoggerInstance);
+        freeCharString(eventLoggerInstance->systemErrorMessage);
+        free(eventLoggerInstance);
+    }
     eventLoggerInstance = NULL;
 }

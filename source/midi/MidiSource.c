@@ -69,7 +69,9 @@ MidiSource newMidiSource(MidiSourceType midiSourceType, const CharString midiSou
 
 void freeMidiSource(MidiSource self)
 {
-    self->freeMidiSourceData(self->extraData);
-    freeCharString(self->sourceName);
-    free(self);
+    if (self != NULL) {
+        self->freeMidiSourceData(self->extraData);
+        freeCharString(self->sourceName);
+        free(self);
+    }
 }

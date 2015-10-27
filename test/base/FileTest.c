@@ -138,7 +138,6 @@ static int _testNewFileWithNetworkPath(void)
     sprintf(p->data, "\\\\%s%c%s", TEST_DIRNAME, PATH_DELIMITER, TEST_FILENAME);
     f = newFileWithPath(p);
     assertNotNull(f);
-    pAbs = newCharString();
     // Mostly just testing to make sure that network paths are not incorrectly
     // translated from relative ones
     sprintf(pAbs->data, "\\\\%s%c%s", TEST_DIRNAME, PATH_DELIMITER, TEST_FILENAME);
