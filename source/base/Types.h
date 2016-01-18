@@ -67,11 +67,14 @@ typedef unsigned char byte;
 // Substitutes for POSIX functions not found on Windows
 #define strcasecmp _stricmp
 #define strdup _strdup
-#define unlink _unlink
-#define snprintf _snprintf
 #define isatty _isatty
 #define chdir _chdir
 #define unlink _unlink
+
+#if _MSC_VER < 1900 
+#define snprintf _snprintf
+#endif
+
 #endif
 
 // LibraryHandle definition
