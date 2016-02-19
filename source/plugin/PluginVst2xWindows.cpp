@@ -33,6 +33,7 @@
 extern "C" {
 #include <stdio.h>
 #include "base/PlatformInfo.h"
+#include "plugin/Plugin.h"
 #include "logging/EventLogger.h"
 
     static const char *kPlatformWindowsProgramFolder = "C:\\Program Files";
@@ -103,6 +104,11 @@ extern "C" {
 
         AEffect *plugin = entryPoint(pluginVst2xHostCallback);
         return plugin;
+    }
+
+    void showVst2xEditor(AEffect *effect, const CharString pluginName, PluginWindowSize *rect)
+    {
+      logUnsupportedFeature("Show VST editor on Windows");
     }
 
     void closeLibraryHandle(LibraryHandle libraryHandle)
