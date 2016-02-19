@@ -129,6 +129,12 @@ void runTestSuite(void *testSuitePtr, void *extraData)
 {
     TestSuite testSuite = (TestSuite)testSuitePtr;
 
+    // TODO: Remove this hack when AudioClock is no longer a singleton
+    // The problem here is that audio clock is also used by the event logger to show the
+    // current sample frame. Unfortunately, the teardown method in the AudioClock test
+    // suite will destroy the global instance for us.
+    initAudioClock();
+
     printToLog(getLogColor(kTestLogEventReset), NULL, "Running tests in ");
     printToLog(getLogColor(kTestLogEventSection), NULL, testSuite->name);
     flushLog(NULL);
