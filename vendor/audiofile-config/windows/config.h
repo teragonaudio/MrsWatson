@@ -131,9 +131,14 @@ typedef unsigned int ssize_t;
 #endif
 
 #define bzero(DATA, SIZE) memset(DATA, 0, SIZE)
+
+// With MSVC 14 (VS 2015), Microsoft ships C99 compliant functions for snprintf and
+// friends. So only define these macros for older versions of MSVC.
+#if _MSC_VER < 1900
 #define snprintf _snprintf
 #define dup _dup
 #define open _open
+#endif
 
 // Ignore VC compiler warnings
 #pragma warning(disable: 4800)
