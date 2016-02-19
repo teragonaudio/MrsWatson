@@ -1,9 +1,9 @@
 [submodule "vendor/AudioTestData"]
 	path = vendor/AudioTestData
-	url = git://github.com/teragonaudio/AudioTestData.git
+	url = https://github.com/teragonaudio/AudioTestData.git
 [submodule "vendor/audiofile"]
 	path = vendor/audiofile
-	url = git://github.com/teragonaudio/audiofile.git
+	url = https://github.com/teragonaudio/audiofile.git
 [submodule "vendor/flac"]
 	path = vendor/flac
-	url = git://github.com/teragonaudio/flac.git
+	url = https://github.com/teragonaudio/flac.git
