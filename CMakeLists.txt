@@ -1,40 +1,16 @@
-cmake_minimum_required(VERSION 2.8.11)
+cmake_minimum_required(VERSION 3.0)
 project(MrsWatson)
 
 set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 set(cmake_SCRIPTS_DIR ${CMAKE_SOURCE_DIR}/cmake)
 include_directories(${CMAKE_SOURCE_DIR}/source)
-include_directories(${CMAKE_SOURCE_DIR}/vendor/vstsdk2.4/pluginterfaces/vst2.x)
 
 # Build options ################################################
 
-option(WITH_AUDIOFILE "Use libaudiofile for reading/writing files" OFF)
+option(WITH_AUDIOFILE "Use libaudiofile for reading/writing files" ON)
 option(WITH_FLAC "Support for FLAC files (requires libaudiofile)" OFF)
 
-# Platform properties ##########################################
-
-# TODO: Rename to platform_XYZ to conform to coding standard
-if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-  set(PLATFORM_NAME "Linux")
-  set(PLATFORM_CONFIG_DIR "linux")
-elseif(APPLE)
-  set(PLATFORM_NAME "Mac OS X")
-  set(PLATFORM_CONFIG_DIR "mac")
-elseif(WIN32)
-  set(PLATFORM_NAME "Windows")
-  set(PLATFORM_CONFIG_DIR "windows")
-else()
-  set(PLATFORM_NAME "Unknown")
-endif()
-
-if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-  set(PLATFORM_BITS 64)
-else()
-  set(PLATFORM_BITS 32)
-endif()
-add_definitions(-DPLATFORM_BITS=${PLATFORM_BITS})
-
-# Build Flags ##################################################
+# Feature configuration ########################################
 
 if(WITH_AUDIOFILE)
   add_definitions(-DUSE_AUDIOFILE=1)
@@ -42,29 +18,57 @@ endif()
 
 if(WITH_FLAC)
   if(NOT WITH_AUDIOFILE)
-    message(FATAL_ERROR "FLAC support requires audiofile to be built")
+    message(FATAL_ERROR "FLAC support requires WITH_AUDIOFILE")
   endif()
   add_definitions(-DUSE_FLAC=1)
 endif()
+
+# Platform properties ##########################################
+
+if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+  set(mw_PLATFORM_NAME "Linux")
+  set(mw_PLATFORM_CONFIG_DIR "linux")
+elseif(APPLE)
+  set(mw_PLATFORM_NAME "Mac OS X")
+  set(mw_PLATFORM_CONFIG_DIR "mac")
+elseif(WIN32)
+  set(mw_PLATFORM_NAME "Windows")
+  set(mw_PLATFORM_CONFIG_DIR "windows")
+else()
+  message(FATAL_ERROR "Unknown or unsupported platform")
+endif()
+
+if(UNIX)
+  set(mw_BUILD_32 ON)
+  set(mw_BUILD_64 ON)
+elseif(MSVC)
+  if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+    set(mw_BUILD_32 OFF)
+    set(mw_BUILD_64 ON)
+  else()
+    set(mw_BUILD_32 ON)
+    set(mw_BUILD_64 OFF)
+  endif()
+endif()
+
+# Build Flags ##################################################
 
 if(MSVC)
   # We don't care about intdir, binary output path is set above
   set(CMAKE_CFG_INTDIR ".")
 
-  set(CMAKE_C_FLAGS_DEBUG "/D DEBUG=1 /D _DEBUG /MTd /Ob0 /Od /RTC1")
-  set(CMAKE_C_FLAGS_MINSIZEREL "/MT /O1 /Ob1 /Oi /D NDEBUG")
-  set(CMAKE_C_FLAGS_RELEASE "/MT /O2 /Ob2 /Oi /D NDEBUG")
-  set(CMAKE_C_FLAGS_RELWITHDEBINFO "/MT /Zi /O2 /Ob1 /D NDEBUG")
+  set(CMAKE_C_FLAGS_DEBUG "/MP /DDEBUG=1 /D_DEBUG /MTd /Ob0 /Od /RTC1")
+  set(CMAKE_C_FLAGS_MINSIZEREL "/MP /MT /O1 /Ob1 /Oi /D NDEBUG")
+  set(CMAKE_C_FLAGS_RELEASE "/MP /MT /O2 /Ob2 /Oi /DNDEBUG")
+  set(CMAKE_C_FLAGS_RELWITHDEBINFO "/MP /MT /Zi /O2 /Ob1 /DNDEBUG")
 
-  set(CMAKE_CXX_FLAGS_DEBUG "/D DEBUG=1 /D _DEBUG /MTd /Zi /Ob0 /Od /RTC1")
-  set(CMAKE_CXX_FLAGS_MINSIZEREL "/MT /O1 /Ob1 /Oi /D NDEBUG")
-  set(CMAKE_CXX_FLAGS_RELEASE "/MT /O2 /Ob2 /Oi /D NDEBUG")
-  set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "/MT /Zi /O2 /Ob1 /D NDEBUG")
+  set(CMAKE_CXX_FLAGS_DEBUG "/MP /DDEBUG=1 /D_DEBUG /MTd /Zi /Ob0 /Od /RTC1")
+  set(CMAKE_CXX_FLAGS_MINSIZEREL "/MP /MT /O1 /Ob1 /Oi /DNDEBUG")
+  set(CMAKE_CXX_FLAGS_RELEASE "/MP /MT /O2 /Ob2 /Oi /DNDEBUG")
+  set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "/MP /MT /Zi /O2 /Ob1 /DNDEBUG")
 
-  add_definitions("/W3 /D _CRT_SECURE_NO_WARNINGS=1 /D WINDOWS=1")
-endif()
-
-if(UNIX)
+  add_definitions("/W3 /D_CRT_SECURE_NO_WARNINGS=1 /DWINDOWS=1")
+elseif(UNIX)
   add_definitions("-DUNIX=1")
 
   # GCC flags common to all Unix platforms
@@ -177,19 +181,36 @@ endif()
 
 # Subdirectories ###############################################
 
+add_subdirectory(vendor)
 add_subdirectory(source)
 add_subdirectory(main)
 add_subdirectory(test)
-add_subdirectory(vendor)
 
 # Build summary ################################################
 
-message("-- Build configuration")
+message(STATUS "Build configuration")
+get_directory_property(preprocessor_flags COMPILE_DEFINITIONS)
+message("   Preprocessor flags: ${preprocessor_flags}")
 message("   C Compiler: ${CMAKE_C_COMPILER}")
+message("   C Compiler flags: ${CMAKE_C_FLAGS}")
+message("   C Compiler flags (Debug): ${CMAKE_C_FLAGS_DEBUG}")
+message("   C Compiler flags (Release): ${CMAKE_C_FLAGS_RELEASE}")
 message("   C++ Compiler: ${CMAKE_CXX_COMPILER}")
-message("   Build type: ${CMAKE_BUILD_TYPE}")
-message("   Platform name: ${PLATFORM_NAME}")
-message("   Platform bitness: ${PLATFORM_BITS}-bit")
-message("-- Build options")
+message("   C++ Compiler flags: ${CMAKE_CXX_FLAGS}")
+message("   C++ Compiler flags (Debug): ${CMAKE_CXX_FLAGS_DEBUG}")
+message("   C++ Compiler flags (Release): ${CMAKE_CXX_FLAGS_RELEASE}")
+message("   Linker: ${CMAKE_LINKER}")
+message("   Linker flags: ${CMAKE_SHARED_LINKER_FLAGS}")
+message("   Linker flags (Debug): ${CMAKE_SHARED_LINKER_FLAGS_DEBUG}")
+message("   Linker flags (Release): ${CMAKE_SHARED_LINKER_FLAGS_RELEASE}")
+if(CMAKE_BUILD_TYPE)
+  message("   Build type: ${CMAKE_BUILD_TYPE}")
+else()
+  message("   Build type: Set by IDE")
+endif()
+message("   Build 32-bit binary: ${mw_BUILD_32}")
+message("   Build 64-bit binary: ${mw_BUILD_64}")
+message("   Platform name: ${mw_PLATFORM_NAME}")
+message(STATUS "Options")
 message("   WITH_AUDIOFILE: ${WITH_AUDIOFILE}")
 message("   WITH_FLAC: ${WITH_FLAC}")

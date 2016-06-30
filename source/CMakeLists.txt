@@ -1,9 +1,9 @@
-cmake_minimum_required(VERSION 2.8.11)
+cmake_minimum_required(VERSION 3.0)
 project(mrswatsoncore)
 
 include(${cmake_SCRIPTS_DIR}/ConfigureTarget.cmake)
 
-set(mrswatsoncore_SOURCES
+set(core_SOURCES
   app/BuildInfo.c
   app/ProgramOption.c
   audio/AudioSettings.c
@@ -44,7 +44,7 @@ set(mrswatsoncore_SOURCES
   time/TaskTimer.c
 )
 
-set(mrswatsoncore_HEADERS
+set(core_HEADERS
   app/BuildInfo.h
   app/ProgramOption.h
   app/ReturnCodes.h
@@ -87,13 +87,15 @@ set(mrswatsoncore_HEADERS
   time/TaskTimer.h
 )
 
+include_directories(${vst_include_DIR})
+
 if(WITH_AUDIOFILE)
-  set(mrswatsoncore_SOURCES
-    ${mrswatsoncore_SOURCES}
+  set(core_SOURCES
+    ${core_SOURCES}
     io/SampleSourceAudiofile.c
   )
-  set(mrswatsoncore_HEADERS
-    ${mrswatsoncore_HEADERS}
+  set(core_HEADERS
+    ${core_HEADERS}
     io/SampleSourceAudiofile.h
   )
   include_directories(${CMAKE_SOURCE_DIR}/vendor/audiofile/libaudiofile)
@@ -101,22 +103,22 @@ endif()
 
 # Add some extra platform-specific sources
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-  set(mrswatsoncore_PLATFORM_SOURCES
+  set(core_PLATFORM_SOURCES
     plugin/PluginVst2xLinux.cpp
   )
 elseif(APPLE)
-  set(mrswatsoncore_PLATFORM_SOURCES
+  set(core_PLATFORM_SOURCES
     base/PlatformInfoMac.m
     plugin/PluginVst2xMac.mm
     plugin/PluginVst2xMacWindow.h
     plugin/PluginVst2xMacWindow.m
   )
-  set_source_files_properties(${mrswatsoncore_PLATFORM_SOURCES}
+  set_source_files_properties(${core_PLATFORM_SOURCES}
     PROPERTIES COMPILE_FLAGS
     "-x objective-c++"
   )
 elseif(MSVC)
-  set(mrswatsoncore_PLATFORM_SOURCES
+  set(core_PLATFORM_SOURCES
     plugin/PluginVst2xWindows.cpp
   )
 endif()
@@ -130,17 +132,20 @@ source_group(midi ".*/midi/.*")
 source_group(plugin ".*/plugin/.*")
 source_group(time ".*/time/.*")
 
-add_library(mrswatsoncore STATIC
-  ${mrswatsoncore_SOURCES}
-  ${mrswatsoncore_PLATFORM_SOURCES}
-  ${mrswatsoncore_HEADERS}
-)
+if(mw_BUILD_32)
+  add_library(mrswatsoncore STATIC
+    ${core_SOURCES}
+    ${core_PLATFORM_SOURCES}
+    ${core_HEADERS}
+  )
+  configure_target(mrswatsoncore 32)
+endif()
 
-add_library(mrswatsoncore64 STATIC
-  ${mrswatsoncore_SOURCES}
-  ${mrswatsoncore_PLATFORM_SOURCES}
-  ${mrswatsoncore_HEADERS}
-)
-
-configure_target(mrswatsoncore 32)
-configure_target(mrswatsoncore64 64)
+if(mw_BUILD_64)
+  add_library(mrswatsoncore64 STATIC
+    ${core_SOURCES}
+    ${core_PLATFORM_SOURCES}
+    ${core_HEADERS}
+  )
+  configure_target(mrswatsoncore64 64)
+endif()

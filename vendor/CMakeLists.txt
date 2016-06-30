@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.11)
+cmake_minimum_required(VERSION 3.0)
 project(MrsWatsonVendor)
 
 include(${cmake_SCRIPTS_DIR}/ConfigureTarget.cmake)
@@ -20,32 +20,32 @@ include(${cmake_SCRIPTS_DIR}/ConfigureTarget.cmake)
 # 6. Copy the generated config.h file to the platform-specific directory
 #
 
-# VST SDK ######################################################
+###########
+# VST SDK #
+###########
 
-set(vst_DIR ${CMAKE_CURRENT_SOURCE_DIR}/vstsdk2.4/pluginterfaces/vst2.x)
-if(NOT EXISTS ${vst_DIR})
-  message("VST 2.x SDK sources were not found, please install them from:")
-  message("")
-  message("http://www.steinberg.net/en/company/developer.html")
-  message("")
-  message("The contents of the vstsdk2.4 zipfile should be placed in the")
-  message("top level of the 'vendor/vstsdk2.4' folder.")
-  message(FATAL_ERROR "VST SDK not found")
+set(vst_web_ROOT "http://www.steinberg.net/sdk_downloads")
+set(vst_web_FILE "vstsdk366_21_06_2016_build_58.zip")
+set(vst_sdk_URL "${vst_web_ROOT}/${vst_web_FILE}")
+set(vst_sdk_ZIP "${CMAKE_BINARY_DIR}/vstsdk.zip")
+set(vst_sdk_ROOT "${CMAKE_BINARY_DIR}/VST3 SDK")
+
+if(NOT EXISTS ${vst_sdk_ROOT})
+  message(STATUS "Downloading VST SDK")
+  file(DOWNLOAD ${vst_sdk_URL} "${vst_sdk_ZIP}")
+  message(STATUS "Extracting VST SDK")
+  execute_process(COMMAND
+    ${CMAKE_COMMAND} -E tar "xf" ${vst_sdk_ZIP} --format=zip
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+    INPUT_FILE "${vst_sdk_ZIP}"
+  )
 endif()
 
-include_directories(${vst_DIR})
-set(vst_HEADERS
-  ${vst_DIR}/aeffect.h
-  ${vst_DIR}/aeffectx.h
-  ${vst_DIR}/vstfxstore.h
-)
+set(vst_include_DIR "${vst_sdk_ROOT}/pluginterfaces/vst2.x" PARENT_SCOPE)
 
-# TODO: This source group doesn't show up in the IDE
-source_group(vst FILES
-  ${vst_HEADERS}
-)
-
-# audiofile ####################################################
+#############
+# Audiofile #
+#############
 
 # Configured with: ./configure --enable-flac --enable-static --disable-docs
 # Also, the generated config.h file should be edited such that the definition
@@ -185,51 +185,70 @@ if(WITH_AUDIOFILE)
     ${audiofile_DIR}/WAVE.h
   )
 
-  add_library(audiofile STATIC
-    ${audiofile_SOURCES}
-    ${audiofile_HEADERS}
-    audiofile-config/${PLATFORM_CONFIG_DIR}/config.h
-  )
-
-  add_library(audiofile64 STATIC
-    ${audiofile_SOURCES}
-    ${audiofile_HEADERS}
-    audiofile-config/${PLATFORM_CONFIG_DIR}/config.h
-  )
-
-  include_directories(${audiofile_DIR})
-  source_group(config FILES
-    audiofile-config/${PLATFORM_CONFIG_DIR}/config.h
-  )
-
-  target_include_directories(audiofile PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/audiofile-config/${PLATFORM_CONFIG_DIR}
-  )
-  target_include_directories(audiofile64 PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/audiofile-config/${PLATFORM_CONFIG_DIR}
-  )
-
-  if(WITH_FLAC)
-    target_include_directories(audiofile PUBLIC
-      ${CMAKE_CURRENT_SOURCE_DIR}/flac/include
+  if(mw_BUILD_32)
+    add_library(audiofile STATIC
+      ${audiofile_SOURCES}
+      ${audiofile_HEADERS}
+      audiofile-config/${mw_PLATFORM_CONFIG_DIR}/config.h
     )
-    target_include_directories(audiofile64 PUBLIC
-      ${CMAKE_CURRENT_SOURCE_DIR}/flac/include
-    )
-
-    target_link_libraries(audiofile flac)
-    target_link_libraries(audiofile64 flac64)
   endif()
 
-  configure_target(audiofile 32)
-  configure_target(audiofile64 64)
+  if(mw_BUILD_64)
+    add_library(audiofile64 STATIC
+      ${audiofile_SOURCES}
+      ${audiofile_HEADERS}
+      audiofile-config/${mw_PLATFORM_CONFIG_DIR}/config.h
+    )
+  endif()
+
+  include_directories(${audiofile_DIR})
+  source_group(Config FILES
+    audiofile-config/${mw_PLATFORM_CONFIG_DIR}/config.h
+  )
+
+  function(configure_audiofile_target target)
+    target_include_directories(${target} PUBLIC
+      ${CMAKE_CURRENT_SOURCE_DIR}/audiofile-config/${mw_PLATFORM_CONFIG_DIR}
+    )
+
+    if(WITH_FLAC)
+      target_include_directories(${target} PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/flac/include
+      )
+    endif()
+
+    if(MSVC)
+      # Compiler warnings to ignore for this library
+      set_target_properties(${target} PROPERTIES COMPILE_FLAGS
+        "/wd4267 /wd4244"
+      )
+    endif()
+  endfunction()
+
+  if(mw_BUILD_32)
+    configure_target(audiofile 32)
+    configure_audiofile_target(audiofile)
+    if(WITH_FLAC)
+      target_link_libraries(audiofile flac)
+    endif()
+  endif()
+
+  if(mw_BUILD_64)
+    configure_target(audiofile64 64)
+    configure_audiofile_target(audiofile64)
+    if(WITH_FLAC)
+      target_link_libraries(audiofile64 flac64)
+    endif()
+  endif()
 endif()
 
-# flac #########################################################
+########
+# FLAC #
+########
 
 # Configured with: ./configure --disable-ogg --enable-static
 # But on Mac: ./configure --disable-ogg --enable-static --disable-asm-optimizations
-# (See https://github.com/Homebrew/homebrew/issues/34589)
+# See https://github.com/Homebrew/homebrew/issues/34589
 
 set(flac_DIR ${CMAKE_CURRENT_SOURCE_DIR}/flac/src)
 if(NOT EXISTS ${flac_DIR})
@@ -313,29 +332,30 @@ if(WITH_FLAC)
     flac-config/${PLATFORM_CONFIG_DIR}/config.h
   )
 
-  target_include_directories(flac PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/flac/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/flac/include/FLAC
-    ${CMAKE_CURRENT_SOURCE_DIR}/flac/include/FLAC++
-    ${CMAKE_CURRENT_SOURCE_DIR}/flac/src/libFLAC/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/flac-config/${PLATFORM_CONFIG_DIR}
-  )
+  function(configure_flac_target target)
+    set(flac_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/flac)
+    target_include_directories(${target} PUBLIC
+      ${flac_ROOT}/include
+      ${flac_ROOT}/include/FLAC
+      ${flac_ROOT}/include/FLAC++
+      ${flac_ROOT}/src/libFLAC/include
+      ${CMAKE_CURRENT_SOURCE_DIR}/flac-config/${PLATFORM_CONFIG_DIR}
+    )
+    set_target_properties(${target} PROPERTIES
+      COMPILE_DEFINITIONS "HAVE_CONFIG_H=1"
+    )
+  endfunction()
 
-  target_include_directories(flac64 PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/flac/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/flac/include/FLAC
-    ${CMAKE_CURRENT_SOURCE_DIR}/flac/include/FLAC++
-    ${CMAKE_CURRENT_SOURCE_DIR}/flac/src/libFLAC/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/flac-config/${PLATFORM_CONFIG_DIR}
-  )
-
-  source_group(config FILES
+  source_group(Config FILES
     flac-config/${PLATFORM_CONFIG_DIR}/config.h
   )
 
-  set_target_properties(flac PROPERTIES COMPILE_DEFINITIONS "HAVE_CONFIG_H=1")
-  set_target_properties(flac64 PROPERTIES COMPILE_DEFINITIONS "HAVE_CONFIG_H=1")
-
-  configure_target(flac 32)
-  configure_target(flac64 64)
+  if(mw_BUILD_32)
+    configure_target(flac 32)
+    configure_flac_target(flac)
+  endif()
+  if(mw_BUILD_64)
+    configure_target(flac64 64)
+    configure_flac_target(flac64)
+  endif()
 endif()
