@@ -61,7 +61,7 @@ typedef struct {
     SampleSourceType sampleSourceType;
     SampleSourceOpenAs openedAs;
     CharString sourceName;
-    unsigned long numSamplesProcessed;
+    SampleCount numSamplesProcessed;
 
     OpenSampleSourceFunc openSampleSource;
     ReadSampleBlockFunc readSampleBlock;
