@@ -192,6 +192,30 @@ if(WITH_AUDIOFILE)
       )
     endif()
 
+    if(UNIX)
+      # Remove some compiler flags for warnings that we don't want to fix
+      if(${CMAKE_CXX_COMPILER_ID} STREQUAL Clang)
+        set(audiofile_REMOVE_FLAGS
+          -Wno-missing-field-initializers
+          -Wno-multichar
+          -Wno-shadow
+          -Wno-sign-compare
+          -Wno-switch-default
+          -Wno-unused-const-variable
+        )
+      elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL GNU)
+        set(audiofile_REMOVE_FLAGS
+          -Wno-missing-field-initializers
+          -Wno-multichar
+          -Wno-shadow
+          -Wno-sign-compare
+          -Wno-switch-default
+        )
+      endif()
+
+      target_compile_options(audiofile${wordsize} PUBLIC ${audiofile_REMOVE_FLAGS})
+    endif()
+
     configure_target(audiofile${wordsize} ${wordsize})
   endfunction()
 
@@ -305,6 +329,22 @@ if(WITH_FLAC)
       ${flac_CONFIG_DIR}
       ${flac_SRC_DIR}/libFLAC/include
     )
+
+    if(UNIX)
+      # Remove some compiler flags for warnings that we don't want to fix
+      if(${CMAKE_CXX_COMPILER_ID} STREQUAL Clang)
+        set(flac_REMOVE_FLAGS
+          -Wno-switch-default
+          -Wno-unused-const-variable
+        )
+      elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL GNU)
+        set(flac_REMOVE_FLAGS
+          -Wno-switch-default
+        )
+      endif()
+
+      target_compile_options(flac${wordsize} PUBLIC ${flac_REMOVE_FLAGS})
+    endif()
 
     set_target_properties(flac${wordsize} PROPERTIES
       COMPILE_DEFINITIONS "HAVE_CONFIG_H=1"

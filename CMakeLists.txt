@@ -98,11 +98,11 @@ elseif(UNIX)
     "-Wchar-subscripts"
     "-Wcomment"
     "-Wformat"
-    "-Wmaybe-uninitialized"
     "-Wnonnull"
     "-Wparentheses"
     "-Wreturn-type"
     "-Wsequence-point"
+    "-Wsign-compare"
     "-Wstrict-aliasing"
     "-Wstrict-overflow=1"
     "-Wswitch"
@@ -125,19 +125,27 @@ elseif(UNIX)
   )
 
   set(mw_CPPFLAGS_LIST
-    "-Wsign-compare"
-    "-Weffc++"
     "-Wc++11-compat"
     "-Wreorder"
   )
 
-  # Linux-specific GCC flags
-  if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+    # Clang-specific flags
+  if(${CMAKE_CXX_COMPILER_ID} STREQUAL Clang)
     set(mw_COMMON_FLAGS_LIST
       ${mw_COMMON_FLAGS_LIST}
-      "-Wuninitialized"
+      "-Wunused-const-variable"
     )
 
+  # GCC-specific flags
+  elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL GNU)
+    set(mw_COMMON_FLAGS_LIST
+      ${mw_COMMON_FLAGS_LIST}
+      "-Wmaybe-uninitialized"
+    )
+  endif()
+
+  # Linux-specific GCC flags
+  if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     set(mw_CFLAGS_LIST
       ${mw_CFLAGS_LIST}
       "-std=c99"
