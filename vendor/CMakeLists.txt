@@ -308,9 +308,11 @@ if(WITH_FLAC)
       ${flac_INCLUDE_DIR}/share/compat.h
       ${flac_INCLUDE_DIR}/share/endswap.h
       ${flac_INCLUDE_DIR}/share/win_utf8_io.h
+      ${flac_INCLUDE_DIR}/share/windows_unicode_filenames.h
     )
     set(flac_SOURCES
       ${flac_SOURCES}
+      ${flac_SRC_DIR}/libFLAC/windows_unicode_filenames.c
       ${flac_SRC_DIR}/share/win_utf8_io/win_utf8_io.c
     )
   endif()
