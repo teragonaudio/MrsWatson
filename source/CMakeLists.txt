@@ -1,7 +1,11 @@
 cmake_minimum_required(VERSION 3.0)
-project(mrswatsoncore)
+project(MrsWatsonCore)
 
 include(${cmake_SCRIPTS_DIR}/ConfigureTarget.cmake)
+
+###########
+# Sources #
+###########
 
 set(core_SOURCES
   app/BuildInfo.c
@@ -26,8 +30,6 @@ set(core_SOURCES
   midi/MidiSequence.c
   midi/MidiSource.c
   midi/MidiSourceFile.c
-  MrsWatson.c
-  MrsWatsonOptions.c
   plugin/Plugin.c
   plugin/PluginChain.c
   plugin/PluginGain.c
@@ -42,6 +44,9 @@ set(core_SOURCES
   plugin/PluginVst2xId.c
   time/AudioClock.c
   time/TaskTimer.c
+
+  MrsWatson.c
+  MrsWatsonOptions.c
 )
 
 set(core_HEADERS
@@ -69,8 +74,6 @@ set(core_HEADERS
   midi/MidiSequence.h
   midi/MidiSource.h
   midi/MidiSourceFile.h
-  MrsWatson.h
-  MrsWatsonOptions.h
   plugin/Plugin.h
   plugin/PluginChain.h
   plugin/PluginGain.h
@@ -85,9 +88,11 @@ set(core_HEADERS
   plugin/PluginVst2xId.h
   time/AudioClock.h
   time/TaskTimer.h
+
+  MrsWatson.h
+  MrsWatsonOptions.h
 )
 
-include_directories(${vst_include_DIR})
 
 if(WITH_AUDIOFILE)
   set(core_SOURCES
@@ -101,11 +106,12 @@ if(WITH_AUDIOFILE)
   include_directories(${CMAKE_SOURCE_DIR}/vendor/audiofile/libaudiofile)
 endif()
 
-# Add some extra platform-specific sources
+# Platform-specific sources
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
   set(core_PLATFORM_SOURCES
     plugin/PluginVst2xLinux.cpp
   )
+
 elseif(APPLE)
   set(core_PLATFORM_SOURCES
     base/PlatformInfoMac.m
@@ -113,15 +119,16 @@ elseif(APPLE)
     plugin/PluginVst2xMacWindow.h
     plugin/PluginVst2xMacWindow.m
   )
-  set_source_files_properties(${core_PLATFORM_SOURCES}
-    PROPERTIES COMPILE_FLAGS
-    "-x objective-c++"
-  )
-elseif(MSVC)
+
+elseif(WIN32)
   set(core_PLATFORM_SOURCES
     plugin/PluginVst2xWindows.cpp
   )
 endif()
+
+#################
+# Source Groups #
+#################
 
 source_group(app ".*/app/.*")
 source_group(audio ".*/audio/.*")
@@ -132,20 +139,36 @@ source_group(midi ".*/midi/.*")
 source_group(plugin ".*/plugin/.*")
 source_group(time ".*/time/.*")
 
-if(mw_BUILD_32)
-  add_library(mrswatsoncore STATIC
+#######################
+# Build Configuration #
+#######################
+
+include_directories(${vst_include_DIR})
+
+if(APPLE)
+  set_source_files_properties(${core_PLATFORM_SOURCES}
+    PROPERTIES COMPILE_FLAGS
+    "-x objective-c++"
+  )
+endif()
+
+##########
+# Target #
+##########
+
+function(add_core_target wordsize)
+  add_library(mrswatsoncore${wordsize} STATIC
     ${core_SOURCES}
     ${core_PLATFORM_SOURCES}
     ${core_HEADERS}
   )
-  configure_target(mrswatsoncore 32)
+  configure_target(mrswatsoncore${wordsize} ${wordsize})
+endfunction()
+
+if(mw_BUILD_32)
+  add_core_target(32)
 endif()
 
 if(mw_BUILD_64)
-  add_library(mrswatsoncore64 STATIC
-    ${core_SOURCES}
-    ${core_PLATFORM_SOURCES}
-    ${core_HEADERS}
-  )
-  configure_target(mrswatsoncore64 64)
+  add_core_target(64)
 endif()

@@ -5,12 +5,13 @@ set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 set(cmake_SCRIPTS_DIR ${CMAKE_SOURCE_DIR}/cmake)
 include_directories(${CMAKE_SOURCE_DIR}/source)
 
-# Build options ################################################
+#################
+# Build options #
+#################
 
 option(WITH_AUDIOFILE "Use libaudiofile for reading/writing files" ON)
 option(WITH_FLAC "Support for FLAC files (requires libaudiofile)" OFF)
 
-# Feature configuration ########################################
 
 if(WITH_AUDIOFILE)
   add_definitions(-DUSE_AUDIOFILE=1)
@@ -23,20 +24,26 @@ if(WITH_FLAC)
   add_definitions(-DUSE_FLAC=1)
 endif()
 
-# Platform properties ##########################################
+############
+# Platform #
+############
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+  set(mw_PLATFORM "linux")
   set(mw_PLATFORM_NAME "Linux")
-  set(mw_PLATFORM_CONFIG_DIR "linux")
 elseif(APPLE)
+  set(mw_PLATFORM "mac")
   set(mw_PLATFORM_NAME "Mac OS X")
-  set(mw_PLATFORM_CONFIG_DIR "mac")
 elseif(WIN32)
+  set(mw_PLATFORM "windows")
   set(mw_PLATFORM_NAME "Windows")
-  set(mw_PLATFORM_CONFIG_DIR "windows")
 else()
   message(FATAL_ERROR "Unknown or unsupported platform")
 endif()
+
+#######################
+# Bitness (word size) #
+#######################
 
 if(UNIX)
   set(mw_BUILD_32 ON)
@@ -51,7 +58,9 @@ elseif(MSVC)
   endif()
 endif()
 
-# Build Flags ##################################################
+###############
+# Build Flags #
+###############
 
 if(MSVC)
   # We don't care about intdir, binary output path is set above
@@ -71,8 +80,8 @@ if(MSVC)
 elseif(UNIX)
   add_definitions("-DUNIX=1")
 
-  # GCC flags common to all Unix platforms
-  set(SHARED_GCC_FLAGS_LIST
+  # Compiler flags common to C/C++ on all Unix platforms
+  set(mw_SHARED_FLAGS_LIST
     "-fmessage-length=0"
     "-pipe"
 
@@ -106,7 +115,7 @@ elseif(UNIX)
     "-Wvolatile-register-var"
   )
 
-  set(SHARED_GCC_CFLAGS_LIST
+  set(mw_SHARED_CFLAGS_LIST
     "-Wmain"
     "-Wenum-compare"
     "-Wmissing-braces"
@@ -115,16 +124,16 @@ elseif(UNIX)
     "-Wpointer-sign"
   )
 
-  set(SHARED_GCC_CPPFLAGS_LIST
+  set(mw_SHARED_CPPFLAGS_LIST
     "-Wsign-compare"
     "-Weffc++"
     "-Wc++11-compat"
     "-Wreorder"
   )
 
-  # Linux-specific GCC stuff
+  # Linux-specific GCC flags
   if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-    set(PLATFORM_GCC_FLAGS_LIST
+    set(mw_PLATFORM_FLAGS_LIST
       "-std=gnu99"
       "-Wuninitialized"
     )
@@ -137,9 +146,9 @@ elseif(UNIX)
     add_definitions("-D__cdecl=")
   endif()
 
-  # Mac OSX GCC stuff
+  # Mac-specific compiler flags
   if(APPLE)
-    set(PLATFORM_GCC_FLAGS_LIST
+    set(mw_PLATFORM_FLAGS_LIST
       "-fpascal-strings"
       "-Wnewline-eof"
       "-Wshorten-64-to-32"
@@ -147,7 +156,7 @@ elseif(UNIX)
       "-mmacosx-version-min=10.5"
     )
 
-    set(PLATFORM_LINKER_FLAGS_LIST
+    set(mw_PLATFORM_LINK_FLAGS_LIST
       "-framework AppKit"
       "-framework Carbon"
       "-framework CoreFoundation"
@@ -155,38 +164,64 @@ elseif(UNIX)
     )
 
     add_definitions("-DMACOSX=1")
-    # Homebrew places installed library files in /usr/local, but no major
+    # Homebrew places installed libraries in /usr/local, but no major
     # Linux distro does that anymore (last time I checked...)
     include_directories("/usr/local/include")
   endif()
 
-  # CMake doesn't really support multi-line strings, so the
-  # compiler flags are in lists above to make them easier to
-  # manage. However, we must build strings from the lists in
-  # order to set the respective CMake variables which they
-  # correspond to.
-  string(REPLACE ";" " " SHARED_GCC_FLAGS "${SHARED_GCC_FLAGS_LIST}")
-  string(REPLACE ";" " " SHARED_GCC_CFLAGS "${SHARED_GCC_CFLAGS_LIST}")
-  string(REPLACE ";" " " SHARED_GCC_CPPFLAGS "${SHARED_GCC_CPPFLAGS_LIST}")
-  string(REPLACE ";" " " PLATFORM_GCC_FLAGS "${PLATFORM_GCC_FLAGS_LIST}")
-  string(REPLACE ";" " " PLATFORM_LINKER_FLAGS "${PLATFORM_LINKER_FLAGS_LIST}")
+  # CMake multi-line strings are a pain to work with, so it's much easier to
+  # define lists and then construct strings from them.
+  string(REPLACE ";" " " mw_SHARED_FLAGS "${mw_SHARED_FLAGS_LIST}")
+  string(REPLACE ";" " " mw_SHARED_CFLAGS "${mw_SHARED_CFLAGS_LIST}")
+  string(REPLACE ";" " " mw_SHARED_CPPFLAGS "${mw_SHARED_CPPFLAGS_LIST}")
+  string(REPLACE ";" " " mw_PLATFORM_FLAGS "${mw_PLATFORM_FLAGS_LIST}")
+  string(REPLACE ";" " " mw_PLATFORM_LINK_FLAGS "${mw_PLATFORM_LINK_FLAGS_LIST}")
 
   # Set compiler flags from shared & platform-specific lists
-  set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} ${SHARED_GCC_CFLAGS} ${PLATFORM_GCC_FLAGS}")
-  set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} ${SHARED_GCC_CFLAGS} ${PLATFORM_GCC_FLAGS}")
-  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${SHARED_GCC_CPPFLAGS} ${PLATFORM_GCC_FLAGS}")
-  set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${SHARED_GCC_CPPFLAGS} ${PLATFORM_GCC_FLAGS}")
-  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${PLATFORM_LINKER_FLAGS}")
+  set(CMAKE_C_FLAGS_DEBUG
+    "${CMAKE_C_FLAGS_DEBUG} \
+     ${mw_SHARED_FLAGS} \
+     ${mw_SHARED_CFLAGS} \
+     ${mw_PLATFORM_FLAGS}"
+  )
+  set(CMAKE_C_FLAGS_RELEASE
+    "${CMAKE_C_FLAGS_RELEASE} \
+     ${mw_SHARED_FLAGS} \
+     ${mw_SHARED_CFLAGS} \
+     ${mw_PLATFORM_FLAGS}"
+  )
+  set(CMAKE_CXX_FLAGS_DEBUG
+    "${CMAKE_CXX_FLAGS_DEBUG} \
+     ${mw_SHARED_FLAGS} \
+     ${mw_SHARED_CPPFLAGS} \
+     ${mw_PLATFORM_FLAGS}"
+  )
+  set(CMAKE_CXX_FLAGS_RELEASE
+    "${CMAKE_CXX_FLAGS_RELEASE} \
+     ${mw_SHARED_FLAGS} \
+     ${mw_SHARED_CPPFLAGS} \
+     ${mw_PLATFORM_FLAGS}"
+  )
+  set(CMAKE_EXE_LINKER_FLAGS
+    "${CMAKE_EXE_LINKER_FLAGS} \
+     ${mw_PLATFORM_LINK_FLAGS}"
+  )
 endif()
 
-# Subdirectories ###############################################
+##################
+# Subdirectories #
+##################
 
+# The vendor subdirectory must be defined first, since it sets some variables
+# that are referenced by CMake scripts in the other directories
 add_subdirectory(vendor)
 add_subdirectory(source)
 add_subdirectory(main)
 add_subdirectory(test)
 
-# Build summary ################################################
+#################
+# Build summary #
+#################
 
 message(STATUS "Build configuration")
 get_directory_property(preprocessor_flags COMPILE_DEFINITIONS)

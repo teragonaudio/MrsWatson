@@ -3,6 +3,10 @@ project(MrsWatsonTest)
 
 include(${cmake_SCRIPTS_DIR}/ConfigureTarget.cmake)
 
+###########
+# Sources #
+###########
+
 set(test_SOURCES
   MrsWatsonTestMain.c
   IntegrationTests.c
@@ -50,6 +54,10 @@ set(test_HEADERS
   unit/TestRunner.h
 )
 
+#################
+# Source Groups #
+#################
+
 source_group(analysis ".*/analysis/.*")
 source_group(app ".*/app/.*")
 source_group(audio ".*/audio/.*")
@@ -60,32 +68,39 @@ source_group(plugin ".*/plugin/.*")
 source_group(time ".*/time/.*")
 source_group(unit ".*/unit/.*")
 
-if(mw_BUILD_32)
-  add_executable(mrswatsontest ${test_SOURCES} ${test_HEADERS})
-  target_link_libraries(mrswatsontest mrswatsoncore)
-  if(WITH_AUDIOFILE)
-    target_link_libraries(mrswatsontest audiofile)
-  endif()
-  if(WITH_FLAC)
-    target_link_libraries(mrswatsontest flac)
+##########
+# Target #
+##########
+
+function(add_test_target wordsize)
+  if(${wordsize} EQUAL 32)
+    set(main_target_NAME mrswatson)
+    set(test_target_NAME mrswatsontest)
+  else()
+    set(main_target_NAME mrswatson64)
+    set(test_target_NAME mrswatsontest64)
   endif()
 
-  configure_target(mrswatsontest 32)
-  # The main executable must be built to correctly run integration tests
-  add_dependencies(mrswatsontest mrswatson)
+  add_executable(${test_target_NAME} ${test_SOURCES} ${test_HEADERS})
+  target_link_libraries(${test_target_NAME} mrswatsoncore${wordsize})
+
+  if(WITH_AUDIOFILE)
+    target_link_libraries(${test_target_NAME} audiofile${wordsize})
+    if(WITH_FLAC)
+      target_link_libraries(${test_target_NAME} flac${wordsize})
+    endif()
+  endif()
+
+  configure_target(${test_target_NAME} ${wordsize})
+
+  # The main executable must be built to run the integration tests
+  add_dependencies(${test_target_NAME} ${main_target_NAME})
+endfunction()
+
+if(mw_BUILD_32)
+  add_test_target(32)
 endif()
 
 if(mw_BUILD_64)
-  add_executable(mrswatsontest64 ${test_SOURCES} ${test_HEADERS})
-  target_link_libraries(mrswatsontest64 mrswatsoncore64)
-  if(WITH_AUDIOFILE)
-    target_link_libraries(mrswatsontest64 audiofile64)
-  endif()
-  if(WITH_FLAC)
-    target_link_libraries(mrswatsontest64 flac64)
-  endif()
-
-  configure_target(mrswatsontest64 64)
-  # The main executable must be built to correctly run integration tests
-  add_dependencies(mrswatsontest64 mrswatson64)
+  add_test_target(64)
 endif()
