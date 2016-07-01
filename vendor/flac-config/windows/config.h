@@ -80,10 +80,10 @@
 #define GWINSZ_IN_SYS_IOCTL 1
 
 /* Compiler has the __builtin_bswap16 intrinsic */
-#define HAVE_BSWAP16 1
+#define HAVE_BSWAP16 0
 
 /* Compiler has the __builtin_bswap32 intrinsic */
-#define HAVE_BSWAP32 1
+#define HAVE_BSWAP32 0
 
 /* Define to 1 if you have the <byteswap.h> header file. */
 #define HAVE_BYTESWAP_H 1

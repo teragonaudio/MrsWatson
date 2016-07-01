@@ -18,6 +18,7 @@
 // Aside from the other problems with FLAC__ASSERT on Windows, it seems
 // that VC compiler is finding assert.h in FLAC before the system. =/
 #define FLAC__ASSERT_H 1
+#define FLAC__NO_DLL 1
 #define assert(x)
 #endif
 
