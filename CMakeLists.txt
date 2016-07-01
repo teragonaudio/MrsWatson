@@ -133,9 +133,14 @@ elseif(UNIX)
 
   # Linux-specific GCC flags
   if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-    set(mw_PLATFORM_FLAGS_LIST
-      "-std=c99"
+    set(mw_COMMON_FLAGS_LIST
+      ${mw_COMMON_FLAGS_LIST}
       "-Wuninitialized"
+    )
+
+    set(mw_CFLAGS_LIST
+      ${mw_CFLAGS_LIST}
+      "-std=c99"
     )
 
     find_package(X11)
@@ -148,8 +153,8 @@ elseif(UNIX)
 
   # Mac-specific compiler flags
   if(APPLE)
-    set(mw_COMMON_FLAGS
-      ${mw_COMMON_FLAGS}
+    set(mw_COMMON_FLAGS_LIST
+      ${mw_COMMON_FLAGS_LIST}
       "-fpascal-strings"
       "-Wnewline-eof"
       "-Wshorten-64-to-32"
