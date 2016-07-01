@@ -183,8 +183,8 @@ LinkedList charStringSplit(const CharString self, const char delimiter)
     return result;
 }
 
-void _charStringWrap(const char *srcString, char *destString, size_t destStringSize, int indentSize, int lineLength);
-void _charStringWrap(const char *srcString, char *destString, size_t destStringSize, int indentSize, int lineLength)
+void _charStringWrap(const char *srcString, char *destString, size_t destStringSize, unsigned int indentSize, unsigned int lineLength);
+void _charStringWrap(const char *srcString, char *destString, size_t destStringSize, unsigned int indentSize, unsigned int lineLength)
 {
     char *lineBuffer = NULL;
     size_t destStringIndex = 0;
