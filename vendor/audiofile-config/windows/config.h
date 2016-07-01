@@ -1,24 +1,30 @@
 /* config.h.  Generated from config.h.in by configure.  */
 /* config.h.in.  Generated from configure.ac by autoheader.  */
 
-// Include some general headers first, but make sure that Windows
-// doesn't blow away other symbols.
+// Make sure that Windows doesn't redefine these symbols before we include
+// the Windows.h header.
 #define NOMINMAX
+
+// This symbol is defined somewhere in deep the Win32 API, but audiofile
+// also defines it in an enum. So we must define it before including
+// Windows.h, but then undef it before compiling anything.
 #define WAVE_FORMAT_PCM
 #include <Windows.h>
 #include <io.h>
-
-// This symbol is defined somewhere in the Win32 API, but audiofile
-// will need it later in an enum. So we must define it before including
-// Windows.h, but then undef it before compiling anything.
 #undef WAVE_FORMAT_PCM
 
 #if USE_FLAC
-// TODO: Fix assert.h include path for Windows
-// Aside from the other problems with FLAC__ASSERT on Windows, it seems
-// that VC compiler is finding assert.h in FLAC before the system. =/
-#define FLAC__ASSERT_H 1
+// This flag is also defined for the config.h file belonging to FLAC. It
+// needs to be set it here as well or else the symbol visibility will differ
+// and the linker will complain about missing symbols from the FLAC library.
 #define FLAC__NO_DLL 1
+
+// Aside from the other problems with FLAC__ASSERT on Windows, it seems
+// that MSVC compiler finds assert.h in FLAC before the system headers.
+// So we undefine the macro and redefine it to nothing, which is perhaps
+// a bit dangerous but necessary.
+#define FLAC__ASSERT_H 1
+#undef assert
 #define assert(x)
 #endif
 
