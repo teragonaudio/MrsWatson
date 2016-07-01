@@ -1,6 +1,11 @@
 /* config.h.  Generated from config.h.in by configure.  */
 /* config.h.in.  Generated from configure.ac by autoheader.  */
 
+// Workaround for compiler error on GCC
+#if __GNUC__
+#define asm __asm__
+#endif
+
 /* Define if building universal (internal helper macro) */
 /* #undef AC_APPLE_UNIVERSAL_BUILD */
 
@@ -38,7 +43,7 @@
 #define FLAC__HAS_OGG 0
 
 /* Set to 1 if <x86intrin.h> is available. */
-#define FLAC__HAS_X86INTRIN 
+#define FLAC__HAS_X86INTRIN 1
 
 /* define to disable use of assembly code */
 /* #undef FLAC__NO_ASM */
