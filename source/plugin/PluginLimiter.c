@@ -41,14 +41,6 @@ static boolByte _pluginLimiterOpen(void *pluginPtr)
     return true;
 }
 
-static void _pluginLimiterGetAbsolutePath(void *pluginPtr, CharString outPath)
-{
-    // Internal plugins don't have a path, and thus can't be copied. So just copy
-    // an empty string here and let any callers needing the absolute path to check
-    // for this value before doing anything important.
-    charStringClear(outPath);
-}
-
 static void _pluginLimiterDisplayInfo(void *pluginPtr)
 {
     logInfo("Information for Internal plugin '%s'", kInternalPluginLimiterName);

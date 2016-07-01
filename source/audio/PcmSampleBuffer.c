@@ -331,6 +331,9 @@ PcmSampleBuffer newPcmSampleBuffer(ChannelCount numChannels, SampleCount blocksi
         pcmSampleBuffer->setSampleBuffer = _setSampleBuffer32Bit;
         pcmSampleBuffer->setSamples = _setSamples32Bit;
         break;
+
+    default:
+        logInternalError("Invalid bit depth");
     }
 
     pcmSampleBuffer->_super = newSampleBuffer(numChannels, blocksize);

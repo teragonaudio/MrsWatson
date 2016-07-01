@@ -24,8 +24,6 @@ extern TestCase findTestCase(TestSuite testSuite, char *testName);
 extern void printUnitTestSuites(void);
 extern TestSuite runUnitTests(LinkedList testSuites, boolByte onlyPrintFailing);
 
-static const char *DEFAULT_TEST_SUITE_NAME = "all";
-
 #if UNIX
 static const char *MRSWATSON_EXE_NAME = "mrswatson";
 #elif WINDOWS
@@ -163,7 +161,6 @@ File _findMrsWatsonExe(CharString mrsWatsonExeArg)
 int main(int argc, char *argv[])
 {
     ProgramOptions programOptions;
-    boolByte runAllTests = true;
     int totalTestsRun = 0;
     int totalTestsPassed = 0;
     int totalTestsFailed = 0;
