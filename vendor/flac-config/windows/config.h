@@ -262,6 +262,7 @@
 #pragma warning(disable: 4996)
 #pragma warning(disable: 4018)
 #pragma warning(disable: 4146)
-//#pragma warning(disable: 4005)
 #pragma warning(disable: 4752)
 #pragma warning(disable: 4013)
+#pragma warning(disable: 4267)
+#pragma warning(disable: 4334)
