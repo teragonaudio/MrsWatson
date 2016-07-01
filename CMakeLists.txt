@@ -67,7 +67,7 @@ if(MSVC)
   set(CMAKE_CFG_INTDIR ".")
 
   set(CMAKE_C_FLAGS_DEBUG "/MP /DDEBUG=1 /D_DEBUG /MTd /Ob0 /Od /RTC1")
-  set(CMAKE_C_FLAGS_MINSIZEREL "/MP /MT /O1 /Ob1 /Oi /D NDEBUG")
+  set(CMAKE_C_FLAGS_MINSIZEREL "/MP /MT /O1 /Ob1 /Oi /DNDEBUG")
   set(CMAKE_C_FLAGS_RELEASE "/MP /MT /O2 /Ob2 /Oi /DNDEBUG")
   set(CMAKE_C_FLAGS_RELWITHDEBINFO "/MP /MT /Zi /O2 /Ob1 /DNDEBUG")
 
@@ -81,7 +81,7 @@ elseif(UNIX)
   add_definitions("-DUNIX=1")
 
   # Compiler flags common to C/C++ on all Unix platforms
-  set(mw_SHARED_FLAGS_LIST
+  set(mw_COMMON_FLAGS_LIST
     "-fmessage-length=0"
     "-pipe"
 
@@ -115,7 +115,7 @@ elseif(UNIX)
     "-Wvolatile-register-var"
   )
 
-  set(mw_SHARED_CFLAGS_LIST
+  set(mw_CFLAGS_LIST
     "-Wmain"
     "-Wenum-compare"
     "-Wmissing-braces"
@@ -124,7 +124,7 @@ elseif(UNIX)
     "-Wpointer-sign"
   )
 
-  set(mw_SHARED_CPPFLAGS_LIST
+  set(mw_CPPFLAGS_LIST
     "-Wsign-compare"
     "-Weffc++"
     "-Wc++11-compat"
@@ -134,7 +134,7 @@ elseif(UNIX)
   # Linux-specific GCC flags
   if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     set(mw_PLATFORM_FLAGS_LIST
-      "-std=gnu99"
+      "-std=c99"
       "-Wuninitialized"
     )
 
@@ -148,7 +148,8 @@ elseif(UNIX)
 
   # Mac-specific compiler flags
   if(APPLE)
-    set(mw_PLATFORM_FLAGS_LIST
+    set(mw_COMMON_FLAGS
+      ${mw_COMMON_FLAGS}
       "-fpascal-strings"
       "-Wnewline-eof"
       "-Wshorten-64-to-32"
@@ -156,7 +157,7 @@ elseif(UNIX)
       "-mmacosx-version-min=10.5"
     )
 
-    set(mw_PLATFORM_LINK_FLAGS_LIST
+    set(mw_LINKER_FLAGS_LIST
       "-framework AppKit"
       "-framework Carbon"
       "-framework CoreFoundation"
@@ -171,41 +172,20 @@ elseif(UNIX)
 
   # CMake multi-line strings are a pain to work with, so it's much easier to
   # define lists and then construct strings from them.
-  string(REPLACE ";" " " mw_SHARED_FLAGS "${mw_SHARED_FLAGS_LIST}")
-  string(REPLACE ";" " " mw_SHARED_CFLAGS "${mw_SHARED_CFLAGS_LIST}")
-  string(REPLACE ";" " " mw_SHARED_CPPFLAGS "${mw_SHARED_CPPFLAGS_LIST}")
-  string(REPLACE ";" " " mw_PLATFORM_FLAGS "${mw_PLATFORM_FLAGS_LIST}")
-  string(REPLACE ";" " " mw_PLATFORM_LINK_FLAGS "${mw_PLATFORM_LINK_FLAGS_LIST}")
+  string(REPLACE ";" " " mw_COMMON_FLAGS "${mw_COMMON_FLAGS_LIST}")
+  string(REPLACE ";" " " mw_CFLAGS "${mw_CFLAGS_LIST}")
+  string(REPLACE ";" " " mw_CPPFLAGS "${mw_CPPFLAGS_LIST}")
+  string(REPLACE ";" " " mw_LINKER_FLAGS "${mw_LINKER_FLAGS_LIST}")
+
+  set(mw_CFLAGS "${mw_COMMON_FLAGS} ${mw_CFLAGS}")
+  set(mw_CPPFLAGS "${mw_COMMON_FLAGS} ${mw_CPPFLAGS}")
 
   # Set compiler flags from shared & platform-specific lists
-  set(CMAKE_C_FLAGS_DEBUG
-    "${CMAKE_C_FLAGS_DEBUG} \
-     ${mw_SHARED_FLAGS} \
-     ${mw_SHARED_CFLAGS} \
-     ${mw_PLATFORM_FLAGS}"
-  )
-  set(CMAKE_C_FLAGS_RELEASE
-    "${CMAKE_C_FLAGS_RELEASE} \
-     ${mw_SHARED_FLAGS} \
-     ${mw_SHARED_CFLAGS} \
-     ${mw_PLATFORM_FLAGS}"
-  )
-  set(CMAKE_CXX_FLAGS_DEBUG
-    "${CMAKE_CXX_FLAGS_DEBUG} \
-     ${mw_SHARED_FLAGS} \
-     ${mw_SHARED_CPPFLAGS} \
-     ${mw_PLATFORM_FLAGS}"
-  )
-  set(CMAKE_CXX_FLAGS_RELEASE
-    "${CMAKE_CXX_FLAGS_RELEASE} \
-     ${mw_SHARED_FLAGS} \
-     ${mw_SHARED_CPPFLAGS} \
-     ${mw_PLATFORM_FLAGS}"
-  )
-  set(CMAKE_EXE_LINKER_FLAGS
-    "${CMAKE_EXE_LINKER_FLAGS} \
-     ${mw_PLATFORM_LINK_FLAGS}"
-  )
+  set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} ${mw_CFLAGS}")
+  set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} ${mw_CFLAGS}")
+  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${mw_CPPFLAGS}")
+  set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${mw_CPPFLAGS}")
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${mw_LINKER_FLAGS}")
 endif()
 
 ##################
