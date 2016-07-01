@@ -41,7 +41,7 @@ typedef struct {
     void *pcmSamples;
     BitDepth bitDepth;
     boolByte littleEndian;
-    size_t bytesPerSample;
+    SampleCount bytesPerSample;
 
     PcmSampleBufferGetSampleBufferFunc getSampleBuffer;
     PcmSampleBufferSetSampleBufferFunc setSampleBuffer;

@@ -323,7 +323,7 @@ static boolByte _readBlockFromWaveFile(void *sampleSourcePtr, SampleBuffer sampl
     SampleSource sampleSource = (SampleSource)sampleSourcePtr;
     SampleSourcePcmData extraData = (SampleSourcePcmData)sampleSource->extraData;
     unsigned long originalBlocksize = sampleBuffer->blocksize;
-    size_t samplesRead = sampleSourcePcmRead(extraData, sampleBuffer);
+    SampleCount samplesRead = sampleSourcePcmRead(extraData, sampleBuffer);
     sampleSource->numSamplesProcessed += samplesRead;
     return (boolByte)(originalBlocksize == sampleBuffer->blocksize);
 }
