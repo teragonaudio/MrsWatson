@@ -3,6 +3,7 @@
 #include <io.h>
 #endif
 
+#include "time/AudioClock.h"
 #include "unit/TestRunner.h"
 
 static boolByte gUseColor = false;
