@@ -383,7 +383,7 @@ if(NOT EXISTS ${vst_sdk_ROOT})
   file(DOWNLOAD ${vst_sdk_URL} "${vst_sdk_ZIP}")
   message(STATUS "Extracting VST SDK")
   execute_process(COMMAND
-    ${CMAKE_COMMAND} -E tar "xf" ${vst_sdk_ZIP} --format=zip
+    ${CMAKE_COMMAND} -E tar "xf" ${vst_sdk_ZIP}
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
     INPUT_FILE "${vst_sdk_ZIP}"
   )

@@ -1,0 +1,39 @@
+branches:
+  only:
+    - master
+
+# This image also includes VS2013
+image: Visual Studio 2015
+
+environment:
+  matrix:
+    - CONFIGURATION: Release
+      GENERATOR: Visual Studio 12 2013
+      MAINEXE: mrswatson.exe
+      TESTEXE: mrswatsontest.exe
+    - CONFIGURATION: Release
+      GENERATOR: Visual Studio 12 2013 Win64
+      MAINEXE: mrswatson64.exe
+      TESTEXE: mrswatsontest64.exe
+    - CONFIGURATION: Release
+      GENERATOR: Visual Studio 14 2015
+      MAINEXE: mrswatson.exe
+      TESTEXE: mrswatsontest.exe
+    - CONFIGURATION: Release
+      GENERATOR: Visual Studio 14 2015 Win64
+      MAINEXE: mrswatson64.exe
+      TESTEXE: mrswatsontest64.exe
+
+install:
+  - git submodule update --init --recursive
+
+build_script:
+  - if exist build (rd /s /q build)
+  - mkdir build
+  - cd build
+  - cmake -D CMAKE_BUILD_TYPE=%CONFIGURATION% -G "%GENERATOR%" ..
+  - cmake --build . --config %CONFIGURATION%
+
+test_script:
+  - cd ..
+  - 'build\test\%CONFIGURATION%\%TESTEXE% -r vendor/AudioTestData -m build\main\%CONFIGURATION%\%MAINEXE%'
