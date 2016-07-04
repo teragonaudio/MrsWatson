@@ -34,15 +34,15 @@
 #include "io/SampleSource.h"
 
 typedef struct {
-    boolByte isStream;
-    boolByte isLittleEndian;
-    FILE *fileHandle;
-    size_t dataBufferNumItems;
-    PcmSampleBuffer pcmSampleBuffer;
+  boolByte isStream;
+  boolByte isLittleEndian;
+  FILE *fileHandle;
+  size_t dataBufferNumItems;
+  PcmSampleBuffer pcmSampleBuffer;
 
-    ChannelCount numChannels;
-    SampleRate sampleRate;
-    BitDepth bitDepth;
+  ChannelCount numChannels;
+  SampleRate sampleRate;
+  BitDepth bitDepth;
 } SampleSourcePcmDataMembers;
 typedef SampleSourcePcmDataMembers *SampleSourcePcmData;
 
@@ -52,7 +52,8 @@ typedef SampleSourcePcmDataMembers *SampleSourcePcmData;
  * @param sampleBuffer
  * @return Number of samples read
  */
-SampleCount sampleSourcePcmRead(SampleSourcePcmData extraData, SampleBuffer sampleBuffer);
+SampleCount sampleSourcePcmRead(SampleSourcePcmData extraData,
+                                SampleBuffer sampleBuffer);
 
 /**
  * Writes data from a sample buffer to a PCM output
@@ -60,7 +61,8 @@ SampleCount sampleSourcePcmRead(SampleSourcePcmData extraData, SampleBuffer samp
  * @param sampleBuffer
  * @return Number of samples written
  */
-SampleCount sampleSourcePcmWrite(SampleSourcePcmData extraData, const SampleBuffer sampleBuffer);
+SampleCount sampleSourcePcmWrite(SampleSourcePcmData extraData,
+                                 const SampleBuffer sampleBuffer);
 
 /**
  * Set the sample rate to be used for raw PCM file operations. This is most

@@ -34,9 +34,9 @@
 #include "base/Types.h"
 
 typedef struct {
-    char id[5];
-    unsigned int size;
-    byte *data;
+  char id[5];
+  unsigned int size;
+  byte *data;
 } RiffChunkMembers;
 typedef RiffChunkMembers *RiffChunk;
 

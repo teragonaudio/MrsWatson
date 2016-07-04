@@ -26,76 +26,71 @@
 //
 
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "base/CharString.h"
 #include "plugin/PluginVst2xId.h"
 
-static CharString _convertIntIdToString(const unsigned long id)
-{
-    CharString result = newCharStringWithCapacity(5);
-    int i;
+static CharString _convertIntIdToString(const unsigned long id) {
+  CharString result = newCharStringWithCapacity(5);
+  int i;
 
+  for (i = 0; i < 4; i++) {
+    result->data[i] = (char)(id >> ((3 - i) * 8) & 0xff);
+  }
+
+  return result;
+}
+
+static unsigned long _convertStringIdToInt(const CharString idString) {
+  unsigned long result = 0;
+  int i;
+
+  if (idString != NULL && strlen(idString->data) == 4) {
     for (i = 0; i < 4; i++) {
-        result->data[i] = (char)(id >> ((3 - i) * 8) & 0xff);
+      result |= (unsigned long)(idString->data[i]) << ((3 - i) * 8);
     }
+  }
 
-    return result;
+  return result;
 }
 
-static unsigned long _convertStringIdToInt(const CharString idString)
-{
-    unsigned long result = 0;
-    int i;
+PluginVst2xId newPluginVst2xId(void) {
+  PluginVst2xId pluginVst2xId =
+      (PluginVst2xId)malloc(sizeof(PluginVst2xIdMembers));
 
-    if (idString != NULL && strlen(idString->data) == 4) {
-        for (i = 0; i < 4; i++) {
-            result |= (unsigned long)(idString->data[i]) << ((3 - i) * 8);
-        }
-    }
+  pluginVst2xId->id = 0;
+  pluginVst2xId->idString = newCharStringWithCString(PLUGIN_VST2X_ID_UNKNOWN);
 
-    return result;
+  return pluginVst2xId;
 }
 
-PluginVst2xId newPluginVst2xId(void)
-{
-    PluginVst2xId pluginVst2xId = (PluginVst2xId)malloc(sizeof(PluginVst2xIdMembers));
+PluginVst2xId newPluginVst2xIdWithId(unsigned long id) {
+  PluginVst2xId pluginVst2xId = newPluginVst2xId();
 
-    pluginVst2xId->id = 0;
-    pluginVst2xId->idString = newCharStringWithCString(PLUGIN_VST2X_ID_UNKNOWN);
+  pluginVst2xId->id = id;
+  freeCharString(pluginVst2xId->idString);
+  pluginVst2xId->idString = _convertIntIdToString(id);
 
-    return pluginVst2xId;
+  return pluginVst2xId;
 }
 
-PluginVst2xId newPluginVst2xIdWithId(unsigned long id)
-{
-    PluginVst2xId pluginVst2xId = newPluginVst2xId();
+PluginVst2xId newPluginVst2xIdWithStringId(const CharString idString) {
+  PluginVst2xId pluginVst2xId = newPluginVst2xId();
 
-    pluginVst2xId->id = id;
-    freeCharString(pluginVst2xId->idString);
-    pluginVst2xId->idString = _convertIntIdToString(id);
+  pluginVst2xId->id = _convertStringIdToInt(idString);
 
-    return pluginVst2xId;
+  if (idString != NULL && pluginVst2xId->id > 0) {
+    charStringCopy(pluginVst2xId->idString, idString);
+  }
+
+  return pluginVst2xId;
 }
 
-PluginVst2xId newPluginVst2xIdWithStringId(const CharString idString)
-{
-    PluginVst2xId pluginVst2xId = newPluginVst2xId();
-
-    pluginVst2xId->id = _convertStringIdToInt(idString);
-
-    if (idString != NULL && pluginVst2xId->id > 0) {
-        charStringCopy(pluginVst2xId->idString, idString);
-    }
-
-    return pluginVst2xId;
-}
-
-void freePluginVst2xId(PluginVst2xId self)
-{
-    if (self) {
-        freeCharString(self->idString);
-        free(self);
-    }
+void freePluginVst2xId(PluginVst2xId self) {
+  if (self) {
+    freeCharString(self->idString);
+    free(self);
+  }
 }

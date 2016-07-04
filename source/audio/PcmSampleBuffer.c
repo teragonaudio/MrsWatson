@@ -26,325 +26,344 @@
 //
 
 #include <math.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdio.h>
 
 #include "audio/PcmSampleBuffer.h"
 #include "base/Endian.h"
 #include "base/PlatformInfo.h"
 #include "logging/EventLogger.h"
 
-static SampleBuffer _getSampleBuffer(void *selfPtr)
-{
-    PcmSampleBuffer self = (PcmSampleBuffer)selfPtr;
-    return self->_super;
+static SampleBuffer _getSampleBuffer(void *selfPtr) {
+  PcmSampleBuffer self = (PcmSampleBuffer)selfPtr;
+  return self->_super;
 }
 
 // Normally we'd return `Sample` here, however for the 32-bit functions that
 // would cause an overflow for 32-bit floating point values.
-static double _getMaxPcmSampleValue(const PcmSampleBuffer self)
-{
-    return pow(2.0, (double)(self->bitDepth - 1)) - 1.0;
+static double _getMaxPcmSampleValue(const PcmSampleBuffer self) {
+  return pow(2.0, (double)(self->bitDepth - 1)) - 1.0;
 }
 
-static void _setSampleBuffer8Bit(void *selfPtr, SampleBuffer sampleBuffer)
-{
-    PcmSampleBuffer self = (PcmSampleBuffer)selfPtr;
-    const double pcmSampleMax = _getMaxPcmSampleValue(self);
-    unsigned char *charSamples = (unsigned char *)(self->pcmSamples);
-    SampleCount index = 0;
+static void _setSampleBuffer8Bit(void *selfPtr, SampleBuffer sampleBuffer) {
+  PcmSampleBuffer self = (PcmSampleBuffer)selfPtr;
+  const double pcmSampleMax = _getMaxPcmSampleValue(self);
+  unsigned char *charSamples = (unsigned char *)(self->pcmSamples);
+  SampleCount index = 0;
 
-    // 8-bit PCM samples are unsigned, so instead of relying on 2's compliment
-    // storage, we must map the samples from {-1.0 .. 1.0} - {0 .. 255}
-    for (SampleCount sample = 0; sample < sampleBuffer->blocksize; ++sample) {
-        for (ChannelCount channel = 0; channel < sampleBuffer->numChannels; ++channel) {
-            charSamples[index++] = (unsigned char)((sampleBuffer->samples[channel][sample] + 1.0f) * pcmSampleMax);
-        }
+  // 8-bit PCM samples are unsigned, so instead of relying on 2's compliment
+  // storage, we must map the samples from {-1.0 .. 1.0} - {0 .. 255}
+  for (SampleCount sample = 0; sample < sampleBuffer->blocksize; ++sample) {
+    for (ChannelCount channel = 0; channel < sampleBuffer->numChannels;
+         ++channel) {
+      charSamples[index++] =
+          (unsigned char)((sampleBuffer->samples[channel][sample] + 1.0f) *
+                          pcmSampleMax);
     }
+  }
 }
 
-static void _setSampleBuffer16Bit(void *selfPtr, SampleBuffer sampleBuffer)
-{
-    PcmSampleBuffer self = (PcmSampleBuffer)selfPtr;
-    const double pcmSampleMax = _getMaxPcmSampleValue(self);
-    short *shortSamples = (short *)(self->pcmSamples);
-    SampleCount index = 0;
+static void _setSampleBuffer16Bit(void *selfPtr, SampleBuffer sampleBuffer) {
+  PcmSampleBuffer self = (PcmSampleBuffer)selfPtr;
+  const double pcmSampleMax = _getMaxPcmSampleValue(self);
+  short *shortSamples = (short *)(self->pcmSamples);
+  SampleCount index = 0;
 
-    for (SampleCount sample = 0; sample < sampleBuffer->blocksize; ++sample) {
-        for (ChannelCount channel = 0; channel < sampleBuffer->numChannels; ++channel) {
-            shortSamples[index++] = (short)(sampleBuffer->samples[channel][sample] * pcmSampleMax);
-        }
+  for (SampleCount sample = 0; sample < sampleBuffer->blocksize; ++sample) {
+    for (ChannelCount channel = 0; channel < sampleBuffer->numChannels;
+         ++channel) {
+      shortSamples[index++] =
+          (short)(sampleBuffer->samples[channel][sample] * pcmSampleMax);
     }
+  }
 }
 
-static void _setSampleBuffer24Bit(void *selfPtr, SampleBuffer sampleBuffer)
-{
-    PcmSampleBuffer self = (PcmSampleBuffer)selfPtr;
-    const double pcmSampleMax = _getMaxPcmSampleValue(self);
-    int *intSamples = (int *)(self->pcmSamples);
-    SampleCount index = 0;
+static void _setSampleBuffer24Bit(void *selfPtr, SampleBuffer sampleBuffer) {
+  PcmSampleBuffer self = (PcmSampleBuffer)selfPtr;
+  const double pcmSampleMax = _getMaxPcmSampleValue(self);
+  int *intSamples = (int *)(self->pcmSamples);
+  SampleCount index = 0;
 
-    for (SampleCount sample = 0; sample < sampleBuffer->blocksize; ++sample) {
-        for (ChannelCount channel = 0; channel < sampleBuffer->numChannels; ++channel) {
-            intSamples[index++] = (int)(sampleBuffer->samples[channel][sample] * pcmSampleMax);
-        }
+  for (SampleCount sample = 0; sample < sampleBuffer->blocksize; ++sample) {
+    for (ChannelCount channel = 0; channel < sampleBuffer->numChannels;
+         ++channel) {
+      intSamples[index++] =
+          (int)(sampleBuffer->samples[channel][sample] * pcmSampleMax);
     }
+  }
 }
 
-static void _setSampleBuffer32Bit(void *selfPtr, SampleBuffer sampleBuffer)
-{
-    PcmSampleBuffer self = (PcmSampleBuffer)selfPtr;
-    float *floatSamples = (float *)(self->pcmSamples);
-    SampleCount index = 0;
+static void _setSampleBuffer32Bit(void *selfPtr, SampleBuffer sampleBuffer) {
+  PcmSampleBuffer self = (PcmSampleBuffer)selfPtr;
+  float *floatSamples = (float *)(self->pcmSamples);
+  SampleCount index = 0;
 
-    for (SampleCount sample = 0; sample < sampleBuffer->blocksize; ++sample) {
-        for (ChannelCount channel = 0; channel < sampleBuffer->numChannels; ++channel) {
-            floatSamples[index++] = sampleBuffer->samples[channel][sample];
-        }
+  for (SampleCount sample = 0; sample < sampleBuffer->blocksize; ++sample) {
+    for (ChannelCount channel = 0; channel < sampleBuffer->numChannels;
+         ++channel) {
+      floatSamples[index++] = sampleBuffer->samples[channel][sample];
     }
+  }
 }
 
-static void _setSamples8Bit(void *selfPtr)
-{
-    PcmSampleBuffer self = (PcmSampleBuffer)selfPtr;
-    Samples *samples = self->_super->samples;
-    unsigned char *charSamples = (unsigned char *)(self->pcmSamples);
-    const SampleCount numSamples = self->_super->blocksize * self->_super->numChannels;
-    SampleCount sampleIndex = 0;
-    ChannelCount channelIndex = 0;
-    const double pcmSampleMax = _getMaxPcmSampleValue(self);
+static void _setSamples8Bit(void *selfPtr) {
+  PcmSampleBuffer self = (PcmSampleBuffer)selfPtr;
+  Samples *samples = self->_super->samples;
+  unsigned char *charSamples = (unsigned char *)(self->pcmSamples);
+  const SampleCount numSamples =
+      self->_super->blocksize * self->_super->numChannels;
+  SampleCount sampleIndex = 0;
+  ChannelCount channelIndex = 0;
+  const double pcmSampleMax = _getMaxPcmSampleValue(self);
+
+  for (SampleCount sample = 0; sample < numSamples; ++sample) {
+    samples[channelIndex++][sampleIndex] =
+        (Sample)((double)(charSamples[sample] - 127) / pcmSampleMax);
+
+    if (channelIndex >= self->_super->numChannels) {
+      channelIndex = 0;
+      ++sampleIndex;
+    }
+  }
+}
+
+static void _setSamples16Bit(void *selfPtr) {
+  PcmSampleBuffer self = (PcmSampleBuffer)selfPtr;
+  Samples *samples = self->_super->samples;
+  short *shortSamples = (short *)(self->pcmSamples);
+  const SampleCount numSamples =
+      self->_super->blocksize * self->_super->numChannels;
+  SampleCount sampleIndex = 0;
+  ChannelCount channelIndex = 0;
+  const double pcmSampleMax = _getMaxPcmSampleValue(self);
+
+  if (platformInfoIsLittleEndian() && self->littleEndian) {
+    for (SampleCount sample = 0; sample < numSamples; ++sample) {
+      samples[channelIndex++][sampleIndex] =
+          (Sample)((double)shortSamples[sample] / pcmSampleMax);
+
+      if (channelIndex >= self->_super->numChannels) {
+        channelIndex = 0;
+        ++sampleIndex;
+      }
+    }
+  } else {
+    short flippedSample;
 
     for (SampleCount sample = 0; sample < numSamples; ++sample) {
-        samples[channelIndex++][sampleIndex] = (Sample)((double)(charSamples[sample] - 127) / pcmSampleMax);
+      flippedSample = flipShortEndian(shortSamples[sample]);
+      samples[channelIndex++][sampleIndex] =
+          (Sample)((double)flippedSample / pcmSampleMax);
 
-        if (channelIndex >= self->_super->numChannels) {
-            channelIndex = 0;
-            ++sampleIndex;
-        }
+      if (channelIndex >= self->_super->numChannels) {
+        channelIndex = 0;
+        ++sampleIndex;
+      }
     }
+  }
 }
 
-static void _setSamples16Bit(void *selfPtr)
-{
-    PcmSampleBuffer self = (PcmSampleBuffer)selfPtr;
-    Samples *samples = self->_super->samples;
-    short *shortSamples = (short *)(self->pcmSamples);
-    const SampleCount numSamples = self->_super->blocksize * self->_super->numChannels;
-    SampleCount sampleIndex = 0;
-    ChannelCount channelIndex = 0;
-    const double pcmSampleMax = _getMaxPcmSampleValue(self);
-
-    if (platformInfoIsLittleEndian() && self->littleEndian) {
-        for (SampleCount sample = 0; sample < numSamples; ++sample) {
-            samples[channelIndex++][sampleIndex] = (Sample)((double)shortSamples[sample] / pcmSampleMax);
-
-            if (channelIndex >= self->_super->numChannels) {
-                channelIndex = 0;
-                ++sampleIndex;
-            }
-        }
-    } else {
-        short flippedSample;
-
-        for (SampleCount sample = 0; sample < numSamples; ++sample) {
-            flippedSample = flipShortEndian(shortSamples[sample]);
-            samples[channelIndex++][sampleIndex] = (Sample)((double)flippedSample / pcmSampleMax);
-
-            if (channelIndex >= self->_super->numChannels) {
-                channelIndex = 0;
-                ++sampleIndex;
-            }
-        }
-    }
-}
-
-static void _setSamples24Bit(void *selfPtr)
-{
-    PcmSampleBuffer self = (PcmSampleBuffer)selfPtr;
-    Samples *samples = self->_super->samples;
-    const SampleCount numSamples = self->_super->blocksize * self->_super->numChannels;
-    SampleCount sampleIndex = 0;
-    ChannelCount channelIndex = 0;
-    const double pcmSampleMax = _getMaxPcmSampleValue(self);
+static void _setSamples24Bit(void *selfPtr) {
+  PcmSampleBuffer self = (PcmSampleBuffer)selfPtr;
+  Samples *samples = self->_super->samples;
+  const SampleCount numSamples =
+      self->_super->blocksize * self->_super->numChannels;
+  SampleCount sampleIndex = 0;
+  ChannelCount channelIndex = 0;
+  const double pcmSampleMax = _getMaxPcmSampleValue(self);
 
 #if USE_AUDIOFILE
-    int *intSamples = (int *)(self->pcmSamples);
+  int *intSamples = (int *)(self->pcmSamples);
 
-    if (platformInfoIsLittleEndian() && self->littleEndian) {
-        for (SampleCount sample = 0; sample < numSamples; ++sample) {
-            samples[channelIndex++][sampleIndex] = (Sample)((double)intSamples[sample] / pcmSampleMax);
+  if (platformInfoIsLittleEndian() && self->littleEndian) {
+    for (SampleCount sample = 0; sample < numSamples; ++sample) {
+      samples[channelIndex++][sampleIndex] =
+          (Sample)((double)intSamples[sample] / pcmSampleMax);
 
-            if (channelIndex >= self->_super->numChannels) {
-                channelIndex = 0;
-                ++sampleIndex;
-            }
-        }
-    } else {
-        logWarn("Bit-flipping on 24-bit PCM data has not been tested, unexpected output may occur");
-        int flippedSample;
-
-        for (SampleCount sample = 0; sample < numSamples; ++sample) {
-            flippedSample = flipIntEndian(intSamples[sample]);
-            samples[channelIndex++][sampleIndex] = (Sample)((double)flippedSample / pcmSampleMax);
-
-            if (channelIndex >= self->_super->numChannels) {
-                channelIndex = 0;
-                ++sampleIndex;
-            }
-        }
+      if (channelIndex >= self->_super->numChannels) {
+        channelIndex = 0;
+        ++sampleIndex;
+      }
     }
+  } else {
+    logWarn("Bit-flipping on 24-bit PCM data has not been tested, unexpected "
+            "output may occur");
+    int flippedSample;
+
+    for (SampleCount sample = 0; sample < numSamples; ++sample) {
+      flippedSample = flipIntEndian(intSamples[sample]);
+      samples[channelIndex++][sampleIndex] =
+          (Sample)((double)flippedSample / pcmSampleMax);
+
+      if (channelIndex >= self->_super->numChannels) {
+        channelIndex = 0;
+        ++sampleIndex;
+      }
+    }
+  }
 
 #else
-    // audiofile will expand 24-bit samples to 32-bit integer quantities for us, but
-    // if we are not using audiofile, then we will need to do the expansion by hand.
-    char *charSamples = (char *)(self->pcmSamples);
-    int value;
+  // audiofile will expand 24-bit samples to 32-bit integer quantities for us,
+  // but
+  // if we are not using audiofile, then we will need to do the expansion by
+  // hand.
+  char *charSamples = (char *)(self->pcmSamples);
+  int value;
 
-    if (self->littleEndian) {
-        for (size_t index = 0; index < numSamples * self->bytesPerSample; index += 3) {
-            // If the topmost bit here is set, then we have a negative number and must
-            // take the 2's compliment of it.
-            if (charSamples[index + 2] & 0x80) {
-                value = 0xffffffff;
-                value &= (charSamples[index + 2] << 16) | 0xff000000;
-                value &= (charSamples[index + 1] << 8) | 0xffff0000;
-                value &= (charSamples[index]) | 0xffffff00;
-            } else {
-                value = 0;
-                value |= (charSamples[index + 2] << 16) & 0x00ff0000;
-                value |= (charSamples[index + 1] << 8) & 0x0000ff00;
-                value |= (charSamples[index]) & 0x000000ff;
-            }
+  if (self->littleEndian) {
+    for (size_t index = 0; index < numSamples * self->bytesPerSample;
+         index += 3) {
+      // If the topmost bit here is set, then we have a negative number and must
+      // take the 2's compliment of it.
+      if (charSamples[index + 2] & 0x80) {
+        value = 0xffffffff;
+        value &= (charSamples[index + 2] << 16) | 0xff000000;
+        value &= (charSamples[index + 1] << 8) | 0xffff0000;
+        value &= (charSamples[index]) | 0xffffff00;
+      } else {
+        value = 0;
+        value |= (charSamples[index + 2] << 16) & 0x00ff0000;
+        value |= (charSamples[index + 1] << 8) & 0x0000ff00;
+        value |= (charSamples[index]) & 0x000000ff;
+      }
 
-            samples[channelIndex++][sampleIndex] = (Sample)((double)value / pcmSampleMax);
+      samples[channelIndex++][sampleIndex] =
+          (Sample)((double)value / pcmSampleMax);
 
-            if (channelIndex >= self->_super->numChannels) {
-                channelIndex = 0;
-                ++sampleIndex;
-            }
-        }
-    } else {
-        for (size_t index = 0; index < numSamples * self->bytesPerSample; index += 3) {
-            // If the topmost bit here is set, then we have a negative number and must
-            // take the 2's compliment of it.
-            if (charSamples[index] & 0x80) {
-                value = 0xffffffff;
-                value &= (charSamples[index] << 16) | 0xff000000;
-                value &= (charSamples[index + 1] << 8) | 0xffff0000;
-                value &= (charSamples[index + 2]) | 0xffffff00;
-            } else {
-                value = 0;
-                value |= (charSamples[index] << 16) & 0x00ff0000;
-                value |= (charSamples[index + 1] << 8) & 0x0000ff00;
-                value |= (charSamples[index + 2]) & 0x000000ff;
-            }
-
-            samples[channelIndex++][sampleIndex] = (Sample)((double)value / pcmSampleMax);
-
-            if (channelIndex >= self->_super->numChannels) {
-                channelIndex = 0;
-                ++sampleIndex;
-            }
-        }
+      if (channelIndex >= self->_super->numChannels) {
+        channelIndex = 0;
+        ++sampleIndex;
+      }
     }
+  } else {
+    for (size_t index = 0; index < numSamples * self->bytesPerSample;
+         index += 3) {
+      // If the topmost bit here is set, then we have a negative number and must
+      // take the 2's compliment of it.
+      if (charSamples[index] & 0x80) {
+        value = 0xffffffff;
+        value &= (charSamples[index] << 16) | 0xff000000;
+        value &= (charSamples[index + 1] << 8) | 0xffff0000;
+        value &= (charSamples[index + 2]) | 0xffffff00;
+      } else {
+        value = 0;
+        value |= (charSamples[index] << 16) & 0x00ff0000;
+        value |= (charSamples[index + 1] << 8) & 0x0000ff00;
+        value |= (charSamples[index + 2]) & 0x000000ff;
+      }
+
+      samples[channelIndex++][sampleIndex] =
+          (Sample)((double)value / pcmSampleMax);
+
+      if (channelIndex >= self->_super->numChannels) {
+        channelIndex = 0;
+        ++sampleIndex;
+      }
+    }
+  }
 
 #endif
 }
 
-static void _setSamples32Bit(void *selfPtr)
-{
-    PcmSampleBuffer self = (PcmSampleBuffer)selfPtr;
-    Samples *samples = self->_super->samples;
-    float *floatSamples = (float *)(self->pcmSamples);
-    const SampleCount numSamples = self->_super->blocksize * self->_super->numChannels;
-    SampleCount sampleIndex = 0;
-    ChannelCount channelIndex = 0;
+static void _setSamples32Bit(void *selfPtr) {
+  PcmSampleBuffer self = (PcmSampleBuffer)selfPtr;
+  Samples *samples = self->_super->samples;
+  float *floatSamples = (float *)(self->pcmSamples);
+  const SampleCount numSamples =
+      self->_super->blocksize * self->_super->numChannels;
+  SampleCount sampleIndex = 0;
+  ChannelCount channelIndex = 0;
 
-    // 32-bit PCM files are usually not stored as 32-bit integer data (though the
-    // WAVE standard does seem to allow this), but in most cases IEEE 32-bit floats
-    // are just written directly to disk. In this case, we don't need to do any
-    // sample conversion (aside from bit flipping, if necessary), basically we just
-    // interlace the data.
+  // 32-bit PCM files are usually not stored as 32-bit integer data (though the
+  // WAVE standard does seem to allow this), but in most cases IEEE 32-bit
+  // floats
+  // are just written directly to disk. In this case, we don't need to do any
+  // sample conversion (aside from bit flipping, if necessary), basically we
+  // just
+  // interlace the data.
 
-    if (platformInfoIsLittleEndian() && self->littleEndian) {
-        for (SampleCount sample = 0; sample < numSamples; ++sample) {
-            samples[channelIndex++][sampleIndex] = floatSamples[sample];
+  if (platformInfoIsLittleEndian() && self->littleEndian) {
+    for (SampleCount sample = 0; sample < numSamples; ++sample) {
+      samples[channelIndex++][sampleIndex] = floatSamples[sample];
 
-            if (channelIndex >= self->_super->numChannels) {
-                channelIndex = 0;
-                ++sampleIndex;
-            }
-        }
-    } else {
-        float flippedSample;
-
-        for (SampleCount sample = 0; sample < numSamples; ++sample) {
-            flippedSample = convertBigEndianFloatToPlatform(floatSamples[sample]);
-            samples[channelIndex++][sampleIndex] = flippedSample;
-
-            if (channelIndex >= self->_super->numChannels) {
-                channelIndex = 0;
-                ++sampleIndex;
-            }
-        }
+      if (channelIndex >= self->_super->numChannels) {
+        channelIndex = 0;
+        ++sampleIndex;
+      }
     }
+  } else {
+    float flippedSample;
+
+    for (SampleCount sample = 0; sample < numSamples; ++sample) {
+      flippedSample = convertBigEndianFloatToPlatform(floatSamples[sample]);
+      samples[channelIndex++][sampleIndex] = flippedSample;
+
+      if (channelIndex >= self->_super->numChannels) {
+        channelIndex = 0;
+        ++sampleIndex;
+      }
+    }
+  }
 }
 
-PcmSampleBuffer newPcmSampleBuffer(ChannelCount numChannels, SampleCount blocksize, BitDepth bitDepth)
-{
-    PcmSampleBuffer pcmSampleBuffer = (PcmSampleBuffer)malloc(sizeof(PcmSampleBufferMembers));
+PcmSampleBuffer newPcmSampleBuffer(ChannelCount numChannels,
+                                   SampleCount blocksize, BitDepth bitDepth) {
+  PcmSampleBuffer pcmSampleBuffer =
+      (PcmSampleBuffer)malloc(sizeof(PcmSampleBufferMembers));
 
-    pcmSampleBuffer->littleEndian = true;
-    pcmSampleBuffer->bitDepth = bitDepth;
-    pcmSampleBuffer->bytesPerSample = bitDepth / 8;
-    SampleCount pcmSampleBufferSize = numChannels * blocksize * pcmSampleBuffer->bytesPerSample;
+  pcmSampleBuffer->littleEndian = true;
+  pcmSampleBuffer->bitDepth = bitDepth;
+  pcmSampleBuffer->bytesPerSample = bitDepth / 8;
+  SampleCount pcmSampleBufferSize =
+      numChannels * blocksize * pcmSampleBuffer->bytesPerSample;
 
-    if (bitDepth == kBitDepth24Bit) {
-        // For 24-bit samples, bytesPerSample is 3 but we store the values internally
-        // as regular 32-bit integers. This value is correct when reading samples from
-        // file, but it will cause us to overwrite memory when writing samples.
-        pcmSampleBufferSize = numChannels * blocksize * sizeof(int);
-    }
+  if (bitDepth == kBitDepth24Bit) {
+    // For 24-bit samples, bytesPerSample is 3 but we store the values
+    // internally
+    // as regular 32-bit integers. This value is correct when reading samples
+    // from
+    // file, but it will cause us to overwrite memory when writing samples.
+    pcmSampleBufferSize = numChannels * blocksize * sizeof(int);
+  }
 
-    pcmSampleBuffer->pcmSamples = malloc(pcmSampleBufferSize);
-    memset(pcmSampleBuffer->pcmSamples, 0, pcmSampleBufferSize);
-    pcmSampleBuffer->getSampleBuffer = _getSampleBuffer;
+  pcmSampleBuffer->pcmSamples = malloc(pcmSampleBufferSize);
+  memset(pcmSampleBuffer->pcmSamples, 0, pcmSampleBufferSize);
+  pcmSampleBuffer->getSampleBuffer = _getSampleBuffer;
 
-    switch (bitDepth) {
-    case kBitDepth8Bit:
-        pcmSampleBuffer->setSampleBuffer = _setSampleBuffer8Bit;
-        pcmSampleBuffer->setSamples = _setSamples8Bit;
-        break;
+  switch (bitDepth) {
+  case kBitDepth8Bit:
+    pcmSampleBuffer->setSampleBuffer = _setSampleBuffer8Bit;
+    pcmSampleBuffer->setSamples = _setSamples8Bit;
+    break;
 
-    case kBitDepth16Bit:
-        pcmSampleBuffer->setSampleBuffer = _setSampleBuffer16Bit;
-        pcmSampleBuffer->setSamples = _setSamples16Bit;
-        break;
+  case kBitDepth16Bit:
+    pcmSampleBuffer->setSampleBuffer = _setSampleBuffer16Bit;
+    pcmSampleBuffer->setSamples = _setSamples16Bit;
+    break;
 
-    case kBitDepth24Bit:
-        pcmSampleBuffer->setSampleBuffer = _setSampleBuffer24Bit;
-        pcmSampleBuffer->setSamples = _setSamples24Bit;
-        break;
+  case kBitDepth24Bit:
+    pcmSampleBuffer->setSampleBuffer = _setSampleBuffer24Bit;
+    pcmSampleBuffer->setSamples = _setSamples24Bit;
+    break;
 
-    case kBitDepth32Bit:
-        pcmSampleBuffer->setSampleBuffer = _setSampleBuffer32Bit;
-        pcmSampleBuffer->setSamples = _setSamples32Bit;
-        break;
+  case kBitDepth32Bit:
+    pcmSampleBuffer->setSampleBuffer = _setSampleBuffer32Bit;
+    pcmSampleBuffer->setSamples = _setSamples32Bit;
+    break;
 
-    default:
-        logInternalError("Invalid bit depth");
-    }
+  default:
+    logInternalError("Invalid bit depth");
+  }
 
-    pcmSampleBuffer->_super = newSampleBuffer(numChannels, blocksize);
-    return pcmSampleBuffer;
+  pcmSampleBuffer->_super = newSampleBuffer(numChannels, blocksize);
+  return pcmSampleBuffer;
 }
 
-void freePcmSampleBuffer(PcmSampleBuffer self)
-{
-    if (self != NULL) {
-        freeSampleBuffer(self->_super);
-        free(self->pcmSamples);
-        free(self);
-    }
+void freePcmSampleBuffer(PcmSampleBuffer self) {
+  if (self != NULL) {
+    freeSampleBuffer(self->_super);
+    free(self->pcmSamples);
+    free(self);
+  }
 }

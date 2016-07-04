@@ -34,247 +34,259 @@
 #include "plugin/PluginPresetFxp.h"
 #include "plugin/PluginVst2x.h"
 
-static boolByte _openPluginPresetFxp(void *pluginPresetPtr)
-{
-    PluginPreset pluginPreset = (PluginPreset)pluginPresetPtr;
-    PluginPresetFxpData extraData = (PluginPresetFxpData)(pluginPreset->extraData);
-    extraData->fileHandle = fopen(pluginPreset->presetName->data, "rb");
+static boolByte _openPluginPresetFxp(void *pluginPresetPtr) {
+  PluginPreset pluginPreset = (PluginPreset)pluginPresetPtr;
+  PluginPresetFxpData extraData =
+      (PluginPresetFxpData)(pluginPreset->extraData);
+  extraData->fileHandle = fopen(pluginPreset->presetName->data, "rb");
 
-    if (extraData->fileHandle == NULL) {
-        logError("Preset '%s' could not be opened for reading", pluginPreset->presetName->data);
-        return false;
-    }
+  if (extraData->fileHandle == NULL) {
+    logError("Preset '%s' could not be opened for reading",
+             pluginPreset->presetName->data);
+    return false;
+  }
 
-    return true;
+  return true;
 }
 
-static boolByte _loadPluginPresetFxp(void *pluginPresetPtr, Plugin plugin)
-{
-    PluginPreset pluginPreset = (PluginPreset)pluginPresetPtr;
-    PluginPresetFxpData extraData = (PluginPresetFxpData)(pluginPreset->extraData);
-    FxpProgram inProgram = NULL;
-    PluginPresetFxpProgramType programType;
+static boolByte _loadPluginPresetFxp(void *pluginPresetPtr, Plugin plugin) {
+  PluginPreset pluginPreset = (PluginPreset)pluginPresetPtr;
+  PluginPresetFxpData extraData =
+      (PluginPresetFxpData)(pluginPreset->extraData);
+  FxpProgram inProgram = NULL;
+  PluginPresetFxpProgramType programType;
 
-    char *chunk;
-    size_t chunkSize;
-    unsigned int valueBuffer;
-    size_t numObjectsRead;
-    float parameterValue;
-    unsigned int i;
+  char *chunk;
+  size_t chunkSize;
+  unsigned int valueBuffer;
+  size_t numObjectsRead;
+  float parameterValue;
+  unsigned int i;
 
-    numObjectsRead = fread(&valueBuffer, sizeof(unsigned int), 1, extraData->fileHandle);
+  numObjectsRead =
+      fread(&valueBuffer, sizeof(unsigned int), 1, extraData->fileHandle);
 
-    if (numObjectsRead != 1) {
-        logError("Short read of FXP preset file at chunkMagic");
-        return false;
-    }
+  if (numObjectsRead != 1) {
+    logError("Short read of FXP preset file at chunkMagic");
+    return false;
+  }
 
-    inProgram = (FxpProgram)malloc(sizeof(FxpProgramMembers));
-    inProgram->chunkMagic = convertBigEndianIntToPlatform(valueBuffer);
+  inProgram = (FxpProgram)malloc(sizeof(FxpProgramMembers));
+  inProgram->chunkMagic = convertBigEndianIntToPlatform(valueBuffer);
 
-    if (inProgram->chunkMagic != 0x43636E4B) { // 'CcnK'
-        logError("FXP preset file has bad chunk magic");
-        free(inProgram);
-        return false;
-    }
-
-    numObjectsRead = fread(&valueBuffer, sizeof(unsigned int), 1, extraData->fileHandle);
-
-    if (numObjectsRead != 1) {
-        logError("Short read of FXP preset file at byteSize");
-        free(inProgram);
-        return false;
-    }
-
-    inProgram->byteSize = convertBigEndianIntToPlatform(valueBuffer);
-    logDebug("FXP program has %d bytes in main chunk", inProgram->byteSize);
-
-    numObjectsRead = fread(&valueBuffer, sizeof(unsigned int), 1, extraData->fileHandle);
-
-    if (numObjectsRead != 1) {
-        logError("Short read of FXP preset file at fxMagic");
-        free(inProgram);
-        return false;
-    }
-
-    inProgram->fxMagic = convertBigEndianIntToPlatform(valueBuffer);
-
-    if (inProgram->fxMagic == 0x4678436b) { // 'FxCk'
-        programType = FXP_TYPE_REGULAR;
-    } else if (inProgram->fxMagic == 0x46504368) { // 'FPCh'
-        programType = FXP_TYPE_OPAQUE_CHUNK;
-    } else {
-        logError("FXP preset has invalid fxMagic type");
-        free(inProgram);
-        return false;
-    }
-
-    numObjectsRead = fread(&valueBuffer, sizeof(unsigned int), 1, extraData->fileHandle);
-
-    if (numObjectsRead != 1) {
-        logError("Short read of FXP preset file at version");
-        free(inProgram);
-        return false;
-    }
-
-    inProgram->version = convertBigEndianIntToPlatform(valueBuffer);
-
-    numObjectsRead = fread(&valueBuffer, sizeof(unsigned int), 1, extraData->fileHandle);
-
-    if (numObjectsRead != 1) {
-        logError("Short read of FXP preset file at fxID");
-        free(inProgram);
-        return false;
-    }
-
-    inProgram->fxID = convertBigEndianIntToPlatform(valueBuffer);
-    logDebug("Preset's fxID is %d", inProgram->fxID);
-
-    if (inProgram->fxID != pluginVst2xGetUniqueId(plugin)) {
-        logError("Preset '%s' is not compatible with plugin '%s'", pluginPreset->presetName->data, plugin->pluginName->data);
-        free(inProgram);
-        return false;
-    }
-
-    numObjectsRead = fread(&valueBuffer, sizeof(unsigned int), 1, extraData->fileHandle);
-
-    if (numObjectsRead != 1) {
-        logError("Short read of FXP preset file at fxVersion");
-        free(inProgram);
-        return false;
-    }
-
-    inProgram->fxVersion = convertBigEndianIntToPlatform(valueBuffer);
-
-    if (inProgram->fxVersion != pluginVst2xGetVersion(plugin)) {
-        logWarn("Plugin has version %ld, but preset has version %d. Loading this preset may result in unexpected behavior!",
-                pluginVst2xGetVersion(plugin), inProgram->fxVersion);
-    } else {
-        logDebug("Preset's version is %d", inProgram->fxVersion);
-    }
-
-    numObjectsRead = fread(&valueBuffer, sizeof(unsigned int), 1, extraData->fileHandle);
-
-    if (numObjectsRead != 1) {
-        logError("Short read of FXP preset file at numParams");
-        free(inProgram);
-        return false;
-    }
-
-    inProgram->numParams = convertBigEndianIntToPlatform(valueBuffer);
-    logDebug("Preset has %d params", inProgram->numParams);
-
-    memset(inProgram->prgName, 0, sizeof(char) * 28);
-    numObjectsRead = fread(inProgram->prgName, sizeof(char), 28, extraData->fileHandle);
-
-    if (numObjectsRead != 28) {
-        logError("Short read of FXP preset file at prgName");
-        free(inProgram);
-        return false;
-    }
-
-    charStringCopyCString(pluginPreset->presetName, inProgram->prgName);
-    logDebug("Preset's name is %s", pluginPreset->presetName->data);
-
-    if (programType == FXP_TYPE_REGULAR) {
-        for (i = 0; i < inProgram->numParams; i++) {
-            float parameterBuffer = 0.0f;
-            numObjectsRead = fread(&parameterBuffer, sizeof(float), 1, extraData->fileHandle);
-
-            if (numObjectsRead != 1) {
-                logError("Short read of FXP preset at parameter data");
-                free(inProgram);
-                return false;
-            }
-
-            parameterValue = convertBigEndianFloatToPlatform(parameterBuffer);
-            plugin->setParameter(plugin, i, parameterValue);
-        }
-    } else if (programType == FXP_TYPE_OPAQUE_CHUNK) {
-        numObjectsRead = fread(&valueBuffer, sizeof(unsigned int), 1, extraData->fileHandle);
-
-        if (numObjectsRead != 1) {
-            logError("Short read of FXP preset file at chunk size");
-            free(inProgram);
-            return false;
-        }
-
-        inProgram->content.data.size = convertBigEndianIntToPlatform(valueBuffer);
-        chunkSize = inProgram->content.data.size;
-
-        if (chunkSize == 0) {
-            logError("FXP preset has chunk of 0 bytes");
-            free(inProgram);
-            return false;
-        } else {
-            logDebug("Plugin has chunk size of %d bytes", chunkSize);
-        }
-
-        chunk = (char *)malloc(sizeof(char) * chunkSize);
-        memset(chunk, 0, sizeof(char) * chunkSize);
-        numObjectsRead = fread(chunk, sizeof(char), chunkSize, extraData->fileHandle);
-
-        if (numObjectsRead != chunkSize) {
-            logError("Short read of FXP preset file at chunk");
-            free(inProgram);
-            free(chunk);
-            return false;
-        }
-
-        // The chunk has been read, set it to the actual plugin
-        if (plugin->interfaceType == PLUGIN_TYPE_VST_2X) {
-            pluginVst2xSetProgramChunk(plugin, chunk, chunkSize);
-            free(inProgram);
-            free(chunk);
-            return true;
-        } else {
-            logInternalError("Load FXP preset to wrong plugin type");
-            free(inProgram);
-            free(chunk);
-            return false;
-        }
-    } else {
-        logInternalError("Invalid FXP program type");
-        free(inProgram);
-        return false;
-    }
-
+  if (inProgram->chunkMagic != 0x43636E4B) { // 'CcnK'
+    logError("FXP preset file has bad chunk magic");
     free(inProgram);
-    return true;
-}
+    return false;
+  }
 
-static void _freePluginPresetDataFxp(void *extraDataPtr)
-{
-    PluginPresetFxpData extraData = extraDataPtr;
+  numObjectsRead =
+      fread(&valueBuffer, sizeof(unsigned int), 1, extraData->fileHandle);
 
-    if (extraData->fileHandle != NULL) {
-        fclose(extraData->fileHandle);
+  if (numObjectsRead != 1) {
+    logError("Short read of FXP preset file at byteSize");
+    free(inProgram);
+    return false;
+  }
+
+  inProgram->byteSize = convertBigEndianIntToPlatform(valueBuffer);
+  logDebug("FXP program has %d bytes in main chunk", inProgram->byteSize);
+
+  numObjectsRead =
+      fread(&valueBuffer, sizeof(unsigned int), 1, extraData->fileHandle);
+
+  if (numObjectsRead != 1) {
+    logError("Short read of FXP preset file at fxMagic");
+    free(inProgram);
+    return false;
+  }
+
+  inProgram->fxMagic = convertBigEndianIntToPlatform(valueBuffer);
+
+  if (inProgram->fxMagic == 0x4678436b) { // 'FxCk'
+    programType = FXP_TYPE_REGULAR;
+  } else if (inProgram->fxMagic == 0x46504368) { // 'FPCh'
+    programType = FXP_TYPE_OPAQUE_CHUNK;
+  } else {
+    logError("FXP preset has invalid fxMagic type");
+    free(inProgram);
+    return false;
+  }
+
+  numObjectsRead =
+      fread(&valueBuffer, sizeof(unsigned int), 1, extraData->fileHandle);
+
+  if (numObjectsRead != 1) {
+    logError("Short read of FXP preset file at version");
+    free(inProgram);
+    return false;
+  }
+
+  inProgram->version = convertBigEndianIntToPlatform(valueBuffer);
+
+  numObjectsRead =
+      fread(&valueBuffer, sizeof(unsigned int), 1, extraData->fileHandle);
+
+  if (numObjectsRead != 1) {
+    logError("Short read of FXP preset file at fxID");
+    free(inProgram);
+    return false;
+  }
+
+  inProgram->fxID = convertBigEndianIntToPlatform(valueBuffer);
+  logDebug("Preset's fxID is %d", inProgram->fxID);
+
+  if (inProgram->fxID != pluginVst2xGetUniqueId(plugin)) {
+    logError("Preset '%s' is not compatible with plugin '%s'",
+             pluginPreset->presetName->data, plugin->pluginName->data);
+    free(inProgram);
+    return false;
+  }
+
+  numObjectsRead =
+      fread(&valueBuffer, sizeof(unsigned int), 1, extraData->fileHandle);
+
+  if (numObjectsRead != 1) {
+    logError("Short read of FXP preset file at fxVersion");
+    free(inProgram);
+    return false;
+  }
+
+  inProgram->fxVersion = convertBigEndianIntToPlatform(valueBuffer);
+
+  if (inProgram->fxVersion != pluginVst2xGetVersion(plugin)) {
+    logWarn("Plugin has version %ld, but preset has version %d. Loading this "
+            "preset may result in unexpected behavior!",
+            pluginVst2xGetVersion(plugin), inProgram->fxVersion);
+  } else {
+    logDebug("Preset's version is %d", inProgram->fxVersion);
+  }
+
+  numObjectsRead =
+      fread(&valueBuffer, sizeof(unsigned int), 1, extraData->fileHandle);
+
+  if (numObjectsRead != 1) {
+    logError("Short read of FXP preset file at numParams");
+    free(inProgram);
+    return false;
+  }
+
+  inProgram->numParams = convertBigEndianIntToPlatform(valueBuffer);
+  logDebug("Preset has %d params", inProgram->numParams);
+
+  memset(inProgram->prgName, 0, sizeof(char) * 28);
+  numObjectsRead =
+      fread(inProgram->prgName, sizeof(char), 28, extraData->fileHandle);
+
+  if (numObjectsRead != 28) {
+    logError("Short read of FXP preset file at prgName");
+    free(inProgram);
+    return false;
+  }
+
+  charStringCopyCString(pluginPreset->presetName, inProgram->prgName);
+  logDebug("Preset's name is %s", pluginPreset->presetName->data);
+
+  if (programType == FXP_TYPE_REGULAR) {
+    for (i = 0; i < inProgram->numParams; i++) {
+      float parameterBuffer = 0.0f;
+      numObjectsRead =
+          fread(&parameterBuffer, sizeof(float), 1, extraData->fileHandle);
+
+      if (numObjectsRead != 1) {
+        logError("Short read of FXP preset at parameter data");
+        free(inProgram);
+        return false;
+      }
+
+      parameterValue = convertBigEndianFloatToPlatform(parameterBuffer);
+      plugin->setParameter(plugin, i, parameterValue);
+    }
+  } else if (programType == FXP_TYPE_OPAQUE_CHUNK) {
+    numObjectsRead =
+        fread(&valueBuffer, sizeof(unsigned int), 1, extraData->fileHandle);
+
+    if (numObjectsRead != 1) {
+      logError("Short read of FXP preset file at chunk size");
+      free(inProgram);
+      return false;
     }
 
-    if (extraData->chunk != NULL) {
-        free(extraData->chunk);
+    inProgram->content.data.size = convertBigEndianIntToPlatform(valueBuffer);
+    chunkSize = inProgram->content.data.size;
+
+    if (chunkSize == 0) {
+      logError("FXP preset has chunk of 0 bytes");
+      free(inProgram);
+      return false;
+    } else {
+      logDebug("Plugin has chunk size of %d bytes", chunkSize);
     }
+
+    chunk = (char *)malloc(sizeof(char) * chunkSize);
+    memset(chunk, 0, sizeof(char) * chunkSize);
+    numObjectsRead =
+        fread(chunk, sizeof(char), chunkSize, extraData->fileHandle);
+
+    if (numObjectsRead != chunkSize) {
+      logError("Short read of FXP preset file at chunk");
+      free(inProgram);
+      free(chunk);
+      return false;
+    }
+
+    // The chunk has been read, set it to the actual plugin
+    if (plugin->interfaceType == PLUGIN_TYPE_VST_2X) {
+      pluginVst2xSetProgramChunk(plugin, chunk, chunkSize);
+      free(inProgram);
+      free(chunk);
+      return true;
+    } else {
+      logInternalError("Load FXP preset to wrong plugin type");
+      free(inProgram);
+      free(chunk);
+      return false;
+    }
+  } else {
+    logInternalError("Invalid FXP program type");
+    free(inProgram);
+    return false;
+  }
+
+  free(inProgram);
+  return true;
 }
 
-PluginPreset newPluginPresetFxp(const CharString presetName)
-{
-    PluginPreset pluginPreset = (PluginPreset)malloc(sizeof(PluginPresetMembers));
-    PluginPresetFxpData extraData = (PluginPresetFxpData)malloc(sizeof(PluginPresetFxpDataMembers));
+static void _freePluginPresetDataFxp(void *extraDataPtr) {
+  PluginPresetFxpData extraData = extraDataPtr;
 
-    pluginPreset->presetType = PRESET_TYPE_FXP;
-    pluginPreset->presetName = newCharString();
-    charStringCopy(pluginPreset->presetName, presetName);
-    pluginPreset->compatiblePluginTypes = 0;
-    pluginPresetSetCompatibleWith(pluginPreset, PLUGIN_TYPE_VST_2X);
+  if (extraData->fileHandle != NULL) {
+    fclose(extraData->fileHandle);
+  }
 
-    pluginPreset->openPreset = _openPluginPresetFxp;
-    pluginPreset->loadPreset = _loadPluginPresetFxp;
-    pluginPreset->freePresetData = _freePluginPresetDataFxp;
-
-    extraData->fileHandle = NULL;
-    extraData->chunk = NULL;
-    pluginPreset->extraData = extraData;
-
-    return pluginPreset;
+  if (extraData->chunk != NULL) {
+    free(extraData->chunk);
+  }
 }
 
+PluginPreset newPluginPresetFxp(const CharString presetName) {
+  PluginPreset pluginPreset = (PluginPreset)malloc(sizeof(PluginPresetMembers));
+  PluginPresetFxpData extraData =
+      (PluginPresetFxpData)malloc(sizeof(PluginPresetFxpDataMembers));
+
+  pluginPreset->presetType = PRESET_TYPE_FXP;
+  pluginPreset->presetName = newCharString();
+  charStringCopy(pluginPreset->presetName, presetName);
+  pluginPreset->compatiblePluginTypes = 0;
+  pluginPresetSetCompatibleWith(pluginPreset, PLUGIN_TYPE_VST_2X);
+
+  pluginPreset->openPreset = _openPluginPresetFxp;
+  pluginPreset->loadPreset = _loadPluginPresetFxp;
+  pluginPreset->freePresetData = _freePluginPresetDataFxp;
+
+  extraData->fileHandle = NULL;
+  extraData->chunk = NULL;
+  pluginPreset->extraData = extraData;
+
+  return pluginPreset;
+}

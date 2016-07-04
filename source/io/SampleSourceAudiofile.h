@@ -39,8 +39,8 @@
 // are defined in the individual subclasses.
 
 typedef struct {
-    AFfilehandle fileHandle;
-    PcmSampleBuffer pcmSampleBuffer;
+  AFfilehandle fileHandle;
+  PcmSampleBuffer pcmSampleBuffer;
 } SampleSourceAudiofileDataMembers;
 
 typedef SampleSourceAudiofileDataMembers *SampleSourceAudiofileData;

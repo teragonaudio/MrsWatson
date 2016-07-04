@@ -50,8 +50,8 @@ static const size_t kCharStringLengthLong = 8192;
 #endif
 
 typedef struct {
-    size_t capacity;
-    char *data;
+  size_t capacity;
+  char *data;
 } CharStringMembers;
 typedef CharStringMembers *CharString;
 
@@ -74,7 +74,8 @@ CharString newCharStringWithCapacity(size_t length);
 CharString newCharStringWithCString(const char *string);
 
 /**
- * Append another CharString to this instance, truncating if necessary. Appending
+ * Append another CharString to this instance, truncating if necessary.
+ * Appending
  * a string to itself will result in undefined behavior.
  * @param self
  * @param string String to append
@@ -82,7 +83,8 @@ CharString newCharStringWithCString(const char *string);
 void charStringAppend(CharString self, const CharString string);
 
 /**
- * Append a C-String to this CharString. Appending a string to itself will result
+ * Append a C-String to this CharString. Appending a string to itself will
+ * result
  * in undefined behavior.
  * @param self
  * @param string NULL-terminated string to append
@@ -122,7 +124,8 @@ boolByte charStringIsEmpty(const CharString self);
  * @param caseInsensitive True for a case-insensitive comparison
  * @return True if the strings are equal, false otherwise
  */
-boolByte charStringIsEqualTo(const CharString self, const CharString string, boolByte caseInsensitive);
+boolByte charStringIsEqualTo(const CharString self, const CharString string,
+                             boolByte caseInsensitive);
 
 /**
  * Test for string equality
@@ -131,7 +134,8 @@ boolByte charStringIsEqualTo(const CharString self, const CharString string, boo
  * @param caseInsensitive True for a case-insensitive comparison
  * @return True if the strings are equal, false otherwise
  */
-boolByte charStringIsEqualToCString(const CharString self, const char *string, boolByte caseInsensitive);
+boolByte charStringIsEqualToCString(const CharString self, const char *string,
+                                    boolByte caseInsensitive);
 
 /**
  * Test if a given character in this string is a letter. This function does not
@@ -158,7 +162,8 @@ boolByte charStringIsNumber(const CharString self, const size_t index);
  * list of strings do not include the delimiter character itself.
  * @param self
  * @param delimiter Delimiter character (cannot be NULL)
- * @return List of strings (may be an empty list if the delimiter was not found),
+ * @return List of strings (may be an empty list if the delimiter was not
+ * found),
  * or NULL if invalid input given.
  */
 LinkedList charStringSplit(const CharString self, const char delimiter);

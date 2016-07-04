@@ -35,70 +35,68 @@
 #include "plugin/PluginPresetFxp.h"
 #include "plugin/PluginPresetInternalProgram.h"
 
-static PluginPresetType _pluginPresetGuessType(const CharString presetName)
-{
-    if (presetName == NULL || charStringIsEmpty(presetName)) {
+static PluginPresetType _pluginPresetGuessType(const CharString presetName) {
+  if (presetName == NULL || charStringIsEmpty(presetName)) {
+    return PRESET_TYPE_INVALID;
+  }
+
+  File presetFile = newFileWithPath(presetName);
+  CharString fileExtension = fileGetExtension(presetFile);
+  freeFile(presetFile);
+
+  if (fileExtension == NULL) {
+    for (size_t i = 0; i < strlen(presetName->data); i++) {
+      if (!charStringIsNumber(presetName, i)) {
         return PRESET_TYPE_INVALID;
+      }
     }
 
-    File presetFile = newFileWithPath(presetName);
-    CharString fileExtension = fileGetExtension(presetFile);
-    freeFile(presetFile);
+    // If the preset name is all numeric, then it's an internal program number
+    return PRESET_TYPE_INTERNAL_PROGRAM;
+  } else if (charStringIsEqualToCString(fileExtension, "fxp", true)) {
+    freeCharString(fileExtension);
+    return PRESET_TYPE_FXP;
+  } else {
+    logCritical("Preset '%s' does not match any supported type",
+                presetName->data);
+    freeCharString(fileExtension);
+    return PRESET_TYPE_INVALID;
+  }
+}
 
-    if (fileExtension == NULL) {
-        for (size_t i = 0; i < strlen(presetName->data); i++) {
-            if (!charStringIsNumber(presetName, i)) {
-                return PRESET_TYPE_INVALID;
-            }
-        }
+PluginPreset pluginPresetFactory(const CharString presetName) {
+  PluginPresetType presetType = _pluginPresetGuessType(presetName);
 
-        // If the preset name is all numeric, then it's an internal program number
-        return PRESET_TYPE_INTERNAL_PROGRAM;
-    } else if (charStringIsEqualToCString(fileExtension, "fxp", true)) {
-        freeCharString(fileExtension);
-        return PRESET_TYPE_FXP;
-    } else {
-        logCritical("Preset '%s' does not match any supported type", presetName->data);
-        freeCharString(fileExtension);
-        return PRESET_TYPE_INVALID;
+  switch (presetType) {
+  case PRESET_TYPE_FXP:
+    return newPluginPresetFxp(presetName);
+
+  case PRESET_TYPE_INTERNAL_PROGRAM:
+    return newPluginPresetInternalProgram(presetName);
+
+  default:
+    return NULL;
+  }
+}
+
+void pluginPresetSetCompatibleWith(PluginPreset pluginPreset,
+                                   PluginInterfaceType interfaceType) {
+  pluginPreset->compatiblePluginTypes |= (1 << interfaceType);
+}
+
+boolByte pluginPresetIsCompatibleWith(const PluginPreset pluginPreset,
+                                      const Plugin plugin) {
+  return (pluginPreset->compatiblePluginTypes & (1 << plugin->interfaceType));
+}
+
+void freePluginPreset(PluginPreset pluginPreset) {
+  if (pluginPreset != NULL) {
+    if (pluginPreset->extraData != NULL) {
+      pluginPreset->freePresetData(pluginPreset->extraData);
+      free(pluginPreset->extraData);
     }
-}
 
-PluginPreset pluginPresetFactory(const CharString presetName)
-{
-    PluginPresetType presetType = _pluginPresetGuessType(presetName);
-
-    switch (presetType) {
-    case PRESET_TYPE_FXP:
-        return newPluginPresetFxp(presetName);
-
-    case PRESET_TYPE_INTERNAL_PROGRAM:
-        return newPluginPresetInternalProgram(presetName);
-
-    default:
-        return NULL;
-    }
-}
-
-void pluginPresetSetCompatibleWith(PluginPreset pluginPreset, PluginInterfaceType interfaceType)
-{
-    pluginPreset->compatiblePluginTypes |= (1 << interfaceType);
-}
-
-boolByte pluginPresetIsCompatibleWith(const PluginPreset pluginPreset, const Plugin plugin)
-{
-    return (pluginPreset->compatiblePluginTypes & (1 << plugin->interfaceType));
-}
-
-void freePluginPreset(PluginPreset pluginPreset)
-{
-    if (pluginPreset != NULL) {
-        if (pluginPreset->extraData != NULL) {
-            pluginPreset->freePresetData(pluginPreset->extraData);
-            free(pluginPreset->extraData);
-        }
-
-        freeCharString(pluginPreset->presetName);
-        free(pluginPreset);
-    }
+    freeCharString(pluginPreset->presetName);
+    free(pluginPreset);
+  }
 }

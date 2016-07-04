@@ -56,9 +56,11 @@ Plugin newPluginVst2x(const CharString pluginName, const CharString pluginRoot);
 unsigned long pluginVst2xGetUniqueId(const Plugin self);
 
 /**
- * Get the plugin's version number. Used to determine compatible FXB/FXP patches.
+ * Get the plugin's version number. Used to determine compatible FXB/FXP
+ * patches.
  * @param self
- * @return Plugin version, or 0 if an error occurred. Note that some (buggy) plugins
+ * @return Plugin version, or 0 if an error occurred. Note that some (buggy)
+ * plugins
  *         could potentially have a declared version of 0 as well.
  */
 unsigned long pluginVst2xGetVersion(const Plugin self);
@@ -70,7 +72,8 @@ unsigned long pluginVst2xGetVersion(const Plugin self);
  * @param pluginRoot User-provided plugin root path
  * @return True if such a plugin exists in any location, false otherwise
  */
-boolByte pluginVst2xExists(const CharString pluginName, const CharString pluginRoot);
+boolByte pluginVst2xExists(const CharString pluginName,
+                           const CharString pluginRoot);
 
 /**
  * Set an internal program number for a VST2.x plugin.

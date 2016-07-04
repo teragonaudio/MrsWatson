@@ -1,5 +1,5 @@
-#include "unit/TestRunner.h"
 #include "base/Endian.h"
+#include "unit/TestRunner.h"
 
 #include "unit/TestRunner.h"
 
@@ -25,143 +25,143 @@
 #error Both HOST_BIG_ENDIAN and HOST_LITTLE_ENDIAN cannot be defined to 1!
 #endif
 
-static int _testFlipShortEndian(void)
-{
-    unsigned short s = 0xabcd;
-    unsigned short r = flipShortEndian(s);
-    assertUnsignedLongEquals(0xcdabul, r);
-    assertIntEquals(s, flipShortEndian(r));
-    return 0;
+static int _testFlipShortEndian(void) {
+  unsigned short s = 0xabcd;
+  unsigned short r = flipShortEndian(s);
+  assertUnsignedLongEquals(0xcdabul, r);
+  assertIntEquals(s, flipShortEndian(r));
+  return 0;
 }
 
-static int _testFlipIntEndian(void)
-{
-    unsigned int i = 0xdeadbeef;
-    unsigned int r = flipIntEndian(i);
-    assertUnsignedLongEquals(0xefbeaddel, r);
-    assertIntEquals(i, flipIntEndian(r));
-    return 0;
+static int _testFlipIntEndian(void) {
+  unsigned int i = 0xdeadbeef;
+  unsigned int r = flipIntEndian(i);
+  assertUnsignedLongEquals(0xefbeaddel, r);
+  assertIntEquals(i, flipIntEndian(r));
+  return 0;
 }
 
-static int _testConvertBigEndianShortToPlatform(void)
-{
-    unsigned short s = 0xabcd;
-    unsigned short r = convertBigEndianShortToPlatform(s);
+static int _testConvertBigEndianShortToPlatform(void) {
+  unsigned short s = 0xabcd;
+  unsigned short r = convertBigEndianShortToPlatform(s);
 #if HOST_BIG_ENDIAN
-    assertUnsignedLongEquals(s, (unsigned long)r);
+  assertUnsignedLongEquals(s, (unsigned long)r);
 #elif HOST_LITTLE_ENDIAN
-    assertUnsignedLongEquals((unsigned long)s, (unsigned long)flipShortEndian(r));
+  assertUnsignedLongEquals((unsigned long)s, (unsigned long)flipShortEndian(r));
 #endif
-    return 0;
+  return 0;
 }
 
-static int _testConvertBigEndianIntToPlatform(void)
-{
-    unsigned int i = 0xdeadbeef;
-    unsigned int r = convertBigEndianIntToPlatform(i);
+static int _testConvertBigEndianIntToPlatform(void) {
+  unsigned int i = 0xdeadbeef;
+  unsigned int r = convertBigEndianIntToPlatform(i);
 #if HOST_BIG_ENDIAN
-    assertUnsignedLongEquals((unsigned long)i, r);
+  assertUnsignedLongEquals((unsigned long)i, r);
 #elif HOST_LITTLE_ENDIAN
-    assertUnsignedLongEquals(0xefbeaddeul, r);
+  assertUnsignedLongEquals(0xefbeaddeul, r);
 #endif
-    return 0;
+  return 0;
 }
 
-static int _testConvertLittleEndianIntToPlatform(void)
-{
-    unsigned int i = 0xdeadbeef;
-    unsigned int r = convertLittleEndianIntToPlatform(i);
+static int _testConvertLittleEndianIntToPlatform(void) {
+  unsigned int i = 0xdeadbeef;
+  unsigned int r = convertLittleEndianIntToPlatform(i);
 #if HOST_BIG_ENDIAN
-    assertUnsignedLongEquals(0xefbeaddeul, r);
+  assertUnsignedLongEquals(0xefbeaddeul, r);
 #elif HOST_LITTLE_ENDIAN
-    assertUnsignedLongEquals((unsigned long)i, r);
+  assertUnsignedLongEquals((unsigned long)i, r);
 #endif
-    return 0;
+  return 0;
 }
 
-static int _testConvertBigEndianFloatToPlatform(void)
-{
-    // Generate an integer with a known value and convert it to a float using pointer trickery
-    int i = 0xdeadbeef;
-    int i2 = 0xefbeadbe;
-    float *f = (float *)&i;
-    float *f2 = (float *)&i2;
-    float r = convertBigEndianFloatToPlatform(*f);
-    // Unfortunately, the above pointer trickery will result in a really huge number, so the
-    // standard comparison tolerance is *way* too low. This number is the lowest possible
-    // result that we should accept for this test.
-    const double bigFloatTolerance = 3.02231e+24;
+static int _testConvertBigEndianFloatToPlatform(void) {
+  // Generate an integer with a known value and convert it to a float using
+  // pointer trickery
+  int i = 0xdeadbeef;
+  int i2 = 0xefbeadbe;
+  float *f = (float *)&i;
+  float *f2 = (float *)&i2;
+  float r = convertBigEndianFloatToPlatform(*f);
+  // Unfortunately, the above pointer trickery will result in a really huge
+  // number, so the
+  // standard comparison tolerance is *way* too low. This number is the lowest
+  // possible
+  // result that we should accept for this test.
+  const double bigFloatTolerance = 3.02231e+24;
 
 #if HOST_BIG_ENDIAN
-    assertDoubleEquals(*f, r);
+  assertDoubleEquals(*f, r);
 #elif HOST_LITTLE_ENDIAN
-    // Sanity check to make sure that the actual result is the really huge number which we
-    // are expecting.
-    assert(fabs(r) > bigFloatTolerance);
-    assertDoubleEquals(*f2, r, bigFloatTolerance);
+  // Sanity check to make sure that the actual result is the really huge number
+  // which we
+  // are expecting.
+  assert(fabs(r) > bigFloatTolerance);
+  assertDoubleEquals(*f2, r, bigFloatTolerance);
 #endif
-    return 0;
+  return 0;
 }
 
-static int _testConvertByteArrayToUnsignedShort(void)
-{
-    byte *b = (byte *)malloc(sizeof(byte) * 2);
-    int i;
-    unsigned short s;
+static int _testConvertByteArrayToUnsignedShort(void) {
+  byte *b = (byte *)malloc(sizeof(byte) * 2);
+  int i;
+  unsigned short s;
 
-    for (i = 0; i < 2; i++) {
-        b[i] = (byte)(0xaa + i);
-    }
+  for (i = 0; i < 2; i++) {
+    b[i] = (byte)(0xaa + i);
+  }
 
-    s = convertByteArrayToUnsignedShort(b);
+  s = convertByteArrayToUnsignedShort(b);
 
 #if HOST_BIG_ENDIAN
-    assertUnsignedLongEquals(0xaaabul, s);
+  assertUnsignedLongEquals(0xaaabul, s);
 #elif HOST_LITTLE_ENDIAN
-    assertUnsignedLongEquals(0xabaaul, s);
+  assertUnsignedLongEquals(0xabaaul, s);
 #endif
 
-    free(b);
-    return 0;
+  free(b);
+  return 0;
 }
 
-static int _testConvertByteArrayToUnsignedInt(void)
-{
-    byte *b = (byte *)malloc(sizeof(byte) * 4);
-    unsigned int s;
+static int _testConvertByteArrayToUnsignedInt(void) {
+  byte *b = (byte *)malloc(sizeof(byte) * 4);
+  unsigned int s;
 
-    for (size_t i = 0; i < 4; i++) {
-        b[i] = (byte)(0xaa + i);
-    }
+  for (size_t i = 0; i < 4; i++) {
+    b[i] = (byte)(0xaa + i);
+  }
 
-    s = convertByteArrayToUnsignedInt(b);
-
+  s = convertByteArrayToUnsignedInt(b);
 
 #if HOST_BIG_ENDIAN
-    assertUnsignedLongEquals(0xaaabacadul, s);
+  assertUnsignedLongEquals(0xaaabacadul, s);
 #elif HOST_LITTLE_ENDIAN
-    assertUnsignedLongEquals(0xadacabaaul, s);
+  assertUnsignedLongEquals(0xadacabaaul, s);
 #endif
 
-    free(b);
-    return 0;
+  free(b);
+  return 0;
 }
 
 TestSuite addEndianTests(void);
-TestSuite addEndianTests(void)
-{
-    TestSuite testSuite = newTestSuite("Endian", NULL, NULL);
+TestSuite addEndianTests(void) {
+  TestSuite testSuite = newTestSuite("Endian", NULL, NULL);
 
-    addTest(testSuite, "FlipShortEndian", _testFlipShortEndian);
-    addTest(testSuite, "FlipIntEndian", _testFlipIntEndian);
+  addTest(testSuite, "FlipShortEndian", _testFlipShortEndian);
+  addTest(testSuite, "FlipIntEndian", _testFlipIntEndian);
 
-    addTest(testSuite, "ConvertBigEndianShortToPlatform", _testConvertBigEndianShortToPlatform);
-    addTest(testSuite, "ConvertBigEndianIntToPlatform", _testConvertBigEndianIntToPlatform);
-    addTest(testSuite, "ConvertLittleEndianIntToPlatform", _testConvertLittleEndianIntToPlatform);
-    addTest(testSuite, "ConvertBigEndianFloatToPlatform", _testConvertBigEndianFloatToPlatform);
+  addTest(testSuite, "ConvertBigEndianShortToPlatform",
+          _testConvertBigEndianShortToPlatform);
+  addTest(testSuite, "ConvertBigEndianIntToPlatform",
+          _testConvertBigEndianIntToPlatform);
+  addTest(testSuite, "ConvertLittleEndianIntToPlatform",
+          _testConvertLittleEndianIntToPlatform);
+  addTest(testSuite, "ConvertBigEndianFloatToPlatform",
+          _testConvertBigEndianFloatToPlatform);
 
-    addTest(testSuite, "ConvertByteArrayToUnsignedShort", _testConvertByteArrayToUnsignedShort);
-    addTest(testSuite, "ConvertByteArrayToUnsignedInt", _testConvertByteArrayToUnsignedInt);
+  addTest(testSuite, "ConvertByteArrayToUnsignedShort",
+          _testConvertByteArrayToUnsignedShort);
+  addTest(testSuite, "ConvertByteArrayToUnsignedInt",
+          _testConvertByteArrayToUnsignedInt);
 
-    return testSuite;
+  return testSuite;
 }

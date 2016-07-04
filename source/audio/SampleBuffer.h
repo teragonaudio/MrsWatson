@@ -31,9 +31,9 @@
 #include "base/Types.h"
 
 typedef struct {
-    ChannelCount numChannels;
-    SampleCount blocksize;
-    Samples *samples;
+  ChannelCount numChannels;
+  SampleCount blocksize;
+  Samples *samples;
 } SampleBufferMembers;
 typedef SampleBufferMembers *SampleBuffer;
 
@@ -54,17 +54,17 @@ void sampleBufferClear(SampleBuffer self);
 /**
  * Copy some samples from another buffer to this one
  * @param destinationBuffer
- * @param destinationOffset zero-based index of where to start in destinationBuffer.
+ * @param destinationOffset zero-based index of where to start in
+ * destinationBuffer.
  * @param sourceBuffer Other buffer to copy from
  * @param sourceOffset zero-based index of where to start in buffer.
  * @param numberOfFrames number of frames to copy.
  * @return True on success, false on failure
  */
-boolByte sampleBufferCopyAndMapChannelsWithOffset(SampleBuffer destinationBuffer,
-        SampleCount destinationOffset,
-        const SampleBuffer sourceBuffer,
-        SampleCount sourceOffset,
-        SampleCount numberOfFrames);
+boolByte sampleBufferCopyAndMapChannelsWithOffset(
+    SampleBuffer destinationBuffer, SampleCount destinationOffset,
+    const SampleBuffer sourceBuffer, SampleCount sourceOffset,
+    SampleCount numberOfFrames);
 
 /**
 * Copy all samples from another buffer to this one
@@ -72,7 +72,8 @@ boolByte sampleBufferCopyAndMapChannelsWithOffset(SampleBuffer destinationBuffer
 * @param buffer Other buffer to copy from
 * @return True on success, false on failure
 */
-boolByte sampleBufferCopyAndMapChannels(SampleBuffer self, const SampleBuffer buffer);
+boolByte sampleBufferCopyAndMapChannels(SampleBuffer self,
+                                        const SampleBuffer buffer);
 
 /**
  * Free all memory used by a SampleBuffer instance

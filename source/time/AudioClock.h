@@ -38,9 +38,9 @@
  */
 
 typedef struct {
-    boolByte transportChanged;
-    boolByte isPlaying;
-    unsigned long currentFrame;
+  boolByte transportChanged;
+  boolByte isPlaying;
+  unsigned long currentFrame;
 } AudioClockMembers;
 typedef AudioClockMembers *AudioClock;
 extern AudioClock audioClockInstance;

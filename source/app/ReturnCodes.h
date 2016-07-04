@@ -29,73 +29,77 @@
 #define MrsWatson_ReturnCodes_h
 
 typedef enum {
-    /**
-     * Failed to fork a process (used by the integration tests).
-     */
-    RETURN_CODE_FORK_FAILED = -1,
+  /**
+   * Failed to fork a process (used by the integration tests).
+   */
+  RETURN_CODE_FORK_FAILED = -1,
 
-    /**
-     * Failed to create a shell for a forked process (used by the integration tests).
-     */
-    RETURN_CODE_SHELL_FAILED = 127,
+  /**
+   * Failed to create a shell for a forked process (used by the integration
+   * tests).
+   */
+  RETURN_CODE_SHELL_FAILED = 127,
 
-    /**
-     * Unknown or other error occurred when launching a process (used by the integration tests).
-     */
-    RETURN_CODE_LAUNCH_FAILED_OTHER = 255,
+  /**
+   * Unknown or other error occurred when launching a process (used by the
+   * integration tests).
+   */
+  RETURN_CODE_LAUNCH_FAILED_OTHER = 255,
 
-    /**
-     * The operation completed successfully.
-     */
-    RETURN_CODE_SUCCESS = 0,
+  /**
+   * The operation completed successfully.
+   */
+  RETURN_CODE_SUCCESS = 0,
 
-    /**
-     * The program executed successfully, but did not process any audio.
-     */
-    RETURN_CODE_NOT_RUN,
+  /**
+   * The program executed successfully, but did not process any audio.
+   */
+  RETURN_CODE_NOT_RUN,
 
-    /**
-     * An invalid argument was passed to the program.
-     */
-    RETURN_CODE_INVALID_ARGUMENT,
+  /**
+   * An invalid argument was passed to the program.
+   */
+  RETURN_CODE_INVALID_ARGUMENT,
 
-    /**
-     * An option required an extra argument, but none was given.
-     */
-    RETURN_CODE_MISSING_REQUIRED_OPTION,
+  /**
+   * An option required an extra argument, but none was given.
+   */
+  RETURN_CODE_MISSING_REQUIRED_OPTION,
 
-    /**
-     * An I/O error occurred during processing.
-     */
-    RETURN_CODE_IO_ERROR,
+  /**
+   * An I/O error occurred during processing.
+   */
+  RETURN_CODE_IO_ERROR,
 
-    /**
-     * A plugin failed to initialize.
-     */
-    RETURN_CODE_PLUGIN_ERROR,
+  /**
+   * A plugin failed to initialize.
+   */
+  RETURN_CODE_PLUGIN_ERROR,
 
-    /**
-     * The plugin chain has an invalid configuration and cannot process audio.
-     */
-    RETURN_CODE_INVALID_PLUGIN_CHAIN,
+  /**
+   * The plugin chain has an invalid configuration and cannot process audio.
+   */
+  RETURN_CODE_INVALID_PLUGIN_CHAIN,
 
-    /**
-     * A feature was requested which is either unimplemented, or was deprecated and removed.
-     */
-    RETURN_CODE_UNSUPPORTED_FEATURE,
+  /**
+   * A feature was requested which is either unimplemented, or was deprecated
+   * and removed.
+   */
+  RETURN_CODE_UNSUPPORTED_FEATURE,
 
-    /**
-     * An internal error occurred.
-     */
-    RETURN_CODE_INTERNAL_ERROR,
+  /**
+   * An internal error occurred.
+   */
+  RETURN_CODE_INTERNAL_ERROR,
 
-    /**
-     * A signal was caught, forcing termination.
-     *
-     * This return code should always be last in this enum list. It is not actually used, but
-     * instead the signal number which was caught is added to this value.
-     */
-    RETURN_CODE_SIGNAL,
+  /**
+   * A signal was caught, forcing termination.
+   *
+   * This return code should always be last in this enum list. It is not
+   * actually used, but
+   * instead the signal number which was caught is added to this value.
+   */
+  RETURN_CODE_SIGNAL,
 } ReturnCode;
 
 #endif

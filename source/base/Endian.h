@@ -71,7 +71,8 @@ unsigned int convertBigEndianIntToPlatform(const unsigned int value);
 unsigned int convertLittleEndianIntToPlatform(const unsigned int value);
 
 /**
- * Convert a big endian floating-point value to the platform's native endian-ness.
+ * Convert a big endian floating-point value to the platform's native
+ * endian-ness.
  * @param value Floating-point number
  * @return Flipped version of float. If the host is big endian, the same value
  * will be returned.

@@ -25,90 +25,84 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
+#include "plugin/PluginLimiter.h"
 #include "audio/SampleBuffer.h"
 #include "logging/EventLogger.h"
-#include "plugin/PluginLimiter.h"
 
 const char *kInternalPluginLimiterName = INTERNAL_PLUGIN_PREFIX "limiter";
 
-static void _pluginLimiterEmpty(void *pluginPtr)
-{
-    // Nothing to do here
+static void _pluginLimiterEmpty(void *pluginPtr) {
+  // Nothing to do here
 }
 
-static boolByte _pluginLimiterOpen(void *pluginPtr)
-{
-    return true;
+static boolByte _pluginLimiterOpen(void *pluginPtr) { return true; }
+
+static void _pluginLimiterDisplayInfo(void *pluginPtr) {
+  logInfo("Information for Internal plugin '%s'", kInternalPluginLimiterName);
+  logInfo("Type: effect, parameters: none");
+  logInfo("Description: a brickwall limiter effect");
 }
 
-static void _pluginLimiterDisplayInfo(void *pluginPtr)
-{
-    logInfo("Information for Internal plugin '%s'", kInternalPluginLimiterName);
-    logInfo("Type: effect, parameters: none");
-    logInfo("Description: a brickwall limiter effect");
+static int _pluginLimiterGetSetting(void *pluginPtr,
+                                    PluginSetting pluginSetting) {
+  switch (pluginSetting) {
+  case PLUGIN_SETTING_TAIL_TIME_IN_MS:
+    return 0;
+
+  case PLUGIN_NUM_INPUTS:
+    return 2;
+
+  case PLUGIN_NUM_OUTPUTS:
+    return 2;
+
+  default:
+    return 0;
+  }
 }
 
-static int _pluginLimiterGetSetting(void *pluginPtr, PluginSetting pluginSetting)
-{
-    switch (pluginSetting) {
-    case PLUGIN_SETTING_TAIL_TIME_IN_MS:
-        return 0;
+static void _pluginLimiterProcessAudio(void *pluginPtr, SampleBuffer inputs,
+                                       SampleBuffer outputs) {
+  unsigned long channel, sample;
 
-    case PLUGIN_NUM_INPUTS:
-        return 2;
+  sampleBufferCopyAndMapChannels(outputs, inputs);
 
-    case PLUGIN_NUM_OUTPUTS:
-        return 2;
-
-    default:
-        return 0;
+  for (channel = 0; channel < outputs->numChannels; ++channel) {
+    for (sample = 0; sample < outputs->blocksize; ++sample) {
+      if (outputs->samples[channel][sample] > 1.0f) {
+        outputs->samples[channel][sample] = 1.0f;
+      } else if (outputs->samples[channel][sample] < -1.0f) {
+        outputs->samples[channel][sample] = -1.0f;
+      }
     }
+  }
 }
 
-static void _pluginLimiterProcessAudio(void *pluginPtr, SampleBuffer inputs, SampleBuffer outputs)
-{
-    unsigned long channel, sample;
-
-    sampleBufferCopyAndMapChannels(outputs, inputs);
-
-    for (channel = 0; channel < outputs->numChannels; ++channel) {
-        for (sample = 0; sample < outputs->blocksize; ++sample) {
-            if (outputs->samples[channel][sample] > 1.0f) {
-                outputs->samples[channel][sample] = 1.0f;
-            } else if (outputs->samples[channel][sample] < -1.0f) {
-                outputs->samples[channel][sample] = -1.0f;
-            }
-        }
-    }
+static void _pluginLimiterProcessMidiEvents(void *pluginPtr,
+                                            LinkedList midiEvents) {
+  // Nothing to do here
 }
 
-static void _pluginLimiterProcessMidiEvents(void *pluginPtr, LinkedList midiEvents)
-{
-    // Nothing to do here
+static boolByte _pluginLimiterSetParameter(void *pluginPtr, unsigned int i,
+                                           float value) {
+  return false;
 }
 
-static boolByte _pluginLimiterSetParameter(void *pluginPtr, unsigned int i, float value)
-{
-    return false;
-}
+Plugin newPluginLimiter(const CharString pluginName) {
+  Plugin plugin = _newPlugin(PLUGIN_TYPE_INTERNAL, PLUGIN_TYPE_EFFECT);
+  charStringCopy(plugin->pluginName, pluginName);
+  charStringCopyCString(plugin->pluginLocation, "Internal");
 
-Plugin newPluginLimiter(const CharString pluginName)
-{
-    Plugin plugin = _newPlugin(PLUGIN_TYPE_INTERNAL, PLUGIN_TYPE_EFFECT);
-    charStringCopy(plugin->pluginName, pluginName);
-    charStringCopyCString(plugin->pluginLocation, "Internal");
+  plugin->openPlugin = _pluginLimiterOpen;
+  plugin->displayInfo = _pluginLimiterDisplayInfo;
+  plugin->getSetting = _pluginLimiterGetSetting;
+  plugin->prepareForProcessing = _pluginLimiterEmpty;
+  plugin->showEditor = _pluginLimiterEmpty;
+  plugin->processAudio = _pluginLimiterProcessAudio;
+  plugin->processMidiEvents = _pluginLimiterProcessMidiEvents;
+  plugin->setParameter = _pluginLimiterSetParameter;
+  plugin->closePlugin = _pluginLimiterEmpty;
+  plugin->freePluginData = _pluginLimiterEmpty;
 
-    plugin->openPlugin = _pluginLimiterOpen;
-    plugin->displayInfo = _pluginLimiterDisplayInfo;
-    plugin->getSetting = _pluginLimiterGetSetting;
-    plugin->prepareForProcessing = _pluginLimiterEmpty;
-    plugin->showEditor = _pluginLimiterEmpty;
-    plugin->processAudio = _pluginLimiterProcessAudio;
-    plugin->processMidiEvents = _pluginLimiterProcessMidiEvents;
-    plugin->setParameter = _pluginLimiterSetParameter;
-    plugin->closePlugin = _pluginLimiterEmpty;
-    plugin->freePluginData = _pluginLimiterEmpty;
-
-    plugin->extraData = NULL;
-    return plugin;
+  plugin->extraData = NULL;
+  return plugin;
 }

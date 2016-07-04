@@ -38,7 +38,8 @@ typedef double Tempo;
 typedef unsigned long SampleCount;
 typedef unsigned short ChannelCount;
 
-// Using "bool" or "boolByte" (or their uppercase equivalents) is a bit dangerous
+// Using "bool" or "boolByte" (or their uppercase equivalents) is a bit
+// dangerous
 // since compilers on some platforms define this for us. This gets tricky when
 // mixing C89/C99 syntax, so to be safe, we will use a new made-up type instead.
 typedef unsigned char boolByte;
@@ -62,7 +63,7 @@ typedef unsigned char byte;
 
 // Even redefining most of the functions below doesn't stop the compiler
 // from nagging about them.
-#pragma warning(disable: 4996)
+#pragma warning(disable : 4996)
 
 // Substitutes for POSIX functions not found on Windows
 #define strcasecmp _stricmp
@@ -71,7 +72,7 @@ typedef unsigned char byte;
 #define chdir _chdir
 #define unlink _unlink
 
-#if _MSC_VER < 1900 
+#if _MSC_VER < 1900
 #define snprintf _snprintf
 #endif
 

@@ -32,11 +32,11 @@
 #include "plugin/PluginChain.h"
 
 typedef struct {
-    CharString reportName;
-    CharString reportDirPath;
-    CharString desktopPath;
-    boolByte started;
-    boolByte completed;
+  CharString reportName;
+  CharString reportDirPath;
+  CharString desktopPath;
+  boolByte started;
+  boolByte completed;
 } ErrorReporterMembers;
 typedef ErrorReporterMembers *ErrorReporter;
 

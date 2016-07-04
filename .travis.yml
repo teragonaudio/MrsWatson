@@ -22,7 +22,7 @@ matrix:
 
     - os: linux
       compiler: clang
-      env: CONFIGURATION=Formatting
+      env: CONFIGURATION=Formatting CLANG_FORMAT=clang-format-3.8
 
 before_install:
   # Install packages
@@ -50,13 +50,17 @@ script:
       echo "Checking code formatting"
       ERRORS_FOUND=0
       for i in $(find main source test -name "*.h" -or -name "*.c"); do
-        clang-format -style=LLVM -output-replacements-xml $i | grep "<replacement " > /dev/null
+        $CLANG_FORMAT -style=LLVM -output-replacements-xml $i | grep "<replacement " > /dev/null
         if [ $? -eq 0 ]; then
           echo "File $i failed formatting"
           ERRORS_FOUND=1
         fi
       done
-      #exit $ERRORS_FOUND
+      if [ $ERRORS_FOUND -eq 1 ]; then
+        echo "Formatting errors found!"
+        echo "Please run 'clang-format -style=LLVM -i' on the above files"
+      fi
+      exit $ERRORS_FOUND
     else
       rm -rf build
       mkdir build

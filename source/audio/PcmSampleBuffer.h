@@ -33,25 +33,27 @@
 
 typedef SampleBuffer (*PcmSampleBufferGetSampleBufferFunc)(void *selfPtr);
 
-typedef void (*PcmSampleBufferSetSampleBufferFunc)(void *selfPtr, SampleBuffer sampleBuffer);
+typedef void (*PcmSampleBufferSetSampleBufferFunc)(void *selfPtr,
+                                                   SampleBuffer sampleBuffer);
 
 typedef void (*PcmSampleBufferSetSamplesFunc)(void *selfPtr);
 
 typedef struct {
-    void *pcmSamples;
-    BitDepth bitDepth;
-    boolByte littleEndian;
-    SampleCount bytesPerSample;
+  void *pcmSamples;
+  BitDepth bitDepth;
+  boolByte littleEndian;
+  SampleCount bytesPerSample;
 
-    PcmSampleBufferGetSampleBufferFunc getSampleBuffer;
-    PcmSampleBufferSetSampleBufferFunc setSampleBuffer;
-    PcmSampleBufferSetSamplesFunc setSamples;
+  PcmSampleBufferGetSampleBufferFunc getSampleBuffer;
+  PcmSampleBufferSetSampleBufferFunc setSampleBuffer;
+  PcmSampleBufferSetSamplesFunc setSamples;
 
-    SampleBuffer _super;
+  SampleBuffer _super;
 } PcmSampleBufferMembers;
 typedef PcmSampleBufferMembers *PcmSampleBuffer;
 
-PcmSampleBuffer newPcmSampleBuffer(ChannelCount numChannels, SampleCount blocksize, BitDepth bitDepth);
+PcmSampleBuffer newPcmSampleBuffer(ChannelCount numChannels,
+                                   SampleCount blocksize, BitDepth bitDepth);
 
 void freePcmSampleBuffer(PcmSampleBuffer self);
 
