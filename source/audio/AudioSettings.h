@@ -28,8 +28,8 @@
 #ifndef MrsWatson_AudioSettings_h
 #define MrsWatson_AudioSettings_h
 
-#include "base/Types.h"
 #include "base/CharString.h"
+#include "base/Types.h"
 
 #define DEFAULT_SAMPLE_RATE 44100.0f
 #define DEFAULT_NUM_CHANNELS 2
@@ -40,21 +40,21 @@
 #define DEFAULT_TIMESIG_NOTE_VALUE 4
 
 typedef enum {
-    kBitDepth8Bit = 8,
-    kBitDepth16Bit = 16,
-    kBitDepth24Bit = 24,
-    kBitDepth32Bit = 32,
-    kBitDepthDefault = kBitDepth16Bit
+  kBitDepth8Bit = 8,
+  kBitDepth16Bit = 16,
+  kBitDepth24Bit = 24,
+  kBitDepth32Bit = 32,
+  kBitDepthDefault = kBitDepth16Bit
 } BitDepth;
 
 typedef struct {
-    SampleRate sampleRate;
-    ChannelCount numChannels;
-    SampleCount blocksize;
-    Tempo tempo;
-    unsigned short timeSignatureBeatsPerMeasure;
-    unsigned short timeSignatureNoteValue;
-    BitDepth bitDepth;
+  SampleRate sampleRate;
+  ChannelCount numChannels;
+  SampleCount blocksize;
+  Tempo tempo;
+  unsigned short timeSignatureBeatsPerMeasure;
+  unsigned short timeSignatureNoteValue;
+  BitDepth bitDepth;
 } AudioSettingsMembers;
 
 typedef AudioSettingsMembers *AudioSettings;

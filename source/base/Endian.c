@@ -28,59 +28,52 @@
 #include "base/Endian.h"
 #include "base/PlatformInfo.h"
 
-unsigned short flipShortEndian(const unsigned short value)
-{
-    return (value << 8) | (value >> 8);
+unsigned short flipShortEndian(const unsigned short value) {
+  return (value << 8) | (value >> 8);
 }
 
-unsigned int flipIntEndian(const unsigned int value)
-{
-    return (value << 24) | ((value << 8) & 0x00ff0000) | ((value >> 8) & 0x0000ff00) | (value >> 24);
+unsigned int flipIntEndian(const unsigned int value) {
+  return (value << 24) | ((value << 8) & 0x00ff0000) |
+         ((value >> 8) & 0x0000ff00) | (value >> 24);
 }
 
-unsigned short convertBigEndianShortToPlatform(const unsigned short value)
-{
-    return platformInfoIsLittleEndian() ? flipShortEndian(value) : value;
+unsigned short convertBigEndianShortToPlatform(const unsigned short value) {
+  return platformInfoIsLittleEndian() ? flipShortEndian(value) : value;
 }
 
-unsigned int convertBigEndianIntToPlatform(const unsigned int value)
-{
-    return platformInfoIsLittleEndian() ? flipIntEndian(value) : value;
+unsigned int convertBigEndianIntToPlatform(const unsigned int value) {
+  return platformInfoIsLittleEndian() ? flipIntEndian(value) : value;
 }
 
-unsigned int convertLittleEndianIntToPlatform(const unsigned int value)
-{
-    return !platformInfoIsLittleEndian() ? flipIntEndian(value) : value;
+unsigned int convertLittleEndianIntToPlatform(const unsigned int value) {
+  return !platformInfoIsLittleEndian() ? flipIntEndian(value) : value;
 }
 
-unsigned short convertByteArrayToUnsignedShort(const byte *value)
-{
-    if (platformInfoIsLittleEndian()) {
-        return ((value[1] << 8) & 0x0000ff00) | value[0];
-    } else {
-        return ((value[0] << 8) & 0x0000ff00) | value[1];
-    }
+unsigned short convertByteArrayToUnsignedShort(const byte *value) {
+  if (platformInfoIsLittleEndian()) {
+    return ((value[1] << 8) & 0x0000ff00) | value[0];
+  } else {
+    return ((value[0] << 8) & 0x0000ff00) | value[1];
+  }
 }
 
-unsigned int convertByteArrayToUnsignedInt(const byte *value)
-{
-    if (platformInfoIsLittleEndian()) {
-        return ((value[3] << 24) | ((value[2] << 16) & 0x00ff0000) |
-                ((value[1] << 8) & 0x0000ff00) | value[0]);
-    } else {
-        return ((value[0] << 24) | ((value[1] << 16) & 0x00ff0000) |
-                ((value[2] << 8) & 0x0000ff00) | value[0]);
-    }
+unsigned int convertByteArrayToUnsignedInt(const byte *value) {
+  if (platformInfoIsLittleEndian()) {
+    return ((value[3] << 24) | ((value[2] << 16) & 0x00ff0000) |
+            ((value[1] << 8) & 0x0000ff00) | value[0]);
+  } else {
+    return ((value[0] << 24) | ((value[1] << 16) & 0x00ff0000) |
+            ((value[2] << 8) & 0x0000ff00) | value[0]);
+  }
 }
 
-float convertBigEndianFloatToPlatform(const float value)
-{
-    float result = 0.0f;
-    byte *floatToConvert = (byte *)&value;
-    byte *floatResult = (byte *)&result;
-    floatResult[0] = floatToConvert[3];
-    floatResult[1] = floatToConvert[2];
-    floatResult[2] = floatToConvert[1];
-    floatResult[3] = floatToConvert[0];
-    return result;
+float convertBigEndianFloatToPlatform(const float value) {
+  float result = 0.0f;
+  byte *floatToConvert = (byte *)&value;
+  byte *floatResult = (byte *)&result;
+  floatResult[0] = floatToConvert[3];
+  floatResult[1] = floatToConvert[2];
+  floatResult[2] = floatToConvert[1];
+  floatResult[3] = floatToConvert[0];
+  return result;
 }

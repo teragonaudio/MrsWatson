@@ -7,10 +7,10 @@
 static const int kPluginMockTailTime = 123;
 
 typedef struct {
-    boolByte isOpen;
-    boolByte isPrepared;
-    boolByte processAudioCalled;
-    boolByte processMidiCalled;
+  boolByte isOpen;
+  boolByte isPrepared;
+  boolByte processAudioCalled;
+  boolByte processMidiCalled;
 } PluginMockDataMembers;
 typedef PluginMockDataMembers *PluginMockData;
 

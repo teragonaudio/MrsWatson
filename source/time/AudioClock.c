@@ -32,41 +32,34 @@
 
 AudioClock audioClockInstance = NULL;
 
-void initAudioClock(void)
-{
-    audioClockInstance = (AudioClock)malloc(sizeof(AudioClockMembers));
-    audioClockInstance->currentFrame = 0;
-    audioClockInstance->transportChanged = false;
-    audioClockInstance->isPlaying = false;
+void initAudioClock(void) {
+  audioClockInstance = (AudioClock)malloc(sizeof(AudioClockMembers));
+  audioClockInstance->currentFrame = 0;
+  audioClockInstance->transportChanged = false;
+  audioClockInstance->isPlaying = false;
 }
 
-AudioClock getAudioClock(void)
-{
-    return audioClockInstance;
-}
+AudioClock getAudioClock(void) { return audioClockInstance; }
 
-void advanceAudioClock(AudioClock self, const unsigned long blocksize)
-{
-    if (self->currentFrame == 0 || !self->isPlaying) {
-        self->transportChanged = true;
-        self->isPlaying = true;
-    } else {
-        self->transportChanged = false;
-    }
-
-    self->currentFrame += blocksize;
-}
-
-void audioClockStop(AudioClock self)
-{
-    self->isPlaying = false;
+void advanceAudioClock(AudioClock self, const unsigned long blocksize) {
+  if (self->currentFrame == 0 || !self->isPlaying) {
     self->transportChanged = true;
+    self->isPlaying = true;
+  } else {
+    self->transportChanged = false;
+  }
+
+  self->currentFrame += blocksize;
 }
 
-void freeAudioClock(AudioClock self)
-{
-    if (self != NULL) {
-        free(self);
-        audioClockInstance = NULL;
-    }
+void audioClockStop(AudioClock self) {
+  self->isPlaying = false;
+  self->transportChanged = true;
+}
+
+void freeAudioClock(AudioClock self) {
+  if (self != NULL) {
+    free(self);
+    audioClockInstance = NULL;
+  }
 }

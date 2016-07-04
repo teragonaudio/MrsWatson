@@ -5,8 +5,8 @@
 #include "plugin/PluginPreset.h"
 
 typedef struct {
-    boolByte isOpen;
-    boolByte isLoaded;
+  boolByte isOpen;
+  boolByte isLoaded;
 } PluginPresetMockDataMembers;
 typedef PluginPresetMockDataMembers *PluginPresetMockData;
 

@@ -33,135 +33,137 @@
 #include "io/SampleSource.h"
 #include "logging/EventLogger.h"
 
-void sampleSourcePrintSupportedTypes(void)
-{
-    logInfo("Supported audio file types:");
-    // We can theoretically support more formats, pretty much anything audiofile supports
-    // would work here. However, most of those file types are rather uncommon, and require
-    // special setup when writing, so we only choose the most common ones.
+void sampleSourcePrintSupportedTypes(void) {
+  logInfo("Supported audio file types:");
+// We can theoretically support more formats, pretty much anything audiofile
+// supports
+// would work here. However, most of those file types are rather uncommon, and
+// require
+// special setup when writing, so we only choose the most common ones.
 #if USE_AUDIOFILE
-    logInfo("- AIFF (via libaudiofile)");
+  logInfo("- AIFF (via libaudiofile)");
 #endif
 #if USE_FLAC
-    logInfo("- FLAC (via libaudiofile)");
+  logInfo("- FLAC (via libaudiofile)");
 #endif
 
-    // Always supported
-    logInfo("- PCM");
+  // Always supported
+  logInfo("- PCM");
 
 #if USE_AUDIOFILE
-    logInfo("- WAV (via libaudiofile)");
+  logInfo("- WAV (via libaudiofile)");
 #else
-    logInfo("- WAV (internal)");
+  logInfo("- WAV (internal)");
 #endif
 }
 
-static SampleSourceType _sampleSourceGuess(const CharString sampleSourceName)
-{
-    File sourceFile = NULL;
-    CharString sourceFileExtension = NULL;
-    SampleSourceType result = SAMPLE_SOURCE_TYPE_PCM;
+static SampleSourceType _sampleSourceGuess(const CharString sampleSourceName) {
+  File sourceFile = NULL;
+  CharString sourceFileExtension = NULL;
+  SampleSourceType result = SAMPLE_SOURCE_TYPE_PCM;
 
-    if (sampleSourceName == NULL || charStringIsEmpty(sampleSourceName)) {
-        result = SAMPLE_SOURCE_TYPE_SILENCE;
+  if (sampleSourceName == NULL || charStringIsEmpty(sampleSourceName)) {
+    result = SAMPLE_SOURCE_TYPE_SILENCE;
+  } else {
+    // Look for stdin/stdout
+    if (strlen(sampleSourceName->data) == 1 &&
+        sampleSourceName->data[0] == '-') {
+      result = SAMPLE_SOURCE_TYPE_PCM;
     } else {
-        // Look for stdin/stdout
-        if (strlen(sampleSourceName->data) == 1 && sampleSourceName->data[0] == '-') {
-            result = SAMPLE_SOURCE_TYPE_PCM;
-        } else {
-            sourceFile = newFileWithPath(sampleSourceName);
-            sourceFileExtension = fileGetExtension(sourceFile);
-            freeFile(sourceFile);
+      sourceFile = newFileWithPath(sampleSourceName);
+      sourceFileExtension = fileGetExtension(sourceFile);
+      freeFile(sourceFile);
 
-            // If there is no file extension, then automatically assume raw PCM data. Deal with it!
-            if (charStringIsEmpty(sourceFileExtension)) {
-                result = SAMPLE_SOURCE_TYPE_PCM;
-            }
-            // Possible file extensions for raw PCM data
-            else if (charStringIsEqualToCString(sourceFileExtension, "pcm", true) ||
-                     charStringIsEqualToCString(sourceFileExtension, "raw", true) ||
-                     charStringIsEqualToCString(sourceFileExtension, "dat", true)) {
-                result = SAMPLE_SOURCE_TYPE_PCM;
-            }
+      // If there is no file extension, then automatically assume raw PCM data.
+      // Deal with it!
+      if (charStringIsEmpty(sourceFileExtension)) {
+        result = SAMPLE_SOURCE_TYPE_PCM;
+      }
+      // Possible file extensions for raw PCM data
+      else if (charStringIsEqualToCString(sourceFileExtension, "pcm", true) ||
+               charStringIsEqualToCString(sourceFileExtension, "raw", true) ||
+               charStringIsEqualToCString(sourceFileExtension, "dat", true)) {
+        result = SAMPLE_SOURCE_TYPE_PCM;
+      }
 
 #if USE_AUDIOFILE
-            else if (charStringIsEqualToCString(sourceFileExtension, "aif", true) ||
-                     charStringIsEqualToCString(sourceFileExtension, "aiff", true)) {
-                result = SAMPLE_SOURCE_TYPE_AIFF;
-            }
+      else if (charStringIsEqualToCString(sourceFileExtension, "aif", true) ||
+               charStringIsEqualToCString(sourceFileExtension, "aiff", true)) {
+        result = SAMPLE_SOURCE_TYPE_AIFF;
+      }
 
 #endif
 
 #if USE_FLAC
-            else if (charStringIsEqualToCString(sourceFileExtension, "flac", true)) {
-                result = SAMPLE_SOURCE_TYPE_FLAC;
-            }
+      else if (charStringIsEqualToCString(sourceFileExtension, "flac", true)) {
+        result = SAMPLE_SOURCE_TYPE_FLAC;
+      }
 
 #endif
 
-            else if (charStringIsEqualToCString(sourceFileExtension, "wav", true) ||
-                     charStringIsEqualToCString(sourceFileExtension, "wave", true)) {
-                result = SAMPLE_SOURCE_TYPE_WAVE;
-            } else {
-                logCritical("Sample source '%s' does not match any supported type", sampleSourceName->data);
-                result = SAMPLE_SOURCE_TYPE_INVALID;
-            }
-        }
+      else if (charStringIsEqualToCString(sourceFileExtension, "wav", true) ||
+               charStringIsEqualToCString(sourceFileExtension, "wave", true)) {
+        result = SAMPLE_SOURCE_TYPE_WAVE;
+      } else {
+        logCritical("Sample source '%s' does not match any supported type",
+                    sampleSourceName->data);
+        result = SAMPLE_SOURCE_TYPE_INVALID;
+      }
     }
+  }
 
-    freeCharString(sourceFileExtension);
-    return result;
+  freeCharString(sourceFileExtension);
+  return result;
 }
 
-extern SampleSource _newSampleSourceAudiofile(const CharString sampleSourceName,
-        const SampleSourceType sampleSourceType);
+extern SampleSource
+_newSampleSourceAudiofile(const CharString sampleSourceName,
+                          const SampleSourceType sampleSourceType);
 extern SampleSource _newSampleSourcePcm(const CharString sampleSourceName);
 extern SampleSource _newSampleSourceSilence();
 extern SampleSource _newSampleSourceWave(const CharString sampleSourceName);
 
-SampleSource sampleSourceFactory(const CharString sampleSourceName)
-{
-    SampleSourceType sampleSourceType = _sampleSourceGuess(sampleSourceName);
+SampleSource sampleSourceFactory(const CharString sampleSourceName) {
+  SampleSourceType sampleSourceType = _sampleSourceGuess(sampleSourceName);
 
-    switch (sampleSourceType) {
-    case SAMPLE_SOURCE_TYPE_SILENCE:
-        return _newSampleSourceSilence();
+  switch (sampleSourceType) {
+  case SAMPLE_SOURCE_TYPE_SILENCE:
+    return _newSampleSourceSilence();
 
-    case SAMPLE_SOURCE_TYPE_PCM:
-        return _newSampleSourcePcm(sampleSourceName);
+  case SAMPLE_SOURCE_TYPE_PCM:
+    return _newSampleSourcePcm(sampleSourceName);
 
 #if USE_AUDIOFILE
 
-    case SAMPLE_SOURCE_TYPE_AIFF:
-        return _newSampleSourceAudiofile(sampleSourceName, sampleSourceType);
+  case SAMPLE_SOURCE_TYPE_AIFF:
+    return _newSampleSourceAudiofile(sampleSourceName, sampleSourceType);
 #endif
 
 #if USE_FLAC
 
-    case SAMPLE_SOURCE_TYPE_FLAC:
-        return _newSampleSourceAudiofile(sampleSourceName, sampleSourceType);
+  case SAMPLE_SOURCE_TYPE_FLAC:
+    return _newSampleSourceAudiofile(sampleSourceName, sampleSourceType);
 #endif
 
 #if USE_AUDIOFILE
 
-    case SAMPLE_SOURCE_TYPE_WAVE:
-        return _newSampleSourceAudiofile(sampleSourceName, sampleSourceType);
+  case SAMPLE_SOURCE_TYPE_WAVE:
+    return _newSampleSourceAudiofile(sampleSourceName, sampleSourceType);
 #else
 
-    case SAMPLE_SOURCE_TYPE_WAVE:
-        return _newSampleSourceWave(sampleSourceName);
+  case SAMPLE_SOURCE_TYPE_WAVE:
+    return _newSampleSourceWave(sampleSourceName);
 #endif
 
-    default:
-        return NULL;
-    }
+  default:
+    return NULL;
+  }
 }
 
-void freeSampleSource(SampleSource self)
-{
-    if (self != NULL) {
-        self->freeSampleSourceData(self->extraData);
-        freeCharString(self->sourceName);
-        free(self);
-    }
+void freeSampleSource(SampleSource self) {
+  if (self != NULL) {
+    self->freeSampleSourceData(self->extraData);
+    freeCharString(self->sourceName);
+    free(self);
+  }
 }

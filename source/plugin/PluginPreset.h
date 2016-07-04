@@ -32,10 +32,10 @@
 #include "plugin/Plugin.h"
 
 typedef enum {
-    PRESET_TYPE_INVALID,
-    PRESET_TYPE_FXP,
-    PRESET_TYPE_INTERNAL_PROGRAM,
-    NUM_PRESET_TYPES
+  PRESET_TYPE_INVALID,
+  PRESET_TYPE_FXP,
+  PRESET_TYPE_INTERNAL_PROGRAM,
+  NUM_PRESET_TYPES
 } PluginPresetType;
 
 /**
@@ -58,15 +58,15 @@ typedef boolByte (*LoadPresetFunc)(void *pluginPresetPtr, Plugin plugin);
 typedef void (*FreePresetDataFunc)(void *pluginPresetPtr);
 
 typedef struct {
-    PluginPresetType presetType;
-    CharString presetName;
-    unsigned int compatiblePluginTypes;
+  PluginPresetType presetType;
+  CharString presetName;
+  unsigned int compatiblePluginTypes;
 
-    OpenPresetFunc openPreset;
-    LoadPresetFunc loadPreset;
-    FreePresetDataFunc freePresetData;
+  OpenPresetFunc openPreset;
+  LoadPresetFunc loadPreset;
+  FreePresetDataFunc freePresetData;
 
-    void *extraData;
+  void *extraData;
 } PluginPresetMembers;
 
 /**
@@ -91,7 +91,8 @@ PluginPreset pluginPresetFactory(const CharString presetName);
  * @param plugin Plugin to check against
  * @return True if the preset can be loaded into the plugin
  */
-boolByte pluginPresetIsCompatibleWith(const PluginPreset self, const Plugin plugin);
+boolByte pluginPresetIsCompatibleWith(const PluginPreset self,
+                                      const Plugin plugin);
 
 /**
  * Set interface compatibility for a preset type. This function should only be
@@ -100,7 +101,8 @@ boolByte pluginPresetIsCompatibleWith(const PluginPreset self, const Plugin plug
  * @param self
  * @param interfaceType Interface type to set
  */
-void pluginPresetSetCompatibleWith(PluginPreset self, PluginInterfaceType interfaceType);
+void pluginPresetSetCompatibleWith(PluginPreset self,
+                                   PluginInterfaceType interfaceType);
 
 /**
  * Free a PluginPreset and all associated resources

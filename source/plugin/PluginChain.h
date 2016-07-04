@@ -39,15 +39,15 @@
 #define CHAIN_STRING_PROGRAM_SEPARATOR ','
 
 typedef struct {
-    unsigned int numPlugins;
-    Plugin *plugins;
-    PluginPreset *presets;
-    TaskTimer *audioTimers;
-    TaskTimer *midiTimers;
+  unsigned int numPlugins;
+  Plugin *plugins;
+  PluginPreset *presets;
+  TaskTimer *audioTimers;
+  TaskTimer *midiTimers;
 
-    // Private fields
-    boolByte _realtime;
-    TaskTimer _realtimeTimer;
+  // Private fields
+  boolByte _realtime;
+  TaskTimer _realtimeTimer;
 } PluginChainMembers;
 
 /**
@@ -77,10 +77,13 @@ void initPluginChain(void);
  * passed NULL here.
  * @return True if the plugin could be added to the end of the chain
  */
-boolByte pluginChainAppend(PluginChain self, Plugin plugin, PluginPreset preset);
+boolByte pluginChainAppend(PluginChain self, Plugin plugin,
+                           PluginPreset preset);
 
 // TODO: Deprecate and remove this function
-boolByte pluginChainAddFromArgumentString(PluginChain self, const CharString argumentString, const CharString userSearchPath);
+boolByte pluginChainAddFromArgumentString(PluginChain self,
+                                          const CharString argumentString,
+                                          const CharString userSearchPath);
 
 /**
  * Open and initialize all plugins in the chain.
@@ -117,10 +120,12 @@ unsigned long pluginChainGetProcessingDelay(PluginChain self);
  * @param parameters List of parameters to be applied
  * @return True if all parameters were set, false otherwise
  */
-boolByte pluginChainSetParameters(PluginChain self, const LinkedList parameters);
+boolByte pluginChainSetParameters(PluginChain self,
+                                  const LinkedList parameters);
 
 /**
- * Set realtime mode for the plugin chain. When set, calls to pluginChainProcessAudio()
+ * Set realtime mode for the plugin chain. When set, calls to
+ * pluginChainProcessAudio()
  * will sleep for the additional time required to process the block in realtime.
  * @param realtime True to enable realtime mode, false to disable (default)
  * @param self
@@ -140,7 +145,8 @@ void pluginChainPrepareForProcessing(PluginChain self);
  * @param inBuffer Input sample block
  * @param outBuffer Output sample block
  */
-void pluginChainProcessAudio(PluginChain self, SampleBuffer inBuffer, SampleBuffer outBuffer);
+void pluginChainProcessAudio(PluginChain self, SampleBuffer inBuffer,
+                             SampleBuffer outBuffer);
 
 /**
  * Send a list of MIDI events to be processed by the chain. Currently, only the

@@ -25,222 +25,199 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <math.h>
 
 #include "audio/AudioSettings.h"
 #include "logging/EventLogger.h"
 
 AudioSettings audioSettingsInstance = NULL;
 
-void initAudioSettings(void)
-{
-    if (audioSettingsInstance != NULL) {
-        freeAudioSettings();
-    }
+void initAudioSettings(void) {
+  if (audioSettingsInstance != NULL) {
+    freeAudioSettings();
+  }
 
-    audioSettingsInstance = malloc(sizeof(AudioSettingsMembers));
-    audioSettingsInstance->sampleRate = DEFAULT_SAMPLE_RATE;
-    audioSettingsInstance->numChannels = DEFAULT_NUM_CHANNELS;
-    audioSettingsInstance->blocksize = DEFAULT_BLOCKSIZE;
-    audioSettingsInstance->tempo = DEFAULT_TEMPO;
-    audioSettingsInstance->timeSignatureBeatsPerMeasure = DEFAULT_TIMESIG_BEATS_PER_MEASURE;
-    audioSettingsInstance->timeSignatureNoteValue = DEFAULT_TIMESIG_NOTE_VALUE;
-    audioSettingsInstance->bitDepth = kBitDepthDefault;
+  audioSettingsInstance = malloc(sizeof(AudioSettingsMembers));
+  audioSettingsInstance->sampleRate = DEFAULT_SAMPLE_RATE;
+  audioSettingsInstance->numChannels = DEFAULT_NUM_CHANNELS;
+  audioSettingsInstance->blocksize = DEFAULT_BLOCKSIZE;
+  audioSettingsInstance->tempo = DEFAULT_TEMPO;
+  audioSettingsInstance->timeSignatureBeatsPerMeasure =
+      DEFAULT_TIMESIG_BEATS_PER_MEASURE;
+  audioSettingsInstance->timeSignatureNoteValue = DEFAULT_TIMESIG_NOTE_VALUE;
+  audioSettingsInstance->bitDepth = kBitDepthDefault;
 }
 
-static AudioSettings _getAudioSettings(void)
-{
-    if (audioSettingsInstance == NULL) {
-        initAudioSettings();
-    }
+static AudioSettings _getAudioSettings(void) {
+  if (audioSettingsInstance == NULL) {
+    initAudioSettings();
+  }
 
-    return audioSettingsInstance;
+  return audioSettingsInstance;
 }
 
-SampleRate getSampleRate(void)
-{
-    return _getAudioSettings()->sampleRate;
+SampleRate getSampleRate(void) { return _getAudioSettings()->sampleRate; }
+
+ChannelCount getNumChannels(void) { return _getAudioSettings()->numChannels; }
+
+SampleCount getBlocksize(void) { return _getAudioSettings()->blocksize; }
+
+Tempo getTempo(void) { return _getAudioSettings()->tempo; }
+
+unsigned short getTimeSignatureBeatsPerMeasure(void) {
+  return _getAudioSettings()->timeSignatureBeatsPerMeasure;
 }
 
-ChannelCount getNumChannels(void)
-{
-    return _getAudioSettings()->numChannels;
+unsigned short getTimeSignatureNoteValue(void) {
+  return _getAudioSettings()->timeSignatureNoteValue;
 }
 
-SampleCount getBlocksize(void)
-{
-    return _getAudioSettings()->blocksize;
-}
+BitDepth getBitDepth(void) { return _getAudioSettings()->bitDepth; }
 
-Tempo getTempo(void)
-{
-    return _getAudioSettings()->tempo;
-}
-
-unsigned short getTimeSignatureBeatsPerMeasure(void)
-{
-    return _getAudioSettings()->timeSignatureBeatsPerMeasure;
-}
-
-unsigned short getTimeSignatureNoteValue(void)
-{
-    return _getAudioSettings()->timeSignatureNoteValue;
-}
-
-BitDepth getBitDepth(void)
-{
-    return _getAudioSettings()->bitDepth;
-}
-
-boolByte setSampleRate(const SampleRate sampleRate)
-{
-    if (sampleRate <= 0.0f) {
-        logError("Can't set sample rate to %f", sampleRate);
-        return false;
-    }
-
-    logInfo("Setting sample rate to %gHz", sampleRate);
-    _getAudioSettings()->sampleRate = sampleRate;
-    return true;
-}
-
-boolByte setNumChannels(const ChannelCount numChannels)
-{
-    if (numChannels <= 0) {
-        logError("Can't set channel count to %d", numChannels);
-        return false;
-    }
-
-    logInfo("Setting %d channels", numChannels);
-    _getAudioSettings()->numChannels = numChannels;
-    return true;
-}
-
-boolByte setBlocksize(const SampleCount blocksize)
-{
-    if (blocksize <= 0) {
-        logError("Can't set invalid blocksize %d", blocksize);
-        return false;
-    }
-
-    logInfo("Setting blocksize to %ld", blocksize);
-    _getAudioSettings()->blocksize = blocksize;
-    return true;
-}
-
-boolByte setTempo(const Tempo tempo)
-{
-    if (tempo <= 0.0f) {
-        logError("Cannot set tempo to %f", tempo);
-        return false;
-    }
-
-    logInfo("Setting tempo to %d", tempo);
-    _getAudioSettings()->tempo = tempo;
-    return true;
-}
-
-void setTempoFromMidiBytes(const byte *bytes)
-{
-    double tempo;
-    unsigned long beatLengthInMicroseconds = 0;
-
-    if (bytes != NULL) {
-        beatLengthInMicroseconds = (unsigned long)(0x00000000 | (bytes[0] << 16) | (bytes[1] << 8) | (bytes[2]));
-        // Convert beats / microseconds -> beats / minutes
-        tempo = (1000000.0 / (double)beatLengthInMicroseconds) * 60.0;
-        setTempo((float)tempo);
-    }
-}
-
-boolByte setTimeSignatureBeatsPerMeasure(const unsigned short beatsPerMeasure)
-{
-    // Bit of an easter egg :)
-    if (beatsPerMeasure < 2 || beatsPerMeasure > 12) {
-        logInfo("Freaky time signature, but whatever you say...");
-    }
-
-    if (beatsPerMeasure <= 0) {
-        logError("Ignoring attempt to set time signature numerator to %d", beatsPerMeasure);
-        return false;
-    }
-
-    _getAudioSettings()->timeSignatureBeatsPerMeasure = beatsPerMeasure;
-    return true;
-}
-
-boolByte setTimeSignatureNoteValue(const unsigned short noteValue)
-{
-    // Bit of an easter egg :)
-    if (!(noteValue == 2 || noteValue == 4 || noteValue == 8 || noteValue == 16) || noteValue < 2 || noteValue > 16) {
-        logInfo("Interesting time signature you've chosen. I'm sure this piece is going to sound great...");
-    }
-
-    if (noteValue <= 0) {
-        logError("Ignoring attempt to set time signature denominator to %d", noteValue);
-        return false;
-    }
-
-    _getAudioSettings()->timeSignatureNoteValue = noteValue;
-    return true;
-}
-
-boolByte setTimeSignatureFromString(const CharString signature)
-{
-    char *slash = NULL;
-    unsigned short numerator = 0;
-    unsigned short denominator = 0;
-
-    if (!charStringIsEmpty(signature)) {
-        slash = strchr(signature->data, '/');
-
-        if (slash != NULL) {
-            *slash = '\0';
-            numerator = (unsigned short)strtod(signature->data, NULL);
-            denominator = (unsigned short)strtod(slash + 1, NULL);
-
-            if (numerator > 0 && denominator > 0) {
-                return (boolByte)(setTimeSignatureBeatsPerMeasure(numerator) &&
-                                  setTimeSignatureNoteValue(denominator));
-            }
-        }
-    }
-
+boolByte setSampleRate(const SampleRate sampleRate) {
+  if (sampleRate <= 0.0f) {
+    logError("Can't set sample rate to %f", sampleRate);
     return false;
+  }
+
+  logInfo("Setting sample rate to %gHz", sampleRate);
+  _getAudioSettings()->sampleRate = sampleRate;
+  return true;
 }
 
-boolByte setTimeSignatureFromMidiBytes(const byte *bytes)
-{
-    if (bytes != NULL) {
-        return (boolByte)(setTimeSignatureBeatsPerMeasure(bytes[0]) &&
-                          setTimeSignatureNoteValue((unsigned const short)powl(2, bytes[1])));
-    }
-
+boolByte setNumChannels(const ChannelCount numChannels) {
+  if (numChannels <= 0) {
+    logError("Can't set channel count to %d", numChannels);
     return false;
+  }
+
+  logInfo("Setting %d channels", numChannels);
+  _getAudioSettings()->numChannels = numChannels;
+  return true;
 }
 
-boolByte setBitDepth(const BitDepth bitDepth)
-{
-    switch (bitDepth) {
-    case kBitDepth8Bit:
-    case kBitDepth16Bit:
-    case kBitDepth24Bit:
-    case kBitDepth32Bit:
-        _getAudioSettings()->bitDepth = bitDepth;
-        return true;
+boolByte setBlocksize(const SampleCount blocksize) {
+  if (blocksize <= 0) {
+    logError("Can't set invalid blocksize %d", blocksize);
+    return false;
+  }
 
-    default:
-        logError("Invalid bit depth %d", bitDepth);
-        return false;
+  logInfo("Setting blocksize to %ld", blocksize);
+  _getAudioSettings()->blocksize = blocksize;
+  return true;
+}
+
+boolByte setTempo(const Tempo tempo) {
+  if (tempo <= 0.0f) {
+    logError("Cannot set tempo to %f", tempo);
+    return false;
+  }
+
+  logInfo("Setting tempo to %d", tempo);
+  _getAudioSettings()->tempo = tempo;
+  return true;
+}
+
+void setTempoFromMidiBytes(const byte *bytes) {
+  double tempo;
+  unsigned long beatLengthInMicroseconds = 0;
+
+  if (bytes != NULL) {
+    beatLengthInMicroseconds = (unsigned long)(0x00000000 | (bytes[0] << 16) |
+                                               (bytes[1] << 8) | (bytes[2]));
+    // Convert beats / microseconds -> beats / minutes
+    tempo = (1000000.0 / (double)beatLengthInMicroseconds) * 60.0;
+    setTempo((float)tempo);
+  }
+}
+
+boolByte setTimeSignatureBeatsPerMeasure(const unsigned short beatsPerMeasure) {
+  // Bit of an easter egg :)
+  if (beatsPerMeasure < 2 || beatsPerMeasure > 12) {
+    logInfo("Freaky time signature, but whatever you say...");
+  }
+
+  if (beatsPerMeasure <= 0) {
+    logError("Ignoring attempt to set time signature numerator to %d",
+             beatsPerMeasure);
+    return false;
+  }
+
+  _getAudioSettings()->timeSignatureBeatsPerMeasure = beatsPerMeasure;
+  return true;
+}
+
+boolByte setTimeSignatureNoteValue(const unsigned short noteValue) {
+  // Bit of an easter egg :)
+  if (!(noteValue == 2 || noteValue == 4 || noteValue == 8 ||
+        noteValue == 16) ||
+      noteValue < 2 || noteValue > 16) {
+    logInfo("Interesting time signature you've chosen. I'm sure this piece is "
+            "going to sound great...");
+  }
+
+  if (noteValue <= 0) {
+    logError("Ignoring attempt to set time signature denominator to %d",
+             noteValue);
+    return false;
+  }
+
+  _getAudioSettings()->timeSignatureNoteValue = noteValue;
+  return true;
+}
+
+boolByte setTimeSignatureFromString(const CharString signature) {
+  char *slash = NULL;
+  unsigned short numerator = 0;
+  unsigned short denominator = 0;
+
+  if (!charStringIsEmpty(signature)) {
+    slash = strchr(signature->data, '/');
+
+    if (slash != NULL) {
+      *slash = '\0';
+      numerator = (unsigned short)strtod(signature->data, NULL);
+      denominator = (unsigned short)strtod(slash + 1, NULL);
+
+      if (numerator > 0 && denominator > 0) {
+        return (boolByte)(setTimeSignatureBeatsPerMeasure(numerator) &&
+                          setTimeSignatureNoteValue(denominator));
+      }
     }
+  }
+
+  return false;
 }
 
+boolByte setTimeSignatureFromMidiBytes(const byte *bytes) {
+  if (bytes != NULL) {
+    return (boolByte)(
+        setTimeSignatureBeatsPerMeasure(bytes[0]) &&
+        setTimeSignatureNoteValue((unsigned const short)powl(2, bytes[1])));
+  }
 
-void freeAudioSettings(void)
-{
-    free(audioSettingsInstance);
-    audioSettingsInstance = NULL;
+  return false;
+}
+
+boolByte setBitDepth(const BitDepth bitDepth) {
+  switch (bitDepth) {
+  case kBitDepth8Bit:
+  case kBitDepth16Bit:
+  case kBitDepth24Bit:
+  case kBitDepth32Bit:
+    _getAudioSettings()->bitDepth = bitDepth;
+    return true;
+
+  default:
+    logError("Invalid bit depth %d", bitDepth);
+    return false;
+  }
+}
+
+void freeAudioSettings(void) {
+  free(audioSettingsInstance);
+  audioSettingsInstance = NULL;
 }

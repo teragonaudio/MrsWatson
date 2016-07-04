@@ -33,15 +33,15 @@
 #include "midi/MidiSource.h"
 
 typedef enum {
-    TIME_DIVISION_TYPE_INVALID,
-    TIME_DIVISION_TYPE_TICKS_PER_BEAT,
-    TIME_DIVISION_TYPE_FRAMES_PER_SECOND,
-    NUM_TIME_DIVISION_TYPES
+  TIME_DIVISION_TYPE_INVALID,
+  TIME_DIVISION_TYPE_TICKS_PER_BEAT,
+  TIME_DIVISION_TYPE_FRAMES_PER_SECOND,
+  NUM_TIME_DIVISION_TYPES
 } MidiFileTimeDivisionType;
 
 typedef struct {
-    FILE *fileHandle;
-    MidiFileTimeDivisionType divisionType;
+  FILE *fileHandle;
+  MidiFileTimeDivisionType divisionType;
 } MidiSourceFileDataMembers;
 typedef MidiSourceFileDataMembers *MidiSourceFileData;
 

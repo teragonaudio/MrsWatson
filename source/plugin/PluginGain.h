@@ -33,13 +33,11 @@
 extern const char *kInternalPluginGainName;
 
 typedef enum {
-    PLUGIN_GAIN_SETTINGS_GAIN,
-    PLUGIN_GAIN_NUM_SETTINGS
+  PLUGIN_GAIN_SETTINGS_GAIN,
+  PLUGIN_GAIN_NUM_SETTINGS
 } PluginGainSettingsIndex;
 
-typedef struct {
-    float gain;
-} PluginGainSettingsMembers;
+typedef struct { float gain; } PluginGainSettingsMembers;
 typedef PluginGainSettingsMembers *PluginGainSettings;
 
 Plugin newPluginGain(const CharString pluginName);

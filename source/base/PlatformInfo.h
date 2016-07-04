@@ -31,18 +31,18 @@
 #include "base/CharString.h"
 
 typedef enum {
-    PLATFORM_UNSUPPORTED,
-    PLATFORM_MACOSX,
-    PLATFORM_WINDOWS,
-    PLATFORM_LINUX,
-    NUM_PLATFORMS
+  PLATFORM_UNSUPPORTED,
+  PLATFORM_MACOSX,
+  PLATFORM_WINDOWS,
+  PLATFORM_LINUX,
+  NUM_PLATFORMS
 } PlatformType;
 
 typedef struct {
-    PlatformType type;
-    CharString name;
-    CharString shortName;
-    boolByte is64Bit;
+  PlatformType type;
+  CharString name;
+  CharString shortName;
+  boolByte is64Bit;
 } PlatformInfoMembers;
 typedef PlatformInfoMembers *PlatformInfo;
 

@@ -28,28 +28,28 @@
 #ifndef MrsWatson_EventLogger_h
 #define MrsWatson_EventLogger_h
 
-#include <sys/types.h>
 #include <stdio.h>
+#include <sys/types.h>
 
 #include "base/CharString.h"
 #include "base/Types.h"
 
 typedef enum {
-    LOG_DEBUG,
-    LOG_INFO,
-    LOG_WARN,
-    LOG_ERROR,
-    NUM_LOG_LEVELS
+  LOG_DEBUG,
+  LOG_INFO,
+  LOG_WARN,
+  LOG_ERROR,
+  NUM_LOG_LEVELS
 } LogLevel;
 
 typedef struct {
-    LogLevel logLevel;
-    long startTimeInSec;
-    long startTimeInMs;
-    boolByte useColor;
-    unsigned long zebraStripeSize;
-    FILE *logFile;
-    CharString systemErrorMessage;
+  LogLevel logLevel;
+  long startTimeInSec;
+  long startTimeInMs;
+  boolByte useColor;
+  unsigned long zebraStripeSize;
+  FILE *logFile;
+  CharString systemErrorMessage;
 } EventLoggerMembers;
 typedef EventLoggerMembers *EventLogger;
 extern EventLogger eventLoggerInstance;

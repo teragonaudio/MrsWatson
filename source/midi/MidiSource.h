@@ -33,9 +33,9 @@
 #include "midi/MidiSequence.h"
 
 typedef enum {
-    MIDI_SOURCE_TYPE_INVALID,
-    MIDI_SOURCE_TYPE_FILE,
-    NUM_MIDI_SOURCE_TYPES
+  MIDI_SOURCE_TYPE_INVALID,
+  MIDI_SOURCE_TYPE_FILE,
+  NUM_MIDI_SOURCE_TYPES
 } MidiSourceType;
 
 typedef boolByte (*OpenMidiSourceFunc)(void *);
@@ -43,14 +43,14 @@ typedef boolByte (*ReadMidiEventsFunc)(void *, MidiSequence);
 typedef void (*FreeMidiSourceDataFunc)(void *);
 
 typedef struct {
-    MidiSourceType midiSourceType;
-    CharString sourceName;
+  MidiSourceType midiSourceType;
+  CharString sourceName;
 
-    OpenMidiSourceFunc openMidiSource;
-    ReadMidiEventsFunc readMidiEvents;
-    FreeMidiSourceDataFunc freeMidiSourceData;
+  OpenMidiSourceFunc openMidiSource;
+  ReadMidiEventsFunc readMidiEvents;
+  FreeMidiSourceDataFunc freeMidiSourceData;
 
-    void *extraData;
+  void *extraData;
 } MidiSourceMembers;
 
 /**
@@ -65,7 +65,8 @@ typedef MidiSourceMembers *MidiSource;
  * @param midiSourceName MIDI source name
  * @return MidiSource object, or NULL if no object could be created
  */
-MidiSource newMidiSource(MidiSourceType midiSourceType, const CharString midiSourceName);
+MidiSource newMidiSource(MidiSourceType midiSourceType,
+                         const CharString midiSourceName);
 
 /**
  * Determine an appropriate source type based on a file name.

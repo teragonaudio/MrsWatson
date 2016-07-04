@@ -28,11 +28,11 @@
 #ifndef MrsWatson_File_h
 #define MrsWatson_File_h
 
-#include <stdio.h>
-#include <stdlib.h>
 #include "base/CharString.h"
 #include "base/LinkedList.h"
 #include "base/Types.h"
+#include <stdio.h>
+#include <stdlib.h>
 
 #if UNIX
 #define PATH_DELIMITER '/'
@@ -42,27 +42,23 @@
 #define ROOT_DIRECTORY "C:\\"
 #endif
 
-typedef enum {
-    kFileTypeFile,
-    kFileTypeDirectory,
-    kFileTypeInvalid
-} FileType;
+typedef enum { kFileTypeFile, kFileTypeDirectory, kFileTypeInvalid } FileType;
 
 typedef enum {
-    kFileOpenModeClosed,
-    kFileOpenModeRead,
-    kFileOpenModeWrite,
-    kFileOpenModeInvalid
+  kFileOpenModeClosed,
+  kFileOpenModeRead,
+  kFileOpenModeWrite,
+  kFileOpenModeInvalid
 } FileOpenMode;
 
 typedef struct {
-    CharString absolutePath;
-    FileType fileType;
+  CharString absolutePath;
+  FileType fileType;
 
-    /** Private */
-    FILE *_fileHandle;
-    /** Private */
-    FileOpenMode _openMode;
+  /** Private */
+  FILE *_fileHandle;
+  /** Private */
+  FileOpenMode _openMode;
 } FileMembers;
 typedef FileMembers *File;
 

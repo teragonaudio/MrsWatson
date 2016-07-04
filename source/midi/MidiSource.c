@@ -32,46 +32,44 @@
 #include "logging/EventLogger.h"
 #include "midi/MidiSourceFile.h"
 
-MidiSourceType guessMidiSourceType(const CharString midiSourceTypeString)
-{
-    if (!charStringIsEmpty(midiSourceTypeString)) {
-        File midiSourceFile = newFileWithPath(midiSourceTypeString);
-        CharString fileExtension = fileGetExtension(midiSourceFile);
-        freeFile(midiSourceFile);
+MidiSourceType guessMidiSourceType(const CharString midiSourceTypeString) {
+  if (!charStringIsEmpty(midiSourceTypeString)) {
+    File midiSourceFile = newFileWithPath(midiSourceTypeString);
+    CharString fileExtension = fileGetExtension(midiSourceFile);
+    freeFile(midiSourceFile);
 
-        if (fileExtension == NULL) {
-            return MIDI_SOURCE_TYPE_INVALID;
-        } else if (charStringIsEqualToCString(fileExtension, "mid", true) ||
-                   charStringIsEqualToCString(fileExtension, "midi", true)) {
-            freeCharString(fileExtension);
-            return MIDI_SOURCE_TYPE_FILE;
-        } else {
-            logCritical("MIDI source '%s' does not match any supported type");
-            freeCharString(fileExtension);
-            return MIDI_SOURCE_TYPE_INVALID;
-        }
+    if (fileExtension == NULL) {
+      return MIDI_SOURCE_TYPE_INVALID;
+    } else if (charStringIsEqualToCString(fileExtension, "mid", true) ||
+               charStringIsEqualToCString(fileExtension, "midi", true)) {
+      freeCharString(fileExtension);
+      return MIDI_SOURCE_TYPE_FILE;
     } else {
-        logInternalError("MIDI source type was null");
-        return MIDI_SOURCE_TYPE_INVALID;
+      logCritical("MIDI source '%s' does not match any supported type");
+      freeCharString(fileExtension);
+      return MIDI_SOURCE_TYPE_INVALID;
     }
+  } else {
+    logInternalError("MIDI source type was null");
+    return MIDI_SOURCE_TYPE_INVALID;
+  }
 }
 
-MidiSource newMidiSource(MidiSourceType midiSourceType, const CharString midiSourceName)
-{
-    switch (midiSourceType) {
-    case MIDI_SOURCE_TYPE_FILE:
-        return newMidiSourceFile(midiSourceName);
+MidiSource newMidiSource(MidiSourceType midiSourceType,
+                         const CharString midiSourceName) {
+  switch (midiSourceType) {
+  case MIDI_SOURCE_TYPE_FILE:
+    return newMidiSourceFile(midiSourceName);
 
-    default:
-        return NULL;
-    }
+  default:
+    return NULL;
+  }
 }
 
-void freeMidiSource(MidiSource self)
-{
-    if (self != NULL) {
-        self->freeMidiSourceData(self->extraData);
-        freeCharString(self->sourceName);
-        free(self);
-    }
+void freeMidiSource(MidiSource self) {
+  if (self != NULL) {
+    self->freeMidiSourceData(self->extraData);
+    freeCharString(self->sourceName);
+    free(self);
+  }
 }

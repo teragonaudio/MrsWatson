@@ -32,75 +32,70 @@
 
 const char *kInternalPluginPassthruName = INTERNAL_PLUGIN_PREFIX "passthru";
 
-static void _pluginPassthruEmpty(void *pluginPtr)
-{
-    // Nothing to do here
+static void _pluginPassthruEmpty(void *pluginPtr) {
+  // Nothing to do here
 }
 
-static boolByte _pluginPassthruOpen(void *pluginPtr)
-{
-    return true;
+static boolByte _pluginPassthruOpen(void *pluginPtr) { return true; }
+
+static void _pluginPassthruDisplayInfo(void *pluginPtr) {
+  logInfo("Information for Internal plugin '%s'", kInternalPluginPassthruName);
+  logInfo("Type: effect, parameters: none");
+  logInfo(
+      "Description: a passthru effect which copies input data to the output");
 }
 
-static void _pluginPassthruDisplayInfo(void *pluginPtr)
-{
-    logInfo("Information for Internal plugin '%s'", kInternalPluginPassthruName);
-    logInfo("Type: effect, parameters: none");
-    logInfo("Description: a passthru effect which copies input data to the output");
+static int _pluginPassthruGetSetting(void *pluginPtr,
+                                     PluginSetting pluginSetting) {
+  switch (pluginSetting) {
+  case PLUGIN_SETTING_TAIL_TIME_IN_MS:
+    return 0;
+
+  case PLUGIN_NUM_INPUTS:
+    return 2;
+
+  case PLUGIN_NUM_OUTPUTS:
+    return 2;
+
+  case PLUGIN_INITIAL_DELAY:
+    return 0;
+
+  default:
+    return 0;
+  }
 }
 
-static int _pluginPassthruGetSetting(void *pluginPtr, PluginSetting pluginSetting)
-{
-    switch (pluginSetting) {
-    case PLUGIN_SETTING_TAIL_TIME_IN_MS:
-        return 0;
-
-    case PLUGIN_NUM_INPUTS:
-        return 2;
-
-    case PLUGIN_NUM_OUTPUTS:
-        return 2;
-
-    case PLUGIN_INITIAL_DELAY:
-        return 0;
-
-    default:
-        return 0;
-    }
+static void _pluginPassthruProcessAudio(void *pluginPtr, SampleBuffer inputs,
+                                        SampleBuffer outputs) {
+  sampleBufferCopyAndMapChannels(outputs, inputs);
 }
 
-static void _pluginPassthruProcessAudio(void *pluginPtr, SampleBuffer inputs, SampleBuffer outputs)
-{
-    sampleBufferCopyAndMapChannels(outputs, inputs);
+static void _pluginPassthruProcessMidiEvents(void *pluginPtr,
+                                             LinkedList midiEvents) {
+  // Nothing to do here
 }
 
-static void _pluginPassthruProcessMidiEvents(void *pluginPtr, LinkedList midiEvents)
-{
-    // Nothing to do here
+static boolByte _pluginPassthruSetParameter(void *pluginPtr, unsigned int i,
+                                            float value) {
+  return false;
 }
 
-static boolByte _pluginPassthruSetParameter(void *pluginPtr, unsigned int i, float value)
-{
-    return false;
-}
+Plugin newPluginPassthru(const CharString pluginName) {
+  Plugin plugin = _newPlugin(PLUGIN_TYPE_INTERNAL, PLUGIN_TYPE_EFFECT);
+  charStringCopy(plugin->pluginName, pluginName);
+  charStringCopyCString(plugin->pluginLocation, "Internal");
 
-Plugin newPluginPassthru(const CharString pluginName)
-{
-    Plugin plugin = _newPlugin(PLUGIN_TYPE_INTERNAL, PLUGIN_TYPE_EFFECT);
-    charStringCopy(plugin->pluginName, pluginName);
-    charStringCopyCString(plugin->pluginLocation, "Internal");
+  plugin->openPlugin = _pluginPassthruOpen;
+  plugin->displayInfo = _pluginPassthruDisplayInfo;
+  plugin->getSetting = _pluginPassthruGetSetting;
+  plugin->prepareForProcessing = _pluginPassthruEmpty;
+  plugin->showEditor = _pluginPassthruEmpty;
+  plugin->processAudio = _pluginPassthruProcessAudio;
+  plugin->processMidiEvents = _pluginPassthruProcessMidiEvents;
+  plugin->setParameter = _pluginPassthruSetParameter;
+  plugin->closePlugin = _pluginPassthruEmpty;
+  plugin->freePluginData = _pluginPassthruEmpty;
 
-    plugin->openPlugin = _pluginPassthruOpen;
-    plugin->displayInfo = _pluginPassthruDisplayInfo;
-    plugin->getSetting = _pluginPassthruGetSetting;
-    plugin->prepareForProcessing = _pluginPassthruEmpty;
-    plugin->showEditor = _pluginPassthruEmpty;
-    plugin->processAudio = _pluginPassthruProcessAudio;
-    plugin->processMidiEvents = _pluginPassthruProcessMidiEvents;
-    plugin->setParameter = _pluginPassthruSetParameter;
-    plugin->closePlugin = _pluginPassthruEmpty;
-    plugin->freePluginData = _pluginPassthruEmpty;
-
-    plugin->extraData = NULL;
-    return plugin;
+  plugin->extraData = NULL;
+  return plugin;
 }

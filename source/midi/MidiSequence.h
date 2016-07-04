@@ -32,10 +32,10 @@
 #include "midi/MidiEvent.h"
 
 typedef struct {
-    LinkedList midiEvents;
-    LinkedListIterator _lastEvent;
-    int _lastTimestamp;
-    int numMidiEventsProcessed;
+  LinkedList midiEvents;
+  LinkedListIterator _lastEvent;
+  int _lastTimestamp;
+  int numMidiEventsProcessed;
 } MidiSequenceMembers;
 
 /**
@@ -74,8 +74,10 @@ void appendMidiEventToSequence(MidiSequence self, MidiEvent midiEvent);
  * false otherwise. This is so that the caller can tell when the end of the MIDI
  * sequence has been reached.
  */
-boolByte fillMidiEventsFromRange(MidiSequence self, const unsigned long startTimestamp,
-                                 const unsigned long blocksize, LinkedList outMidiEvents);
+boolByte fillMidiEventsFromRange(MidiSequence self,
+                                 const unsigned long startTimestamp,
+                                 const unsigned long blocksize,
+                                 LinkedList outMidiEvents);
 
 /**
  * Free a MIDI sequence and its associated resources

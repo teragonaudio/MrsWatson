@@ -28,11 +28,13 @@
 #ifndef MrsWatson_PluginVst2xId_h
 #define MrsWatson_PluginVst2xId_h
 
+#include "base/CharString.h"
+
 #define PLUGIN_VST2X_ID_UNKNOWN "????"
 
 typedef struct {
-    unsigned long id;
-    CharString idString;
+  unsigned long id;
+  CharString idString;
 } PluginVst2xIdMembers;
 typedef PluginVst2xIdMembers *PluginVst2xId;
 

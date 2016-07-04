@@ -29,11 +29,12 @@
 #define MrsWatson_LinkedList_h
 
 typedef struct {
-    void *item;
-    void *nextItem;
+  void *item;
+  void *nextItem;
 
-    // This field should be considered private, and is only valid for the head node
-    int _numItems;
+  // This field should be considered private, and is only valid for the head
+  // node
+  int _numItems;
 } LinkedListMembers;
 
 typedef LinkedListMembers *LinkedList;
@@ -74,15 +75,18 @@ int linkedListLength(LinkedList self);
 void **linkedListToArray(LinkedList self);
 
 /**
- * Iterate over each item in a linked list, calling the given function on each item.
+ * Iterate over each item in a linked list, calling the given function on each
+ * item.
  * @param self
  * @param foreachFunc Function to call
  * @param userData User data to pass to the function
  */
-void linkedListForeach(LinkedList self, LinkedListForeachFunc foreachFunc, void *userData);
+void linkedListForeach(LinkedList self, LinkedListForeachFunc foreachFunc,
+                       void *userData);
 
 /**
- * Free each item in a linked list. The contents of the items themselves are *not*
+ * Free each item in a linked list. The contents of the items themselves are
+ * *not*
  * freed. To do that, call freeLinkedListAndItems() instead.
  * @param self
  */

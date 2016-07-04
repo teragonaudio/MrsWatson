@@ -26,76 +26,72 @@
 //
 
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "app/BuildInfo.h"
 #include "logging/EventLogger.h"
 
-unsigned long buildInfoGetYear(void)
-{
-    unsigned long result = 0;
-    CharString buildDate = newCharStringWithCapacity(kCharStringLengthShort);
-    const char *compilerDate = __DATE__;
-    size_t startingIndex = strlen(compilerDate) - 4;
-    strncpy(buildDate->data, compilerDate + startingIndex, 4);
-    result = (unsigned long)strtol(buildDate->data, NULL, 10);
-    freeCharString(buildDate);
-    return result;
+unsigned long buildInfoGetYear(void) {
+  unsigned long result = 0;
+  CharString buildDate = newCharStringWithCapacity(kCharStringLengthShort);
+  const char *compilerDate = __DATE__;
+  size_t startingIndex = strlen(compilerDate) - 4;
+  strncpy(buildDate->data, compilerDate + startingIndex, 4);
+  result = (unsigned long)strtol(buildDate->data, NULL, 10);
+  freeCharString(buildDate);
+  return result;
 }
 
-static short _getMonthNumber(const char *abbreviatedMonthName)
-{
-    if (!strncmp(abbreviatedMonthName, "Jan", 3)) {
-        return 1;
-    } else if (!strncmp(abbreviatedMonthName, "Feb", 3)) {
-        return 2;
-    } else if (!strncmp(abbreviatedMonthName, "Mar", 3)) {
-        return 3;
-    } else if (!strncmp(abbreviatedMonthName, "Apr", 3)) {
-        return 4;
-    } else if (!strncmp(abbreviatedMonthName, "May", 3)) {
-        return 5;
-    } else if (!strncmp(abbreviatedMonthName, "Jun", 3)) {
-        return 6;
-    } else if (!strncmp(abbreviatedMonthName, "Jul", 3)) {
-        return 7;
-    } else if (!strncmp(abbreviatedMonthName, "Aug", 3)) {
-        return 8;
-    } else if (!strncmp(abbreviatedMonthName, "Sep", 3)) {
-        return 9;
-    } else if (!strncmp(abbreviatedMonthName, "Oct", 3)) {
-        return 10;
-    } else if (!strncmp(abbreviatedMonthName, "Nov", 3)) {
-        return 11;
-    } else if (!strncmp(abbreviatedMonthName, "Dec", 3)) {
-        return 12;
-    } else {
-        logInternalError("Invalid build month '%s'", abbreviatedMonthName);
-        return 0;
-    }
+static short _getMonthNumber(const char *abbreviatedMonthName) {
+  if (!strncmp(abbreviatedMonthName, "Jan", 3)) {
+    return 1;
+  } else if (!strncmp(abbreviatedMonthName, "Feb", 3)) {
+    return 2;
+  } else if (!strncmp(abbreviatedMonthName, "Mar", 3)) {
+    return 3;
+  } else if (!strncmp(abbreviatedMonthName, "Apr", 3)) {
+    return 4;
+  } else if (!strncmp(abbreviatedMonthName, "May", 3)) {
+    return 5;
+  } else if (!strncmp(abbreviatedMonthName, "Jun", 3)) {
+    return 6;
+  } else if (!strncmp(abbreviatedMonthName, "Jul", 3)) {
+    return 7;
+  } else if (!strncmp(abbreviatedMonthName, "Aug", 3)) {
+    return 8;
+  } else if (!strncmp(abbreviatedMonthName, "Sep", 3)) {
+    return 9;
+  } else if (!strncmp(abbreviatedMonthName, "Oct", 3)) {
+    return 10;
+  } else if (!strncmp(abbreviatedMonthName, "Nov", 3)) {
+    return 11;
+  } else if (!strncmp(abbreviatedMonthName, "Dec", 3)) {
+    return 12;
+  } else {
+    logInternalError("Invalid build month '%s'", abbreviatedMonthName);
+    return 0;
+  }
 }
 
-unsigned long buildInfoGetDatestamp(void)
-{
-    unsigned long result = buildInfoGetYear() * 10000;
+unsigned long buildInfoGetDatestamp(void) {
+  unsigned long result = buildInfoGetYear() * 10000;
 
-    CharString buffer = newCharStringWithCapacity(kCharStringLengthShort);
-    strncpy(buffer->data, __DATE__, 3);
-    result += _getMonthNumber(buffer->data) * 100;
+  CharString buffer = newCharStringWithCapacity(kCharStringLengthShort);
+  strncpy(buffer->data, __DATE__, 3);
+  result += _getMonthNumber(buffer->data) * 100;
 
-    charStringClear(buffer);
-    strncpy(buffer->data, __DATE__ + 4, 2);
-    result += strtol(buffer->data, NULL, 10);
+  charStringClear(buffer);
+  strncpy(buffer->data, __DATE__ + 4, 2);
+  result += strtol(buffer->data, NULL, 10);
 
-    freeCharString(buffer);
-    return result;
+  freeCharString(buffer);
+  return result;
 }
 
-CharString buildInfoGetVersionString(void)
-{
-    CharString result = newCharStringWithCapacity(kCharStringLengthShort);
-    snprintf(result->data, result->capacity, "%s version %d.%d.%d",
-             PROGRAM_NAME, VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
-    return result;
+CharString buildInfoGetVersionString(void) {
+  CharString result = newCharStringWithCapacity(kCharStringLengthShort);
+  snprintf(result->data, result->capacity, "%s version %d.%d.%d", PROGRAM_NAME,
+           VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
+  return result;
 }

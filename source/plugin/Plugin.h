@@ -36,31 +36,31 @@
 #define INTERNAL_PLUGIN_PREFIX "mrs_"
 
 typedef enum {
-    PLUGIN_TYPE_INVALID,
-    PLUGIN_TYPE_VST_2X,
-    PLUGIN_TYPE_INTERNAL,
-    NUM_PLUGIN_INTERFACE_TYPES
+  PLUGIN_TYPE_INVALID,
+  PLUGIN_TYPE_VST_2X,
+  PLUGIN_TYPE_INTERNAL,
+  NUM_PLUGIN_INTERFACE_TYPES
 } PluginInterfaceType;
 
 typedef enum {
-    PLUGIN_TYPE_UNKNOWN,
-    PLUGIN_TYPE_UNSUPPORTED,
-    PLUGIN_TYPE_EFFECT,
-    PLUGIN_TYPE_INSTRUMENT,
-    NUM_PLUGIN_TYPES
+  PLUGIN_TYPE_UNKNOWN,
+  PLUGIN_TYPE_UNSUPPORTED,
+  PLUGIN_TYPE_EFFECT,
+  PLUGIN_TYPE_INSTRUMENT,
+  NUM_PLUGIN_TYPES
 } PluginType;
 
 typedef enum {
-    PLUGIN_SETTING_TAIL_TIME_IN_MS,
-    PLUGIN_NUM_INPUTS,
-    PLUGIN_NUM_OUTPUTS,
-    PLUGIN_INITIAL_DELAY,
-    NUM_PLUGIN_SETTINGS
+  PLUGIN_SETTING_TAIL_TIME_IN_MS,
+  PLUGIN_NUM_INPUTS,
+  PLUGIN_NUM_OUTPUTS,
+  PLUGIN_INITIAL_DELAY,
+  NUM_PLUGIN_SETTINGS
 } PluginSetting;
 
 typedef struct {
-    unsigned int width;
-    unsigned int height;
+  unsigned int width;
+  unsigned int height;
 } PluginWindowSize;
 
 /**
@@ -86,7 +86,8 @@ typedef void (*PluginDisplayInfoFunc)(void *pluginPtr);
  * @param pluginPtr self
  * @param pluginSetting Setting to query
  */
-typedef int (*PluginGetSettingFunc)(void *pluginPtr, PluginSetting pluginSetting);
+typedef int (*PluginGetSettingFunc)(void *pluginPtr,
+                                    PluginSetting pluginSetting);
 
 /**
  * Called with the host wants to process a block of audio samples.
@@ -94,7 +95,8 @@ typedef int (*PluginGetSettingFunc)(void *pluginPtr, PluginSetting pluginSetting
  * @param inputs Block of input samples to process
  * @param outputs Block where output samples shall be written
  */
-typedef void (*PluginProcessAudioFunc)(void *pluginPtr, SampleBuffer inputs, SampleBuffer outputs);
+typedef void (*PluginProcessAudioFunc)(void *pluginPtr, SampleBuffer inputs,
+                                       SampleBuffer outputs);
 
 /**
  * Called the host wants to process MIDI events. This will be called directly
@@ -103,7 +105,8 @@ typedef void (*PluginProcessAudioFunc)(void *pluginPtr, SampleBuffer inputs, Sam
  * @param midiEvents List of events to process. This should be non-empty, as
  * this function is not called when there are no events to process.
  */
-typedef void (*PluginProcessMidiEventsFunc)(void *pluginPtr, LinkedList midiEvents);
+typedef void (*PluginProcessMidiEventsFunc)(void *pluginPtr,
+                                            LinkedList midiEvents);
 
 /**
  * Set a parameter within a plugin
@@ -111,7 +114,8 @@ typedef void (*PluginProcessMidiEventsFunc)(void *pluginPtr, LinkedList midiEven
  * @param index Parameter index
  * @param value New value
  */
-typedef boolByte (*PluginSetParameterFunc)(void *pluginPtr, unsigned int index, float value);
+typedef boolByte (*PluginSetParameterFunc)(void *pluginPtr, unsigned int index,
+                                           float value);
 
 /**
  * Called once before audio processing begins. Some interfaces provide hooks for
@@ -139,27 +143,27 @@ typedef void (*PluginCloseFunc)(void *pluginPtr);
 typedef void (*FreePluginDataFunc)(void *pluginDataPtr);
 
 typedef struct {
-    PluginInterfaceType interfaceType;
-    PluginType pluginType;
-    CharString pluginName;
-    CharString pluginLocation;
-    CharString pluginAbsolutePath;
+  PluginInterfaceType interfaceType;
+  PluginType pluginType;
+  CharString pluginName;
+  CharString pluginLocation;
+  CharString pluginAbsolutePath;
 
-    PluginOpenFunc openPlugin;
-    PluginDisplayInfoFunc displayInfo;
-    PluginGetSettingFunc getSetting;
-    PluginProcessAudioFunc processAudio;
-    PluginProcessMidiEventsFunc processMidiEvents;
-    PluginSetParameterFunc setParameter;
-    PluginPrepareForProcessingFunc prepareForProcessing;
-    PluginShowEditorFunc showEditor;
-    PluginCloseFunc closePlugin;
-    FreePluginDataFunc freePluginData;
-    SampleBuffer inputBuffer;
-    SampleBuffer outputBuffer;
-    boolByte isOpen;
+  PluginOpenFunc openPlugin;
+  PluginDisplayInfoFunc displayInfo;
+  PluginGetSettingFunc getSetting;
+  PluginProcessAudioFunc processAudio;
+  PluginProcessMidiEventsFunc processMidiEvents;
+  PluginSetParameterFunc setParameter;
+  PluginPrepareForProcessingFunc prepareForProcessing;
+  PluginShowEditorFunc showEditor;
+  PluginCloseFunc closePlugin;
+  FreePluginDataFunc freePluginData;
+  SampleBuffer inputBuffer;
+  SampleBuffer outputBuffer;
+  boolByte isOpen;
 
-    void *extraData;
+  void *extraData;
 } PluginMembers;
 
 /**

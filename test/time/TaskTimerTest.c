@@ -1,7 +1,7 @@
 #include <math.h>
 
-#include "unit/TestRunner.h"
 #include "time/TaskTimer.h"
+#include "unit/TestRunner.h"
 
 #define SLEEP_DURATION_MS 10.0
 // Timer testing is a bit unreliable, so we just check to see that each sleep
@@ -17,263 +17,253 @@
 // that's the entire point of running it there. :)
 static TaskTimer _testTaskTimer;
 
-static void _testTaskTimerSetup(void)
-{
-    _testTaskTimer = newTaskTimerWithCString(TEST_COMPONENT_NAME, TEST_SUBCOMPONENT_NAME);
+static void _testTaskTimerSetup(void) {
+  _testTaskTimer =
+      newTaskTimerWithCString(TEST_COMPONENT_NAME, TEST_SUBCOMPONENT_NAME);
 }
 
-static void _testTaskTimerTeardown(void)
-{
-    freeTaskTimer(_testTaskTimer);
+static void _testTaskTimerTeardown(void) { freeTaskTimer(_testTaskTimer); }
+
+static int _testNewTaskTimer(void) {
+  CharString c = newCharStringWithCString(TEST_COMPONENT_NAME);
+  TaskTimer t = newTaskTimer(c, TEST_SUBCOMPONENT_NAME);
+
+  assert(t->enabled);
+  assertCharStringEquals(TEST_COMPONENT_NAME, t->component);
+  assertCharStringEquals(TEST_SUBCOMPONENT_NAME, t->subcomponent);
+  assertDoubleEquals(0.0, t->totalTaskTime, TEST_DEFAULT_TOLERANCE);
+
+  freeCharString(c);
+  freeTaskTimer(t);
+  return 0;
 }
 
-static int _testNewTaskTimer(void)
-{
-    CharString c = newCharStringWithCString(TEST_COMPONENT_NAME);
-    TaskTimer t = newTaskTimer(c, TEST_SUBCOMPONENT_NAME);
+static int _testNewObjectWithEmptyComponent(void) {
+  CharString c = newCharStringWithCString(EMPTY_STRING);
+  TaskTimer t = newTaskTimer(c, TEST_SUBCOMPONENT_NAME);
 
-    assert(t->enabled);
-    assertCharStringEquals(TEST_COMPONENT_NAME, t->component);
-    assertCharStringEquals(TEST_SUBCOMPONENT_NAME, t->subcomponent);
-    assertDoubleEquals(0.0, t->totalTaskTime, TEST_DEFAULT_TOLERANCE);
+  assertNotNull(t);
+  assertCharStringEquals(EMPTY_STRING, t->component);
+  assertCharStringEquals(TEST_SUBCOMPONENT_NAME, t->subcomponent);
 
-    freeCharString(c);
-    freeTaskTimer(t);
-    return 0;
+  freeCharString(c);
+  freeTaskTimer(t);
+  return 0;
 }
 
-static int _testNewObjectWithEmptyComponent(void)
-{
-    CharString c = newCharStringWithCString(EMPTY_STRING);
-    TaskTimer t = newTaskTimer(c, TEST_SUBCOMPONENT_NAME);
+static int _testNewObjectWithEmptySubcomponent(void) {
+  CharString c = newCharStringWithCString(TEST_COMPONENT_NAME);
+  TaskTimer t = newTaskTimer(c, EMPTY_STRING);
 
-    assertNotNull(t);
-    assertCharStringEquals(EMPTY_STRING, t->component);
-    assertCharStringEquals(TEST_SUBCOMPONENT_NAME, t->subcomponent);
+  assertNotNull(t);
+  assertCharStringEquals(TEST_COMPONENT_NAME, t->component);
+  assertCharStringEquals(EMPTY_STRING, t->subcomponent);
 
-    freeCharString(c);
-    freeTaskTimer(t);
-    return 0;
+  freeCharString(c);
+  freeTaskTimer(t);
+  return 0;
 }
 
-static int _testNewObjectWithEmptySubcomponent(void)
-{
-    CharString c = newCharStringWithCString(TEST_COMPONENT_NAME);
-    TaskTimer t = newTaskTimer(c, EMPTY_STRING);
+static int _testNewObjectWithNullComponent(void) {
+  TaskTimer t = newTaskTimer(NULL, NULL);
 
-    assertNotNull(t);
-    assertCharStringEquals(TEST_COMPONENT_NAME, t->component);
-    assertCharStringEquals(EMPTY_STRING, t->subcomponent);
+  assertNotNull(t);
+  assertCharStringEquals(EMPTY_STRING, t->component);
+  assertCharStringEquals(EMPTY_STRING, t->subcomponent);
 
-    freeCharString(c);
-    freeTaskTimer(t);
-    return 0;
+  freeTaskTimer(t);
+  return 0;
 }
 
-static int _testNewObjectWithNullComponent(void)
-{
-    TaskTimer t = newTaskTimer(NULL, NULL);
+static int _testNewObjectWithNullComponentCString(void) {
+  TaskTimer t = newTaskTimerWithCString(NULL, NULL);
 
-    assertNotNull(t);
-    assertCharStringEquals(EMPTY_STRING, t->component);
-    assertCharStringEquals(EMPTY_STRING, t->subcomponent);
+  assertNotNull(t);
+  assertCharStringEquals(EMPTY_STRING, t->component);
+  assertCharStringEquals(EMPTY_STRING, t->subcomponent);
 
-    freeTaskTimer(t);
-    return 0;
+  freeTaskTimer(t);
+  return 0;
 }
 
-static int _testNewObjectWithNullComponentCString(void)
-{
-    TaskTimer t = newTaskTimerWithCString(NULL, NULL);
+static int _testNewObjectWithNullSubcomponent(void) {
+  CharString c = newCharStringWithCString(TEST_COMPONENT_NAME);
+  TaskTimer t = newTaskTimer(c, NULL);
 
-    assertNotNull(t);
-    assertCharStringEquals(EMPTY_STRING, t->component);
-    assertCharStringEquals(EMPTY_STRING, t->subcomponent);
+  assertNotNull(t);
+  assertCharStringEquals(TEST_COMPONENT_NAME, t->component);
+  assertCharStringEquals(EMPTY_STRING, t->subcomponent);
 
-    freeTaskTimer(t);
-    return 0;
+  freeCharString(c);
+  freeTaskTimer(t);
+  return 0;
 }
 
-static int _testNewObjectWithNullSubcomponent(void)
-{
-    CharString c = newCharStringWithCString(TEST_COMPONENT_NAME);
-    TaskTimer t = newTaskTimer(c, NULL);
+static int _testNewObjectWithCStrings(void) {
+  TaskTimer t =
+      newTaskTimerWithCString(TEST_COMPONENT_NAME, TEST_SUBCOMPONENT_NAME);
 
-    assertNotNull(t);
-    assertCharStringEquals(TEST_COMPONENT_NAME, t->component);
-    assertCharStringEquals(EMPTY_STRING, t->subcomponent);
+  assert(t->enabled);
+  assertCharStringEquals(TEST_COMPONENT_NAME, t->component);
+  assertCharStringEquals(TEST_SUBCOMPONENT_NAME, t->subcomponent);
+  assertDoubleEquals(0.0, t->totalTaskTime, TEST_DEFAULT_TOLERANCE);
 
-    freeCharString(c);
-    freeTaskTimer(t);
-    return 0;
+  freeTaskTimer(t);
+  return 0;
 }
 
-static int _testNewObjectWithCStrings(void)
-{
-    TaskTimer t = newTaskTimerWithCString(TEST_COMPONENT_NAME, TEST_SUBCOMPONENT_NAME);
+static void _testSleep(void) { taskTimerSleep(SLEEP_DURATION_MS); }
 
-    assert(t->enabled);
-    assertCharStringEquals(TEST_COMPONENT_NAME, t->component);
-    assertCharStringEquals(TEST_SUBCOMPONENT_NAME, t->subcomponent);
-    assertDoubleEquals(0.0, t->totalTaskTime, TEST_DEFAULT_TOLERANCE);
-
-    freeTaskTimer(t);
-    return 0;
+static int _testTaskTimerDuration(void) {
+  double elapsedTime = 0.0;
+  taskTimerStart(_testTaskTimer);
+  _testSleep();
+  elapsedTime = taskTimerStop(_testTaskTimer);
+  assertTimeEquals(SLEEP_DURATION_MS, _testTaskTimer->totalTaskTime,
+                   MAX_TIMER_TOLERANCE_MS);
+  assertTimeEquals(SLEEP_DURATION_MS, elapsedTime, MAX_TIMER_TOLERANCE_MS);
+  return 0;
 }
 
-static void _testSleep(void)
-{
-    taskTimerSleep(SLEEP_DURATION_MS);
-}
+static int _testTaskTimerDurationMultipleTimes(void) {
+  double elapsedTime = 0.0;
+  int i;
 
-static int _testTaskTimerDuration(void)
-{
-    double elapsedTime = 0.0;
+  for (i = 0; i < 5; i++) {
     taskTimerStart(_testTaskTimer);
     _testSleep();
     elapsedTime = taskTimerStop(_testTaskTimer);
-    assertTimeEquals(SLEEP_DURATION_MS, _testTaskTimer->totalTaskTime, MAX_TIMER_TOLERANCE_MS);
     assertTimeEquals(SLEEP_DURATION_MS, elapsedTime, MAX_TIMER_TOLERANCE_MS);
-    return 0;
+    elapsedTime = 0.0;
+  }
+
+  assertTimeEquals(5.0 * SLEEP_DURATION_MS, _testTaskTimer->totalTaskTime,
+                   MAX_TIMER_TOLERANCE_MS * 5.0);
+
+  return 0;
 }
 
-static int _testTaskTimerDurationMultipleTimes(void)
-{
-    double elapsedTime = 0.0;
-    int i;
-
-    for (i = 0; i < 5; i++) {
-        taskTimerStart(_testTaskTimer);
-        _testSleep();
-        elapsedTime = taskTimerStop(_testTaskTimer);
-        assertTimeEquals(SLEEP_DURATION_MS, elapsedTime, MAX_TIMER_TOLERANCE_MS);
-        elapsedTime = 0.0;
-    }
-
-    assertTimeEquals(5.0 * SLEEP_DURATION_MS, _testTaskTimer->totalTaskTime, MAX_TIMER_TOLERANCE_MS * 5.0);
-
-    return 0;
+static int _testTaskTimerCallStartTwice(void) {
+  taskTimerStart(_testTaskTimer);
+  taskTimerStart(_testTaskTimer);
+  _testSleep();
+  taskTimerStop(_testTaskTimer);
+  assertTimeEquals(SLEEP_DURATION_MS, _testTaskTimer->totalTaskTime,
+                   MAX_TIMER_TOLERANCE_MS);
+  return 0;
 }
 
-static int _testTaskTimerCallStartTwice(void)
-{
-    taskTimerStart(_testTaskTimer);
-    taskTimerStart(_testTaskTimer);
-    _testSleep();
-    taskTimerStop(_testTaskTimer);
-    assertTimeEquals(SLEEP_DURATION_MS, _testTaskTimer->totalTaskTime, MAX_TIMER_TOLERANCE_MS);
-    return 0;
+static int _testTaskTimerCallStopTwice(void) {
+  taskTimerStart(_testTaskTimer);
+  _testSleep();
+  taskTimerStop(_testTaskTimer);
+  taskTimerStop(_testTaskTimer);
+  assertTimeEquals(SLEEP_DURATION_MS, _testTaskTimer->totalTaskTime,
+                   MAX_TIMER_TOLERANCE_MS);
+  return 0;
 }
 
-static int _testTaskTimerCallStopTwice(void)
-{
-    taskTimerStart(_testTaskTimer);
-    _testSleep();
-    taskTimerStop(_testTaskTimer);
-    taskTimerStop(_testTaskTimer);
-    assertTimeEquals(SLEEP_DURATION_MS, _testTaskTimer->totalTaskTime, MAX_TIMER_TOLERANCE_MS);
-    return 0;
+static int _testCallStopBeforeStart(void) {
+  taskTimerStop(_testTaskTimer);
+  taskTimerStart(_testTaskTimer);
+  _testSleep();
+  taskTimerStop(_testTaskTimer);
+  assertTimeEquals(SLEEP_DURATION_MS, _testTaskTimer->totalTaskTime,
+                   MAX_TIMER_TOLERANCE_MS);
+  return 0;
 }
 
-static int _testCallStopBeforeStart(void)
-{
-    taskTimerStop(_testTaskTimer);
-    taskTimerStart(_testTaskTimer);
-    _testSleep();
-    taskTimerStop(_testTaskTimer);
-    assertTimeEquals(SLEEP_DURATION_MS, _testTaskTimer->totalTaskTime, MAX_TIMER_TOLERANCE_MS);
-    return 0;
+static int _testHumanReadableTimeMs(void) {
+  CharString s;
+  _testTaskTimer->totalTaskTime = 230;
+  s = taskTimerHumanReadbleString(_testTaskTimer);
+  assertCharStringEquals("230ms", s);
+  freeCharString(s);
+  return 0;
 }
 
-static int _testHumanReadableTimeMs(void)
-{
-    CharString s;
-    _testTaskTimer->totalTaskTime = 230;
-    s = taskTimerHumanReadbleString(_testTaskTimer);
-    assertCharStringEquals("230ms", s);
-    freeCharString(s);
-    return 0;
+static int _testHumanReadableTimeSec(void) {
+  CharString s;
+  // 23 seconds
+  _testTaskTimer->totalTaskTime = 23000;
+  s = taskTimerHumanReadbleString(_testTaskTimer);
+  assertCharStringEquals("23sec", s);
+  freeCharString(s);
+  return 0;
 }
 
-static int _testHumanReadableTimeSec(void)
-{
-    CharString s;
-    // 23 seconds
-    _testTaskTimer->totalTaskTime = 23000;
-    s = taskTimerHumanReadbleString(_testTaskTimer);
-    assertCharStringEquals("23sec", s);
-    freeCharString(s);
-    return 0;
+static int _testHumanReadableTimeMinSec(void) {
+  CharString s;
+  // 10 minutes, 23 seconds
+  _testTaskTimer->totalTaskTime = 600000 + 23000;
+  s = taskTimerHumanReadbleString(_testTaskTimer);
+  assertCharStringEquals("10:23sec", s);
+  freeCharString(s);
+  return 0;
 }
 
-static int _testHumanReadableTimeMinSec(void)
-{
-    CharString s;
-    // 10 minutes, 23 seconds
-    _testTaskTimer->totalTaskTime = 600000 + 23000;
-    s = taskTimerHumanReadbleString(_testTaskTimer);
-    assertCharStringEquals("10:23sec", s);
-    freeCharString(s);
-    return 0;
+static int _testHumanReadableTimeHoursMinSec(void) {
+  CharString s;
+  // 2 hours, 10 minutes, 23 seconds
+  _testTaskTimer->totalTaskTime = (1000 * 60 * 60 * 2) + 600000 + 23000;
+  s = taskTimerHumanReadbleString(_testTaskTimer);
+  assertCharStringEquals("2:10:23sec", s);
+  freeCharString(s);
+  return 0;
 }
 
-static int _testHumanReadableTimeHoursMinSec(void)
-{
-    CharString s;
-    // 2 hours, 10 minutes, 23 seconds
-    _testTaskTimer->totalTaskTime = (1000 * 60 * 60 * 2) + 600000 + 23000;
-    s = taskTimerHumanReadbleString(_testTaskTimer);
-    assertCharStringEquals("2:10:23sec", s);
-    freeCharString(s);
-    return 0;
+static int _testHumanReadableTimeNotStarted(void) {
+  CharString s = taskTimerHumanReadbleString(_testTaskTimer);
+  assertCharStringEquals("0ms", s);
+  freeCharString(s);
+  return 0;
 }
 
-static int _testHumanReadableTimeNotStarted(void)
-{
-    CharString s = taskTimerHumanReadbleString(_testTaskTimer);
-    assertCharStringEquals("0ms", s);
-    freeCharString(s);
-    return 0;
-}
-
-static int _testSleepMilliseconds(void)
-{
-    double elapsedTime;
-    TaskTimer t = newTaskTimerWithCString("test", "test");
-    taskTimerStart(t);
-    taskTimerSleep(12);
-    elapsedTime = taskTimerStop(t);
-    assertTimeEquals(12, elapsedTime, 0.1);
-    freeTaskTimer(t);
-    return 0;
+static int _testSleepMilliseconds(void) {
+  double elapsedTime;
+  TaskTimer t = newTaskTimerWithCString("test", "test");
+  taskTimerStart(t);
+  taskTimerSleep(12);
+  elapsedTime = taskTimerStop(t);
+  assertTimeEquals(12, elapsedTime, 0.1);
+  freeTaskTimer(t);
+  return 0;
 }
 
 TestSuite addTaskTimerTests(void);
-TestSuite addTaskTimerTests(void)
-{
-    TestSuite testSuite = newTestSuite("TaskTimer", _testTaskTimerSetup, _testTaskTimerTeardown);
-    addTest(testSuite, "NewObject", _testNewTaskTimer);
-    addTest(testSuite, "NewObjectWithEmptyComponent", _testNewObjectWithEmptyComponent);
-    addTest(testSuite, "NewObjectWithEmptySubcomponent", _testNewObjectWithEmptySubcomponent);
-    addTest(testSuite, "NewObjectWithNullComponent", _testNewObjectWithNullComponent);
-    addTest(testSuite, "NewObjectWithNullComponentCString", _testNewObjectWithNullComponentCString);
-    addTest(testSuite, "NewObjectWithNullSubcomponent", _testNewObjectWithNullSubcomponent);
-    addTest(testSuite, "NewObjectWithCStrings", _testNewObjectWithCStrings);
+TestSuite addTaskTimerTests(void) {
+  TestSuite testSuite =
+      newTestSuite("TaskTimer", _testTaskTimerSetup, _testTaskTimerTeardown);
+  addTest(testSuite, "NewObject", _testNewTaskTimer);
+  addTest(testSuite, "NewObjectWithEmptyComponent",
+          _testNewObjectWithEmptyComponent);
+  addTest(testSuite, "NewObjectWithEmptySubcomponent",
+          _testNewObjectWithEmptySubcomponent);
+  addTest(testSuite, "NewObjectWithNullComponent",
+          _testNewObjectWithNullComponent);
+  addTest(testSuite, "NewObjectWithNullComponentCString",
+          _testNewObjectWithNullComponentCString);
+  addTest(testSuite, "NewObjectWithNullSubcomponent",
+          _testNewObjectWithNullSubcomponent);
+  addTest(testSuite, "NewObjectWithCStrings", _testNewObjectWithCStrings);
 
-    addTest(testSuite, "TaskDuration", _testTaskTimerDuration);
-    addTest(testSuite, "TaskDurationMultipleTimes", _testTaskTimerDurationMultipleTimes);
+  addTest(testSuite, "TaskDuration", _testTaskTimerDuration);
+  addTest(testSuite, "TaskDurationMultipleTimes",
+          _testTaskTimerDurationMultipleTimes);
 
-    addTest(testSuite, "CallStartTwice", _testTaskTimerCallStartTwice);
-    addTest(testSuite, "CallStopTwice", _testTaskTimerCallStopTwice);
-    addTest(testSuite, "CallStartTwice", _testTaskTimerCallStartTwice);
-    addTest(testSuite, "CallStopBeforeStart", _testCallStopBeforeStart);
+  addTest(testSuite, "CallStartTwice", _testTaskTimerCallStartTwice);
+  addTest(testSuite, "CallStopTwice", _testTaskTimerCallStopTwice);
+  addTest(testSuite, "CallStartTwice", _testTaskTimerCallStartTwice);
+  addTest(testSuite, "CallStopBeforeStart", _testCallStopBeforeStart);
 
-    addTest(testSuite, "HumanReadableTimeMs", _testHumanReadableTimeMs);
-    addTest(testSuite, "HumanReadableTimeSec", _testHumanReadableTimeSec);
-    addTest(testSuite, "HumanReadableTimeMinSec", _testHumanReadableTimeMinSec);
-    addTest(testSuite, "HumanReadableTimeHoursMinSec", _testHumanReadableTimeHoursMinSec);
-    addTest(testSuite, "HumanReadableTimeNotStarted", _testHumanReadableTimeNotStarted);
+  addTest(testSuite, "HumanReadableTimeMs", _testHumanReadableTimeMs);
+  addTest(testSuite, "HumanReadableTimeSec", _testHumanReadableTimeSec);
+  addTest(testSuite, "HumanReadableTimeMinSec", _testHumanReadableTimeMinSec);
+  addTest(testSuite, "HumanReadableTimeHoursMinSec",
+          _testHumanReadableTimeHoursMinSec);
+  addTest(testSuite, "HumanReadableTimeNotStarted",
+          _testHumanReadableTimeNotStarted);
 
-    addTest(testSuite, "SleepMilliseconds", _testSleepMilliseconds);
-    return testSuite;
+  addTest(testSuite, "SleepMilliseconds", _testSleepMilliseconds);
+  return testSuite;
 }
