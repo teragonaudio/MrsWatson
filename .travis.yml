@@ -56,7 +56,11 @@ script:
           ERRORS_FOUND=1
         fi
       done
-      #exit $ERRORS_FOUND
+      if [ $ERRORS_FOUND -eq 1 ]; then
+        echo "Formatting errors found!"
+        echo "Please run 'clang-format -style=LLVM -i' on the above files"
+      fi
+      exit $ERRORS_FOUND
     else
       rm -rf build
       mkdir build
