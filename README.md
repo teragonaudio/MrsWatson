@@ -1,3 +1,5 @@
+[![Travis status][ci-status-travis]][ci-travis]
+
 MrsWatson
 =========
 
@@ -214,3 +216,4 @@ agreements:
 [7]: http://www.steinberg.net/en/company/developer.html
 [8]: http://audiofile.68k.org/
 [9]: https://github.com/teragonaudio/MrsWatson/blob/master/BUILDING.md
+[ci-status-travis]: https://travis-ci.com/teragonaudio/MrsWatson.svg
