@@ -1,0 +1,72 @@
+language: cpp
+sudo: required
+dist: trusty
+branches:
+  only:
+    - master
+
+matrix:
+  include:
+    - os: osx
+      compiler: clang
+      osx_image: xcode7.1
+      env: C_COMPILER=clang CXX_COMPILER=clang++ CONFIGURATION=Release
+
+    - os: linux
+      compiler: clang
+      env: C_COMPILER=clang-3.8 CXX_COMPILER=clang++-3.8 CONFIGURATION=Release
+
+    - os: linux
+      compiler: gcc
+      env: C_COMPILER=gcc CXX_COMPILER=g++ CONFIGURATION=Release
+
+    - os: linux
+      compiler: clang
+      env: CONFIGURATION=Formatting
+
+before_install:
+  # Install packages
+  - |
+    if [ "$TRAVIS_OS_NAME" = "osx" ]; then
+      brew update
+      brew install cmake ninja libzip
+    fi
+
+  - |
+    if [ "$TRAVIS_OS_NAME" = "linux" ]; then
+      sudo dpkg --add-architecture i386
+      wget -O - http://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
+      echo deb http://apt.llvm.org/trusty/ llvm-toolchain-trusty-3.8 main | sudo tee --append /etc/apt/sources.list
+      sudo apt-get update
+      sudo apt-get -y install cmake cmake-data ninja-build gcc clang-3.8 clang-format-3.8 g++-multilib libc6-dev libc6-dev-i386
+    fi
+
+install:
+  - git submodule update --init --recursive
+
+script:
+  - |
+    if [ "$CONFIGURATION" = "Formatting" ]; then
+      echo "Checking code formatting"
+      ERRORS_FOUND=0
+      for i in $(find main source test -name "*.h" -or -name "*.c"); do
+        clang-format -style=LLVM -output-replacements-xml $i | grep "<replacement " > /dev/null
+        if [ $? -eq 0 ]; then
+          echo "File $i failed formatting"
+          ERRORS_FOUND=1
+        fi
+      done
+      #exit $ERRORS_FOUND
+    else
+      rm -rf build
+      mkdir build
+      (cd build ; \
+        CC=$C_COMPILER CXX=$CXX_COMPILER cmake -G Ninja -D CMAKE_BUILD_TYPE=$CONFIGURATION .. && \
+        cmake --build . && \
+        echo "Running 32-bit tests" && \
+        ./test/mrswatsontest -r ../vendor/AudioTestData -m ./main/mrswatson && \
+        echo "Running 64-bit tests" && \
+        ./test/mrswatsontest64 -r ../vendor/AudioTestData -m ./main/mrswatson64 && \
+        echo
+      )
+    fi
