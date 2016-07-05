@@ -193,11 +193,12 @@ if(WITH_AUDIOFILE)
     endif()
 
     # Remove some compiler flags for warnings that we don't want to fix
-    if(${CMAKE_CXX_COMPILER_ID} STREQUAL Clang)
+    if(${CMAKE_CXX_COMPILER_ID} MATCHES Clang)
       set(audiofile_REMOVE_FLAGS
         -Wno-missing-field-initializers
         -Wno-multichar
         -Wno-shadow
+        -Wno-shorten-64-to-32
         -Wno-sign-compare
         -Wno-switch-default
         -Wno-unused-const-variable
