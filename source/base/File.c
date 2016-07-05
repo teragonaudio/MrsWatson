@@ -27,28 +27,31 @@
 
 // Must be declared before stdlib, shouldn't have any effect on Windows builds
 #define _XOPEN_SOURCE 700
+
+#include "File.h"
+
+#include "logging/EventLogger.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
 
-#include "base/File.h"
-#include "logging/EventLogger.h"
-
 #if WINDOWS
 #include <Shellapi.h>
 #include <Windows.h>
 #elif UNIX
+#include <dirent.h>
+#include <ftw.h>
+#include <unistd.h>
+
 #if LINUX
 #include <errno.h>
 #elif MACOSX
 #include <mach-o/dyld.h>
 #endif
-
-#include <dirent.h>
-#include <ftw.h>
-#include <unistd.h>
 #endif
+
 
 static const int kFileNameStringLength = 1024;
 static const int kFileMaxRecursionDepth = 32;

@@ -25,13 +25,15 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
+#include "ProgramOption.h"
+
+#include "base/File.h"
+#include "logging/EventLogger.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include "app/ProgramOption.h"
-#include "base/File.h"
-#include "logging/EventLogger.h"
 
 CharString _programOptionGetString(const ProgramOption self);
 float _programOptionGetNumber(const ProgramOption self);

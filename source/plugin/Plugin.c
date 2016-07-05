@@ -25,18 +25,20 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include "Plugin.h"
 
 #include "audio/AudioSettings.h"
 #include "logging/EventLogger.h"
-#include "plugin/Plugin.h"
 #include "plugin/PluginGain.h"
 #include "plugin/PluginLimiter.h"
 #include "plugin/PluginPassthru.h"
 #include "plugin/PluginSilence.h"
 #include "plugin/PluginVst2x.h"
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 
 static PluginInterfaceType
 _guessPluginInterfaceType(const CharString pluginName,

@@ -25,12 +25,15 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include <stdio.h>
-#include <stdlib.h>
+#include "MidiSource.h"
 
 #include "base/File.h"
 #include "logging/EventLogger.h"
 #include "midi/MidiSourceFile.h"
+
+#include <stdio.h>
+#include <stdlib.h>
+
 
 MidiSourceType guessMidiSourceType(const CharString midiSourceTypeString) {
   if (!charStringIsEmpty(midiSourceTypeString)) {

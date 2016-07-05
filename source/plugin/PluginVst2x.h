@@ -31,6 +31,7 @@
 #include "base/CharString.h"
 #include "plugin/Plugin.h"
 
+
 static const char kPluginVst2xSubpluginSeparator = ':';
 
 /**

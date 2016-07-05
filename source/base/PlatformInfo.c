@@ -25,11 +25,13 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
+#include "PlatformInfo.h"
+
+#include "logging/EventLogger.h"
+
 #include <stdio.h>
 #include <string.h>
 
-#include "base/PlatformInfo.h"
-#include "logging/EventLogger.h"
 
 #if LINUX
 #include "base/File.h"

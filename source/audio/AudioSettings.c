@@ -25,13 +25,15 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
+#include "AudioSettings.h"
+
+#include "logging/EventLogger.h"
+
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include "audio/AudioSettings.h"
-#include "logging/EventLogger.h"
 
 AudioSettings audioSettingsInstance = NULL;
 

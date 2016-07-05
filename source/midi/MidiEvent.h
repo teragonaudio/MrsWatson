@@ -30,6 +30,7 @@
 
 #include "base/Types.h"
 
+
 typedef enum {
   MIDI_TYPE_INVALID,
   MIDI_TYPE_REGULAR,

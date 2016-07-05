@@ -34,6 +34,7 @@
 #include <Windows.h>
 #endif
 
+
 #if UNIX
 typedef const char *LogColor;
 

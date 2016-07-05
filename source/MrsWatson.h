@@ -32,6 +32,7 @@
 #include "base/CharString.h"
 #include "logging/ErrorReporter.h"
 
+
 int mrsWatsonMain(ErrorReporter errorReporter, int argc, char **argv);
 
 #endif

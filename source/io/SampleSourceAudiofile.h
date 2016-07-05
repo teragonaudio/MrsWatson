@@ -25,13 +25,15 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
+#if USE_AUDIOFILE
+
 #ifndef MrsWatson_SampleSourceAudiofile_h
 #define MrsWatson_SampleSourceAudiofile_h
 
-#if USE_AUDIOFILE
+#include "audio/PcmSampleBuffer.h"
+
 #include <audiofile.h>
 
-#include "audio/PcmSampleBuffer.h"
 
 // This isn't a real SampleSource class, but rather a base class to facilitate
 // in reading and writing any file supported via the audiofile library. As each

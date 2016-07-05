@@ -25,8 +25,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include <stdio.h>
-#include <string.h>
+#include "MrsWatson.h"
+#include "MrsWatsonOptions.h"
 
 #include "app/BuildInfo.h"
 #include "audio/AudioSettings.h"
@@ -40,8 +40,9 @@
 #include "plugin/PluginChain.h"
 #include "time/AudioClock.h"
 
-#include "MrsWatson.h"
-#include "MrsWatsonOptions.h"
+#include <stdio.h>
+#include <string.h>
+
 
 static void _printTaskTime(void *item, void *userData) {
   TaskTimer taskTimer = (TaskTimer)item;

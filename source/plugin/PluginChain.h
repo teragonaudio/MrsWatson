@@ -34,6 +34,7 @@
 #include "plugin/PluginPreset.h"
 #include "time/TaskTimer.h"
 
+
 #define MAX_PLUGINS 8
 #define CHAIN_STRING_PLUGIN_SEPARATOR ';'
 #define CHAIN_STRING_PROGRAM_SEPARATOR ','

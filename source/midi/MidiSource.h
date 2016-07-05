@@ -32,6 +32,7 @@
 #include "base/Types.h"
 #include "midi/MidiSequence.h"
 
+
 typedef enum {
   MIDI_SOURCE_TYPE_INVALID,
   MIDI_SOURCE_TYPE_FILE,

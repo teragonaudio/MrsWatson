@@ -28,10 +28,11 @@
 #ifndef MrsWatson_InputSourcePcm_h
 #define MrsWatson_InputSourcePcm_h
 
-#include <stdio.h>
-
 #include "audio/PcmSampleBuffer.h"
 #include "io/SampleSource.h"
+
+#include <stdio.h>
+
 
 typedef struct {
   boolByte isStream;

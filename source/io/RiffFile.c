@@ -25,11 +25,13 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
+#include "RiffFile.h"
+
+#include "base/Endian.h"
+
 #include <stdlib.h>
 #include <string.h>
 
-#include "base/Endian.h"
-#include "io/RiffFile.h"
 
 RiffChunk newRiffChunk(void) {
   RiffChunk chunk = (RiffChunk)malloc(sizeof(RiffChunkMembers));

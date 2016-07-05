@@ -25,14 +25,16 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
+#include "PluginPresetFxp.h"
+
+#include "base/Endian.h"
+#include "logging/EventLogger.h"
+#include "plugin/PluginVst2x.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include "base/Endian.h"
-#include "logging/EventLogger.h"
-#include "plugin/PluginPresetFxp.h"
-#include "plugin/PluginVst2x.h"
 
 static boolByte _openPluginPresetFxp(void *pluginPresetPtr) {
   PluginPreset pluginPreset = (PluginPreset)pluginPresetPtr;

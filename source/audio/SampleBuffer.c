@@ -25,16 +25,18 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
+#include "SampleBuffer.h"
+
+#include "audio/AudioSettings.h"
+#include "audio/SampleBuffer.h"
+#include "base/Endian.h"
+#include "logging/EventLogger.h"
+
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include "SampleBuffer.h"
-#include "audio/AudioSettings.h"
-#include "audio/SampleBuffer.h"
-#include "base/Endian.h"
-#include "logging/EventLogger.h"
 
 SampleBuffer newSampleBuffer(ChannelCount numChannels, SampleCount blocksize) {
   SampleBuffer sampleBuffer = (SampleBuffer)malloc(sizeof(SampleBufferMembers));

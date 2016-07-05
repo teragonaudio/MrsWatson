@@ -25,6 +25,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
+#include "TaskTimer.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -32,7 +34,6 @@
 #include <time.h>
 #endif
 
-#include "time/TaskTimer.h"
 
 TaskTimer newTaskTimer(const CharString component, const char *subcomponent) {
   const char *componentCString = component != NULL ? component->data : NULL;

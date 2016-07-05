@@ -30,6 +30,7 @@
 
 #include "app/ProgramOption.h"
 
+
 // Runtime options
 typedef enum {
   OPTION_BIT_DEPTH,

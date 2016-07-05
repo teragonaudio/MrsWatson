@@ -32,6 +32,7 @@
 #include "base/CharString.h"
 #include "base/Types.h"
 
+
 typedef enum {
   SAMPLE_SOURCE_TYPE_INVALID,
   SAMPLE_SOURCE_TYPE_SILENCE,

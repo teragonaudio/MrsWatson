@@ -25,18 +25,19 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include "EventLogger.h"
 
 #include "app/BuildInfo.h"
 #include "audio/AudioSettings.h"
-#include "logging/EventLogger.h"
 #include "logging/LogPrinter.h"
 #include "time/AudioClock.h"
 
 #include "MrsWatson.h"
+
+#include <stdarg.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #if WINDOWS
 #include <Windows.h>
@@ -44,6 +45,7 @@
 #elif UNIX
 #include <unistd.h>
 #endif
+
 
 EventLogger eventLoggerInstance = NULL;
 

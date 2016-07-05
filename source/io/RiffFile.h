@@ -28,10 +28,11 @@
 #ifndef MrsWatson_RiffFile_h
 #define MrsWatson_RiffFile_h
 
-#include <stdio.h>
-
 #include "base/CharString.h"
 #include "base/Types.h"
+
+#include <stdio.h>
+
 
 typedef struct {
   char id[5];

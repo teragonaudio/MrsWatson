@@ -25,11 +25,13 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
+#include "MidiSequence.h"
+
+#include "logging/EventLogger.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "logging/EventLogger.h"
-#include "midi/MidiSequence.h"
 
 MidiSequence newMidiSequence(void) {
   MidiSequence midiSequence = malloc(sizeof(MidiSequenceMembers));

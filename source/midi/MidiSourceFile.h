@@ -28,9 +28,10 @@
 #ifndef MrsWatson_MidiSourceFile_h
 #define MrsWatson_MidiSourceFile_h
 
+#include "midi/MidiSource.h"
+
 #include <stdio.h>
 
-#include "midi/MidiSource.h"
 
 typedef enum {
   TIME_DIVISION_TYPE_INVALID,

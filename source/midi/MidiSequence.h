@@ -31,6 +31,7 @@
 #include "base/LinkedList.h"
 #include "midi/MidiEvent.h"
 
+
 typedef struct {
   LinkedList midiEvents;
   LinkedListIterator _lastEvent;

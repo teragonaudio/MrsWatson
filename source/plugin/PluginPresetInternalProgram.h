@@ -30,6 +30,7 @@
 
 #include "plugin/PluginPreset.h"
 
+
 typedef struct {
   unsigned int programNumber;
 } PluginPresetInternalProgramDataMembers;

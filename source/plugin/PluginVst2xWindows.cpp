@@ -26,15 +26,17 @@
 //
 
 #if WINDOWS
+#include "PluginVst2xHostCallback.h"
+
 #define VST_FORCE_DEPRECATED 0
 #include "aeffectx.h"
-#include "plugin/PluginVst2xHostCallback.h"
 
 extern "C" {
-#include <stdio.h>
 #include "base/PlatformInfo.h"
 #include "plugin/Plugin.h"
 #include "logging/EventLogger.h"
+
+#include <stdio.h>
 
     static const char *kPlatformWindowsProgramFolder = "C:\\Program Files";
     static const char *kPlatformWindows32BitProgramFolder = "C:\\Program Files (x86)";

@@ -25,8 +25,10 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include "base/Endian.h"
+#include "Endian.h"
+
 #include "base/PlatformInfo.h"
+
 
 unsigned short flipShortEndian(const unsigned short value) {
   return (value << 8) | (value >> 8);

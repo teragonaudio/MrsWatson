@@ -31,6 +31,7 @@
 #include "base/CharString.h"
 #include "plugin/Plugin.h"
 
+
 typedef enum {
   PRESET_TYPE_INVALID,
   PRESET_TYPE_FXP,

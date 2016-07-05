@@ -25,11 +25,13 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
+#include "LinkedList.h"
+
+#include "base/Types.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "base/LinkedList.h"
-#include "base/Types.h"
 
 LinkedList newLinkedList(void) {
   LinkedList list = malloc(sizeof(LinkedListMembers));

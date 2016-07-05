@@ -28,11 +28,12 @@
 #ifndef MrsWatson_EventLogger_h
 #define MrsWatson_EventLogger_h
 
+#include "base/CharString.h"
+#include "base/Types.h"
+
 #include <stdio.h>
 #include <sys/types.h>
 
-#include "base/CharString.h"
-#include "base/Types.h"
 
 typedef enum {
   LOG_DEBUG,

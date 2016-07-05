@@ -25,11 +25,14 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
+#include "CharString.h"
+
+#include "logging/EventLogger.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include "logging/EventLogger.h"
 
 CharString newCharString(void) {
   return newCharStringWithCapacity(kCharStringLengthDefault);

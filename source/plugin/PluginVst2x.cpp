@@ -26,13 +26,14 @@
 //
 
 // C++ includes
+#include "PluginVst2xHostCallback.h"
+
 #define VST_FORCE_DEPRECATED 0
 #include "aeffectx.h"
-#include "plugin/PluginVst2xHostCallback.h"
 
 // C includes
 extern "C" {
-#include <stdlib.h>
+#include "PluginVst2x.h"
 
 #include "audio/AudioSettings.h"
 #include "base/File.h"
@@ -41,8 +42,10 @@ extern "C" {
 #include "logging/EventLogger.h"
 #include "midi/MidiEvent.h"
 #include "plugin/Plugin.h"
-#include "plugin/PluginVst2x.h"
 #include "plugin/PluginVst2xId.h"
+
+#include <stdlib.h>
+
 
     extern LinkedList getVst2xPluginLocations(CharString currentDirectory);
     extern LibraryHandle getLibraryHandleForPlugin(const CharString pluginAbsolutePath);

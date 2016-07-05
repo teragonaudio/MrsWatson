@@ -25,13 +25,15 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include <stdio.h>
-#include <stdlib.h>
+#include "SampleSourcePcm.h"
 
 #include "audio/AudioSettings.h"
 #include "audio/PcmSampleBuffer.h"
-#include "io/SampleSourcePcm.h"
 #include "logging/EventLogger.h"
+
+#include <stdio.h>
+#include <stdlib.h>
+
 
 static boolByte openSampleSourcePcm(void *selfPtr,
                                     const SampleSourceOpenAs openAs) {

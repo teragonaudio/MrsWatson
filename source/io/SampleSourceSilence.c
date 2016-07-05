@@ -25,12 +25,15 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include <stdio.h>
-#include <stdlib.h>
+#include "SampleSourceSilence.h"
 
 #include "audio/AudioSettings.h"
 #include "io/SampleSource.h"
 #include "logging/EventLogger.h"
+
+#include <stdio.h>
+#include <stdlib.h>
+
 
 static boolByte _openSampleSourceSilence(void *sampleSourcePtr,
                                          const SampleSourceOpenAs openAs) {

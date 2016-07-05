@@ -25,9 +25,7 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include "SampleSourceWave.h"
 
 #include "audio/AudioSettings.h"
 #include "base/Endian.h"
@@ -36,6 +34,11 @@
 #include "io/SampleSource.h"
 #include "io/SampleSourcePcm.h"
 #include "logging/EventLogger.h"
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 
 static boolByte _readWaveFileInfo(const char *filename,
                                   SampleSourcePcmData extraData) {

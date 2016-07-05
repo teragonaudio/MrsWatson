@@ -25,9 +25,11 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include "plugin/PluginGain.h"
+#include "PluginGain.h"
+
 #include "audio/SampleBuffer.h"
 #include "logging/EventLogger.h"
+
 
 const char *kInternalPluginGainName = INTERNAL_PLUGIN_PREFIX "gain";
 

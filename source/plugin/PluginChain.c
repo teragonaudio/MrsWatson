@@ -25,13 +25,15 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
+#include "PluginChain.h"
+
+#include "audio/AudioSettings.h"
+#include "logging/EventLogger.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include "audio/AudioSettings.h"
-#include "logging/EventLogger.h"
-#include "plugin/PluginChain.h"
 
 PluginChain pluginChainInstance = NULL;
 

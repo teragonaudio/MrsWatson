@@ -31,6 +31,7 @@
 #include "base/CharString.h"
 #include "base/Types.h"
 
+
 #define DEFAULT_SAMPLE_RATE 44100.0f
 #define DEFAULT_NUM_CHANNELS 2
 #define DEFAULT_BLOCKSIZE 512l

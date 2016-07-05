@@ -25,10 +25,12 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include <stdlib.h>
+#include "PluginSilence.h"
 
 #include "logging/EventLogger.h"
-#include "plugin/PluginSilence.h"
+
+#include <stdlib.h>
+
 
 const char *kInternalPluginSilenceName = INTERNAL_PLUGIN_PREFIX "silence";
 

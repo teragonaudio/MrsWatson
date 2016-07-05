@@ -25,12 +25,14 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
+#include "PluginVst2xId.h"
+
+#include "base/CharString.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include "base/CharString.h"
-#include "plugin/PluginVst2xId.h"
 
 static CharString _convertIntIdToString(const unsigned long id) {
   CharString result = newCharStringWithCapacity(5);

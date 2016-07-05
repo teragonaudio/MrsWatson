@@ -27,14 +27,16 @@
 
 #if USE_AUDIOFILE
 
-#include <stdio.h>
-#include <stdlib.h>
+#include "SampleSourceAudiofile.h"
 
 #include "audio/AudioSettings.h"
 #include "audio/PcmSampleBuffer.h"
-#include "io/SampleSourceAudiofile.h"
 #include "io/SampleSourcePcm.h"
 #include "logging/EventLogger.h"
+
+#include <stdio.h>
+#include <stdlib.h>
+
 
 static boolByte _openSampleSourceAudiofile(void *selfPtr,
                                            const SampleSourceOpenAs openAs) {

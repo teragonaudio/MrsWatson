@@ -25,12 +25,14 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
+#include "BuildInfo.h"
+
+#include "logging/EventLogger.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include "app/BuildInfo.h"
-#include "logging/EventLogger.h"
 
 unsigned long buildInfoGetYear(void) {
   unsigned long result = 0;

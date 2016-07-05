@@ -25,14 +25,16 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include "MidiSourceFile.h"
 
 #include "audio/AudioSettings.h"
 #include "base/Endian.h"
 #include "logging/EventLogger.h"
-#include "midi/MidiSourceFile.h"
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 
 static boolByte _openMidiSourceFile(void *midiSourcePtr) {
   MidiSource midiSource = midiSourcePtr;

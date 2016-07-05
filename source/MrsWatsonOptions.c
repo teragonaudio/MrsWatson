@@ -25,12 +25,13 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include <stdio.h>
+#include "MrsWatsonOptions.h"
 
 #include "audio/AudioSettings.h"
 #include "base/File.h"
 
-#include "MrsWatsonOptions.h"
+#include <stdio.h>
+
 
 ProgramOptions newMrsWatsonOptions(void) {
   ProgramOptions options = newProgramOptions(NUM_OPTIONS);

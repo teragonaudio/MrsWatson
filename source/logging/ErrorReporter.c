@@ -25,20 +25,22 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
+#include "ErrorReporter.h"
+
+#include "app/BuildInfo.h"
+#include "base/File.h"
+#include "base/PlatformInfo.h"
+#include "logging/EventLogger.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
 
-#include "app/BuildInfo.h"
-#include "base/File.h"
-#include "base/PlatformInfo.h"
-#include "logging/ErrorReporter.h"
-#include "logging/EventLogger.h"
-
 #if WINDOWS
 #include <Shlobj.h>
 #endif
+
 
 static const char *kErrorReportInfoText = "MrsWatson is now running \
 in error report mode, which will generate a report on your desktop with \

@@ -30,6 +30,7 @@
 
 #include "base/CharString.h"
 
+
 #define PLUGIN_VST2X_ID_UNKNOWN "????"
 
 typedef struct {

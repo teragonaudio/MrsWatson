@@ -25,15 +25,17 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
+#include "PluginPreset.h"
+
+#include "base/File.h"
+#include "logging/EventLogger.h"
+#include "plugin/PluginPresetFxp.h"
+#include "plugin/PluginPresetInternalProgram.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include "base/File.h"
-#include "logging/EventLogger.h"
-#include "plugin/PluginPreset.h"
-#include "plugin/PluginPresetFxp.h"
-#include "plugin/PluginPresetInternalProgram.h"
 
 static PluginPresetType _pluginPresetGuessType(const CharString presetName) {
   if (presetName == NULL || charStringIsEmpty(presetName)) {

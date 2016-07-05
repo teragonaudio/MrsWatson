@@ -28,10 +28,11 @@
 #ifndef MrsWatson_CharString_h
 #define MrsWatson_CharString_h
 
-#include <stdlib.h>
-
 #include "base/LinkedList.h"
 #include "base/Types.h"
+
+#include <stdlib.h>
+
 
 static const size_t kCharStringLengthDefault = 256;
 static const size_t kCharStringLengthShort = 32;

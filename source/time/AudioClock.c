@@ -25,10 +25,11 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
+#include "AudioClock.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "time/AudioClock.h"
 
 AudioClock audioClockInstance = NULL;
 

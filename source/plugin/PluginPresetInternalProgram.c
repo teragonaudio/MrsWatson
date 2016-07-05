@@ -25,11 +25,13 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
+#include "PluginPresetInternalProgram.h"
+
 #include <stdlib.h>
 
 #include "base/CharString.h"
-#include "plugin/PluginPresetInternalProgram.h"
 #include "plugin/PluginVst2x.h"
+
 
 static boolByte _openPluginPresetInternalProgram(void *pluginPresetPtr) {
   PluginPreset pluginPreset = (PluginPreset)pluginPresetPtr;

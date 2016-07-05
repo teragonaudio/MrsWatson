@@ -25,10 +25,12 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include <stdlib.h>
+#include "PluginPassthru.h"
 
 #include "logging/EventLogger.h"
-#include "plugin/PluginPassthru.h"
+
+#include <stdlib.h>
+
 
 const char *kInternalPluginPassthruName = INTERNAL_PLUGIN_PREFIX "passthru";
 

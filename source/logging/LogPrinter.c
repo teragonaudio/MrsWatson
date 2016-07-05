@@ -25,9 +25,10 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
+#include "LogPrinter.h"
+
 #include <stdlib.h>
 
-#include "logging/LogPrinter.h"
 
 #if UNIX
 void printToLog(const char *color, FILE *logFile, const char *message) {

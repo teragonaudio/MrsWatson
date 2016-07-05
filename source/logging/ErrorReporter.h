@@ -31,6 +31,7 @@
 #include "base/CharString.h"
 #include "plugin/PluginChain.h"
 
+
 typedef struct {
   CharString reportName;
   CharString reportDirPath;
