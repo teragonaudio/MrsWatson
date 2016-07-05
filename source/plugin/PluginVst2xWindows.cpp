@@ -32,90 +32,98 @@
 
 extern "C" {
 #include "base/PlatformInfo.h"
-#include "plugin/Plugin.h"
 #include "logging/EventLogger.h"
+#include "plugin/Plugin.h"
+#include <stdio.h>
 
 #include <stdio.h>
 
-    static const char *kPlatformWindowsProgramFolder = "C:\\Program Files";
-    static const char *kPlatformWindows32BitProgramFolder = "C:\\Program Files (x86)";
+static const char *kPlatformWindowsProgramFolder = "C:\\Program Files";
+static const char *kPlatformWindows32BitProgramFolder =
+    "C:\\Program Files (x86)";
 
-    LinkedList getVst2xPluginLocations(CharString currentDirectory)
-    {
-        LinkedList locations = newLinkedList();
-        CharString locationBuffer;
-        const char *programFiles = (!platformInfoIsRuntime64Bit() && platformInfoIsHost64Bit()) ?
-                                   kPlatformWindows32BitProgramFolder : kPlatformWindowsProgramFolder;
+LinkedList getVst2xPluginLocations(CharString currentDirectory) {
+  LinkedList locations = newLinkedList();
+  CharString locationBuffer;
+  const char *programFiles =
+      (!platformInfoIsRuntime64Bit() && platformInfoIsHost64Bit())
+          ? kPlatformWindows32BitProgramFolder
+          : kPlatformWindowsProgramFolder;
 
-        linkedListAppend(locations, currentDirectory);
+  linkedListAppend(locations, currentDirectory);
 
-        locationBuffer = newCharString();
-        snprintf(locationBuffer->data, (size_t)(locationBuffer->capacity), "C:\\VstPlugins");
-        linkedListAppend(locations, locationBuffer);
+  locationBuffer = newCharString();
+  snprintf(locationBuffer->data, (size_t)(locationBuffer->capacity),
+           "C:\\VstPlugins");
+  linkedListAppend(locations, locationBuffer);
 
-        locationBuffer = newCharString();
-        snprintf(locationBuffer->data, (size_t)(locationBuffer->capacity), "%s\\VstPlugIns", programFiles);
-        linkedListAppend(locations, locationBuffer);
+  locationBuffer = newCharString();
+  snprintf(locationBuffer->data, (size_t)(locationBuffer->capacity),
+           "%s\\VstPlugIns", programFiles);
+  linkedListAppend(locations, locationBuffer);
 
-        locationBuffer = newCharString();
-        snprintf(locationBuffer->data, (size_t)(locationBuffer->capacity), "%s\\Common Files\\VstPlugIns", programFiles);
-        linkedListAppend(locations, locationBuffer);
+  locationBuffer = newCharString();
+  snprintf(locationBuffer->data, (size_t)(locationBuffer->capacity),
+           "%s\\Common Files\\VstPlugIns", programFiles);
+  linkedListAppend(locations, locationBuffer);
 
-        locationBuffer = newCharString();
-        snprintf(locationBuffer->data, (size_t)(locationBuffer->capacity), "%s\\Steinberg\\VstPlugIns", programFiles);
-        linkedListAppend(locations, locationBuffer);
+  locationBuffer = newCharString();
+  snprintf(locationBuffer->data, (size_t)(locationBuffer->capacity),
+           "%s\\Steinberg\\VstPlugIns", programFiles);
+  linkedListAppend(locations, locationBuffer);
 
-        return locations;
+  return locations;
+}
+
+LibraryHandle getLibraryHandleForPlugin(const CharString pluginAbsolutePath) {
+  HMODULE libraryHandle = LoadLibraryExA((LPCSTR)pluginAbsolutePath->data, NULL,
+                                         LOAD_WITH_ALTERED_SEARCH_PATH);
+  DWORD errorCode = GetLastError();
+
+  if (libraryHandle == NULL) {
+    if (errorCode == ERROR_BAD_EXE_FORMAT) {
+      logError("Could not open library, wrong architecture");
+    } else {
+      logError("Could not open library, error code %d (%s)", errorCode,
+               stringForLastError(errorCode));
     }
 
-    LibraryHandle getLibraryHandleForPlugin(const CharString pluginAbsolutePath)
-    {
-        HMODULE libraryHandle = LoadLibraryExA((LPCSTR)pluginAbsolutePath->data, NULL, LOAD_WITH_ALTERED_SEARCH_PATH);
-        DWORD errorCode = GetLastError();
+    return NULL;
+  }
 
-        if (libraryHandle == NULL) {
-            if (errorCode == ERROR_BAD_EXE_FORMAT) {
-                logError("Could not open library, wrong architecture");
-            } else {
-                logError("Could not open library, error code %d (%s)", errorCode, stringForLastError(errorCode));
-            }
+  return libraryHandle;
+}
 
-            return NULL;
-        }
+AEffect *loadVst2xPlugin(LibraryHandle libraryHandle) {
+  Vst2xPluginEntryFunc entryPoint =
+      (Vst2xPluginEntryFunc)GetProcAddress(libraryHandle, "VSTPluginMain");
 
-        return libraryHandle;
-    }
+  if (entryPoint == NULL) {
+    entryPoint =
+        (Vst2xPluginEntryFunc)GetProcAddress(libraryHandle, "VstPluginMain()");
+  }
 
-    AEffect *loadVst2xPlugin(LibraryHandle libraryHandle)
-    {
-        Vst2xPluginEntryFunc entryPoint = (Vst2xPluginEntryFunc)GetProcAddress(libraryHandle, "VSTPluginMain");
+  if (entryPoint == NULL) {
+    entryPoint = (Vst2xPluginEntryFunc)GetProcAddress(libraryHandle, "main");
+  }
 
-        if (entryPoint == NULL) {
-            entryPoint = (Vst2xPluginEntryFunc)GetProcAddress(libraryHandle, "VstPluginMain()");
-        }
+  if (entryPoint == NULL) {
+    logError("Couldn't get a pointer to plugin's main()");
+    return NULL;
+  }
 
-        if (entryPoint == NULL) {
-            entryPoint = (Vst2xPluginEntryFunc)GetProcAddress(libraryHandle, "main");
-        }
+  AEffect *plugin = entryPoint(pluginVst2xHostCallback);
+  return plugin;
+}
 
-        if (entryPoint == NULL) {
-            logError("Couldn't get a pointer to plugin's main()");
-            return NULL;
-        }
+void showVst2xEditor(AEffect *effect, const CharString pluginName,
+                     PluginWindowSize *rect) {
+  logUnsupportedFeature("Show VST editor on Windows");
+}
 
-        AEffect *plugin = entryPoint(pluginVst2xHostCallback);
-        return plugin;
-    }
-
-    void showVst2xEditor(AEffect *effect, const CharString pluginName, PluginWindowSize *rect)
-    {
-      logUnsupportedFeature("Show VST editor on Windows");
-    }
-
-    void closeLibraryHandle(LibraryHandle libraryHandle)
-    {
-        FreeLibrary(libraryHandle);
-    }
+void closeLibraryHandle(LibraryHandle libraryHandle) {
+  FreeLibrary(libraryHandle);
+}
 
 } // extern "C"
 #endif
