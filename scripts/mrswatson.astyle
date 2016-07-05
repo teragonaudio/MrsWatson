@@ -1,7 +1,0 @@
-style=1tbs
-indent=spaces
-break-blocks
-pad-header
-pad-oper
-align-pointer=name
-align-reference=name
