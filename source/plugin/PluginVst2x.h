@@ -1,7 +1,6 @@
 //
 // PluginVst2x.h - MrsWatson
-// Created by Nik Reiman on 1/3/12.
-// Copyright (c) 2012 Teragon Audio. All rights reserved.
+// Copyright (c) 2016 Teragon Audio. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are met:
@@ -30,7 +29,6 @@
 
 #include "base/CharString.h"
 #include "plugin/Plugin.h"
-
 
 static const char kPluginVst2xSubpluginSeparator = ':';
 

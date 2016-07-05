@@ -1,7 +1,6 @@
 //
 // PluginPreset.c - MrsWatson
-// Created by Nik Reiman on 1/13/12.
-// Copyright (c) 2011 Teragon Audio. All rights reserved.
+// Copyright (c) 2016 Teragon Audio. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are met:
@@ -35,7 +34,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
 
 static PluginPresetType _pluginPresetGuessType(const CharString presetName) {
   if (presetName == NULL || charStringIsEmpty(presetName)) {

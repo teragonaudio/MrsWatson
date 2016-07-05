@@ -1,7 +1,6 @@
 //
 // File.c - MrsWatson
-// Created by Nik Reiman on 09 Dec 12.
-// Copyright (c) 2012 Teragon Audio. All rights reserved.
+// Copyright (c) 2016 Teragon Audio. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are met:
@@ -51,7 +50,6 @@
 #include <mach-o/dyld.h>
 #endif
 #endif
-
 
 static const int kFileNameStringLength = 1024;
 static const int kFileMaxRecursionDepth = 32;

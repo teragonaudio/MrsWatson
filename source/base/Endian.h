@@ -1,7 +1,6 @@
 //
 // Endian.h - MrsWatson
-// Created by Nik Reiman on 10 Dec 14.
-// Copyright (c) 2014 Teragon Audio. All rights reserved.
+// Copyright (c) 2016 Teragon Audio. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are met:
@@ -29,7 +28,6 @@
 #define MrsWatson_Endian_h
 
 #include "base/Types.h"
-
 
 /**
  * Flip bytes for a short value. This does not take into account the host's
