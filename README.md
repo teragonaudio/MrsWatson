@@ -1,5 +1,5 @@
-[![Travis Build Status](travis-build-icon)](travis-build-home)
-[![AppVeyor Build status](appveyor-build-icon)](appveyor-build-home)
+[![Travis Build Status][travis-build-icon]][travis-build-home]
+[![AppVeyor Build status][appveyor-build-icon]][appveyor-build-home]
 
 
 MrsWatson
