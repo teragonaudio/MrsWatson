@@ -85,30 +85,25 @@ elseif(UNIX)
     "-fmessage-length=0"
     "-pipe"
 
-    "-Wno-trigraphs"
-    "-Wmissing-field-initializers"
-    "-Wreturn-type"
-    "-Wunused-variable"
-    "-Wshadow"
-    "-Wsign-compare"
-    "-Wswitch"
-    "-Wswitch-default"
-
+    "-Werror"
     "-Waddress"
     "-Wchar-subscripts"
     "-Wcomment"
     "-Wformat"
+    "-Wmissing-field-initializers"
+    "-Wno-trigraphs"
     "-Wnonnull"
     "-Wparentheses"
     "-Wreturn-type"
     "-Wsequence-point"
+    "-Wshadow"
     "-Wsign-compare"
     "-Wstrict-aliasing"
     "-Wstrict-overflow=1"
     "-Wswitch"
+    "-Wswitch-default"
     "-Wtrigraphs"
     "-Wuninitialized"
-    "-Wunused-function"
     "-Wunused-label"
     "-Wunused-value"
     "-Wunused-variable"
@@ -116,11 +111,11 @@ elseif(UNIX)
   )
 
   set(mw_CFLAGS_LIST
-    "-Wmain"
     "-Wenum-compare"
-    "-Wmissing-braces"
     "-Wimplicit-int"
     "-Wimplicit-function-declaration"
+    "-Wmain"
+    "-Wmissing-braces"
     "-Wpointer-sign"
   )
 
@@ -134,6 +129,7 @@ elseif(UNIX)
     set(mw_COMMON_FLAGS_LIST
       ${mw_COMMON_FLAGS_LIST}
       "-Wunused-const-variable"
+      "-Wunused-function"
     )
 
   # GCC-specific flags

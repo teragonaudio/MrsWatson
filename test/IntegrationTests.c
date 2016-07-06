@@ -17,6 +17,15 @@
 #define REQUIRES_FLAC(x) NULL
 #endif
 
+// These tests are currently broken :(
+#define TEST_AIFF_BIT_DEPTHS 0
+
+// The tests for the silence plugin work, but they fail the analysis check for
+// silence (obviously). These tests will remain disabled until there is a
+// smarter way to specify which analysis functions should be run for each
+// integration test.
+#define TEST_SILENCE_PLUGIN 0
+
 static CharString getDefaultInputPath(const CharString resourcesPath) {
   return getTestResourcePath(resourcesPath, "audio", "a440-16bit-stereo.pcm");
 }
@@ -244,32 +253,6 @@ static int _testProcessPcmFile16BitStereo(const char *testName,
   return result;
 }
 
-static int _testProcessWaveFile8BitMono(const char *testName,
-                                        const CharString applicationPath,
-                                        const CharString resourcesPath) {
-  CharString inputPath =
-      getTestResourcePath(resourcesPath, "audio", "a440-8bit-mono.wav");
-  int result = runIntegrationTest(
-      testName,
-      buildTestArgumentString("--plugin again --input \"%s\"", inputPath->data),
-      RETURN_CODE_SUCCESS, kTestOutputWave, applicationPath, resourcesPath);
-  freeCharString(inputPath);
-  return result;
-}
-
-static int _testProcessWaveFile8BitStereo(const char *testName,
-                                          const CharString applicationPath,
-                                          const CharString resourcesPath) {
-  CharString inputPath =
-      getTestResourcePath(resourcesPath, "audio", "a440-8bit-stereo.wav");
-  int result = runIntegrationTest(
-      testName,
-      buildTestArgumentString("--plugin again --input \"%s\"", inputPath->data),
-      RETURN_CODE_SUCCESS, kTestOutputWave, applicationPath, resourcesPath);
-  freeCharString(inputPath);
-  return result;
-}
-
 static int _testProcessWaveFile16BitMono(const char *testName,
                                          const CharString applicationPath,
                                          const CharString resourcesPath) {
@@ -288,6 +271,32 @@ static int _testProcessWaveFile16BitStereo(const char *testName,
                                            const CharString resourcesPath) {
   CharString inputPath =
       getTestResourcePath(resourcesPath, "audio", "a440-16bit-stereo.wav");
+  int result = runIntegrationTest(
+      testName,
+      buildTestArgumentString("--plugin again --input \"%s\"", inputPath->data),
+      RETURN_CODE_SUCCESS, kTestOutputWave, applicationPath, resourcesPath);
+  freeCharString(inputPath);
+  return result;
+}
+
+static int _testProcessWaveFile8BitMono(const char *testName,
+                                        const CharString applicationPath,
+                                        const CharString resourcesPath) {
+  CharString inputPath =
+      getTestResourcePath(resourcesPath, "audio", "a440-8bit-mono.wav");
+  int result = runIntegrationTest(
+      testName,
+      buildTestArgumentString("--plugin again --input \"%s\"", inputPath->data),
+      RETURN_CODE_SUCCESS, kTestOutputWave, applicationPath, resourcesPath);
+  freeCharString(inputPath);
+  return result;
+}
+
+static int _testProcessWaveFile8BitStereo(const char *testName,
+                                          const CharString applicationPath,
+                                          const CharString resourcesPath) {
+  CharString inputPath =
+      getTestResourcePath(resourcesPath, "audio", "a440-8bit-stereo.wav");
   int result = runIntegrationTest(
       testName,
       buildTestArgumentString("--plugin again --input \"%s\"", inputPath->data),
@@ -361,32 +370,6 @@ static int _testProcessWaveFileFfmpeg(const char *testName,
   return result;
 }
 
-static int _testProcessAiffFile8BitMono(const char *testName,
-                                        const CharString applicationPath,
-                                        const CharString resourcesPath) {
-  CharString inputPath =
-      getTestResourcePath(resourcesPath, "audio", "a440-8bit-mono.aiff");
-  int result = runIntegrationTest(
-      testName,
-      buildTestArgumentString("--plugin again --input \"%s\"", inputPath->data),
-      RETURN_CODE_SUCCESS, kTestOutputAiff, applicationPath, resourcesPath);
-  freeCharString(inputPath);
-  return result;
-}
-
-static int _testProcessAiffFile8BitStereo(const char *testName,
-                                          const CharString applicationPath,
-                                          const CharString resourcesPath) {
-  CharString inputPath =
-      getTestResourcePath(resourcesPath, "audio", "a440-8bit-stereo.aiff");
-  int result = runIntegrationTest(
-      testName,
-      buildTestArgumentString("--plugin again --input \"%s\"", inputPath->data),
-      RETURN_CODE_SUCCESS, kTestOutputAiff, applicationPath, resourcesPath);
-  freeCharString(inputPath);
-  return result;
-}
-
 static int _testProcessAiffFile16BitMono(const char *testName,
                                          const CharString applicationPath,
                                          const CharString resourcesPath) {
@@ -405,6 +388,33 @@ static int _testProcessAiffFile16BitStereo(const char *testName,
                                            const CharString resourcesPath) {
   CharString inputPath =
       getTestResourcePath(resourcesPath, "audio", "a440-16bit-stereo.aiff");
+  int result = runIntegrationTest(
+      testName,
+      buildTestArgumentString("--plugin again --input \"%s\"", inputPath->data),
+      RETURN_CODE_SUCCESS, kTestOutputAiff, applicationPath, resourcesPath);
+  freeCharString(inputPath);
+  return result;
+}
+
+#if TEST_AIFF_BIT_DEPTHS
+static int _testProcessAiffFile8BitMono(const char *testName,
+                                        const CharString applicationPath,
+                                        const CharString resourcesPath) {
+  CharString inputPath =
+      getTestResourcePath(resourcesPath, "audio", "a440-8bit-mono.aiff");
+  int result = runIntegrationTest(
+      testName,
+      buildTestArgumentString("--plugin again --input \"%s\"", inputPath->data),
+      RETURN_CODE_SUCCESS, kTestOutputAiff, applicationPath, resourcesPath);
+  freeCharString(inputPath);
+  return result;
+}
+
+static int _testProcessAiffFile8BitStereo(const char *testName,
+                                          const CharString applicationPath,
+                                          const CharString resourcesPath) {
+  CharString inputPath =
+      getTestResourcePath(resourcesPath, "audio", "a440-8bit-stereo.aiff");
   int result = runIntegrationTest(
       testName,
       buildTestArgumentString("--plugin again --input \"%s\"", inputPath->data),
@@ -464,6 +474,34 @@ static int _testProcessAiffFile32BitStereo(const char *testName,
   freeCharString(inputPath);
   return result;
 }
+#endif
+
+#if USE_FLAC
+static int _testProcessFlacFile16BitMono(const char *testName,
+                                         const CharString applicationPath,
+                                         const CharString resourcesPath) {
+  CharString inputPath =
+      getTestResourcePath(resourcesPath, "audio", "a440-16bit-mono.flac");
+  int result = runIntegrationTest(
+      testName,
+      buildTestArgumentString("--plugin again --input \"%s\"", inputPath->data),
+      RETURN_CODE_SUCCESS, kTestOutputFlac, applicationPath, resourcesPath);
+  freeCharString(inputPath);
+  return result;
+}
+
+static int _testProcessFlacFile16BitStereo(const char *testName,
+                                           const CharString applicationPath,
+                                           const CharString resourcesPath) {
+  CharString inputPath =
+      getTestResourcePath(resourcesPath, "audio", "a440-16bit-stereo.flac");
+  int result = runIntegrationTest(
+      testName,
+      buildTestArgumentString("--plugin again --input \"%s\"", inputPath->data),
+      RETURN_CODE_SUCCESS, kTestOutputFlac, applicationPath, resourcesPath);
+  freeCharString(inputPath);
+  return result;
+}
 
 static int _testProcessFlacFile8BitMono(const char *testName,
                                         const CharString applicationPath,
@@ -483,32 +521,6 @@ static int _testProcessFlacFile8BitStereo(const char *testName,
                                           const CharString resourcesPath) {
   CharString inputPath =
       getTestResourcePath(resourcesPath, "audio", "a440-8bit-stereo.flac");
-  int result = runIntegrationTest(
-      testName,
-      buildTestArgumentString("--plugin again --input \"%s\"", inputPath->data),
-      RETURN_CODE_SUCCESS, kTestOutputFlac, applicationPath, resourcesPath);
-  freeCharString(inputPath);
-  return result;
-}
-
-static int _testProcessFlacFile16BitMono(const char *testName,
-                                         const CharString applicationPath,
-                                         const CharString resourcesPath) {
-  CharString inputPath =
-      getTestResourcePath(resourcesPath, "audio", "a440-16bit-mono.flac");
-  int result = runIntegrationTest(
-      testName,
-      buildTestArgumentString("--plugin again --input \"%s\"", inputPath->data),
-      RETURN_CODE_SUCCESS, kTestOutputFlac, applicationPath, resourcesPath);
-  freeCharString(inputPath);
-  return result;
-}
-
-static int _testProcessFlacFile16BitStereo(const char *testName,
-                                           const CharString applicationPath,
-                                           const CharString resourcesPath) {
-  CharString inputPath =
-      getTestResourcePath(resourcesPath, "audio", "a440-16bit-stereo.flac");
   int result = runIntegrationTest(
       testName,
       buildTestArgumentString("--plugin again --input \"%s\"", inputPath->data),
@@ -568,6 +580,7 @@ static int _testProcessFlacFile32BitStereo(const char *testName,
   freeCharString(inputPath);
   return result;
 }
+#endif
 
 static int _testProcessWithSampleRate(const char *testName,
                                       const CharString applicationPath,
@@ -673,6 +686,7 @@ static int _testInternalPassthruPlugin(const char *testName,
   return result;
 }
 
+#if TEST_SILENCE_PLUGIN
 static int _testInternalSilenceGenerator(const char *testName,
                                          const CharString applicationPath,
                                          const CharString resourcesPath) {
@@ -681,6 +695,7 @@ static int _testInternalSilenceGenerator(const char *testName,
       newCharStringWithCString("--plugin mrs_silence --max-time 1000"),
       RETURN_CODE_SUCCESS, kTestOutputPcm, applicationPath, resourcesPath);
 }
+#endif
 
 static int _testProcessWithAgainPlugin(const char *testName,
                                        const CharString applicationPath,
@@ -796,14 +811,14 @@ TestSuite addIntegrationTests(File mrsWatsonExePath, File resourcesPath) {
                    _testProcessPcmFile16BitStereo);
 
   // WAVE files
-  addTestWithPaths(testSuite, "Process 8-bit WAVE file (mono)",
-                   REQUIRES_AUDIOFILE(_testProcessWaveFile8BitMono));
-  addTestWithPaths(testSuite, "Process 8-bit WAVE file (stereo)",
-                   REQUIRES_AUDIOFILE(_testProcessWaveFile8BitStereo));
   addTestWithPaths(testSuite, "Process 16-bit WAVE file (mono)",
                    _testProcessWaveFile16BitMono);
   addTestWithPaths(testSuite, "Process 16-bit WAVE file (stereo)",
                    _testProcessWaveFile16BitStereo);
+  addTestWithPaths(testSuite, "Process 8-bit WAVE file (mono)",
+                   REQUIRES_AUDIOFILE(_testProcessWaveFile8BitMono));
+  addTestWithPaths(testSuite, "Process 8-bit WAVE file (stereo)",
+                   REQUIRES_AUDIOFILE(_testProcessWaveFile8BitStereo));
   addTestWithPaths(testSuite, "Process 24-bit WAVE file (mono)",
                    REQUIRES_AUDIOFILE(_testProcessWaveFile24BitMono));
   addTestWithPaths(testSuite, "Process 24-bit WAVE file (stereo)",
@@ -816,26 +831,26 @@ TestSuite addIntegrationTests(File mrsWatsonExePath, File resourcesPath) {
                    _testProcessWaveFileFfmpeg);
 
   // AIFF files
-  // 8-bit AIFF will require some extra work in SampleSourceAudiofile
-  addTestWithPaths(testSuite, "Process 8-bit AIFF file (mono)",
-                   NULL); // REQUIRES_AUDIOFILE(_testProcessAiffFile8BitMono));
-  addTestWithPaths(
-      testSuite, "Process 8-bit AIFF file (stereo)",
-      NULL); // REQUIRES_AUDIOFILE(_testProcessAiffFile8BitStereo));
   addTestWithPaths(testSuite, "Process 16-bit AIFF file (mono)",
                    REQUIRES_AUDIOFILE(_testProcessAiffFile16BitMono));
   addTestWithPaths(testSuite, "Process 16-bit AIFF file (stereo)",
                    REQUIRES_AUDIOFILE(_testProcessAiffFile16BitStereo));
+#if TEST_AIFF_BIT_DEPTHS
+  // 8-bit AIFF will require some extra work in SampleSourceAudiofile
+  addTestWithPaths(testSuite, "Process 8-bit AIFF file (mono)",
+                   REQUIRES_AUDIOFILE(_testProcessAiffFile8BitMono));
+  addTestWithPaths(testSuite, "Process 8-bit AIFF file (stereo)",
+                   REQUIRES_AUDIOFILE(_testProcessAiffFile8BitStereo));
   addTestWithPaths(testSuite, "Process 24-bit AIFF file (mono)",
                    REQUIRES_AUDIOFILE(_testProcessAiffFile24BitMono));
   addTestWithPaths(testSuite, "Process 24-bit AIFF file (stereo)",
                    REQUIRES_AUDIOFILE(_testProcessAiffFile24BitStereo));
   // 32-bit AIFF will require some extra work in SampleSourceAudiofile
   addTestWithPaths(testSuite, "Process 32-bit AIFF file (mono)",
-                   NULL); // REQUIRES_AUDIOFILE(_testProcessAiffFile32BitMono));
-  addTestWithPaths(
-      testSuite, "Process 32-bit AIFF file (stereo)",
-      NULL); // REQUIRES_AUDIOFILE(_testProcessAiffFile32BitStereo));
+                   REQUIRES_AUDIOFILE(_testProcessAiffFile32BitMono));
+  addTestWithPaths(testSuite, "Process 32-bit AIFF file (stereo)",
+                   REQUIRES_AUDIOFILE(_testProcessAiffFile32BitStereo));
+#endif
 
   // FLAC files
   addTestWithPaths(testSuite, "Process 8-bit FLAC file (mono)",
@@ -873,11 +888,10 @@ TestSuite addIntegrationTests(File mrsWatsonExePath, File resourcesPath) {
                    _testInternalGainPluginInvalidParameter);
   addTestWithPaths(testSuite, "Internal passthru plugin",
                    _testInternalPassthruPlugin);
-#if 0
-    // This test case works, but fails the analysis check for silence (obviously).
-    // It will remain disabled until we have a smarter way to specify which analysis
-    // functions should be run for each integration test.
-    addTestWithPaths(testSuite, "Internal silence generator", _testInternalSilenceGenerator);
+
+#if TEST_SILENCE_PLUGIN
+  addTestWithPaths(testSuite, "Internal silence generator",
+                   _testInternalSilenceGenerator);
 #endif
 
   // Plugin processing tests

@@ -188,16 +188,11 @@ void _charStringWrap(const char *srcString, char *destString,
   char *lastSpacePosition;
 
   // Sanity checks
-  if (srcString == NULL) {
-    return;
-  } else if (indentSize < 0 || indentSize > lineLength) {
-    return;
-  } else if (lineLength <= 0) {
+  if (srcString == NULL || indentSize > lineLength || lineLength <= 0) {
     return;
   }
 
   lineBuffer = (char *)malloc(sizeof(char) * lineLength);
-
   while (srcStringIndex < strlen(srcString)) {
     if (lineIndex == 0) {
       for (indentIndex = 0; indentIndex < indentSize; indentIndex++) {

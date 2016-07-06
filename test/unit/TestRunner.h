@@ -77,6 +77,11 @@ TestCase newTestCaseWithPaths(char *name, char *filename, int lineNumber,
 void freeTestCase(TestCase self);
 void freeTestSuite(TestSuite self);
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-function"
+// This function is only used by macros, which causes the compiler to
+// incorrectly believe it is unused. Unfortunately, GCC doesn't seem to handle
+// diagnostic push/pop correctly, so -Wunused-function is disabled for GCC.
 static const char *_getFileBasename(const char *filename) {
   const char *lastDelimiter;
 
@@ -92,6 +97,7 @@ static const char *_getFileBasename(const char *filename) {
     return lastDelimiter + 1;
   }
 }
+#pragma clang diagnostic pop
 
 #define addTest(testSuite, name, testCaseFunc)                                 \
   {                                                                            \
