@@ -1,7 +1,6 @@
 //
 // MrsWatsonOptions.c - MrsWatson
-// Created by Nik Reiman on 10/23/12.
-// Copyright (c) 2012 Teragon Audio. All rights reserved.
+// Copyright (c) 2016 Teragon Audio. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are met:
@@ -25,12 +24,12 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include <stdio.h>
+#include "MrsWatsonOptions.h"
 
 #include "audio/AudioSettings.h"
 #include "base/File.h"
 
-#include "MrsWatsonOptions.h"
+#include <stdio.h>
 
 ProgramOptions newMrsWatsonOptions(void) {
   ProgramOptions options = newProgramOptions(NUM_OPTIONS);

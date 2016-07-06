@@ -1,7 +1,6 @@
 //
 // TaskTimer.c - MrsWatson
-// Created by Nik Reiman on 1/5/12.
-// Copyright (c) 2012 Teragon Audio. All rights reserved.
+// Copyright (c) 2016 Teragon Audio. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are met:
@@ -25,14 +24,14 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
+#include "TaskTimer.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 
 #if UNIX
 #include <time.h>
 #endif
-
-#include "time/TaskTimer.h"
 
 TaskTimer newTaskTimer(const CharString component, const char *subcomponent) {
   const char *componentCString = component != NULL ? component->data : NULL;

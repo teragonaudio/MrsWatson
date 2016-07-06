@@ -1,7 +1,6 @@
 //
 // PluginPresetFxp.h - MrsWatson
-// Created by Nik Reiman on 1/13/12.
-// Copyright (c) 2011 Teragon Audio. All rights reserved.
+// Copyright (c) 2016 Teragon Audio. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are met:
@@ -28,9 +27,9 @@
 #ifndef MrsWatson_PluginPresetFxp_h
 #define MrsWatson_PluginPresetFxp_h
 
-#include <stdio.h>
-
 #include "plugin/PluginPreset.h"
+
+#include <stdio.h>
 
 typedef enum {
   FXP_TYPE_INVALID,

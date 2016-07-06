@@ -1,7 +1,6 @@
 //
 // EventLogger.c - MrsWatson
-// Created by Nik Reiman on 1/2/12.
-// Copyright (c) 2012 Teragon Audio. All rights reserved.
+// Copyright (c) 2016 Teragon Audio. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are met:
@@ -25,18 +24,19 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include "EventLogger.h"
 
 #include "app/BuildInfo.h"
 #include "audio/AudioSettings.h"
-#include "logging/EventLogger.h"
 #include "logging/LogPrinter.h"
 #include "time/AudioClock.h"
 
 #include "MrsWatson.h"
+
+#include <stdarg.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #if WINDOWS
 #include <Windows.h>

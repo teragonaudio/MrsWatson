@@ -1,7 +1,6 @@
 //
 // PluginPresetInternalProgram.c - MrsWatson
-// Created by Nik Reiman on 19 May 13.
-// Copyright (c) 2013 Teragon Audio. All rights reserved.
+// Copyright (c) 2016 Teragon Audio. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are met:
@@ -25,10 +24,11 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
+#include "PluginPresetInternalProgram.h"
+
 #include <stdlib.h>
 
 #include "base/CharString.h"
-#include "plugin/PluginPresetInternalProgram.h"
 #include "plugin/PluginVst2x.h"
 
 static boolByte _openPluginPresetInternalProgram(void *pluginPresetPtr) {

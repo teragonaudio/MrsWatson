@@ -1,7 +1,6 @@
 //
 // SampleSourcePcm.c - MrsWatson
-// Created by Nik Reiman on 1/2/12.
-// Copyright (c) 2012 Teragon Audio. All rights reserved.
+// Copyright (c) 2016 Teragon Audio. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are met:
@@ -25,13 +24,14 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include <stdio.h>
-#include <stdlib.h>
+#include "SampleSourcePcm.h"
 
 #include "audio/AudioSettings.h"
 #include "audio/PcmSampleBuffer.h"
-#include "io/SampleSourcePcm.h"
 #include "logging/EventLogger.h"
+
+#include <stdio.h>
+#include <stdlib.h>
 
 static boolByte openSampleSourcePcm(void *selfPtr,
                                     const SampleSourceOpenAs openAs) {

@@ -1,7 +1,6 @@
 //
 // MidiSourceFile.h - MrsWatson
-// Created by Nik Reiman on 1/5/12.
-// Copyright (c) 2012 Teragon Audio. All rights reserved.
+// Copyright (c) 2016 Teragon Audio. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are met:
@@ -28,9 +27,9 @@
 #ifndef MrsWatson_MidiSourceFile_h
 #define MrsWatson_MidiSourceFile_h
 
-#include <stdio.h>
-
 #include "midi/MidiSource.h"
+
+#include <stdio.h>
 
 typedef enum {
   TIME_DIVISION_TYPE_INVALID,

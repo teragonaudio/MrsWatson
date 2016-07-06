@@ -1,7 +1,6 @@
 //
 // SampleSource.c - MrsWatson
-// Created by Nik Reiman on 1/2/12.
-// Copyright (c) 2012 Teragon Audio. All rights reserved.
+// Copyright (c) 2016 Teragon Audio. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are met:
@@ -25,13 +24,14 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
+#include "SampleSource.h"
+
+#include "base/File.h"
+#include "logging/EventLogger.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-#include "base/File.h"
-#include "io/SampleSource.h"
-#include "logging/EventLogger.h"
 
 void sampleSourcePrintSupportedTypes(void) {
   logInfo("Supported audio file types:");
