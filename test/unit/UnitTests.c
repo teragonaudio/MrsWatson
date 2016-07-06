@@ -156,7 +156,9 @@ static void _printTestsInSuite(void *item, void *userData) {
 
 void printUnitTestSuites(void);
 void printUnitTestSuites(void) {
-  LinkedList unitTestSuites = getTestSuites(NULL, NULL);
+  File dummy = newFile();
+  LinkedList unitTestSuites = getTestSuites(dummy, dummy);
   linkedListForeach(unitTestSuites, _printTestsInSuite, NULL);
   freeLinkedListAndItems(unitTestSuites, (LinkedListFreeItemFunc)freeTestSuite);
+  freeFile(dummy);
 }
