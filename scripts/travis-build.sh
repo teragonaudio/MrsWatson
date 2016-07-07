@@ -7,7 +7,7 @@ CXX_COMPILER=$3
 if [ "$CONFIGURATION" = "Formatting" ]; then
   echo "Checking code formatting"
   ERRORS_FOUND=0
-  for i in $(find main source test -name "*.h" -or -name "*.c"); do
+  for i in $(find main source test -name "*.h" -or -name "*.c" -or -name "*.cpp"); do
     $C_COMPILER -style=LLVM -output-replacements-xml $i | grep "<replacement " > /dev/null
     if [ $? -eq 0 ]; then
       echo "File $i failed formatting"
