@@ -61,23 +61,11 @@ static int _testGetPlatformName(void) {
 static int _testGetShortPlatformName(void) {
   PlatformInfo platform = newPlatformInfo();
 #if LINUX
-
-  if (platformInfoIsHost64Bit() && platformInfoIsRuntime64Bit()) {
-    assertCharStringEquals("Linux-x86_64", platform->shortName);
-  } else {
-    assertCharStringEquals("Linux-i686", platform->shortName);
-  }
-
+  assertCharStringEquals("Linux", platform->shortName);
 #elif MACOSX
   assertCharStringEquals("Mac OS X", platform->shortName);
 #elif WINDOWS
-
-  if (platformInfoIsHost64Bit() && platformInfoIsRuntime64Bit()) {
-    assertCharStringEquals("Windows 64-bit", platform->shortName);
-  } else {
-    assertCharStringEquals("Windows 32-bit", platform->shortName);
-  }
-
+  assertCharStringEquals("Windows", platform->shortName);
 #else
   assertCharStringEquals("Unsupported", platform->shortName);
 #endif

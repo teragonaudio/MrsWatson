@@ -89,7 +89,8 @@ static void printWelcomeMessage(int argc, char **argv) {
     PlatformInfo platform = newPlatformInfo();
     logDebug("Host platform is %s (%s)", platform->shortName->data,
              platform->name->data);
-    logDebug("Application is %d-bit", platform->is64Bit ? 64 : 32);
+    logDebug("Application is %d-bit, host is %d-bit",
+             platform->is64BitRuntime ? 64 : 32, platform->is64BitOs ? 64 : 32);
     freePlatformInfo(platform);
 
     stringBuffer = newCharStringWithCapacity(kCharStringLengthLong);

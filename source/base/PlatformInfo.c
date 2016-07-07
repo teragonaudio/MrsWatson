@@ -37,6 +37,9 @@
 
 #define LSB_FILE_PATH "/etc/lsb-release"
 #define LSB_DISTRIBUTION "DISTRIB_DESCRIPTION"
+#elif WINDOWS
+#include <VersionHelpers.h>
+#include <ntverp.h>
 #endif
 
 static PlatformType _getPlatformType() {
@@ -55,21 +58,9 @@ static const char *_getShortPlatformName(void) {
 #if MACOSX
   return "Mac OS X";
 #elif WINDOWS
-
-  if (platformInfoIsRuntime64Bit()) {
-    return "Windows 64-bit";
-  } else {
-    return "Windows 32-bit";
-  }
-
+  return "Windows";
 #elif LINUX
-
-  if (platformInfoIsRuntime64Bit()) {
-    return "Linux-x86_64";
-  } else {
-    return "Linux-i686";
-  }
-
+  return "Linux";
 #else
   return "Unsupported";
 #endif
@@ -142,53 +133,48 @@ static CharString _getPlatformName(void) {
                          (LinkedListFreeItemFunc)freeCharString);
   freeFile(lsbRelease);
 #elif WINDOWS
-  OSVERSIONINFOEX versionInformation;
-  memset(&versionInformation, 0, sizeof(OSVERSIONINFOEX));
-  versionInformation.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
-  GetVersionEx((OSVERSIONINFO *)&versionInformation);
-  // Generic string which will also work with newer versions of windows
-  snprintf(result->data, result->capacity, "Windows %d.%d",
-           versionInformation.dwMajorVersion,
-           versionInformation.dwMinorVersion);
-
-  // This is a bit lame, but it seems that this is the standard way of getting
-  // the platform name on Windows.
-  switch (versionInformation.dwMajorVersion) {
-  case 6:
-    switch (versionInformation.dwMinorVersion) {
-    case 2:
-      charStringCopyCString(result, "Windows 8");
-      break;
-
-    case 1:
-      charStringCopyCString(result, "Windows 7");
-      break;
-
-    case 0:
-      charStringCopyCString(result, "Windows Vista");
-      break;
-    }
-
-    break;
-
-  case 5:
-    switch (versionInformation.dwMinorVersion) {
-    case 2:
-      charStringCopyCString(result, "Windows Server 2003");
-      break;
-
-    case 1:
-      charStringCopyCString(result, "Windows XP");
-      break;
-
-    case 0:
-      charStringCopyCString(result, "Windows 2000");
-      break;
-    }
-
-    break;
+  if (IsWindowsServer()) {
+    charStringCopyCString(result, "Windows Server ");
+  } else {
+    charStringCopyCString(result, "Windows ");
   }
 
+// To check for Windows 10, the Windows 10+ SDK is required. This isn't very
+// widespread yet, and also is not available on AppVeyor. Once it is more
+// common, this preprocessor condition should be removed.
+#if VER_PRODUCTBUILD > 9600
+  if (IsWindows10OrGreater()) {
+    charStringAppendCString(result, "10 (or newer)");
+  } else if (IsWindows8Point1OrGreater())
+    charStringAppendCString(result, "8.1");
+#else
+  if (IsWindows8Point1OrGreater()) {
+    charStringAppendCString(result, "8.1 (or newer)");
+  }
+#endif
+  else if (IsWindows8OrGreater()) {
+    charStringAppendCString(result, "8");
+  } else if (IsWindows7SP1OrGreater()) {
+    charStringAppendCString(result, "7 SP1");
+  } else if (IsWindows7OrGreater()) {
+    charStringAppendCString(result, "7");
+  } else if (IsWindowsVistaSP2OrGreater()) {
+    charStringAppendCString(result, "Vista SP2");
+  } else if (IsWindowsVistaSP1OrGreater()) {
+    charStringAppendCString(result, "Vista SP1");
+  } else if (IsWindowsVistaOrGreater()) {
+    charStringAppendCString(result, "Vista");
+  } else if (IsWindowsXPSP3OrGreater()) {
+    charStringAppendCString(result, "XP SP3");
+  } else if (IsWindowsXPSP2OrGreater()) {
+    charStringAppendCString(result, "XP SP2");
+  } else if (IsWindowsXPSP1OrGreater()) {
+    charStringAppendCString(result, "XP SP1");
+  } else if (IsWindowsXPOrGreater()) {
+    charStringAppendCString(result, "XP");
+  } else {
+    charStringAppendCString(result, "(Unknown version)");
+  }
 #else
   charStringCopyCString(result, "Unsupported platform");
 #endif
@@ -218,22 +204,17 @@ boolByte platformInfoIsHost64Bit(void) {
   BOOL isProcessRunningInWow64 = false;
   IsWow64ProcessFuncPtr isWow64ProcessFunc = NULL;
 
-  // The IsWow64Process() function is not available on all versions of Windows,
-  // so it must be looked up first and called only if it exists.
+  // The IsWow64Process() function is not available on all versions of
+  // Windows, so it must be looked up first and called only if it exists.
   isWow64ProcessFunc = (IsWow64ProcessFuncPtr)GetProcAddress(
       GetModuleHandle(TEXT("kernel32")), "IsWow64Process");
 
   if (isWow64ProcessFunc != NULL) {
     if (isWow64ProcessFunc(GetCurrentProcess(), &isProcessRunningInWow64)) {
-      // IsWow64Process will only return true if the current process is a 32-bit
-      // application running on 64-bit Windows.
-      if (isProcessRunningInWow64) {
-        result = true;
-      } else {
-        // If false, then we can assume that the host has the same bitness as
-        // the executable.
-        result = platformInfoIsRuntime64Bit();
-      }
+      // IsWow64Process() returns true only if the current process is a
+      // 32-bit application running on 64-bit Windows. Otherwise, the process
+      // has the same word size as the runtime.
+      result = isProcessRunningInWow64 ? true : platformInfoIsRuntime64Bit();
     }
   }
 
@@ -254,7 +235,8 @@ PlatformInfo newPlatformInfo(void) {
   platformInfo->type = _getPlatformType();
   platformInfo->name = _getPlatformName();
   platformInfo->shortName = newCharStringWithCString(_getShortPlatformName());
-  platformInfo->is64Bit = platformInfoIsHost64Bit();
+  platformInfo->is64BitOs = platformInfoIsHost64Bit();
+  platformInfo->is64BitRuntime = platformInfoIsRuntime64Bit();
   return platformInfo;
 }
 

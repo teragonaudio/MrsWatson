@@ -111,12 +111,26 @@ CharString getTestOutputFilename(const char *testName,
   return filename;
 }
 
+static const char *_getPlatformVstDirName(const PlatformInfo platform) {
+  switch (platform->type) {
+  case PLATFORM_LINUX:
+    return platform->is64BitRuntime ? "Linux-x86_64" : "Linux-i686";
+  case PLATFORM_MACOSX:
+    return "Mac OS X";
+  case PLATFORM_WINDOWS:
+    return platform->is64BitRuntime ? "Windows 64-bit" : "Windows 32-bit";
+  default:
+    logInternalError("No VST resource directory for platform");
+    return NULL;
+  }
+}
+
 static CharString _getTestPluginResourcesPath(const CharString resourcesPath) {
   CharString pluginRoot = newCharString();
   PlatformInfo platform = newPlatformInfo();
   snprintf(pluginRoot->data, pluginRoot->capacity, "%s%cvst%c%s",
            resourcesPath->data, PATH_DELIMITER, PATH_DELIMITER,
-           platform->shortName->data);
+           _getPlatformVstDirName(platform));
   freePlatformInfo(platform);
   return pluginRoot;
 }
