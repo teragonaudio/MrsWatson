@@ -41,7 +41,8 @@ typedef struct {
   PlatformType type;
   CharString name;
   CharString shortName;
-  boolByte is64Bit;
+  boolByte is64BitOs;
+  boolByte is64BitRuntime;
 } PlatformInfoMembers;
 typedef PlatformInfoMembers *PlatformInfo;
 
