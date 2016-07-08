@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.0)
 project(MrsWatsonMain)
 
-include(${cmake_SCRIPTS_DIR}/ConfigureTarget.cmake)
+include(${mw_cmake_scripts_DIR}/ConfigureTarget.cmake)
 set(main_SOURCES MrsWatsonMain.c)
 
 function(add_main_target wordsize)
