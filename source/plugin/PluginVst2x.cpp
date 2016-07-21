@@ -469,7 +469,13 @@ static boolByte _openVst2xPlugin(void *pluginPtr) {
       strrchr(plugin->pluginName->data, kPluginVst2xSubpluginSeparator);
   CharString subpluginIdString = NULL;
 
-  if (subpluginSeparator != NULL) {
+  // Check to see if a sub-plugin has been given, which would indicate that a
+  // shell plugin is being used. However, we must also make sure that the
+  // separator is past the 2nd character position, since otherwise it may
+  // conflict with absolute paths on Windows. It was a bad idea to use colon
+  // as the sub-plugin separator character. :(
+  size_t separatorPosition = subpluginSeparator - plugin->pluginName->data;
+  if (subpluginSeparator != NULL && separatorPosition > 1) {
     *subpluginSeparator = '\0';
     subpluginIdString = newCharStringWithCapacity(kCharStringLengthShort);
     strncpy(subpluginIdString->data, subpluginSeparator + 1, 4);
