@@ -111,7 +111,8 @@ CharString getTestOutputFilename(const char *testName,
   return filename;
 }
 
-static const char *_getPlatformVstDirName(const PlatformInfo platform) {
+const char *_getPlatformVstDirName(const PlatformInfo platform);
+const char *_getPlatformVstDirName(const PlatformInfo platform) {
   switch (platform->type) {
   case PLATFORM_LINUX:
     return platform->is64BitRuntime ? "Linux-x86_64" : "Linux-i686";
@@ -297,10 +298,9 @@ int runIntegrationTest(const char *testName, CharString testArguments,
   charStringAppendCString(arguments, " ");
   charStringAppend(arguments, testArguments);
   // Although testArguments is passed into this function (and hence, it would
-  // generally not take
-  // ownership of it), in this case we free the arguments here to make writing
-  // the test cases
-  // simpler and reduce the amount of boilerplate code.
+  // generally not take ownership of it), in this case we free the arguments
+  // here to make writing the test cases simpler and reduce the amount of
+  // boilerplate code.
   freeCharString(testArguments);
 
 #if WINDOWS

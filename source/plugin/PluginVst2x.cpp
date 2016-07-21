@@ -87,7 +87,8 @@ extern "C" {
 // setting up the effect chain.
 VstInt32 currentPluginUniqueId;
 
-static const char *_getVst2xPlatformExtension(void) {
+const char *_getVst2xPlatformExtension(void);
+const char *_getVst2xPlatformExtension(void) {
   PlatformInfo platform = newPlatformInfo();
   PlatformType platformType = platform->type;
   freePlatformInfo(platform);
