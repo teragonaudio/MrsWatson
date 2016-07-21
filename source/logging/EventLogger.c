@@ -60,6 +60,7 @@ void initEventLogger(void) {
   eventLoggerInstance->useColor = false;
   eventLoggerInstance->zebraStripeSize = (unsigned long)DEFAULT_SAMPLE_RATE;
   eventLoggerInstance->systemErrorMessage = NULL;
+  eventLoggerInstance->shownUnsupportedMessages = newLinkedList();
 
 #if WINDOWS
   currentTime = GetTickCount();
@@ -344,12 +345,40 @@ void logInternalError(const char *message, ...) {
   fprintf(stderr, "  Support email: %s\n", SUPPORT_EMAIL);
 }
 
+struct _findData {
+  const char *featureName;
+  boolByte found;
+};
+
+static void _findShownErrorMessage(void *item, void *userData) {
+  const char *featureName = (const char *)item;
+  struct _findData *findData = (struct _findData *)userData;
+  if (!strcmp(featureName, findData->featureName)) {
+    findData->found = true;
+  }
+}
+
 void logUnsupportedFeature(const char *featureName) {
-  fprintf(stderr, "UNSUPPORTED FEATURE: %s\n", featureName);
-  fprintf(stderr, "  This feature is not yet supported. Please help us out and "
-                  "submit a patch! :)\n");
-  fprintf(stderr, "  Project website: %s\n", PROJECT_WEBSITE);
-  fprintf(stderr, "  Support email: %s\n", SUPPORT_EMAIL);
+  // This function can really spam the console if it gets called from the
+  // process callback, so we maintain a list of shown messages and first check
+  // to see that this message hasn't been shown before.
+  EventLogger eventLogger = _getEventLoggerInstance();
+  struct _findData findData;
+  findData.featureName = featureName;
+  findData.found = false;
+  linkedListForeach(eventLogger->shownUnsupportedMessages,
+                    _findShownErrorMessage, &findData);
+  if (!findData.found) {
+    linkedListAppend(eventLogger->shownUnsupportedMessages,
+                     (void *)featureName);
+
+    fprintf(stderr, "UNSUPPORTED FEATURE: %s\n", featureName);
+    fprintf(stderr,
+            "  This feature is not yet supported. Please help us out and "
+            "submit a patch! :)\n");
+    fprintf(stderr, "  Project website: %s\n", PROJECT_WEBSITE);
+    fprintf(stderr, "  Support email: %s\n", SUPPORT_EMAIL);
+  }
 }
 
 void logDeprecated(const char *functionName, const char *plugin) {
@@ -394,6 +423,7 @@ void freeEventLogger(void) {
       fclose(eventLoggerInstance->logFile);
     }
 
+    freeLinkedList(eventLoggerInstance->shownUnsupportedMessages);
     freeCharString(eventLoggerInstance->systemErrorMessage);
     free(eventLoggerInstance);
   }
