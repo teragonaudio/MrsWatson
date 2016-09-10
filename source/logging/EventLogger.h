@@ -49,6 +49,7 @@ typedef struct {
   unsigned long zebraStripeSize;
   FILE *logFile;
   CharString systemErrorMessage;
+  LinkedList shownUnsupportedMessages;
 } EventLoggerMembers;
 typedef EventLoggerMembers *EventLogger;
 extern EventLogger eventLoggerInstance;

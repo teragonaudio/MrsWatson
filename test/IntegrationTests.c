@@ -26,6 +26,7 @@
 
 #include "base/CharString.h"
 #include "base/File.h"
+#include "base/PlatformInfo.h"
 #include "unit/ApplicationRunner.h"
 #include "unit/TestRunner.h"
 
@@ -80,6 +81,44 @@ static int _testInvalidArgument(const char *testName,
   return runIntegrationTest(testName, newCharStringWithCString("--invalid"),
                             RETURN_CODE_INVALID_ARGUMENT, kTestOutputNone,
                             applicationPath, resourcesPath);
+}
+
+// Private functions which are needed for the absolute path test
+extern const char *_getPlatformVstDirName(const PlatformInfo platform);
+extern const char *_getVst2xPlatformExtension();
+
+static int _testLoadPluginWithAbsolutePath(const char *testName,
+                                           const CharString applicationPath,
+                                           const CharString resourcesPath) {
+  File resourcesFile = newFileWithPath(resourcesPath);
+  CharString vstDirName = newCharStringWithCString("vst");
+  File vstFile = newFileWithParent(resourcesFile, vstDirName);
+  freeFile(resourcesFile);
+  freeCharString(vstDirName);
+
+  PlatformInfo platformInfo = newPlatformInfo();
+  CharString platformDirName =
+      newCharStringWithCString(_getPlatformVstDirName(platformInfo));
+  File vstPlatformFile = newFileWithParent(vstFile, platformDirName);
+  freeCharString(platformDirName);
+  freePlatformInfo(platformInfo);
+  freeFile(vstFile);
+
+  CharString vstPluginName = newCharStringWithCString("again");
+  charStringAppendCString(vstPluginName, _getVst2xPlatformExtension());
+  File pluginFile = newFileWithParent(vstPlatformFile, vstPluginName);
+  freeCharString(vstPluginName);
+  freeFile(vstPlatformFile);
+
+  CharString inputPath = getDefaultInputPath(resourcesPath);
+  int result = runIntegrationTest(
+      testName,
+      buildTestArgumentString("--plugin \"%s\" --input \"%s\"",
+                              pluginFile->absolutePath->data, inputPath->data),
+      RETURN_CODE_SUCCESS, kTestOutputPcm, applicationPath, resourcesPath);
+  freeCharString(inputPath);
+  freeFile(pluginFile);
+  return result;
 }
 
 static int _testRunWithNoPlugins(const char *testName,
@@ -800,9 +839,13 @@ TestSuite addIntegrationTests(File mrsWatsonExePath, File resourcesPath) {
       newCharStringWithCString(resourcesPath->absolutePath->data);
 
   // Basic non-processing operations
-  addTestWithPaths(testSuite, "ListPlugins", _testListPlugins);
-  addTestWithPaths(testSuite, "ListFileTypes", _testListFileTypes);
-  addTestWithPaths(testSuite, "InvalidArugment", _testInvalidArgument);
+  addTestWithPaths(testSuite, "List plugins", _testListPlugins);
+  addTestWithPaths(testSuite, "List file types", _testListFileTypes);
+  addTestWithPaths(testSuite, "Invalid arugment", _testInvalidArgument);
+
+  // Plugin loading
+  addTestWithPaths(testSuite, "Load plugin with absolute path",
+                   _testLoadPluginWithAbsolutePath);
 
   // Invalid configurations
   addTestWithPaths(testSuite, "Run with no plugins", _testRunWithNoPlugins);
