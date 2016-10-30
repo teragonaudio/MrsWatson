@@ -11,6 +11,7 @@ include_directories(${CMAKE_SOURCE_DIR}/source)
 
 option(WITH_AUDIOFILE "Use libaudiofile for reading/writing audio files" ON)
 option(WITH_FLAC "Support for FLAC files (requires libaudiofile)" OFF)
+option(WITH_VST_SDK "Manually specify VST SDK zipfile" "")
 option(VERBOSE "Show extra build information" OFF)
 
 

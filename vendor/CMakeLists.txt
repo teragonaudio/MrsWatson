@@ -380,8 +380,14 @@ set(vst_sdk_ZIP "${CMAKE_BINARY_DIR}/vstsdk.zip")
 set(vst_sdk_ROOT "${CMAKE_BINARY_DIR}/VST3 SDK")
 
 if(NOT EXISTS ${vst_sdk_ROOT})
-  message(STATUS "Downloading VST SDK")
-  file(DOWNLOAD ${vst_sdk_URL} "${vst_sdk_ZIP}")
+  if(WITH_VST_SDK)
+    message(STATUS "Using VST SDK from ${WITH_VST_SDK}")
+    file(COPY "${WITH_VST_SDK}" DESTINATION "${CMAKE_BINARY_DIR}")
+  else()
+    message(STATUS "Downloading VST SDK")
+    file(DOWNLOAD ${vst_sdk_URL} "${vst_sdk_ZIP}")
+  endif()
+
   message(STATUS "Extracting VST SDK")
   execute_process(COMMAND
     ${CMAKE_COMMAND} -E tar "xf" ${vst_sdk_ZIP}
