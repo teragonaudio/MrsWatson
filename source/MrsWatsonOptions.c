@@ -285,6 +285,16 @@ using unusual sample rates will probably result in weird behavior from plugins."
                           (const float)getSampleRate());
 
   programOptionsAdd(
+      options,
+      newProgramOptionWithName(
+          OPTION_SMPTE_FRAME_RATE, "smpte-frame-rate",
+          "SMPTE frame rate to use. Relevant for plugins which require SMPTE \
+timing. Only the following frame rates are supported: 24, 25, 30, and 60.",
+          NO_SHORT_FORM, kProgramOptionTypeNumber,
+          kProgramOptionArgumentTypeRequired));
+  programOptionsSetNumber(options, OPTION_SMPTE_FRAME_RATE, getSmpteFrameRate());
+
+  programOptionsAdd(
       options, newProgramOptionWithName(OPTION_TEMPO, "tempo",
                                         "Tempo to use when processing.",
                                         NO_SHORT_FORM, kProgramOptionTypeNumber,
