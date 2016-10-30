@@ -69,7 +69,7 @@ double audioClockSamplesToPpq(const SampleCount samples, const Tempo tempo,
 
 SampleCount audioClockPpqToSamples(const double ppq, const Tempo tempo,
                                    const SampleRate sampleRate) {
-  return _samplesPerBeat(tempo, sampleRate) * (ppq - 1.0);
+  return (SampleCount)(_samplesPerBeat(tempo, sampleRate) * (ppq - 1.0));
 }
 
 void freeAudioClock(AudioClock self) {
