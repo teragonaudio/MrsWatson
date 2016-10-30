@@ -28,6 +28,7 @@
 #include "base/LinkedList.h"
 #include "unit/TestRunner.h"
 
+#include <stdio.h>
 #include <stdlib.h>
 
 extern TestSuite addAudioClockTests(void);
@@ -91,8 +92,22 @@ LinkedList getTestSuites(File mrsWatsonExePath, File resourcesPath) {
   linkedListAppend(unitTestSuites, addAnalysisClippingTests());
   linkedListAppend(unitTestSuites, addAnalysisDistortionTests());
   linkedListAppend(unitTestSuites, addAnalysisSilenceTests());
-  linkedListAppend(unitTestSuites,
-                   addIntegrationTests(mrsWatsonExePath, resourcesPath));
+
+  const boolByte mrsWatsonExists = fileExists(mrsWatsonExePath);
+  if (!mrsWatsonExists) {
+    printf("WARNING: mrswatson executable not found, skipping integration "
+           "tests\n");
+  }
+
+  const boolByte resourcesExist = fileExists(resourcesPath);
+  if (!resourcesExist) {
+    printf("WARNING: Test resources not found, skipping integration tests\n");
+  }
+
+  if (mrsWatsonExists && resourcesExist) {
+    linkedListAppend(unitTestSuites,
+                     addIntegrationTests(mrsWatsonExePath, resourcesPath));
+  }
 
   return unitTestSuites;
 }
