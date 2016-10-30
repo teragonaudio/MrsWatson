@@ -15,6 +15,17 @@ will not be included. Currently it is not recommended to use the GitHub source
 releases, but rather to clone the sources and build from the release tag.
 
 
+CMake Build Options
+-------------------
+
+The following options can be passed to CMake to configure the build. Note that
+these arguments must be prefixed with `-D` to CMake, eg `-DOPTION_NAME=ON`.
+
+* `WITH_AUDIOFILE`: Use libaudiofile for reading/writing audio files (default:
+  `ON`)
+* `WITH_FLAC`: Support for FLAC files (requires libaudiofile, default: `OFF`)
+
+
 Mac OSX
 -------
 

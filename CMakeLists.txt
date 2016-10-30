@@ -9,7 +9,7 @@ include_directories(${CMAKE_SOURCE_DIR}/source)
 # Build options #
 #################
 
-option(WITH_AUDIOFILE "Use libaudiofile for reading/writing files" ON)
+option(WITH_AUDIOFILE "Use libaudiofile for reading/writing audio files" ON)
 option(WITH_FLAC "Support for FLAC files (requires libaudiofile)" OFF)
 
 
