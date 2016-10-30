@@ -49,6 +49,7 @@ void initAudioSettings(void) {
       DEFAULT_TIMESIG_BEATS_PER_MEASURE;
   audioSettingsInstance->timeSignatureNoteValue = DEFAULT_TIMESIG_NOTE_VALUE;
   audioSettingsInstance->bitDepth = kBitDepthDefault;
+  audioSettingsInstance->smpteFrameRate = kSmpteFrameRateDefault;
 }
 
 static AudioSettings _getAudioSettings(void) {
@@ -76,6 +77,10 @@ unsigned short getTimeSignatureNoteValue(void) {
 }
 
 BitDepth getBitDepth(void) { return _getAudioSettings()->bitDepth; }
+
+SmpteFrameRate getSmpteFrameRate(void) {
+  return _getAudioSettings()->smpteFrameRate;
+}
 
 boolByte setSampleRate(const SampleRate sampleRate) {
   if (sampleRate <= 0.0f) {
@@ -213,6 +218,21 @@ boolByte setBitDepth(const BitDepth bitDepth) {
 
   default:
     logError("Invalid bit depth %d", bitDepth);
+    return false;
+  }
+}
+
+boolByte setSmtpeFrameRate(const SmpteFrameRate smpteFrameRate) {
+  switch (smpteFrameRate) {
+  case kSmpte24Fps:
+  case kSmpte25Fps:
+  case kSmpte30Fps:
+  case kSmpte60Fps:
+    _getAudioSettings()->smpteFrameRate = smpteFrameRate;
+    return true;
+
+  default:
+    logError("Unsupported SMPTE frame rate %d", smpteFrameRate);
     return false;
   }
 }

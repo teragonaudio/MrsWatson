@@ -42,6 +42,7 @@ static int _testInitAudioSettings(void) {
                   getTimeSignatureBeatsPerMeasure());
   assertIntEquals(DEFAULT_TIMESIG_NOTE_VALUE, getTimeSignatureNoteValue());
   assertIntEquals(16, getBitDepth());
+  assertIntEquals(30, getSmpteFrameRate());
   return 0;
 }
 
@@ -204,6 +205,18 @@ static int _testSetBitDepth(void) {
   return 0;
 }
 
+int _testSetSmpteFrameRate(void) {
+  setSmtpeFrameRate(kSmpte24Fps);
+  assertIntEquals(24, getSmpteFrameRate());
+  return 0;
+}
+
+int _testSetInvalidSmpteFrameRate(void) {
+  assertFalse(setSmtpeFrameRate((SmpteFrameRate)1));
+  assertIntEquals(30, getSmpteFrameRate());
+  return 0;
+}
+
 TestSuite addAudioSettingsTests(void);
 TestSuite addAudioSettingsTests(void) {
   TestSuite testSuite = newTestSuite("AudioSettings", _audioSettingsSetup,
@@ -237,6 +250,9 @@ TestSuite addAudioSettingsTests(void) {
           _testSetTimeSignatureFromNullString);
 
   addTest(testSuite, "SetBitDepth", _testSetBitDepth);
+
+  addTest(testSuite, "SetSMPTEFrameRate", _testSetSmpteFrameRate);
+  addTest(testSuite, "SetInvalidSMPTEFrameRate", _testSetInvalidSmpteFrameRate);
 
   return testSuite;
 }

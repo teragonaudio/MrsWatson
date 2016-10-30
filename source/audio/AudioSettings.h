@@ -46,6 +46,14 @@ typedef enum {
   kBitDepthDefault = kBitDepth16Bit
 } BitDepth;
 
+typedef enum {
+  kSmpte24Fps = 24,
+  kSmpte25Fps = 25,
+  kSmpte30Fps = 30,
+  kSmpte60Fps = 60,
+  kSmpteFrameRateDefault = kSmpte30Fps
+} SmpteFrameRate;
+
 typedef struct {
   SampleRate sampleRate;
   ChannelCount numChannels;
@@ -54,6 +62,7 @@ typedef struct {
   unsigned short timeSignatureBeatsPerMeasure;
   unsigned short timeSignatureNoteValue;
   BitDepth bitDepth;
+  SmpteFrameRate smpteFrameRate;
 } AudioSettingsMembers;
 
 typedef AudioSettingsMembers *AudioSettings;
@@ -111,6 +120,12 @@ unsigned short getTimeSignatureNoteValue(void);
  * @return Bit depth
  */
 BitDepth getBitDepth(void);
+
+/**
+ * Get SMPTE frame rate.
+ * @return SMPTE frame rate, in frames per second (FPS)
+ */
+SmpteFrameRate getSmpteFrameRate(void);
 
 /**
  * Set the sample rate to be used during processing. This must be set before the
@@ -192,6 +207,14 @@ boolByte setTimeSignatureFromString(const CharString signature);
  * @return True if successfully set, false otherwise
  */
 boolByte setBitDepth(const BitDepth bitDepth);
+
+/**
+ * Set the SMPTE frame rate. This does not affect processing, but only timing
+ * for plugins which request the SMPTE frame count.
+ * @param smpteFrameRate SMPTE frame rate, in FPS
+ * @return True if successfully set, false otherwise
+ */
+boolByte setSmtpeFrameRate(const SmpteFrameRate smpteFrameRate);
 
 /**
  * Release memory of the global audio settings instance. Any attempt to use the
