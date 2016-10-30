@@ -219,7 +219,7 @@ VstIntPtr VSTCALLBACK pluginVst2xHostCallback(AEffect *effect, VstInt32 opcode,
     }
 
     if (value & kVstCyclePosValid) {
-      // We don't support cycling, so this is always 0
+      // We don't support cycling, so this is always a noop
     }
 
     if (value & kVstTimeSigValid) {
