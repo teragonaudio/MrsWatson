@@ -192,9 +192,8 @@ if(WITH_AUDIOFILE)
       )
     endif()
 
-    # Remove some compiler flags for warnings that we don't want to fix
     if(${CMAKE_CXX_COMPILER_ID} MATCHES Clang)
-      set(audiofile_REMOVE_FLAGS
+      set(audiofile_IGNORE_FLAGS
         -Wno-missing-field-initializers
         -Wno-multichar
         -Wno-shadow
@@ -204,7 +203,7 @@ if(WITH_AUDIOFILE)
         -Wno-unused-const-variable
       )
     elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL GNU)
-      set(audiofile_REMOVE_FLAGS
+      set(audiofile_IGNORE_FLAGS
         -Wno-missing-field-initializers
         -Wno-multichar
         -Wno-shadow
@@ -212,12 +211,14 @@ if(WITH_AUDIOFILE)
         -Wno-switch-default
       )
     elseif(MSVC)
-      set(audiofile_REMOVE_FLAGS
+      set(audiofile_IGNORE_FLAGS
         /wd4244
       )
     endif()
 
-    target_compile_options(audiofile${wordsize} PUBLIC ${audiofile_REMOVE_FLAGS})
+    target_compile_options(audiofile${wordsize} PUBLIC
+      ${audiofile_IGNORE_FLAGS}
+    )
     configure_target(audiofile${wordsize} ${wordsize})
   endfunction()
 
@@ -334,21 +335,20 @@ if(WITH_FLAC)
       ${flac_SRC_DIR}/libFLAC/include
     )
 
-    # Remove some compiler flags for warnings that we don't want to fix
     if(${CMAKE_CXX_COMPILER_ID} STREQUAL Clang)
-      set(flac_REMOVE_FLAGS
+      set(flac_IGNORE_FLAGS
         -Wno-switch-default
         -Wno-unused-const-variable
       )
     elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL GNU)
-      set(flac_REMOVE_FLAGS
+      set(flac_IGNORE_FLAGS
         -Wno-switch-default
       )
     elseif(MSVC)
-      set(flac_REMOVE_FLAGS)
+      set(flac_IGNORE_FLAGS)
     endif()
 
-    target_compile_options(flac${wordsize} PUBLIC ${flac_REMOVE_FLAGS})
+    target_compile_options(flac${wordsize} PUBLIC ${flac_IGNORE_FLAGS})
     set_target_properties(flac${wordsize} PROPERTIES
       COMPILE_DEFINITIONS "HAVE_CONFIG_H=1"
     )
