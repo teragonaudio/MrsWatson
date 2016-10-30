@@ -229,7 +229,28 @@ VstIntPtr VSTCALLBACK pluginVst2xHostCallback(AEffect *effect, VstInt32 opcode,
     }
 
     if (value & kVstSmpteValid) {
-      logUnsupportedFeature("Current time in SMPTE format");
+      logUnsupportedFeature("SMPTE time is experimental and not fully tested");
+      const SmpteFrameRate frameRate = getSmpteFrameRate();
+      switch (frameRate) {
+      case kSmpte24Fps:
+        vstTimeInfo.smpteFrameRate = kVstSmpte24fps;
+        break;
+      case kSmpte25Fps:
+        vstTimeInfo.smpteFrameRate = kVstSmpte25fps;
+        break;
+      case kSmpte30Fps:
+        vstTimeInfo.smpteFrameRate = kVstSmpte30fps;
+        break;
+      case kSmpte60Fps:
+        vstTimeInfo.smpteFrameRate = kVstSmpte60fps;
+        break;
+      default:
+        logInternalError("Invalid SMPTE frame rate");
+        break;
+      }
+
+      double positionInSec = vstTimeInfo.samplePos / vstTimeInfo.sampleRate;
+      vstTimeInfo.smpteOffset = (VstInt32)(positionInSec * (double)frameRate);
     }
 
     if (value & kVstClockValid) {
