@@ -191,10 +191,8 @@ VstIntPtr VSTCALLBACK pluginVst2xHostCallback(AEffect *effect, VstInt32 opcode,
     }
 
     if (value & kVstPpqPosValid) {
-      // TODO: Move calculations to AudioClock
-      double samplesPerBeat = (60.0 / getTempo()) * getSampleRate();
-      // Musical time starts with 1, not 0
-      vstTimeInfo.ppqPos = (vstTimeInfo.samplePos / samplesPerBeat) + 1.0;
+      vstTimeInfo.ppqPos = audioClockSamplesToPpq(audioClock->currentFrame,
+                                                  getTempo(), getSampleRate());
       logDebug("Current PPQ position is %g", vstTimeInfo.ppqPos);
       vstTimeInfo.flags |= kVstPpqPosValid;
     }

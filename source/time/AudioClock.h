@@ -72,6 +72,12 @@ void advanceAudioClock(AudioClock self, const unsigned long blocksize);
  */
 void audioClockStop(AudioClock self);
 
+double audioClockSamplesToPpq(const SampleCount samples, const Tempo tempo,
+                              const SampleRate sampleRate);
+
+SampleCount audioClockPpqToSamples(const double ppq, const Tempo tempo,
+                                   const SampleRate sampleRate);
+
 /**
  * Free an audio clock instance and its associated resources.
  * @param self

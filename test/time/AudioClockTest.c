@@ -86,6 +86,18 @@ static int _testAdvanceClockMulitpleTimes(void) {
   return 0;
 }
 
+static int _testSamplesToPpq(void) {
+  assertDoubleEquals(2.0, audioClockSamplesToPpq(44100 / 2, 120.0, 44100),
+                     TEST_DEFAULT_TOLERANCE);
+  return 0;
+}
+
+static int _testPpqToSamples(void) {
+  assertDoubleEquals(44100 / 2, audioClockPpqToSamples(2.0, 120.0, 44100),
+                     TEST_DEFAULT_TOLERANCE);
+  return 0;
+}
+
 TestSuite addAudioClockTests(void);
 TestSuite addAudioClockTests(void) {
   TestSuite testSuite =
@@ -95,5 +107,7 @@ TestSuite addAudioClockTests(void) {
   addTest(testSuite, "StopClock", _testStopAudioClock);
   addTest(testSuite, "RestartClock", _testRestartAudioClock);
   addTest(testSuite, "MultipleAdvance", _testAdvanceClockMulitpleTimes);
+  addTest(testSuite, "SamplesToPpq", _testSamplesToPpq);
+  addTest(testSuite, "PpqToSamples", _testPpqToSamples);
   return testSuite;
 }

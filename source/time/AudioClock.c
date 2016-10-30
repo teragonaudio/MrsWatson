@@ -56,6 +56,22 @@ void audioClockStop(AudioClock self) {
   self->transportChanged = true;
 }
 
+static inline double _samplesPerBeat(const Tempo tempo,
+                                     const SampleRate sampleRate) {
+  return (60.0 / tempo) * sampleRate;
+}
+
+double audioClockSamplesToPpq(const SampleCount samples, const Tempo tempo,
+                              const SampleRate sampleRate) {
+  // Musical time starts with 1, not 0
+  return (samples / _samplesPerBeat(tempo, sampleRate)) + 1.0;
+}
+
+SampleCount audioClockPpqToSamples(const double ppq, const Tempo tempo,
+                                   const SampleRate sampleRate) {
+  return _samplesPerBeat(tempo, sampleRate) * (ppq - 1.0);
+}
+
 void freeAudioClock(AudioClock self) {
   if (self != NULL) {
     free(self);
