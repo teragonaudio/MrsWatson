@@ -233,7 +233,25 @@ VstIntPtr VSTCALLBACK pluginVst2xHostCallback(AEffect *effect, VstInt32 opcode,
     }
 
     if (value & kVstClockValid) {
-      logUnsupportedFeature("Sample frames until next clock");
+      logUnsupportedFeature("audioMasterGetTime with kVstClockValid is still \
+experimental and not fully tested");
+      double ppq = vstTimeInfo.ppqPos;
+      const Tempo tempo = getTempo();
+      const SampleRate sampleRate = getSampleRate();
+      if (!(value & kVstPpqPosValid)) {
+        ppq =
+            audioClockSamplesToPpq(audioClock->currentFrame, tempo, sampleRate);
+      }
+
+      const double mantissa = ppq - floor(ppq);
+      const double midiPulses = mantissa * 24.0;
+      const double midiPulsePercent = midiPulses - floor(midiPulses);
+      const double pulses = midiPulsePercent * (1.0 / 24.0);
+      const SampleCount samples =
+          audioClockPpqToSamples(pulses, tempo, sampleRate);
+
+      vstTimeInfo.samplesToNextClock = (VstInt32)samples * -1;
+      vstTimeInfo.flags |= kVstClockValid;
     }
 
     result = (VstIntPtr)&vstTimeInfo;
