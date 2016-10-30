@@ -173,6 +173,13 @@ elseif(UNIX)
       "-framework Foundation"
     )
 
+    if(${CMAKE_GENERATOR} MATCHES "Xcode")
+      set(mw_LINKER_FLAGS_LIST
+        ${mw_LINKER_FLAGS_LIST}
+        "-stdlib=libstdc++"
+      )
+    endif()
+
     add_definitions("-DMACOSX=1")
     # Homebrew places installed libraries in /usr/local, but no major
     # Linux distro does that anymore (last time I checked...)
