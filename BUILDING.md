@@ -24,6 +24,7 @@ these arguments must be prefixed with `-D` to CMake, eg `-DOPTION_NAME=ON`.
 * `WITH_AUDIOFILE`: Use libaudiofile for reading/writing audio files (default:
   `ON`)
 * `WITH_FLAC`: Support for FLAC files (requires libaudiofile, default: `OFF`)
+* `VERBOSE`: Show extra build information (default: `OFF`)
 
 
 Mac OSX
