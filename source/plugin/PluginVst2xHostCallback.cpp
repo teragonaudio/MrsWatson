@@ -203,13 +203,15 @@ VstIntPtr VSTCALLBACK pluginVst2xHostCallback(AEffect *effect, VstInt32 opcode,
     }
 
     if (value & kVstBarsValid) {
+      double ppq = vstTimeInfo.ppqPos;
       if (!(value & kVstPpqPosValid)) {
-        logError("Plugin requested position in bars, but not PPQ");
+        ppq = audioClockSamplesToPpq(audioClock->currentFrame, getTempo(),
+                                     getSampleRate());
       }
 
       // TODO: Move calculations to AudioClock
       double currentBarPos =
-          floor(vstTimeInfo.ppqPos / (double)getTimeSignatureBeatsPerMeasure());
+          floor(ppq / (double)getTimeSignatureBeatsPerMeasure());
       vstTimeInfo.barStartPos =
           currentBarPos * (double)getTimeSignatureBeatsPerMeasure() + 1.0;
       logDebug("Current bar is %g", vstTimeInfo.barStartPos);
