@@ -290,10 +290,11 @@ static boolByte _readMidiFileTrack(FILE *midiFile, const int trackNumber,
 }
 
 static boolByte _readMidiEventsFile(void *midiSourcePtr,
-                                    MidiSequence *midiSequence) {
+                                    MidiSequence *midiSequence,
+                                    const unsigned short midiTrack) {
   MidiSource midiSource = (MidiSource)midiSourcePtr;
   MidiSourceFileData extraData = (MidiSourceFileData)(midiSource->extraData);
-  unsigned short formatType, numTracks, midiTrack, timeDivision = 0;
+  unsigned short formatType, numTracks, timeDivision = 0;
   int track;
 
   if (!_readMidiFileHeader(extraData->fileHandle, &formatType, &numTracks,
@@ -304,22 +305,27 @@ static boolByte _readMidiEventsFile(void *midiSourcePtr,
   switch (formatType) {
   case 0:
     if (numTracks != 1) {
-      logError("MIDI file '%s' is of type 0, but contains %d tracks",
+      logError("Invalid MIDI file '%s' is of type 0, but has %d tracks",
                midiSource->sourceName->data, numTracks);
       return false;
-    } else {
-      midiTrack = 0;
+    } else if (midiTrack > 0) {
+      logError("MIDI file '%s' is of type 0, but requested to read track %d",
+               midiSource->sourceName->data, midiTrack);
+      return false;
     }
     break;
   case 1:
-    // TODO: Option for selecting MIDI track
-    midiTrack = 0;
+    if (midiTrack >= numTracks) {
+      logError("Cannot read track %d from MIDI file '%s', which has %d tracks",
+               midiTrack, midiSource->sourceName->data, numTracks);
+      return false;
+    }
     break;
   case 2:
     logUnsupportedFeature("MIDI files of type 2");
     return false;
   default:
-    logError("MIDI file has invalid type '%d'", formatType);
+    logError("MIDI file is of invalid type %d", formatType);
     return false;
   }
 
