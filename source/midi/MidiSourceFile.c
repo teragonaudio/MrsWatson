@@ -410,6 +410,7 @@ static boolByte _readMidiEventsFile(void *midiSourcePtr,
 
   for (track = 0; track < numTracks; track++) {
     MidiSequence readSequence = newMidiSequence();
+    logDebug("Reading MIDI track %d", track);
     if (!_readMidiFileTrack(extraData->fileHandle, track, timeDivision,
                             extraData->divisionType, readSequence)) {
       return false;
