@@ -7,6 +7,12 @@ execute_process(COMMAND
   OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 
+function(add_dummy_package_target wordsize)
+  add_custom_target(build_package_${wordsize}
+    COMMAND ${CMAKE_COMMAND} -E echo "Skipping package for ${wordsize}-bit"
+  )
+endfunction()
+
 function(add_package_target platform wordsize)
   set(pkg_NAME "MrsWatson-${mw_VERSION}-${platform}-${wordsize}bit")
   set(pkg_DIR "${CMAKE_BINARY_DIR}/${pkg_NAME}")
@@ -52,7 +58,9 @@ elseif(APPLE)
 elseif(MSVC)
   if(mw_BUILD_32)
     add_package_target("Win" 32 "mrswatson")
+    add_dummy_package_target(64)
   else()
     add_package_target("Win" 64 "mrswatson64")
+    add_dummy_package_target(32)
   endif()
 endif()
