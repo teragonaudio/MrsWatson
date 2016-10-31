@@ -32,9 +32,7 @@ function(add_package_target platform wordsize)
     COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_SOURCE_DIR}/README.md" "${pkg_DIR}/README.txt"
 
     COMMAND ${CMAKE_COMMAND} -E echo "Copying executables"
-    # TODO: What's the actual output directory?
-    #COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_BINARY_DIR}/main/Release/${mw_exe_name}" "${pkg_DIR}"
-    COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_BINARY_DIR}/main/${mw_exe_name}" "${pkg_DIR}"
+    COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_BINARY_DIR}/main/${CMAKE_BUILD_TYPE}/${mw_exe_name}" "${pkg_DIR}"
 
     COMMAND ${CMAKE_COMMAND} -E echo "Creating zipfile"
     COMMAND ${CMAKE_COMMAND} -E tar "cvf" "${CMAKE_BINARY_DIR}/${pkg_NAME}.zip" --format=zip "${pkg_DIR}"
