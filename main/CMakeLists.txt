@@ -12,7 +12,9 @@ function(add_main_target wordsize)
   endif()
 
   add_executable(${main_target_NAME} ${main_SOURCES})
-  target_link_libraries(${main_target_NAME} mrswatsoncore${wordsize})
+  target_link_libraries(${main_target_NAME}
+    mrswatsoncore${wordsize}-static
+  )
 
   if(WITH_AUDIOFILE)
     target_link_libraries(${main_target_NAME} audiofile${wordsize})

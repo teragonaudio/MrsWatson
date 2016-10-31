@@ -157,11 +157,24 @@ endif()
 ##########
 
 function(add_core_target wordsize)
-  add_library(mrswatsoncore${wordsize} STATIC
+  add_library(mrswatsoncore${wordsize}-static STATIC
     ${core_SOURCES}
     ${core_PLATFORM_SOURCES}
     ${core_HEADERS}
   )
+  configure_target(mrswatsoncore${wordsize}-static ${wordsize})
+
+  add_library(mrswatsoncore${wordsize} SHARED
+    ${core_SOURCES}
+    ${core_PLATFORM_SOURCES}
+    ${core_HEADERS}
+  )
+  if(WITH_AUDIOFILE)
+    target_link_libraries(mrswatsoncore${wordsize} audiofile${wordsize})
+    if(WITH_FLAC)
+      target_link_libraries(mrswatsoncore${wordsize} flac${wordsize})
+    endif()
+  endif()
   configure_target(mrswatsoncore${wordsize} ${wordsize})
 endfunction()
 
