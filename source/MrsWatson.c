@@ -178,11 +178,7 @@ static ReturnCode setupMidiSource(MidiSource midiSource,
     }
 
     // Read in all events from the MIDI source
-    // TODO: This will not work if we want to support streaming MIDI events (ie,
-    // from a pipe)
-    *outSequence = newMidiSequence();
-
-    if (!midiSource->readMidiEvents(midiSource, *outSequence)) {
+    if (!midiSource->readMidiEvents(midiSource, outSequence)) {
       logWarn("Failed reading MIDI events from source '%s'",
               midiSource->sourceName->data);
       return RETURN_CODE_IO_ERROR;

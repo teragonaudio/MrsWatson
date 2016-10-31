@@ -290,10 +290,10 @@ static boolByte _readMidiFileTrack(FILE *midiFile, const int trackNumber,
 }
 
 static boolByte _readMidiEventsFile(void *midiSourcePtr,
-                                    MidiSequence midiSequence) {
+                                    MidiSequence *midiSequence) {
   MidiSource midiSource = (MidiSource)midiSourcePtr;
   MidiSourceFileData extraData = (MidiSourceFileData)(midiSource->extraData);
-  unsigned short formatType, numTracks, timeDivision = 0;
+  unsigned short formatType, numTracks, midiTrack, timeDivision = 0;
   int track;
 
   if (!_readMidiFileHeader(extraData->fileHandle, &formatType, &numTracks,
@@ -301,12 +301,25 @@ static boolByte _readMidiEventsFile(void *midiSourcePtr,
     return false;
   }
 
-  if (formatType != 0) {
-    logUnsupportedFeature("MIDI file types other than 0");
+  switch (formatType) {
+  case 0:
+    if (numTracks != 1) {
+      logError("MIDI file '%s' is of type 0, but contains %d tracks",
+               midiSource->sourceName->data, numTracks);
+      return false;
+    } else {
+      midiTrack = 0;
+    }
+    break;
+  case 1:
+    // TODO: Option for selecting MIDI track
+    midiTrack = 0;
+    break;
+  case 2:
+    logUnsupportedFeature("MIDI files of type 2");
     return false;
-  } else if (formatType == 0 && numTracks != 1) {
-    logError("MIDI file '%s' is of type 0, but contains %d tracks",
-             midiSource->sourceName->data, numTracks);
+  default:
+    logError("MIDI file has invalid type '%d'", formatType);
     return false;
   }
 
@@ -324,13 +337,21 @@ static boolByte _readMidiEventsFile(void *midiSourcePtr,
       formatType, numTracks, timeDivision, extraData->divisionType);
 
   for (track = 0; track < numTracks; track++) {
+    MidiSequence readSequence = newMidiSequence();
     if (!_readMidiFileTrack(extraData->fileHandle, track, timeDivision,
-                            extraData->divisionType, midiSequence)) {
+                            extraData->divisionType, readSequence)) {
       return false;
+    } else {
+      if (track == midiTrack) {
+        *midiSequence = readSequence;
+        return true;
+      } else {
+        freeMidiSequence(readSequence);
+      }
     }
   }
 
-  return true;
+  return false;
 }
 
 static void _freeMidiEventsFile(void *midiSourceDataPtr) {
