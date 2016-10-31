@@ -24,11 +24,15 @@ fi
 rm -rf build
 mkdir build
 (cd build
-  CC=$C_COMPILER CXX=$CXX_COMPILER cmake -G Ninja -D CMAKE_BUILD_TYPE=$CONFIGURATION .. && \
-  cmake --build . && \
+  CC=$C_COMPILER CXX=$CXX_COMPILER \
+  cmake -G Ninja -D CMAKE_BUILD_TYPE=$CONFIGURATION .. && \
+  cmake --build . --config $CONFIGURATION && \
   echo "Running 32-bit tests" && \
   ./test/mrswatsontest -r ../vendor/AudioTestData -m ./main/mrswatson && \
   echo "Running 64-bit tests" && \
   ./test/mrswatsontest64 -r ../vendor/AudioTestData -m ./main/mrswatson64 && \
+  echo "Creating distribution package" && \
+  cmake --build . --config $CONFIGURATION --target build_package_32 && \
+  cmake --build . --config $CONFIGURATION --target build_package_64 && \
   echo
 )
