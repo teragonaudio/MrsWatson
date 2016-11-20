@@ -31,8 +31,10 @@ build_script:
   - if exist build (rd /s /q build)
   - mkdir build
   - cd build
-  - cmake -D CMAKE_BUILD_TYPE=%CONFIGURATION% -G "%GENERATOR%" ..
+  - cmake -D VERBOSE=ON -D CMAKE_BUILD_TYPE=%CONFIGURATION% -G "%GENERATOR%" ..
   - cmake --build . --config %CONFIGURATION%
+  - cmake --build . --config %CONFIGURATION% --target build_package_32
+  - cmake --build . --config %CONFIGURATION% --target build_package_64
 
 test_script:
   - cd ..

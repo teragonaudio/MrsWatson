@@ -1,10 +1,6 @@
 cmake_minimum_required(VERSION 3.0)
 project(MrsWatson)
 
-set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
-set(cmake_SCRIPTS_DIR ${CMAKE_SOURCE_DIR}/cmake)
-include_directories(${CMAKE_SOURCE_DIR}/source)
-
 #################
 # Build options #
 #################
@@ -13,6 +9,7 @@ option(WITH_AUDIOFILE "Use libaudiofile for reading/writing audio files" ON)
 option(WITH_FLAC "Support for FLAC files (requires libaudiofile)" OFF)
 option(WITH_VST_SDK "Manually specify VST SDK zipfile" "")
 option(VERBOSE "Show extra build information" OFF)
+option(VERSION "Set version number when building distribution package" OFF)
 
 
 if(WITH_AUDIOFILE)
@@ -24,6 +21,18 @@ if(WITH_FLAC)
     message(FATAL_ERROR "FLAC support requires WITH_AUDIOFILE")
   endif()
   add_definitions(-DUSE_FLAC=1)
+endif()
+
+if(VERSION)
+  set(mw_VERSION "${VERSION}")
+else()
+  execute_process(COMMAND
+    git describe --abbrev=0 --tags
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    OUTPUT_VARIABLE git_VERSION
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+  )
+  set(mw_VERSION "${git_VERSION}")
 endif()
 
 ############
@@ -127,7 +136,7 @@ elseif(UNIX)
   )
 
     # Clang-specific flags
-  if(${CMAKE_CXX_COMPILER_ID} STREQUAL Clang)
+  if(${CMAKE_CXX_COMPILER_ID} MATCHES Clang)
     set(mw_COMMON_FLAGS_LIST
       ${mw_COMMON_FLAGS_LIST}
       "-Wunused-const-variable"
@@ -210,12 +219,23 @@ endif()
 # Subdirectories #
 ##################
 
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+include_directories(${CMAKE_SOURCE_DIR}/source)
+
+set(mw_cmake_scripts_DIR ${PROJECT_SOURCE_DIR}/cmake)
+
 # The vendor subdirectory must be defined first, since it sets some variables
 # that are referenced by CMake scripts in the other directories
 add_subdirectory(vendor)
 add_subdirectory(source)
 add_subdirectory(main)
 add_subdirectory(test)
+
+#############
+# Packaging #
+#############
+
+include(${mw_cmake_scripts_DIR}/BuildPackage.cmake)
 
 #################
 # Build summary #
@@ -248,4 +268,5 @@ if(VERBOSE)
   message(STATUS "Options")
   message("   WITH_AUDIOFILE: ${WITH_AUDIOFILE}")
   message("   WITH_FLAC: ${WITH_FLAC}")
+  message(STATUS "Package version: ${mw_VERSION}")
 endif()

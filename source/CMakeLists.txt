@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.0)
 project(MrsWatsonCore)
 
-include(${cmake_SCRIPTS_DIR}/ConfigureTarget.cmake)
+include(${mw_cmake_scripts_DIR}/ConfigureTarget.cmake)
 
 ###########
 # Sources #
