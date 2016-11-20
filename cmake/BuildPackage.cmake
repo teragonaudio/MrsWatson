@@ -1,12 +1,5 @@
 cmake_minimum_required(VERSION 3.2)
 
-execute_process(COMMAND
-  git describe --abbrev=0 --tags
-  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-  OUTPUT_VARIABLE mw_VERSION
-  OUTPUT_STRIP_TRAILING_WHITESPACE
-)
-
 function(add_dummy_package_target wordsize)
   add_custom_target(build_package_${wordsize}
     COMMAND ${CMAKE_COMMAND} -E echo "Skipping package for ${wordsize}-bit"
