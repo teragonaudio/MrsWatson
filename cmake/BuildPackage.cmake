@@ -29,22 +29,43 @@ function(add_package_target platform wordsize)
     set(mw_config_dir "${CMAKE_BUILD_TYPE}")
   endif()
 
-  add_custom_target(build_package_${wordsize}
-    COMMAND ${CMAKE_COMMAND} -E echo "Creating directories"
-    COMMAND ${CMAKE_COMMAND} -E make_directory "${pkg_DIR}"
+  if(CMAKE_VERSION VERSION_LESS 3.5)
+    # Older versions of CMake lack the --format=zip argument to tar, so create a zipfile
+    # with the external command-line tool
+    add_custom_target(build_package_${wordsize}
+      COMMAND ${CMAKE_COMMAND} -E echo "Creating directories"
+      COMMAND ${CMAKE_COMMAND} -E make_directory "${pkg_DIR}"
 
-    COMMAND ${CMAKE_COMMAND} -E echo "Copying documentation"
-    COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_SOURCE_DIR}/LICENSE.txt" "${pkg_DIR}"
-    COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_SOURCE_DIR}/README.md" "${pkg_DIR}/README.txt"
+      COMMAND ${CMAKE_COMMAND} -E echo "Copying documentation"
+      COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_SOURCE_DIR}/LICENSE.txt" "${pkg_DIR}"
+      COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_SOURCE_DIR}/README.md" "${pkg_DIR}/README.txt"
 
-    COMMAND ${CMAKE_COMMAND} -E echo "Copying executables"
-    COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_BINARY_DIR}/main/${mw_config_dir}/${mw_exe_name}" "${pkg_DIR}"
+      COMMAND ${CMAKE_COMMAND} -E echo "Copying executables"
+      COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_BINARY_DIR}/main/${mw_config_dir}/${mw_exe_name}" "${pkg_DIR}"
 
-    COMMAND ${CMAKE_COMMAND} -E echo "Creating zipfile"
-    COMMAND ${CMAKE_COMMAND} -E tar "cvf" "${CMAKE_BINARY_DIR}/${pkg_NAME}.zip" --format=zip "${pkg_DIR}"
+      COMMAND ${CMAKE_COMMAND} -E echo "Creating zipfile"
+      COMMAND "zip" "-r" "${CMAKE_BINARY_DIR}/${pkg_NAME}.zip" "${pkg_DIR}"
 
-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-  )
+      WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    )
+  else()
+    add_custom_target(build_package_${wordsize}
+      COMMAND ${CMAKE_COMMAND} -E echo "Creating directories"
+      COMMAND ${CMAKE_COMMAND} -E make_directory "${pkg_DIR}"
+
+      COMMAND ${CMAKE_COMMAND} -E echo "Copying documentation"
+      COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_SOURCE_DIR}/LICENSE.txt" "${pkg_DIR}"
+      COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_SOURCE_DIR}/README.md" "${pkg_DIR}/README.txt"
+
+      COMMAND ${CMAKE_COMMAND} -E echo "Copying executables"
+      COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_BINARY_DIR}/main/${mw_config_dir}/${mw_exe_name}" "${pkg_DIR}"
+
+      COMMAND ${CMAKE_COMMAND} -E echo "Creating zipfile"
+      COMMAND ${CMAKE_COMMAND} -E tar "cvf" "${CMAKE_BINARY_DIR}/${pkg_NAME}.zip" --format=zip "${pkg_DIR}"
+
+      WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    )
+  endif()
 
   add_dependencies(build_package_${wordsize} ${mw_target})
 endfunction()
