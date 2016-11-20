@@ -22,6 +22,13 @@ function(add_package_target platform wordsize)
     set(mw_exe_name "${mw_target}")
   endif()
 
+  # Ninja doesn't use configuration-specific subdirectories
+  if(${CMAKE_GENERATOR} MATCHES "Ninja")
+    set(mw_config_dir "")
+  else()
+    set(mw_config_dir "${CMAKE_BUILD_TYPE}")
+  endif()
+
   add_custom_target(build_package_${wordsize}
     COMMAND ${CMAKE_COMMAND} -E echo "Creating directories"
     COMMAND ${CMAKE_COMMAND} -E make_directory "${pkg_DIR}"
@@ -31,7 +38,7 @@ function(add_package_target platform wordsize)
     COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_SOURCE_DIR}/README.md" "${pkg_DIR}/README.txt"
 
     COMMAND ${CMAKE_COMMAND} -E echo "Copying executables"
-    COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_BINARY_DIR}/main/${CMAKE_BUILD_TYPE}/${mw_exe_name}" "${pkg_DIR}"
+    COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_BINARY_DIR}/main/${mw_config_dir}/${mw_exe_name}" "${pkg_DIR}"
 
     COMMAND ${CMAKE_COMMAND} -E echo "Creating zipfile"
     COMMAND ${CMAKE_COMMAND} -E tar "cvf" "${CMAKE_BINARY_DIR}/${pkg_NAME}.zip" --format=zip "${pkg_DIR}"
