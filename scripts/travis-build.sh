@@ -21,11 +21,14 @@ if [ "$CONFIGURATION" = "Formatting" ]; then
   exit $ERRORS_FOUND
 fi
 
+git fetch --tags
+VERSION=$(git tag -l | sort -r -n -t. -k1,1 -k2,2 -k3,3 -k4,4 | head -1)
+
 rm -rf build
 mkdir build
 (cd build
   CC=$C_COMPILER CXX=$CXX_COMPILER \
-  cmake -G Ninja -D CMAKE_BUILD_TYPE=$CONFIGURATION .. && \
+  cmake -G Ninja -DCMAKE_BUILD_TYPE=$CONFIGURATION -DVERBOSE=ON -DVERSION=$VERSION .. && \
   cmake --build . --config $CONFIGURATION && \
   echo "Running 32-bit tests" && \
   ./test/mrswatsontest -r ../vendor/AudioTestData -m ./main/mrswatson && \
