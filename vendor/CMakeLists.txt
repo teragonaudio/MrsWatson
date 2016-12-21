@@ -374,7 +374,7 @@ endif()
 # it to the build products directory.
 
 set(vst_web_ROOT "http://www.steinberg.net/sdk_downloads")
-set(vst_web_FILE "vstsdk366_21_06_2016_build_58.zip")
+set(vst_web_FILE "vstsdk366_27_06_2016_build_61.zip")
 set(vst_sdk_URL "${vst_web_ROOT}/${vst_web_FILE}")
 set(vst_sdk_ZIP "${CMAKE_BINARY_DIR}/vstsdk.zip")
 set(vst_sdk_ROOT "${CMAKE_BINARY_DIR}/VST3 SDK")
