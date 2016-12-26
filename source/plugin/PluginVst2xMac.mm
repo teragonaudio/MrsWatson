@@ -138,7 +138,9 @@ extern "C" {
 
     void showVst2xEditor(AEffect* effect, const CharString pluginName, PluginWindowSize *rect);
     void showVst2xEditor(AEffect* effect, const CharString pluginName, PluginWindowSize *rect) {
-#if PLATFORM_BITS == 64
+#if PLATFORM_BITS == 32
+        logUnsupportedFeature("Showing plugin editor on 32-bit Mac OS X");
+#else //when in doubt, just try and display the GUI editor
         NSRect frame;
         NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
         [NSApplication sharedApplication];
@@ -176,8 +178,6 @@ extern "C" {
         [NSApp run];
         logDebug("App runloop stopped");
         [pool release];
- #else
-        logUnsupportedFeature("Showing plugin editor on 32-bit Mac OS X");
  #endif
     }
 
