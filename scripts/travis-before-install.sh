@@ -5,7 +5,7 @@ TRAVIS_OS_NAME=$1
 case $TRAVIS_OS_NAME in
   osx)
     brew update
-    brew install cmake ninja libzip
+    brew install ninja libzip
     ;;
   linux)
     sudo dpkg --add-architecture i386
