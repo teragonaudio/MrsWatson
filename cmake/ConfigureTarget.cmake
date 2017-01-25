@@ -26,4 +26,6 @@ function(configure_target target wordsize)
       set_target_properties(${target} PROPERTIES COMPILE_FLAGS "/DWIN64=1")
     endif()
   endif()
+
+  target_compile_definitions(${target} PUBLIC PLATFORM_BITS=${wordsize})
 endfunction()
