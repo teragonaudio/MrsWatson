@@ -109,7 +109,7 @@ extern void showVst2xEditor(AEffect *effect, const CharString pluginName,
 // Bah, this stuff doesn't build so well for 32-bit Linux on a 64-bit
 // machine. Since most people in the Linux audio community have been able to
 // move to 64-bit, this feature is unavailable on 32-bit Linux.
-#if PLATFORM_BITS == 64
+#if defined(WITH_GUI) && PLATFORM_BITS == 64
   Display *display;
   Window window;
   XEvent event;
@@ -161,7 +161,7 @@ extern void showVst2xEditor(AEffect *effect, const CharString pluginName,
   XDestroyWindow(display, window);
   XCloseDisplay(display);
 #else
-  logUnsupportedFeature("Show plugin editor on 32-bit OS");
+  logUnsupportedFeature("Showing plugin editor window");
 #endif
 }
 

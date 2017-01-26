@@ -12,6 +12,10 @@ function(configure_target target wordsize)
     endif()
     target_link_libraries(${target} dl)
 
+    if(WITH_GUI)
+      target_link_libraries(${target} x11)
+    endif()
+
   elseif(APPLE)
     if(${wordsize} EQUAL 32)
       set_target_properties(${target} PROPERTIES OSX_ARCHITECTURES "i386")
