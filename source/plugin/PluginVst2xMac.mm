@@ -138,7 +138,7 @@ extern "C" {
 
     void showVst2xEditor(AEffect* effect, const CharString pluginName, PluginWindowSize *rect);
     void showVst2xEditor(AEffect* effect, const CharString pluginName, PluginWindowSize *rect) {
-#if PLATFORM_BITS == 64
+#if defined(WITH_GUI) && PLATFORM_BITS == 64
         NSRect frame;
         NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
         [NSApplication sharedApplication];
@@ -151,10 +151,12 @@ extern "C" {
         frame.origin.y = (mainScreenRect.size.height - rect->height) / 2;
         frame.size.width = rect->width;
         frame.size.height = rect->height;
+        /*
         NSUInteger windowStyleMask = NSTitledWindowMask |
                 NSResizableWindowMask |
                 NSClosableWindowMask |
                 NSMiniaturizableWindowMask;
+        */
         NSWindow *window  = [[[NSWindow alloc] initWithContentRect:frame
                                                          styleMask:NSBackingStoreBuffered
                                                            backing:NSBackingStoreBuffered
@@ -177,7 +179,7 @@ extern "C" {
         logDebug("App runloop stopped");
         [pool release];
  #else
-        logUnsupportedFeature("Showing plugin editor on 32-bit Mac OS X");
+        logUnsupportedFeature("Showing plugin editor window");
  #endif
     }
 

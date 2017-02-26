@@ -1,16 +1,16 @@
 cmake_minimum_required(VERSION 3.0)
 project(MrsWatson)
 
-set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
-set(cmake_SCRIPTS_DIR ${CMAKE_SOURCE_DIR}/cmake)
-include_directories(${CMAKE_SOURCE_DIR}/source)
-
 #################
 # Build options #
 #################
 
-option(WITH_AUDIOFILE "Use libaudiofile for reading/writing files" ON)
+option(WITH_AUDIOFILE "Use libaudiofile for reading/writing audio files" ON)
 option(WITH_FLAC "Support for FLAC files (requires libaudiofile)" OFF)
+option(WITH_GUI "Support for showing VST GUI windows (experimental)" OFF)
+option(WITH_VST_SDK "Manually specify VST SDK zipfile" "")
+option(VERBOSE "Show extra build information" OFF)
+option(VERSION "Set version number when building distribution package" OFF)
 
 
 if(WITH_AUDIOFILE)
@@ -22,6 +22,22 @@ if(WITH_FLAC)
     message(FATAL_ERROR "FLAC support requires WITH_AUDIOFILE")
   endif()
   add_definitions(-DUSE_FLAC=1)
+endif()
+
+if(WITH_GUI)
+  add_definitions(-DWITH_GUI=1)
+endif()
+
+if(VERSION)
+  set(mw_VERSION "${VERSION}")
+else()
+  execute_process(COMMAND
+    git describe --abbrev=0 --tags
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    OUTPUT_VARIABLE git_VERSION
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+  )
+  set(mw_VERSION "${git_VERSION}")
 endif()
 
 ############
@@ -125,7 +141,7 @@ elseif(UNIX)
   )
 
     # Clang-specific flags
-  if(${CMAKE_CXX_COMPILER_ID} STREQUAL Clang)
+  if(${CMAKE_CXX_COMPILER_ID} MATCHES Clang)
     set(mw_COMMON_FLAGS_LIST
       ${mw_COMMON_FLAGS_LIST}
       "-Wunused-const-variable"
@@ -173,6 +189,13 @@ elseif(UNIX)
       "-framework Foundation"
     )
 
+    if(${CMAKE_GENERATOR} MATCHES "Xcode")
+      set(mw_LINKER_FLAGS_LIST
+        ${mw_LINKER_FLAGS_LIST}
+        "-stdlib=libstdc++"
+      )
+    endif()
+
     add_definitions("-DMACOSX=1")
     # Homebrew places installed libraries in /usr/local, but no major
     # Linux distro does that anymore (last time I checked...)
@@ -201,6 +224,11 @@ endif()
 # Subdirectories #
 ##################
 
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+include_directories(${CMAKE_SOURCE_DIR}/source)
+
+set(mw_cmake_scripts_DIR ${PROJECT_SOURCE_DIR}/cmake)
+
 # The vendor subdirectory must be defined first, since it sets some variables
 # that are referenced by CMake scripts in the other directories
 add_subdirectory(vendor)
@@ -208,33 +236,43 @@ add_subdirectory(source)
 add_subdirectory(main)
 add_subdirectory(test)
 
+#############
+# Packaging #
+#############
+
+include(${mw_cmake_scripts_DIR}/BuildPackage.cmake)
+
 #################
 # Build summary #
 #################
 
-message(STATUS "Build configuration")
-get_directory_property(preprocessor_flags COMPILE_DEFINITIONS)
-message("   Preprocessor flags: ${preprocessor_flags}")
-message("   C Compiler: ${CMAKE_C_COMPILER}")
-message("   C Compiler flags: ${CMAKE_C_FLAGS}")
-message("   C Compiler flags (Debug): ${CMAKE_C_FLAGS_DEBUG}")
-message("   C Compiler flags (Release): ${CMAKE_C_FLAGS_RELEASE}")
-message("   C++ Compiler: ${CMAKE_CXX_COMPILER}")
-message("   C++ Compiler flags: ${CMAKE_CXX_FLAGS}")
-message("   C++ Compiler flags (Debug): ${CMAKE_CXX_FLAGS_DEBUG}")
-message("   C++ Compiler flags (Release): ${CMAKE_CXX_FLAGS_RELEASE}")
-message("   Linker: ${CMAKE_LINKER}")
-message("   Linker flags: ${CMAKE_SHARED_LINKER_FLAGS}")
-message("   Linker flags (Debug): ${CMAKE_SHARED_LINKER_FLAGS_DEBUG}")
-message("   Linker flags (Release): ${CMAKE_SHARED_LINKER_FLAGS_RELEASE}")
-if(CMAKE_BUILD_TYPE)
-  message("   Build type: ${CMAKE_BUILD_TYPE}")
-else()
-  message("   Build type: Set by IDE")
+if(VERBOSE)
+  message(STATUS "Build configuration")
+  get_directory_property(preprocessor_flags COMPILE_DEFINITIONS)
+  message("   Preprocessor flags: ${preprocessor_flags}")
+  message("   C Compiler: ${CMAKE_C_COMPILER}")
+  message("   C Compiler flags: ${CMAKE_C_FLAGS}")
+  message("   C Compiler flags (Debug): ${CMAKE_C_FLAGS_DEBUG}")
+  message("   C Compiler flags (Release): ${CMAKE_C_FLAGS_RELEASE}")
+  message("   C++ Compiler: ${CMAKE_CXX_COMPILER}")
+  message("   C++ Compiler flags: ${CMAKE_CXX_FLAGS}")
+  message("   C++ Compiler flags (Debug): ${CMAKE_CXX_FLAGS_DEBUG}")
+  message("   C++ Compiler flags (Release): ${CMAKE_CXX_FLAGS_RELEASE}")
+  message("   Linker: ${CMAKE_LINKER}")
+  message("   Linker flags: ${CMAKE_SHARED_LINKER_FLAGS}")
+  message("   Linker flags (Debug): ${CMAKE_SHARED_LINKER_FLAGS_DEBUG}")
+  message("   Linker flags (Release): ${CMAKE_SHARED_LINKER_FLAGS_RELEASE}")
+  if(CMAKE_BUILD_TYPE)
+    message("   Build type: ${CMAKE_BUILD_TYPE}")
+  else()
+    message("   Build type: Set by IDE")
+  endif()
+  message("   Build 32-bit binary: ${mw_BUILD_32}")
+  message("   Build 64-bit binary: ${mw_BUILD_64}")
+  message("   Platform name: ${mw_PLATFORM_NAME}")
+  message(STATUS "Options")
+  message("   WITH_AUDIOFILE: ${WITH_AUDIOFILE}")
+  message("   WITH_FLAC: ${WITH_FLAC}")
+  message("   WITH_GUI: ${WITH_GUI}")
+  message(STATUS "Package version: ${mw_VERSION}")
 endif()
-message("   Build 32-bit binary: ${mw_BUILD_32}")
-message("   Build 64-bit binary: ${mw_BUILD_64}")
-message("   Platform name: ${mw_PLATFORM_NAME}")
-message(STATUS "Options")
-message("   WITH_AUDIOFILE: ${WITH_AUDIOFILE}")
-message("   WITH_FLAC: ${WITH_FLAC}")

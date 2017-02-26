@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.0)
 project(MrsWatsonVendor)
 
-include(${cmake_SCRIPTS_DIR}/ConfigureTarget.cmake)
+include(${mw_cmake_scripts_DIR}/ConfigureTarget.cmake)
 
 ######################
 # Updating Libraries #
@@ -192,9 +192,8 @@ if(WITH_AUDIOFILE)
       )
     endif()
 
-    # Remove some compiler flags for warnings that we don't want to fix
     if(${CMAKE_CXX_COMPILER_ID} MATCHES Clang)
-      set(audiofile_REMOVE_FLAGS
+      set(audiofile_IGNORE_FLAGS
         -Wno-missing-field-initializers
         -Wno-multichar
         -Wno-shadow
@@ -204,7 +203,7 @@ if(WITH_AUDIOFILE)
         -Wno-unused-const-variable
       )
     elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL GNU)
-      set(audiofile_REMOVE_FLAGS
+      set(audiofile_IGNORE_FLAGS
         -Wno-missing-field-initializers
         -Wno-multichar
         -Wno-shadow
@@ -212,12 +211,14 @@ if(WITH_AUDIOFILE)
         -Wno-switch-default
       )
     elseif(MSVC)
-      set(audiofile_REMOVE_FLAGS
+      set(audiofile_IGNORE_FLAGS
         /wd4244
       )
     endif()
 
-    target_compile_options(audiofile${wordsize} PUBLIC ${audiofile_REMOVE_FLAGS})
+    target_compile_options(audiofile${wordsize} PUBLIC
+      ${audiofile_IGNORE_FLAGS}
+    )
     configure_target(audiofile${wordsize} ${wordsize})
   endfunction()
 
@@ -334,21 +335,20 @@ if(WITH_FLAC)
       ${flac_SRC_DIR}/libFLAC/include
     )
 
-    # Remove some compiler flags for warnings that we don't want to fix
     if(${CMAKE_CXX_COMPILER_ID} STREQUAL Clang)
-      set(flac_REMOVE_FLAGS
+      set(flac_IGNORE_FLAGS
         -Wno-switch-default
         -Wno-unused-const-variable
       )
     elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL GNU)
-      set(flac_REMOVE_FLAGS
+      set(flac_IGNORE_FLAGS
         -Wno-switch-default
       )
     elseif(MSVC)
-      set(flac_REMOVE_FLAGS)
+      set(flac_IGNORE_FLAGS)
     endif()
 
-    target_compile_options(flac${wordsize} PUBLIC ${flac_REMOVE_FLAGS})
+    target_compile_options(flac${wordsize} PUBLIC ${flac_IGNORE_FLAGS})
     set_target_properties(flac${wordsize} PROPERTIES
       COMPILE_DEFINITIONS "HAVE_CONFIG_H=1"
     )
@@ -374,14 +374,20 @@ endif()
 # it to the build products directory.
 
 set(vst_web_ROOT "http://www.steinberg.net/sdk_downloads")
-set(vst_web_FILE "vstsdk366_21_06_2016_build_58.zip")
+set(vst_web_FILE "vstsdk366_27_06_2016_build_61.zip")
 set(vst_sdk_URL "${vst_web_ROOT}/${vst_web_FILE}")
 set(vst_sdk_ZIP "${CMAKE_BINARY_DIR}/vstsdk.zip")
 set(vst_sdk_ROOT "${CMAKE_BINARY_DIR}/VST3 SDK")
 
 if(NOT EXISTS ${vst_sdk_ROOT})
-  message(STATUS "Downloading VST SDK")
-  file(DOWNLOAD ${vst_sdk_URL} "${vst_sdk_ZIP}")
+  if(WITH_VST_SDK)
+    message(STATUS "Using VST SDK from ${WITH_VST_SDK}")
+    file(COPY "${WITH_VST_SDK}" DESTINATION "${CMAKE_BINARY_DIR}")
+  else()
+    message(STATUS "Downloading VST SDK")
+    file(DOWNLOAD ${vst_sdk_URL} "${vst_sdk_ZIP}")
+  endif()
+
   message(STATUS "Extracting VST SDK")
   execute_process(COMMAND
     ${CMAKE_COMMAND} -E tar "xf" ${vst_sdk_ZIP}
