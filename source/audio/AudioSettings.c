@@ -116,7 +116,7 @@ boolByte setTempo(const Tempo tempo) {
     return false;
   }
 
-  logInfo("Setting tempo to %d", tempo);
+  logInfo("Setting tempo to %f", tempo);
   _getAudioSettings()->tempo = tempo;
   return true;
 }
