@@ -48,6 +48,7 @@ endif()
 if(WITH_AUDIOFILE)
   set(audiofile_SOURCES
     ${audiofile_SRC_DIR}/aes.cpp
+    ${audiofile_SRC_DIR}/af_UUID.cpp
     ${audiofile_SRC_DIR}/af_vfs.cpp
     ${audiofile_SRC_DIR}/AIFF.cpp
     ${audiofile_SRC_DIR}/alac/ag_dec.c
@@ -111,6 +112,7 @@ if(WITH_AUDIOFILE)
   )
 
   set(audiofile_HEADERS
+    ${audiofile_SRC_DIR}/af_UUID.h
     ${audiofile_SRC_DIR}/af_vfs.h
     ${audiofile_SRC_DIR}/afinternal.h
     ${audiofile_SRC_DIR}/AIFF.h
