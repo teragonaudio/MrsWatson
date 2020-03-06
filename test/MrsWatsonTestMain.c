@@ -319,7 +319,7 @@ int main(int argc, char *argv[]) {
     colon = strchr(testArgument, ':');
 
     if (colon == NULL) {
-      printf("ERROR: Invalid test name");
+      printf("ERROR: Invalid test name\n");
       programOptionPrintHelp(programOptions->options[OPTION_TEST_NAME], true,
                              DEFAULT_INDENT_SIZE, 0);
       freeProgramOptions(programOptions);
