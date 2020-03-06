@@ -51,6 +51,31 @@ static const char *MRSWATSON_EXE_NAME = "mrswatson.exe";
 static const char *MRSWATSON_EXE_NAME = "mrswatson";
 #endif
 
+static boolByte _assertResourcePath(const File path,
+                                    const ProgramOptions programOptions) {
+  boolByte testRequired = false;
+
+  if (programOptions->options[OPTION_TEST_NAME]->enabled) {
+    if (strstr(programOptionsGetString(programOptions, OPTION_TEST_NAME)->data,
+               "Integration:")) {
+      testRequired = true;
+    }
+  } else if (programOptions->options[OPTION_TEST_SUITE]->enabled) {
+    testRequired = charStringIsEqualToCString(
+        programOptionsGetString(programOptions, OPTION_TEST_SUITE),
+        "Integration", true);
+  } else {
+    testRequired = true;
+  }
+
+  if (testRequired && !fileExists(path)) {
+    printf("ERROR: required resource path was not found\n");
+    return false;
+  }
+
+  return true;
+}
+
 static ProgramOptions _newTestProgramOptions(void) {
   ProgramOptions programOptions = newProgramOptions(NUM_TEST_OPTIONS);
   srand((unsigned int)time(NULL));
@@ -273,6 +298,20 @@ int main(int argc, char *argv[]) {
       programOptionsGetString(programOptions, OPTION_TEST_MRSWATSON_PATH));
   File resourcesPath = newFileWithPath(
       programOptionsGetString(programOptions, OPTION_TEST_RESOURCES_PATH));
+  if (!_assertResourcePath(mrsWatsonExePath, programOptions)) {
+    freeProgramOptions(programOptions);
+    freeFile(mrsWatsonExePath);
+    freeFile(resourcesPath);
+    freeTaskTimer(timer);
+    return -1;
+  }
+  if (!_assertResourcePath(resourcesPath, programOptions)) {
+    freeProgramOptions(programOptions);
+    freeFile(mrsWatsonExePath);
+    freeFile(resourcesPath);
+    freeTaskTimer(timer);
+    return -1;
+  }
 
   if (programOptions->options[OPTION_TEST_NAME]->enabled) {
     testArgument =
@@ -280,7 +319,7 @@ int main(int argc, char *argv[]) {
     colon = strchr(testArgument, ':');
 
     if (colon == NULL) {
-      printf("ERROR: Invalid test name");
+      printf("ERROR: Invalid test name\n");
       programOptionPrintHelp(programOptions->options[OPTION_TEST_NAME], true,
                              DEFAULT_INDENT_SIZE, 0);
       freeProgramOptions(programOptions);

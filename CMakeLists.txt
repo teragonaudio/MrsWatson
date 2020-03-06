@@ -61,8 +61,11 @@ endif()
 # Bitness (word size) #
 #######################
 
-if(UNIX)
+if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
   set(mw_BUILD_32 ON)
+  set(mw_BUILD_64 ON)
+elseif(APPLE)
+  set(mw_BUILD_32 OFF)
   set(mw_BUILD_64 ON)
 elseif(MSVC)
   if(CMAKE_SIZEOF_VOID_P EQUAL 8)
@@ -72,6 +75,8 @@ elseif(MSVC)
     set(mw_BUILD_32 ON)
     set(mw_BUILD_64 OFF)
   endif()
+else()
+  message(FATAL_ERROR "Unknown or unsupported platform")
 endif()
 
 ###############

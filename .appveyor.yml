@@ -2,19 +2,10 @@ branches:
   only:
     - master
 
-# This image also includes VS2013
 image: Visual Studio 2015
 
 environment:
   matrix:
-    - CONFIGURATION: Release
-      GENERATOR: Visual Studio 12 2013
-      MAINEXE: mrswatson.exe
-      TESTEXE: mrswatsontest.exe
-    - CONFIGURATION: Release
-      GENERATOR: Visual Studio 12 2013 Win64
-      MAINEXE: mrswatson64.exe
-      TESTEXE: mrswatsontest64.exe
     - CONFIGURATION: Release
       GENERATOR: Visual Studio 14 2015
       MAINEXE: mrswatson.exe
