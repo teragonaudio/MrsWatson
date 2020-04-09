@@ -202,6 +202,13 @@ input source length. Mostly useful when using internal plugins as sources.",
                                  kProgramOptionArgumentTypeRequired));
 
   programOptionsAdd(
+      options, newProgramOptionWithName(OPTION_MIDI_TRACK, "midi-track",
+                                        "MIDI track to read events from, when "
+                                        "reading from type 1 MIDI files.",
+                                        NO_SHORT_FORM, kProgramOptionTypeNumber,
+                                        kProgramOptionArgumentTypeRequired));
+
+  programOptionsAdd(
       options,
       newProgramOptionWithName(
           OPTION_OUTPUT_SOURCE, "output",

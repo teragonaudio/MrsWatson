@@ -31,8 +31,8 @@
 
 typedef enum {
   MIDI_TYPE_INVALID,
-  MIDI_TYPE_REGULAR,
-  MIDI_TYPE_SYSEX,
+  MIDI_TYPE_VOICE,
+  MIDI_TYPE_SYSTEM,
   MIDI_TYPE_META,
   NUM_MIDI_TYPES
 } MidiEventType;
@@ -45,6 +45,7 @@ typedef struct {
   byte data1;
   byte data2;
   byte *extraData;
+  size_t extraDataSize;
 } MidiEventMembers;
 typedef MidiEventMembers *MidiEvent;
 

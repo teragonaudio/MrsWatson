@@ -758,7 +758,7 @@ static void _processAudioVst2xPlugin(void *pluginPtr, SampleBuffer inputs,
 static void _fillVstMidiEvent(const MidiEvent midiEvent,
                               VstMidiEvent *vstMidiEvent) {
   switch (midiEvent->eventType) {
-  case MIDI_TYPE_REGULAR:
+  case MIDI_TYPE_VOICE:
     vstMidiEvent->type = kVstMidiType;
     vstMidiEvent->byteSize = sizeof(VstMidiEvent);
     vstMidiEvent->deltaFrames = (VstInt32)midiEvent->deltaFrames;
@@ -770,7 +770,7 @@ static void _fillVstMidiEvent(const MidiEvent midiEvent,
     vstMidiEvent->reserved2 = 0;
     break;
 
-  case MIDI_TYPE_SYSEX:
+  case MIDI_TYPE_SYSTEM:
     logUnsupportedFeature("VST2.x plugin sysex messages");
     break;
 

@@ -787,6 +787,19 @@ static int _testProcessWithVstxsynthPlugin(const char *testName,
   return result;
 }
 
+static int _testProcessMidiType1File(const char *testName,
+                                           const CharString applicationPath,
+                                           const CharString resourcesPath) {
+  CharString midiFile =
+      getTestResourcePath(resourcesPath, "midi", "children.mid");
+  int result = runIntegrationTest(
+      testName, buildTestArgumentString(
+          "--plugin vstxsynth --midi-file \"%s\" --midi-track 4", midiFile->data),
+      RETURN_CODE_SUCCESS, kTestOutputPcm, applicationPath, resourcesPath);
+  freeCharString(midiFile);
+  return result;
+}
+
 static int _testProcessEffectChain(const char *testName,
                                    const CharString applicationPath,
                                    const CharString resourcesPath) {
@@ -968,6 +981,8 @@ TestSuite addIntegrationTests(File mrsWatsonExePath, File resourcesPath) {
                    _testProcessWithAgainPlugin);
   addTestWithPaths(testSuite, "Process MIDI with vstxsynth plugin",
                    _testProcessWithVstxsynthPlugin);
+  addTestWithPaths(testSuite, "Process MIDI type 1 file",
+                   _testProcessMidiType1File);
   addTestWithPaths(testSuite, "Process effect chain", _testProcessEffectChain);
   addTestWithPaths(testSuite, "Load FXP preset in VST",
                    _testLoadFxpPresetInVst);

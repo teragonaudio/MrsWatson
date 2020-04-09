@@ -164,6 +164,7 @@ static boolByte _readMidiFileTrack(FILE *midiFile, const int trackNumber,
 
   currentByte = trackData;
   endByte = trackData + numBytes;
+  byte runningStatus = 0x0;
 
   while (currentByte < endByte) {
     // Unpack variable length timestamp
@@ -182,39 +183,87 @@ static boolByte _readMidiFileTrack(FILE *midiFile, const int trackNumber,
     freeMidiEvent(midiEvent);
     midiEvent = newMidiEvent();
 
-    switch (*currentByte) {
-    case 0xff:
+    if (*currentByte == 0xff) {
       midiEvent->eventType = MIDI_TYPE_META;
       currentByte++;
       midiEvent->status = *(currentByte++);
-      numBytes = *(currentByte++);
+      midiEvent->extraDataSize = *(currentByte++);
       midiEvent->extraData = (byte *)malloc(numBytes);
+      runningStatus = 0x0;
 
-      for (i = 0; i < numBytes; i++) {
+      for (i = 0; i < midiEvent->extraDataSize; ++i) {
         midiEvent->extraData[i] = *(currentByte++);
       }
-
-      break;
-
-    case 0x7f:
-      logUnsupportedFeature("MIDI files containing sysex events");
-      free(trackData);
-      freeMidiEvent(midiEvent);
-      return false;
-
-    default:
-      midiEvent->eventType = MIDI_TYPE_REGULAR;
+    } else if (*currentByte >= 0x80 && *currentByte < 0xf0) {
+      midiEvent->eventType = MIDI_TYPE_VOICE;
       midiEvent->status = *currentByte++;
+      runningStatus = midiEvent->status;
       midiEvent->data1 = *currentByte++;
 
-      // All regular MIDI events have 3 bytes except for program change and
-      // channel aftertouch
-      if (!((midiEvent->status & 0xf0) == 0xc0 ||
-            (midiEvent->status & 0xf0) == 0xd0)) {
+      switch (midiEvent->status & 0xf0) {
+      // Program change and aftertouch have only one byte. All other voice
+      // events should read in the next data byte.
+      case 0xc0:
+      case 0xd0:
+        break;
+      default:
         midiEvent->data2 = *currentByte++;
+        break;
       }
+    } else if (*currentByte >= 0xf0) {
+      logWarn("Ignoring MIDI system event of type 0x%x", *currentByte);
+      midiEvent->eventType = MIDI_TYPE_SYSTEM;
+      midiEvent->status = *currentByte++;
+      runningStatus = 0x0;
 
+      switch (midiEvent->status) {
+      case 0xf0: // Sysex
+        while (*currentByte != 0xf7) {
+          ++currentByte;
+        }
+        break;
+
+      // System messages with no data (unlikely to be in MIDI files)
+      case 0xf6: // Tune Request
+      case 0xf8: // MIDI Clock
+      case 0xf9: // MIDI Tick
+      case 0xfa: // MIDI Start
+      case 0xfb: // MIDI Continue
+      case 0xfc: // MIDI Stop
+      case 0xfe: // MIDI Sense
+        break;
+
+      // System messages with one data byte
+      case 0xf1: // MTC Quarter Frame
+      case 0xf3: // Song Select
+        ++currentByte;
+        break;
+
+      // System messages with two data bytes
+      case 0xf2: // Song Position Pointer
+        ++currentByte;
+        ++currentByte;
+        break;
+      }
+      numBytes = *(++currentByte);
+      currentByte++;
       break;
+    } else {
+      logDebug("Assuming running status of type 0x%02x", runningStatus);
+      midiEvent->eventType = MIDI_TYPE_VOICE;
+      midiEvent->status = runningStatus;
+      midiEvent->data1 = *currentByte++;
+
+      switch (midiEvent->status & 0xf0) {
+      // Program change and aftertouch have only one byte. All other voice
+      // events should read in the next data byte.
+      case 0xc0:
+      case 0xd0:
+        break;
+      default:
+        midiEvent->data2 = *currentByte++;
+        break;
+      }
     }
 
     switch (divisionType) {
@@ -242,7 +291,8 @@ static boolByte _readMidiFileTrack(FILE *midiFile, const int trackNumber,
 
     midiEvent->timestamp = currentTimeInSampleFrames;
 
-    if (midiEvent->eventType == MIDI_TYPE_META) {
+    switch (midiEvent->eventType) {
+    case MIDI_TYPE_META:
       switch (midiEvent->status) {
       case MIDI_META_TYPE_TEXT:
       case MIDI_META_TYPE_COPYRIGHT:
@@ -252,35 +302,51 @@ static boolByte _readMidiFileTrack(FILE *midiFile, const int trackNumber,
       case MIDI_META_TYPE_MARKER:
       case MIDI_META_TYPE_CUE_POINT:
 
-      // This event type could theoretically be supported, as long as the
-      // plugin supports it
+      // These event type could theoretically be supported, so long as the
+      // plugin supports it. But for now, we just throw them away until such a
+      // plugin comes along.
       case MIDI_META_TYPE_PROGRAM_NAME:
       case MIDI_META_TYPE_DEVICE_NAME:
       case MIDI_META_TYPE_KEY_SIGNATURE:
       case MIDI_META_TYPE_PROPRIETARY:
-        logDebug("Ignoring MIDI meta event of type 0x%x at %ld",
-                 midiEvent->status, midiEvent->timestamp);
+        if (midiEvent->extraDataSize > 0) {
+          CharString metaData =
+              newCharStringWithCapacity(midiEvent->extraDataSize + 1);
+          charStringCopyCString(metaData, (char *)(midiEvent->extraData));
+          logDebug(
+              "Ignoring MIDI meta event of type 0x%02x at %ld (data: '%s')",
+              midiEvent->status, midiEvent->timestamp, metaData->data);
+        }
         break;
 
       case MIDI_META_TYPE_TEMPO:
       case MIDI_META_TYPE_TIME_SIGNATURE:
       case MIDI_META_TYPE_TRACK_END:
-        logDebug("Parsed MIDI meta event of type 0x%02x at %ld",
+        logDebug("Adding MIDI meta event of type 0x%02x at %ld",
                  midiEvent->status, midiEvent->timestamp);
         appendMidiEventToSequence(midiSequence, midiEvent);
         midiEvent = NULL;
         break;
 
       default:
-        logWarn("Ignoring MIDI meta event of type 0x%x at %ld",
+        logWarn("Ignoring unknown MIDI meta event of type 0x%02x at %ld",
                 midiEvent->status, midiEvent->timestamp);
         break;
       }
-    } else {
-      logDebug("MIDI event of type 0x%02x parsed at %ld", midiEvent->status,
+      break;
+    case MIDI_TYPE_VOICE:
+      logDebug("Adding MIDI voice event (0x%02x, 0x%02x, 0x%02x) at %ld",
+               midiEvent->status, midiEvent->data1, midiEvent->data2,
                midiEvent->timestamp);
       appendMidiEventToSequence(midiSequence, midiEvent);
       midiEvent = NULL;
+      break;
+    case MIDI_TYPE_SYSTEM:
+      logInfo("Ignoring MIDI system event of type 0x%02x", midiEvent->status);
+      break;
+    default:
+      logInternalError("Unhandled MIDI event type %d", midiEvent->eventType);
+      break;
     }
   }
 
@@ -290,7 +356,8 @@ static boolByte _readMidiFileTrack(FILE *midiFile, const int trackNumber,
 }
 
 static boolByte _readMidiEventsFile(void *midiSourcePtr,
-                                    MidiSequence midiSequence) {
+                                    MidiSequence *midiSequence,
+                                    const unsigned short midiTrack) {
   MidiSource midiSource = (MidiSource)midiSourcePtr;
   MidiSourceFileData extraData = (MidiSourceFileData)(midiSource->extraData);
   unsigned short formatType, numTracks, timeDivision = 0;
@@ -301,12 +368,30 @@ static boolByte _readMidiEventsFile(void *midiSourcePtr,
     return false;
   }
 
-  if (formatType != 0) {
-    logUnsupportedFeature("MIDI file types other than 0");
+  switch (formatType) {
+  case 0:
+    if (numTracks != 1) {
+      logError("Invalid MIDI file '%s' is of type 0, but has %d tracks",
+               midiSource->sourceName->data, numTracks);
+      return false;
+    } else if (midiTrack > 0) {
+      logError("MIDI file '%s' is of type 0, but requested to read track %d",
+               midiSource->sourceName->data, midiTrack);
+      return false;
+    }
+    break;
+  case 1:
+    if (midiTrack >= numTracks) {
+      logError("Cannot read track %d from MIDI file '%s', which has %d tracks",
+               midiTrack, midiSource->sourceName->data, numTracks);
+      return false;
+    }
+    break;
+  case 2:
+    logUnsupportedFeature("MIDI files of type 2");
     return false;
-  } else if (formatType == 0 && numTracks != 1) {
-    logError("MIDI file '%s' is of type 0, but contains %d tracks",
-             midiSource->sourceName->data, numTracks);
+  default:
+    logError("MIDI file is of invalid type %d", formatType);
     return false;
   }
 
@@ -324,13 +409,22 @@ static boolByte _readMidiEventsFile(void *midiSourcePtr,
       formatType, numTracks, timeDivision, extraData->divisionType);
 
   for (track = 0; track < numTracks; track++) {
+    MidiSequence readSequence = newMidiSequence();
+    logDebug("Reading MIDI track %d", track);
     if (!_readMidiFileTrack(extraData->fileHandle, track, timeDivision,
-                            extraData->divisionType, midiSequence)) {
+                            extraData->divisionType, readSequence)) {
       return false;
+    } else {
+      if (track == midiTrack) {
+        *midiSequence = readSequence;
+        return true;
+      } else {
+        freeMidiSequence(readSequence);
+      }
     }
   }
 
-  return true;
+  return false;
 }
 
 static void _freeMidiEventsFile(void *midiSourceDataPtr) {

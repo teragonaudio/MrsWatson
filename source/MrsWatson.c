@@ -169,7 +169,8 @@ static ReturnCode setupInputSource(SampleSource inputSource) {
 }
 
 static ReturnCode setupMidiSource(MidiSource midiSource,
-                                  MidiSequence *outSequence) {
+                                  MidiSequence *outSequence,
+                                  const unsigned short midiTrack) {
   if (midiSource != NULL) {
     if (!midiSource->openMidiSource(midiSource)) {
       logError("MIDI source '%s' could not be opened",
@@ -178,11 +179,7 @@ static ReturnCode setupMidiSource(MidiSource midiSource,
     }
 
     // Read in all events from the MIDI source
-    // TODO: This will not work if we want to support streaming MIDI events (ie,
-    // from a pipe)
-    *outSequence = newMidiSequence();
-
-    if (!midiSource->readMidiEvents(midiSource, *outSequence)) {
+    if (!midiSource->readMidiEvents(midiSource, outSequence, midiTrack)) {
       logWarn("Failed reading MIDI events from source '%s'",
               midiSource->sourceName->data);
       return RETURN_CODE_IO_ERROR;
@@ -783,7 +780,9 @@ int mrsWatsonMain(ErrorReporter errorReporter, int argc, char **argv) {
   freeCharString(pluginSearchRoot);
 
   if (midiSource != NULL) {
-    result = setupMidiSource(midiSource, &midiSequence);
+    const unsigned short midiTrack = (unsigned short)programOptionsGetNumber(
+        programOptions, OPTION_MIDI_TRACK);
+    result = setupMidiSource(midiSource, &midiSequence, midiTrack);
 
     if (result != RETURN_CODE_SUCCESS) {
       logError("MIDI source could not be opened, exiting");

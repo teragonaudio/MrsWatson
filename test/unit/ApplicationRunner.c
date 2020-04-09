@@ -115,11 +115,11 @@ const char *_getPlatformVstDirName(const PlatformInfo platform);
 const char *_getPlatformVstDirName(const PlatformInfo platform) {
   switch (platform->type) {
   case PLATFORM_LINUX:
-    return platform->is64BitRuntime ? "Linux-x86_64" : "Linux-i686";
+    return platform->is64BitRuntime ? "linux-64bit" : "linux-32bit";
   case PLATFORM_MACOSX:
-    return "Mac OS X";
+    return "macOS";
   case PLATFORM_WINDOWS:
-    return platform->is64BitRuntime ? "Windows 64-bit" : "Windows 32-bit";
+    return platform->is64BitRuntime ? "win-64bit" : "win-32bit";
   default:
     logInternalError("No VST resource directory for platform");
     return NULL;
