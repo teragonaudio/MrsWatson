@@ -1,9 +1,12 @@
-[![Travis Build Status][travis-build-icon]][travis-build-home]
-[![AppVeyor Build status][appveyor-build-icon]][appveyor-build-home]
-
-
 MrsWatson
 =========
+
+This project is archived, because I don't have the time to maintain it
+anymore. Please contact info@teragonaudio.com if you have any further
+questions
+
+About
+-----
 
 MrsWatson is a command-line audio plugin host. It takes an audio and/or MIDI
 file as input, and processes it through one or more VST plugins. MrsWatson was
