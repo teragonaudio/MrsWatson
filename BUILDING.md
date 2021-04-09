@@ -115,6 +115,8 @@ building on Linux should be a simple matter of:
     make
     make install
 
+There is a Dockerfile in the root directory that you can use to build a linux image with all necessary tools installed. If you use VSCode, in .vscode directory there are pre-configured tasks for building the image and both 32 and 64-bit linux versions of the application in a container.
+
 
 [homebrew]: http://brew.sh
 [cmake]: http://www.cmake.org/download/
