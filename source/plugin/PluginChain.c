@@ -273,7 +273,7 @@ unsigned long pluginChainGetProcessingDelay(PluginChain self) {
 }
 
 typedef struct {
-  Plugin plugin;
+  PluginChain self;
   boolByte success;
 } _PluginChainSetParameterPassData;
 
@@ -283,10 +283,31 @@ void _pluginChainSetParameter(void *item, void *userData) {
   char *parameterValue = (char *)item;
   _PluginChainSetParameterPassData *passData =
       (_PluginChainSetParameterPassData *)userData;
-  Plugin plugin = passData->plugin;
+  PluginChain self = passData->self;
+
   char *comma = NULL;
+  char *colon = NULL;
+  int pluginIndex;
   int index;
   float value;
+
+  colon = strchr(parameterValue, ':');
+
+  if (colon == NULL) {
+    logWarn("No plugin index set for parameter argument %s, defaulting to plugin chain head", parameterValue);
+    pluginIndex = 0;
+  } else {
+    pluginIndex = (int)strtod(parameterValue, NULL);
+
+    if (pluginIndex < 0 || pluginIndex >= self->numPlugins) {
+      logWarn("Plugin index for parameter argument %s is out of bounds, skipping parameter", parameterValue);
+      return;
+    }
+
+    parameterValue = colon + 1;
+  }
+
+  Plugin plugin = self->plugins[pluginIndex];
 
   // If a previous attempt to set a parameter failed, then return right away
   // since this method will return false anyways.
@@ -306,16 +327,15 @@ void _pluginChainSetParameter(void *item, void *userData) {
   *comma = '\0';
   index = (int)strtod(parameterValue, NULL);
   value = (float)strtod(comma + 1, NULL);
-  logDebug("Set parameter %d to %f", index, value);
+  logDebug("Set parameter %d of plugin %d to %f", index, pluginIndex, value);
   passData->success = plugin->setParameter(plugin, (unsigned int)index, value);
 }
 
 boolByte pluginChainSetParameters(PluginChain self,
                                   const LinkedList parameters) {
   _PluginChainSetParameterPassData passData;
-  passData.plugin = self->plugins[0];
+  passData.self = self;
   passData.success = true;
-  logDebug("Setting parameters on head plugin in chain");
   linkedListForeach(parameters, _pluginChainSetParameter, &passData);
   return passData.success;
 }

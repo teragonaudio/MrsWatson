@@ -216,11 +216,10 @@ Use '-' to write to stdout..",
       options,
       newProgramOptionWithName(
           OPTION_PARAMETER, "parameter",
-          "Set a parameter in a plugin. May be specified multiple times, but can only \
-set parameters for the first plugin in a chain. Parameter indexes for plugins \
-can be found with the --display-info option. Use comma-separated arguments for \
-index/value, for example:\n\n\
-\t--parameter 1,0.3 --parameter 0,0.75",
+          "Set a parameter in a plugin. May be specified multiple times. Parameter indexes for plugins \
+can be found with the --display-info option. Use arguments for \
+plugin:index,value, for example:\n\n\
+\t--parameter 0:1,0.3 --parameter 2:0,0.75",
           NO_SHORT_FORM, kProgramOptionTypeList,
           kProgramOptionArgumentTypeRequired));
 
